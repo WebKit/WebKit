@@ -1,3 +1,12 @@
+2014-09-22  Sweta Kothari  <swkothar@redhat.com>
+
+        Webkit Gujarati Translations
+        https://bugs.webkit.org/show_bug.cgi?id=136525
+
+        Reviewed by Philippe Normand.
+
+        * gu.po:
+
 2014-09-16  Nilamdyuti Goswami  <ngoswami@redhat.com>
 
         [as] Updated Assamese translations of WebKitGtk+
