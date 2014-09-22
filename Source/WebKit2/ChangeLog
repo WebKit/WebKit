@@ -1,5 +1,27 @@
 2014-09-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173788.
+
+    2014-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            WebContent crash in WebKit::WebPage::expandedRangeFromHandle
+            https://bugs.webkit.org/show_bug.cgi?id=136969
+
+            Reviewed by David Kilzer.
+
+            The crash was caused by m_currentBlockSelection and frame.selection().selection().toNormalizedRange()
+            both being null and the subsequent lines of code assuming currentRange to be not null.
+
+            Replace the assertion by an early exit since the range could be null here.
+
+            In the future, we should figure out if there are other things we need to do in addition
+            to checking the nullity when this race condition is hit.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle):
+
+2014-09-22  Babak Shafiei  <bshafiei@apple.com>
+
         Roll out r171775.
 
 2014-09-22  Babak Shafiei  <bshafiei@apple.com>

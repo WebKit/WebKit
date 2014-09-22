@@ -1325,7 +1325,11 @@ void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, S
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
-    ASSERT(currentRange);
+
+    // FIXME: This used to be an assertion but there appears to be some race condition under which we get a null range.
+    // Should we do other things in addition to the null check here?
+    if (!currentRange)
+        return;
 
     RefPtr<Range> expandedRange = expandedRangeFromHandle(currentRange.get(), handlePosition);
     SelectionFlags flags;
