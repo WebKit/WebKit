@@ -239,7 +239,7 @@ typedef struct {
         if (!page)
             continue;
 
-        CGSize pageSize = [page cropBoxAccountForRotation].size;
+        CGSize pageSize = [page size];
         pageFrame.size.height = pageSize.height / pageSize.width * pageFrame.size.width;
         CGRect pageFrameWithMarginApplied = CGRectInset(pageFrame, pdfPageMargin, pdfPageMargin);
 
