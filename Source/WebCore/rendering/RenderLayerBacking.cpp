@@ -436,7 +436,7 @@ void RenderLayerBacking::updateCompositedBounds()
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
     if (shouldClipCompositedBounds()) {
-        RenderView& view = m_owningLayer.renderer().view();
+        RenderView& view = renderer().view();
         RenderLayer* rootLayer = view.layer();
 
         LayoutRect clippingBounds;
@@ -1594,7 +1594,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     FloatSize tileSize;
 
     RefPtr<Image> image = style.backgroundLayers()->image()->cachedImage()->image();
-    toRenderBox(renderer()).getGeometryForBackgroundImage(&m_owningLayer.renderer(), destRect, phase, tileSize);
+    toRenderBox(renderer()).getGeometryForBackgroundImage(&renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
@@ -2131,12 +2131,12 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
 
 #ifndef NDEBUG
-    RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&m_owningLayer.renderer());
+    RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&renderer());
 #endif
 
     FrameView::PaintingState paintingState;
     if (m_owningLayer.isRootLayer())
-        m_owningLayer.renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+        renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
 
     // FIXME: GraphicsLayers need a way to split for RenderRegions.
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, m_devicePixelFractionFromRenderer);
@@ -2146,7 +2146,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
 
     if (m_owningLayer.isRootLayer())
-        m_owningLayer.renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
+        renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
 
     compositor().didPaintBacking(this);
 

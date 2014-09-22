@@ -1,5 +1,19 @@
 2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        Leverage RenderLayerBacking::renderer() instead of m_owningLayer.renderer()
+        https://bugs.webkit.org/show_bug.cgi?id=136954
+
+        Reviewed by Darin Adler.
+
+        No new tests just refactoring.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
+2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSS Regions] Assertion failure and null dereference crash when using animations and regions
         https://bugs.webkit.org/show_bug.cgi?id=136918
 
