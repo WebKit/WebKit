@@ -1538,7 +1538,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     }
     
     if (RenderLayerBacking* layerBacking = layer.backing())
-        layerBacking->updateAfterDescendents();
+        layerBacking->updateAfterDescendants();
 }
 
 void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFragment* region, Vector<GraphicsLayer*>& childList, int depth)
@@ -1775,7 +1775,7 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int dept
     }
 
     if (RenderLayerBacking* layerBacking = layer.backing())
-        layerBacking->updateAfterDescendents();
+        layerBacking->updateAfterDescendants();
 }
 
 // Recurs down the RenderLayer tree until its finds the compositing descendants of compositingAncestor and updates their geometry.
@@ -1792,7 +1792,7 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
 
             layerBacking->updateGeometry();
             if (compositedChildrenOnly) {
-                layerBacking->updateAfterDescendents();
+                layerBacking->updateAfterDescendants();
                 return;
             }
         }
@@ -1832,7 +1832,7 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
     
     if (&layer != &compositingAncestor) {
         if (RenderLayerBacking* layerBacking = layer.backing())
-            layerBacking->updateAfterDescendents();
+            layerBacking->updateAfterDescendants();
     }
 }
 

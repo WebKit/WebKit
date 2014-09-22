@@ -1,3 +1,36 @@
+2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Assertion failure and null dereference crash when using animations and regions
+        https://bugs.webkit.org/show_bug.cgi?id=136918
+
+        Reviewed by Andrei Bucur.
+
+        In some situations, for instance when an image has an attached animation, the style change caused by the animation
+        triggers a geometry update for the backing store associated with the image's layer. This may occur before
+        the layout for the image has finished.
+
+        Moreover, if the image in such situation - having a composited layer - is displayed in a region,
+        sicne the layout did not finish yet, the mappings between the layers of the elements collected in the named flow
+        and the regions associated with the named flow are not updated and cannot be used.
+
+        Therefore in those situations, we have to bail out early and use these mappings only after the layout has finished.
+
+        This patch also changes RenderLayerBacking method updateAfterDescendents -> updateAfterDescendants.
+
+        Test: fast/regions/animated-image-in-region.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::cachedRegionForCompositedLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+
 2014-09-21  Christophe Dumez  <cdumez@apple.com>
 
         Fix post-mortem nits for r173724
