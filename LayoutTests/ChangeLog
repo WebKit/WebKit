@@ -1,5 +1,24 @@
 2014-09-22  Benjamin Poulain  <bpoulain@apple.com>
 
+        Split the test parsing-css-nth-child-of.html in 3
+        https://bugs.webkit.org/show_bug.cgi?id=137013
+
+        Rubber-stamped by Christophe Dumez.
+
+        parsing-css-nth-child-of.html tends to be too slow in debug, causing timeout from time to time.
+
+        The speed issues will be fixed once we JIT the selector. Since it will take a while before the JIT is ready,
+        this patch splits the test in three to avoid timeouts on the bots.
+
+        * fast/css/parsing-css-nth-child-of-1-expected.txt: Renamed from LayoutTests/fast/css/parsing-css-nth-child-of-expected.txt.
+        * fast/css/parsing-css-nth-child-of-1.html: Added.
+        * fast/css/parsing-css-nth-child-of-2-expected.txt: Added.
+        * fast/css/parsing-css-nth-child-of-2.html: Renamed from LayoutTests/fast/css/parsing-css-nth-child-of.html.
+        * fast/css/parsing-css-nth-child-of-3-expected.txt: Added.
+        * fast/css/parsing-css-nth-child-of-3.html: Added.
+
+2014-09-22  Benjamin Poulain  <bpoulain@apple.com>
+
         Add the baseline implementation of :nth-child(An+B of selector-list)
         https://bugs.webkit.org/show_bug.cgi?id=136975
 
