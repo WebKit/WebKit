@@ -142,7 +142,7 @@
             "filename": r"Source/WebCore/page/scrolling/",
         },
         "WebKitGTKTranslations": {
-            "filename": r"Source/WebKit/gtk/po/",
+            "filename": r"Source/WebCore/platform/gtk/po/",
         },
         "Media": {
             "filename": r"(Source|LayoutTests)/.*([Mm]edia|[Aa]udio|[Vv]ideo)",
@@ -377,7 +377,7 @@
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@webkit.org" ],
         "WebInspectorGenerator": [ "burg@cs.washington.edu", "joepeck@webkit.org" ],
         "WebReplayGenerator": [ "burg@cs.washington.edu" ],
-        "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
+        "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com", "cgarcia@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],
         "webkitperl": [ "dbates@webkit.org" ],

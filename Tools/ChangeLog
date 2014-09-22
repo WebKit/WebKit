@@ -1,3 +1,15 @@
+2014-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKitGTKTranslations rule in watchlist.
+
+        In r145081 GTK+ translations were moved from Source/WebKit/gtk/po/
+        to Source/WebCore/platform/gtk/po/ but the rule was not updated.
+
+        * Scripts/webkitpy/common/config/watchlist: Use
+        Source/WebCore/platform/gtk/po/ as directory to watch for
+        WebKitGTKTranslations rule and add berto and myself to the list of
+        watchers.
+
 2014-09-22  Ryuan Choi  <ryuan.choi@gmail.com>
 
         Fix syntaxError in watchlist since r173594
