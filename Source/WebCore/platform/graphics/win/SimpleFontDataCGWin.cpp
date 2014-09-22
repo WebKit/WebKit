@@ -62,10 +62,12 @@ void SimpleFontData::platformInit()
     int iAscent = CGFontGetAscent(font);
     int iDescent = CGFontGetDescent(font);
     int iLineGap = CGFontGetLeading(font);
+    int iCapHeight = CGFontGetCapHeight(font);
     unsigned unitsPerEm = CGFontGetUnitsPerEm(font);
     float pointSize = m_platformData.size();
     float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float fCapHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     if (!isCustomFont()) {
@@ -82,6 +84,7 @@ void SimpleFontData::platformInit()
 
     m_fontMetrics.setAscent(fAscent);
     m_fontMetrics.setDescent(fDescent);
+    m_fontMetrics.setCapHeight(fCapHeight);
     m_fontMetrics.setLineGap(fLineGap);
     m_fontMetrics.setLineSpacing(lroundf(fAscent) + lroundf(fDescent) + lroundf(fLineGap));
 

@@ -1,3 +1,13 @@
+2014-09-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement cap height in SimpleFontDataWin to enable initial-letter support for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=136841
+
+        Reviewed by David Hyatt.
+
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit): Add missing calls to set up our fonts.
+
 2014-09-22  Eric Carlson  <eric.carlson@apple.com>
 
         Update HTMLMediaElement logging
