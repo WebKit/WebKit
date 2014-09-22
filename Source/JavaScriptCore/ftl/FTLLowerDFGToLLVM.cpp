@@ -4624,74 +4624,28 @@ private:
                 m_callFrame, object);
         }
         
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorage slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorage continuation"));
-        
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
-        LValue endOfStorage = allocateBasicStorageAndGetEnd(
-            m_out.constIntPtr(initialOutOfLineCapacity * sizeof(JSValue)), slowPath);
-        
-        ValueFromBlock fastButterfly = m_out.anchor(
-            m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(slowPath, continuation);
-        
-        ValueFromBlock slowButterfly = m_out.anchor(vmCall(
-            m_out.operation(operationAllocatePropertyStorageWithInitialCapacity), m_callFrame));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+        LValue result = allocatePropertyStorageWithSizeImpl(initialOutOfLineCapacity);
         m_out.storePtr(result, object, m_heaps.JSObject_butterfly);
-        
         return result;
     }
     
     LValue reallocatePropertyStorage(
         LValue object, LValue oldStorage, Structure* previous, Structure* next)
     {
-        size_t oldSize = previous->outOfLineCapacity() * sizeof(JSValue);
+        size_t oldSize = previous->outOfLineCapacity();
         size_t newSize = oldSize * outOfLineGrowthFactor; 
 
-        ASSERT_UNUSED(next, newSize == next->outOfLineCapacity() * sizeof(JSValue));
+        ASSERT_UNUSED(next, newSize == next->outOfLineCapacity());
         
         if (previous->couldHaveIndexingHeader()) {
-            LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));                    
+            LValue newAllocSize = m_out.constIntPtr(newSize);                    
             return vmCall(m_out.operation(operationReallocateButterflyToGrowPropertyStorage), m_callFrame, object, newAllocSize);
         }
         
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("reallocatePropertyStorage slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("reallocatePropertyStorage continuation"));
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
-        LValue endOfStorage = 
-            allocateBasicStorageAndGetEnd(m_out.constIntPtr(newSize), slowPath);
-        
-        ValueFromBlock fastButterfly = m_out.anchor(m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(slowPath, continuation);
-        
-        LValue newAllocSize = m_out.constInt64(newSize / sizeof(JSValue));       
-        
-        LValue storageLocation = vmCall(m_out.operation(operationAllocatePropertyStorage), m_callFrame, newAllocSize);
-        
-        ValueFromBlock slowButterfly = m_out.anchor(storageLocation);
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+        LValue result = allocatePropertyStorageWithSizeImpl(newSize);
 
-        ptrdiff_t headerSize = -sizeof(JSValue) - sizeof(void *);
-        ptrdiff_t endStorage = headerSize - static_cast<ptrdiff_t>(oldSize);
+        ptrdiff_t headerSize = -sizeof(IndexingHeader) - sizeof(void*);
+        ptrdiff_t endStorage = headerSize - static_cast<ptrdiff_t>(oldSize * sizeof(JSValue));
 
         for (ptrdiff_t offset = headerSize; offset > endStorage; offset -= sizeof(void*)) {
             LValue loaded = 
@@ -4702,6 +4656,42 @@ private:
         m_out.storePtr(result, m_out.address(object, m_heaps.JSObject_butterfly));
         
         return result;
+    }
+    
+    LValue allocatePropertyStorageWithSizeImpl(size_t sizeInValues)
+    {
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorageWithSizeImpl slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("allocatePropertyStorageWithSizeImpl continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        LValue endOfStorage = allocateBasicStorageAndGetEnd(
+            m_out.constIntPtr(sizeInValues * sizeof(JSValue)), slowPath);
+        
+        ValueFromBlock fastButterfly = m_out.anchor(
+            m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        LValue slowButterflyValue;
+        if (sizeInValues == initialOutOfLineCapacity) {
+            slowButterflyValue = vmCall(
+                m_out.operation(operationAllocatePropertyStorageWithInitialCapacity),
+                m_callFrame);
+        } else {
+            slowButterflyValue = vmCall(
+                m_out.operation(operationAllocatePropertyStorage),
+                m_callFrame, m_out.constIntPtr(sizeInValues));
+        }
+        ValueFromBlock slowButterfly = m_out.anchor(slowButterflyValue);
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        return m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
     }
     
     LValue getById(LValue base)
