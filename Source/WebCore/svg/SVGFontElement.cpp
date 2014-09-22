@@ -133,10 +133,14 @@ void SVGFontElement::ensureGlyphCache()
                 ligatures.append(unicode.string());
         } else if (isSVGHKernElement(child)) {
             SVGHKernElement& hkern = toSVGHKernElement(child);
-            hkern.buildHorizontalKerningPair(m_horizontalKerningMap);
+            SVGKerningPair kerningPair;
+            if (hkern.buildHorizontalKerningPair(kerningPair))
+                m_horizontalKerningMap.insert(kerningPair);
         } else if (isSVGVKernElement(child)) {
             SVGVKernElement& vkern = toSVGVKernElement(child);
-            vkern.buildVerticalKerningPair(m_verticalKerningMap);
+            SVGKerningPair kerningPair;
+            if (vkern.buildVerticalKerningPair(kerningPair))
+                m_verticalKerningMap.insert(kerningPair);
         } else if (isSVGMissingGlyphElement(child) && !firstMissingGlyphElement)
             firstMissingGlyphElement = &toSVGMissingGlyphElement(child);
     }

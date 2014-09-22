@@ -1,3 +1,78 @@
+2014-09-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement 'vhea', 'vmtx', and 'kern' tables in SVG -> OTF converter
+        https://bugs.webkit.org/show_bug.cgi?id=136971
+
+        Reviewed by Darin Adler.
+
+        This patch fills in the tables related to vertical metrics and kerning. The vertical metrics tables are
+        fairly straightforward. On the other hand, the 'kern' table has subtables which can be in a variety
+        of formats; however, according to Microsoft, Windows only allows one particular format, which doesn't
+        allow for ranges of glyphs to be described and therefore might lead to a large 'kern' table size. In
+        the interest of platform agnosticism I have implemented this particular format, and have not actually
+        witnessed any extremely large 'kern' tables in any of the fonts that I have looked at.
+
+        I also added basic support for the horiz-origin-x and horiz-origin-y SVG properties, though support
+        might not be perfect based on my testing.
+
+        Regarding testing, after this patch, almost all of our SVG fonts tests pass (barring tiny rebaselining;
+        the platform font system calculates slightly different advances than we did. These differences are tiny
+        and expected from such a dramatic shift in text handling engines.) There are around two dozen failing
+        tests left that look like they are actually indiciative of code problems.
+
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::ensureGlyphCache): Refactor to accept new signature of
+        SVG*KernElement::build*KerningPair().
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair): Refactor to allow for intermediate data to be
+        returned, which the SVG -> OTF font converter can use.
+        * svg/SVGHKernElement.h: New signature for buildHorizontalKerningPair().
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::GlyphData::GlyphData): Save the glyph's vertical advance along with
+        the glyph's horizontal advance.
+        (WebCore::SVGToOTFFontConverter::KerningData::KerningData): This data represents a record in one of
+        the two 'kern' subtables, and as such needs to be sorted.
+        (WebCore::SVGToOTFFontConverter::KerningData::operator<): Sort comparator.
+        (WebCore::SVGToOTFFontConverter::appendHEADTable): Save the unitsPerEm locally to save a conditional.
+        (WebCore::SVGToOTFFontConverter::appendHHEATable): Ditto.
+        (WebCore::SVGToOTFFontConverter::appendHMTXTable): Ditto. Also use the horizontal advance as opposed to
+        the vertical advance.
+        (WebCore::SVGToOTFFontConverter::appendOS2Table): Save the unitsPerEm locally to save a conditional.
+        Also if the average advance isn't found in the font, use the missing glyph's advance. If there is no
+        missing glyph, bail and use the unitsPerEm.
+        (WebCore::SVGToOTFFontConverter::appendVORGTable): If the default vertical origin isn't found in the
+        font, use the missing glyphs's vertical origin. If there is no missing glyph, bail and use 0.
+        (WebCore::SVGToOTFFontConverter::appendVHEATable): Parallel of 'hhea' table, except for vertical info.
+        (WebCore::SVGToOTFFontConverter::appendVMTXTable): Parallel of 'hmtx' table, except for vertical info.
+        (WebCore::SVGToOTFFontConverter::appendKerningHelperFields): Computes and appends 4 fields that font
+        parsers need in order to do a binary search on the kern records.
+        (WebCore::SVGToOTFFontConverter::addCodepointRanges): For each codepoint in the ranges, look up its
+        representative glyph and append it to a set.
+        (WebCore::SVGToOTFFontConverter::addCodepoints): For each codepoint in the range, look up its
+        representative glyph and append it to a set.
+        (WebCore::SVGToOTFFontConverter::addGlyphNames): For each glyph name, look up its representative glyph
+        and append it to a set.
+        (WebCore::SVGToOTFFontConverter::computeKerningData): Call SVG*KernElement::build*KerningPair() and
+        iterate through all the data it returned, building up records into a Vector.
+        (WebCore::SVGToOTFFontConverter::appendKERNTable): Go through the vector that computeKerningData()
+        returned and actually write out the two subtables. One is for horizontal kerning and the other is for
+        vertical kerning.
+        (WebCore::CFFBuilder::CFFBuilder): Use the position of the glyph origin to perform the initial moveto
+        command.
+        (WebCore::transcodeGlyphPaths): Get the glyph's origin and pass it to the CFFBuilder.
+        (WebCore::SVGToOTFFontConverter::appendGlyphData): Templated overloading so that the missing glyph
+        gets a null SVGGlyphElement pointer but the rest of the glyphs get a non-null one.
+        (WebCore::SVGToOTFFontConverter::processGlyphElement): Called on both SVGGlyphElements and
+        SVGMissingGlyphElements, this pulls out information from the element and computs its path information.
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Use the new templated version of
+        processGlyphElement so we can get the same glyph parsing behavior on SVGMissingGlyphElements. In
+        addition, populate two maps for the kerning table creation function to use.
+        (WebCore::SVGToOTFFontConverter::convertSVGToOTFFont): Append new tables.
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::buildVerticalKerningPair): Refactor to allow for intermediate data to be
+        returned, which the SVG -> OTF font converter can use.
+        * svg/SVGVKernElement.h: New signature for buildVerticalKerningPair().
+
 2014-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         WebSocket crash when a connection is closed from server side
