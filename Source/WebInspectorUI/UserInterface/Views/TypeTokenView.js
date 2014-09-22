@@ -188,6 +188,6 @@ WebInspector.TypeTokenView.prototype = {
         if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String | WebInspector.TypeSet.NullOrUndefinedTypeBits))
             return "Object?";
 
-        return "(" + WebInspector.UIString("many") + ")";
+        return WebInspector.UIString("(many)");
     }
 };

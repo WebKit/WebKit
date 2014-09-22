@@ -1,3 +1,15 @@
+2014-09-21  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: unlocalized 'many' string in type profiler inline bubble
+        https://bugs.webkit.org/show_bug.cgi?id=136980
+
+        Reviewed by Timothy Hatcher.
+
+        Generate the localizable string for the type profiler's "many" inline bubble.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/TypeTokenView.js:
+
 2014-09-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Option+Click on CSS url(...) should jump to resource view
