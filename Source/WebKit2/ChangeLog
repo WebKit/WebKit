@@ -1,5 +1,25 @@
+2014-09-22  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r171775.
+
+    2014-07-29  Tim Horton  <timothy_horton@apple.com>
+
+            WKPDFView paints rotated pages squished
+            https://bugs.webkit.org/show_bug.cgi?id=135401
+            <rdar://problem/17173916>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/ios/WKPDFView.mm:
+            (-[WKPDFView _computePageAndDocumentFrames]):
+            [page size] returns the crop box's size, ignoring rotation.
+            [page cropBoxAccountForRotation] respects rotation, but otherwise returns the same size.
+            UIPDFPageView will respect rotation when painting, so we
+            should make sure that it is given an aspect ratio that also
+            respects rotation, so that the page isn't squished.
+
 2014-09-19  Dana Burkart  <dburkart@apple.com>
-        
+
         Merge r173722.
 
     2014-09-18  Tim Horton  <timothy_horton@apple.com>
