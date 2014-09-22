@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2014-08-28 22:55+0000\n"
-"PO-Revision-Date: 2014-09-03 16:22+0530\n"
+"POT-Creation-Date: 2014-09-16 22:59+0000\n"
+"PO-Revision-Date: 2014-09-18 11:19+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
 "Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as_IN\n"
@@ -122,12 +122,10 @@ msgid "Open _Audio in New Window"
 msgstr "অডিঅ'ক নতুন উইন্ডোত খোলক (_A)"
 
 #: ../LocalizedStringsGtk.cpp:145
-#| msgid "_Download Linked File"
 msgid "Download _Video"
 msgstr "ভিডিঅ' ডাউনল'ড কৰক (_V)"
 
 #: ../LocalizedStringsGtk.cpp:150
-#| msgid "_Download Linked File"
 msgid "Download _Audio"
 msgstr "অডিঅ' ডাউনল'ড কৰক (_A)"
 
@@ -144,12 +142,10 @@ msgid "_Toggle Media Controls"
 msgstr "মাধ্যমৰ নিয়ন্ত্ৰণসমূহ টগ'ল কৰক (_T)"
 
 #: ../LocalizedStringsGtk.cpp:170
-#| msgid "_Toggle Media Controls"
 msgid "_Show Media Controls"
 msgstr "মাধ্যমৰ নিয়ন্ত্ৰণসমূহ দেখুৱাওক (_S)"
 
 #: ../LocalizedStringsGtk.cpp:175
-#| msgid "_Toggle Media Controls"
 msgid "_Hide Media Controls"
 msgstr "মাধ্যমৰ নিয়ন্ত্ৰণসমূহ লুকুৱাওক (_H)"
 
@@ -231,19 +227,19 @@ msgstr "বানান আৰু ব্যাকৰণ লুকাওক (_H)"
 
 #: ../LocalizedStringsGtk.cpp:318
 msgid "_Check Document Now"
-msgstr "দস্তাবেজ এতিয়া নীৰিক্ষণ কৰক (_C)"
+msgstr "দস্তাবেজ এতিয়া নিৰীক্ষণ কৰক (_C)"
 
 #: ../LocalizedStringsGtk.cpp:323
 msgid "Check Spelling While _Typing"
-msgstr "টাইপ কৰাৰ সময়ত বানান নীৰিক্ষণ কৰক (_T)"
+msgstr "টাইপ কৰাৰ সময়ত বানান নিৰীক্ষণ কৰক (_T)"
 
 #: ../LocalizedStringsGtk.cpp:328
 msgid "Check _Grammar With Spelling"
-msgstr "বানানৰ সৈতে ব্যাকৰণ নীৰিক্ষণ কৰক (_G)"
+msgstr "বানানৰ সৈতে ব্যাকৰণ নিৰীক্ষণ কৰক (_G)"
 
 #: ../LocalizedStringsGtk.cpp:333
 msgid "_Font"
-msgstr "ফন্ট (_F)"
+msgstr "ফণ্ট (_F)"
 
 #: ../LocalizedStringsGtk.cpp:356
 msgid "_Outline"
@@ -343,11 +339,11 @@ msgstr "সক্ৰিয় কৰক"
 
 #: ../LocalizedStringsGtk.cpp:476
 msgid "uncheck"
-msgstr "নীৰিক্ষণ নকৰিব"
+msgstr "নিৰীক্ষণ নকৰিব"
 
 #: ../LocalizedStringsGtk.cpp:481
 msgid "check"
-msgstr "নীৰিক্ষণ কৰক"
+msgstr "নিৰীক্ষণ কৰক"
 
 #: ../LocalizedStringsGtk.cpp:486
 msgid "jump"
@@ -612,58 +608,71 @@ msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "এটা স্নেপষটেড প্লাগ-ইনত দেখুৱাবলে লেবেলৰ উপশীৰ্ষক"
 
-#: ../WebKitAuthenticationWidget.cpp:155
-#, c-format
-msgid "The site %s:%i requests a username and password"
-msgstr "ছাইট %s:%i এ এটা ব্যৱহাৰকাৰীনাম আৰু পাছৱৰ্ড অনুৰোধ কৰিছে"
-
-#: ../WebKitAuthenticationWidget.cpp:159
-msgid "_Remember password"
-msgstr "পাছৱৰ্ড মনত ৰাখক (_R)"
-
-#: ../WebKitAuthenticationWidget.cpp:167
-msgid "Server message:"
-msgstr "চাৰ্ভাৰৰ বাৰ্তা:"
-
-#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
-msgid "Username:"
-msgstr "ব্যৱহাৰকাৰীনাম:"
-
-#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
-msgid "Password:"
-msgstr "পাছৱৰ্ড:"
-
-#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:95
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
 #, c-format
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
 msgstr ""
 "উপদেশ দিয়া ফাইলনাম %s ৰ সৈতে ডাউনল'ডৰ বাবে গন্তব্য URl নিৰ্ধাৰণ কৰিব নোৱাৰি"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:114
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "ছাইট %s:%i এ এটা ব্যৱহাৰকাৰীনাম আৰু পাছৱৰ্ড অনুৰোধ কৰিছে"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+msgid "Server message:"
+msgstr "চাৰ্ভাৰৰ বাৰ্তা:"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
+msgid "_Remember password"
+msgstr "পাছৱৰ্ড মনত ৰাখক (_R)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:133
+msgid "Username:"
+msgstr "ব্যৱহাৰকাৰীনাম:"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:144
+msgid "Password:"
+msgstr "পাছৱৰ্ড:"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
 msgid "Destination"
 msgstr "গন্তব্য"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:146
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
 msgid "The local URI to where the download will be saved"
 msgstr "স্থানীয় URl যত ডাউনল'ড সংৰক্ষণ কৰা হব"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
 msgid "Response"
 msgstr "প্ৰতিক্ৰিয়া"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:159
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
 msgid "The response of the download"
 msgstr "ডাউনল'ডৰ প্ৰতিক্ৰিয়া"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
 msgid "Estimated Progress"
 msgstr "আনুমানিক প্ৰগতি"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
 msgid "Determines the current progress of the download"
 msgstr "ডাউনল'ডৰ বৰ্তমান প্ৰগতি নিৰ্ধাৰণ কৰে"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "অভাৰৰাইটৰ অনুমতি দিয়ক"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+#| msgid "Whether the window can be resized."
+msgid "Whether the destination may be overwritten"
+msgstr "গন্তব্যক অভাৰৰাইট কৰিব পাৰি নে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
@@ -794,12 +803,10 @@ msgid "The media URI"
 msgstr "মাধ্যমৰ URl"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
-#| msgid "Navigation type"
 msgid "Navigation action"
 msgstr "মাৰ্গদৰ্শন কাৰ্য্য"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
-#| msgid "The type of navigation triggering this decision"
 msgid "The WebKitNavigationAction triggering this decision"
 msgstr "এই নিৰ্ণয় আৰম্ভ কৰা WebKitNavigationAction"
 
@@ -849,15 +856,15 @@ msgstr "ৱেব দৰ্শন"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
 msgid "The web view that will be printed"
-msgstr "ৱেব দৰ্শন যাক প্ৰিন্ট কৰা হব"
+msgstr "ৱেব দৰ্শন যাক প্ৰিণ্ট কৰা হব"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
 msgid "Print Settings"
-msgstr "প্ৰিন্ট সংহতিসমূহ"
+msgstr "প্ৰিণ্ট সংহতিসমূহ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
 msgid "The initial print settings for the print operation"
-msgstr "প্ৰিন্ট কাৰ্য্যৰ বাবে আৰম্ভণি প্ৰিন্ট সংহতিসমূহ"
+msgstr "প্ৰিণ্ট কাৰ্য্যৰ বাবে আৰম্ভণি প্ৰিণ্ট সংহতিসমূহ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
 msgid "Page Setup"
@@ -865,7 +872,7 @@ msgstr "পৃষ্ঠাৰ সংস্থাপন"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
 msgid "The initial page setup for the print operation"
-msgstr "প্ৰিন্ট কাৰ্য্যৰ বাবে আৰম্ভণি পৃষ্ঠাৰ সংস্থাপন"
+msgstr "প্ৰিণ্ট কাৰ্য্যৰ বাবে আৰম্ভণি পৃষ্ঠাৰ সংস্থাপন"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
 msgid "Response URI request"
@@ -981,94 +988,94 @@ msgstr "<a ping> এ পিঙ পঠাবলে সক্ষম থাকি�
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:668
 msgid "Default font family"
-msgstr "অবিকল্পিত ফন্ট পৰিয়াল"
+msgstr "অবিকল্পিত ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:669
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
 msgstr ""
-"এটা ফন্ট ধাৰ্য্য নকৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰিবলে ফন্ট পৰিয়াল।"
+"এটা ফণ্ট ধাৰ্য্য নকৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰিবলে ফণ্ট পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:682
 msgid "Monospace font family"
-msgstr "মনোস্পেইচ ফন্ট পৰিয়াল"
+msgstr "মনোস্পেইচ ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:683
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
-"মনোস্পেইচ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
+"মনোস্পেইচ ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:695
 msgid "Serif font family"
-msgstr "চেৰিফ ফন্ট পৰিয়াল"
+msgstr "চেৰিফ ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:696
 msgid "The font family used as the default for content using serif font."
 msgstr ""
-"চেৰিফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
+"চেৰিফ ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:708
 msgid "Sans-serif font family"
-msgstr "চান্স-চেৰিফ ফন্ট পৰিয়াল"
+msgstr "চান্স-চেৰিফ ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:709
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
-"চান্স-চেৰিফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট "
+"চান্স-চেৰিফ ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট "
 "পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:721
 msgid "Cursive font family"
-msgstr "কাৰ্চিভ ফন্ট পৰিয়াল"
+msgstr "কাৰ্চিভ ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:722
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
-"কাৰ্চিভ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
+"কাৰ্চিভ ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:734
 msgid "Fantasy font family"
-msgstr "ফেন্টাচি ফন্ট পৰিয়াল"
+msgstr "ফেন্টাচি ফণ্ট পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:735
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
-"ফেন্টাচি ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
+"ফেন্টাচি ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:747
 msgid "Pictograph font family"
-msgstr "পিক্টোগ্ৰাফ ফন্টৰ পৰিয়াল"
+msgstr "পিক্টোগ্ৰাফ ফণ্টৰ পৰিয়াল"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:748
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
-"পিক্টোগ্ৰাফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট "
+"পিক্টোগ্ৰাফ ফণ্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফণ্ট "
 "পৰিয়াল।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:761
 msgid "Default font size"
-msgstr "অবিকল্পিত ফন্ট আকাৰ"
+msgstr "অবিকল্পিত ফণ্ট আকাৰ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:762
 msgid "The default font size used to display text."
-msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফন্টৰ আকাৰ।"
+msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফণ্টৰ আকাৰ।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:775
 msgid "Default monospace font size"
-msgstr "অবিকল্পিত মনোস্পেইচ ফন্টৰ আকাৰ"
+msgstr "অবিকল্পিত মনোস্পেইচ ফণ্টৰ আকাৰ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:776
 msgid "The default font size used to display monospace text."
-msgstr "মনোস্পেইচ লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফন্টৰ আকাৰ।"
+msgstr "মনোস্পেইচ লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফণ্টৰ আকাৰ।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:790
 msgid "Minimum font size"
-msgstr "নূন্যতম ফন্টৰ আকাৰ"
+msgstr "নূন্যতম ফণ্টৰ আকাৰ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:791
 msgid "The minimum font size used to display text."
-msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা নূন্যতম ফন্টৰ আকাৰ।"
+msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা নূন্যতম ফণ্টৰ আকাৰ।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:803
 msgid "Default charset"
@@ -1134,13 +1141,12 @@ msgid "Enable Fullscreen"
 msgstr "পূৰ্ণপৰ্দা সামৰ্থবান কৰক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
-#| msgid "Whether to enable the Javascriipt Fullscreen API"
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Javascript Fullscreen API সামৰ্থবান কৰা হব নে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:915
 msgid "Print Backgrounds"
-msgstr "পটভূমিসমূহ প্ৰিন্ট কৰক"
+msgstr "পটভূমিসমূহ প্ৰিণ্ট কৰক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:916
 msgid "Whether background images should be drawn during printing"
@@ -1259,12 +1265,10 @@ msgid "Whether to write console messages on stdout"
 msgstr "কনচৌল বাৰ্তাসমূহ stdout লৈ লিখা হব নে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1172
-#| msgid "Enable Media Stream"
 msgid "Enable MediaStream"
 msgstr "MediaStream সামৰ্থবান কৰক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1173
-#| msgid "Whether WebAudio content should be handled"
 msgid "Whether MediaStream content should be handled"
 msgstr "MediaStream সমল ব্যৱস্থাপনা কৰা হব নে"
 
@@ -1273,17 +1277,14 @@ msgid "Enable Spatial Navigation"
 msgstr "স্পেচিয়েল মাৰ্গদৰ্শন সামৰ্থবান কৰা হব নে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1193
-#| msgid "Whether to enable Spatial Navigation"
 msgid "Whether to enable Spatial Navigation support."
 msgstr "স্পেচিয়েল মাৰ্গদৰ্শন সমৰ্থন সামৰ্থবান কৰা হব নে।"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1212
-#| msgid "Enable Media Stream"
 msgid "Enable MediaSource"
 msgstr "MediaSource সামৰ্থবান কৰক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1213
-#| msgid "Whether Media Stream should be enabled"
 msgid "Whether MediaSource should be enabled."
 msgstr "MediaSource সামৰ্থবান কৰা হব নে।"
 
@@ -1339,17 +1340,16 @@ msgid "HTTP Headers"
 msgstr "HTTP হেডাৰসমূহ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
-#| msgid "The MIME type of the response"
 msgid "The The HTTP headers of the response"
 msgstr "প্ৰতিক্ৰিয়াৰ HTTP হেডাৰসমূহ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
 msgid "Inspected URI"
-msgstr "নীৰিক্ষণ কৰা URl"
+msgstr "নিৰীক্ষণ কৰা URl"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
 msgid "The URI that is currently being inspected"
-msgstr "URl যাক বৰ্তমানে নীৰিক্ষণ কৰা হৈছে"
+msgstr "URl যাক বৰ্তমানে নিৰীক্ষণ কৰা হৈছে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
 msgid "Attached Height"
@@ -1384,7 +1384,6 @@ msgid "The web context for the view"
 msgstr "দৰ্শনৰ বাবে ৱেব পৰিপ্ৰেক্ষতিত"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:651
-#| msgid "WebView"
 msgid "Related WebView"
 msgstr "প্ৰাসংগিক WebView"
 
@@ -1397,12 +1396,10 @@ msgstr ""
 "WebKitWebView"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#| msgid "WebView"
 msgid "WebView settings"
 msgstr "WebView সংহতিসমূহ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:669
-#| msgid "The WebKitWebViewGroup of the view"
 msgid "The WebKitSettings of the view"
 msgstr "দৰ্শনৰ WebKitSettings"
 
@@ -1411,7 +1408,6 @@ msgid "WebView user content manager"
 msgstr "WebView ব্যৱহাৰকাৰী সমল ব্যৱস্থাপক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:686
-#| msgid "The WebKitWebViewGroup of the view"
 msgid "The WebKitUserContentManager of the view"
 msgstr "দৰ্শনৰ WebKitUserContentManager"
 
@@ -1939,55 +1935,55 @@ msgstr "ৱেব নীৰিক্ষক"
 #~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত এনক'ডিং।"
 
 #~ msgid "Cursive Font Family"
-#~ msgstr "কাৰ্চিব ফন্ট পৰিয়াল"
+#~ msgstr "কাৰ্চিব ফণ্ট পৰিয়াল"
 
 #~ msgid "The default Cursive font family used to display text."
-#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত কাৰ্চিব ফন্ট পৰিয়াল।"
+#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত কাৰ্চিব ফণ্ট পৰিয়াল।"
 
 #~ msgid "Default Font Family"
-#~ msgstr "অবিকল্পিত ফন্ট পৰিয়াল"
+#~ msgstr "অবিকল্পিত ফণ্ট পৰিয়াল"
 
 #~ msgid "The default font family used to display text."
-#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত ফন্ট পৰিয়াল।"
+#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত ফণ্ট পৰিয়াল।"
 
 #~ msgid "Fantasy Font Family"
-#~ msgstr "কাল্পনিক ফন্ট পৰিয়াল"
+#~ msgstr "কাল্পনিক ফণ্ট পৰিয়াল"
 
 #~ msgid "The default Fantasy font family used to display text."
-#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত কাল্পনিক ফন্ট পৰিয়াল।"
+#~ msgstr "লিখনি প্ৰদৰ্শনৰ বাবে ব্যৱহাৰ কৰা অবিকল্পিত কাল্পনিক ফণ্ট পৰিয়াল।"
 
 #~ msgid "Monospace Font Family"
-#~ msgstr "মনোস্পেইচ ফন্ট পৰিয়াল"
+#~ msgstr "মনোস্পেইচ ফণ্ট পৰিয়াল"
 
 #~ msgid "The default font family used to display monospace text."
-#~ msgstr "মনোস্পেইচ লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফন্ট পৰিয়াল।"
+#~ msgstr "মনোস্পেইচ লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফণ্ট পৰিয়াল।"
 
 #~ msgid "Sans Serif Font Family"
-#~ msgstr "চান্স চেৰিফ ফন্ট পৰিয়াল"
+#~ msgstr "চান্স চেৰিফ ফণ্ট পৰিয়াল"
 
 #~ msgid "The default Sans Serif font family used to display text."
-#~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত চান্স চেৰিফ ফন্ট পৰিয়াল।"
+#~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত চান্স চেৰিফ ফণ্ট পৰিয়াল।"
 
 #~ msgid "Serif Font Family"
-#~ msgstr "চেৰিফ ফন্ট পৰিয়াল"
+#~ msgstr "চেৰিফ ফণ্ট পৰিয়াল"
 
 #~ msgid "The default Serif font family used to display text."
 #~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত চেৰিফ পৰিয়াল।"
 
 #~ msgid "Default Font Size"
-#~ msgstr "অবিকল্পিত ফন্ট আকাৰ"
+#~ msgstr "অবিকল্পিত ফণ্ট আকাৰ"
 
 #~ msgid "Default Monospace Font Size"
-#~ msgstr "অবিকল্পিত মনোস্পেইচ ফন্টৰ আকাৰ"
+#~ msgstr "অবিকল্পিত মনোস্পেইচ ফণ্টৰ আকাৰ"
 
 #~ msgid "Minimum Font Size"
-#~ msgstr "নূন্যতম ফন্টৰ আকাৰ"
+#~ msgstr "নূন্যতম ফণ্টৰ আকাৰ"
 
 #~ msgid "Minimum Logical Font Size"
-#~ msgstr "নূন্যতম যৌক্তিক ফন্টৰ আকাৰ"
+#~ msgstr "নূন্যতম যৌক্তিক ফণ্টৰ আকাৰ"
 
 #~ msgid "The minimum logical font size used to display text."
-#~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা নূন্যতম যৌক্তিক ফন্টৰ আকাৰ।"
+#~ msgstr "লিখনি প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা নূন্যতম যৌক্তিক ফণ্টৰ আকাৰ।"
 
 #~ msgid "Enforce 96 DPI"
 #~ msgstr "96 DPI বলৱৎ"
@@ -2011,7 +2007,7 @@ msgstr "ৱেব নীৰিক্ষক"
 #~ msgstr "WebKit এ ছবিৰ দিশক সন্মান দিব লাগে নে।"
 
 #~ msgid "Whether background images should be printed."
-#~ msgstr "পটভূমি ছবিসমূহ প্ৰিন্ট কৰা হব নে।"
+#~ msgstr "পটভূমি ছবিসমূহ প্ৰিণ্ট কৰা হব নে।"
 
 #~ msgid "Enable Scripts"
 #~ msgstr "স্ক্ৰিপ্টসমূহ সামৰ্থবান কৰক"
@@ -2053,16 +2049,16 @@ msgstr "ৱেব নীৰিক্ষক"
 #~ msgstr "ব্যক্তিগত ব্ৰাউছিং অৱস্থা সামৰ্থবান কৰে"
 
 #~ msgid "Enable Spell Checking"
-#~ msgstr "বানান নীৰিক্ষণ সামৰ্থবান কৰক"
+#~ msgstr "বানান নিৰীক্ষণ সামৰ্থবান কৰক"
 
 #~ msgid "Enables spell checking while typing"
-#~ msgstr "টাইপ কৰোতে বানান নীৰিক্ষণ সামৰ্থবান কৰে"
+#~ msgstr "টাইপ কৰোতে বানান নিৰীক্ষণ সামৰ্থবান কৰে"
 
 #~ msgid "Languages to use for spell checking"
-#~ msgstr "বানান নীৰিক্ষণৰ বাবে ব্যৱহাৰ কৰিবলে ভাষাসমূহ"
+#~ msgstr "বানান নিৰীক্ষণৰ বাবে ব্যৱহাৰ কৰিবলে ভাষাসমূহ"
 
 #~ msgid "Comma separated list of languages to use for spell checking"
-#~ msgstr "বানান নীৰিক্ষণৰ বাবে ব্যৱহাৰ কৰিবলে ভাষাসমূহৰ কমা পৃথকিত তালিকা"
+#~ msgstr "বানান নিৰীক্ষণৰ বাবে ব্যৱহাৰ কৰিবলে ভাষাসমূহৰ কমা পৃথকিত তালিকা"
 
 #~ msgid "Enable HTML5 Database"
 #~ msgstr "HTML5 ডাটাবেইচ সামৰ্থবান কৰক"
