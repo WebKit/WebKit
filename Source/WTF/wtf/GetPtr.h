@@ -71,7 +71,7 @@ template <typename T, typename Deleter> struct IsSmartPtr<std::unique_ptr<T, Del
 template <typename T, typename Deleter>
 struct GetPtrHelper<std::unique_ptr<T, Deleter>> {
     typedef T* PtrType;
-    static T* getPtr(const std::unique_ptr<T, Deleter>& p) { return const_cast<T*>(p.get()); }
+    static T* getPtr(const std::unique_ptr<T, Deleter>& p) { return p.get(); }
 };
 
 } // namespace WTF

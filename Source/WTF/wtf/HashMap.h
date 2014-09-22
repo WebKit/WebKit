@@ -22,7 +22,6 @@
 #define WTF_HashMap_h
 
 #include <initializer_list>
-#include <wtf/GetPtr.h>
 #include <wtf/HashTable.h>
 #include <wtf/IteratorRange.h>
 

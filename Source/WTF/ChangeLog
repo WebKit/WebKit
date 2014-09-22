@@ -1,3 +1,41 @@
+2014-09-22  Sam Weinig  <sam@webkit.org>
+
+        Eliminate redundant PtrHash specializations
+        https://bugs.webkit.org/show_bug.cgi?id=136990
+
+        Reviewed by Darin Adler.
+
+        Now that we have IsSmartPtr, we can eliminate all the specializations
+        of PtrHash that we had (for RefPtr, OwnPtr, RetainPtr, and std::unique_ptr)
+        and instead just have one that uses GetPtrHelper.
+
+        No changes of behavior intended.
+
+        * wtf/GetPtr.h:
+        Remove unnecessary const_cast that Darin noticed.
+
+        * wtf/HashFunctions.h:
+        (WTF::PtrHash::hash): Deleted.
+        (WTF::PtrHash::equal): Deleted.
+        (WTF::PtrHash<RefPtr<P>>::hash): Deleted.
+        (WTF::PtrHash<RefPtr<P>>::equal): Deleted.
+        Specialize PtrHash based on whether the type is a smart pointer, and use GetPtrHelper
+        to implement the smart pointer specialized variant.
+
+        * wtf/HashMap.h:
+        Remove include of GetPtr.h that is now included by HashFunctions.h
+
+        * wtf/OwnPtr.h:
+        (WTF::PtrHash<OwnPtr<P>>::hash): Deleted.
+        (WTF::PtrHash<OwnPtr<P>>::equal): Deleted.
+        Remove unnecessary specialization of PtrHash.
+
+        * wtf/RetainPtr.h:
+        (WTF::PtrHash<RetainPtr<P>>::hash): Deleted.
+        (WTF::PtrHash<RetainPtr<P>>::equal): Deleted.
+        Specialize IsSmartPointer for RetainPtr and remove the then unnecessary specialization of PtrHash.
+        (This is already tested in the API test WTF/cf/RetainPtrHashing).
+
 2014-09-20  Sam Weinig  <sam@webkit.org>
 
         Make possible HashSet<std::unique_ptr<>>

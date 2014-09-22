@@ -21,8 +21,9 @@
 #ifndef WTF_HashFunctions_h
 #define WTF_HashFunctions_h
 
-#include <wtf/RefPtr.h>
 #include <stdint.h>
+#include <wtf/GetPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 
@@ -119,31 +120,33 @@ namespace WTF {
 
     // pointer identity hash function
 
-    template<typename T> struct PtrHash {
-        static unsigned hash(T key)
-        {
-            return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key));
-        }
-        static bool equal(T a, T b) { return a == b; }
+    template<typename T, bool isSmartPointer> 
+    struct PtrHashBase;
+
+    template <typename T>
+    struct PtrHashBase<T, false /* isSmartPtr */> {
+        typedef T PtrType; 
+
+        static unsigned hash(PtrType key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
+        static bool equal(PtrType a, PtrType b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
-    template<typename P> struct PtrHash<RefPtr<P>> : PtrHash<P*> {
-        using PtrHash<P*>::hash;
-        static unsigned hash(const RefPtr<P>& key) { return hash(key.get()); }
-        using PtrHash<P*>::equal;
-        static bool equal(const RefPtr<P>& a, const RefPtr<P>& b) { return a == b; }
-        static bool equal(P* a, const RefPtr<P>& b) { return a == b; }
-        static bool equal(const RefPtr<P>& a, P* b) { return a == b; }
+    template <typename T>
+    struct PtrHashBase<T, true /* isSmartPtr */> {
+        typedef typename GetPtrHelper<T>::PtrType PtrType; 
+
+        static unsigned hash(PtrType key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
+        static bool equal(PtrType a, PtrType b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
+
+        static unsigned hash(const T& key) { return hash(getPtr(key)); }
+        static bool equal(const T& a, const T& b) { return getPtr(a) == getPtr(b); }
+        static bool equal(PtrType a, const T& b) { return a == getPtr(b); }
+        static bool equal(const T& a, PtrType b) { return getPtr(a) == b; }
     };
 
-    template<typename P, typename Deleter> struct PtrHash<std::unique_ptr<P, Deleter>> : PtrHash<P*> {
-        using PtrHash<P*>::hash;
-        static unsigned hash(const std::unique_ptr<P, Deleter>& key) { return hash(key.get()); }
-        using PtrHash<P*>::equal;
-        static bool equal(const std::unique_ptr<P, Deleter>& a, const std::unique_ptr<P, Deleter>& b) { return a.get() == b.get(); }
-        static bool equal(P* a, const std::unique_ptr<P, Deleter>& b) { return a == b.get(); }
-        static bool equal(const std::unique_ptr<P, Deleter>& a, P* b) { return a.get() == b; }
+    template<typename T> struct PtrHash : PtrHashBase<T, IsSmartPtr<T>::value> {
     };
 
     // default hash function for each type
@@ -159,8 +162,7 @@ namespace WTF {
         {
             return DefaultHash<T>::Hash::equal(a.first, b.first) && DefaultHash<U>::Hash::equal(a.second, b.second);
         }
-        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::Hash::safeToCompareToEmptyOrDeleted 
-                                                            && DefaultHash<U>::Hash::safeToCompareToEmptyOrDeleted;
+        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::Hash::safeToCompareToEmptyOrDeleted && DefaultHash<U>::Hash::safeToCompareToEmptyOrDeleted;
     };
 
     template<typename T, typename U> struct IntPairHash {

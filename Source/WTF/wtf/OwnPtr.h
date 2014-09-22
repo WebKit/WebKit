@@ -201,10 +201,6 @@ namespace WTF {
         return a != b.get(); 
     }
 
-    template <typename T> struct IsSmartPtr<OwnPtr<T>> {
-        static const bool value = true;
-    };
-
     template<typename T> template<typename... Args> inline void OwnPtr<T>::createTransactionally(Args... args)
     {
         if (m_ptr) {
@@ -227,16 +223,13 @@ namespace WTF {
 #endif
     }
 
-    template<typename P> struct PtrHash<OwnPtr<P>> : PtrHash<P*> {
-        using PtrHash<P*>::hash;
-        static unsigned hash(const OwnPtr<P>& key) { return hash(key.get()); }
-        using PtrHash<P*>::equal;
-        static bool equal(const OwnPtr<P>& a, const OwnPtr<P>& b) { return a.get() == b.get(); }
-        static bool equal(P* a, const OwnPtr<P>& b) { return a == b.get(); }
-        static bool equal(const OwnPtr<P>& a, P* b) { return a.get() == b; }
+    template <typename T> struct IsSmartPtr<OwnPtr<T>> {
+        static const bool value = true;
     };
 
-    template<typename P> struct DefaultHash<OwnPtr<P>> { typedef PtrHash<OwnPtr<P>> Hash; };
+    template<typename P> struct DefaultHash<OwnPtr<P>> {
+        typedef PtrHash<OwnPtr<P>> Hash;
+    };
 
 } // namespace WTF
 
