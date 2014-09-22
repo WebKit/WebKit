@@ -1,3 +1,48 @@
+2014-09-20  Sam Weinig  <sam@webkit.org>
+
+        Make possible HashSet<std::unique_ptr<>>
+        https://bugs.webkit.org/show_bug.cgi?id=136166
+
+        Reviewed by Darin Adler.
+
+        * wtf/GetPtr.h:
+        (WTF::getPtr):
+        (WTF::GetPtrHelper<std::unique_ptr<T>>::getPtr):
+        Make specializing GetPtrHelper a bit cleaner (you don't have to put 
+        IsSmartPtr<T>::value everywhere any more) and add specializations for
+        std::unique_ptr.
+
+        * wtf/HashFunctions.h:
+        (WTF::PtrHash<std::unique_ptr<P>>):
+        Add specialization for PtrHash for std::unique_ptr and set it as the DefaultHash
+        for it as well.
+
+        * wtf/HashMap.h:    
+        * wtf/HashSet.h:
+        Add overloads of find(), contains(), remove(), take() (and get() for HashMap) for "smart pointers" that
+        take the raw pointer type as the parameter. These use SFINAE to make themselves only available
+        when the IsSmartPtr<KeyType>::value is true. 
+
+        * wtf/HashTraits.h:
+        Override constructDeletedValue() and isDeletedValue() in the std::unique_ptr specialization
+        since the default implementation depends on the type having a constructor that takes a HashTableDeletedValue
+        and function named isHashTableDeletedValue().
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::OwnPtr):
+        (WTF::OwnPtr::isHashTableDeletedValue):
+        (WTF::OwnPtr::hashTableDeletedValue):
+        Add HashTableDeletedValue constructor/functions to allow the constructDeletedValue() and isDeletedValue()
+        hash traits to work.
+
+        (WTF::PtrHash<OwnPtr<P>>::hash):
+        (WTF::PtrHash<OwnPtr<P>>::equal):
+        Add specialization for PtrHash for OwnPtr and set it as the DefaultHash
+        for it as well.
+
+        * wtf/Ref.h:
+        Update for the less verbose GetPtrHelper specialization.
+
 2014-09-19  Chris Dumez  <cdumez@apple.com>
 
         Allow DOM methods to return references instead of pointers

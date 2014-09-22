@@ -25,9 +25,11 @@
 
 #include "config.h"
 
+#include "Counters.h"
 #include "MoveOnly.h"
 #include <wtf/HashSet.h>
-
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -115,6 +117,182 @@ TEST(WTF_HashSet, MoveOnly)
 
     for (size_t i = 0; i < 100; ++i)
         EXPECT_TRUE(secondSet.contains(MoveOnly(i + 1)));
+}
+
+TEST(WTF_HashSet, OwnPtrKey)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<OwnPtr<ConstructorDestructorCounter>> set;
+
+    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
+    set.add(WTF::move(ownPtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    set.clear();
+    
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashSet, OwnPtrKey_FindUsingRawPointer)
+{
+    HashSet<OwnPtr<int>> set;
+
+    OwnPtr<int> ownPtr = adoptPtr(new int(5));
+    int* ptr = ownPtr.get();
+    set.add(WTF::move(ownPtr));
+
+    auto it = set.find(ptr);
+    ASSERT_TRUE(it != set.end());
+    EXPECT_EQ(ptr, it->get());
+    EXPECT_EQ(5, *it->get());
+}
+
+TEST(WTF_HashSet, OwnPtrKey_ContainsUsingRawPointer)
+{
+    HashSet<OwnPtr<int>> set;
+
+    OwnPtr<int> ownPtr = adoptPtr(new int(5));
+    int* ptr = ownPtr.get();
+    set.add(WTF::move(ownPtr));
+
+    EXPECT_EQ(true, set.contains(ptr));
+}
+
+TEST(WTF_HashSet, OwnPtrKey_RemoveUsingRawPointer)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<OwnPtr<ConstructorDestructorCounter>> set;
+
+    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
+    ConstructorDestructorCounter* ptr = ownPtr.get();
+    set.add(WTF::move(ownPtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    bool result = set.remove(ptr);
+    EXPECT_EQ(true, result);
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashSet, OwnPtrKey_TakeUsingRawPointer)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<OwnPtr<ConstructorDestructorCounter>> set;
+
+    OwnPtr<ConstructorDestructorCounter> ownPtr = adoptPtr(new ConstructorDestructorCounter);
+    ConstructorDestructorCounter* ptr = ownPtr.get();
+    set.add(WTF::move(ownPtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    auto result = set.take(ptr);
+    EXPECT_EQ(ptr, result.get());
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    result = nullptr;
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashSet, UniquePtrKey)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+
+    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    set.add(WTF::move(uniquePtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    set.clear();
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
+{
+    HashSet<std::unique_ptr<int>> set;
+
+    auto uniquePtr = std::make_unique<int>(5);
+    int* ptr = uniquePtr.get();
+    set.add(WTF::move(uniquePtr));
+
+    auto it = set.find(ptr);
+    ASSERT_TRUE(it != set.end());
+    EXPECT_EQ(ptr, it->get());
+    EXPECT_EQ(5, *it->get());
+}
+
+TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
+{
+    HashSet<std::unique_ptr<int>> set;
+
+    auto uniquePtr = std::make_unique<int>(5);
+    int* ptr = uniquePtr.get();
+    set.add(WTF::move(uniquePtr));
+
+    EXPECT_EQ(true, set.contains(ptr));
+}
+
+TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+
+    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    ConstructorDestructorCounter* ptr = uniquePtr.get();
+    set.add(WTF::move(uniquePtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    bool result = set.remove(ptr);
+    EXPECT_EQ(true, result);
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+
+    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    ConstructorDestructorCounter* ptr = uniquePtr.get();
+    set.add(WTF::move(uniquePtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    auto result = set.take(ptr);
+    EXPECT_EQ(ptr, result.get());
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+    
+    result = nullptr;
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
 } // namespace TestWebKitAPI

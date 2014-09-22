@@ -1,3 +1,26 @@
+2014-09-20  Sam Weinig  <sam@webkit.org>
+
+        Make possible HashSet<std::unique_ptr<>>
+        https://bugs.webkit.org/show_bug.cgi?id=136166
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/CopyMoveCounter.h: Removed.
+        * TestWebKitAPI/Counters.cpp: Added.
+        * TestWebKitAPI/Counters.h: Copied from Tools/TestWebKitAPI/Tests/WTF/CopyMoveCounter.h.
+        Move the CopyMoveCounter helper from CopyMoveCounter.h to Counters.h, and add a ConstructorDestructorCounter
+        helper to the mix as well. Add Counters.cpp to allow for the global variables to be used in more than one
+        translation unit.
+    
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        Add tests for using std::unique_ptr and OwnPtr as the key's of a HashMap.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        Add tests for using std::unique_ptr and OwnPtr as the values of a HashSet.
+
 2014-09-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         run-webkit-tests should count tests submitted as absolute paths once

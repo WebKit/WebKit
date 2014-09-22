@@ -75,7 +75,7 @@ template<typename T> template<typename U> inline PassRef<T> Ref<T>::replace(Pass
 }
 
 template <typename T>
-struct GetPtrHelper<Ref<T>, false /* isSmartPtr */> {
+struct GetPtrHelper<Ref<T>> {
     typedef T* PtrType;
     static T* getPtr(const Ref<T>& p) { return const_cast<T*>(&p.get()); }
 };

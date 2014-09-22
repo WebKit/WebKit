@@ -104,6 +104,9 @@ template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Dele
     typedef std::nullptr_t EmptyValueType;
     static EmptyValueType emptyValue() { return nullptr; }
 
+    static void constructDeletedValue(std::unique_ptr<T, Deleter>& slot) { new (NotNull, &slot) std::unique_ptr<T, Deleter> { reinterpret_cast<T*>(-1) }; }
+    static bool isDeletedValue(const std::unique_ptr<T, Deleter>& value) { return value.get() == reinterpret_cast<T*>(-1); }
+
     typedef T* PeekType;
     static T* peek(const std::unique_ptr<T, Deleter>& value) { return value.get(); }
     static T* peek(std::nullptr_t) { return nullptr; }

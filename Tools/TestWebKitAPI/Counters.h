@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CopyMoveCounter_h
-#define CopyMoveCounter_h
+#ifndef Counters_h
+#define Counters_h
 
 struct CopyMoveCounter {
     static unsigned constructionCount;
@@ -47,8 +48,41 @@ struct CopyMoveCounter {
     CopyMoveCounter& operator=(CopyMoveCounter&&) { moveCount++; return *this; }
 };
 
-unsigned CopyMoveCounter::constructionCount = 0;
-unsigned CopyMoveCounter::copyCount = 0;
-unsigned CopyMoveCounter::moveCount = 0;
 
-#endif
+struct ConstructorDestructorCounter {
+    static unsigned constructionCount;
+    static unsigned destructionCount;
+
+    struct TestingScope {
+        TestingScope()
+        {
+            constructionCount = 0;
+            destructionCount = 0;
+        }
+    };
+
+    ConstructorDestructorCounter() { constructionCount++; }
+    ~ConstructorDestructorCounter() { destructionCount++; }
+};
+
+template<typename T>
+struct DeleterCounter {
+    static unsigned deleterCount;
+
+    struct TestingScope {
+        TestingScope()
+        {
+            deleterCount = 0;
+        }
+    };
+
+    void operator()(T* p) const
+    {
+        deleterCount++;
+        delete p;
+    }
+};
+
+template<class T> unsigned DeleterCounter<T>::deleterCount = 0;
+
+#endif // Counters_h

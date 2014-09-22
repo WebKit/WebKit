@@ -127,6 +127,7 @@ namespace WTF {
         static bool equal(T a, T b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
+
     template<typename P> struct PtrHash<RefPtr<P>> : PtrHash<P*> {
         using PtrHash<P*>::hash;
         static unsigned hash(const RefPtr<P>& key) { return hash(key.get()); }
@@ -134,6 +135,15 @@ namespace WTF {
         static bool equal(const RefPtr<P>& a, const RefPtr<P>& b) { return a == b; }
         static bool equal(P* a, const RefPtr<P>& b) { return a == b; }
         static bool equal(const RefPtr<P>& a, P* b) { return a == b; }
+    };
+
+    template<typename P, typename Deleter> struct PtrHash<std::unique_ptr<P, Deleter>> : PtrHash<P*> {
+        using PtrHash<P*>::hash;
+        static unsigned hash(const std::unique_ptr<P, Deleter>& key) { return hash(key.get()); }
+        using PtrHash<P*>::equal;
+        static bool equal(const std::unique_ptr<P, Deleter>& a, const std::unique_ptr<P, Deleter>& b) { return a.get() == b.get(); }
+        static bool equal(P* a, const std::unique_ptr<P, Deleter>& b) { return a == b.get(); }
+        static bool equal(const std::unique_ptr<P, Deleter>& a, P* b) { return a.get() == b; }
     };
 
     // default hash function for each type
@@ -181,6 +191,7 @@ namespace WTF {
 
     template<typename P> struct DefaultHash<P*> { typedef PtrHash<P*> Hash; };
     template<typename P> struct DefaultHash<RefPtr<P>> { typedef PtrHash<RefPtr<P>> Hash; };
+    template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> { typedef PtrHash<std::unique_ptr<P, Deleter>> Hash; };
 
     // make IntPairHash the default hash function for pairs of (at most) 32-bit integers.
 

@@ -119,6 +119,7 @@
 		76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
+		7C6BBD8C19CEA63000C1F5E0 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */; };
 		7C74D42F188228F300E5ED57 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
 		7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
@@ -463,6 +464,8 @@
 		76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent.cpp; sourceTree = "<group>"; };
 		76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillSendSubmitEvent_Bundle.cpp; sourceTree = "<group>"; };
 		76E182DE15475A8300F1FADD /* auto-submitting-form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "auto-submitting-form.html"; sourceTree = "<group>"; };
+		7C6BBD8A19CEA54300C1F5E0 /* Counters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Counters.h; sourceTree = "<group>"; };
+		7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Counters.cpp; sourceTree = "<group>"; };
 		7C74D42D188228F300E5ED57 /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseThenTerminate.cpp; sourceTree = "<group>"; };
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
@@ -670,6 +673,8 @@
 				2E9660DC16C07D7B00371B42 /* ios */,
 				BCA61C3A11700B9400460D1E /* mac */,
 				BC131A9E1171317C00B69727 /* config.h */,
+				7C6BBD8A19CEA54300C1F5E0 /* Counters.h */,
+				7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */,
 				C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */,
 				C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */,
 				BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */,
@@ -1384,6 +1389,7 @@
 				BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */,
 				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
 				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
+				7C6BBD8C19CEA63000C1F5E0 /* Counters.cpp in Sources */,
 				265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,

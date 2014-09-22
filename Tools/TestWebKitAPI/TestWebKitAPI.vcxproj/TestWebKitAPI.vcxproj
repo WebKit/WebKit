@@ -280,11 +280,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\Counters.h" />
     <ClInclude Include="..\Test.h" />
     <ClInclude Include="..\TestsController.h" />
     <ClInclude Include="..\win\HostWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Counters.cpp" />
     <ClCompile Include="..\TestsController.cpp" />
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />
     <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp">

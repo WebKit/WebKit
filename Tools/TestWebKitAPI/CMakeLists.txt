@@ -65,6 +65,7 @@ set(TestJavaScriptCore_LIBRARIES
 )
 
 set(TestWTF_SOURCES
+    ${TESTWEBKITAPI_DIR}/Counters.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp

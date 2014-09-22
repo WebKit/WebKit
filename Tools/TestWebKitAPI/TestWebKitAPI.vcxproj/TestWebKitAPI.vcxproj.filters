@@ -22,6 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\Counters.h" />
     <ClInclude Include="..\Test.h" />
     <ClInclude Include="..\TestsController.h" />
     <ClInclude Include="..\win\HostWindow.h">
@@ -29,6 +30,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Counters.cpp" />
     <ClCompile Include="..\TestsController.cpp" />
     <ClCompile Include="..\win\HostWindow.cpp">
       <Filter>win</Filter>
