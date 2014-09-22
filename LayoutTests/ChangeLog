@@ -1,5 +1,15 @@
 2014-09-22  David Hyatt  <hyatt@apple.com>
 
+        Bad cast in isValidColumnSpanner.
+        https://bugs.webkit.org/show_bug.cgi?id=133380.
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/multicol-crazy-nesting-expected.txt: Added.
+        * fast/multicol/multicol-crazy-nesting.html: Added.
+
+2014-09-22  David Hyatt  <hyatt@apple.com>
+
         ASSERT in RenderMultiColumnSet::requiresBalancing.
         https://bugs.webkit.org/show_bug.cgi?id=136376.
 
