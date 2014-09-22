@@ -1,3 +1,27 @@
+2014-09-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        Simple ES6 feature: Number constructor extras
+        https://bugs.webkit.org/show_bug.cgi?id=131707
+
+        Reviewed by Darin Adler.
+
+        * runtime/CommonIdentifiers.h: Added new identifiers.
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        (JSC::NumberConstructor::isFunction): Added.
+        (JSC::numberConstructorEpsilonValue): Added.
+        (JSC::numberConstructorNegInfinity): Added.
+        (JSC::numberConstructorPosInfinity): Added.
+        (JSC::numberConstructorMaxValue): Added.
+        (JSC::numberConstructorMinValue): Added.
+        (JSC::numberConstructorMaxSafeInteger): Added.
+        (JSC::numberConstructorMinSafeInteger): Added.
+        (JSC::numberConstructorFuncIsFinite): Added.
+        (JSC::numberConstructorFuncIsInteger): Added.
+        (JSC::numberConstructorFuncIsNaN): Added.
+        (JSC::numberConstructorFuncIsSafeInteger): Added.
+        * runtime/NumberConstructor.h:
+
 2014-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should store the four bytes of the cell header using a 32-bit store rather than four 8-bit stores

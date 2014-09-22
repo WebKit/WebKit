@@ -58,6 +58,7 @@ private:
     NumberConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
+    static bool isFunction(VM&, AtomicStringImpl* propertyName);
 };
 
 } // namespace JSC

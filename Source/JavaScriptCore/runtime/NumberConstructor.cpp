@@ -26,14 +26,22 @@
 #include "NumberObject.h"
 #include "NumberPrototype.h"
 #include "JSCInlines.h"
+#include "JSGlobalObjectFunctions.h"
 
 namespace JSC {
 
+static EncodedJSValue numberConstructorEpsilonValue(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 static EncodedJSValue numberConstructorNaNValue(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 static EncodedJSValue numberConstructorNegInfinity(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 static EncodedJSValue numberConstructorPosInfinity(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 static EncodedJSValue numberConstructorMaxValue(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 static EncodedJSValue numberConstructorMinValue(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue numberConstructorMaxSafeInteger(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue numberConstructorMinSafeInteger(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsFinite(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsNaN(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(ExecState*);
 
 } // namespace JSC
 
@@ -47,11 +55,20 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable
-   NaN                   numberConstructorNaNValue       DontEnum|DontDelete|ReadOnly
-   NEGATIVE_INFINITY     numberConstructorNegInfinity    DontEnum|DontDelete|ReadOnly
-   POSITIVE_INFINITY     numberConstructorPosInfinity    DontEnum|DontDelete|ReadOnly
-   MAX_VALUE             numberConstructorMaxValue       DontEnum|DontDelete|ReadOnly
-   MIN_VALUE             numberConstructorMinValue       DontEnum|DontDelete|ReadOnly
+   EPSILON               numberConstructorEpsilonValue      DontEnum|DontDelete|ReadOnly
+   NaN                   numberConstructorNaNValue          DontEnum|DontDelete|ReadOnly
+   NEGATIVE_INFINITY     numberConstructorNegInfinity       DontEnum|DontDelete|ReadOnly
+   POSITIVE_INFINITY     numberConstructorPosInfinity       DontEnum|DontDelete|ReadOnly
+   MAX_VALUE             numberConstructorMaxValue          DontEnum|DontDelete|ReadOnly
+   MIN_VALUE             numberConstructorMinValue          DontEnum|DontDelete|ReadOnly
+   MAX_SAFE_INTEGER      numberConstructorMaxSafeInteger    DontEnum|DontDelete|ReadOnly
+   MIN_SAFE_INTEGER      numberConstructorMinSafeInteger    DontEnum|DontDelete|ReadOnly
+   isFinite              numberConstructorFuncIsFinite      DontEnum|Function 1
+   isInteger             numberConstructorFuncIsInteger     DontEnum|Function 1
+   isNaN                 numberConstructorFuncIsNaN         DontEnum|Function 1
+   isSafeInteger         numberConstructorFuncIsSafeInteger DontEnum|Function 1
+   parseFloat            globalFuncParseFloat                DontEnum|Function 1
+   parseInt              globalFuncParseInt                  DontEnum|Function 2
 @end
 */
 
@@ -74,32 +91,70 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 
 bool NumberConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, numberConstructorTable, jsCast<NumberConstructor*>(object), propertyName, slot);
+    if (isFunction(exec->vm(), propertyName.uid())) {
+        return getStaticFunctionSlot<InternalFunction>(exec, numberConstructorTable,
+            jsCast<NumberConstructor*>(object), propertyName, slot);
+    }
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, numberConstructorTable,
+        jsCast<NumberConstructor*>(object), propertyName, slot);
 }
 
+bool ALWAYS_INLINE NumberConstructor::isFunction(VM& vm, AtomicStringImpl* propertyName)
+{
+    return propertyName == vm.propertyNames->isFinite
+        || propertyName == vm.propertyNames->isInteger
+        || propertyName == vm.propertyNames->isNaN
+        || propertyName == vm.propertyNames->isSafeInteger
+        || propertyName == vm.propertyNames->parseFloat
+        || propertyName == vm.propertyNames->parseInt;
+}
+
+// ECMA-262 20.1.2.1
+static EncodedJSValue numberConstructorEpsilonValue(ExecState*, JSObject*, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(jsDoubleNumber((std::numeric_limits<double>::epsilon())));
+}
+
+// ECMA-262 20.1.2.8
 static EncodedJSValue numberConstructorNaNValue(ExecState*, JSObject*, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(jsNaN());
 }
 
+// ECMA-262 20.1.2.9
 static EncodedJSValue numberConstructorNegInfinity(ExecState*, JSObject*, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(-std::numeric_limits<double>::infinity()));
+    return JSValue::encode(jsDoubleNumber(-std::numeric_limits<double>::infinity()));
 }
 
+// ECMA-262 20.1.2.14
 static EncodedJSValue numberConstructorPosInfinity(ExecState*, JSObject*, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(std::numeric_limits<double>::infinity()));
+    return JSValue::encode(jsDoubleNumber(std::numeric_limits<double>::infinity()));
 }
 
+// ECMA-262 20.1.2.7
 static EncodedJSValue numberConstructorMaxValue(ExecState*, JSObject*, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(1.7976931348623157E+308));
+    return JSValue::encode(jsDoubleNumber(1.7976931348623157E+308));
 }
 
+// ECMA-262 20.1.2.11
 static EncodedJSValue numberConstructorMinValue(ExecState*, JSObject*, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(5E-324));
+    return JSValue::encode(jsDoubleNumber(5E-324));
+}
+
+// ECMA-262 20.1.2.6
+static EncodedJSValue numberConstructorMaxSafeInteger(ExecState*, JSObject*, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(jsDoubleNumber(9007199254740991.0));
+}
+
+// ECMA-262 20.1.2.7
+static EncodedJSValue numberConstructorMinSafeInteger(ExecState*, JSObject*, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(jsDoubleNumber(-9007199254740991.0));
 }
 
 // ECMA 15.7.1
@@ -127,6 +182,52 @@ CallType NumberConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callNumberConstructor;
     return CallTypeHost;
+}
+
+// ECMA-262 20.1.2.2
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsFinite(ExecState* exec)
+{
+    JSValue argument = exec->argument(0);
+    return JSValue::encode(jsBoolean(argument.isNumber() && (argument.isInt32() || std::isfinite(argument.asDouble()))));
+}
+
+// ECMA-262 20.1.2.3
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(ExecState* exec)
+{
+    JSValue argument = exec->argument(0);
+    bool isInteger;
+    if (argument.isInt32())
+        isInteger = true;
+    else if (!argument.isDouble())
+        isInteger = false;
+    else {
+        double number = argument.asDouble();
+        isInteger = std::isfinite(number) && trunc(number) == number;
+    }
+    return JSValue::encode(jsBoolean(isInteger));
+}
+
+// ECMA-262 20.1.2.4
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsNaN(ExecState* exec)
+{
+    JSValue argument = exec->argument(0);
+    return JSValue::encode(jsBoolean(argument.isDouble() && std::isnan(argument.asDouble())));
+}
+
+// ECMA-262 20.1.2.5
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(ExecState* exec)
+{
+    JSValue argument = exec->argument(0);
+    bool isInteger;
+    if (argument.isInt32())
+        isInteger = true;
+    else if (!argument.isDouble())
+        isInteger = false;
+    else {
+        double number = argument.asDouble();
+        isInteger = trunc(number) == number && std::abs(number) <= 9007199254740991.0;
+    }
+    return JSValue::encode(jsBoolean(isInteger));
 }
 
 } // namespace JSC
