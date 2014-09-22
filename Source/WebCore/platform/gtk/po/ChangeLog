@@ -1,3 +1,12 @@
+2014-09-22  Yosef Or Boczko  <yoseforb@gnome.org>
+
+        [l10n] Updated Hebrew translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=136678
+
+        Reviewed by Philippe Normand.
+
+        * he.po:
+
 2014-09-22  Shantha kumar  <shantha.thamizh@gmail.com>
 
         Webkit Tamil translations updated
