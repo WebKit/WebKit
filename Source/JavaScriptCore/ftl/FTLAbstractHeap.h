@@ -72,6 +72,11 @@ public:
         m_parent = parent;
         m_heapName = heapName;
     }
+    
+    void changeParent(AbstractHeap* parent)
+    {
+        m_parent = parent;
+    }
 
     AbstractHeap* parent() const
     {

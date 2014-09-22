@@ -52,6 +52,7 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
     macro(JSCell_structureID, JSCell::structureIDOffset()) \
+    macro(JSCell_usefulBytes, JSCell::indexingTypeOffset()) \
     macro(JSCell_typeInfoFlags, JSCell::typeInfoFlagsOffset()) \
     macro(JSCell_typeInfoType, JSCell::typeInfoTypeOffset()) \
     macro(JSCell_indexingType, JSCell::indexingTypeOffset()) \

@@ -1,3 +1,23 @@
+2014-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should store the four bytes of the cell header using a 32-bit store rather than four 8-bit stores
+        https://bugs.webkit.org/show_bug.cgi?id=136992
+
+        Reviewed by Sam Weinig.
+        
+        LLVM ought to be able to do this optimization for us given how the code was written, but
+        any such lower-level attempts to optimize this would get into trouble with the weird
+        object materialization logic I'll be introducing in bug 136330. So, this brings the
+        merging of the byte stores into the FTL lowering so that we can control it explicitly.
+
+        * ftl/FTLAbstractHeap.h:
+        (JSC::FTL::AbstractHeap::changeParent):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+
 2014-09-21  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: fix TypeSet hierarchy in TypeTokenView

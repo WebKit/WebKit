@@ -4857,10 +4857,10 @@ private:
             allocator, m_heaps.MarkedAllocator_freeListHead);
         
         m_out.store32(m_out.constInt32(structure->id()), result, m_heaps.JSCell_structureID);
-        m_out.store8(m_out.constInt8(structure->indexingType()), result, m_heaps.JSCell_indexingType);
-        m_out.store8(m_out.constInt8(structure->typeInfo().type()), result, m_heaps.JSCell_typeInfoType);
-        m_out.store8(m_out.constInt8(structure->typeInfo().inlineTypeFlags()), result, m_heaps.JSCell_typeInfoFlags);
-        m_out.store8(m_out.constInt8(JSCell::NotMarked), result, m_heaps.JSCell_gcData);
+        
+        m_out.store32(
+            m_out.constInt32(structure->objectInitializationBlob()),
+            result, m_heaps.JSCell_usefulBytes);
         
         return result;
     }

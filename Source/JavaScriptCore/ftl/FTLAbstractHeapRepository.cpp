@@ -61,6 +61,17 @@ AbstractHeapRepository::AbstractHeapRepository(LContext context)
     , m_context(context)
     , m_tbaaKind(mdKindID(m_context, "tbaa"))
 {
+    // Make sure that our explicit assumptions about the StructureIDBlob match reality.
+    RELEASE_ASSERT(!(JSCell_indexingType.offset() & (sizeof(int32_t) - 1)));
+    RELEASE_ASSERT(JSCell_indexingType.offset() + 1 == JSCell_typeInfoType.offset());
+    RELEASE_ASSERT(JSCell_indexingType.offset() + 2 == JSCell_typeInfoFlags.offset());
+    RELEASE_ASSERT(JSCell_indexingType.offset() + 3 == JSCell_gcData.offset());
+
+    JSCell_indexingType.changeParent(&JSCell_usefulBytes);
+    JSCell_typeInfoType.changeParent(&JSCell_usefulBytes);
+    JSCell_typeInfoFlags.changeParent(&JSCell_usefulBytes);
+    JSCell_gcData.changeParent(&JSCell_usefulBytes);
+    
     root.m_tbaaMetadata = mdNode(m_context, mdString(m_context, root.m_heapName));
     
     RELEASE_ASSERT(m_tbaaKind);
