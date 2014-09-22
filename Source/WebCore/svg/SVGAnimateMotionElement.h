@@ -70,8 +70,6 @@ private:
     Path m_path;
     Path m_animationPath;
 };
-
-NODE_TYPE_CASTS(SVGAnimateMotionElement)
     
 } // namespace WebCore
 

@@ -239,7 +239,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestExceptio
     return createNewWrapper<JSTestException>(globalObject, impl);
 }
 
-TestException* toTestException(JSC::JSValue value)
+TestException* JSTestException::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestException*>(value))
         return &wrapper->impl();

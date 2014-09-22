@@ -143,8 +143,6 @@ private:
 #endif
 };
 
-NODE_TYPE_CASTS(HTMLImageElement)
-
 } //namespace
 
 #endif

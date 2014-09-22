@@ -103,8 +103,6 @@ private:
     bool m_useFallbackContent : 1;
 };
 
-NODE_TYPE_CASTS(HTMLObjectElement)
-
 }
 
 #endif

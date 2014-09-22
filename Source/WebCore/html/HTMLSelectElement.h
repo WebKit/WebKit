@@ -212,8 +212,6 @@ private:
     mutable bool m_shouldRecalcListItems;
 };
 
-NODE_TYPE_CASTS(HTMLSelectElement)
-
 } // namespace
 
 #endif

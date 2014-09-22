@@ -45,8 +45,6 @@ private:
     virtual HTMLFormElement* virtualForm() const override;
 };
 
-NODE_TYPE_CASTS(HTMLLegendElement)
-
 } //namespace
 
 #endif

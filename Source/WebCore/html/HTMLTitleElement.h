@@ -46,8 +46,6 @@ private:
     StringWithDirection m_title;
 };
 
-NODE_TYPE_CASTS(HTMLTitleElement)
-
 } //namespace
 
 #endif

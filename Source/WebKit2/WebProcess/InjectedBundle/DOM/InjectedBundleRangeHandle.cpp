@@ -57,7 +57,7 @@ static DOMHandleCache& domHandleCache()
 
 PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSContextRef, JSObjectRef object)
 {
-    Range* range = toRange(toJS(object));
+    Range* range = JSRange::toWrapped(toJS(object));
     return getOrCreate(range);
 }
 

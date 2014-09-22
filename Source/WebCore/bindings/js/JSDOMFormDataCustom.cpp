@@ -41,18 +41,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-static HTMLFormElement* toHTMLFormElement(JSC::JSValue value)
+static HTMLFormElement* toHTMLFormElementOrNull(JSC::JSValue value)
 {
-    return value.inherits(JSHTMLFormElement::info()) ? &jsCast<JSHTMLFormElement*>(asObject(value))->impl() : 0;
+    return value.inherits(JSHTMLFormElement::info()) ? &jsCast<JSHTMLFormElement*>(asObject(value))->impl() : nullptr;
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState* exec)
 {
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
 
-    HTMLFormElement* form = 0;
-    if (exec->argumentCount() > 0)
-        form = toHTMLFormElement(exec->argument(0));
+    HTMLFormElement* form = toHTMLFormElementOrNull(exec->argument(0));
     RefPtr<DOMFormData> domFormData = DOMFormData::create(form);
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData.get())));
 }
@@ -66,7 +64,7 @@ JSValue JSDOMFormData::append(ExecState* exec)
             String filename;
             if (exec->argumentCount() >= 3 && !exec->argument(2).isUndefinedOrNull())
                 filename = exec->argument(2).toString(exec)->value(exec);
-            impl().append(name, toBlob(value), filename);
+            impl().append(name, JSBlob::toWrapped(value), filename);
         } else
             impl().append(name, value.toString(exec)->value(exec));
     }

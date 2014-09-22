@@ -1,3 +1,15 @@
+2014-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Generate Element casting helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=136839
+
+        Reviewed by Darin Adler.
+
+        Update some of the exported symbols on Windows for functions that were
+        renamed.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-09-15  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Make it easier to enable/disable GStreamer.

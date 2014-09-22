@@ -46,8 +46,6 @@ private:
     bool supportsFocus() const override;
 };
 
-NODE_TYPE_CASTS(HTMLSummaryElement)
-
 }
 
 #endif // HTMLSummaryElement_h

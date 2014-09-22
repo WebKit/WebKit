@@ -5974,7 +5974,7 @@ HRESULT STDMETHODCALLTYPE WebView::elementFromJS(
 
     JSC::ExecState* exec = toJS(context);
     JSC::JSLockHolder lock(exec);
-    Element* elt = toElement(toJS(exec, nodeObject));
+    Element* elt = JSElement::toWrapped(toJS(exec, nodeObject));
     if (!elt)
         return E_FAIL;
 

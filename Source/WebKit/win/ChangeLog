@@ -1,3 +1,15 @@
+2014-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Generate Element casting helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=136839
+
+        Reviewed by Darin Adler.
+
+        Use JSXXX::toWrapped() instead of toXXX() function.
+
+        * WebView.cpp:
+        (WebView::elementFromJS):
+
 2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: convert DockSide to an enum class

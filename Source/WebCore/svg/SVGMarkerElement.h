@@ -164,8 +164,6 @@ private:
     mutable SVGSynchronizableAnimatedProperty<SVGMarkerOrientType> m_orientType;
 };
 
-NODE_TYPE_CASTS(SVGMarkerElement)
-
 }
 
 #endif

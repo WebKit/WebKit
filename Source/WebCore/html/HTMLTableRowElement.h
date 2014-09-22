@@ -52,8 +52,6 @@ private:
     HTMLTableRowElement(const QualifiedName&, Document&);
 };
 
-NODE_TYPE_CASTS(HTMLTableRowElement)
-
 } // namespace
 
 #endif

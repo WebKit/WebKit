@@ -68,8 +68,6 @@ private:
     virtual void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 };
 
-NODE_TYPE_CASTS(SVGMaskElement)
-
 }
 
 #endif

@@ -534,7 +534,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeter
     return createNewWrapper<JSTestNondeterministic>(globalObject, impl);
 }
 
-TestNondeterministic* toTestNondeterministic(JSC::JSValue value)
+TestNondeterministic* JSTestNondeterministic::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestNondeterministic*>(value))
         return &wrapper->impl();

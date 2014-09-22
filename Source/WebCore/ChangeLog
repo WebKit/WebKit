@@ -1,3 +1,311 @@
+2014-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Generate Element casting helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=136839
+
+        Reviewed by Darin Adler.
+
+        Generate Element casting helper functions instead of requiring explicit
+        use of NODE_TYPE_CASTS() macro. Casting is now done using the following
+        form: downcast<HTMLDivElement>(), instead of toHTMLDivElement().
+
+        The previous form (i.e. toHTMLDivElement()) is still supported for now
+        by generating macros that convert these calls into the new form, until
+        the code base is ported to the new casting helpers.
+
+        The plan is also to use is<HTMLDivElement>() instead of
+        isHTMLDivElement() for consistency but this was not changed in this
+        patch to avoid blowing up the size.
+
+        This CL also updates the way we convert a JSValue into an
+        implementation pointer. Instead of using toHTMLDivElement(), which
+        looked like a cast, we now use JSHTMLDivElement::toWrapped(). This
+        avoids conflicting with the toXXXElement() macros and makes it
+        clearer this is not a simple cast.
+
+        No new tests, no behavior change.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * WebCore.exp.in:
+        * bindings/js/JSAudioBufferSourceNodeCustom.cpp:
+        (WebCore::JSAudioBufferSourceNode::setBuffer):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob):
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::getEventListeners):
+        (WebCore::JSCommandLineAPIHost::databaseId):
+        (WebCore::JSCommandLineAPIHost::storageId):
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::toHTMLFormElementOrNull):
+        (WebCore::constructJSDOMFormData):
+        (WebCore::JSDOMFormData::append):
+        (WebCore::toHTMLFormElement): Deleted.
+        * bindings/js/JSDOMStringListCustom.cpp:
+        (WebCore::JSDOMStringList::toWrapped):
+        (WebCore::toDOMStringList): Deleted.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        (WebCore::toDOMWindow): Deleted.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::createTouchList):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        (WebCore::toEventTarget): Deleted.
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/js/JSHTMLMediaElementCustom.cpp:
+        (WebCore::JSHTMLMediaElement::setController):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add):
+        (WebCore::JSHTMLOptionsCollection::remove):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove):
+        (WebCore::selectIndexSetter):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::fillMessagePortArray):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::toWrapped):
+        (WebCore::toNodeFilter): Deleted.
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::encrypt):
+        (WebCore::JSSubtleCrypto::decrypt):
+        (WebCore::JSSubtleCrypto::sign):
+        (WebCore::JSSubtleCrypto::verify):
+        (WebCore::JSSubtleCrypto::exportKey):
+        (WebCore::JSSubtleCrypto::wrapKey):
+        (WebCore::JSSubtleCrypto::unwrapKey):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        (WebCore::JSTestActiveDOMObject::toWrapped):
+        (WebCore::toTestActiveDOMObject): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::toWrapped):
+        (WebCore::toTestCustomNamedGetter): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::toWrapped):
+        (WebCore::toTestEventConstructor): Deleted.
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionDispatchEvent):
+        (WebCore::JSTestEventTarget::toWrapped):
+        (WebCore::toTestEventTarget): Deleted.
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::toWrapped):
+        (WebCore::toTestException): Deleted.
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachable::toWrapped):
+        (WebCore::toTestGenerateIsReachable): Deleted.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceImplementsNode):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        (WebCore::JSTestInterface::toWrapped):
+        (WebCore::toTestInterface): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::toWrapped):
+        (WebCore::toTestMediaQueryListListener): Deleted.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::toWrapped):
+        (WebCore::toTestNamedConstructor): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::JSTestNondeterministic::toWrapped):
+        (WebCore::toTestNondeterministic): Deleted.
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::setJSTestObjMutablePoint):
+        (WebCore::setJSTestObjImmutablePoint):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionConvert2):
+        (WebCore::jsTestObjPrototypeFunctionConvert4):
+        (WebCore::jsTestObjPrototypeFunctionConvert5):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::JSTestObj::toWrapped):
+        (WebCore::toTestObj): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3):
+        (WebCore::JSTestOverloadedConstructors::toWrapped):
+        (WebCore::toTestOverloadedConstructors): Deleted.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::toWrapped):
+        (WebCore::toTestSerializedScriptValueInterface): Deleted.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude):
+        (WebCore::JSTestTypedefs::toWrapped):
+        (WebCore::toTestTypedefs): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::JSattribute::toWrapped):
+        (WebCore::toattribute): Deleted.
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::JSreadonly::toWrapped):
+        (WebCore::toreadonly): Deleted.
+        * bindings/scripts/test/JS/JSreadonly.h:
+        * dom/Element.h:
+        (WebCore::downcast):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLBaseElement.h:
+        * html/HTMLBodyElement.h:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDataListElement.h:
+        * html/HTMLDetailsElement.h:
+        * html/HTMLDivElement.h:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.h:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMapElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMetaElement.h:
+        * html/HTMLMeterElement.h:
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParamElement.h:
+        * html/HTMLProgressElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTemplateElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.h:
+        * html/HTMLTrackElement.h:
+        * html/HTMLVideoElement.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::scriptValueAsNode):
+        * mathml/MathMLMencloseElement.h:
+        * svg/SVGAltGlyphDefElement.h:
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAltGlyphItemElement.h:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGCursorElement.h:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGHKernElement.h:
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.h:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolygonElement.h:
+        * svg/SVGPolylineElement.h:
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.h:
+        * svg/SVGStyleElement.h:
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.h:
+        * svg/SVGVKernElement.h:
+        * svg/SVGViewElement.h:
+
 2014-09-21  Christophe Dumez  <cdumez@apple.com>
 
         Fix post-mortem nits for r173724

@@ -131,7 +131,7 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
 #if ENABLE(CONTEXT_MENUS)
     if (exec->argumentCount() < 2)
         return jsUndefined();
-    Event* event = toEvent(exec->argument(0));
+    Event* event = JSEvent::toWrapped(exec->argument(0));
 
     JSArray* array = asArray(exec->argument(1));
     ContextMenu menu;

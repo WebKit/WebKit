@@ -784,12 +784,12 @@ private:
                 write(obj->internalValue().asNumber());
                 return true;
             }
-            if (File* file = toFile(obj)) {
+            if (File* file = JSFile::toWrapped(obj)) {
                 write(FileTag);
                 write(file);
                 return true;
             }
-            if (FileList* list = toFileList(obj)) {
+            if (FileList* list = JSFileList::toWrapped(obj)) {
                 write(FileListTag);
                 unsigned length = list->length();
                 write(length);
@@ -797,7 +797,7 @@ private:
                     write(list->item(i));
                 return true;
             }
-            if (Blob* blob = toBlob(obj)) {
+            if (Blob* blob = JSBlob::toWrapped(obj)) {
                 write(BlobTag);
                 m_blobURLs.append(blob->url());
                 write(blob->url());
@@ -805,7 +805,7 @@ private:
                 write(blob->size());
                 return true;
             }
-            if (ImageData* data = toImageData(obj)) {
+            if (ImageData* data = JSImageData::toWrapped(obj)) {
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
@@ -865,7 +865,7 @@ private:
                 return success;
             }
 #if ENABLE(SUBTLE_CRYPTO)
-            if (CryptoKey* key = toCryptoKey(obj)) {
+            if (CryptoKey* key = JSCryptoKey::toWrapped(obj)) {
                 write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
                 Vector<String> dummyBlobURLs;

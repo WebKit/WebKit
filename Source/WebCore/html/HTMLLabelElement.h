@@ -55,8 +55,6 @@ private:
     virtual void focus(bool restorePreviousSelection, FocusDirection) override;
 };
 
-NODE_TYPE_CASTS(HTMLLabelElement)
-
 } //namespace
 
 #endif

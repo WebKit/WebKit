@@ -597,7 +597,7 @@ void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    WebCore::Notification* notification = toNotification(toJS(toJS(jsContext), jsNotification));
+    WebCore::Notification* notification = JSNotification::toWrapped(toJS(toJS(jsContext), jsNotification));
     if (!notification)
         return 0;
     return WebProcess::shared().supplement<WebNotificationManager>()->notificationIDForTesting(notification);

@@ -294,7 +294,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
-    Event* evt(toEvent(exec->argument(0)));
+    Event* evt(JSEvent::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
@@ -364,7 +364,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTar
     return createNewWrapper<JSTestEventTarget>(globalObject, impl);
 }
 
-TestEventTarget* toTestEventTarget(JSC::JSValue value)
+TestEventTarget* JSTestEventTarget::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestEventTarget*>(value))
         return &wrapper->impl();

@@ -148,11 +148,11 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
     if (val.isUndefinedOrNull())
         impl().send(ec);
     else if (val.inherits(JSDocument::info()))
-        impl().send(toDocument(val), ec);
+        impl().send(JSDocument::toWrapped(val), ec);
     else if (val.inherits(JSBlob::info()))
-        impl().send(toBlob(val), ec);
+        impl().send(JSBlob::toWrapped(val), ec);
     else if (val.inherits(JSDOMFormData::info()))
-        impl().send(toDOMFormData(val), ec);
+        impl().send(JSDOMFormData::toWrapped(val), ec);
     else if (val.inherits(JSArrayBuffer::info()))
         impl().send(toArrayBuffer(val), ec);
     else if (val.inherits(JSArrayBufferView::info())) {

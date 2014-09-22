@@ -70,8 +70,6 @@ private:
     bool m_loadedSheet;
 };
 
-NODE_TYPE_CASTS(HTMLStyleElement)
-
 } //namespace
 
 #endif

@@ -54,8 +54,6 @@ private:
     void recalcSelectOptions();
 };
 
-NODE_TYPE_CASTS(HTMLOptGroupElement)
-
 } //namespace
 
 #endif

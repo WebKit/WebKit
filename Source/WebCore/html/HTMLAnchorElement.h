@@ -155,8 +155,6 @@ bool isEnterKeyKeydownEvent(Event*);
 bool isLinkClick(Event*);
 bool shouldProhibitLinks(Element*);
 
-NODE_TYPE_CASTS(HTMLAnchorElement)
-
 } // namespace WebCore
 
 #endif // HTMLAnchorElement_h

@@ -281,7 +281,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNamedCon
     return createNewWrapper<JSTestNamedConstructor>(globalObject, impl);
 }
 
-TestNamedConstructor* toTestNamedConstructor(JSC::JSValue value)
+TestNamedConstructor* JSTestNamedConstructor::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestNamedConstructor*>(value))
         return &wrapper->impl();

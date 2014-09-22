@@ -56,8 +56,6 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-NODE_TYPE_CASTS(SVGRadialGradientElement)
-
 } // namespace WebCore
 
 #endif

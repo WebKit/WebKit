@@ -874,6 +874,17 @@ sub GenerateHeader
         push(@headerContent, "    static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);\n");
     }
 
+    # JSValue to implementation type
+    if (!$hasParent || $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
+        if ($interfaceName eq "NodeFilter") {
+            push(@headerContent, "    static PassRefPtr<NodeFilter> toWrapped(JSC::VM&, JSC::JSValue);\n");
+        } elsif ($interfaceName eq "DOMStringList") {
+            push(@headerContent, "    static PassRefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
+        } else {
+            push(@headerContent, "    static $implType* toWrapped(JSC::JSValue);\n");
+        }
+    }
+
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{"JSCustomHeader"};
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
@@ -1165,15 +1176,6 @@ sub GenerateHeader
     }
     if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
         push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
-    }
-    if (!$hasParent || $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
-        if ($interfaceName eq "NodeFilter") {
-            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::VM&, JSC::JSValue);\n");
-        } elsif ($interfaceName eq "DOMStringList") {
-            push(@headerContent, "PassRefPtr<DOMStringList> toDOMStringList(JSC::ExecState*, JSC::JSValue);\n");
-        } else {
-            push(@headerContent, "WEBCORE_EXPORT $implType* to${interfaceName}(JSC::JSValue);\n");
-        }
     }
     if ($usesToJSNewlyCreated{$interfaceName}) {
         push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
@@ -3112,7 +3114,7 @@ END
     }
 
     if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"}) and !$interface->extendedAttributes->{"JSCustomToNativeObject"}) {
-        push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
+        push(@implContent, "$implType* ${className}::toWrapped(JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(value))\n");
         push(@implContent, "        return &wrapper->impl();\n");
@@ -3243,7 +3245,7 @@ sub GenerateParametersCheck
 
         if ($argType eq "XPathNSResolver") {
             push(@$outputArray, "    RefPtr<XPathNSResolver> customResolver;\n");
-            push(@$outputArray, "    XPathNSResolver* resolver = toXPathNSResolver(exec->argument($argsIndex));\n");
+            push(@$outputArray, "    XPathNSResolver* resolver = JSXPathNSResolver::toWrapped(exec->argument($argsIndex));\n");
             push(@$outputArray, "    if (!resolver) {\n");
             push(@$outputArray, "        customResolver = JSCustomXPathNSResolver::create(exec, exec->argument($argsIndex));\n");
             push(@$outputArray, "        if (UNLIKELY(exec->hadException()))\n");
@@ -3296,7 +3298,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    for (unsigned i = $argsIndex, count = exec->argumentCount(); i < count; ++i) {\n");
                 push(@$outputArray, "        if (!exec->uncheckedArgument(i).inherits(JS${argType}::info()))\n");
                 push(@$outputArray, "            return throwArgumentTypeError(*exec, i, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$argType\");\n");
-                push(@$outputArray, "        $name.append(to$argType(exec->uncheckedArgument(i)));\n");
+                push(@$outputArray, "        $name.append(JS${argType}::toWrapped(exec->uncheckedArgument(i)));\n");
                 push(@$outputArray, "    }\n")
             } else {
                 push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(exec, $argsIndex);\n");
@@ -3849,7 +3851,7 @@ sub JSValueToNative
 
     if ($type eq "NodeFilter") {
         AddToImplIncludes("JS$type.h", $conditional);
-        return "to$type(exec->vm(), $value)";
+        return "JS${type}::toWrapped(exec->vm(), $value)";
     }
 
     if ($type eq "SerializedScriptValue") {
@@ -3881,7 +3883,7 @@ sub JSValueToNative
     if ($arrayOrSequenceType) {
         if ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
             AddToImplIncludes("JS${arrayOrSequenceType}.h");
-            return "(toRefPtrNativeArray<${arrayOrSequenceType}, JS${arrayOrSequenceType}>(exec, $value, &to${arrayOrSequenceType}))";
+            return "(toRefPtrNativeArray<${arrayOrSequenceType}, JS${arrayOrSequenceType}>(exec, $value, &JS${arrayOrSequenceType}::toWrapped))";
         }
         return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(exec, $value)";
     }
@@ -3892,7 +3894,7 @@ sub JSValueToNative
 
     # Default, assume autogenerated type conversion routines
     AddToImplIncludes("JS$type.h", $conditional);
-    return "to$type($value)";
+    return "JS${type}::toWrapped($value)";
 }
 
 sub NativeToJSValue

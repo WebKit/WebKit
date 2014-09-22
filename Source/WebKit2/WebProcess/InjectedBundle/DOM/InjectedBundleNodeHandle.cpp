@@ -70,7 +70,7 @@ static DOMHandleCache& domHandleCache()
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(JSContextRef, JSObjectRef object)
 {
-    Node* node = toNode(toJS(object));
+    Node* node = JSNode::toWrapped(toJS(object));
     return getOrCreate(node);
 }
 

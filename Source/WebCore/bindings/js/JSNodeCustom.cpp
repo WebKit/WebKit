@@ -135,7 +135,7 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 JSValue JSNode::insertBefore(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec);
+    bool ok = impl().insertBefore(JSNode::toWrapped(exec->argument(0)), JSNode::toWrapped(exec->argument(1)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);
@@ -145,7 +145,7 @@ JSValue JSNode::insertBefore(ExecState* exec)
 JSValue JSNode::replaceChild(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec);
+    bool ok = impl().replaceChild(JSNode::toWrapped(exec->argument(0)), JSNode::toWrapped(exec->argument(1)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(1);
@@ -155,7 +155,7 @@ JSValue JSNode::replaceChild(ExecState* exec)
 JSValue JSNode::removeChild(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().removeChild(toNode(exec->argument(0)), ec);
+    bool ok = impl().removeChild(JSNode::toWrapped(exec->argument(0)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);
@@ -165,7 +165,7 @@ JSValue JSNode::removeChild(ExecState* exec)
 JSValue JSNode::appendChild(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().appendChild(toNode(exec->argument(0)), ec);
+    bool ok = impl().appendChild(JSNode::toWrapped(exec->argument(0)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);

@@ -257,7 +257,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     WebGLRenderingContext& context = impl();
-    WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
+    WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
     Vector<RefPtr<WebGLShader>> shaders;
@@ -341,7 +341,7 @@ JSValue JSWebGLRenderingContext::getProgramParameter(ExecState* exec)
 
     ExceptionCode ec = 0;
     WebGLRenderingContext& context = impl();
-    WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
+    WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
     unsigned pname = exec->uncheckedArgument(1).toInt32(exec);
@@ -369,7 +369,7 @@ JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
     WebGLRenderingContext& context = impl();
     if (!exec->uncheckedArgument(0).isUndefinedOrNull() && !exec->uncheckedArgument(0).inherits(JSWebGLShader::info()))
         return throwTypeError(exec);
-    WebGLShader* shader = toWebGLShader(exec->uncheckedArgument(0));
+    WebGLShader* shader = JSWebGLShader::toWrapped(exec->uncheckedArgument(0));
     unsigned pname = exec->uncheckedArgument(1).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
@@ -405,10 +405,10 @@ JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
 
     ExceptionCode ec = 0;
     WebGLRenderingContext& context = impl();
-    WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
+    WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
-    WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(1));
+    WebGLUniformLocation* location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(1));
     if (!location && !exec->uncheckedArgument(1).isUndefinedOrNull())
         return throwTypeError(exec);
     WebGLGetInfo info = context.getUniform(program, location, ec);
@@ -478,7 +478,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
     long index = -1;
     
     if (functionForUniform(f)) {
-        location = toWebGLUniformLocation(exec->uncheckedArgument(0));
+        location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(0));
         if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
             return throwTypeError(exec);
     } else
@@ -564,7 +564,7 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(0));
+    WebGLUniformLocation* location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(0));
     if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
   
@@ -624,7 +624,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
     if (exec->argumentCount() != 3)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(0));
+    WebGLUniformLocation* location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(0));
     if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
 

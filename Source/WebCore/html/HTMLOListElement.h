@@ -65,8 +65,6 @@ private:
     bool m_shouldRecalculateItemCount : 1;
 };
 
-NODE_TYPE_CASTS(HTMLOListElement)
-
 } //namespace
 
 #endif

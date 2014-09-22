@@ -40,6 +40,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestSerializedScriptValueInterface* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestSerializedScriptValueInterface();
 
@@ -97,7 +98,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestSerializedScriptValueInt
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
-WEBCORE_EXPORT TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
 
 
 } // namespace WebCore

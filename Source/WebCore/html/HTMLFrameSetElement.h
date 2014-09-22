@@ -100,8 +100,6 @@ private:
     bool m_noresize;
 };
 
-NODE_TYPE_CASTS(HTMLFrameSetElement)
-
 } // namespace WebCore
 
 #endif // HTMLFrameSetElement_h

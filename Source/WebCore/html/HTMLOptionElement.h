@@ -87,8 +87,6 @@ private:
     bool m_isSelected;
 };
 
-NODE_TYPE_CASTS(HTMLOptionElement)
-
 } // namespace
 
 #endif

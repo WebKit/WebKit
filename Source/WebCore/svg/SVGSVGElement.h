@@ -175,8 +175,6 @@ private:
     RefPtr<SVGViewSpec> m_viewSpec;
 };
 
-NODE_TYPE_CASTS(SVGSVGElement)
-
 } // namespace WebCore
 
 #endif

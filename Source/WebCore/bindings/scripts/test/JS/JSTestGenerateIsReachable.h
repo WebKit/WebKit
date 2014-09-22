@@ -38,6 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestGenerateIsReachable* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestGenerateIsReachable();
 
@@ -91,7 +92,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestGenerateIsReachable*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestGenerateIsReachable*);
-WEBCORE_EXPORT TestGenerateIsReachable* toTestGenerateIsReachable(JSC::JSValue);
 
 
 } // namespace WebCore

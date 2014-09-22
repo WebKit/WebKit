@@ -47,8 +47,6 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 };
 
-NODE_TYPE_CASTS(HTMLIFrameElement)
-
 } // namespace WebCore
 
 #endif // HTMLIFrameElement_h

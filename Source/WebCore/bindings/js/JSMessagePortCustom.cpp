@@ -84,7 +84,7 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
         }
 
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
-        RefPtr<MessagePort> port = toMessagePort(value);
+        RefPtr<MessagePort> port = JSMessagePort::toWrapped(value);
         if (port) {
             // Check for duplicate ports.
             if (portArray.contains(port)) {

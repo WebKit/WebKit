@@ -72,8 +72,6 @@ private:
     SVGImageLoader m_imageLoader;
 };
 
-NODE_TYPE_CASTS(SVGImageElement)
-
 } // namespace WebCore
 
 #endif

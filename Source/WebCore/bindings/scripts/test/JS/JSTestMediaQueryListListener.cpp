@@ -227,7 +227,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQue
     return createNewWrapper<JSTestMediaQueryListListener>(globalObject, impl);
 }
 
-TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)
+TestMediaQueryListListener* JSTestMediaQueryListListener::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestMediaQueryListListener*>(value))
         return &wrapper->impl();

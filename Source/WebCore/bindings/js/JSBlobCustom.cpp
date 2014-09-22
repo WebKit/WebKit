@@ -121,7 +121,7 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
             blobBuilder.append(arrayBuffer);
         else if (RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(item))
             blobBuilder.append(arrayBufferView.release());
-        else if (Blob* blob = toBlob(item))
+        else if (Blob* blob = JSBlob::toWrapped(item))
             blobBuilder.append(blob);
         else {
             String string = item.toString(exec)->value(exec);

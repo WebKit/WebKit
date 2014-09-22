@@ -182,7 +182,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* im
     return createNewWrapper<JSreadonly>(globalObject, impl);
 }
 
-readonly* toreadonly(JSC::JSValue value)
+readonly* JSreadonly::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSreadonly*>(value))
         return &wrapper->impl();

@@ -35,7 +35,7 @@ void JSNodeFilter::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     visitor.addOpaqueRoot(&impl());
 }
 
-PassRefPtr<NodeFilter> toNodeFilter(JSC::VM& vm, JSC::JSValue value)
+PassRefPtr<NodeFilter> JSNodeFilter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
     if (value.inherits(JSNodeFilter::info()))
         return &JSC::jsCast<JSNodeFilter*>(asObject(value))->impl();

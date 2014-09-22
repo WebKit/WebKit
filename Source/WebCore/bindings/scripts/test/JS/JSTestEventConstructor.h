@@ -40,6 +40,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestEventConstructor* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestEventConstructor();
 
@@ -93,7 +94,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestEventConstructor*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
-WEBCORE_EXPORT TestEventConstructor* toTestEventConstructor(JSC::JSValue);
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 

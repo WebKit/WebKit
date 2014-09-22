@@ -38,6 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestOverloadedConstructors* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestOverloadedConstructors();
 
@@ -91,7 +92,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestOverloadedConstructors*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestOverloadedConstructors*);
-WEBCORE_EXPORT TestOverloadedConstructors* toTestOverloadedConstructors(JSC::JSValue);
 
 
 } // namespace WebCore

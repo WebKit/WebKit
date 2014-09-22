@@ -724,7 +724,7 @@ void setJSTestInterfaceImplementsNode(ExecState* exec, JSObject* baseObject, Enc
         return;
     }
     TestInterface& impl = castedThis->impl();
-    Node* nativeValue(toNode(value));
+    Node* nativeValue(JSNode::toWrapped(value));
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setImplementsNode(nativeValue);
@@ -795,7 +795,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* baseObject, E
         return;
     }
     TestInterface& impl = castedThis->impl();
-    Node* nativeValue(toNode(value));
+    Node* nativeValue(JSNode::toWrapped(value));
     if (UNLIKELY(exec->hadException()))
         return;
     TestSupplemental::setSupplementalNode(&impl, nativeValue);
@@ -841,7 +841,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    TestObj* objArg(toTestObj(exec->argument(1)));
+    TestObj* objArg(JSTestObj::toWrapped(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
@@ -907,7 +907,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    TestObj* objArg(toTestObj(exec->argument(1)));
+    TestObj* objArg(JSTestObj::toWrapped(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
@@ -973,7 +973,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
     return createNewWrapper<JSTestInterface>(globalObject, impl);
 }
 
-TestInterface* toTestInterface(JSC::JSValue value)
+TestInterface* JSTestInterface::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestInterface*>(value))
         return &wrapper->impl();

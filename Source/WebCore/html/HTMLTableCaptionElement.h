@@ -41,8 +41,6 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 };
 
-NODE_TYPE_CASTS(HTMLTableCaptionElement)
-
 } // namespace
 
 #endif

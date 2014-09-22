@@ -50,8 +50,6 @@ private:
     bool m_isRadicalValue;
 };
 
-NODE_TYPE_CASTS(MathMLMencloseElement)
-
 }
 
 #endif // ENABLE(MATHML)

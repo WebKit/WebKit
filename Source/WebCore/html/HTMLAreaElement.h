@@ -71,8 +71,6 @@ private:
     Shape m_shape;
 };
 
-NODE_TYPE_CASTS(HTMLAreaElement)
-
 } //namespace
 
 #endif

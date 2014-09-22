@@ -81,8 +81,6 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };
 
-NODE_TYPE_CASTS(HTMLBodyElement)
-
 } //namespace
 
 #endif

@@ -38,6 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static readonly* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSreadonly();
 
@@ -91,7 +92,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, readonly*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, readonly*);
-WEBCORE_EXPORT readonly* toreadonly(JSC::JSValue);
 
 
 } // namespace WebCore

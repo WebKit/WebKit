@@ -201,8 +201,6 @@ private:
 #endif
 };
 
-NODE_TYPE_CASTS(HTMLFormElement)
-
 } // namespace WebCore
 
 #endif // HTMLFormElement_h

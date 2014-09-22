@@ -38,8 +38,6 @@ private:
     virtual bool childShouldCreateRenderer(const Node&) const override;
 };
 
-NODE_TYPE_CASTS(SVGTextElement)
-
 } // namespace WebCore
 
 #endif

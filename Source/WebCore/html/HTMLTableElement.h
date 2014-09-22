@@ -101,8 +101,6 @@ private:
     RefPtr<StyleProperties> m_sharedCellStyle;
 };
 
-NODE_TYPE_CASTS(HTMLTableElement)
-
 } //namespace
 
 #endif

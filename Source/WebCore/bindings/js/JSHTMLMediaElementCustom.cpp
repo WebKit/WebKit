@@ -40,7 +40,7 @@ void JSHTMLMediaElement::setController(ExecState*, JSValue value)
     // On setting, it must first remove the element's mediagroup attribute, if any, 
     impl().setMediaGroup(String());
     // and then set the current media controller to the given value.
-    impl().setController(toMediaController(value));
+    impl().setController(JSMediaController::toWrapped(value));
 }
 
 }

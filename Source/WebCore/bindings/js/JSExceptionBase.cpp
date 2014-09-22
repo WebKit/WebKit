@@ -41,20 +41,20 @@ namespace WebCore {
 
 ExceptionBase* toExceptionBase(JSC::JSValue value)
 {
-    if (DOMCoreException* domException = toDOMCoreException(value))
+    if (DOMCoreException* domException = JSDOMCoreException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(domException);
-    if (RangeException* rangeException = toRangeException(value))
+    if (RangeException* rangeException = JSRangeException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(rangeException);
-    if (EventException* eventException = toEventException(value))
+    if (EventException* eventException = JSEventException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(eventException);
-    if (XMLHttpRequestException* xmlHttpException = toXMLHttpRequestException(value))
+    if (XMLHttpRequestException* xmlHttpException = JSXMLHttpRequestException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(xmlHttpException);
-    if (SVGException* svgException = toSVGException(value))
+    if (SVGException* svgException = JSSVGException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(svgException);
-    if (XPathException* pathException = toXPathException(value))
+    if (XPathException* pathException = JSXPathException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 #if ENABLE(SQL_DATABASE)
-    if (SQLException* pathException = toSQLException(value))
+    if (SQLException* pathException = JSSQLException::toWrapped(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 #endif
 

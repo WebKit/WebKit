@@ -58,8 +58,6 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-NODE_TYPE_CASTS(SVGForeignObjectElement)
-
 } // namespace WebCore
 
 #endif

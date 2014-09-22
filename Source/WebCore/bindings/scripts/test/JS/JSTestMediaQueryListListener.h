@@ -38,6 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestMediaQueryListListener* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestMediaQueryListListener();
 
@@ -91,7 +92,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestMediaQueryListListener*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
-WEBCORE_EXPORT TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue);
 
 
 } // namespace WebCore

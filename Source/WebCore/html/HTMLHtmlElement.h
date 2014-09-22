@@ -41,8 +41,6 @@ private:
     virtual bool isURLAttribute(const Attribute&) const override;
 };
 
-NODE_TYPE_CASTS(HTMLHtmlElement)
-
 } // namespace
 
 #endif

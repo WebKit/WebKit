@@ -74,7 +74,7 @@ using namespace JSC;
 
     ExecState* exec = toJS(context);
     JSLockHolder lock(exec);
-    return kit(toElement(toJS(exec, value)));
+    return kit(JSElement::toWrapped(toJS(exec, value)));
 }
 
 @end

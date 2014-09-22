@@ -33,8 +33,6 @@ private:
     SVGPolylineElement(const QualifiedName&, Document&);
 };
 
-NODE_TYPE_CASTS(SVGPolylineElement)
-
 } // namespace WebCore
 
 #endif

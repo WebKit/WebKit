@@ -57,8 +57,6 @@ private:
     Timer<HTMLSourceElement> m_errorEventTimer;
 };
 
-NODE_TYPE_CASTS(HTMLSourceElement)
-
 } //namespace
 
 #endif

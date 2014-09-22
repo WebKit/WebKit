@@ -214,7 +214,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     TestActiveDOMObject& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Node* nextChild(toNode(exec->argument(0)));
+    Node* nextChild(JSNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     impl.excitingFunction(nextChild);
@@ -289,7 +289,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestActiveDO
     return createNewWrapper<JSTestActiveDOMObject>(globalObject, impl);
 }
 
-TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue value)
+TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestActiveDOMObject*>(value))
         return &wrapper->impl();

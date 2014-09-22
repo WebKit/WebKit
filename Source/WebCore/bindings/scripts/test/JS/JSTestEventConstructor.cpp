@@ -292,7 +292,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventCon
     return createNewWrapper<JSTestEventConstructor>(globalObject, impl);
 }
 
-TestEventConstructor* toTestEventConstructor(JSC::JSValue value)
+TestEventConstructor* JSTestEventConstructor::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestEventConstructor*>(value))
         return &wrapper->impl();

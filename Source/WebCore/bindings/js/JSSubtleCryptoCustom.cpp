@@ -145,7 +145,7 @@ JSValue JSSubtleCrypto::encrypt(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
@@ -197,7 +197,7 @@ JSValue JSSubtleCrypto::decrypt(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
@@ -248,7 +248,7 @@ JSValue JSSubtleCrypto::sign(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
@@ -299,7 +299,7 @@ JSValue JSSubtleCrypto::verify(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
@@ -600,7 +600,7 @@ JSValue JSSubtleCrypto::exportKey(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
@@ -630,11 +630,11 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(exec->uncheckedArgument(1));
     if (!key)
         return throwTypeError(exec);
 
-    RefPtr<CryptoKey> wrappingKey = toCryptoKey(exec->uncheckedArgument(2));
+    RefPtr<CryptoKey> wrappingKey = JSCryptoKey::toWrapped(exec->uncheckedArgument(2));
     if (!key)
         return throwTypeError(exec);
 
@@ -713,7 +713,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
         return jsUndefined();
     }
 
-    RefPtr<CryptoKey> unwrappingKey = toCryptoKey(exec->uncheckedArgument(2));
+    RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(exec->uncheckedArgument(2));
     if (!unwrappingKey)
         return throwTypeError(exec);
 

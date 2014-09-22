@@ -263,7 +263,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNa
     return createNewWrapper<JSTestCustomNamedGetter>(globalObject, impl);
 }
 
-TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)
+TestCustomNamedGetter* JSTestCustomNamedGetter::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestCustomNamedGetter*>(value))
         return &wrapper->impl();

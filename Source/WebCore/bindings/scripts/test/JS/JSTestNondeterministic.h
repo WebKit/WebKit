@@ -38,6 +38,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static TestNondeterministic* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
     ~JSTestNondeterministic();
 
@@ -91,7 +92,6 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestNondeterministic*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterministic*);
-WEBCORE_EXPORT TestNondeterministic* toTestNondeterministic(JSC::JSValue);
 
 
 } // namespace WebCore

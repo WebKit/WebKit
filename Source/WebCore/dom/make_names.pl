@@ -633,6 +633,7 @@ sub printTypeHelpers
         }
 
         my $class = $parsedTags{$name}{interfaceName};
+        # FIXME: Rename these helpers to is<*Element>().
         my $checkHelper = "is$class";
 
         print F <<END
@@ -663,6 +664,10 @@ template <typename ArgType>
 struct ElementTypeCastTraits<const $class, ArgType> {
     static bool is(ArgType& node) { return $checkHelper(node); }
 };
+
+// FIXME: Remove these macros once the code has been ported to using
+// downcast<*Element>().
+#define to$class(x) WebCore::downcast<WebCore::$class>(x)
 END
         ;
 

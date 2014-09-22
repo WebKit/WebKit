@@ -113,7 +113,7 @@ JSValue JSCommandLineAPIHost::getEventListeners(ExecState* exec)
     if (!value.isObject() || value.isNull())
         return jsUndefined();
 
-    Node* node = toNode(value);
+    Node* node = JSNode::toWrapped(value);
     if (!node)
         return jsUndefined();
 
@@ -149,7 +149,7 @@ JSValue JSCommandLineAPIHost::databaseId(ExecState* exec)
         return jsUndefined();
 
 #if ENABLE(SQL_DATABASE)
-    Database* database = toDatabase(exec->uncheckedArgument(0));
+    Database* database = JSDatabase::toWrapped(exec->uncheckedArgument(0));
     if (database)
         return jsStringWithCache(exec, impl().databaseIdImpl(database));
 #endif
@@ -162,7 +162,7 @@ JSValue JSCommandLineAPIHost::storageId(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    Storage* storage = toStorage(exec->uncheckedArgument(0));
+    Storage* storage = JSStorage::toWrapped(exec->uncheckedArgument(0));
     if (storage)
         return jsStringWithCache(exec, impl().storageIdImpl(storage));
 

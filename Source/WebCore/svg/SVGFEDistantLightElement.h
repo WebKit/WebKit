@@ -34,8 +34,6 @@ private:
     virtual PassRefPtr<LightSource> lightSource() const override;
 };
 
-NODE_TYPE_CASTS(SVGFEDistantLightElement)
-
 } // namespace WebCore
 
 #endif

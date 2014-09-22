@@ -155,22 +155,22 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<Serialize
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)
 {
-    result = toDOMWindow(value);
+    result = JSDOMWindow::toWrapped(value);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
 {
-    result = toEventTarget(value);
+    result = JSEventTarget::toWrapped(value);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
 {
-    result = toNode(value);
+    result = JSNode::toWrapped(value);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& result)
 {
-    result = toStorage(value);
+    result = JSStorage::toWrapped(value);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
@@ -222,31 +222,31 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint
 #if ENABLE(ENCRYPTED_MEDIA)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
 {
-    result = toMediaKeyError(value);
+    result = JSMediaKeyError::toWrapped(value);
 }
 #endif
 
 #if ENABLE(MEDIA_STREAM)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStream>& result)
 {
-    result = toMediaStream(value);
+    result = JSMediaStream::toWrapped(value);
 }
 
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStreamTrack>& result)
 {
-    result = toMediaStreamTrack(value);
+    result = JSMediaStreamTrack::toWrapped(value);
 }
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<CSSFontFaceRule>& result)
 {
-    result = toCSSFontFaceRule(value);
+    result = JSCSSFontFaceRule::toWrapped(value);
 }
 
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<DOMError>& result)
 {
-    result = toDOMError(value);
+    result = JSDOMError::toWrapped(value);
 }
 
 void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr<VoidCallback>& result)
@@ -261,7 +261,7 @@ void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr
 #if ENABLE(GAMEPAD)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Gamepad>& result)
 {
-    result = toGamepad(value);
+    result = JSGamepad::toWrapped(value);
 }
 #endif
 

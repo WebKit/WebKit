@@ -33,8 +33,6 @@ private:
     SVGFEFuncBElement(const QualifiedName&, Document&);
 };
 
-NODE_TYPE_CASTS(SVGFEFuncBElement)
-
 } // namespace WebCore
 
 #endif

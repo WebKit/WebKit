@@ -44,8 +44,6 @@ private:
     virtual void removedFrom(ContainerNode&) override;
 };
 
-NODE_TYPE_CASTS(HTMLBaseElement)
-
 } // namespace
 
 #endif

@@ -1,3 +1,16 @@
+2014-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Generate Element casting helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=136839
+
+        Reviewed by Darin Adler.
+
+        Use JSXXX::toWrapped() instead of toXXX() function.
+
+        * DOM/WebDOMOperations.mm:
+        * WebView/WebView.mm:
+        (-[WebView _notificationIDForTesting:]):
+
 2014-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Leak: WebNotificationPrivate ObjC leaks seen on leaks bot

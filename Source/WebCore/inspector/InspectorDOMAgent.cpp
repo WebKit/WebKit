@@ -2010,7 +2010,7 @@ Node* InspectorDOMAgent::scriptValueAsNode(Deprecated::ScriptValue value)
     if (!value.isObject() || value.isNull())
         return nullptr;
 
-    return toNode(value.jsValue());
+    return JSNode::toWrapped(value.jsValue());
 }
 
 Deprecated::ScriptValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState* state, Node* node)

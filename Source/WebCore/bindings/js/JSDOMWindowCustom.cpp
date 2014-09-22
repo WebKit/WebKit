@@ -684,7 +684,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec)
     return jsUndefined();
 }
 
-DOMWindow* toDOMWindow(JSValue value)
+DOMWindow* JSDOMWindow::toWrapped(JSValue value)
 {
     if (!value.isObject())
         return 0;

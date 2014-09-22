@@ -102,8 +102,6 @@ private:
     AtomicString m_defaultPosterURL;
 };
 
-NODE_TYPE_CASTS(HTMLVideoElement)
-
 } //namespace
 
 #endif

@@ -224,7 +224,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* i
     return createNewWrapper<JSattribute>(globalObject, impl);
 }
 
-attribute* toattribute(JSC::JSValue value)
+attribute* JSattribute::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSattribute*>(value))
         return &wrapper->impl();

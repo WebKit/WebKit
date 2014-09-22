@@ -43,7 +43,7 @@ JSValue JSHTMLSelectElement::remove(ExecState* exec)
         setDOMException(exec, ec);
     } else {
         // The HTMLSelectElement::remove() function can take either an option object or the index of an option.
-        if (HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0)))
+        if (HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(exec->argument(0)))
             select.remove(option);
         else
             select.removeByIndex(exec->argument(0).toInt32(exec));
@@ -58,7 +58,7 @@ void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned
         select->removeByIndex(index);
     else {
         ExceptionCode ec = 0;
-        HTMLOptionElement* option = toHTMLOptionElement(value);
+        HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(value);
         if (!option)
             ec = TYPE_MISMATCH_ERR;
         else

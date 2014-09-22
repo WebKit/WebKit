@@ -36,8 +36,6 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 };
 
-NODE_TYPE_CASTS(SVGMissingGlyphElement)
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

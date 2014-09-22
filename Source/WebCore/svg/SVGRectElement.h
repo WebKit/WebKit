@@ -58,8 +58,6 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-NODE_TYPE_CASTS(SVGRectElement)
-
 } // namespace WebCore
 
 #endif

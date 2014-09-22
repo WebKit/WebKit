@@ -689,6 +689,21 @@ struct ElementTypeCastTraits<ExpectedType, ExpectedType> {
     static bool is(ExpectedType&) { return true; }
 };
 
+// Downcasting functions for Element types.
+template<typename Target, typename Source>
+inline typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type downcast(Source& source)
+{
+    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
+    ASSERT_WITH_SECURITY_IMPLICATION(isElementOfType<const Target>(source));
+    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type>(source);
+}
+template<typename Target, typename Source> inline typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type downcast(Source* source)
+{
+    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
+    ASSERT_WITH_SECURITY_IMPLICATION(!source || isElementOfType<const Target>(*source));
+    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type>(source);
+}
+
 inline bool Node::hasAttributes() const
 {
     return isElementNode() && toElement(this)->hasAttributes();

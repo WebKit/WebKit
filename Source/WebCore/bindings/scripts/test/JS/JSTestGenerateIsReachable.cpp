@@ -211,7 +211,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerate
     return createNewWrapper<JSTestGenerateIsReachable>(globalObject, impl);
 }
 
-TestGenerateIsReachable* toTestGenerateIsReachable(JSC::JSValue value)
+TestGenerateIsReachable* JSTestGenerateIsReachable::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestGenerateIsReachable*>(value))
         return &wrapper->impl();
