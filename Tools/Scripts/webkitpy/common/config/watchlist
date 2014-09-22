@@ -205,7 +205,7 @@
                         r"|Tools/Scripts/webkitpy/inspector",
         },
         "WebReplayGenerator": {
-            "filename": r"Source/JavaScriptCore/replay/scripts",
+            "filename": r"Source/JavaScriptCore/replay/scripts"
                         r"|Tools/Scripts/webkitpy/replay",
         },
         "WebSocket": {

@@ -1,3 +1,12 @@
+2014-09-22  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        Fix syntaxError in watchlist since r173594
+        https://bugs.webkit.org/show_bug.cgi?id=136996
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/common/config/watchlist: Removed unnecessary comma.
+
 2014-09-20  Sam Weinig  <sam@webkit.org>
 
         Make possible HashSet<std::unique_ptr<>>
