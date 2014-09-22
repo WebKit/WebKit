@@ -46,7 +46,7 @@ unsigned long DOMNamedFlowCollection::length() const
 PassRefPtr<WebKitNamedFlow> DOMNamedFlowCollection::item(unsigned long index) const
 {
     if (index >= static_cast<unsigned long>(m_namedFlows.size()))
-        return 0;
+        return nullptr;
     DOMNamedFlowSet::const_iterator it = m_namedFlows.begin();
     for (unsigned long i = 0; i < index; ++i)
         ++it;
@@ -58,7 +58,7 @@ PassRefPtr<WebKitNamedFlow> DOMNamedFlowCollection::namedItem(const AtomicString
     DOMNamedFlowSet::const_iterator it = m_namedFlows.find<String, DOMNamedFlowHashTranslator>(name);
     if (it != m_namedFlows.end())
         return *it;
-    return 0;
+    return nullptr;
 }
 
 bool DOMNamedFlowCollection::hasNamedItem(const AtomicString& name) const

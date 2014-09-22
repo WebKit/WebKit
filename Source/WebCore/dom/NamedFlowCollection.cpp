@@ -61,7 +61,7 @@ WebKitNamedFlow* NamedFlowCollection::flowByName(const String& flowName)
 {
     NamedFlowSet::iterator it = m_namedFlows.find<String, NamedFlowHashTranslator>(flowName);
     if (it == m_namedFlows.end() || (*it)->flowState() == WebKitNamedFlow::FlowStateNull)
-        return 0;
+        return nullptr;
 
     return *it;
 }

@@ -106,7 +106,7 @@ RenderElement* RenderNamedFlowThread::nextRendererForElement(Element& element) c
             return child;
     }
 
-    return 0;
+    return nullptr;
 }
 
 void RenderNamedFlowThread::addFlowChild(RenderElement& newChild)

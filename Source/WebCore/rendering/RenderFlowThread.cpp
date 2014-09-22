@@ -229,13 +229,13 @@ const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFr
 {
     ASSERT(m_regionToLayerListMap);
     auto iterator = m_regionToLayerListMap->find(region);
-    return iterator == m_regionToLayerListMap->end() ? 0 : &iterator->value;
+    return iterator == m_regionToLayerListMap->end() ? nullptr : &iterator->value;
 }
 
 RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer& childLayer)
 {
     if (childLayer.renderer().fixedPositionedWithNamedFlowContainingBlock())
-        return 0;
+        return nullptr;
 
     if (childLayer.renderBox()) {
         RenderRegion* startRegion = nullptr;
@@ -404,7 +404,7 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, L
         autoGenerateRegionsToBlockOffset(offset);
 
     if (m_regionList.isEmpty())
-        return 0;
+        return nullptr;
 
     if (m_regionList.size() == 1 && extendLastRegion)
         return m_regionList.first();
@@ -423,7 +423,7 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, L
     RenderRegion* region = adapter.result();
     if (!clampBox)
         return region;
-    return region ? clampBox->clampToStartAndEndRegions(region) : 0;
+    return region ? clampBox->clampToStartAndEndRegions(region) : nullptr;
 }
 
 LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint)
@@ -549,7 +549,7 @@ LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offs
 RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformState) const
 {
     if (!hasValidRegionInfo())
-        return 0;
+        return nullptr;
 
     RenderRegion* renderRegion = currentRegion();
     if (!renderRegion) {
@@ -559,7 +559,7 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
         LayoutPoint center = boxRect.center();
         renderRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true, DisallowRegionAutoGeneration);
         if (!renderRegion)
-            return 0;
+            return nullptr;
     }
 
     LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
@@ -699,14 +699,14 @@ LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
 RenderRegion* RenderFlowThread::firstRegion() const
 {
     if (!hasRegions())
-        return 0;
+        return nullptr;
     return m_regionList.first();
 }
 
 RenderRegion* RenderFlowThread::lastRegion() const
 {
     if (!hasRegions())
-        return 0;
+        return nullptr;
     return m_regionList.last();
 }
 
@@ -1196,10 +1196,10 @@ void RenderFlowThread::clearOffsetFromLogicalTopOfFirstRegion(const RenderBox* b
 const RenderBox* RenderFlowThread::currentActiveRenderBox() const
 {
     if (m_activeObjectsStack.isEmpty())
-        return 0;
+        return nullptr;
 
     const RenderObject* currentObject = m_activeObjectsStack.last();
-    return currentObject->isBox() ? toRenderBox(currentObject) : 0;
+    return currentObject->isBox() ? toRenderBox(currentObject) : nullptr;
 }
 
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)

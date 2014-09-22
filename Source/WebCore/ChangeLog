@@ -1,3 +1,30 @@
+2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Use nullptr in regions code
+        https://bugs.webkit.org/show_bug.cgi?id=137001
+
+        Reviewed by Andrei Bucur.
+
+        No new tests as no new functionality is introduced.
+
+        * dom/DOMNamedFlowCollection.cpp:
+        (WebCore::DOMNamedFlowCollection::item):
+        (WebCore::DOMNamedFlowCollection::namedItem):
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::flowByName):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::WebKitNamedFlow):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getLayerListForRegion):
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::firstRegion):
+        (WebCore::RenderFlowThread::lastRegion):
+        (WebCore::RenderFlowThread::currentActiveRenderBox):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::nextRendererForElement):
+
 2014-09-17  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Cannot play Vimeo video

@@ -42,7 +42,7 @@ namespace WebCore {
 WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
     : m_flowThreadName(flowThreadName)
     , m_flowManager(manager)
-    , m_parentFlowThread(0)
+    , m_parentFlowThread(nullptr)
 {
 }
 
