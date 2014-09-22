@@ -1,3 +1,13 @@
+2014-09-19  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        REGRESSION(r173464): It broke the !ENABLE(PICTURE_SIZES) build
+        https://bugs.webkit.org/show_bug.cgi?id=136942
+
+        Reviewed by Simon Fraser.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+
 2014-09-17  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Cannot play Vimeo video
