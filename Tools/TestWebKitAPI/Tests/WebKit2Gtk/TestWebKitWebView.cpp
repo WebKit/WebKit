@@ -237,7 +237,6 @@ static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
 
     // Unsupported MIME types.
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "text/vcard"));
-    g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/pdf"));
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/zip"));
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/octet-stream"));
 
