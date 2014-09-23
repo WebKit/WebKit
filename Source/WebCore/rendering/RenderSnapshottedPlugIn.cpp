@@ -64,7 +64,7 @@ RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
 
 HTMLPlugInImageElement& RenderSnapshottedPlugIn::plugInImageElement() const
 {
-    return downcast<HTMLPlugInImageElement>(RenderEmbeddedObject::frameOwnerElement());
+    return toHTMLPlugInImageElement(RenderEmbeddedObject::frameOwnerElement());
 }
 
 void RenderSnapshottedPlugIn::layout()

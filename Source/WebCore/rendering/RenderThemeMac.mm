@@ -1678,7 +1678,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     NSSearchFieldCell* search = this->search();
 
-    if (!input->isDisabledFormControl() && (input->isTextFormControl() && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
+    if (!input->isDisabledFormControl() && (input->isTextFormControl() && !toHTMLTextFormControlElement(*input).isReadOnly()))
         updatePressedState([search cancelButtonCell], o);
     else if ([[search cancelButtonCell] isHighlighted])
         [[search cancelButtonCell] setHighlighted:NO];
@@ -1861,7 +1861,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
     if (!plugInElement->isPlugInImageElement())
         return true;
 
-    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*plugInElement);
+    HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(*plugInElement);
 
     Image* snapshot = plugInImageElement.snapshotImage();
     if (!snapshot)

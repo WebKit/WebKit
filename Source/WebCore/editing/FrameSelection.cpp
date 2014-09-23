@@ -1689,7 +1689,7 @@ void FrameSelection::selectAll()
     } else {
         if (m_selection.isNone() && focusedElement) {
             if (focusedElement->isTextFormControl()) {
-                downcast<HTMLTextFormControlElement>(*focusedElement).select();
+                toHTMLTextFormControlElement(*focusedElement).select();
                 return;
             }
             root = focusedElement->nonBoundaryShadowTreeRootNode();

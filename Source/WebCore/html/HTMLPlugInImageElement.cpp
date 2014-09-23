@@ -417,7 +417,7 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
         if (node->isPluginElement()) {
             HTMLPlugInElement* plugInElement = toHTMLPlugInElement(node);
             if (plugInElement->isPlugInImageElement()) {
-                HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*node);
+                HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(*node);
                 const URL& loadedURL = plugInImageElement.loadedUrl();
                 String otherMimeType = plugInImageElement.loadedMimeType();
                 if (plugInOrigin == loadedURL.host() && mimeType == otherMimeType)

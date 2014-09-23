@@ -655,7 +655,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
                     if (RenderStyle* style = context.elementStyle ? context.elementStyle : element->renderStyle())
                         style->setUnique();
                 }
-                return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+                return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
             }
             return false;
 #endif

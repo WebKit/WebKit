@@ -128,7 +128,7 @@ void PDFPluginTextAnnotation::commit()
 
 String PDFPluginTextAnnotation::value() const
 {
-    return downcast<HTMLTextFormControlElement>(element())->value();
+    return toHTMLTextFormControlElement(element())->value();
 }
 
 bool PDFPluginTextAnnotation::handleEvent(Event* event)

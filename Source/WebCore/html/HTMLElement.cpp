@@ -379,7 +379,7 @@ bool HTMLElement::matchesReadWritePseudoClass() const
 
     const Document& document = this->document();
     if (document.isHTMLDocument()) {
-        const HTMLDocument& htmlDocument = downcast<HTMLDocument>(document);
+        const HTMLDocument& htmlDocument = toHTMLDocument(document);
         return htmlDocument.inDesignMode();
     }
     return false;
@@ -920,7 +920,7 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
     if (isHTMLTextFormControlElement(*this)) {
-        HTMLTextFormControlElement& textElement = downcast<HTMLTextFormControlElement>(const_cast<HTMLElement&>(*this));
+        HTMLTextFormControlElement& textElement = toHTMLTextFormControlElement(const_cast<HTMLElement&>(*this));
         bool hasStrongDirectionality;
         UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)

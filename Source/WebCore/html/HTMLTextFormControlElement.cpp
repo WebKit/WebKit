@@ -717,7 +717,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
     if (!container)
         return nullptr;
     Element* ancestor = container->shadowHost();
-    return ancestor && isHTMLTextFormControlElement(*ancestor) ? downcast<HTMLTextFormControlElement>(ancestor) : nullptr;
+    return ancestor && isHTMLTextFormControlElement(*ancestor) ? toHTMLTextFormControlElement(ancestor) : nullptr;
 }
 
 static const Element* parentHTMLElement(const Element* element)

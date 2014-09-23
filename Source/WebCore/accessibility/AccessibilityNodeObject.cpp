@@ -1752,7 +1752,7 @@ String AccessibilityNodeObject::text() const
         return String();
 
     if (isNativeTextControl() && isHTMLTextFormControlElement(*node))
-        return downcast<HTMLTextFormControlElement>(*node).value();
+        return toHTMLTextFormControlElement(*node).value();
 
     if (!node->isElementNode())
         return String();

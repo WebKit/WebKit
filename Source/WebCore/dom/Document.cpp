@@ -2881,7 +2881,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
         if (isHTMLDocument()) {
             // Exception (for sandboxed documents) ignored.
-            downcast<HTMLDocument>(*this).setCookie(content, IGNORE_EXCEPTION);
+            toHTMLDocument(*this).setCookie(content, IGNORE_EXCEPTION);
         }
         break;
 

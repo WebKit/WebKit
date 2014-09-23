@@ -1,3 +1,18 @@
+2014-09-23  Christophe Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r173893.
+
+        Partial revert of r173893 to fix debug builds.
+
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::value):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        (WebKit::PluginView::pluginDidReceiveUserInteraction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
         Use downcast<HTML*Element>() instead of toHTML*Element()

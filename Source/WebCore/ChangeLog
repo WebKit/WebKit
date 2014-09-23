@@ -1,3 +1,62 @@
+2014-09-23  Christophe Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r173893.
+
+        Partial revert of r173893 to fix debug builds.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::text):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::isPlaceholderShown):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::updateName):
+        (WebCore::Element::updateId):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand):
+        (WebCore::findFirstMarkable):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::matchesReadWritePseudoClass):
+        (WebCore::HTMLElement::directionality):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::addPlugInsFromNodeListMatchingPlugInOrigin):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::enclosingTextFormControl):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addEmbeddedObjectToUpdate):
+        (WebCore::FrameView::updateEmbeddedObject):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absolutePDFURL):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintContents):
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::plugInImageElement):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textFormControlElement):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * testing/Internals.cpp:
+        (WebCore::Internals::visiblePlaceholder):
+
 2014-09-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement snapping behavior for Mac overflow scrolling

@@ -339,7 +339,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!isHTMLEmbedElement(*m_innerNonSharedNode) && !isHTMLObjectElement(*m_innerNonSharedNode))
         return URL();
 
-    HTMLPlugInImageElement& element = downcast<HTMLPlugInImageElement>(*m_innerNonSharedNode);
+    HTMLPlugInImageElement& element = toHTMLPlugInImageElement(*m_innerNonSharedNode);
     URL url = m_innerNonSharedNode->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.url()));
     if (!url.isValid())
         return URL();

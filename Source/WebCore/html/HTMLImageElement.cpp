@@ -183,7 +183,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
             if (hasName() != willHaveName && inDocument() && document().isHTMLDocument()) {
-                HTMLDocument& document = downcast<HTMLDocument>(this->document());
+                HTMLDocument& document = toHTMLDocument(this->document());
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)

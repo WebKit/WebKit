@@ -624,7 +624,7 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
 String Internals::visiblePlaceholder(Element* element)
 {
     if (element && isHTMLTextFormControlElement(*element)) {
-        const HTMLTextFormControlElement& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
+        const HTMLTextFormControlElement& textFormControlElement = toHTMLTextFormControlElement(*element);
         if (!textFormControlElement.isPlaceholderVisible())
             return String();
         if (HTMLElement* placeholderElement = textFormControlElement.placeholderElement())

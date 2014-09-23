@@ -1338,7 +1338,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
         elementRareData()->clearClassListValueForQuirksMode();
 
     TreeScope* newScope = &insertionPoint.treeScope();
-    HTMLDocument* newDocument = !wasInDocument && inDocument() && newScope->documentScope().isHTMLDocument() ? downcast<HTMLDocument>(&newScope->documentScope()) : nullptr;
+    HTMLDocument* newDocument = !wasInDocument && inDocument() && newScope->documentScope().isHTMLDocument() ? toHTMLDocument(&newScope->documentScope()) : nullptr;
     if (newScope != &treeScope())
         newScope = nullptr;
 
@@ -1381,7 +1381,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
     if (insertionPoint.isInTreeScope()) {
         TreeScope* oldScope = &insertionPoint.treeScope();
-        HTMLDocument* oldDocument = inDocument() && oldScope->documentScope().isHTMLDocument() ? downcast<HTMLDocument>(&oldScope->documentScope()) : nullptr;
+        HTMLDocument* oldDocument = inDocument() && oldScope->documentScope().isHTMLDocument() ? toHTMLDocument(&oldScope->documentScope()) : nullptr;
         if (oldScope != &treeScope() || !isInTreeScope())
             oldScope = nullptr;
 
@@ -2590,7 +2590,7 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
         return;
     if (!document().isHTMLDocument())
         return;
-    updateNameForDocument(downcast<HTMLDocument>(document()), oldName, newName);
+    updateNameForDocument(toHTMLDocument(document()), oldName, newName);
 }
 
 void Element::updateNameForTreeScope(TreeScope& scope, const AtomicString& oldName, const AtomicString& newName)
@@ -2638,7 +2638,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         return;
     if (!document().isHTMLDocument())
         return;
-    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(toHTMLDocument(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, const AtomicString& newId)

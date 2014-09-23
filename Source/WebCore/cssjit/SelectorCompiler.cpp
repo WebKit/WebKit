@@ -2785,7 +2785,7 @@ static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* 
     if (isHTMLTextFormControlElement(*element)) {
         if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
             checkingContext->elementStyle->setUnique();
-        return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
     }
     return false;
 }
@@ -2797,14 +2797,14 @@ static bool makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* 
             if (RenderStyle* style = element->renderStyle())
                 style->setUnique();
         }
-        return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
     }
     return false;
 }
 
 static bool isPlaceholderShown(Element* element)
 {
-    return isHTMLTextFormControlElement(*element) && downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+    return isHTMLTextFormControlElement(*element) && toHTMLTextFormControlElement(*element).isPlaceholderVisible();
 }
 
 void SelectorCodeGenerator::generateElementHasPlaceholderShown(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

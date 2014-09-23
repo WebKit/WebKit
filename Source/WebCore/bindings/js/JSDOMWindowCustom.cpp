@@ -83,16 +83,16 @@ static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, Encod
     ASSERT(document->isHTMLDocument());
 
     AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-    if (!atomicPropertyName || !downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName))
+    if (!atomicPropertyName || !toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName))
         return JSValue::encode(jsUndefined());
 
-    if (UNLIKELY(downcast<HTMLDocument>(*document).windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
+    if (UNLIKELY(toHTMLDocument(*document).windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
         return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
     }
 
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), downcast<HTMLDocument>(*document).windowNamedItem(*atomicPropertyName)));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), toHTMLDocument(*document).windowNamedItem(*atomicPropertyName)));
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -246,7 +246,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     Document* document = thisObject->impl().frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-        if (atomicPropertyName && downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName)) {
+        if (atomicPropertyName && toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName)) {
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }
@@ -323,7 +323,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     Document* document = thisObject->impl().frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-        if (atomicPropertyName && downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName)) {
+        if (atomicPropertyName && toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName)) {
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }

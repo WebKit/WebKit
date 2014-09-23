@@ -436,7 +436,7 @@ void HTMLObjectElement::updateDocNamedItem()
         child = child->nextSibling();
     }
     if (isNamedItem != wasNamedItem && inDocument() && document().isHTMLDocument()) {
-        HTMLDocument& document = downcast<HTMLDocument>(this->document());
+        HTMLDocument& document = toHTMLDocument(this->document());
 
         const AtomicString& id = getIdAttribute();
         if (!id.isEmpty()) {
