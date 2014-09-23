@@ -52,7 +52,7 @@ public:
     void setItem(const String& name, const String& value, ExceptionCode&);
     bool deleteItem(const String& name);
 
-    Element* element() { return &m_element; }
+    Element& element() { return m_element; }
 
 private:
     Element& m_element;

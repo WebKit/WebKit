@@ -63,8 +63,7 @@ public:
     PassRefPtr<Node> item(unsigned index) const;
     unsigned length() const;
 
-    // FIXME: It's lame that the bindings generator chokes if we return Element& here.
-    Element* element() const { return &m_element; }
+    Element& element() const { return m_element; }
 
 private:
     explicit NamedNodeMap(Element& element)
