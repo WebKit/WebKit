@@ -143,18 +143,6 @@ setConfiguration();
 
 my $productDir = productDir();
 
-sub unlinkZeroFiles()
-{
-    my $file = $File::Find::name;
-    # Remove 0 byte sized files, except
-    # - directories (Because they are always 0 byte sized on Windows)
-    # - .d files used for dependency tracking
-    if (! -d $file && ! -s $file && $file !~ m/\.d$/) {
-        unlink $file;
-        print "0 byte sized file removed from build directory: $file\n";
-    }
-}
-
 # Check that all the project directories are there.
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 

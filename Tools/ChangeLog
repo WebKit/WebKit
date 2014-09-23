@@ -1,3 +1,13 @@
+2014-09-23  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove unlinkZeroFiles from build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=137018
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/build-webkit:
+        (unlinkZeroFiles): Deleted.
+
 2014-09-23  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [GTK] Minibrowser : Add keyboard support for stop page load
