@@ -1,3 +1,16 @@
+2014-09-23  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [GTK] Minibrowser : Add keyboard support for stop page load
+        https://bugs.webkit.org/show_bug.cgi?id=136857
+
+        Reviewed by Philippe Normand.
+
+        Keyboard support to stop page load in GTK Minibrowser using F6 and Escape keys.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (stopPageLoad): Callback to stop page load.
+        (browser_window_init):
+
 2014-09-22  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2] Minibrowser : Add keyboard support for page reload while ignoring cache
