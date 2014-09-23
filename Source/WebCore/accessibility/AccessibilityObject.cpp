@@ -782,12 +782,9 @@ bool AccessibilityObject::press()
     // as the target of the action.
     Element* hitTestElement = nullptr;
     if (Document* document = this->document()) {
-        RenderView* renderView = document->renderView();
-        RenderLayer* layer = renderView->layer();
-        
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
-        HitTestResult hitTestResult = HitTestResult(clickPoint());
-        layer->hitTest(request, hitTestResult);
+        HitTestResult hitTestResult(clickPoint());
+        document->renderView()->hitTest(request, hitTestResult);
         if (hitTestResult.innerNode()) {
             Node* innerNode = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
             if (innerNode->isElementNode())

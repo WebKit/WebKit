@@ -4641,8 +4641,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& hitTestLocation, HitTestResult& result)
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
-
-    renderer().document().updateLayout();
+    ASSERT(!renderer().view().needsLayout());
 
     LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(&renderer())->visualOverflowRect() : renderer().view().documentRect();
     if (!request.ignoreClipping())

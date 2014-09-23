@@ -850,8 +850,8 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
     // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
     // in handleMousePressEvent
-    
-    if (!m_frame.contentRenderer() || !m_frame.contentRenderer()->hasLayer())
+    RenderView* renderView = m_frame.contentRenderer();
+    if (!renderView)
         return false;
 
     if (event.button() != LeftButton || event.clickCount() != 1)
@@ -871,7 +871,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     updateDragSourceActionsAllowed();
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
     HitTestResult result(view->windowToContents(event.position()));
-    m_frame.contentRenderer()->hitTest(request, result);
+    renderView->hitTest(request, result);
     DragState state;
     return result.innerElement() && page->dragController().draggableElement(&m_frame, result.innerElement(), result.roundedPointInInnerNodeFrame(), state);
 }
@@ -881,13 +881,13 @@ void EventHandler::updateSelectionForMouseDrag()
     FrameView* view = m_frame.view();
     if (!view)
         return;
-    RenderView* renderer = m_frame.contentRenderer();
-    if (!renderer)
+    RenderView* renderView = m_frame.contentRenderer();
+    if (!renderView)
         return;
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::Move | HitTestRequest::DisallowShadowContent);
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-    renderer->hitTest(request, result);
+    renderView->hitTest(request, result);
     updateSelectionForMouseDrag(result);
 }
 
@@ -1127,14 +1127,13 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
 
     HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width());
 
-    if (!m_frame.contentRenderer())
+    RenderView* renderView = m_frame.contentRenderer();
+    if (!renderView)
         return result;
-
-    m_frame.document()->updateLayout();
     
     // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
-    m_frame.contentRenderer()->hitTest(request, result);
+    renderView->hitTest(request, result);
     if (!request.readOnly())
         m_frame.document()->updateHoverActiveState(request, result.innerElement());
 
@@ -1338,8 +1337,6 @@ void EventHandler::updateCursor()
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-
-    m_frame.document()->updateLayout();
 
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
@@ -2662,8 +2659,8 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    Document* document = m_frame.document();
-    if (!document->renderView())
+    RenderView* renderView = m_frame.contentRenderer();
+    if (!renderView)
         return false;
 
     RefPtr<FrameView> protector(m_frame.view());
@@ -2677,7 +2674,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
     HitTestResult result(view->windowToContents(event.position()));
-    document->renderView()->hitTest(request, result);
+    renderView->hitTest(request, result);
 
     RefPtr<Element> element = result.innerElement();
     RefPtr<ContainerNode> scrollableContainer;
@@ -2687,9 +2684,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
 #if PLATFORM(MAC)
     if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone)
-    {
         m_frame.mainFrame().latchingState()->clear();
-    }
 #endif
 
     // FIXME: It should not be necessary to do this mutation here.
@@ -2985,11 +2980,11 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>&)
 
     ASSERT(m_frame.document());
 
-    if (RenderView* renderer = m_frame.contentRenderer()) {
+    if (RenderView* renderView = m_frame.contentRenderer()) {
         if (FrameView* view = m_frame.view()) {
             HitTestRequest request(HitTestRequest::Move | HitTestRequest::DisallowShadowContent);
             HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-            renderer->hitTest(request, result);
+            renderView->hitTest(request, result);
             m_frame.document()->updateHoverActiveState(request, result.innerElement());
         }
     }
@@ -3763,6 +3758,7 @@ static HitTestResult hitTestResultInFrame(Frame* frame, const LayoutPoint& point
 
     if (!frame || !frame->contentRenderer())
         return result;
+
     if (frame->view()) {
         IntRect rect = frame->view()->visibleContentRect();
         if (!rect.contains(roundedIntPoint(point)))
