@@ -1,3 +1,15 @@
+2014-09-22  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Minibrowser : Add keyboard support for page reload while ignoring cache
+        https://bugs.webkit.org/show_bug.cgi?id=136813
+
+        Reviewed by Gyuyoung Kim.
+
+        Ctrl+r is used for page reload along with F5. Ctrl+Shift+r and Ctrl+F5 is used for page reload while ignoring cache.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
 2014-09-22  Daniel Bates  <dabates@apple.com>
 
         [Cocoa] Add UI delegate callback when window.close() is called

@@ -522,6 +522,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     const Evas_Modifier *mod = evas_key_modifier_get(e);
     Eina_Bool ctrlPressed = evas_key_modifier_is_set(mod, "Control");
     Eina_Bool altPressed = evas_key_modifier_is_set(mod, "Alt");
+    Eina_Bool shiftPressed = evas_key_modifier_is_set(mod, "Shift");
 
     if (!strcmp(ev->key, "Left") && altPressed) {
         info("Back (Alt+Left) was pressed");
@@ -538,8 +539,11 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         currentEncoding = (currentEncoding + 1) % (sizeof(encodings) / sizeof(encodings[0]));
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
         ewk_view_custom_encoding_set(ewk_view, encodings[currentEncoding]);
-    } else if (!strcmp(ev->key, "F5")) {
-        info("Reload (F5) was pressed, reloading.");
+    } else if ((!strcmp(ev->key, "F5") && ctrlPressed) || (!strcmp(ev->key, "r") && (shiftPressed & ctrlPressed))) {
+        info("Reload ignoring cache (Ctrl+F5 or Ctrl+Shift+r) was pressed, reloading and bypassing cache...");
+        ewk_view_reload_bypass_cache(ewk_view);
+    } else if (!strcmp(ev->key, "F5") || (!strcmp(ev->key, "r") && ctrlPressed)) {
+        info("Reload (F5 or Ctrl+r) was pressed, reloading...");
         ewk_view_reload(ewk_view);
     } else if (!strcmp(ev->key, "F6") || !strcmp(ev->key, "Escape")) {
         info("Stop (F6 or Escape) was pressed, stop loading.");
