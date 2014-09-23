@@ -2986,19 +2986,19 @@ sub GenerateImplementation
             if (GetGenerateIsReachable($interface) eq "Impl") {
                 $rootString  = "    ${implType}* root = &js${interfaceName}->impl();\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContext* root = js${interfaceName}->impl().context();\n";
+                $rootString  = "    WebGLRenderingContext* root = WTF::getPtr(js${interfaceName}->impl().context());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplFrame") {
-                $rootString  = "    Frame* root = js${interfaceName}->impl().frame();\n";
+                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}->impl().frame());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
-                $rootString  = "    Document* root = js${interfaceName}->impl().document();\n";
+                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->impl().document());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    Element* element = js${interfaceName}->impl().element();\n";
+                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}->impl().element());\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    void* root = WebCore::root(element);\n";

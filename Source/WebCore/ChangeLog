@@ -1,5 +1,31 @@
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Have DOMImplementation::document() and Element::attributes() return references
+        https://bugs.webkit.org/show_bug.cgi?id=137035
+
+        Reviewed by Andreas Kling.
+
+        Have DOMImplementation::document() and Element::attributes() return
+        references instead of pointers as they can never return null.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        Update the JS Bindings code generator to use WTF::getPtr() in a couple
+        more places so that the implementation can return references instead
+        of pointers even when [GenerateIsReachable=xxx] IDL extended attribute
+        is used.
+
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::document):
+        * dom/Element.cpp:
+        (WebCore::Element::attributes):
+        * dom/Element.h:
+        (WebCore::Node::attributes):
+
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
         Have Document::ensureTemplateDocument() return a reference
         https://bugs.webkit.org/show_bug.cgi?id=137033
 

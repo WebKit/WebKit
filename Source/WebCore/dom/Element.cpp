@@ -352,14 +352,14 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
         removeAttribute(name);
 }
 
-NamedNodeMap* Element::attributes() const
+NamedNodeMap& Element::attributes() const
 {
     ElementRareData& rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (NamedNodeMap* attributeMap = rareData.attributeMap())
-        return attributeMap;
+        return *attributeMap;
 
     rareData.setAttributeMap(NamedNodeMap::create(const_cast<Element&>(*this)));
-    return rareData.attributeMap();
+    return *rareData.attributeMap();
 }
 
 Node::NodeType Element::nodeType() const

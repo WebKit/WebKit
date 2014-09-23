@@ -285,7 +285,7 @@ public:
     void setBooleanAttribute(const QualifiedName& name, bool);
 
     // For exposing to DOM only.
-    NamedNodeMap* attributes() const;
+    NamedNodeMap& attributes() const;
 
     enum AttributeModificationReason {
         ModifiedDirectly,
@@ -711,7 +711,7 @@ inline bool Node::hasAttributes() const
 
 inline NamedNodeMap* Node::attributes() const
 {
-    return isElementNode() ? toElement(this)->attributes() : nullptr;
+    return isElementNode() ? &toElement(this)->attributes() : nullptr;
 }
 
 inline Element* Node::parentElement() const
