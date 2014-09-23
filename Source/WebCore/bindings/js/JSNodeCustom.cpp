@@ -195,7 +195,7 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             if (node->isHTMLElement())
                 wrapper = createJSHTMLWrapper(globalObject, toHTMLElement(node));
             else if (node->isSVGElement())
-                wrapper = createJSSVGWrapper(globalObject, toSVGElement(node));
+                wrapper = createJSSVGWrapper(globalObject, downcast<SVGElement>(node));
             else
                 wrapper = CREATE_DOM_WRAPPER(globalObject, Element, node);
             break;

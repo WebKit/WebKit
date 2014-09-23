@@ -105,8 +105,8 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     bool isolateMaskForBlending = false;
 
 #if ENABLE(CSS_COMPOSITING)
-    if (svgStyle.hasMasker() && toSVGElement(renderer.element())->isSVGGraphicsElement()) {
-        SVGGraphicsElement& graphicsElement = *toSVGGraphicsElement(renderer.element());
+    if (svgStyle.hasMasker() && downcast<SVGElement>(renderer.element())->isSVGGraphicsElement()) {
+        SVGGraphicsElement& graphicsElement = downcast<SVGGraphicsElement>(*renderer.element());
         isolateMaskForBlending = graphicsElement.shouldIsolateBlending();
     }
 #endif
@@ -144,7 +144,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             referenceBox = renderer.strokeBoundingBox();
         else if (clipPath.referenceBox() == ViewBox && renderer.element()) {
             FloatSize viewportSize;
-            SVGLengthContext(toSVGElement(renderer.element())).determineViewport(viewportSize);
+            SVGLengthContext(downcast<SVGElement>(renderer.element())).determineViewport(viewportSize);
             referenceBox.setWidth(viewportSize.width());
             referenceBox.setHeight(viewportSize.height());
         } else

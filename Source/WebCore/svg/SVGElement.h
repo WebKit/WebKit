@@ -235,7 +235,7 @@ NODE_TYPE_CASTS(SVGElement)
 
 inline bool Node::hasTagName(const SVGQualifiedName& name) const
 {
-    return isSVGElement() && toSVGElement(*this).hasTagName(name);
+    return isSVGElement() && downcast<SVGElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore

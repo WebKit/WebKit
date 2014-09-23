@@ -41,11 +41,11 @@ SVGDocument::SVGDocument(Frame* frame, const URL& url)
 
 SVGSVGElement* SVGDocument::rootElement() const
 {
-    Element* elem = documentElement();
-    if (elem && elem->hasTagName(SVGNames::svgTag))
-        return toSVGSVGElement(elem);
+    Element* element = documentElement();
+    if (element && isSVGSVGElement(element))
+        return downcast<SVGSVGElement>(element);
 
-    return 0;
+    return nullptr;
 }
 
 bool SVGDocument::zoomAndPanEnabled() const

@@ -49,7 +49,7 @@ RenderSVGForeignObject::~RenderSVGForeignObject()
 
 SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 {
-    return toSVGForeignObjectElement(RenderSVGBlock::graphicsElement());
+    return downcast<SVGForeignObjectElement>(RenderSVGBlock::graphicsElement());
 }
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)

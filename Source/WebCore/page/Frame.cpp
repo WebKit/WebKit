@@ -968,7 +968,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
     if (document->isSVGDocument()) {
-        if (!toSVGDocument(document)->zoomAndPanEnabled())
+        if (!downcast<SVGDocument>(*document).zoomAndPanEnabled())
             return;
     }
 

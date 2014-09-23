@@ -1,3 +1,284 @@
+2014-09-22  Christophe Dumez  <cdumez@apple.com>
+
+        Use downcast<SVG*Element>() instead of toSVG*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137004
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<SVG*Element>() instead of toSVG*Element() for casting SVG
+        Elements and get rid of the transition toSVG*Element() macros.
+
+        Also use downcast<MathML*Element>() instead of toMathML*Element() for
+        casting MathML Elements.
+
+        The HTML Elements casting counterparts will be taken care of in a
+        separate patch.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        (WebCore::AccessibilityNodeObject::accessibilityDescription):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::resourceReferencedByCursorElement):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAllRules):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::locateCousinList):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/Element.cpp:
+        (WebCore::Element::synchronizeAllAttributes):
+        (WebCore::Element::synchronizeAttribute):
+        (WebCore::Element::boundsInRootViewSpace):
+        (WebCore::Element::getBoundingClientRect):
+        (WebCore::Element::childShouldCreateRenderer):
+        (WebCore::Element::fastAttributeLookupAllowed):
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingTargetRules):
+        * dom/ScriptElement.cpp:
+        (WebCore::toScriptElementIfPossible):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPhrasingContent):
+        (WebCore::MathMLElement::childShouldCreateRenderer):
+        (WebCore::MathMLElement::attributeChanged):
+        * mathml/MathMLElement.h:
+        (WebCore::Node::hasTagName):
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedSemanticsChild):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::instanceAssociatedWithShadowTreeElement):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::parseColSpanFromDOM):
+        (WebCore::RenderTableCell::parseRowSpanFromDOM):
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::addChild):
+        (WebCore::RenderMathMLMenclose::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLMenclose::updateLogicalHeight):
+        (WebCore::RenderMathMLMenclose::paint):
+        * rendering/svg/RenderSVGBlock.h:
+        (WebCore::RenderSVGBlock::graphicsElement):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::foreignObjectElement):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::gradientElement):
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageElement):
+        * rendering/svg/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::graphicsElement):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::getElementCTM):
+        (WebCore::RenderSVGModelObject::checkIntersection):
+        (WebCore::RenderSVGModelObject::checkEnclosure):
+        * rendering/svg/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::element):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::rectElement):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::patternElement):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::svgSVGElement):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::graphicsElement):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::textElement):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::textPathElement):
+        (WebCore::RenderSVGTextPath::layoutPath):
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::svgSVGElement):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromLineElement):
+        (WebCore::updatePathFromPathElement):
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren):
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        (WebCore::SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        (WebCore::SVGResources::buildCachedResources):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createElementRenderer):
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAltGlyphDefElement.cpp:
+        (WebCore::SVGAltGlyphDefElement::hasValidGlyphElements):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::adjustForInheritance):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::rootElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::ownerSVGElement):
+        (WebCore::SVGElement::viewportElement):
+        (WebCore::SVGElement::getBoundingBox):
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        (WebCore::SVGElement::title):
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+        * svg/SVGElement.h:
+        (WebCore::Node::hasTagName):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::childShouldCreateRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::isSVGFilterPrimitiveStandardAttributes):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::srcValue):
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        * svg/SVGGraphicsElement.h:
+        (WebCore::isSVGGraphicsElement):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto):
+        (WebCore::SVGHKernElement::removedFrom):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        (WebCore::SVGLocatable::computeCTM):
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        (WebCore::SVGMPathElement::pathElement):
+        (WebCore::SVGMPathElement::notifyParentOfPathChange):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+        (WebCore::SVGMarkerElement::lookupOrCreateOrientTypeWrapper):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        (WebCore::SVGPathElement::synchronizeD):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::commitChange):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::synchronizePoints):
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setupInitialView):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::synchronizeTextLength):
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper):
+        (WebCore::SVGTextContentElement::elementFromRenderer):
+        * svg/SVGTextContentElement.h:
+        (WebCore::isSVGTextContentElement):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/SVGUseElement.cpp:
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::toClipPath):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::hasCycleUseReferencing):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto):
+        (WebCore::SVGVKernElement::removedFrom):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::viewTarget):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::isSVGSMILElement):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::containerSize):
+        (WebCore::SVGImage::embeddedContentBox):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+        (WebCore::SVGImage::computeIntrinsicDimensions):
+        (WebCore::SVGImage::startAnimation):
+        (WebCore::SVGImage::stopAnimation):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::animValDidChange):
+        * svg/properties/SVGPathSegListPropertyTearOff.cpp:
+        (WebCore::SVGPathSegListPropertyTearOff::contextElement):
+
 2014-09-22  Pratik Solanki  <psolanki@apple.com>
 
         Follow on fix for [iOS] ASSERTION FAILED: WTF::isMainThread() in WebCore::memoryCache() when using WebKit1

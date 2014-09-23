@@ -121,7 +121,7 @@ private:
 
 void isSVGTextContentElement(const SVGTextContentElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isSVGTextContentElement(const SVGElement& element) { return element.isTextContent(); }
-inline bool isSVGTextContentElement(const Node& node) { return node.isSVGElement() && toSVGElement(node).isTextContent(); }
+inline bool isSVGTextContentElement(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isTextContent(); }
 NODE_TYPE_CASTS(SVGTextContentElement)
 
 } // namespace WebCore

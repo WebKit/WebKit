@@ -234,12 +234,12 @@ void SVGFontFaceElement::rebuildFontFace()
     RefPtr<CSSValueList> list;
 
     if (describesParentFont) {
-        m_fontElement = toSVGFontElement(parentNode());
+        m_fontElement = downcast<SVGFontElement>(parentNode());
 
         list = CSSValueList::createCommaSeparated();
         list->append(CSSFontFaceSrcValue::createLocal(fontFamily()));
     } else {
-        m_fontElement = 0;
+        m_fontElement = nullptr;
         if (srcElement)
             list = srcElement->srcValue();
     }

@@ -64,7 +64,7 @@ public:
     bool hasSVGShadow() const { return m_hasSVGShadow; }
     void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
 
-    SVGElement& element() const { return toSVGElement(nodeForNonAnonymous()); }
+    SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
     RenderSVGModelObject(SVGElement&, PassRef<RenderStyle>);

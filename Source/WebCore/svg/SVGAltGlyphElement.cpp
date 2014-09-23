@@ -100,7 +100,7 @@ bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
     }
 
     if (isSVGAltGlyphDefElement(element)
-        && toSVGAltGlyphDefElement(element)->hasValidGlyphElements(glyphNames))
+        && downcast<SVGAltGlyphDefElement>(*element).hasValidGlyphElements(glyphNames))
         return true;
 
     return false;

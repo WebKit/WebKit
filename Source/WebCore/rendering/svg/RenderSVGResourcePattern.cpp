@@ -40,7 +40,7 @@ RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, P
 
 SVGPatternElement& RenderSVGResourcePattern::patternElement() const
 {
-    return toSVGPatternElement(RenderSVGResourceContainer::element());
+    return downcast<SVGPatternElement>(RenderSVGResourceContainer::element());
 }
 
 void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)

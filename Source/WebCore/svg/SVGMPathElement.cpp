@@ -76,7 +76,7 @@ void SVGMPathElement::buildPendingResource()
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions()->addElementReferencingTarget(this, toSVGElement(target));
+        document().accessSVGExtensions()->addElementReferencingTarget(this, downcast<SVGElement>(target));
     }
 
     targetPathChanged();
@@ -156,9 +156,9 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
 SVGPathElement* SVGMPathElement::pathElement()
 {
     Element* target = targetElementFromIRIString(href(), document());
-    if (target && target->hasTagName(SVGNames::pathTag))
-        return toSVGPathElement(target);
-    return 0;
+    if (target && isSVGPathElement(target))
+        return downcast<SVGPathElement>(target);
+    return nullptr;
 }
 
 void SVGMPathElement::targetPathChanged()
@@ -169,7 +169,7 @@ void SVGMPathElement::targetPathChanged()
 void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
 {
     if (parent && isSVGAnimateMotionElement(parent))
-        toSVGAnimateMotionElement(parent)->updateAnimationPath();
+        downcast<SVGAnimateMotionElement>(*parent).updateAnimationPath();
 }
 
 } // namespace WebCore

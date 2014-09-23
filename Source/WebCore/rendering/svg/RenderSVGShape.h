@@ -49,7 +49,7 @@ public:
     RenderSVGShape(SVGGraphicsElement&, PassRef<RenderStyle>, Path*, bool);
     virtual ~RenderSVGShape();
 
-    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(RenderSVGModelObject::element()); }
+    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(RenderSVGModelObject::element()); }
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     virtual void setNeedsBoundariesUpdate() override final { m_needsBoundariesUpdate = true; }

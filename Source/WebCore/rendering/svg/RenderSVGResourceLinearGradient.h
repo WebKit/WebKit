@@ -32,7 +32,7 @@ public:
     RenderSVGResourceLinearGradient(SVGLinearGradientElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceLinearGradient();
 
-    SVGLinearGradientElement& linearGradientElement() const { return toSVGLinearGradientElement(RenderSVGResourceGradient::gradientElement()); }
+    SVGLinearGradientElement& linearGradientElement() const { return downcast<SVGLinearGradientElement>(RenderSVGResourceGradient::gradientElement()); }
 
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;

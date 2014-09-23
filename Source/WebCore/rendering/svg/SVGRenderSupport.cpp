@@ -252,7 +252,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
-            if (SVGElement* element = child->node()->isSVGElement() ? toSVGElement(child->node()) : 0) {
+            if (SVGElement* element = child->node()->isSVGElement() ? downcast<SVGElement>(child->node()) : nullptr) {
                 if (element->hasRelativeLengths()) {
                     // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
                     if (child->isSVGShape())
@@ -409,7 +409,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
 
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    SVGLengthContext lengthContext(toSVGElement(renderer.element()));
+    SVGLengthContext lengthContext(downcast<SVGElement>(renderer.element()));
     context->setStrokeThickness(lengthContext.valueForLength(svgStyle.strokeWidth()));
     context->setLineCap(svgStyle.capStyle());
     context->setLineJoin(svgStyle.joinStyle());
@@ -460,11 +460,11 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
 
     bool maskedAncestorShouldIsolateBlending = renderer.style().hasBlendMode();
     for (auto* ancestor = renderer.element()->parentElement(); ancestor && ancestor->isSVGElement(); ancestor = ancestor->parentElement()) {
-        if (!toSVGElement(ancestor)->isSVGGraphicsElement() || !isolatesBlending(*ancestor->computedStyle()))
+        if (!downcast<SVGElement>(*ancestor).isSVGGraphicsElement() || !isolatesBlending(*ancestor->computedStyle()))
             continue;
 
         if (ancestor->computedStyle()->svgStyle().hasMasker())
-            toSVGGraphicsElement(ancestor)->setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
+            downcast<SVGGraphicsElement>(*ancestor).setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
 
         return;
     }

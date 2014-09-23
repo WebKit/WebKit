@@ -35,7 +35,7 @@ public:
     RenderSVGGradientStop(SVGStopElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGGradientStop();
 
-    SVGStopElement& element() const { return toSVGStopElement(RenderObject::nodeForNonAnonymous()); }
+    SVGStopElement& element() const { return downcast<SVGStopElement>(RenderObject::nodeForNonAnonymous()); }
 
 private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

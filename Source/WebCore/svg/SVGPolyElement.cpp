@@ -132,18 +132,18 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 void SVGPolyElement::synchronizePoints(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPolyElement* ownerType = toSVGPolyElement(contextElement);
-    if (!ownerType->m_points.shouldSynchronize)
+    SVGPolyElement& ownerType = downcast<SVGPolyElement>(*contextElement);
+    if (!ownerType.m_points.shouldSynchronize)
         return;
-    ownerType->m_points.synchronize(ownerType, pointsPropertyInfo()->attributeName, ownerType->m_points.value.valueAsString());
+    ownerType.m_points.synchronize(&ownerType, pointsPropertyInfo()->attributeName, ownerType.m_points.value.valueAsString());
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPolyElement* ownerType = toSVGPolyElement(contextElement);
+    SVGPolyElement& ownerType = downcast<SVGPolyElement>(*contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointList>
-           (ownerType, pointsPropertyInfo(), ownerType->m_points.value);
+        (&ownerType, pointsPropertyInfo(), ownerType.m_points.value);
 }
 
 SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::points()

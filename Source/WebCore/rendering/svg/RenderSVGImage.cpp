@@ -60,7 +60,7 @@ RenderSVGImage::~RenderSVGImage()
 
 SVGImageElement& RenderSVGImage::imageElement() const
 {
-    return toSVGImageElement(RenderSVGModelObject::element());
+    return downcast<SVGImageElement>(RenderSVGModelObject::element());
 }
 
 bool RenderSVGImage::updateImageViewport()

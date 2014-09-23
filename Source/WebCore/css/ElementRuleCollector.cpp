@@ -422,7 +422,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
 
         // Now check SMIL animation override style.
         if (includeSMILProperties && styledElement.isSVGElement())
-            addElementStyleProperties(toSVGElement(styledElement).animatedSMILStyleProperties(), false /* isCacheable */);
+            addElementStyleProperties(downcast<SVGElement>(styledElement).animatedSMILStyleProperties(), false /* isCacheable */);
     }
 }
 

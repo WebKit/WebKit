@@ -39,7 +39,7 @@ String SVGPathSegList::valueAsString() const
 void SVGPathSegList::commitChange(SVGElement* contextElement, ListModification listModification)
 {
     ASSERT(contextElement);
-    toSVGPathElement(contextElement)->pathSegListChanged(m_role, listModification);
+    downcast<SVGPathElement>(contextElement)->pathSegListChanged(m_role, listModification);
 }
 
 }

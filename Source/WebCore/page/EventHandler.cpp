@@ -760,10 +760,10 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         return true;
 
     if (m_frame.document()->isSVGDocument()
-        && toSVGDocument(m_frame.document())->zoomAndPanEnabled()) {
+        && downcast<SVGDocument>(*m_frame.document()).zoomAndPanEnabled()) {
         if (event.event().shiftKey() && singleClick) {
             m_svgPan = true;
-            toSVGDocument(m_frame.document())->startPan(m_frame.view()->windowToContents(event.event().position()));
+            downcast<SVGDocument>(*m_frame.document()).startPan(m_frame.view()->windowToContents(event.event().position()));
             return true;
         }
     }
@@ -1896,7 +1896,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 #endif
 
     if (m_svgPan) {
-        toSVGDocument(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
+        downcast<SVGDocument>(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
 
@@ -2040,7 +2040,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     if (m_svgPan) {
         m_svgPan = false;
-        toSVGDocument(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
+        downcast<SVGDocument>(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
 
@@ -2356,17 +2356,17 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
 static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* referenceNode)
 {
     if (!referenceNode || !referenceNode->isSVGElement())
-        return 0;
+        return nullptr;
 
     ShadowRoot* shadowRoot = referenceNode->containingShadowRoot();
     if (!shadowRoot)
-        return 0;
+        return nullptr;
 
     Element* shadowTreeParentElement = shadowRoot->hostElement();
     if (!shadowTreeParentElement || !shadowTreeParentElement->hasTagName(useTag))
-        return 0;
+        return nullptr;
 
-    return toSVGUseElement(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode);
+    return downcast<SVGUseElement>(*shadowTreeParentElement).instanceForShadowTreeElement(referenceNode);
 }
 
 static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElement* obj2)

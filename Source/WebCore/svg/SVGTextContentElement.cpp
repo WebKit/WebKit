@@ -75,19 +75,19 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement* ownerType = toSVGTextContentElement(contextElement);
-    if (!ownerType->m_textLength.shouldSynchronize)
+    SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
+    if (!ownerType.m_textLength.shouldSynchronize)
         return;
-    AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType->m_specifiedTextLength));
-    ownerType->m_textLength.synchronize(ownerType, textLengthPropertyInfo()->attributeName, value);
+    AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType.m_specifiedTextLength));
+    ownerType.m_textLength.synchronize(&ownerType, textLengthPropertyInfo()->attributeName, value);
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement* ownerType = toSVGTextContentElement(contextElement);
+    SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength>
-           (ownerType, textLengthPropertyInfo(), ownerType->m_textLength.value);
+        (&ownerType, textLengthPropertyInfo(), ownerType.m_textLength.value);
 }
 
 PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
@@ -288,18 +288,18 @@ bool SVGTextContentElement::selfHasRelativeLengths() const
 SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* renderer)
 {
     if (!renderer)
-        return 0;
+        return nullptr;
 
     if (!renderer->isSVGText() && !renderer->isSVGInline())
-        return 0;
+        return nullptr;
 
-    SVGElement* element = toSVGElement(renderer->node());
+    SVGElement* element = downcast<SVGElement>(renderer->node());
     ASSERT(element);
 
     if (!element->isTextContent())
-        return 0;
+        return nullptr;
 
-    return toSVGTextContentElement(element);
+    return downcast<SVGTextContentElement>(element);
 }
 
 }

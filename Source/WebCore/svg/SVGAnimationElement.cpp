@@ -508,7 +508,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
 
     CalcMode calcMode = this->calcMode();
     if (hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::animateColorTag)) {
-        AnimatedPropertyType attributeType = toSVGAnimateElement(this)->determineAnimatedPropertyType(targetElement());
+        AnimatedPropertyType attributeType = downcast<SVGAnimateElement>(*this).determineAnimatedPropertyType(targetElement());
         // Fall back to discrete animations for Strings.
         if (attributeType == AnimatedBoolean
             || attributeType == AnimatedEnumeration
@@ -663,8 +663,8 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
     if (!parent || !parent->isSVGElement())
         return;
 
-    SVGElement* svgParent = toSVGElement(parent);
-    computeCSSPropertyValue(svgParent, cssPropertyID(attributeName.localName()), value);
+    SVGElement& svgParent = downcast<SVGElement>(*parent);
+    computeCSSPropertyValue(&svgParent, cssPropertyID(attributeName.localName()), value);
 }
 
 static bool inheritsFromProperty(SVGElement*, const QualifiedName& attributeName, const String& value)

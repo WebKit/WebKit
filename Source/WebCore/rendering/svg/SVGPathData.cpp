@@ -74,7 +74,7 @@ static void updatePathFromEllipseElement(SVGElement* element, Path& path)
 
 static void updatePathFromLineElement(SVGElement* element, Path& path)
 {
-    SVGLineElement* line = toSVGLineElement(element);
+    SVGLineElement* line = downcast<SVGLineElement>(element);
 
     SVGLengthContext lengthContext(element);
     path.moveTo(FloatPoint(line->x1().value(lengthContext), line->y1().value(lengthContext)));
@@ -83,12 +83,12 @@ static void updatePathFromLineElement(SVGElement* element, Path& path)
 
 static void updatePathFromPathElement(SVGElement* element, Path& path)
 {
-    buildPathFromByteStream(toSVGPathElement(element)->pathByteStream(), path);
+    buildPathFromByteStream(downcast<SVGPathElement>(element)->pathByteStream(), path);
 }
 
 static void updatePathFromPolygonElement(SVGElement* element, Path& path)
 {
-    SVGPointList& points = toSVGPolygonElement(element)->animatedPoints()->values();
+    SVGPointList& points = downcast<SVGPolygonElement>(element)->animatedPoints()->values();
     if (points.isEmpty())
         return;
 
@@ -103,7 +103,7 @@ static void updatePathFromPolygonElement(SVGElement* element, Path& path)
 
 static void updatePathFromPolylineElement(SVGElement* element, Path& path)
 {
-    SVGPointList& points = toSVGPolylineElement(element)->animatedPoints()->values();
+    SVGPointList& points = downcast<SVGPolylineElement>(element)->animatedPoints()->values();
     if (points.isEmpty())
         return;
 

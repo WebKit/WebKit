@@ -286,8 +286,8 @@ void SVGPathElement::invalidateMPathDependencies()
     // markForLayoutAndParentResourceInvalidation so we update any mpath dependencies manually.
     if (HashSet<SVGElement*>* dependencies = document().accessSVGExtensions()->setOfElementsReferencingTarget(this)) {
         for (auto* element : *dependencies) {
-            if (element->hasTagName(SVGNames::mpathTag))
-                toSVGMPathElement(element)->targetPathChanged();
+            if (isSVGMPathElement(element))
+                downcast<SVGMPathElement>(*element).targetPathChanged();
         }
     }
 }
@@ -316,25 +316,25 @@ SVGPathByteStream* SVGPathElement::pathByteStream() const
 PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPathElement* ownerType = toSVGPathElement(contextElement);
+    SVGPathElement& ownerType = downcast<SVGPathElement>(*contextElement);
 
-    if (SVGAnimatedProperty* property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(ownerType, dPropertyInfo()))
+    if (SVGAnimatedProperty* property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(&ownerType, dPropertyInfo()))
         return property;
 
     // Build initial SVGPathSegList.
-    buildSVGPathSegListFromByteStream(ownerType->m_pathByteStream.get(), ownerType, ownerType->m_pathSegList.value, UnalteredParsing);
+    buildSVGPathSegListFromByteStream(ownerType.m_pathByteStream.get(), &ownerType, ownerType.m_pathSegList.value, UnalteredParsing);
 
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList>
-           (ownerType, dPropertyInfo(), ownerType->m_pathSegList.value);
+        (&ownerType, dPropertyInfo(), ownerType.m_pathSegList.value);
 }
 
 void SVGPathElement::synchronizeD(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPathElement* ownerType = toSVGPathElement(contextElement);
-    if (!ownerType->m_pathSegList.shouldSynchronize)
+    SVGPathElement& ownerType = downcast<SVGPathElement>(*contextElement);
+    if (!ownerType.m_pathSegList.shouldSynchronize)
         return;
-    ownerType->m_pathSegList.synchronize(ownerType, dPropertyInfo()->attributeName, ownerType->m_pathSegList.value.valueAsString());
+    ownerType.m_pathSegList.synchronize(&ownerType, dPropertyInfo()->attributeName, ownerType.m_pathSegList.value.valueAsString());
 }
 
 SVGPathSegListPropertyTearOff* SVGPathElement::pathSegList()

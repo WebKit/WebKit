@@ -124,11 +124,11 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
     Node* current = element;
 
     while (current && current->isSVGElement()) {
-        SVGElement* currentElement = toSVGElement(current);
-        localTransform = currentElement->renderer()->localToParentTransform();
+        SVGElement& currentElement = downcast<SVGElement>(*current);
+        localTransform = currentElement.renderer()->localToParentTransform();
         transform = localTransform.multiply(transform);
         // For getCTM() computation, stop at the nearest viewport element
-        if (currentElement == stopAtElement)
+        if (&currentElement == stopAtElement)
             break;
 
         current = current->parentOrShadowHostNode();
@@ -171,7 +171,7 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
     if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = toSVGElement(renderer->element());
+    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
     return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
@@ -184,7 +184,7 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
     if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = toSVGElement(renderer->element());
+    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
     return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));

@@ -59,7 +59,7 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Element* e
     if (element->isHTMLElement())
         wrapper = createJSHTMLWrapper(globalObject, toHTMLElement(element));
     else if (element->isSVGElement())
-        wrapper = createJSSVGWrapper(globalObject, toSVGElement(element));
+        wrapper = createJSSVGWrapper(globalObject, downcast<SVGElement>(element));
     else
         wrapper = CREATE_DOM_WRAPPER(globalObject, Element, element);
 

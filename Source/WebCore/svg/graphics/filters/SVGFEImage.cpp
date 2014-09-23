@@ -119,7 +119,7 @@ void FEImage::platformApplySoftware()
         const AffineTransform& absoluteTransform = filter().absoluteTransform();
         resultImage->context()->concatCTM(absoluteTransform);
 
-        SVGElement* contextNode = toSVGElement(renderer->element());
+        SVGElement* contextNode = downcast<SVGElement>(renderer->element());
         if (contextNode->hasRelativeLengths()) {
             SVGLengthContext lengthContext(contextNode);
             FloatSize viewportSize;

@@ -110,9 +110,9 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
 
-    SVGAnimateElement* resultAnimationElement = toSVGAnimateElement(resultElement);
-    ASSERT(resultAnimationElement->m_animatedType);
-    ASSERT(resultAnimationElement->m_animatedPropertyType == m_animatedPropertyType);
+    SVGAnimateElement& resultAnimationElement = downcast<SVGAnimateElement>(*resultElement);
+    ASSERT(resultAnimationElement.m_animatedType);
+    ASSERT(resultAnimationElement.m_animatedPropertyType == m_animatedPropertyType);
 
     if (hasTagName(SVGNames::setTag))
         percentage = 1;
@@ -132,7 +132,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 
     // Values-animation accumulates using the last values entry corresponding to the end of duration time.
     SVGAnimatedType* toAtEndOfDurationType = m_toAtEndOfDurationType ? m_toAtEndOfDurationType.get() : m_toType.get();
-    m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), toAtEndOfDurationType, resultAnimationElement->m_animatedType.get());
+    m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), toAtEndOfDurationType, resultAnimationElement.m_animatedType.get());
 }
 
 bool SVGAnimateElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)

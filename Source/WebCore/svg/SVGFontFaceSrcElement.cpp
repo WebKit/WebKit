@@ -51,9 +51,9 @@ PassRefPtr<CSSValueList> SVGFontFaceSrcElement::srcValue() const
     for (auto& child : childrenOfType<SVGElement>(*this)) {
         RefPtr<CSSFontFaceSrcValue> srcValue;
         if (isSVGFontFaceUriElement(child))
-            srcValue = toSVGFontFaceUriElement(child).srcValue();
+            srcValue = downcast<SVGFontFaceUriElement>(child).srcValue();
         else if (isSVGFontFaceNameElement(child))
-            srcValue = toSVGFontFaceNameElement(child).srcValue();
+            srcValue = downcast<SVGFontFaceNameElement>(child).srcValue();
         if (srcValue && srcValue->resource().length())
             list->append(srcValue.releaseNonNull());
     }
@@ -64,7 +64,7 @@ void SVGFontFaceSrcElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
     if (parentNode() && isSVGFontFaceElement(parentNode()))
-        toSVGFontFaceElement(parentNode())->rebuildFontFace();
+        downcast<SVGFontFaceElement>(*parentNode()).rebuildFontFace();
 }
 
 }

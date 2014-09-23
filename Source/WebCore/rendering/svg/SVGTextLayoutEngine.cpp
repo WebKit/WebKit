@@ -423,10 +423,11 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     if (m_inPathLayout && m_textPath.isEmpty())
         return;
 
-    SVGElement* lengthContext = toSVGElement(text->parent()->element());
+    RenderElement* textParent = text->parent();
+    ASSERT(textParent);
+    SVGElement* lengthContext = downcast<SVGElement>(textParent->element());
     
-    RenderObject* textParent = text->parent();
-    bool definesTextLength = textParent ? parentDefinesTextLength(textParent) : false;
+    bool definesTextLength = parentDefinesTextLength(textParent);
 
     const SVGRenderStyle& svgStyle = style->svgStyle();
 

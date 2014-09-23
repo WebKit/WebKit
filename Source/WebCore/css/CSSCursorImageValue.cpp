@@ -48,9 +48,9 @@ static inline SVGCursorElement* resourceReferencedByCursorElement(const String& 
 {
     Element* element = SVGURIReference::targetElementFromIRIString(url, document);
     if (element && isSVGCursorElement(element))
-        return toSVGCursorElement(element);
+        return downcast<SVGCursorElement>(element);
 
-    return 0;
+    return nullptr;
 }
 
 CSSCursorImageValue::CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
@@ -120,10 +120,10 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
         if (cachedImageURL() != element->document().completeURL(cursorElement->href()))
             clearCachedImage();
 
-        SVGElement* svgElement = toSVGElement(element);
-        m_referencedElements.add(svgElement);
-        svgElement->setCursorImageValue(this);
-        cursorElement->addClient(svgElement);
+        SVGElement& svgElement = downcast<SVGElement>(*element);
+        m_referencedElements.add(&svgElement);
+        svgElement.setCursorImageValue(this);
+        cursorElement->addClient(&svgElement);
         return true;
     }
 

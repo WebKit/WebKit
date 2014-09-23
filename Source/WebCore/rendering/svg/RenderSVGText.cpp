@@ -68,7 +68,7 @@ RenderSVGText::~RenderSVGText()
 
 SVGTextElement& RenderSVGText::textElement() const
 {
-    return toSVGTextElement(RenderSVGBlock::graphicsElement());
+    return downcast<SVGTextElement>(RenderSVGBlock::graphicsElement());
 }
 
 bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const

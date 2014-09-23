@@ -87,7 +87,7 @@ SVGPathElement* SVGPathSegListPropertyTearOff::contextElement() const
 {
     SVGElement* contextElement = m_animatedProperty->contextElement();
     ASSERT(contextElement);
-    return toSVGPathElement(contextElement);
+    return downcast<SVGPathElement>(contextElement);
 }
 
 bool SVGPathSegListPropertyTearOff::processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify)

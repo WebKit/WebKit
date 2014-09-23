@@ -229,24 +229,24 @@ bool SVGMarkerElement::selfHasRelativeLengths() const
 void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGMarkerElement* ownerType = toSVGMarkerElement(contextElement);
-    if (!ownerType->m_orientType.shouldSynchronize)
+    SVGMarkerElement& ownerType = downcast<SVGMarkerElement>(*contextElement);
+    if (!ownerType.m_orientType.shouldSynchronize)
         return;
 
     // If orient is not auto, the previous call to synchronizeOrientAngle already set the orientAttr to the right angle.
-    if (ownerType->m_orientType.value != SVGMarkerOrientAuto)
+    if (ownerType.m_orientType.value != SVGMarkerOrientAuto)
         return;
 
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, autoString, ("auto", AtomicString::ConstructFromLiteral));
-    ownerType->m_orientType.synchronize(ownerType, orientTypePropertyInfo()->attributeName, autoString);
+    ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoString);
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGMarkerElement* ownerType = toSVGMarkerElement(contextElement);
+    SVGMarkerElement& ownerType = downcast<SVGMarkerElement>(*contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGMarkerElement, SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>, SVGMarkerOrientType>
-           (ownerType, orientTypePropertyInfo(), ownerType->m_orientType.value);
+        (&ownerType, orientTypePropertyInfo(), ownerType.m_orientType.value);
 }
   
 PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> SVGMarkerElement::orientTypeAnimated()

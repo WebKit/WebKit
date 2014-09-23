@@ -34,7 +34,7 @@ public:
     RenderSVGResourceRadialGradient(SVGRadialGradientElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceRadialGradient();
 
-    SVGRadialGradientElement& radialGradientElement() const { return toSVGRadialGradientElement(RenderSVGResourceGradient::gradientElement()); }
+    SVGRadialGradientElement& radialGradientElement() const { return downcast<SVGRadialGradientElement>(RenderSVGResourceGradient::gradientElement()); }
 
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;

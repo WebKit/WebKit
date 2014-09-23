@@ -113,12 +113,12 @@ bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 {
-    Document* doc = contentDocument();
-    if (doc && doc->isSVGDocument())
-        return toSVGDocument(doc);
+    Document* document = contentDocument();
+    if (document && document->isSVGDocument())
+        return downcast<SVGDocument>(document);
     // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
     ec = NOT_SUPPORTED_ERR;
-    return 0;
+    return nullptr;
 }
 
 void HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)

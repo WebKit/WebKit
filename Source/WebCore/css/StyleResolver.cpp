@@ -447,18 +447,18 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
         return 0;
     if (!parent || !parent->isStyledElement())
         return 0;
-    StyledElement* p = toStyledElement(parent);
-    if (p->inlineStyle())
+    StyledElement* styledParent = toStyledElement(parent);
+    if (styledParent->inlineStyle())
         return 0;
-    if (p->isSVGElement() && toSVGElement(p)->animatedSMILStyleProperties())
+    if (styledParent->isSVGElement() && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
         return 0;
-    if (p->hasID() && m_ruleSets.features().idsInRules.contains(p->idForStyleResolution().impl()))
+    if (styledParent->hasID() && m_ruleSets.features().idsInRules.contains(styledParent->idForStyleResolution().impl()))
         return 0;
 
-    RenderStyle* parentStyle = p->renderStyle();
+    RenderStyle* parentStyle = styledParent->renderStyle();
     unsigned subcount = 0;
-    Node* thisCousin = p;
-    Node* currentNode = p->previousSibling();
+    Node* thisCousin = styledParent;
+    Node* currentNode = styledParent->previousSibling();
 
     // Reserve the tries for this level. This effectively makes sure that the algorithm
     // will never go deeper than cStyleSearchLevelThreshold levels into recursion.
@@ -602,7 +602,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->needsStyleRecalc())
         return false;
-    if (element->isSVGElement() && toSVGElement(element)->animatedSMILStyleProperties())
+    if (element->isSVGElement() && downcast<SVGElement>(*element).animatedSMILStyleProperties())
         return false;
     if (element->isLink() != state.element()->isLink())
         return false;
@@ -681,22 +681,22 @@ RenderStyle* StyleResolver::locateSharedStyle()
 {
     State& state = m_state;
     if (!state.styledElement() || !state.parentStyle())
-        return 0;
+        return nullptr;
 
     // If the element has inline style it is probably unique.
     if (state.styledElement()->inlineStyle())
-        return 0;
-    if (state.styledElement()->isSVGElement() && toSVGElement(state.styledElement())->animatedSMILStyleProperties())
-        return 0;
+        return nullptr;
+    if (state.styledElement()->isSVGElement() && downcast<SVGElement>(*state.styledElement()).animatedSMILStyleProperties())
+        return nullptr;
     // Ids stop style sharing if they show up in the stylesheets.
     if (state.styledElement()->hasID() && m_ruleSets.features().idsInRules.contains(state.styledElement()->idForStyleResolution().impl()))
-        return 0;
+        return nullptr;
     if (parentElementPreventsSharing(state.element()->parentElement()))
-        return 0;
+        return nullptr;
     if (state.element() == state.document().cssTarget())
-        return 0;
+        return nullptr;
     if (elementHasDirectionAuto(state.element()))
-        return 0;
+        return nullptr;
 
     // Cache whether state.element is affected by any known class selectors.
     // FIXME: This shouldn't be a member variable. The style sharing code could be factored out of StyleResolver.
@@ -716,17 +716,17 @@ RenderStyle* StyleResolver::locateSharedStyle()
 
     // If we have exhausted all our budget or our cousins.
     if (!shareElement)
-        return 0;
+        return nullptr;
 
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
     if (styleSharingCandidateMatchesRuleSet(m_ruleSets.sibling()))
-        return 0;
+        return nullptr;
     // Can't share if attribute rules apply.
     if (styleSharingCandidateMatchesRuleSet(m_ruleSets.uncommonAttribute()))
-        return 0;
+        return nullptr;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentElementPreventsSharing(state.element()->parentElement()))
-        return 0;
+        return nullptr;
     return shareElement->renderStyle();
 }
 

@@ -221,8 +221,8 @@ inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
     // At this time, SVG nodes are not supported in non-<use> shadow trees.
     if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
         return referenceNode;
-    SVGUseElement* useElement = toSVGUseElement(shadowHostElement);
-    if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(&referenceNode))
+    SVGUseElement& useElement = downcast<SVGUseElement>(*shadowHostElement);
+    if (SVGElementInstance* instance = useElement.instanceForShadowTreeElement(&referenceNode))
         return *instance;
 
     return referenceNode;

@@ -165,13 +165,13 @@ void SVGSMILElement::buildPendingResource()
     String href = getAttribute(XLinkNames::hrefAttr);
     Element* target;
     if (href.isEmpty())
-        target = parentNode() && parentNode()->isElementNode() ? toElement(parentNode()) : 0;
+        target = parentNode() && parentNode()->isElementNode() ? toElement(parentNode()) : nullptr;
     else
         target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
-    SVGElement* svgTarget = target && target->isSVGElement() ? toSVGElement(target) : 0;
+    SVGElement* svgTarget = target && target->isSVGElement() ? downcast<SVGElement>(target) : nullptr;
 
     if (svgTarget && !svgTarget->inDocument())
-        svgTarget = 0;
+        svgTarget = nullptr;
 
     if (svgTarget != targetElement())
         setTargetElement(svgTarget);
@@ -540,7 +540,7 @@ void SVGSMILElement::connectConditions()
                 condition.m_syncbase = nullptr;
                 continue;
             }
-            toSVGSMILElement(*condition.m_syncbase).addTimeDependent(this);
+            downcast<SVGSMILElement>(*condition.m_syncbase).addTimeDependent(this);
         }
     }
 }
@@ -565,12 +565,12 @@ void SVGSMILElement::disconnectConditions()
             if (eventBase)
                 eventBase->removeEventListener(condition.m_name, condition.m_eventListener.get(), false);
             condition.m_eventListener->disconnectAnimation();
-            condition.m_eventListener = 0;
+            condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {
             if (condition.m_syncbase)
-                toSVGSMILElement(condition.m_syncbase.get())->removeTimeDependent(this);
+                downcast<SVGSMILElement>(condition.m_syncbase.get())->removeTimeDependent(this);
         }
-        condition.m_syncbase = 0;
+        condition.m_syncbase = nullptr;
     }
 }
 

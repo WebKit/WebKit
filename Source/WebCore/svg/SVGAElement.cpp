@@ -140,7 +140,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGAElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (parentNode() && parentNode()->isSVGElement() && toSVGElement(parentNode())->isTextContent())
+    if (parentNode() && parentNode()->isSVGElement() && downcast<SVGElement>(*parentNode()).isTextContent())
         return createRenderer<RenderSVGInline>(*this, WTF::move(style));
 
     return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
@@ -161,7 +161,7 @@ void SVGAElement::defaultEventHandler(Event* event)
             if (url[0] == '#') {
                 Element* targetElement = treeScope().getElementById(url.substringSharingImpl(1));
                 if (targetElement && isSVGSMILElement(*targetElement)) {
-                    toSVGSMILElement(*targetElement).beginByLinkActivation();
+                    downcast<SVGSMILElement>(*targetElement).beginByLinkActivation();
                     event->setDefaultHandled();
                     return;
                 }

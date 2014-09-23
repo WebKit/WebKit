@@ -1712,7 +1712,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
         renderer = styledNode->renderer();
 
-        if (propertyID == CSSPropertyDisplay && !renderer && isSVGElement(*styledNode) && !toSVGElement(*styledNode).isValid())
+        if (propertyID == CSSPropertyDisplay && !renderer && isSVGElement(*styledNode) && !downcast<SVGElement>(*styledNode).isValid())
             return nullptr;
 
         style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);

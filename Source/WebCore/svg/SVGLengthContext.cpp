@@ -312,7 +312,7 @@ bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
 
     // Root <svg> element lengths are resolved against the top level viewport.
     if (m_context->isOutermostSVGSVGElement()) {
-        viewportSize = toSVGSVGElement(m_context)->currentViewportSize();
+        viewportSize = downcast<SVGSVGElement>(*m_context).currentViewportSize();
         return true;
     }
 
@@ -321,10 +321,10 @@ bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
     if (!viewportElement || !isSVGSVGElement(viewportElement))
         return false;
 
-    const SVGSVGElement* svg = toSVGSVGElement(viewportElement);
-    viewportSize = svg->currentViewBoxRect().size();
+    const SVGSVGElement& svg = downcast<SVGSVGElement>(*viewportElement);
+    viewportSize = svg.currentViewBoxRect().size();
     if (viewportSize.isEmpty())
-        viewportSize = svg->currentViewportSize();
+        viewportSize = svg.currentViewportSize();
 
     return true;
 }

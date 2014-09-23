@@ -45,7 +45,7 @@ Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode& 
     if (rootParent.inDocument()) {
         ContainerNode* fontNode = parentNode();
         if (fontNode && isSVGFontElement(fontNode))
-            toSVGFontElement(fontNode)->invalidateGlyphCache();
+            downcast<SVGFontElement>(*fontNode).invalidateGlyphCache();
     }
 
     return SVGElement::insertedInto(rootParent);
@@ -55,7 +55,7 @@ void SVGVKernElement::removedFrom(ContainerNode& rootParent)
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && isSVGFontElement(fontNode))
-        toSVGFontElement(fontNode)->invalidateGlyphCache();
+        downcast<SVGFontElement>(*fontNode).invalidateGlyphCache();
 
     SVGElement::removedFrom(rootParent);
 }

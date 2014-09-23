@@ -282,8 +282,8 @@ static void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstan
     SVGElement* element = targetInstance->correspondingElement();
     ASSERT(element);
 
-    if (element->hasTagName(SVGNames::useTag)) {
-        if (toSVGUseElement(element)->cachedDocumentIsStillLoading())
+    if (isSVGUseElement(element)) {
+        if (downcast<SVGUseElement>(*element).cachedDocumentIsStillLoading())
             return;
     }
 
@@ -417,7 +417,7 @@ void SVGUseElement::buildPendingResource()
     }
 
     if (target->isSVGElement()) {
-        buildShadowAndInstanceTree(toSVGElement(target));
+        buildShadowAndInstanceTree(downcast<SVGElement>(target));
         invalidateDependentShadowTrees();
     }
 
@@ -543,16 +543,16 @@ void SVGUseElement::toClipPath(Path& path)
 {
     ASSERT(path.isEmpty());
 
-    Node* n = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : 0;
-    if (!n)
+    Node* node = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : nullptr;
+    if (!node)
         return;
 
-    if (n->isSVGElement() && toSVGElement(*n).isSVGGraphicsElement()) {
-        if (!isDirectReference(toSVGElement(*n))) {
+    if (node->isSVGElement() && downcast<SVGElement>(*node).isSVGGraphicsElement()) {
+        if (!isDirectReference(downcast<SVGElement>(*node))) {
             // Spec: Indirect references are an error (14.3.5)
             document().accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
         } else {
-            toSVGGraphicsElement(*n).toClipPath(path);
+            downcast<SVGGraphicsElement>(*node).toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
             SVGLengthContext lengthContext(this);
             path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));
@@ -584,9 +584,9 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
     // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
     bool targetHasUseTag = target->hasTagName(SVGNames::useTag);
-    SVGElement* newTarget = 0;
+    SVGElement* newTarget = nullptr;
     if (targetHasUseTag) {
-        foundProblem = hasCycleUseReferencing(toSVGUseElement(target), targetInstance, newTarget);
+        foundProblem = hasCycleUseReferencing(downcast<SVGUseElement>(target), targetInstance, newTarget);
         if (foundProblem)
             return;
 
@@ -627,7 +627,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     if (!targetHasUseTag || !newTarget)
         return;
 
-    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, toSVGUseElement(target), newTarget);
+    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, downcast<SVGUseElement>(target), newTarget);
     SVGElementInstance* newInstancePtr = newInstance.get();
     targetInstance->appendChild(newInstance.release());
     buildInstanceTree(newTarget, newInstancePtr, foundProblem, foundUse);
@@ -637,9 +637,9 @@ bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstanc
 {
     ASSERT(referencedDocument());
     Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), *referencedDocument());
-    newTarget = 0;
+    newTarget = nullptr;
     if (targetElement && targetElement->isSVGElement())
-        newTarget = toSVGElement(targetElement);
+        newTarget = downcast<SVGElement>(targetElement);
 
     if (!newTarget)
         return false;
@@ -710,24 +710,24 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
     // contains <use> tags, we'd miss them. So once we're done with settin' up the
     // actual shadow tree (after the special case modification for svg/symbol) we have
     // to walk it completely and expand all <use> elements.
-    if (element->hasTagName(SVGNames::useTag)) {
-        SVGUseElement* use = toSVGUseElement(element);
-        ASSERT(!use->cachedDocumentIsStillLoading());
+    if (isSVGUseElement(element)) {
+        SVGUseElement& use = downcast<SVGUseElement>(*element);
+        ASSERT(!use.cachedDocumentIsStillLoading());
 
         ASSERT(referencedDocument());
-        Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), *referencedDocument());
-        SVGElement* target = 0;
+        Element* targetElement = SVGURIReference::targetElementFromIRIString(use.href(), *referencedDocument());
+        SVGElement* target = nullptr;
         if (targetElement && targetElement->isSVGElement())
-            target = toSVGElement(targetElement);
+            target = downcast<SVGElement>(targetElement);
 
         // Don't ASSERT(target) here, it may be "pending", too.
         // Setup sub-shadow tree root node
         RefPtr<SVGGElement> cloneParent = SVGGElement::create(SVGNames::gTag, *referencedDocument());
-        use->cloneChildNodes(cloneParent.get());
+        use.cloneChildNodes(cloneParent.get());
 
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
-        transferUseAttributesToReplacedElement(use, cloneParent.get());
+        transferUseAttributesToReplacedElement(&use, cloneParent.get());
 
         if (target && !isDisallowedElement(*target)) {
             RefPtr<Element> newChild = target->cloneElementWithChildren();
@@ -746,8 +746,8 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
         RefPtr<Node> replacingElement(cloneParent.get());
 
         // Replace <use> with referenced content.
-        ASSERT(use->parentNode());
-        use->parentNode()->replaceChild(cloneParent.release(), use);
+        ASSERT(use.parentNode());
+        use.parentNode()->replaceChild(cloneParent.release(), &use);
 
         // Expand the siblings because the *element* is replaced and we will
         // lose the sibling chain when we are back from recursion.
@@ -837,9 +837,9 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
     } else
         ASSERT(target->nodeName() == originalElement->nodeName());
 
-    SVGElement* element = 0;
+    SVGElement* element = nullptr;
     if (target->isSVGElement())
-        element = toSVGElement(target);
+        element = downcast<SVGElement>(target);
 
     ASSERT(!targetInstance->shadowTreeElement());
     targetInstance->setShadowTreeElement(element);

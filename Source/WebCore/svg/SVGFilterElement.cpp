@@ -200,7 +200,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
     if (!child.isSVGElement())
         return false;
 
-    const SVGElement& svgElement = toSVGElement(child);
+    const SVGElement& svgElement = downcast<SVGElement>(child);
 
     static NeverDestroyed<HashSet<QualifiedName>> allowedChildElementTags;
     if (allowedChildElementTags.get().isEmpty()) {

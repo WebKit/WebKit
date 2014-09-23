@@ -40,7 +40,7 @@ public:
     RenderSVGResourceMasker(SVGMaskElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceMasker();
 
-    SVGMaskElement& maskElement() const { return toSVGMaskElement(RenderSVGResourceContainer::element()); }
+    SVGMaskElement& maskElement() const { return downcast<SVGMaskElement>(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

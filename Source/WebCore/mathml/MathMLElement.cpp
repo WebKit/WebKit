@@ -84,12 +84,12 @@ bool MathMLElement::isPhrasingContent(const Node& node) const
         return node.isTextNode();
 
     if (node.isMathMLElement()) {
-        auto& mathmlElement = toMathMLElement(node);
+        auto& mathmlElement = downcast<MathMLElement>(node);
         return mathmlElement.hasTagName(MathMLNames::mathTag);
     }
 
     if (node.isSVGElement()) {
-        auto& svgElement = toSVGElement(node);
+        auto& svgElement = downcast<SVGElement>(node);
         return svgElement.hasTagName(SVGNames::svgTag);
     }
 
@@ -269,12 +269,12 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
         // See annotation-xml.model.mathml, annotation-xml.model.svg and annotation-xml.model.xhtml in the HTML5 RelaxNG schema.
 
         if (child.isMathMLElement() && (MathMLSelectElement::isMathMLEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
-            auto& mathmlElement = toMathMLElement(child);
+            auto& mathmlElement = downcast<MathMLElement>(child);
             return mathmlElement.hasTagName(MathMLNames::mathTag);
         }
 
         if (child.isSVGElement() && (MathMLSelectElement::isSVGEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
-            auto& svgElement = toSVGElement(child);
+            auto& svgElement = downcast<SVGElement>(child);
             return svgElement.hasTagName(SVGNames::svgTag);
         }
 
@@ -295,7 +295,7 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicStri
     if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
         Element* parent = parentElement();
         if (parent && parent->isMathMLElement() && parent->hasTagName(semanticsTag))
-            toMathMLElement(parent)->updateSelectedChild();
+            downcast<MathMLElement>(*parent).updateSelectedChild();
     }
     StyledElement::attributeChanged(name, oldValue, newValue, reason);
 }

@@ -280,7 +280,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                 return;
             }
 #endif
-        } else if ((node->isHTMLElement() && (toHTMLElement(*node).hasTagName(linkTag) || toHTMLElement(*node).hasTagName(styleTag))) || (node->isSVGElement() && toSVGElement(*node).hasTagName(SVGNames::styleTag))) {
+        } else if ((node->isHTMLElement() && (toHTMLElement(*node).hasTagName(linkTag) || toHTMLElement(*node).hasTagName(styleTag))) || (node->isSVGElement() && downcast<SVGElement>(*node).hasTagName(SVGNames::styleTag))) {
             Element& element = toElement(*node);
             AtomicString title = element.fastGetAttribute(titleAttr);
             bool enabledViaScript = false;
@@ -306,7 +306,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.
             if (isSVGStyleElement(element))
-                sheet = toSVGStyleElement(element).sheet();
+                sheet = downcast<SVGStyleElement>(element).sheet();
             else if (isHTMLLinkElement(element))
                 sheet = toHTMLLinkElement(element).sheet();
             else

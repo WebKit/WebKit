@@ -383,7 +383,7 @@ void Element::synchronizeAllAttributes() const
 
     if (elementData()->animatedSVGAttributesAreDirty()) {
         ASSERT(isSVGElement());
-        toSVGElement(this)->synchronizeAnimatedSVGAttribute(anyQName());
+        downcast<SVGElement>(*this).synchronizeAnimatedSVGAttribute(anyQName());
     }
 }
 
@@ -399,7 +399,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
 
     if (UNLIKELY(elementData()->animatedSVGAttributesAreDirty())) {
         ASSERT(isSVGElement());
-        toSVGElement(this)->synchronizeAnimatedSVGAttribute(name);
+        downcast<SVGElement>(*this).synchronizeAnimatedSVGAttribute(name);
     }
 }
 
@@ -418,7 +418,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomicString& localName) 
     if (elementData()->animatedSVGAttributesAreDirty()) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
         ASSERT_WITH_SECURITY_IMPLICATION(isSVGElement());
-        toSVGElement(this)->synchronizeAnimatedSVGAttribute(QualifiedName(nullAtom, localName, nullAtom));
+        downcast<SVGElement>(*this).synchronizeAnimatedSVGAttribute(QualifiedName(nullAtom, localName, nullAtom));
     }
 }
 
@@ -860,9 +860,9 @@ IntRect Element::boundsInRootViewSpace()
 
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
-        SVGElement* svgElement = toSVGElement(this);
+        SVGElement& svgElement = downcast<SVGElement>(*this);
         FloatRect localRect;
-        if (svgElement->getBoundingBox(localRect))
+        if (svgElement.getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
     } else {
         // Get the bounding rectangle from the box model.
@@ -905,9 +905,9 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
     Vector<FloatQuad> quads;
     if (isSVGElement() && renderer() && !renderer()->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
-        SVGElement* svgElement = toSVGElement(this);
+        SVGElement& svgElement = downcast<SVGElement>(*this);
         FloatRect localRect;
-        if (svgElement->getBoundingBox(localRect))
+        if (svgElement.getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
     } else {
         // Get the bounding rectangle from the box model.
@@ -2404,7 +2404,8 @@ bool Element::childShouldCreateRenderer(const Node& child) const
     // Only create renderers for SVG elements whose parents are SVG elements, or for proper <svg xmlns="svgNS"> subdocuments.
     if (child.isSVGElement()) {
         ASSERT(!isSVGElement());
-        return child.hasTagName(SVGNames::svgTag) && toSVGElement(child).isValid();
+        const SVGElement& childElement = downcast<SVGElement>(child);
+        return isSVGSVGElement(childElement) && childElement.isValid();
     }
     return true;
 }
@@ -2562,7 +2563,7 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
         return false;
 
     if (isSVGElement())
-        return !toSVGElement(this)->isAnimatableAttribute(name);
+        return !downcast<SVGElement>(*this).isAnimatableAttribute(name);
 
     return true;
 }

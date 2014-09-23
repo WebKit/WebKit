@@ -394,30 +394,30 @@ void SVGElement::removedFrom(ContainerNode& rootParent)
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    ContainerNode* n = parentOrShadowHostNode();
-    while (n) {
-        if (n->hasTagName(SVGNames::svgTag))
-            return toSVGSVGElement(n);
+    ContainerNode* node = parentOrShadowHostNode();
+    while (node) {
+        if (isSVGSVGElement(node))
+            return downcast<SVGSVGElement>(node);
 
-        n = n->parentOrShadowHostNode();
+        node = node->parentOrShadowHostNode();
     }
 
-    return 0;
+    return nullptr;
 }
 
 SVGElement* SVGElement::viewportElement() const
 {
     // This function needs shadow tree support - as RenderSVGContainer uses this function
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
-    ContainerNode* n = parentOrShadowHostNode();
-    while (n) {
-        if (n->hasTagName(SVGNames::svgTag) || isSVGImageElement(n) || n->hasTagName(SVGNames::symbolTag))
-            return toSVGElement(n);
+    ContainerNode* node = parentOrShadowHostNode();
+    while (node) {
+        if (isSVGSVGElement(node) || isSVGImageElement(node) || node->hasTagName(SVGNames::symbolTag))
+            return downcast<SVGElement>(node);
 
-        n = n->parentOrShadowHostNode();
+        node = node->parentOrShadowHostNode();
     }
 
-    return 0;
+    return nullptr;
 }
 
 SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions()
@@ -460,7 +460,7 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
     if (isSVGGraphicsElement()) {
-        rect = toSVGGraphicsElement(this)->getBBox(styleUpdateStrategy);
+        rect = downcast<SVGGraphicsElement>(*this).getBBox(styleUpdateStrategy);
         return true;
     }
     return false;
@@ -730,7 +730,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
         invalidTextContent.get().add(SVGNames::tspanTag);
     }
     if (child.isSVGElement()) {
-        const SVGElement& svgChild = toSVGElement(child);
+        const SVGElement& svgChild = downcast<SVGElement>(child);
         if (invalidTextContent.get().contains(svgChild.tagQName()))
             return false;
 
@@ -970,10 +970,10 @@ String SVGElement::title() const
         // that do enable SVG in a shadow tree.
         ASSERT(!shadowHostElement || shadowHostElement->hasTagName(SVGNames::useTag));
         if (shadowHostElement && shadowHostElement->hasTagName(SVGNames::useTag)) {
-            SVGUseElement* useElement = toSVGUseElement(shadowHostElement);
+            SVGUseElement& useElement = downcast<SVGUseElement>(*shadowHostElement);
 
             // If the <use> title is not empty we found the title to use.
-            String useTitle(useElement->title());
+            String useTitle(useElement.title());
             if (!useTitle.isEmpty())
                 return useTitle;
         }
@@ -1173,7 +1173,7 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
             break;
 
         // Register us in the parent element map.
-        toSVGElement(node)->updateRelativeLengthsInformation(hasRelativeLengths, this);
+        downcast<SVGElement>(*node).updateRelativeLengthsInformation(hasRelativeLengths, this);
         break;
     }
 }

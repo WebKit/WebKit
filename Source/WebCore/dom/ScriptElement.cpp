@@ -386,9 +386,9 @@ ScriptElement* toScriptElementIfPossible(Element* element)
         return toHTMLScriptElement(element);
 
     if (isSVGScriptElement(element))
-        return toSVGScriptElement(element);
+        return downcast<SVGScriptElement>(element);
 
-    return 0;
+    return nullptr;
 }
 
 }

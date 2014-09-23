@@ -664,13 +664,16 @@ template <typename ArgType>
 struct ElementTypeCastTraits<const $class, ArgType> {
     static bool is(ArgType& node) { return $checkHelper(node); }
 };
-
+END
+        ;
+        if ($parameters{namespace} eq "HTML") {
+            print F <<END
 // FIXME: Remove these macros once the code has been ported to using
 // downcast<*Element>().
 #define to$class(x) WebCore::downcast<WebCore::$class>(x)
 END
-        ;
-
+            ;
+        }
         print F "\n";
     }
 }

@@ -41,13 +41,13 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
     // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
     // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers
     // need to respect the translations induced by their corresponding use elements x/y attributes.
-    SVGUseElement* useElement = 0;
+    SVGUseElement* useElement = nullptr;
     if (isSVGUseElement(element))
-        useElement = &toSVGUseElement(element);
+        useElement = &downcast<SVGUseElement>(element);
     else if (element.isInShadowTree() && isSVGGElement(element)) {
         SVGElement* correspondingElement = element.correspondingElement();
         if (correspondingElement && isSVGUseElement(correspondingElement))
-            useElement = toSVGUseElement(correspondingElement);
+            useElement = downcast<SVGUseElement>(correspondingElement);
     }
 
     if (useElement) {

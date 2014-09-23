@@ -142,11 +142,11 @@ static inline String targetReferenceFromResource(SVGElement& element)
 {
     String target;
     if (isSVGPatternElement(element))
-        target = toSVGPatternElement(element).href();
+        target = downcast<SVGPatternElement>(element).href();
     else if (isSVGGradientElement(element))
-        target = toSVGGradientElement(element).href();
+        target = downcast<SVGGradientElement>(element).href();
     else if (isSVGFilterElement(element))
-        target = toSVGFilterElement(element).href();
+        target = downcast<SVGFilterElement>(element).href();
     else
         ASSERT_NOT_REACHED();
 
@@ -185,7 +185,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
     if (!renderer.element())
         return false;
 
-    auto& element = toSVGElement(*renderer.element());
+    auto& element = downcast<SVGElement>(*renderer.element());
 
     Document& document = element.document();
 

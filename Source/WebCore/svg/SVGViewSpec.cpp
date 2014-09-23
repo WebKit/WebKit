@@ -139,11 +139,11 @@ String SVGViewSpec::preserveAspectRatioString() const
 SVGElement* SVGViewSpec::viewTarget() const
 {
     if (!m_contextElement)
-        return 0;
+        return nullptr;
     Element* element = m_contextElement->treeScope().getElementById(m_viewTargetString);
     if (!element || !element->isSVGElement())
-        return 0;
-    return toSVGElement(element);
+        return nullptr;
+    return downcast<SVGElement>(element);
 }
 
 SVGTransformListPropertyTearOff* SVGViewSpec::transform()

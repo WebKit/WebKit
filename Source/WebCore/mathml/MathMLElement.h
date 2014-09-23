@@ -85,7 +85,7 @@ NODE_TYPE_CASTS(MathMLElement)
 
 inline bool Node::hasTagName(const MathMLQualifiedName& name) const
 {
-    return isMathMLElement() && toMathMLElement(*this).hasTagName(name);
+    return isMathMLElement() && downcast<MathMLElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore

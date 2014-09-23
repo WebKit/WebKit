@@ -143,19 +143,19 @@ static void setGradientAttributes(SVGGradientElement& element, LinearGradientAtt
     }
 
     if (isLinear) {
-        SVGLinearGradientElement* linear = toSVGLinearGradientElement(&element);
+        SVGLinearGradientElement& linear = downcast<SVGLinearGradientElement>(element);
 
         if (!attributes.hasX1() && element.hasAttribute(SVGNames::x1Attr))
-            attributes.setX1(linear->x1());
+            attributes.setX1(linear.x1());
 
         if (!attributes.hasY1() && element.hasAttribute(SVGNames::y1Attr))
-            attributes.setY1(linear->y1());
+            attributes.setY1(linear.y1());
 
         if (!attributes.hasX2() && element.hasAttribute(SVGNames::x2Attr))
-            attributes.setX2(linear->x2());
+            attributes.setX2(linear.x2());
 
         if (!attributes.hasY2() && element.hasAttribute(SVGNames::y2Attr))
-            attributes.setY2(linear->y2());
+            attributes.setY2(linear.y2());
     }
 }
 
@@ -174,7 +174,7 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         // Respect xlink:href, take attributes from referenced element
         Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
         if (refNode && isSVGGradientElement(*refNode)) {
-            current = toSVGGradientElement(refNode);
+            current = downcast<SVGGradientElement>(refNode);
 
             // Cycle detection
             if (processedGradients.contains(current))

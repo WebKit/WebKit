@@ -84,7 +84,7 @@ private:
 
 void isSVGGraphicsElement(const SVGGraphicsElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isSVGGraphicsElement(const SVGElement& element) { return element.isSVGGraphicsElement(); }
-inline bool isSVGGraphicsElement(const Node& node) { return node.isSVGElement() && toSVGElement(node).isSVGGraphicsElement(); }
+inline bool isSVGGraphicsElement(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isSVGGraphicsElement(); }
 NODE_TYPE_CASTS(SVGGraphicsElement)
 
 } // namespace WebCore

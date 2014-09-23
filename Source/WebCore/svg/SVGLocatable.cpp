@@ -44,19 +44,19 @@ SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
     ASSERT(element);
     for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
         if (isViewportElement(current))
-            return toSVGElement(current);
+            return downcast<SVGElement>(current);
     }
 
-    return 0;
+    return nullptr;
 }
 
 SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
-    SVGElement* farthest = 0;
+    SVGElement* farthest = nullptr;
     for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
         if (isViewportElement(current))
-            farthest = toSVGElement(current);
+            farthest = downcast<SVGElement>(current);
     }
     return farthest;
 }
@@ -82,12 +82,12 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
 
     AffineTransform ctm;
 
-    SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : 0;
+    SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
     for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
         if (!currentElement->isSVGElement())
             break;
 
-        ctm = toSVGElement(currentElement)->localCoordinateSpaceTransform(mode).multiply(ctm);
+        ctm = downcast<SVGElement>(*currentElement).localCoordinateSpaceTransform(mode).multiply(ctm);
 
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)
@@ -102,7 +102,7 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
     if (target && target->isSVGGraphicsElement()) {
-        AffineTransform targetCTM = toSVGGraphicsElement(target)->getCTM(styleUpdateStrategy);
+        AffineTransform targetCTM = downcast<SVGGraphicsElement>(*target).getCTM(styleUpdateStrategy);
         if (!targetCTM.isInvertible()) {
             ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
             return ctm;

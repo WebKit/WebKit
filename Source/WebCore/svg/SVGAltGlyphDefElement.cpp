@@ -94,7 +94,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
             fountFirstGlyphRef = true;
             String referredGlyphName;
 
-            if (toSVGGlyphRefElement(child).hasValidGlyphElement(referredGlyphName))
+            if (downcast<SVGGlyphRefElement>(child).hasValidGlyphElement(referredGlyphName))
                 glyphNames.append(referredGlyphName);
             else {
                 // As the spec says "If any of the referenced glyphs are unavailable,
@@ -109,7 +109,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
 
             // As the spec says "The first 'altGlyphItem' in which all referenced glyphs
             // are available is chosen."
-            if (toSVGAltGlyphItemElement(child).hasValidGlyphElements(glyphNames) && !glyphNames.isEmpty())
+            if (downcast<SVGAltGlyphItemElement>(child).hasValidGlyphElements(glyphNames) && !glyphNames.isEmpty())
                 return true;
         }
     }

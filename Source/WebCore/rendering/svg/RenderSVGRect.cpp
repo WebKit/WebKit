@@ -44,7 +44,7 @@ RenderSVGRect::~RenderSVGRect()
 
 SVGRectElement& RenderSVGRect::rectElement() const
 {
-    return toSVGRectElement(RenderSVGShape::graphicsElement());
+    return downcast<SVGRectElement>(RenderSVGShape::graphicsElement());
 }
 
 void RenderSVGRect::updateShapeFromElement()

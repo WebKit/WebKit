@@ -48,7 +48,7 @@ void SVGGlyphElement::invalidateGlyphCache()
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && isSVGFontElement(fontNode))
-        toSVGFontElement(fontNode)->invalidateGlyphCache();
+        downcast<SVGFontElement>(*fontNode).invalidateGlyphCache();
 }
 
 void SVGGlyphElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

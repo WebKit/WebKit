@@ -42,7 +42,7 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, P
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
-    return toSVGSVGElement(RenderSVGContainer::element());
+    return downcast<SVGSVGElement>(RenderSVGContainer::element());
 }
 
 void RenderSVGViewportContainer::determineIfLayoutSizeChanged()

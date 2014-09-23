@@ -91,13 +91,13 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
 
     for (auto& child : childrenOfType<SVGElement>(*this)) {
         if (isSVGFEFuncRElement(child))
-            red = toSVGFEFuncRElement(child).transferFunction();
+            red = downcast<SVGFEFuncRElement>(child).transferFunction();
         else if (isSVGFEFuncGElement(child))
-            green = toSVGFEFuncGElement(child).transferFunction();
+            green = downcast<SVGFEFuncGElement>(child).transferFunction();
         else if (isSVGFEFuncBElement(child))
-            blue = toSVGFEFuncBElement(child).transferFunction();
+            blue = downcast<SVGFEFuncBElement>(child).transferFunction();
         else if (isSVGFEFuncAElement(child))
-            alpha = toSVGFEFuncAElement(child).transferFunction();
+            alpha = downcast<SVGFEFuncAElement>(child).transferFunction();
     }
     
     RefPtr<FilterEffect> effect = FEComponentTransfer::create(filter, red, green, blue, alpha);

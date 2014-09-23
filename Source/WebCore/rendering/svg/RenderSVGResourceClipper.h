@@ -42,7 +42,7 @@ public:
     RenderSVGResourceClipper(SVGClipPathElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceClipper();
 
-    SVGClipPathElement& clipPathElement() const { return toSVGClipPathElement(nodeForNonAnonymous()); }
+    SVGClipPathElement& clipPathElement() const { return downcast<SVGClipPathElement>(nodeForNonAnonymous()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

@@ -65,7 +65,7 @@ public:
     RenderSVGResourceFilter(SVGFilterElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceFilter();
 
-    SVGFilterElement& filterElement() const { return toSVGFilterElement(RenderSVGResourceContainer::element()); }
+    SVGFilterElement& filterElement() const { return downcast<SVGFilterElement>(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;

@@ -155,12 +155,12 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
 
     Element* child = firstElementChild();
     if (!child)
-        return child;
+        return nullptr;
 
-    if (!child->isMathMLElement() || !toMathMLElement(child)->isPresentationMathML()) { 
+    if (!child->isMathMLElement() || !downcast<MathMLElement>(*child).isPresentationMathML()) {
         // The first child is not a presentation MathML element. Hence we move to the second child and start searching an annotation child that could be displayed.
         child = child->nextElementSibling();
-    } else if (!toMathMLElement(child)->isSemanticAnnotation()) {
+    } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {
         // The first child is a presentation MathML but not an annotation, so we can just display it.
         return child;
     }

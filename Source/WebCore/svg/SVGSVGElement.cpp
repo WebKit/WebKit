@@ -662,15 +662,14 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
     // Any view specification attributes included on the given ‘view’ element override the corresponding view specification
     // attributes on the closest ancestor ‘svg’ element.
     if (anchorNode && isSVGViewElement(anchorNode)) {
-        if (SVGViewElement* viewElement = toSVGViewElement(anchorNode)) {
-            SVGElement* element = SVGLocatable::nearestViewportElement(viewElement);
-            if (element->hasTagName(SVGNames::svgTag)) {
-                SVGSVGElement* svg = toSVGSVGElement(element);
-                svg->inheritViewAttributes(viewElement);
+        SVGViewElement& viewElement = downcast<SVGViewElement>(*anchorNode);
+        SVGElement* element = SVGLocatable::nearestViewportElement(&viewElement);
+        if (isSVGSVGElement(element)) {
+            SVGSVGElement& svg = downcast<SVGSVGElement>(*element);
+            svg.inheritViewAttributes(&viewElement);
 
-                if (RenderElement* renderer = svg->renderer())
-                    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-            }
+            if (RenderElement* renderer = svg.renderer())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         }
         return;
     }

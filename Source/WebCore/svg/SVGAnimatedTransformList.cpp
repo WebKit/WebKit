@@ -33,7 +33,7 @@ namespace WebCore {
 
 SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
     : SVGAnimatedTypeAnimator(AnimatedTransformList, animationElement, contextElement)
-    , m_transformTypeString(SVGTransform::transformTypePrefixForParsing(toSVGAnimateTransformElement(animationElement)->transformType()))
+    , m_transformTypeString(SVGTransform::transformTypePrefixForParsing(downcast<SVGAnimateTransformElement>(animationElement)->transformType()))
 {
     // Only <animateTransform> uses this animator, as <animate> doesn't allow to animate transform lists directly.
     ASSERT(animationElement->hasTagName(SVGNames::animateTransformTag));

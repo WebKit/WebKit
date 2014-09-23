@@ -94,9 +94,9 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
         // Only shapes or paths are supported for direct clipping. We need to fallback to masking for texts.
         if (renderer->isSVGText())
             return false;
-        if (!childNode->isSVGElement() || !toSVGElement(childNode)->isSVGGraphicsElement())
+        if (!childNode->isSVGElement() || !downcast<SVGElement>(*childNode).isSVGGraphicsElement())
             continue;
-        SVGGraphicsElement* styled = toSVGGraphicsElement(childNode);
+        SVGGraphicsElement& styled = downcast<SVGGraphicsElement>(*childNode);
         const RenderStyle& style = renderer->style();
         if (style.display() == NONE || style.visibility() != VISIBLE)
              continue;
@@ -106,7 +106,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
             return false;
         // Fallback to masking, if there is more than one clipping path.
         if (clipPath.isEmpty()) {
-            styled->toClipPath(clipPath);
+            styled.toClipPath(clipPath);
             clipRule = svgStyle.clipRule();
         } else
             return false;
@@ -222,7 +222,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         WindRule newClipRule = style.svgStyle().clipRule();
         bool isUseElement = child.hasTagName(SVGNames::useTag);
         if (isUseElement) {
-            SVGUseElement& useElement = toSVGUseElement(child);
+            SVGUseElement& useElement = downcast<SVGUseElement>(child);
             renderer = useElement.rendererClipChild();
             if (!renderer)
                 continue;

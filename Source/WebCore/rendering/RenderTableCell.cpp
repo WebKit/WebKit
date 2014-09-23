@@ -92,7 +92,7 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
         return std::min<unsigned>(toHTMLTableCellElement(element())->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
-        return std::min<unsigned>(toMathMLElement(element())->colSpan(), maxColumnIndex);
+        return std::min<unsigned>(downcast<MathMLElement>(*element()).colSpan(), maxColumnIndex);
 #endif
     return 1;
 }
@@ -104,7 +104,7 @@ unsigned RenderTableCell::parseRowSpanFromDOM() const
         return std::min<unsigned>(toHTMLTableCellElement(element())->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
-        return std::min<unsigned>(toMathMLElement(element())->rowSpan(), maxRowIndex);
+        return std::min<unsigned>(downcast<MathMLElement>(*element()).rowSpan(), maxRowIndex);
 #endif
     return 1;
 }

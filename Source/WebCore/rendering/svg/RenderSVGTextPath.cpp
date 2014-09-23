@@ -39,7 +39,7 @@ RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, PassRef<Render
 
 SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 {
-    return toSVGTextPathElement(RenderSVGInline::graphicsElement());
+    return downcast<SVGTextPathElement>(RenderSVGInline::graphicsElement());
 }
 
 Path RenderSVGTextPath::layoutPath() const
@@ -48,17 +48,17 @@ Path RenderSVGTextPath::layoutPath() const
     if (!targetElement || !targetElement->hasTagName(SVGNames::pathTag))
         return Path();
     
-    SVGPathElement* pathElement = toSVGPathElement(targetElement);
+    SVGPathElement& pathElement = downcast<SVGPathElement>(*targetElement);
     
     Path pathData;
-    updatePathFromGraphicsElement(pathElement, pathData);
+    updatePathFromGraphicsElement(&pathElement, pathData);
 
     // Spec:  The transform attribute on the referenced 'path' element represents a
     // supplemental transformation relative to the current user coordinate system for
     // the current 'text' element, including any adjustments to the current user coordinate
     // system due to a possible transform attribute on the current 'text' element.
     // http://www.w3.org/TR/SVG/text.html#TextPathElement
-    pathData.transform(pathElement->animatedLocalTransform());
+    pathData.transform(pathElement.animatedLocalTransform());
     return pathData;
 }
 

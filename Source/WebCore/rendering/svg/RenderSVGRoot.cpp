@@ -66,7 +66,7 @@ RenderSVGRoot::~RenderSVGRoot()
 
 SVGSVGElement& RenderSVGRoot::svgSVGElement() const
 {
-    return toSVGSVGElement(nodeForNonAnonymous());
+    return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
