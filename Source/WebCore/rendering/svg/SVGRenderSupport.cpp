@@ -464,7 +464,7 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
             continue;
 
         if (ancestor->computedStyle()->svgStyle().hasMasker())
-            downcast<SVGGraphicsElement>(*ancestor).setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
+            toSVGGraphicsElement(*ancestor).setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
 
         return;
     }

@@ -1,3 +1,79 @@
+2014-09-22  Christophe Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r173859.
+
+        Partial revert to fix debug build after r173859.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+        * rendering/svg/RenderSVGBlock.h:
+        (WebCore::RenderSVGBlock::graphicsElement):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::gradientElement):
+        * rendering/svg/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::graphicsElement):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::graphicsElement):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getBoundingBox):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::synchronizePoints):
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::synchronizeTextLength):
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper):
+        (WebCore::SVGTextContentElement::elementFromRenderer):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::toClipPath):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::containerSize):
+        (WebCore::SVGImage::embeddedContentBox):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+        (WebCore::SVGImage::computeIntrinsicDimensions):
+        (WebCore::SVGImage::startAnimation):
+        (WebCore::SVGImage::stopAnimation):
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Ensure that layout is up-to-date before hit-testing via RenderView

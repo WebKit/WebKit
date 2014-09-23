@@ -110,7 +110,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
 
-    SVGAnimateElement& resultAnimationElement = downcast<SVGAnimateElement>(*resultElement);
+    SVGAnimateElement& resultAnimationElement = toSVGAnimateElement(*resultElement);
     ASSERT(resultAnimationElement.m_animatedType);
     ASSERT(resultAnimationElement.m_animatedPropertyType == m_animatedPropertyType);
 

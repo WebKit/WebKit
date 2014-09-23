@@ -115,7 +115,7 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 {
     Document* document = contentDocument();
     if (document && document->isSVGDocument())
-        return downcast<SVGDocument>(document);
+        return toSVGDocument(document);
     // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
     ec = NOT_SUPPORTED_ERR;
     return nullptr;

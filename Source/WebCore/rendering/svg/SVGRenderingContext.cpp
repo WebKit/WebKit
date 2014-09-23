@@ -106,7 +106,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
 #if ENABLE(CSS_COMPOSITING)
     if (svgStyle.hasMasker() && downcast<SVGElement>(renderer.element())->isSVGGraphicsElement()) {
-        SVGGraphicsElement& graphicsElement = downcast<SVGGraphicsElement>(*renderer.element());
+        SVGGraphicsElement& graphicsElement = toSVGGraphicsElement(*renderer.element());
         isolateMaskForBlending = graphicsElement.shouldIsolateBlending();
     }
 #endif

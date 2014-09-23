@@ -32,7 +32,7 @@ class RenderSVGBlock : public RenderBlockFlow {
 public:
     virtual LayoutRect visualOverflowRect() const override final;
 
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
+    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(nodeForNonAnonymous()); }
 
 protected:
     RenderSVGBlock(SVGGraphicsElement&, PassRef<RenderStyle>);

@@ -2885,7 +2885,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
     if (!document || !document->isSVGDocument())
         return nullptr;
     
-    SVGSVGElement* rootElement = downcast<SVGDocument>(*document).rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(*document).rootElement();
     if (!rootElement)
         return nullptr;
     RenderObject* rendererRoot = rootElement->renderer();

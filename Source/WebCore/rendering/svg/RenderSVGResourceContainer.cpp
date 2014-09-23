@@ -212,7 +212,7 @@ AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderOb
     if (!object->isSVGShape())
         return resourceTransform;
 
-    SVGGraphicsElement* element = downcast<SVGGraphicsElement>(object->node());
+    SVGGraphicsElement* element = toSVGGraphicsElement(object->node());
     AffineTransform transform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
     transform *= resourceTransform;
     return transform;

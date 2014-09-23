@@ -96,7 +96,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
             return false;
         if (!childNode->isSVGElement() || !downcast<SVGElement>(*childNode).isSVGGraphicsElement())
             continue;
-        SVGGraphicsElement& styled = downcast<SVGGraphicsElement>(*childNode);
+        SVGGraphicsElement& styled = toSVGGraphicsElement(*childNode);
         const RenderStyle& style = renderer->style();
         if (style.display() == NONE || style.visibility() != VISIBLE)
              continue;

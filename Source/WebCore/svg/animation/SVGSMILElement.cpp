@@ -540,7 +540,7 @@ void SVGSMILElement::connectConditions()
                 condition.m_syncbase = nullptr;
                 continue;
             }
-            downcast<SVGSMILElement>(*condition.m_syncbase).addTimeDependent(this);
+            toSVGSMILElement(*condition.m_syncbase).addTimeDependent(this);
         }
     }
 }
@@ -568,7 +568,7 @@ void SVGSMILElement::disconnectConditions()
             condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {
             if (condition.m_syncbase)
-                downcast<SVGSMILElement>(condition.m_syncbase.get())->removeTimeDependent(this);
+                toSVGSMILElement(condition.m_syncbase.get())->removeTimeDependent(this);
         }
         condition.m_syncbase = nullptr;
     }

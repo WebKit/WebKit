@@ -344,7 +344,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
         writeNameValuePair(ts, "cy", element.cy().value(lengthContext));
         writeNameValuePair(ts, "r", element.r().value(lengthContext));
     } else if (svgElement.hasTagName(SVGNames::polygonTag) || svgElement.hasTagName(SVGNames::polylineTag)) {
-        const SVGPolyElement& element = downcast<SVGPolyElement>(svgElement);
+        const SVGPolyElement& element = toSVGPolyElement(svgElement);
         writeNameAndQuotedValue(ts, "points", element.pointList().valueAsString());
     } else if (isSVGPathElement(svgElement)) {
         const SVGPathElement& element = downcast<SVGPathElement>(svgElement);

@@ -68,7 +68,7 @@ void RenderSVGGradientStop::layout()
 SVGGradientElement* RenderSVGGradientStop::gradientElement()
 {
     if (element().parentElement() && isSVGGradientElement(*element().parentElement()))
-        return &downcast<SVGGradientElement>(*element().parentElement());
+        return &toSVGGradientElement(*element().parentElement());
     return nullptr;
 }
 

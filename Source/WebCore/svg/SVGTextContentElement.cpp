@@ -75,7 +75,7 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
 void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
+    SVGTextContentElement& ownerType = toSVGTextContentElement(*contextElement);
     if (!ownerType.m_textLength.shouldSynchronize)
         return;
     AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType.m_specifiedTextLength));
@@ -85,7 +85,7 @@ void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
 PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement& ownerType = downcast<SVGTextContentElement>(*contextElement);
+    SVGTextContentElement& ownerType = toSVGTextContentElement(*contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength>
         (&ownerType, textLengthPropertyInfo(), ownerType.m_textLength.value);
 }
@@ -299,7 +299,7 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     if (!element->isTextContent())
         return nullptr;
 
-    return downcast<SVGTextContentElement>(element);
+    return toSVGTextContentElement(element);
 }
 
 }

@@ -68,7 +68,7 @@ bool SVGImage::hasSingleSecurityOrigin() const
     if (!m_page)
         return true;
 
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return true;
 
@@ -86,7 +86,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
     if (!m_page || !usesContainerSize())
         return;
 
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return;
     RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
@@ -103,7 +103,7 @@ IntSize SVGImage::containerSize() const
 {
     if (!m_page)
         return IntSize();
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return IntSize();
 
@@ -264,7 +264,7 @@ RenderBox* SVGImage::embeddedContentBox() const
 {
     if (!m_page)
         return 0;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return 0;
     return toRenderBox(rootElement->renderer());
@@ -281,7 +281,7 @@ bool SVGImage::hasRelativeWidth() const
 {
     if (!m_page)
         return false;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicWidth().isPercent();
@@ -291,7 +291,7 @@ bool SVGImage::hasRelativeHeight() const
 {
     if (!m_page)
         return false;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicHeight().isPercent();
@@ -301,7 +301,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 {
     if (!m_page)
         return;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return;
 
@@ -320,7 +320,7 @@ void SVGImage::startAnimation(CatchUpAnimation)
 {
     if (!m_page)
         return;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return;
     rootElement->unpauseAnimations();
@@ -331,7 +331,7 @@ void SVGImage::stopAnimation()
 {
     if (!m_page)
         return;
-    SVGSVGElement* rootElement = downcast<SVGDocument>(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
     if (!rootElement)
         return;
     rootElement->pauseAnimations();
