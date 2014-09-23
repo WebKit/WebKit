@@ -2045,7 +2045,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
         if (builderMaster(builder).name == WEBKIT_BUILDER_MASTER) {
             var latestRevision = g_history.dashboardSpecificState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
-            actualResultsBase = 'http://build.webkit.org/results/' + builder +
+            actualResultsBase = 'https://build.webkit.org/results/' + builder +
                 '/r' + buildInfo.revisionStart + ' (' + buildInfo.buildNumber + ')/';
         } else
             console.error("Unexpected master name: " + master.name);

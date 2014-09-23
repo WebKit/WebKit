@@ -80,5 +80,5 @@ RecentBuildsLoader.prototype = {
         });
     },
 
-    _buildbotBaseURL: "http://build.webkit.org/",
+    _buildbotBaseURL: "https://build.webkit.org/",
 };

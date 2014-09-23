@@ -1,3 +1,40 @@
+2014-09-23  David Kilzer  <ddkilzer@apple.com>
+
+        Switch build.webkit.org URLs to https
+
+        Reviewed by Lucas Forschler and Alexey Proskuryakov.
+
+        * TestResultServer/app.yaml: Update version to this commit
+        revision.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_builder_with_name):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (TreeStatus):
+        * TestResultServer/generate_builders_json.py:
+        (main):
+        * TestResultServer/generate_builders_json_unittest.py:
+        (GenerateBuildersJsonTest.test_generate_json_data.dummy_fetch_json):
+        (GenerateBuildersJsonTest):
+        (GenerateBuildersJsonTest.test_generate_json_data):
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (loadExpectationsLayoutTests):
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+
 2014-09-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should copy .htaccess files

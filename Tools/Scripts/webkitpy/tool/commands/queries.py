@@ -412,7 +412,7 @@ class FindFlakyTests(Command):
 class TreeStatus(Command):
     name = "tree-status"
     help_text = "Print the status of the %s buildbots" % config_urls.buildbot_url
-    long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder
+    long_help = """Fetches build status from https://build.webkit.org/one_box_per_builder
 and displayes the status of each builder."""
 
     def execute(self, options, args, tool):

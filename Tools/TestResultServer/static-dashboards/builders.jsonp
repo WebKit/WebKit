@@ -23,6 +23,6 @@ LOAD_BUILDBOT_DATA([
                 ]
             }
         }, 
-        "url": "http://build.webkit.org"
+        "url": "https://build.webkit.org"
     }
 ]);

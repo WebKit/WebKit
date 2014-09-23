@@ -24,7 +24,7 @@
  */
 
 function WebKitBuildbot() {
-    Buildbot.call(this, 'http://build.webkit.org/');
+    Buildbot.call(this, 'https://build.webkit.org/');
 }
 
 WebKitBuildbot.prototype = {

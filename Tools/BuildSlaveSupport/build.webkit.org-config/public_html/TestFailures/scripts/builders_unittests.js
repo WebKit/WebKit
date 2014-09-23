@@ -1058,8 +1058,8 @@ test("buildersFailing (Apple)", 3, function() {
     });
 
     deepEqual(requestedURLs, [
-        "http://build.webkit.org/json/builders",
-        "http://build.webkit.org/json/builders/Apple%20Lion%20Release%20WK2%20(Tests)/builds/11461"
+        "https://build.webkit.org/json/builders",
+        "https://build.webkit.org/json/builders/Apple%20Lion%20Release%20WK2%20(Tests)/builds/11461"
     ]);
 
     config.currentPlatform = 'chromium';

@@ -242,9 +242,9 @@ class BuildBotTest(unittest.TestCase):
 
         builder = buildbot.builder_with_name("Test Builder")
         self.assertEqual(builder.name(), "Test Builder")
-        self.assertEqual(builder.url(), "http://build.webkit.org/builders/Test%20Builder")
+        self.assertEqual(builder.url(), "https://build.webkit.org/builders/Test%20Builder")
         self.assertEqual(builder.url_encoded_name(), "Test%20Builder")
-        self.assertEqual(builder.results_url(), "http://build.webkit.org/results/Test%20Builder")
+        self.assertEqual(builder.results_url(), "https://build.webkit.org/results/Test%20Builder")
 
         # Override _fetch_build_dictionary function to not touch the network.
         def mock_fetch_build_dictionary(self, build_number):
@@ -260,15 +260,15 @@ class BuildBotTest(unittest.TestCase):
 
         build = builder.build(10)
         self.assertEqual(build.builder(), builder)
-        self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/10")
-        self.assertEqual(build.results_url(), "http://build.webkit.org/results/Test%20Builder/r20%20%2810%29")
+        self.assertEqual(build.url(), "https://build.webkit.org/builders/Test%20Builder/builds/10")
+        self.assertEqual(build.results_url(), "https://build.webkit.org/results/Test%20Builder/r20%20%2810%29")
         self.assertEqual(build.revision(), 20)
         self.assertTrue(build.is_green())
 
         build = build.previous_build()
         self.assertEqual(build.builder(), builder)
-        self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/9")
-        self.assertEqual(build.results_url(), "http://build.webkit.org/results/Test%20Builder/r18%20%289%29")
+        self.assertEqual(build.url(), "https://build.webkit.org/builders/Test%20Builder/builds/9")
+        self.assertEqual(build.results_url(), "https://build.webkit.org/results/Test%20Builder/r18%20%289%29")
         self.assertEqual(build.revision(), 18)
         self.assertFalse(build.is_green())
 

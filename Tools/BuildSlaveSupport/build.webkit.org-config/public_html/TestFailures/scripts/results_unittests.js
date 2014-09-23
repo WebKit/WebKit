@@ -584,7 +584,7 @@ test("fetchResultsByBuilder", 5, function() {
                     "_buildLocation": {
                         "buildNumber": "1",
                         "revision": 1,
-                        "url": "http://build.webkit.org/results/MockBuilder2/r1%20(1)/full_results.json"
+                        "url": "https://build.webkit.org/results/MockBuilder2/r1%20(1)/full_results.json"
                     }
                 }
             });
@@ -592,10 +592,10 @@ test("fetchResultsByBuilder", 5, function() {
     });
 
     deepEqual(probedURLs, [
-        "http://build.webkit.org/results/MockBuilder1/r2%20(2)/full_results.json",
-        "http://build.webkit.org/results/MockBuilder2/r2%20(2)/full_results.json",
-        "http://build.webkit.org/results/MockBuilder1/r1%20(1)/full_results.json",
-        "http://build.webkit.org/results/MockBuilder2/r1%20(1)/full_results.json"
+        "https://build.webkit.org/results/MockBuilder1/r2%20(2)/full_results.json",
+        "https://build.webkit.org/results/MockBuilder2/r2%20(2)/full_results.json",
+        "https://build.webkit.org/results/MockBuilder1/r1%20(1)/full_results.json",
+        "https://build.webkit.org/results/MockBuilder2/r1%20(1)/full_results.json"
     ]);
 
     builders.cachedBuildInfos = oldCachedBuildInfos;

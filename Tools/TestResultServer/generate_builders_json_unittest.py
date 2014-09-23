@@ -54,21 +54,21 @@ class GenerateBuildersJsonTest(unittest.TestCase):
             def dummy_fetch_json(url):
                 fetched_urls.append(url)
 
-                if url == 'http://build.webkit.org/json/builders':
+                if url == 'https://build.webkit.org/json/builders':
                     return {'Apple Mac SnowLeopard Tests': None, 'EFL Linux Builder': None, 'GTK Linux Tests': None}
 
-                if url == 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests':
+                if url == 'https://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests':
                     return {'cachedBuilds': [1, 2], 'currentBuilds': []}
-                if url == 'http://build.webkit.org/json/builders/EFL%20Linux%20Builder':
+                if url == 'https://build.webkit.org/json/builders/EFL%20Linux%20Builder':
                     return {'cachedBuilds': [1, 2, 3], 'currentBuilds': [3]}
-                if url == 'http://build.webkit.org/json/builders/GTK%20Linux%20Tests':
+                if url == 'https://build.webkit.org/json/builders/GTK%20Linux%20Tests':
                     return {'cachedBuilds': [2], 'currentBuilds': []}
 
-                if url == 'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2':
+                if url == 'https://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2':
                     return {'steps': [{'name': 'layout-test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
-                if url == 'http://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2':
+                if url == 'https://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2':
                     return {'steps': [{'name': 'compile'}]}
-                if url == 'http://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2':
+                if url == 'https://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2':
                     return {'steps': [{'name': 'layout-test'}, {'name': 'archive_test_results'}, {'name': 'compile'}]}
 
                 logging.error('Cannot fetch fake url: %s' % url)
@@ -76,24 +76,24 @@ class GenerateBuildersJsonTest(unittest.TestCase):
             generate_builders_json.fetch_json = dummy_fetch_json
 
             masters = [
-                {'name': 'webkit.org', 'url': 'http://build.webkit.org'},
+                {'name': 'webkit.org', 'url': 'https://build.webkit.org'},
             ]
 
             generate_builders_json.insert_builder_and_test_data(masters)
 
             expected_fetched_urls = [
-                'http://build.webkit.org/json/builders',
-                'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests',
-                'http://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2',
-                'http://build.webkit.org/json/builders/GTK%20Linux%20Tests',
-                'http://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2',
-                'http://build.webkit.org/json/builders/EFL%20Linux%20Builder',
-                'http://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2']
+                'https://build.webkit.org/json/builders',
+                'https://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests',
+                'https://build.webkit.org/json/builders/Apple%20Mac%20SnowLeopard%20Tests/builds/2',
+                'https://build.webkit.org/json/builders/GTK%20Linux%20Tests',
+                'https://build.webkit.org/json/builders/GTK%20Linux%20Tests/builds/2',
+                'https://build.webkit.org/json/builders/EFL%20Linux%20Builder',
+                'https://build.webkit.org/json/builders/EFL%20Linux%20Builder/builds/2']
             self.assertEqual(fetched_urls, expected_fetched_urls)
 
             expected_masters = [
                 {
-                    'url': 'http://build.webkit.org',
+                    'url': 'https://build.webkit.org',
                     'tests': {
                         'layout-tests': {'builders': ['Apple Mac SnowLeopard Tests', 'GTK Linux Tests']},
                     },

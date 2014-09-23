@@ -93,7 +93,7 @@ def main():
     logging.getLogger().setLevel(logging.DEBUG if options.verbose else logging.INFO)
 
     masters = [
-        {'name': 'webkit.org', 'url': 'http://build.webkit.org'},
+        {'name': 'webkit.org', 'url': 'https://build.webkit.org'},
     ]
 
     insert_builder_and_test_data(masters)

@@ -32,9 +32,9 @@ config.kBuildNumberLimit = 20;
 config.kPlatforms = {
     'apple' : {
         label : 'Apple',
-        buildConsoleURL: 'http://build.webkit.org',
-        layoutTestResultsURL: 'http://build.webkit.org/results',
-        waterfallURL: 'http://build.webkit.org/waterfall',
+        buildConsoleURL: 'https://build.webkit.org',
+        layoutTestResultsURL: 'https://build.webkit.org/results',
+        waterfallURL: 'https://build.webkit.org/waterfall',
         builders: {
             'Apple Lion Release WK1 (Tests)' : {version: 'lion' },
             'Apple Lion Debug WK1 (Tests)' : {version: 'lion', debug: true},
@@ -62,9 +62,9 @@ config.kPlatforms = {
     },
     'gtk' : {
         label : 'GTK',
-        buildConsoleURL: 'http://build.webkit.org',
-        layoutTestResultsURL: 'http://build.webkit.org/results',
-        waterfallURL: 'http://build.webkit.org/waterfall',
+        buildConsoleURL: 'https://build.webkit.org',
+        layoutTestResultsURL: 'https://build.webkit.org/results',
+        waterfallURL: 'https://build.webkit.org/waterfall',
         builders: {
             'GTK Linux 32-bit Release' : {version: '32-bit release'},
             'GTK Linux 64-bit Release (Tests)' : {version: '64-bit release'},
@@ -85,9 +85,9 @@ config.kPlatforms = {
     },
     'qt' : {
         label : 'Qt',
-        buildConsoleURL: 'http://build.webkit.org',
-        layoutTestResultsURL: 'http://build.webkit.org/results',
-        waterfallURL: 'http://build.webkit.org/waterfall',
+        buildConsoleURL: 'https://build.webkit.org',
+        layoutTestResultsURL: 'https://build.webkit.org/results',
+        waterfallURL: 'https://build.webkit.org/waterfall',
         builders: {
             'Qt Linux Release' : {version : '32-bit release'},
         },
@@ -106,9 +106,9 @@ config.kPlatforms = {
     },
     'efl' : {
         label : 'EFL',
-        buildConsoleURL: 'http://build.webkit.org',
-        layoutTestResultsURL: 'http://build.webkit.org/results',
-        waterfallURL: 'http://build.webkit.org/waterfall',
+        buildConsoleURL: 'https://build.webkit.org',
+        layoutTestResultsURL: 'https://build.webkit.org/results',
+        waterfallURL: 'https://build.webkit.org/waterfall',
         builders: {
             'EFL Linux 64-bit Release WK2' : {version: '64-bit WK2'},
         },

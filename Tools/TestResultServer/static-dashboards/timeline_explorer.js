@@ -215,7 +215,7 @@ function updateBuildInspector(results, builder, dygraph, index)
     addRow('', '');
     var master = builderMaster(builder);
     var buildUrl = master.logPath(builder, results[BUILD_NUMBERS_KEY][index]);
-    var resultsUrl = 'http://build.webkit.org/results/' + builder + '/r' + results[WEBKIT_REVISIONS_KEY][index] +
+    var resultsUrl = 'https://build.webkit.org/results/' + builder + '/r' + results[WEBKIT_REVISIONS_KEY][index] +
         ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
 
     addRow('Build:', '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a> (<a href="' + resultsUrl + '" target="_blank">results</a>)');
