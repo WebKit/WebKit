@@ -56,21 +56,21 @@ bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* 
         return true;
     }
     if (!valid) {
-        doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
+        doc->accessSVGExtensions().reportWarning("Problem parsing viewBox=\"" + str + "\"");
         return false;
     }
 
     if (width < 0.0) { // check that width is positive
-        doc->accessSVGExtensions()->reportError("A negative value for ViewBox width is not allowed");
+        doc->accessSVGExtensions().reportError("A negative value for ViewBox width is not allowed");
         return false;
     }
     if (height < 0.0) { // check that height is positive
-        doc->accessSVGExtensions()->reportError("A negative value for ViewBox height is not allowed");
+        doc->accessSVGExtensions().reportError("A negative value for ViewBox height is not allowed");
         return false;
     }
     skipOptionalSVGSpaces(c, end);
     if (c < end) { // nothing should come after the last, fourth number
-        doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
+        doc->accessSVGExtensions().reportWarning("Problem parsing viewBox=\"" + str + "\"");
         return false;
     }
 

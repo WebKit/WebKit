@@ -1,3 +1,93 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Have Document::accessSVGExtensions() return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=137030
+
+        Reviewed by Ryosuke Niwa.
+
+        Have Document::accessSVGExtensions() return a reference instead of a
+        pointer as it can never return null.
+
+        No new tests, no behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::accessSVGExtensions):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::removedFrom):
+        * editing/markup.cpp:
+        (WebCore::isPlainTextMarkup):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::svgExtensionsFromElement):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        (WebCore::getRenderSVGResourceContainerById):
+        (WebCore::getRenderSVGResourceById):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::registerPendingResource):
+        (WebCore::SVGResources::buildCachedResources):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::resourcesCacheFromRenderer):
+        (WebCore::SVGResourcesCache::resourceDestroyed):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::reportAttributeParsingError):
+        (WebCore::SVGElement::removedFrom):
+        (WebCore::SVGElement::viewportElement):
+        (WebCore::SVGElement::attributeChanged):
+        (WebCore::SVGElement::buildPendingResourcesIfNeeded):
+        (WebCore::SVGElement::accessDocumentSVGExtensions): Deleted.
+        * svg/SVGElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::clearResourceReferences):
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedInto):
+        (WebCore::SVGFontFaceElement::removedFrom):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        (WebCore::SVGMPathElement::clearResourceReferences):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseAttribute):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::insertedInto):
+        (WebCore::SVGSVGElement::removedFrom):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::detachTarget):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::clearResourceReferences):
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::clearResourceReferences):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::toClipPath):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::clearResourceReferences):
+        (WebCore::SVGSMILElement::buildPendingResource):
+
 2014-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed

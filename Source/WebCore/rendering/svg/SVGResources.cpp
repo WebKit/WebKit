@@ -172,9 +172,9 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document&
     return container;
 }
 
-static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement& element)
+static inline void registerPendingResource(SVGDocumentExtensions& extensions, const AtomicString& id, SVGElement& element)
 {
-    extensions->addPendingResource(id, &element);
+    extensions.addPendingResource(id, &element);
 }
 
 bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVGRenderStyle& svgStyle)
@@ -189,8 +189,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
 
     Document& document = element.document();
 
-    SVGDocumentExtensions* extensions = document.accessSVGExtensions();
-    ASSERT(extensions);
+    SVGDocumentExtensions& extensions = document.accessSVGExtensions();
 
     const AtomicString& tagName = element.localName();
     if (tagName.isNull())

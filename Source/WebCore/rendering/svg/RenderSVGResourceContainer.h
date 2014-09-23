@@ -80,12 +80,12 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceContainer, isSVGResourceContainer())
 inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document& document, const AtomicString& id)
 {
     if (id.isEmpty())
-        return 0;
+        return nullptr;
 
-    if (RenderSVGResourceContainer* renderResource = document.accessSVGExtensions()->resourceById(id))
+    if (RenderSVGResourceContainer* renderResource = document.accessSVGExtensions().resourceById(id))
         return renderResource;
 
-    return 0;
+    return nullptr;
 }
 
 template<typename Renderer>
@@ -94,7 +94,7 @@ Renderer* getRenderSVGResourceById(Document& document, const AtomicString& id)
     if (RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id))
         return container->cast<Renderer>();
 
-    return 0;
+    return nullptr;
 }
 
 }

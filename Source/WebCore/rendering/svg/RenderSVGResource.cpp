@@ -169,7 +169,7 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
 
     if (!renderer.element() || !renderer.element()->isSVGElement())
         return;
-    HashSet<SVGElement*>* dependencies = renderer.document().accessSVGExtensions()->setOfElementsReferencingTarget(downcast<SVGElement>(renderer.element()));
+    HashSet<SVGElement*>* dependencies = renderer.document().accessSVGExtensions().setOfElementsReferencingTarget(downcast<SVGElement>(renderer.element()));
     if (!dependencies)
         return;
     for (auto* element : *dependencies) {

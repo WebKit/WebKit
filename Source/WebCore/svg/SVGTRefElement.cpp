@@ -175,7 +175,7 @@ void SVGTRefElement::detachTarget()
     String id;
     SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!id.isEmpty())
-        document().accessSVGExtensions()->addPendingResource(id, this);
+        document().accessSVGExtensions().addPendingResource(id, this);
 }
 
 bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -263,7 +263,7 @@ void SVGTRefElement::buildPendingResource()
         if (id.isEmpty())
             return;
 
-        document().accessSVGExtensions()->addPendingResource(id, this);
+        document().accessSVGExtensions().addPendingResource(id, this);
         ASSERT(hasPendingResources());
         return;
     }

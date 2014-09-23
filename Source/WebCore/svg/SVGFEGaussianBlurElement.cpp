@@ -114,7 +114,7 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
         else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feGaussianBlur: problem parsing edgeMode=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;

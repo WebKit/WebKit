@@ -75,7 +75,7 @@ void SVGFEImageElement::clearResourceReferences()
         m_cachedImage = 0;
     }
 
-    document().accessSVGExtensions()->removeAllTargetReferencesForElement(this);
+    document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
 }
 
 void SVGFEImageElement::requestImageResource()
@@ -100,13 +100,13 @@ void SVGFEImageElement::buildPendingResource()
         if (id.isEmpty())
             requestImageResource();
         else {
-            document().accessSVGExtensions()->addPendingResource(id, this);
+            document().accessSVGExtensions().addPendingResource(id, this);
             ASSERT(hasPendingResources());
         }
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions()->addElementReferencingTarget(this, downcast<SVGElement>(target));
+        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target));
     }
 
     invalidate();

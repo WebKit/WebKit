@@ -289,8 +289,8 @@ SVGElement::~SVGElement()
 
         m_svgRareData = nullptr;
     }
-    document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(*this);
-    document().accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+    document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
+    document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
 }
 
 short SVGElement::tabIndex() const
@@ -347,15 +347,15 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
         return;
 
     String errorString = "<" + tagName() + "> attribute " + name.toString() + "=\"" + value + "\"";
-    SVGDocumentExtensions* extensions = document().accessSVGExtensions();
+    SVGDocumentExtensions& extensions = document().accessSVGExtensions();
 
     if (error == NegativeValueForbiddenError) {
-        extensions->reportError("Invalid negative value for " + errorString);
+        extensions.reportError("Invalid negative value for " + errorString);
         return;
     }
 
     if (error == ParsingAttributeFailedError) {
-        extensions->reportError("Invalid value for " + errorString);
+        extensions.reportError("Invalid value for " + errorString);
         return;
     }
 
@@ -386,8 +386,8 @@ void SVGElement::removedFrom(ContainerNode& rootParent)
     StyledElement::removedFrom(rootParent);
 
     if (wasInDocument) {
-        document().accessSVGExtensions()->clearTargetDependencies(*this);
-        document().accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+        document().accessSVGExtensions().clearTargetDependencies(*this);
+        document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
     }
     SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
@@ -418,13 +418,6 @@ SVGElement* SVGElement::viewportElement() const
     }
 
     return nullptr;
-}
-
-SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions()
-{
-    // This function is provided for use by SVGAnimatedProperty to avoid
-    // global inclusion of Document.h in SVG code.
-    return document().accessSVGExtensions();
 }
  
 void SVGElement::mapInstanceToElement(SVGElementInstance* instance)
@@ -744,7 +737,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
     StyledElement::attributeChanged(name, oldValue, newValue);
 
     if (name == HTMLNames::idAttr)
-        document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(*this);
+        document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.
@@ -1081,20 +1074,20 @@ void SVGElement::buildPendingResourcesIfNeeded()
     if (!needsPendingResourceHandling() || !inDocument() || isInShadowTree())
         return;
 
-    SVGDocumentExtensions* extensions = document().accessSVGExtensions();
+    SVGDocumentExtensions& extensions = document().accessSVGExtensions();
     String resourceId = getIdAttribute();
-    if (!extensions->isIdOfPendingResource(resourceId))
+    if (!extensions.isIdOfPendingResource(resourceId))
         return;
 
     // Mark pending resources as pending for removal.
-    extensions->markPendingResourcesForRemoval(resourceId);
+    extensions.markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (Element* clientElement = extensions->removeElementFromPendingResourcesForRemovalMap(resourceId)) {
+    while (Element* clientElement = extensions.removeElementFromPendingResourcesForRemovalMap(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
-            extensions->clearHasPendingResourcesIfPossible(clientElement);
+            extensions.clearHasPendingResourcesIfPossible(clientElement);
         }
     }
 }

@@ -87,7 +87,7 @@ GraphicsContext* FilterEffectRenderer::inputContext()
 PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
     if (!renderer)
-        return 0;
+        return nullptr;
 
     Document* document = &renderer->document();
 
@@ -100,15 +100,15 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElemen
         document = cachedSVGDocument->document();
 
     if (!document)
-        return 0;
+        return nullptr;
 
     Element* filter = document->getElementById(filterOperation->fragment());
     if (!filter) {
         // Although we did not find the referenced filter, it might exist later in the document.
         // FIXME: This skips anonymous RenderObjects. <https://webkit.org/b/131085>
         if (Element* element = renderer->element())
-            document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), element);
-        return 0;
+            document->accessSVGExtensions().addPendingResource(filterOperation->fragment(), element);
+        return nullptr;
     }
 
     RefPtr<FilterEffect> effect;

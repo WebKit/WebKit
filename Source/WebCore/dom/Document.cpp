@@ -693,7 +693,7 @@ void Document::removedLastRef()
 void Document::commonTeardown()
 {
     if (svgExtensions())
-        accessSVGExtensions()->pauseAnimations();
+        accessSVGExtensions().pauseAnimations();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
@@ -2440,7 +2440,7 @@ void Document::implicitClose()
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
     // which is the default, for ='true' its fired at a later time, once all external resources finished loading).
     if (svgExtensions())
-        accessSVGExtensions()->dispatchSVGLoadEventToOutermostSVGElements();
+        accessSVGExtensions().dispatchSVGLoadEventToOutermostSVGElements();
 
     dispatchWindowLoadEvent();
     enqueuePageshowEvent(PageshowEventNotPersisted);
@@ -2505,7 +2505,7 @@ void Document::implicitClose()
 #endif
 
     if (svgExtensions())
-        accessSVGExtensions()->startAnimations();
+        accessSVGExtensions().startAnimations();
 }
 
 void Document::setParsing(bool b)
@@ -4464,11 +4464,11 @@ const SVGDocumentExtensions* Document::svgExtensions()
     return m_svgExtensions.get();
 }
 
-SVGDocumentExtensions* Document::accessSVGExtensions()
+SVGDocumentExtensions& Document::accessSVGExtensions()
 {
     if (!m_svgExtensions)
         m_svgExtensions = std::make_unique<SVGDocumentExtensions>(this);
-    return m_svgExtensions.get();
+    return *m_svgExtensions;
 }
 
 bool Document::hasSVGRootNode() const

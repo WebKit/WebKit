@@ -1094,7 +1094,7 @@ public:
     virtual void removeAllEventListeners() override;
 
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
-    WEBCORE_EXPORT SVGDocumentExtensions* accessSVGExtensions();
+    WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
     void initSecurityContext();
     void initContentSecurityPolicy();

@@ -168,7 +168,7 @@ Element::~Element()
         detachAllAttrNodesFromElement();
 
     if (hasPendingResources()) {
-        document().accessSVGExtensions()->removeElementFromPendingResources(this);
+        document().accessSVGExtensions().removeElementFromPendingResources(this);
         ASSERT(!hasPendingResources());
     }
 }
@@ -1410,7 +1410,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
     ContainerNode::removedFrom(insertionPoint);
 
     if (hasPendingResources())
-        document().accessSVGExtensions()->removeElementFromPendingResources(this);
+        document().accessSVGExtensions().removeElementFromPendingResources(this);
 }
 
 void Element::unregisterNamedFlowContentElement()

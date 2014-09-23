@@ -746,7 +746,7 @@ bool isPlainTextMarkup(Node* node)
     if (!isHTMLDivElement(node))
         return false;
 
-    HTMLDivElement& element = toHTMLDivElement(*node);
+    HTMLDivElement& element = downcast<HTMLDivElement>(*node);
     if (element.hasAttributes())
         return false;
 

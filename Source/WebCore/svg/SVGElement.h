@@ -74,8 +74,6 @@ public:
     void setInstanceUpdatesBlocked(bool);
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
-    SVGDocumentExtensions* accessDocumentSVGExtensions();
-
     virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }
     virtual bool isGradientStop() const { return false; }

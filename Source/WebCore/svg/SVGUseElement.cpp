@@ -390,7 +390,7 @@ void SVGUseElement::clearResourceReferences()
 
     m_needsShadowTreeRecreation = false;
 
-    document().accessSVGExtensions()->removeAllTargetReferencesForElement(this);
+    document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
 }
 
 void SVGUseElement::buildPendingResource()
@@ -411,7 +411,7 @@ void SVGUseElement::buildPendingResource()
         if (id.isEmpty())
             return;
 
-        referencedDocument()->accessSVGExtensions()->addPendingResource(id, this);
+        referencedDocument()->accessSVGExtensions().addPendingResource(id, this);
         ASSERT(hasPendingResources());
         return;
     }
@@ -550,7 +550,7 @@ void SVGUseElement::toClipPath(Path& path)
     if (node->isSVGElement() && downcast<SVGElement>(*node).isSVGGraphicsElement()) {
         if (!isDirectReference(downcast<SVGElement>(*node))) {
             // Spec: Indirect references are an error (14.3.5)
-            document().accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
+            document().accessSVGExtensions().reportError("Not allowed to use indirect reference in <clip-path>");
         } else {
             toSVGGraphicsElement(*node).toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
@@ -593,7 +593,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
         // We only need to track first degree <use> dependencies. Indirect references are handled
         // as the invalidation bubbles up the dependency chain.
         if (!foundUse) {
-            document().accessSVGExtensions()->addElementReferencingTarget(this, target);
+            document().accessSVGExtensions().addElementReferencingTarget(this, target);
             foundUse = true;
         }
     } else if (isDisallowedElement(*target)) {

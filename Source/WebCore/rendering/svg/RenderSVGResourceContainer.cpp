@@ -31,8 +31,7 @@ namespace WebCore {
 
 static inline SVGDocumentExtensions& svgExtensionsFromElement(SVGElement& element)
 {
-    // FIXME: accessSVGExtensions() should return a reference.
-    return *element.document().accessSVGExtensions();
+    return element.document().accessSVGExtensions();
 }
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, PassRef<RenderStyle> style)

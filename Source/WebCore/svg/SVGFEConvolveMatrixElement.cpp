@@ -136,7 +136,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
             setOrderXBaseValue(x);
             setOrderYBaseValue(y);
         } else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feConvolveMatrix: problem parsing order=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;
@@ -147,7 +147,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
         else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feConvolveMatrix: problem parsing edgeMode=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;
@@ -166,7 +166,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         if (divisor)
             setDivisorBaseValue(divisor);
         else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feConvolveMatrix: problem parsing divisor=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;
@@ -193,7 +193,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         } else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feConvolveMatrix: problem parsing kernelUnitLength=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;
@@ -205,7 +205,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
         else if (value == "false")
             setPreserveAlphaBaseValue(false);
         else
-            document().accessSVGExtensions()->reportWarning(
+            document().accessSVGExtensions().reportWarning(
                 "feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + value
                 + "\". Filtered element will not be displayed.");
         return;
