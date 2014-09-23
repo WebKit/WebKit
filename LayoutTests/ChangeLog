@@ -1,3 +1,17 @@
+2014-09-23  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Adds implementation of Subtle Crypto digest algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=133319
+
+        Leaves all crypto/subtle tests skipped and whitelist only those related to
+        digest algorithms (sha-*.html). When enough crypto algorithms are implemented,
+        we can invert the approach and blacklist only those tests whose algorithms are
+        not implemented.
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: Unskip tests for Subtle-Crypto digest algorithms.
+
 2014-09-23  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] The composited layers isolated by the page group should blend with the default white background color.

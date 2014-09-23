@@ -355,8 +355,14 @@ Bug(GTK) editing/secure-input [ Failure ]
 # Synthesized italics not supported
 webkit.org/b/117975 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
-# crypto.subtle is not yet enabled
-Bug(GTK) crypto/subtle [ Skip ]
+# crypto.subtle is not yet enabled, but digest algorithms are already implemented
+# and their tests are whitelisted
+webkit.org/b/133122 crypto/subtle [ Skip ]
+webkit.org/b/133319 crypto/subtle/sha-1.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-224.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-256.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-384.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-512.html [ Pass ]
 
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]

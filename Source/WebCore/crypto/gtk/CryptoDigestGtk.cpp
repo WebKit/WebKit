@@ -28,44 +28,78 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "NotImplemented.h"
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 
 namespace WebCore {
 
 struct CryptoDigestContext {
+    gnutls_digest_algorithm_t algorithm;
+    gnutls_hash_hd_t hash;
 };
 
 CryptoDigest::CryptoDigest()
     : m_context(new CryptoDigestContext)
 {
-    notImplemented();
 }
 
 CryptoDigest::~CryptoDigest()
 {
-    notImplemented();
+    gnutls_hash_deinit(m_context->hash, 0);
 }
-
 
 std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoAlgorithmIdentifier algorithm)
 {
-    notImplemented();
-    UNUSED_PARAM(algorithm);
+    gnutls_digest_algorithm_t gnutlsAlgorithm;
 
-    return 0;
+    switch (algorithm) {
+    case CryptoAlgorithmIdentifier::SHA_1: {
+        gnutlsAlgorithm = GNUTLS_DIG_SHA1;
+        break;
+    }
+    case CryptoAlgorithmIdentifier::SHA_224: {
+        gnutlsAlgorithm = GNUTLS_DIG_SHA224;
+        break;
+    }
+    case CryptoAlgorithmIdentifier::SHA_256: {
+        gnutlsAlgorithm = GNUTLS_DIG_SHA256;
+        break;
+    }
+    case CryptoAlgorithmIdentifier::SHA_384: {
+        gnutlsAlgorithm = GNUTLS_DIG_SHA384;
+        break;
+    }
+    case CryptoAlgorithmIdentifier::SHA_512: {
+        gnutlsAlgorithm = GNUTLS_DIG_SHA512;
+        break;
+    }
+    default:
+        return nullptr;
+    }
+
+    std::unique_ptr<CryptoDigest> digest(new CryptoDigest);
+    digest->m_context->algorithm = gnutlsAlgorithm;
+
+    int ret = gnutls_hash_init(&digest->m_context->hash, gnutlsAlgorithm);
+    if (ret != GNUTLS_E_SUCCESS)
+        return nullptr;
+
+    return digest;
 }
 
 void CryptoDigest::addBytes(const void* input, size_t length)
 {
-    notImplemented();
-    UNUSED_PARAM(input);
-    UNUSED_PARAM(length);
+    gnutls_hash(m_context->hash, input, length);
 }
 
 Vector<uint8_t> CryptoDigest::computeHash()
 {
-    notImplemented();
-    Vector<uint8_t> result(0);
+    Vector<uint8_t> result;
+    int digestLen = gnutls_hash_get_len(m_context->algorithm);
+    result.resize(digestLen);
+
+    gnutls_hash_output(m_context->hash, result.data());
+
     return result;
 }
 
