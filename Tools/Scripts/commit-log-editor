@@ -152,6 +152,8 @@ while (my $curLine = <LOG>) {
 }
 close LOG;
 
+@changeLogs = map { $ENV{GIT_PREFIX} . $_ } @changeLogs if isGit();
+
 # We want to match the line endings of the existing log file in case they're
 # different from perl's line endings.
 $endl = $1 if $logContents =~ /(\r?\n)/;
