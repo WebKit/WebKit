@@ -68,7 +68,7 @@ StyleSheet* StyleSheetList::item(unsigned index)
 HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
 {
     if (!m_document)
-        return 0;
+        return nullptr;
 
     // IE also supports retrieving a stylesheet by name, using the name/id of the <style> tag
     // (this is consistent with all the other collections)
@@ -77,8 +77,8 @@ HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
     // But unicity of stylesheet ids is good practice anyway ;)
     Element* element = m_document->getElementById(name);
     if (element && isHTMLStyleElement(element))
-        return toHTMLStyleElement(element);
-    return 0;
+        return downcast<HTMLStyleElement>(element);
+    return nullptr;
 }
 
 } // namespace WebCore

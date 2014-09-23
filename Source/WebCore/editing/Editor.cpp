@@ -209,7 +209,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
-    HTMLTextFormControlElement* textFromControlOfTarget = isHTMLTextFormControlElement(*event->target()->toNode()) ? toHTMLTextFormControlElement(event->target()->toNode()) : nullptr;
+    HTMLTextFormControlElement* textFromControlOfTarget = isHTMLTextFormControlElement(*event->target()->toNode()) ? downcast<HTMLTextFormControlElement>(event->target()->toNode()) : nullptr;
     if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
         if (RefPtr<Range> range = textFromControlOfTarget->selection())
             return VisibleSelection(range.get(), DOWNSTREAM, selection.isDirectional());
@@ -321,18 +321,18 @@ bool Editor::canCut() const
 static HTMLImageElement* imageElementFromImageDocument(Document& document)
 {
     if (!document.isImageDocument())
-        return 0;
+        return nullptr;
     
     HTMLElement* body = document.body();
     if (!body)
-        return 0;
+        return nullptr;
     
     Node* node = body->firstChild();
     if (!node)
-        return 0;
+        return nullptr;
     if (!isHTMLImageElement(node))
-        return 0;
-    return toHTMLImageElement(node);
+        return nullptr;
+    return downcast<HTMLImageElement>(node);
 }
 
 bool Editor::canCopy() const
@@ -3533,18 +3533,18 @@ static Node* findFirstMarkable(Node* node)
 {
     while (node) {
         if (!node->renderer())
-            return 0;
+            return nullptr;
         if (node->renderer()->isTextOrLineBreak())
             return node;
         if (isHTMLTextFormControlElement(*node))
-            node = toHTMLTextFormControlElement(node)->visiblePositionForIndex(1).deepEquivalent().deprecatedNode();
+            node = downcast<HTMLTextFormControlElement>(*node).visiblePositionForIndex(1).deepEquivalent().deprecatedNode();
         else if (node->firstChild())
             node = node->firstChild();
         else
             node = node->nextSibling();
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, int from, int length) const

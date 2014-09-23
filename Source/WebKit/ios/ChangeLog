@@ -1,3 +1,15 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Use downcast<HTML*Element>() instead of toHTML*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137007
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<HTML*Element>() instead of toHTML*Element().
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::focusedElementChanged):
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r173695.

@@ -1033,9 +1033,9 @@ void FrameLoader::setOpener(Frame* opener)
 void FrameLoader::handleFallbackContent()
 {
     HTMLFrameOwnerElement* owner = m_frame.ownerElement();
-    if (!owner || !owner->hasTagName(objectTag))
+    if (!owner || !isHTMLObjectElement(owner))
         return;
-    toHTMLObjectElement(owner)->renderFallbackContent();
+    downcast<HTMLObjectElement>(*owner).renderFallbackContent();
 }
 
 void FrameLoader::provisionalLoadStarted()

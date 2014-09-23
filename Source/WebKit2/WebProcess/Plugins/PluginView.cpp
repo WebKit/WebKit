@@ -590,7 +590,7 @@ void PluginView::initializePlugin()
     }
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
+    HTMLPlugInImageElement* plugInImageElement = downcast<HTMLPlugInImageElement>(m_pluginElement.get());
     m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
 #endif
     m_plugin->initialize(this, m_parameters);
@@ -1713,7 +1713,7 @@ void PluginView::pluginSnapshotTimerFired()
     ASSERT(m_plugin);
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
+    HTMLPlugInImageElement* plugInImageElement = downcast<HTMLPlugInImageElement>(m_pluginElement.get());
     bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
     bool plugInCameOnScreen = isPlugInOnScreen && m_didPlugInStartOffScreen;
     bool snapshotFound = false;
@@ -1781,7 +1781,7 @@ void PluginView::pluginDidReceiveUserInteraction()
 
     m_didReceiveUserInteraction = true;
 
-    WebCore::HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
+    WebCore::HTMLPlugInImageElement* plugInImageElement = downcast<HTMLPlugInImageElement>(m_pluginElement.get());
     String pageOrigin = plugInImageElement->document().page()->mainFrame().document()->baseURL().host();
     String pluginOrigin = plugInImageElement->loadedUrl().host();
     String mimeType = plugInImageElement->loadedMimeType();

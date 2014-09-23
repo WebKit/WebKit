@@ -238,8 +238,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
     if (!plugInElement.isPlugInImageElement())
         return;
 
-    Image* snapshot = toHTMLPlugInImageElement(plugInElement).snapshotImage();
-    if (snapshot)
+    if (Image* snapshot = downcast<HTMLPlugInImageElement>(plugInElement).snapshotImage())
         paintSnapshotImage(paintInfo, paintOffset, snapshot);
 }
 
@@ -495,7 +494,7 @@ void RenderEmbeddedObject::layout()
     if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
         HTMLFrameOwnerElement& element = frameOwnerElement();
         if (element.isPluginElement() && toHTMLPlugInElement(element).isPlugInImageElement()) {
-            HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(element);
+            HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(element);
             if (plugInImageElement.displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement.snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
                 plugInImageElement.setNeedsCheckForSizeChange();
                 view().frameView().addEmbeddedObjectToUpdate(*this);

@@ -238,19 +238,19 @@ static AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
 
 static AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
 {
-    g_return_val_if_fail(ATK_TABLE(table), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), 0);
+    g_return_val_if_fail(ATK_TABLE(table), nullptr);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), nullptr);
 
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
         Node* node = accTable->node();
         if (node && isHTMLTableElement(node)) {
-            HTMLTableCaptionElement* caption = toHTMLTableElement(node)->caption();
+            HTMLTableCaptionElement* caption = downcast<HTMLTableElement>(*node).caption();
             if (caption)
                 return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->element())->wrapper();
         }
     }
-    return 0;
+    return nullptr;
 }
 
 static const gchar* webkitAccessibleTableGetColumnDescription(AtkTable* table, gint column)

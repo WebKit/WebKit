@@ -102,7 +102,7 @@ void AccessibilityMenuListPopup::addChildren()
 
     m_haveChildren = true;
 
-    for (const auto& listItem : toHTMLSelectElement(selectNode)->listItems()) {
+    for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems()) {
         AccessibilityMenuListOption* option = menuListOptionAccessibilityObject(listItem);
         if (option) {
             option->setParent(this);

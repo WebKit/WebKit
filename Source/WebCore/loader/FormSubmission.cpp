@@ -190,7 +190,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         if (!element.isDisabledFormControl())
             control.appendFormData(*domFormData, isMultiPartForm);
         if (isHTMLInputElement(element)) {
-            HTMLInputElement& input = toHTMLInputElement(element);
+            HTMLInputElement& input = downcast<HTMLInputElement>(element);
             if (input.isTextField()) {
                 formValues.append(std::pair<String, String>(input.name().string(), input.value()));
                 input.addSearchResult();

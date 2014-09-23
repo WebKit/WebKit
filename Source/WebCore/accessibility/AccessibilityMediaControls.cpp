@@ -277,7 +277,7 @@ String AccessibilityMediaTimeline::valueDescription() const
     if (!isHTMLInputElement(node))
         return String();
 
-    float time = toHTMLInputElement(node)->value().toFloat();
+    float time = downcast<HTMLInputElement>(*node).value().toFloat();
     return localizedMediaTimeDescription(time);
 }
 

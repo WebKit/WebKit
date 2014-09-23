@@ -40,8 +40,8 @@ class HTMLTableRowsCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 
-    HTMLTableElement& tableElement() { return toHTMLTableElement(ownerNode()); }
-    const HTMLTableElement& tableElement() const { return toHTMLTableElement(ownerNode()); }
+    HTMLTableElement& tableElement() { return downcast<HTMLTableElement>(ownerNode()); }
+    const HTMLTableElement& tableElement() const { return downcast<HTMLTableElement>(ownerNode()); }
 
     static HTMLTableRowElement* rowAfter(HTMLTableElement*, HTMLTableRowElement*);
     static HTMLTableRowElement* lastRow(HTMLTableElement*);

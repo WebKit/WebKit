@@ -60,7 +60,7 @@ RenderSlider::~RenderSlider()
 
 HTMLInputElement& RenderSlider::element() const
 {
-    return toHTMLInputElement(nodeForNonAnonymous());
+    return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
 
 int RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirectionMode, LinePositionMode) const

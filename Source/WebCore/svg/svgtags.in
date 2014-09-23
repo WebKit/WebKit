@@ -3,7 +3,7 @@ namespaceURI="http://www.w3.org/2000/svg"
 fallbackInterfaceName="SVGUnknownElement"
 fallbackJSInterfaceName="SVGElement"
 
-a
+a generateTypeHelpers
 #if ENABLE_SVG_FONTS
 altGlyph generateTypeHelpers
 altGlyphDef generateTypeHelpers

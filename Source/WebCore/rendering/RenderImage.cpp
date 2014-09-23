@@ -131,7 +131,7 @@ RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImag
     imageResource().initialize(this);
 
     if (isHTMLImageElement(element))
-        m_hasShadowControls = toHTMLImageElement(element).hasShadowControls();
+        m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
 
 RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleImage* styleImage)
@@ -517,20 +517,20 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     if (!focusedElement || !isHTMLAreaElement(focusedElement))
         return;
 
-    HTMLAreaElement* areaElement = toHTMLAreaElement(focusedElement);
-    if (areaElement->imageElement() != element())
+    HTMLAreaElement& areaElement = downcast<HTMLAreaElement>(*focusedElement);
+    if (areaElement.imageElement() != element())
         return;
 
     // Even if the theme handles focus ring drawing for entire elements, it won't do it for
     // an area within an image, so we don't call RenderTheme::supportsFocusRing here.
 
-    Path path = areaElement->computePath(this);
+    Path path = areaElement.computePath(this);
     if (path.isEmpty())
         return;
 
     // FIXME: Do we need additional code to clip the path to the image's bounding box?
 
-    RenderStyle* areaElementStyle = areaElement->computedStyle();
+    RenderStyle* areaElementStyle = areaElement.computedStyle();
     unsigned short outlineWidth = areaElementStyle->outlineWidth();
     if (!outlineWidth)
         return;
@@ -560,8 +560,8 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
     if (!img || img->isNull())
         return;
 
-    HTMLImageElement* imageElt = (element() && isHTMLImageElement(element())) ? toHTMLImageElement(element()) : 0;
-    CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
+    HTMLImageElement* imageElement = (element() && isHTMLImageElement(element())) ? downcast<HTMLImageElement>(element()) : nullptr;
+    CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
     Image* image = imageResource().image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, LayoutSize(rect.size()));
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
@@ -622,8 +622,8 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 HTMLMapElement* RenderImage::imageMap() const
 {
-    HTMLImageElement* i = element() && isHTMLImageElement(element()) ? toHTMLImageElement(element()) : 0;
-    return i ? i->treeScope().getImageMap(i->fastGetAttribute(usemapAttr)) : 0;
+    HTMLImageElement* image = element() && isHTMLImageElement(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
+    return image ? image->treeScope().getImageMap(image->fastGetAttribute(usemapAttr)) : nullptr;
 }
 
 bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -655,10 +655,10 @@ void RenderImage::updateAltText()
     if (!element())
         return;
 
-    if (isHTMLInputElement(element()))
-        m_altText = toHTMLInputElement(element())->altText();
-    else if (isHTMLImageElement(element()))
-        m_altText = toHTMLImageElement(element())->altText();
+    if (isHTMLInputElement(*element()))
+        m_altText = downcast<HTMLInputElement>(*element()).altText();
+    else if (isHTMLImageElement(*element()))
+        m_altText = downcast<HTMLImageElement>(*element()).altText();
 }
 
 bool RenderImage::canHaveChildren() const

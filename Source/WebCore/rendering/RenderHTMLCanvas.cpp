@@ -50,7 +50,7 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, PassRef<RenderSty
 
 HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const
 {
-    return toHTMLCanvasElement(nodeForNonAnonymous());
+    return downcast<HTMLCanvasElement>(nodeForNonAnonymous());
 }
 
 bool RenderHTMLCanvas::requiresLayer() const

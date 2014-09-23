@@ -1338,7 +1338,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
         elementRareData()->clearClassListValueForQuirksMode();
 
     TreeScope* newScope = &insertionPoint.treeScope();
-    HTMLDocument* newDocument = !wasInDocument && inDocument() && newScope->documentScope().isHTMLDocument() ? toHTMLDocument(&newScope->documentScope()) : nullptr;
+    HTMLDocument* newDocument = !wasInDocument && inDocument() && newScope->documentScope().isHTMLDocument() ? downcast<HTMLDocument>(&newScope->documentScope()) : nullptr;
     if (newScope != &treeScope())
         newScope = nullptr;
 
@@ -1381,7 +1381,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
     if (insertionPoint.isInTreeScope()) {
         TreeScope* oldScope = &insertionPoint.treeScope();
-        HTMLDocument* oldDocument = inDocument() && oldScope->documentScope().isHTMLDocument() ? toHTMLDocument(&oldScope->documentScope()) : nullptr;
+        HTMLDocument* oldDocument = inDocument() && oldScope->documentScope().isHTMLDocument() ? downcast<HTMLDocument>(&oldScope->documentScope()) : nullptr;
         if (oldScope != &treeScope() || !isInTreeScope())
             oldScope = nullptr;
 
@@ -2590,7 +2590,7 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
         return;
     if (!document().isHTMLDocument())
         return;
-    updateNameForDocument(toHTMLDocument(document()), oldName, newName);
+    updateNameForDocument(downcast<HTMLDocument>(document()), oldName, newName);
 }
 
 void Element::updateNameForTreeScope(TreeScope& scope, const AtomicString& oldName, const AtomicString& newName)
@@ -2638,7 +2638,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         return;
     if (!document().isHTMLDocument())
         return;
-    updateIdForDocument(toHTMLDocument(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, const AtomicString& newId)
@@ -2685,9 +2685,9 @@ void Element::updateLabel(TreeScope& scope, const AtomicString& oldForAttributeV
         return;
 
     if (!oldForAttributeValue.isEmpty())
-        scope.removeLabel(*oldForAttributeValue.impl(), *toHTMLLabelElement(this));
+        scope.removeLabel(*oldForAttributeValue.impl(), downcast<HTMLLabelElement>(*this));
     if (!newForAttributeValue.isEmpty())
-        scope.addLabel(*newForAttributeValue.impl(), *toHTMLLabelElement(this));
+        scope.addLabel(*newForAttributeValue.impl(), downcast<HTMLLabelElement>(*this));
 }
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
@@ -2741,11 +2741,10 @@ PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType ty
     if (HTMLCollection* collection = cachedHTMLCollection(type))
         return collection;
 
-    RefPtr<HTMLCollection> collection;
     if (type == TableRows) {
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(toHTMLTableElement(*this), type);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(downcast<HTMLTableElement>(*this), type);
     } else if (type == SelectOptions) {
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(toHTMLSelectElement(*this), type);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(downcast<HTMLSelectElement>(*this), type);
     } else if (type == FormControls) {
         ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
         return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, type);

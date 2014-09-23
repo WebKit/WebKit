@@ -45,7 +45,7 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
 
 HTMLTextAreaElement& RenderTextControlMultiLine::textAreaElement() const
 {
-    return toHTMLTextAreaElement(RenderTextControl::textFormControlElement());
+    return downcast<HTMLTextAreaElement>(RenderTextControl::textFormControlElement());
 }
 
 bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

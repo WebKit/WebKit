@@ -86,7 +86,7 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
     }
 
     if (loadError && isHTMLObjectElement(element()))
-        toHTMLObjectElement(element()).renderFallbackContent();
+        downcast<HTMLObjectElement>(element()).renderFallbackContent();
 }
 
 }

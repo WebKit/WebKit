@@ -524,8 +524,8 @@ bool AccessibilityRenderObject::isAttachment() const
 bool AccessibilityRenderObject::isFileUploadButton() const
 {
     if (m_renderer && m_renderer->node() && isHTMLInputElement(m_renderer->node())) {
-        HTMLInputElement* input = toHTMLInputElement(m_renderer->node());
-        return input->isFileUpload();
+        HTMLInputElement& input = downcast<HTMLInputElement>(*m_renderer->node());
+        return input.isFileUpload();
     }
     
     return false;
@@ -741,9 +741,9 @@ String AccessibilityRenderObject::stringValue() const
     if (cssBox && cssBox->isMenuList()) {
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overridden in the case where the selected item has an ARIA label.
-        HTMLSelectElement* selectElement = toHTMLSelectElement(m_renderer->node());
-        int selectedIndex = selectElement->selectedIndex();
-        const Vector<HTMLElement*>& listItems = selectElement->listItems();
+        HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*m_renderer->node());
+        int selectedIndex = selectElement.selectedIndex();
+        const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
             const AtomicString& overriddenDescription = listItems[selectedIndex]->fastGetAttribute(aria_labelAttr);
             if (!overriddenDescription.isNull())
@@ -783,7 +783,7 @@ HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
     // find if this has a parent that is a label
     for (Node* parentNode = m_renderer->node(); parentNode; parentNode = parentNode->parentNode()) {
         if (isHTMLLabelElement(parentNode))
-            return toHTMLLabelElement(parentNode);
+            return downcast<HTMLLabelElement>(parentNode);
     }
     
     return nullptr;
@@ -916,9 +916,9 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     // Right now, we do not support ARIA links as internal link elements
     if (!isHTMLAnchorElement(element))
         return nullptr;
-    HTMLAnchorElement* anchor = toHTMLAnchorElement(element);
+    HTMLAnchorElement& anchor = downcast<HTMLAnchorElement>(*element);
     
-    URL linkURL = anchor->href();
+    URL linkURL = anchor.href();
     String fragmentIdentifier = linkURL.fragmentIdentifier();
     if (fragmentIdentifier.isEmpty())
         return nullptr;
@@ -953,24 +953,25 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
     if (!node || !isHTMLInputElement(node))
         return;
     
-    HTMLInputElement* input = toHTMLInputElement(node);
+    HTMLInputElement& input = downcast<HTMLInputElement>(*node);
     // if there's a form, then this is easy
-    if (input->form()) {
+    if (input.form()) {
         Vector<Ref<Element>> formElements;
-        input->form()->getNamedElements(input->name(), formElements);
+        input.form()->getNamedElements(input.name(), formElements);
         
         for (auto& associateElement : formElements) {
             if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement.get()))
                 linkedUIElements.append(object);        
         } 
     } else {
-        RefPtr<NodeList> list = node->document().getElementsByTagName("input");
-        unsigned len = list->length();
-        for (unsigned i = 0; i < len; ++i) {
-            if (isHTMLInputElement(list->item(i))) {
-                HTMLInputElement* associateElement = toHTMLInputElement(list->item(i));
-                if (associateElement->isRadioButton() && associateElement->name() == input->name()) {
-                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement))
+        RefPtr<NodeList> list = node->document().getElementsByTagName(inputTag.localName());
+        unsigned length = list->length();
+        for (unsigned i = 0; i < length; ++i) {
+            Node* item = list->item(i);
+            if (isHTMLInputElement(item)) {
+                HTMLInputElement& associateElement = downcast<HTMLInputElement>(*item);
+                if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
+                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
                         linkedUIElements.append(object);
                 }
             }
@@ -1507,7 +1508,7 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 URL AccessibilityRenderObject::url() const
 {
     if (isAnchor() && isHTMLAnchorElement(m_renderer->node())) {
-        if (HTMLAnchorElement* anchor = toHTMLAnchorElement(anchorElement()))
+        if (HTMLAnchorElement* anchor = downcast<HTMLAnchorElement>(anchorElement()))
             return anchor->href();
     }
     
@@ -1515,10 +1516,10 @@ URL AccessibilityRenderObject::url() const
         return m_renderer->document().url();
     
     if (isImage() && m_renderer->node() && isHTMLImageElement(m_renderer->node()))
-        return toHTMLImageElement(m_renderer->node())->src();
+        return downcast<HTMLImageElement>(*m_renderer->node()).src();
     
     if (isInputImage())
-        return toHTMLInputElement(m_renderer->node())->src();
+        return downcast<HTMLInputElement>(*m_renderer->node()).src();
     
     return URL();
 }
@@ -1679,20 +1680,17 @@ void AccessibilityRenderObject::setValue(const String& string)
 {
     if (!m_renderer || !m_renderer->node() || !m_renderer->node()->isElementNode())
         return;
-    Element* element = toElement(m_renderer->node());
+    Element& element = toElement(*m_renderer->node());
 
     if (!m_renderer->isBoxModelObject())
         return;
     RenderBoxModelObject* renderer = toRenderBoxModelObject(m_renderer);
 
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer->isTextField()) {
-        // FIXME: This is not safe!  Other elements could have a TextField renderer.
-        toHTMLInputElement(element)->setValue(string);
-    } else if (renderer->isTextArea()) {
-        // FIXME: This is not safe!  Other elements could have a TextArea renderer.
-        toHTMLTextAreaElement(element)->setValue(string);
-    }
+    if (renderer->isTextField() && isHTMLInputElement(element))
+        downcast<HTMLInputElement>(element).setValue(string);
+    else if (renderer->isTextArea() && isHTMLTextAreaElement(element))
+        downcast<HTMLTextAreaElement>(element).setValue(string);
 }
 
 void AccessibilityRenderObject::ariaOwnsElements(AccessibilityChildrenVector& axObjects) const
@@ -1763,10 +1761,10 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
             Node* parent = curr->parentNode();
             if (parent && isHTMLAreaElement(curr) && isHTMLMapElement(parent)) {
                 AccessibilityImageMapLink* areaObject = toAccessibilityImageMapLink(axObjectCache()->getOrCreate(ImageMapLinkRole));
-                HTMLMapElement* map = toHTMLMapElement(parent);
-                areaObject->setHTMLAreaElement(toHTMLAreaElement(curr));
-                areaObject->setHTMLMapElement(map);
-                areaObject->setParent(accessibilityParentForImageMap(map));
+                HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
+                areaObject->setHTMLAreaElement(downcast<HTMLAreaElement>(curr));
+                areaObject->setHTMLMapElement(&map);
+                areaObject->setParent(accessibilityParentForImageMap(&map));
 
                 result.append(areaObject);
             }
@@ -2161,7 +2159,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     AccessibilityObject* parent = nullptr;
     for (Element* mapParent = area->parentElement(); mapParent; mapParent = mapParent->parentElement()) {
         if (isHTMLMapElement(mapParent)) {
-            parent = accessibilityParentForImageMap(toHTMLMapElement(mapParent));
+            parent = accessibilityParentForImageMap(downcast<HTMLMapElement>(mapParent));
             break;
         }
     }
@@ -2211,10 +2209,10 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     Node* node = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
 
     if (isHTMLAreaElement(node))
-        return accessibilityImageMapHitTest(toHTMLAreaElement(node), point);
+        return accessibilityImageMapHitTest(downcast<HTMLAreaElement>(node), point);
     
     if (isHTMLOptionElement(node))
-        node = toHTMLOptionElement(node)->ownerSelectElement();
+        node = downcast<HTMLOptionElement>(*node).ownerSelectElement();
     
     RenderObject* obj = node->renderer();
     if (!obj)
@@ -2505,21 +2503,22 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return TextAreaRole;
 
     if (node && isHTMLInputElement(node)) {
-        HTMLInputElement* input = toHTMLInputElement(node);
-        if (input->isCheckbox())
+        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+        if (input.isCheckbox())
             return CheckBoxRole;
-        if (input->isRadioButton())
+        if (input.isRadioButton())
             return RadioButtonRole;
-        if (input->isTextButton())
+        if (input.isTextButton())
             return buttonRoleType();
         // On iOS, the date field is a popup button. On other platforms this is a text field.
 #if PLATFORM(IOS)
-        if (input->isDateField())
+        if (input.isDateField())
             return PopUpButtonRole;
 #endif
         
 #if ENABLE(INPUT_TYPE_COLOR)
-        const AtomicString& type = input->getAttribute(typeAttr);
+        // FIXME: Shouldn't this use input.isColorControl()?
+        const AtomicString& type = input.getAttribute(typeAttr);
         if (equalIgnoringCase(type, "color"))
             return ColorWellRole;
 #endif
@@ -2840,8 +2839,8 @@ void AccessibilityRenderObject::addTextFieldChildren()
     if (!node || !isHTMLInputElement(node))
         return;
     
-    HTMLInputElement* input = toHTMLInputElement(node);
-    HTMLElement* spinButtonElement = input->innerSpinButtonElement();
+    HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+    HTMLElement* spinButtonElement = input.innerSpinButtonElement();
     if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
         return;
 
@@ -3271,7 +3270,7 @@ String AccessibilityRenderObject::stringValueForMSAA() const
     if (isLinkable(*this)) {
         Element* anchor = anchorElement();
         if (anchor && isHTMLAnchorElement(anchor))
-            return toHTMLAnchorElement(anchor)->href();
+            return downcast<HTMLAnchorElement>(*anchor).href();
     }
 
     return stringValue();
@@ -3286,7 +3285,7 @@ bool AccessibilityRenderObject::isLinked() const
     if (!anchor || !isHTMLAnchorElement(anchor))
         return false;
 
-    return !toHTMLAnchorElement(anchor)->href().isEmpty();
+    return !downcast<HTMLAnchorElement>(*anchor).href().isEmpty();
 }
 
 bool AccessibilityRenderObject::hasBoldFont() const

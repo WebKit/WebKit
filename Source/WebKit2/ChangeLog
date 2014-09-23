@@ -1,3 +1,48 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Use downcast<HTML*Element>() instead of toHTML*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137007
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<HTML*Element>() instead of toHTML*Element().
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementValueForUser):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutofilled):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutofilled):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::isTextField):
+        (WebKit::InjectedBundleNodeHandle::htmlTableCellElementCellAbove):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::commit):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement):
+        (WebKit::PDFPluginTextAnnotation::value):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+        (WebKit::PluginView::pluginDidReceiveUserInteraction):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedElementChanged):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setAssistedNodeValue):
+        (WebKit::WebPage::setAssistedNodeValueAsNumber):
+        (WebKit::WebPage::setAssistedNodeSelectedIndex):
+        (WebKit::isAssistableNode): Deleted.
+        (WebKit::WebPage::getAssistedNodeInformation): Deleted.
+
 2014-09-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r171197): Clip's content is drawn behind Safari window when entering Full Screen youtube html5 first time

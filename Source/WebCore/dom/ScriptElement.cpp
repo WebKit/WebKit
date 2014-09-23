@@ -383,7 +383,7 @@ String ScriptElement::scriptContent() const
 ScriptElement* toScriptElementIfPossible(Element* element)
 {
     if (isHTMLScriptElement(element))
-        return toHTMLScriptElement(element);
+        return downcast<HTMLScriptElement>(element);
 
     if (isSVGScriptElement(element))
         return downcast<SVGScriptElement>(element);

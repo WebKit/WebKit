@@ -93,7 +93,7 @@ Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
     
     Node* node = renderer->node();
     if (node && isHTMLImageElement(node)) {
-        const AtomicString& urlString = toHTMLImageElement(node)->imageSourceURL();
+        const AtomicString& urlString = downcast<HTMLImageElement>(*node).imageSourceURL();
         URL url = node->document().completeURL(urlString);
         imageForContainer->setURL(url);
     }

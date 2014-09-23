@@ -417,11 +417,11 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
         if (node->isPluginElement()) {
             HTMLPlugInElement* plugInElement = toHTMLPlugInElement(node);
             if (plugInElement->isPlugInImageElement()) {
-                HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(node);
-                const URL& loadedURL = plugInImageElement->loadedUrl();
-                String otherMimeType = plugInImageElement->loadedMimeType();
+                HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*node);
+                const URL& loadedURL = plugInImageElement.loadedUrl();
+                String otherMimeType = plugInImageElement.loadedMimeType();
                 if (plugInOrigin == loadedURL.host() && mimeType == otherMimeType)
-                    plugInList.append(plugInImageElement);
+                    plugInList.append(&plugInImageElement);
             }
         }
     }

@@ -145,7 +145,7 @@ void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
     if (isHTMLInputElement(formControlElement())) {
-        HTMLInputElement& input = toHTMLInputElement(formControlElement());
+        HTMLInputElement& input = downcast<HTMLInputElement>(formControlElement());
         String value = input.valueWithDefault();
         setText(value);
     }

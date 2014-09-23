@@ -205,7 +205,7 @@ void RenderVideo::layout()
     
 HTMLVideoElement& RenderVideo::videoElement() const
 {
-    return toHTMLVideoElement(RenderMedia::mediaElement());
+    return downcast<HTMLVideoElement>(RenderMedia::mediaElement());
 }
 
 void RenderVideo::updateFromElement()

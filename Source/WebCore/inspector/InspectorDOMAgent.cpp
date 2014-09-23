@@ -1297,8 +1297,8 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
         }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (element->hasTagName(HTMLNames::templateTag))
-            value->setTemplateContent(buildObjectForNode(toHTMLTemplateElement(element)->content(), 0, nodesMap));
+        if (isHTMLTemplateElement(element))
+            value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(*element).content(), 0, nodesMap));
 #endif
 
     } else if (node->isDocumentNode()) {

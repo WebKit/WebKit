@@ -1515,18 +1515,16 @@ HTMLElement* HTMLInputElement::list() const
 HTMLDataListElement* HTMLInputElement::dataList() const
 {
     if (!m_hasNonEmptyList)
-        return 0;
+        return nullptr;
 
     if (!m_inputType->shouldRespectListAttribute())
-        return 0;
+        return nullptr;
 
     Element* element = treeScope().getElementById(fastGetAttribute(listAttr));
-    if (!element)
-        return 0;
-    if (!element->hasTagName(datalistTag))
-        return 0;
+    if (!element || !isHTMLDataListElement(element))
+        return nullptr;
 
-    return toHTMLDataListElement(element);
+    return downcast<HTMLDataListElement>(element);
 }
 
 void HTMLInputElement::resetListAttributeTargetObserver()
@@ -1855,7 +1853,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
 #if ENABLE(DATALIST_ELEMENT)
     if (HTMLDataListElement* dataList = this->dataList()) {
         RefPtr<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; HTMLOptionElement* option = toHTMLOptionElement(options->item(i)); ++i) {
+        for (unsigned i = 0; HTMLOptionElement* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
             if (!isValidValue(option->value()))
                 continue;
             parameters.suggestionValues.append(sanitizeValue(option->value()));

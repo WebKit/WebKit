@@ -379,7 +379,7 @@ bool HTMLElement::matchesReadWritePseudoClass() const
 
     const Document& document = this->document();
     if (document.isHTMLDocument()) {
-        const HTMLDocument& htmlDocument = toHTMLDocument(document);
+        const HTMLDocument& htmlDocument = downcast<HTMLDocument>(document);
         return htmlDocument.inDesignMode();
     }
     return false;
@@ -427,8 +427,8 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
         ContainerNode* container = this;
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (hasTagName(templateTag))
-            container = toHTMLTemplateElement(this)->content();
+        if (isHTMLTemplateElement(*this))
+            container = downcast<HTMLTemplateElement>(*this).content();
 #endif
         replaceChildrenWithFragment(*container, fragment.release(), ec);
     }
@@ -920,11 +920,11 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
     if (isHTMLTextFormControlElement(*this)) {
-        HTMLTextFormControlElement* textElement = toHTMLTextFormControlElement(const_cast<HTMLElement*>(this));
+        HTMLTextFormControlElement& textElement = downcast<HTMLTextFormControlElement>(const_cast<HTMLElement&>(*this));
         bool hasStrongDirectionality;
-        UCharDirection textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
+        UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)
-            *strongDirectionalityTextNode = hasStrongDirectionality ? textElement : nullptr;
+            *strongDirectionalityTextNode = hasStrongDirectionality ? &textElement : nullptr;
         return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
     }
 

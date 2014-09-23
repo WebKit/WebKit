@@ -44,10 +44,10 @@ HTMLMeterElement* RenderMeter::meterElement() const
     ASSERT(element());
 
     if (isHTMLMeterElement(element()))
-        return toHTMLMeterElement(element());
+        return downcast<HTMLMeterElement>(element());
 
     ASSERT(element()->shadowHost());
-    return toHTMLMeterElement(element()->shadowHost());
+    return downcast<HTMLMeterElement>(element()->shadowHost());
 }
 
 void RenderMeter::updateLogicalWidth()

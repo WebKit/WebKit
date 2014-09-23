@@ -56,14 +56,14 @@ const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlEle
 {
     ASSERT(isHTMLFormElement(ownerNode()) || ownerNode().hasTagName(fieldsetTag));
     if (isHTMLFormElement(ownerNode()))
-        return toHTMLFormElement(ownerNode()).associatedElements();
-    return toHTMLFieldSetElement(ownerNode()).associatedElements();
+        return downcast<HTMLFormElement>(ownerNode()).associatedElements();
+    return downcast<HTMLFieldSetElement>(ownerNode()).associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
     ASSERT(isHTMLFormElement(ownerNode()));
-    return toHTMLFormElement(ownerNode()).imageElements();
+    return downcast<HTMLFormElement>(ownerNode()).imageElements();
 }
 
 static unsigned findFormAssociatedElement(const Vector<FormAssociatedElement*>& elements, const Element& element)

@@ -53,18 +53,18 @@ inline bool keyMatchesName(const AtomicStringImpl& key, const Element& element)
 
 inline bool keyMatchesMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && toHTMLMapElement(element).getName().impl() == &key;
+    return isHTMLMapElement(element) && downcast<HTMLMapElement>(element).getName().impl() == &key;
 }
 
 inline bool keyMatchesLowercasedMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && toHTMLMapElement(element).getName().lower().impl() == &key;
+    return isHTMLMapElement(element) && downcast<HTMLMapElement>(element).getName().lower().impl() == &key;
 }
 
 inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl& key, const Element& element)
 {
     // FIXME: HTML5 specification says we should match both image and object elements.
-    return isHTMLImageElement(element) && toHTMLImageElement(element).matchesLowercasedUsemap(key);
+    return isHTMLImageElement(element) && downcast<HTMLImageElement>(element).matchesLowercasedUsemap(key);
 }
 
 inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, const Element& element)
@@ -168,22 +168,22 @@ Element* DocumentOrderedMap::getElementByName(const AtomicStringImpl& key, const
 
 HTMLMapElement* DocumentOrderedMap::getElementByMapName(const AtomicStringImpl& key, const TreeScope& scope) const
 {
-    return toHTMLMapElement(get<keyMatchesMapName>(key, scope));
+    return downcast<HTMLMapElement>(get<keyMatchesMapName>(key, scope));
 }
 
 HTMLMapElement* DocumentOrderedMap::getElementByLowercasedMapName(const AtomicStringImpl& key, const TreeScope& scope) const
 {
-    return toHTMLMapElement(get<keyMatchesLowercasedMapName>(key, scope));
+    return downcast<HTMLMapElement>(get<keyMatchesLowercasedMapName>(key, scope));
 }
 
 HTMLImageElement* DocumentOrderedMap::getElementByLowercasedUsemap(const AtomicStringImpl& key, const TreeScope& scope) const
 {
-    return toHTMLImageElement(get<keyMatchesLowercasedUsemap>(key, scope));
+    return downcast<HTMLImageElement>(get<keyMatchesLowercasedUsemap>(key, scope));
 }
 
 HTMLLabelElement* DocumentOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl& key, const TreeScope& scope) const
 {
-    return toHTMLLabelElement(get<keyMatchesLabelForAttribute>(key, scope));
+    return downcast<HTMLLabelElement>(get<keyMatchesLabelForAttribute>(key, scope));
 }
 
 Element* DocumentOrderedMap::getElementByWindowNamedItem(const AtomicStringImpl& key, const TreeScope& scope) const

@@ -58,9 +58,9 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     ec = 0;
 
     if (index == -1 || unsigned(index) >= length())
-        selectElement().add(newOption, 0, ec);
+        selectElement().add(newOption, nullptr, ec);
     else
-        selectElement().add(newOption, toHTMLOptionElement(item(index)), ec);
+        selectElement().add(newOption, downcast<HTMLOptionElement>(item(index)), ec);
 
     ASSERT(!ec);
 }

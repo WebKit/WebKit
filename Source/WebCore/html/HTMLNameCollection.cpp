@@ -66,14 +66,14 @@ bool WindowNameCollection::elementMatches(const Element& element, const AtomicSt
 bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& element)
 {
     // FIXME: we need to fix HTMLImageElement to update the hash map for us when name attribute has been removed.
-    return element.hasTagName(appletTag) || (element.hasTagName(objectTag) && toHTMLObjectElement(element).isDocNamedItem())
+    return element.hasTagName(appletTag) || (isHTMLObjectElement(element) && downcast<HTMLObjectElement>(element).isDocNamedItem())
         || (isHTMLImageElement(element) && element.hasName());
 }
 
 bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
     return isHTMLFormElement(element) || element.hasTagName(embedTag) || element.hasTagName(iframeTag)
-        || element.hasTagName(appletTag) || (element.hasTagName(objectTag) && toHTMLObjectElement(element).isDocNamedItem())
+        || element.hasTagName(appletTag) || (isHTMLObjectElement(element) && downcast<HTMLObjectElement>(element).isDocNamedItem())
         || isHTMLImageElement(element);
 }
 
@@ -85,8 +85,8 @@ bool DocumentNameCollection::elementMatches(const Element& element, const Atomic
         return element.getNameAttribute().impl() == name;
     if (element.hasTagName(appletTag))
         return element.getNameAttribute().impl() == name || element.getIdAttribute().impl() == name;
-    if (element.hasTagName(objectTag))
-        return (element.getNameAttribute().impl() == name || element.getIdAttribute().impl() == name) && toHTMLObjectElement(element).isDocNamedItem();
+    if (isHTMLObjectElement(element))
+        return (element.getNameAttribute().impl() == name || element.getIdAttribute().impl() == name) && downcast<HTMLObjectElement>(element).isDocNamedItem();
     if (isHTMLImageElement(element))
         return element.getNameAttribute().impl() == name || (element.getIdAttribute().impl() == name && element.hasName());
     return false;

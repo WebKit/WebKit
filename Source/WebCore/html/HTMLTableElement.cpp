@@ -70,10 +70,10 @@ PassRefPtr<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagNa
 HTMLTableCaptionElement* HTMLTableElement::caption() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(captionTag))
-            return toHTMLTableCaptionElement(child);
+        if (isHTMLTableCaptionElement(child))
+            return downcast<HTMLTableCaptionElement>(child);
     }
-    return 0;
+    return nullptr;
 }
 
 void HTMLTableElement::setCaption(PassRefPtr<HTMLTableCaptionElement> newCaption, ExceptionCode& ec)

@@ -70,7 +70,7 @@ int HTMLTableRowElement::rowIndex() const
 
     int rIndex = 0;
 
-    if (HTMLTableSectionElement* head = toHTMLTableElement(table)->tHead()) {
+    if (HTMLTableSectionElement* head = downcast<HTMLTableElement>(*table).tHead()) {
         for (Node *row = head->firstChild(); row; row = row->nextSibling()) {
             if (row == this)
                 return rIndex;
@@ -91,7 +91,7 @@ int HTMLTableRowElement::rowIndex() const
         }
     }
 
-    if (HTMLTableSectionElement* foot = toHTMLTableElement(table)->tFoot()) {
+    if (HTMLTableSectionElement* foot = downcast<HTMLTableElement>(*table).tFoot()) {
         for (Node *row = foot->firstChild(); row; row = row->nextSibling()) {
             if (row == this)
                 return rIndex;

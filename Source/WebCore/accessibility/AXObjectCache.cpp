@@ -177,7 +177,7 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
     Element* focusedElement = focusedDocument->focusedElement();
     if (focusedElement && isHTMLAreaElement(focusedElement))
-        return focusedImageMapUIElement(toHTMLAreaElement(focusedElement));
+        return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
 
     AccessibilityObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
     if (!obj)
@@ -948,7 +948,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
 void AXObjectCache::labelChanged(Element* element)
 {
     ASSERT(isHTMLLabelElement(element));
-    HTMLElement* correspondingControl = toHTMLLabelElement(element)->control();
+    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(element)->control();
     textChanged(correspondingControl);
 }
 

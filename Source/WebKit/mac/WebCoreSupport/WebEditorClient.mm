@@ -708,7 +708,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    DOMHTMLInputElement* inputElement = kit(toHTMLInputElement(element));
+    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement, kit(element->document().frame()));
 }
@@ -718,7 +718,7 @@ void WebEditorClient::textFieldDidEndEditing(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    DOMHTMLInputElement* inputElement = kit(toHTMLInputElement(element));
+    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element->document().frame()));
 }
@@ -733,7 +733,7 @@ void WebEditorClient::textDidChangeInTextField(Element* element)
         return;
 #endif
 
-    DOMHTMLInputElement* inputElement = kit(toHTMLInputElement(element));
+    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement, kit(element->document().frame()));
 }
@@ -766,7 +766,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
     if (!isHTMLInputElement(element))
         return NO;
 
-    DOMHTMLInputElement* inputElement = kit(toHTMLInputElement(element));
+    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     if (SEL commandSelector = selectorForKeyEvent(event))
         return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, commandSelector, kit(element->document().frame()));
@@ -778,7 +778,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    DOMHTMLInputElement* inputElement = kit(toHTMLInputElement(element));
+    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
     CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, @selector(deleteBackward:), kit(element->document().frame()));
@@ -789,7 +789,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     if (!isHTMLTextAreaElement(element))
         return;
 
-    DOMHTMLTextAreaElement* textAreaElement = kit(toHTMLTextAreaElement(element));
+    DOMHTMLTextAreaElement* textAreaElement = kit(downcast<HTMLTextAreaElement>(element));
     FormDelegateLog(textAreaElement);
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document().frame()));
 }

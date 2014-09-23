@@ -194,7 +194,7 @@ static Element *elementFromDOMElement(IDOMElement *element)
 static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
 {
     if (!element)
-        return 0;
+        return nullptr;
 
     IDOMElementPrivate* elePriv;
     HRESULT hr = element->QueryInterface(IID_IDOMElementPrivate, (void**) &elePriv);
@@ -203,15 +203,15 @@ static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
         if (SUCCEEDED(hr) && ele && isHTMLFormElement(ele))
-            return toHTMLFormElement(ele);
+            return downcast<HTMLFormElement>(ele);
     }
-    return 0;
+    return nullptr;
 }
 
 static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
 {
     if (!element)
-        return 0;
+        return nullptr;
 
     IDOMElementPrivate* elePriv;
     HRESULT hr = element->QueryInterface(IID_IDOMElementPrivate, (void**) &elePriv);
@@ -220,9 +220,9 @@ static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
         if (SUCCEEDED(hr) && ele && isHTMLInputElement(ele))
-            return toHTMLInputElement(ele);
+            return downcast<HTMLInputElement>(ele);
     }
-    return 0;
+    return nullptr;
 }
 
 // WebFramePrivate ------------------------------------------------------------

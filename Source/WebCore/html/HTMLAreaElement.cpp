@@ -183,9 +183,9 @@ HTMLImageElement* HTMLAreaElement::imageElement() const
 {
     Node* mapElement = parentNode();
     if (!mapElement || !isHTMLMapElement(mapElement))
-        return 0;
+        return nullptr;
     
-    return toHTMLMapElement(mapElement)->imageElement();
+    return downcast<HTMLMapElement>(*mapElement).imageElement();
 }
 
 bool HTMLAreaElement::isKeyboardFocusable(KeyboardEvent*) const

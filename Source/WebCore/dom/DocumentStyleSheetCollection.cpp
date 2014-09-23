@@ -286,7 +286,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             bool enabledViaScript = false;
             if (isHTMLLinkElement(element)) {
                 // <LINK> element
-                HTMLLinkElement& linkElement = toHTMLLinkElement(element);
+                HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(element);
                 if (linkElement.isDisabled())
                     continue;
                 enabledViaScript = linkElement.isEnabledViaScript();
@@ -308,9 +308,9 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             if (isSVGStyleElement(element))
                 sheet = downcast<SVGStyleElement>(element).sheet();
             else if (isHTMLLinkElement(element))
-                sheet = toHTMLLinkElement(element).sheet();
+                sheet = downcast<HTMLLinkElement>(element).sheet();
             else
-                sheet = toHTMLStyleElement(element).sheet();
+                sheet = downcast<HTMLStyleElement>(element).sheet();
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).

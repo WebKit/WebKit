@@ -3876,7 +3876,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
     }
 
     URL mediaURL;
-    HTMLSourceElement* source = 0;
+    HTMLSourceElement* source = nullptr;
     String type;
     String system;
     bool lookingForStartNode = m_nextChildNodeToConsider;
@@ -3897,7 +3897,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         if (node.parentNode() != this)
             continue;
 
-        source = toHTMLSourceElement(&node);
+        source = downcast<HTMLSourceElement>(&node);
 
         // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
         mediaURL = source->getNonEmptyURLAttribute(srcAttr);
@@ -4883,9 +4883,9 @@ void HTMLMediaElement::enterFullscreen()
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
     if (document().page() && isHTMLVideoElement(this)) {
-        HTMLVideoElement* asVideo = toHTMLVideoElement(this);
+        HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
         if (document().page()->chrome().client().supportsVideoFullscreen()) {
-            document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo);
+            document().page()->chrome().client().enterVideoFullscreenForVideoElement(&asVideo);
             scheduleEvent(eventNames().webkitbeginfullscreenEvent);
         }
     }

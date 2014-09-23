@@ -436,22 +436,22 @@ void HTMLObjectElement::updateDocNamedItem()
         child = child->nextSibling();
     }
     if (isNamedItem != wasNamedItem && inDocument() && document().isHTMLDocument()) {
-        HTMLDocument* document = toHTMLDocument(&this->document());
+        HTMLDocument& document = downcast<HTMLDocument>(this->document());
 
         const AtomicString& id = getIdAttribute();
         if (!id.isEmpty()) {
             if (isNamedItem)
-                document->addDocumentNamedItem(*id.impl(), *this);
+                document.addDocumentNamedItem(*id.impl(), *this);
             else
-                document->removeDocumentNamedItem(*id.impl(), *this);
+                document.removeDocumentNamedItem(*id.impl(), *this);
         }
 
         const AtomicString& name = getNameAttribute();
         if (!name.isEmpty() && id != name) {
             if (isNamedItem)
-                document->addDocumentNamedItem(*name.impl(), *this);
+                document.addDocumentNamedItem(*name.impl(), *this);
             else
-                document->removeDocumentNamedItem(*name.impl(), *this);
+                document.removeDocumentNamedItem(*name.impl(), *this);
         }
     }
     m_docNamedItem = isNamedItem;
@@ -466,7 +466,7 @@ bool HTMLObjectElement::containsJavaApplet() const
         if (child.hasTagName(paramTag) && equalIgnoringCase(child.getNameAttribute(), "type")
             && MIMETypeRegistry::isJavaAppletMIMEType(child.getAttribute(valueAttr).string()))
             return true;
-        if (child.hasTagName(objectTag) && toHTMLObjectElement(child).containsJavaApplet())
+        if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())
             return true;
         if (child.hasTagName(appletTag))
             return true;

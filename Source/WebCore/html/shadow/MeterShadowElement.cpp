@@ -51,7 +51,7 @@ MeterShadowElement::MeterShadowElement(Document& document)
 
 HTMLMeterElement* MeterShadowElement::meterElement() const
 {
-    return toHTMLMeterElement(shadowHost());
+    return downcast<HTMLMeterElement>(shadowHost());
 }
 
 bool MeterShadowElement::rendererIsNeeded(const RenderStyle& style)

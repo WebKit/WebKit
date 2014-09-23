@@ -1273,7 +1273,7 @@ bool ReplaceSelectionCommand::shouldPerformSmartReplace() const
         return false;
 
     Element* textControl = enclosingTextFormControl(positionAtStartOfInsertedContent().deepEquivalent());
-    if (textControl && isHTMLInputElement(textControl) && toHTMLInputElement(textControl)->isPasswordField())
+    if (textControl && isHTMLInputElement(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField())
         return false; // Disable smart replace for password fields.
 
     return true;

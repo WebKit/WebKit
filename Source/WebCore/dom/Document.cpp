@@ -1551,8 +1551,8 @@ void Document::setTitle(const String& title)
     // The DOM API has no method of specifying direction, so assume LTR.
     updateTitle(StringWithDirection(title, LTR));
 
-    if (m_titleElement && isHTMLTitleElement(m_titleElement.get()))
-        toHTMLTitleElement(m_titleElement.get())->setText(title);
+    if (m_titleElement && isHTMLTitleElement(*m_titleElement))
+        downcast<HTMLTitleElement>(*m_titleElement).setText(title);
 }
 
 void Document::setTitleElement(const StringWithDirection& title, Element* titleElement)
@@ -2881,7 +2881,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
         if (isHTMLDocument()) {
             // Exception (for sandboxed documents) ignored.
-            toHTMLDocument(this)->setCookie(content, IGNORE_EXCEPTION);
+            downcast<HTMLDocument>(*this).setCookie(content, IGNORE_EXCEPTION);
         }
         break;
 
@@ -4652,14 +4652,14 @@ const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
         Node* child = children->item(i);
         if (!child->hasTagName(linkTag))
             continue;
-        HTMLLinkElement* linkElement = toHTMLLinkElement(child);
-        if (!(linkElement->iconType() & iconTypesMask))
+        HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*child);
+        if (!(linkElement.iconType() & iconTypesMask))
             continue;
-        if (linkElement->href().isEmpty())
+        if (linkElement.href().isEmpty())
             continue;
 
         // Put it at the front to ensure that icons seen later take precedence as required by the spec.
-        IconURL newURL(linkElement->href(), linkElement->iconSizes(), linkElement->type(), linkElement->iconType());
+        IconURL newURL(linkElement.href(), linkElement.iconSizes(), linkElement.type(), linkElement.iconType());
         m_iconURLs.append(newURL);
     }
 

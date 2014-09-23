@@ -612,9 +612,9 @@ void WebPage::setAssistedNodeValue(const String& value)
 {
     if (!m_assistedNode)
         return;
-    if (isHTMLInputElement(m_assistedNode.get())) {
-        HTMLInputElement *element = toHTMLInputElement(m_assistedNode.get());
-        element->setValue(value, DispatchInputAndChangeEvent);
+    if (isHTMLInputElement(*m_assistedNode)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
+        element.setValue(value, DispatchInputAndChangeEvent);
     }
     // FIXME: should also handle the case of HTMLSelectElement.
 }
@@ -623,18 +623,18 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 {
     if (!m_assistedNode)
         return;
-    if (isHTMLInputElement(m_assistedNode.get())) {
-        HTMLInputElement *element = toHTMLInputElement(m_assistedNode.get());
-        element->setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
+    if (isHTMLInputElement(*m_assistedNode)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
+        element.setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
     }
 }
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!m_assistedNode || !isHTMLSelectElement(m_assistedNode.get()))
+    if (!m_assistedNode || !isHTMLSelectElement(*m_assistedNode)
         return;
-    HTMLSelectElement* select = toHTMLSelectElement(m_assistedNode.get());
-    select->optionSelectedByUser(index, true, allowMultipleSelection);
+    HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
+    select.optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 #if ENABLE(INSPECTOR)
@@ -1993,10 +1993,10 @@ static inline bool isAssistableNode(Node* node)
     if (isHTMLSelectElement(node))
         return true;
     if (isHTMLTextAreaElement(node))
-        return !toHTMLTextAreaElement(node)->isReadOnlyNode();
+        return !downcast<HTMLTextAreaElement>(*node).isReadOnlyNode();
     if (isHTMLInputElement(node)) {
-        HTMLInputElement* element = toHTMLInputElement(node);
-        return !element->isReadOnlyNode() && (element->isTextField() || element->isDateField() || element->isDateTimeLocalField() || element->isMonthField() || element->isTimeField());
+        HTMLInputElement& element = downcast<HTMLInputElement>(*node);
+        return !element.isReadOnlyNode() && (element.isTextField() || element.isDateField() || element.isDateTimeLocalField() || element.isMonthField() || element.isTimeField());
     }
 
     return node->isContentEditable();
@@ -2066,81 +2066,82 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
     information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);
 
-    if (isHTMLSelectElement(m_assistedNode.get())) {
-        HTMLSelectElement* element = toHTMLSelectElement(m_assistedNode.get());
+    if (isHTMLSelectElement(*m_assistedNode) {
+        HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
         information.elementType = InputType::Select;
-        size_t count = element->listItems().size();
+        const Vector<HTMLElement*>& items = element.listItems();
+        size_t count = items.size();
         int parentGroupID = 0;
         // The parent group ID indicates the group the option belongs to and is 0 for group elements.
         // If there are option elements in between groups, they are given it's own group identifier.
         // If a select does not have groups, all the option elements have group ID 0.
         for (size_t i = 0; i < count; ++i) {
-            HTMLElement* item = element->listItems()[i];
+            HTMLElement* item = items[i];
             if (isHTMLOptionElement(item)) {
-                HTMLOptionElement* option = toHTMLOptionElement(item);
-                information.selectOptions.append(OptionItem(option->text(), false, parentGroupID, option->selected(), option->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+                HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
+                information.selectOptions.append(OptionItem(option.text(), false, parentGroupID, option.selected(), option.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
             } else if (isHTMLOptGroupElement(item)) {
-                HTMLOptGroupElement* group = toHTMLOptGroupElement(item);
+                HTMLOptGroupElement& group = downcast<HTMLOptGroupElement>(*item);
                 parentGroupID++;
-                information.selectOptions.append(OptionItem(group->groupLabelText(), true, 0, false, group->fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(group.groupLabelText(), true, 0, false, group.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
             }
         }
-        information.selectedIndex = element->selectedIndex();
-        information.isMultiSelect = element->multiple();
-    } else if (isHTMLTextAreaElement(m_assistedNode.get())) {
-        HTMLTextAreaElement* element = toHTMLTextAreaElement(m_assistedNode.get());
-        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
-        information.isAutocorrect = element->autocorrect();
+        information.selectedIndex = element.selectedIndex();
+        information.isMultiSelect = element.multiple();
+    } else if (isHTMLTextAreaElement(*m_assistedNode)) {
+        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*m_assistedNode);
+        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element.autocapitalizeType());
+        information.isAutocorrect = element.autocorrect();
         information.elementType = InputType::TextArea;
-        information.isReadOnly = element->isReadOnly();
-        information.value = element->value();
-    } else if (isHTMLInputElement(m_assistedNode.get())) {
-        HTMLInputElement* element = toHTMLInputElement(m_assistedNode.get());
-        HTMLFormElement* form = element->form();
+        information.isReadOnly = element.isReadOnly();
+        information.value = element.value();
+    } else if (isHTMLInputElement(*m_assistedNode)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
+        HTMLFormElement* form = element.form();
         if (form)
             information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
-        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element->autocapitalizeType());
-        information.isAutocorrect = element->autocorrect();
-        if (element->isPasswordField())
+        information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element.autocapitalizeType());
+        information.isAutocorrect = element.autocorrect();
+        if (element.isPasswordField())
             information.elementType = InputType::Password;
-        else if (element->isSearchField())
+        else if (element.isSearchField())
             information.elementType = InputType::Search;
-        else if (element->isEmailField())
+        else if (element.isEmailField())
             information.elementType = InputType::Email;
-        else if (element->isTelephoneField())
+        else if (element.isTelephoneField())
             information.elementType = InputType::Phone;
-        else if (element->isNumberField())
-            information.elementType = element->getAttribute("pattern") == "\\d*" || element->getAttribute("pattern") == "[0-9]*" ? InputType::NumberPad : InputType::Number;
-        else if (element->isDateTimeLocalField())
+        else if (element.isNumberField())
+            information.elementType = element.getAttribute("pattern") == "\\d*" || element.getAttribute("pattern") == "[0-9]*" ? InputType::NumberPad : InputType::Number;
+        else if (element.isDateTimeLocalField())
             information.elementType = InputType::DateTimeLocal;
-        else if (element->isDateField())
+        else if (element.isDateField())
             information.elementType = InputType::Date;
-        else if (element->isDateTimeField())
+        else if (element.isDateTimeField())
             information.elementType = InputType::DateTime;
-        else if (element->isTimeField())
+        else if (element.isTimeField())
             information.elementType = InputType::Time;
-        else if (element->isWeekField())
+        else if (element.isWeekField())
             information.elementType = InputType::Week;
-        else if (element->isMonthField())
+        else if (element.isMonthField())
             information.elementType = InputType::Month;
-        else if (element->isURLField())
+        else if (element.isURLField())
             information.elementType = InputType::URL;
-        else if (element->isText()) {
-            const AtomicString& pattern = element->fastGetAttribute(HTMLNames::patternAttr);
+        else if (element.isText()) {
+            const AtomicString& pattern = element.fastGetAttribute(HTMLNames::patternAttr);
             if (pattern == "\\d*" || pattern == "[0-9]*")
                 information.elementType = InputType::NumberPad;
             else {
                 information.elementType = InputType::Text;
                 if (!information.formAction.isEmpty()
-                    && (element->getNameAttribute().contains("search") || element->getIdAttribute().contains("search") || element->fastGetAttribute(HTMLNames::titleAttr).contains("search")))
+                    && (element.getNameAttribute().contains("search") || element.getIdAttribute().contains("search") || element.fastGetAttribute(HTMLNames::titleAttr).contains("search")))
                     information.elementType = InputType::Search;
             }
         }
 
-        information.isReadOnly = element->isReadOnly();
-        information.value = element->value();
-        information.valueAsNumber = element->valueAsNumber();
-        information.title = element->title();
+        information.isReadOnly = element.isReadOnly();
+        information.value = element.value();
+        information.valueAsNumber = element.valueAsNumber();
+        information.title = element.title();
     } else if (m_assistedNode->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         information.isAutocorrect = true;   // FIXME: Should we look at the attribute?

@@ -97,7 +97,7 @@ HTMLTableElement* AccessibilityTable::tableElement() const
     
     RenderTable* table = toRenderTable(m_renderer);
     if (table->element() && isHTMLTableElement(table->element()))
-        return toHTMLTableElement(table->element());
+        return downcast<HTMLTableElement>(table->element());
     
     // If the table has a display:table-row-group, then the RenderTable does not have a pointer to it's HTMLTableElement.
     // We can instead find it by asking the firstSection for its parent.
@@ -109,7 +109,7 @@ HTMLTableElement* AccessibilityTable::tableElement() const
     if (!actualTable || !isHTMLTableElement(actualTable))
         return nullptr;
     
-    return toHTMLTableElement(actualTable);
+    return downcast<HTMLTableElement>(actualTable);
 }
     
 bool AccessibilityTable::isDataTable() const
@@ -608,8 +608,7 @@ String AccessibilityTable::title() const
     // see if there is a caption
     Node* tableElement = m_renderer->node();
     if (tableElement && isHTMLTableElement(tableElement)) {
-        HTMLTableCaptionElement* caption = toHTMLTableElement(tableElement)->caption();
-        if (caption)
+        if (HTMLTableCaptionElement* caption = downcast<HTMLTableElement>(*tableElement).caption())
             title = caption->innerText();
     }
     

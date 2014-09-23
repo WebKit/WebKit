@@ -672,7 +672,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, con
 
     // Paint Indicators.
 
-    if (box.isMenuList() && toHTMLSelectElement(box.node())->multiple()) {
+    if (box.isMenuList() && downcast<HTMLSelectElement>(box.node())->multiple()) {
         int size = 2;
         int count = 3;
         int padding = 3;

@@ -67,11 +67,8 @@ int AccessibilityObject::accessibilityPasswordFieldLength()
     if (!renderObject || !renderObject->node() || !renderObject->node()->isHTMLElement())
         return false;
     
-    HTMLInputElement* inputElement = toHTMLInputElement(renderObject->node());
-    if (!inputElement)
-        return false;
-    
-    return inputElement->value().length();
+    HTMLInputElement& inputElement = downcast<HTMLInputElement>(*renderObject->node());
+    return inputElement.value().length();
 }
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const

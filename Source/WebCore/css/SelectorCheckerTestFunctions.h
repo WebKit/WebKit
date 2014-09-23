@@ -86,7 +86,7 @@ ALWAYS_INLINE bool isChecked(Element* element)
     const HTMLInputElement* inputElement = element->toInputElement();
     if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
         return true;
-    if (isHTMLOptionElement(element) && toHTMLOptionElement(element)->selected())
+    if (isHTMLOptionElement(element) && downcast<HTMLOptionElement>(*element).selected())
         return true;
     return false;
 }

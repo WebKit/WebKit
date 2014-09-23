@@ -409,9 +409,9 @@ void Chrome::setToolTip(const HitTestResult& result)
         if (Element* element = result.innerNonSharedElement()) {
             // Get tooltip representing form action, if relevant
             if (isHTMLInputElement(element)) {
-                HTMLInputElement* input = toHTMLInputElement(element);
-                if (input->isSubmitButton()) {
-                    if (HTMLFormElement* form = input->form()) {
+                HTMLInputElement& input = downcast<HTMLInputElement>(*element);
+                if (input.isSubmitButton()) {
+                    if (HTMLFormElement* form = input.form()) {
                         toolTip = form->action();
                         if (form->renderer())
                             toolTipDirection = form->renderer()->style().direction();
@@ -442,7 +442,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     if (toolTip.isEmpty()) {
         if (Element* element = result.innerNonSharedElement()) {
             if (isHTMLInputElement(element)) {
-                toolTip = toHTMLInputElement(element)->defaultToolTip();
+                toolTip = downcast<HTMLInputElement>(*element).defaultToolTip();
 
                 // FIXME: We should obtain text direction of tooltip from
                 // ChromeClient or platform. As of October 2011, all client

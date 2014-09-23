@@ -2435,7 +2435,7 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
 #if USE(COMPOSITING_FOR_SMALL_CANVASES)
         bool isCanvasLargeEnoughToForceCompositing = true;
 #else
-        HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer.element());
+        HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer.element());
         bool isCanvasLargeEnoughToForceCompositing = canvas->size().area() >= canvasAreaThresholdRequiringCompositing;
 #endif
         CanvasCompositingStrategy compositingStrategy = canvasCompositingStrategy(renderer);

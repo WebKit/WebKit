@@ -303,7 +303,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     else if (!isHTMLTableElement(tableElement.get()))
         LOG_ERROR("Element of id \"ftpDirectoryTable\" is not a table element");
     else 
-        m_tableElement = toHTMLTableElement(tableElement.get());
+        m_tableElement = downcast<HTMLTableElement>(tableElement.get());
 
     // Bail if we found the table element
     if (m_tableElement)
@@ -311,7 +311,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 
     // Otherwise create one manually
     tableElement = document()->createElement(tableTag, false);
-    m_tableElement = toHTMLTableElement(tableElement.get());
+    m_tableElement = downcast<HTMLTableElement>(tableElement.get());
     m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
 
     // If we didn't find the table element, lets try to append our own to the body
@@ -336,7 +336,7 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     document()->appendChild(bodyElement, IGNORE_EXCEPTION);
 
     RefPtr<Element> tableElement = document()->createElement(tableTag, false);
-    m_tableElement = toHTMLTableElement(tableElement.get());
+    m_tableElement = downcast<HTMLTableElement>(tableElement.get());
     m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
     m_tableElement->setAttribute(HTMLNames::styleAttr, "width:100%");
 

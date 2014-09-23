@@ -42,7 +42,7 @@ public:
         , m_isHTMLScriptElement(isHTMLScriptElement(element))
     {
         if (m_isHTMLScriptElement)
-            m_document->pushCurrentScript(toHTMLScriptElement(element));
+            m_document->pushCurrentScript(downcast<HTMLScriptElement>(element));
     }
 
     ~CurrentScriptIncrementer()

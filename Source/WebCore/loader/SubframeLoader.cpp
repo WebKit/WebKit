@@ -213,7 +213,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
-    bool hasFallbackContent = isHTMLObjectElement(ownerElement) && toHTMLObjectElement(ownerElement).hasFallbackContent();
+    bool hasFallbackContent = isHTMLObjectElement(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, ownerElement.shouldPreferPlugInsForImages(), hasFallbackContent, useFallback)) {

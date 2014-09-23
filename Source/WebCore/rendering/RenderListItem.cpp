@@ -189,7 +189,7 @@ inline int RenderListItem::calcValue() const
         return m_explicitValue;
 
     Element* list = enclosingList(this);
-    HTMLOListElement* oListElement = (list && list->hasTagName(olTag)) ? toHTMLOListElement(list) : nullptr;
+    HTMLOListElement* oListElement = (list && list->hasTagName(olTag)) ? downcast<HTMLOListElement>(list) : nullptr;
     int valueStep = 1;
     if (oListElement && oListElement->isReversed())
         valueStep = -1;
@@ -501,7 +501,7 @@ void RenderListItem::updateListMarkerNumbers()
         return;
 
     bool isListReversed = false;
-    HTMLOListElement* oListElement = (listNode && listNode->hasTagName(olTag)) ? toHTMLOListElement(listNode) : nullptr;
+    HTMLOListElement* oListElement = (listNode && listNode->hasTagName(olTag)) ? downcast<HTMLOListElement>(listNode) : nullptr;
     if (oListElement) {
         oListElement->itemCountChanged();
         isListReversed = oListElement->isReversed();

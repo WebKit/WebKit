@@ -86,10 +86,10 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
 void HTMLOptGroupElement::recalcSelectOptions()
 {
     ContainerNode* select = parentNode();
-    while (select && !select->hasTagName(selectTag))
+    while (select && !isHTMLSelectElement(select))
         select = select->parentNode();
     if (select)
-        toHTMLSelectElement(select)->setRecalcListItems();
+        downcast<HTMLSelectElement>(*select).setRecalcListItems();
 }
 
 String HTMLOptGroupElement::groupLabelText() const
@@ -107,13 +107,13 @@ String HTMLOptGroupElement::groupLabelText() const
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
     ContainerNode* select = parentNode();
-    while (select && !select->hasTagName(selectTag))
+    while (select && !isHTMLSelectElement(select))
         select = select->parentNode();
     
     if (!select)
-       return 0;
+        return nullptr;
     
-    return toHTMLSelectElement(select);
+    return downcast<HTMLSelectElement>(select);
 }
 
 void HTMLOptGroupElement::accessKeyAction(bool)

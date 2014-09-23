@@ -171,7 +171,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
 
     AccessibilityObject* coreObject = core(object);
-    Node* node = 0;
+    Node* node = nullptr;
     if (coreObject->isAccessibilityRenderObject())
         node = coreObject->node();
     if (!node || !node->isHTMLElement() || coreObject->ariaRoleAttribute() != UnknownRole || coreObject->isImage())
@@ -179,7 +179,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
     if (coreObject->roleValue() == TableRole) {
-        String summary = toHTMLTableElement(node)->summary();
+        const AtomicString& summary = downcast<HTMLTableElement>(*node).summary();
         if (!summary.isEmpty())
             return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, summary);
     }

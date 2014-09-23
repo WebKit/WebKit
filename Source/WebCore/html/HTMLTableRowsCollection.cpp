@@ -98,7 +98,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
         if (isHTMLTableRowElement(child))
-            return toHTMLTableRowElement(child);
+            return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
             if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
@@ -131,7 +131,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 
     for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
         if (isHTMLTableRowElement(child))
-            return toHTMLTableRowElement(child);
+            return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
             if (auto* row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
@@ -161,7 +161,7 @@ PassRef<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElemen
 
 Element* HTMLTableRowsCollection::customElementAfter(Element* previous) const
 {
-    return rowAfter(const_cast<HTMLTableElement*>(&tableElement()), toHTMLTableRowElement(previous));
+    return rowAfter(const_cast<HTMLTableElement*>(&tableElement()), downcast<HTMLTableRowElement>(previous));
 }
 
 }

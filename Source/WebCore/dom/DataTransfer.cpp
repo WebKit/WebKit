@@ -253,11 +253,9 @@ void DataTransfer::setDragImage(Element* element, int x, int y)
     if (!canSetDragImage())
         return;
 
-    CachedImage* image;
+    CachedImage* image = nullptr;
     if (element && isHTMLImageElement(element) && !element->inDocument())
-        image = toHTMLImageElement(element)->cachedImage();
-    else
-        image = 0;
+        image = downcast<HTMLImageElement>(*element).cachedImage();
 
     m_dragLocation = IntPoint(x, y);
 
@@ -270,7 +268,7 @@ void DataTransfer::setDragImage(Element* element, int x, int y)
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
-    m_dragImageElement = image ? 0 : element;
+    m_dragImageElement = image ? nullptr : element;
 
     updateDragImage();
 }

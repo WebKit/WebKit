@@ -1416,7 +1416,7 @@ void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
     HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
     if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
         // Tell the DOM element that it needs a widget update.
-        HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+        HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
         if (!pluginElement.needsCheckForSizeChange())
             pluginElement.setNeedsWidgetUpdate(true);
     }
@@ -2789,7 +2789,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
     if (embeddedObject.isSnapshottedPlugIn()) {
         if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
-            HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+            HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
             pluginElement.checkSnapshotStatus();
         }
         return;
@@ -2800,7 +2800,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(PluginCreationOption) on HTMLElement.
     if (isHTMLObjectElement(element) || isHTMLEmbedElement(element) || isHTMLAppletElement(element)) {
-        HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+        HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
         if (pluginElement.needsCheckForSizeChange()) {
             pluginElement.checkSnapshotStatus();
             return;

@@ -372,8 +372,8 @@ void RangeInputType::updateTickMarkValues()
     m_tickMarkValues.reserveCapacity(options->length());
     for (unsigned i = 0; i < options->length(); ++i) {
         Node* node = options->item(i);
-        HTMLOptionElement* optionElement = toHTMLOptionElement(node);
-        String optionValue = optionElement->value();
+        HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
+        String optionValue = optionElement.value();
         if (!element().isValidValue(optionValue))
             continue;
         m_tickMarkValues.append(parseToNumber(optionValue, Decimal::nan()));

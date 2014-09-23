@@ -181,13 +181,13 @@ void WebChromeClient::focusedElementChanged(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (!inputElement->isText())
+    HTMLInputElement& inputElement = downcast<HTMLInputElement>(*element);
+    if (!inputElement.isText())
         return;
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
-    m_page->injectedBundleFormClient().didFocusTextField(m_page, inputElement, webFrame);
+    m_page->injectedBundleFormClient().didFocusTextField(m_page, &inputElement, webFrame);
 }
 
 void WebChromeClient::focusedFrameChanged(Frame* frame)

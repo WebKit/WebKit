@@ -297,7 +297,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 #endif
 
         resetInsertionModeAppropriately();
-        m_tree.setForm(!contextElement || isHTMLFormElement(contextElement) ? toHTMLFormElement(contextElement) : HTMLFormElement::findClosestFormAncestor(*contextElement));
+        m_tree.setForm(!contextElement || isHTMLFormElement(contextElement) ? downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(*contextElement));
     }
 }
 

@@ -59,7 +59,7 @@ RenderFrameSet::~RenderFrameSet()
 
 HTMLFrameSetElement& RenderFrameSet::frameSetElement() const
 {
-    return toHTMLFrameSetElement(nodeForNonAnonymous());
+    return downcast<HTMLFrameSetElement>(nodeForNonAnonymous());
 }
 
 RenderFrameSet::GridAxis::GridAxis()

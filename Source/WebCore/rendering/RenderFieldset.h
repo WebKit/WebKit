@@ -38,7 +38,7 @@ public:
     enum FindLegendOption { IgnoreFloatingOrOutOfFlow, IncludeFloatingOrOutOfFlow };
     RenderBox* findLegend(FindLegendOption = IgnoreFloatingOrOutOfFlow) const;
 
-    HTMLFieldSetElement& fieldSetElement() const { return toHTMLFieldSetElement(nodeForNonAnonymous()); }
+    HTMLFieldSetElement& fieldSetElement() const { return downcast<HTMLFieldSetElement>(nodeForNonAnonymous()); }
 
 private:
     void element() const = delete;

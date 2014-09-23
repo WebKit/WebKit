@@ -142,8 +142,8 @@ static bool planCounter(RenderElement& renderer, const AtomicString& identifier,
             return true;
         }
         if (Element* element = renderer.element()) {
-            if (element->hasTagName(olTag)) {
-                value = toHTMLOListElement(element)->start();
+            if (isHTMLOListElement(element)) {
+                value = downcast<HTMLOListElement>(*element).start();
                 isReset = true;
                 return true;
             }

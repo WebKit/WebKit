@@ -138,7 +138,7 @@ void AccessibilitySlider::setValue(const String& value)
 
 HTMLInputElement* AccessibilitySlider::inputElement() const
 {
-    return toHTMLInputElement(m_renderer->node());
+    return downcast<HTMLInputElement>(m_renderer->node());
 }
 
 
@@ -159,7 +159,7 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     RenderObject* sliderRenderer = m_parent->renderer();
     if (!sliderRenderer || !sliderRenderer->isSlider())
         return LayoutRect();
-    return toHTMLInputElement(sliderRenderer->node())->sliderThumbElement()->boundingBox();
+    return downcast<HTMLInputElement>(sliderRenderer->node())->sliderThumbElement()->boundingBox();
 }
 
 bool AccessibilitySliderThumb::computeAccessibilityIsIgnored() const

@@ -850,16 +850,16 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (newElement->hasTagName(HTMLNames::templateTag))
-        pushCurrentNode(toHTMLTemplateElement(newElement.get())->content());
+    if (isHTMLTemplateElement(*newElement))
+        pushCurrentNode(downcast<HTMLTemplateElement>(*newElement).content());
     else
         pushCurrentNode(newElement.get());
 #else
     pushCurrentNode(newElement.get());
 #endif
 
-    if (newElement->hasTagName(HTMLNames::htmlTag))
-        toHTMLHtmlElement(newElement.get())->insertedByParser();
+    if (isHTMLHtmlElement(*newElement))
+        downcast<HTMLHtmlElement>(*newElement).insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())
         document()->frame()->injectUserScripts(InjectAtDocumentStart);

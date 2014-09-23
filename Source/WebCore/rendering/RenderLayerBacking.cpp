@@ -74,7 +74,7 @@ CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer
 {
     ASSERT(renderer.isCanvas());
     
-    const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer.node());
+    const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer.node());
     CanvasRenderingContext* context = canvas->renderingContext();
     if (!context || !context->isAccelerated())
         return UnacceleratedCanvas;
@@ -300,7 +300,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 
 #if PLATFORM(COCOA) && USE(CA)
     if (!compositor().acceleratedDrawingEnabled() && renderer().isCanvas()) {
-        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().element());
+        const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (canvas->shouldAccelerate(canvas->size()))
             m_graphicsLayer->setAcceleratesDrawing(true);
     }
@@ -592,7 +592,7 @@ bool RenderLayerBacking::updateConfiguration()
 #endif
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
-        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().element());
+        const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (CanvasRenderingContext* context = canvas->renderingContext())
             m_graphicsLayer->setContentsToPlatformLayer(context->platformLayer(), GraphicsLayer::ContentsLayerForCanvas);
         layerConfigChanged = true;

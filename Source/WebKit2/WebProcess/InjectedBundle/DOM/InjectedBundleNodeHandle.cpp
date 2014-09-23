@@ -199,55 +199,55 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange() c
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
-    if (!isHTMLInputElement(m_node.get()))
+    if (!isHTMLInputElement(*m_node))
         return;
 
-    toHTMLInputElement(m_node.get())->setValueForUser(value);
+    downcast<HTMLInputElement>(*m_node).setValueForUser(value);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutofilled() const
 {
-    if (!isHTMLInputElement(m_node.get()))
+    if (!isHTMLInputElement(*m_node))
         return false;
     
-    return toHTMLInputElement(m_node.get())->isAutofilled();
+    return downcast<HTMLInputElement>(*m_node).isAutofilled();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
 {
-    if (!isHTMLInputElement(m_node.get()))
+    if (!isHTMLInputElement(*m_node))
         return;
 
-    toHTMLInputElement(m_node.get())->setAutofilled(filled);
+    downcast<HTMLInputElement>(*m_node).setAutofilled(filled);
 }
 
 bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 {
-    if (!isHTMLInputElement(m_node.get()))
+    if (!isHTMLInputElement(*m_node))
         return false;
 
-    return toHTMLInputElement(m_node.get())->lastChangeWasUserEdit();
+    return downcast<HTMLInputElement>(*m_node).lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
 {
-    if (!isHTMLTextAreaElement(m_node.get()))
+    if (!isHTMLTextAreaElement(*m_node))
         return false;
 
-    return toHTMLTextAreaElement(m_node.get())->lastChangeWasUserEdit();
+    return downcast<HTMLTextAreaElement>(*m_node).lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::isTextField() const
 {
-    return isHTMLInputElement(m_node.get()) && toHTMLInputElement(m_node.get())->isText();
+    return isHTMLInputElement(*m_node) && downcast<HTMLInputElement>(*m_node).isText();
 }
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
 {
     if (!m_node->hasTagName(tdTag))
-        return 0;
+        return nullptr;
 
-    return getOrCreate(static_cast<HTMLTableCellElement*>(m_node.get())->cellAbove());
+    return getOrCreate(static_cast<HTMLTableCellElement&>(*m_node).cellAbove());
 }
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
@@ -276,10 +276,10 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
 {
-    if (!m_node->hasTagName(iframeTag))
+    if (!isHTMLIFrameElement(*m_node))
         return nullptr;
 
-    Frame* frame = toHTMLIFrameElement(m_node.get())->contentFrame();
+    Frame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();
     if (!frame)
         return nullptr;
 

@@ -357,17 +357,17 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 
     InputElementClickState clickHandlingState;
     if (isHTMLInputElement(node.get()))
-        toHTMLInputElement(*node).willDispatchEvent(*event, clickHandlingState);
+        downcast<HTMLInputElement>(*node).willDispatchEvent(*event, clickHandlingState);
 
     if (!event->propagationStopped() && !eventPath.isEmpty())
         dispatchEventInDOM(*event, eventPath, windowEventContext);
 
     event->setTarget(&eventTargetRespectingTargetRules(*node));
-    event->setCurrentTarget(0);
+    event->setCurrentTarget(nullptr);
     event->setEventPhase(0);
 
     if (clickHandlingState.stateful)
-        toHTMLInputElement(*node).didDispatchClickEvent(*event, clickHandlingState);
+        downcast<HTMLInputElement>(*node).didDispatchClickEvent(*event, clickHandlingState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal

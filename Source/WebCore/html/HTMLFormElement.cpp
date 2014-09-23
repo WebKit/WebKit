@@ -318,7 +318,7 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
         HTMLElement& element = control.asHTMLElement();
         if (!isHTMLInputElement(element))
             continue;
-        HTMLInputElement& input = toHTMLInputElement(element);
+        HTMLInputElement& input = downcast<HTMLInputElement>(element);
         if (!input.isTextField())
             continue;
         fieldNamesAndValues.append(std::make_pair(input.name().string(), input.value()));
@@ -745,7 +745,7 @@ void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
     }
 
     ASSERT_WITH_SECURITY_IMPLICATION(element.hasTagName(imgTag));
-    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(&toHTMLImageElement(element)) != notFound);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(&downcast<HTMLImageElement>(element)) != notFound);
 }
 #else
 inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const

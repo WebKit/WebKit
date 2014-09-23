@@ -1,3 +1,26 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Use downcast<HTML*Element>() instead of toHTML*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137007
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<HTML*Element>() instead of toHTML*Element().
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMHTMLInputElement _setAutofilled:]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::focusedElementChanged):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textFieldDidBeginEditing):
+        (WebEditorClient::textFieldDidEndEditing):
+        (WebEditorClient::textDidChangeInTextField):
+        (WebEditorClient::doTextFieldCommandFromEvent):
+        (WebEditorClient::textWillBeDeletedInTextField):
+        (WebEditorClient::textDidChangeInTextArea):
+        * WebView/WebHTMLRepresentation.mm:
+        (inputElementFromDOMElement):
+
 2014-09-21  Chris Dumez  <cdumez@apple.com>
 
         Generate Element casting helper functions

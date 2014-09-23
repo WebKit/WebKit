@@ -1,5 +1,421 @@
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Use downcast<HTML*Element>() instead of toHTML*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137007
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<HTML*Element>() instead of toHTML*Element() and drop
+        transition macros for toHTML*Element().
+
+        This patch also cleans up the surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::labelChanged):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::canSetSelectedChildrenAttribute):
+        (WebCore::AccessibilityListBox::addChildren):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isSelected):
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionParentNode):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaTimeline::valueDescription):
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::isEnabled):
+        (WebCore::AccessibilityMenuListOption::isSelected):
+        (WebCore::AccessibilityMenuListOption::setSelected):
+        (WebCore::AccessibilityMenuListOption::stringValue):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::isNativeTextControl):
+        (WebCore::AccessibilityNodeObject::isNativeImage):
+        (WebCore::AccessibilityNodeObject::isInputImage):
+        (WebCore::AccessibilityNodeObject::isMultiSelectable):
+        (WebCore::AccessibilityNodeObject::isReadOnly):
+        (WebCore::AccessibilityNodeObject::valueForRange):
+        (WebCore::AccessibilityNodeObject::maxValueForRange):
+        (WebCore::AccessibilityNodeObject::minValueForRange):
+        (WebCore::isNodeActionElement):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+        (WebCore::AccessibilityNodeObject::text):
+        (WebCore::AccessibilityNodeObject::stringValue):
+        (WebCore::AccessibilityNodeObject::colorValue):
+        (WebCore::accessibleNameForNode):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFileUploadButton):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::url):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        (WebCore::AccessibilityRenderObject::stringValueForMSAA):
+        (WebCore::AccessibilityRenderObject::isLinked):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::inputElement):
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableElement):
+        (WebCore::AccessibilityTable::title):
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::notifyChildrenSelectionChange):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (optionFromSelection):
+        (webkitAccessibleSelectionGetSelectionCount):
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (webkitAccessibleTableGetCaption):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetDescription):
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::accessibilityPasswordFieldLength):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isChecked):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::getNamedItem):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::isPlaceholderShown):
+        * dom/CurrentScriptIncrementer.h:
+        (WebCore::CurrentScriptIncrementer::CurrentScriptIncrementer):
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::setDragImage):
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::iconURLs):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::keyMatchesLowercasedUsemap):
+        (WebCore::DocumentOrderedMap::getElementByMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedUsemap):
+        (WebCore::DocumentOrderedMap::getElementByLabelForAttribute):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::updateName):
+        (WebCore::Element::updateId):
+        (WebCore::Element::updateLabel):
+        (WebCore::Element::ensureCachedHTMLCollection):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/ScriptElement.cpp:
+        (WebCore::toScriptElementIfPossible):
+        * dom/VisitedLinkState.cpp:
+        (WebCore::linkHashForElement):
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand):
+        (WebCore::imageElementFromImageDocument):
+        (WebCore::findFirstMarkable):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::scanForForm):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartReplace):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::nonBoundaryShadowTreeRootNode):
+        (WebCore::VisibleSelection::isInPasswordField):
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processElement):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        * editing/markup.cpp:
+        (WebCore::isPlainTextMarkup):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::suggestions):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::findAssociatedForm):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::imageElement):
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::matchesReadWritePseudoClass):
+        (WebCore::HTMLElement::setInnerHTML):
+        (WebCore::HTMLElement::directionality):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::refreshElementsIfNeeded):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::computeIsDisabledByFieldsetAncestor):
+        (WebCore::shouldAutofocus):
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::formControlElements):
+        (WebCore::HTMLFormControlsCollection::formImageElements):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getTextFieldValues):
+        (WebCore::HTMLFormElement::assertItemCanBeInPastNamesMap):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dataList):
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::virtualForm):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::DocumentNameCollection::elementMatchesIfIdAttributeMatch):
+        (WebCore::DocumentNameCollection::elementMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::elementMatches):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::recalcSelectOptions):
+        (WebCore::HTMLOptGroupElement::ownerSelectElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::ownerDataListElement):
+        (WebCore::HTMLOptionElement::ownerSelectElement):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::addPlugInsFromNodeListMatchingPlugInOrigin):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::hasPlaceholderLabelOption):
+        (WebCore::HTMLSelectElement::value):
+        (WebCore::HTMLSelectElement::setValue):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::selectOption):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::searchOptionsForValue):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::optionAtIndex):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::detailsElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::caption):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::findParentTable):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::rowIndex):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::rowAfter):
+        (WebCore::HTMLTableRowsCollection::lastRow):
+        (WebCore::HTMLTableRowsCollection::customElementAfter):
+        * html/HTMLTableRowsCollection.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::cloneNode):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::enclosingTextFormControl):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::elementMatches):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::descendentVideoElement):
+        (WebCore::ancestorVideoElement):
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        (WebCore::RadioInputType::isKeyboardFocusable):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::updateTickMarkValues):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::insert):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::rendererIsNeeded):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::meterElement):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::progressElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handleFallbackContent):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestObject):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        * page/EventHandler.cpp:
+        (WebCore::isSubmitImage):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addEmbeddedObjectToUpdate):
+        (WebCore::FrameView::updateEmbeddedObject):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        * page/SpatialNavigation.cpp:
+        (WebCore::FocusCandidate::FocusCandidate):
+        * page/ios/FrameIOS.mm:
+        (WebCore::ancestorRespondingToClickEvents):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absolutePDFURL):
+        (WebCore::HitTestResult::enterFullscreenForVideo):
+        (WebCore::HitTestResult::mediaControlsEnabled):
+        (WebCore::HitTestResult::isLiveLink):
+        (WebCore::HitTestResult::isContentEditable):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintContents):
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::inputElement):
+        (WebCore::RenderFileUploadControl::uploadButton):
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::frameElement):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::frameSetElement):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasElement):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::iframeElement):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::imageMap):
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::canvasCompositingStrategy):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::selectElement):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::marqueeSpeed):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::selectedOptionCount):
+        (RenderMenuList::selectElement):
+        (RenderMenuList::updateOptionsWidth):
+        (RenderMenuList::setTextFromOption):
+        (RenderMenuList::itemText):
+        (RenderMenuList::itemIsSelected):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::meterElement):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::progressElement):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::element):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::plugInImageElement):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textFormControlElement):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::textAreaElement):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoElement):
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageForRenderer):
+        * svg/svgtags.in:
+        Generate helpers to SVGAElement so that isSVGAElement() can be used
+        instead of hasTagName(SVGNames::aTag). I did such update in this
+        patch.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::visiblePlaceholder):
+        (WebCore::Internals::wasLastChangeUserEdit):
+        (WebCore::Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks):
+        (WebCore::Internals::isSelectPopupVisible):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
         Have DataTransfer::files() return a reference
         https://bugs.webkit.org/show_bug.cgi?id=137039
 

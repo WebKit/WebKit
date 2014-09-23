@@ -166,7 +166,7 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     for (auto& element : descendantsOfType<Element>(const_cast<HTMLFieldSetElement&>(*this))) {
         if (element.hasTagName(objectTag))
-            m_associatedElements.append(&toHTMLObjectElement(element));
+            m_associatedElements.append(&downcast<HTMLObjectElement>(element));
         else if (element.isFormControlElement())
             m_associatedElements.append(&toHTMLFormControlElement(element));
     }

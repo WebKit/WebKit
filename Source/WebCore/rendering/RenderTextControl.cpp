@@ -48,7 +48,7 @@ RenderTextControl::~RenderTextControl()
 
 HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
 {
-    return toHTMLTextFormControlElement(nodeForNonAnonymous());
+    return downcast<HTMLTextFormControlElement>(nodeForNonAnonymous());
 }
 
 TextControlInnerTextElement* RenderTextControl::innerTextElement() const

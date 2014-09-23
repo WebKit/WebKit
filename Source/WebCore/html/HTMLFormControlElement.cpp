@@ -104,7 +104,7 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLFieldSetElement(ancestor) && ancestor->fastHasAttribute(disabledAttr)) {
-            HTMLFieldSetElement& fieldSetAncestor = toHTMLFieldSetElement(*ancestor);
+            HTMLFieldSetElement& fieldSetAncestor = downcast<HTMLFieldSetElement>(*ancestor);
             bool isInFirstLegend = previousAncestor && isHTMLLegendElement(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;
         }
@@ -193,7 +193,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
     if (isHTMLInputElement(element))
-        return !toHTMLInputElement(element)->isInputTypeHidden();
+        return !downcast<HTMLInputElement>(*element).isInputTypeHidden();
     if (element->hasTagName(selectTag))
         return true;
     if (element->hasTagName(keygenTag))

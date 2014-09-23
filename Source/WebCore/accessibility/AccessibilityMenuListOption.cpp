@@ -54,7 +54,7 @@ bool AccessibilityMenuListOption::isEnabled() const
 {
     // isDisabledFormControl() returns true if the parent <select> element is disabled,
     // which we don't want.
-    return !toHTMLOptionElement(m_element.get())->ownElementDisabled();
+    return !downcast<HTMLOptionElement>(*m_element).ownElementDisabled();
 }
 
 bool AccessibilityMenuListOption::isVisible() const
@@ -75,15 +75,15 @@ bool AccessibilityMenuListOption::isOffScreen() const
 
 bool AccessibilityMenuListOption::isSelected() const
 {
-    return toHTMLOptionElement(m_element.get())->selected();
+    return downcast<HTMLOptionElement>(*m_element).selected();
 }
 
-void AccessibilityMenuListOption::setSelected(bool b)
+void AccessibilityMenuListOption::setSelected(bool selected)
 {
     if (!canSetSelectedAttribute())
         return;
 
-    toHTMLOptionElement(m_element.get())->setSelected(b);
+    downcast<HTMLOptionElement>(*m_element).setSelected(selected);
 }
 
 String AccessibilityMenuListOption::nameForMSAA() const
@@ -114,7 +114,7 @@ LayoutRect AccessibilityMenuListOption::elementRect() const
 
 String AccessibilityMenuListOption::stringValue() const
 {
-    return toHTMLOptionElement(m_element.get())->text();
+    return downcast<HTMLOptionElement>(*m_element).text();
 }
 
 } // namespace WebCore

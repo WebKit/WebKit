@@ -161,16 +161,16 @@ static void appendServerMapMousePosition(StringBuilder& url, Event* event)
     if (!isHTMLImageElement(target))
         return;
 
-    HTMLImageElement* imageElement = toHTMLImageElement(target);
-    if (!imageElement || !imageElement->isServerMap())
+    HTMLImageElement& imageElement = downcast<HTMLImageElement>(*target);
+    if (!imageElement.isServerMap())
         return;
 
-    if (!imageElement->renderer() || !imageElement->renderer()->isRenderImage())
+    if (!imageElement.renderer() || !imageElement.renderer()->isRenderImage())
         return;
-    RenderImage* renderer = toRenderImage(imageElement->renderer());
+    RenderImage& renderer = toRenderImage(*imageElement.renderer());
 
     // FIXME: This should probably pass true for useTransforms.
-    FloatPoint absolutePosition = renderer->absoluteToLocal(FloatPoint(toMouseEvent(event)->pageX(), toMouseEvent(event)->pageY()));
+    FloatPoint absolutePosition = renderer.absoluteToLocal(FloatPoint(toMouseEvent(event)->pageX(), toMouseEvent(event)->pageY()));
     int x = absolutePosition.x();
     int y = absolutePosition.y();
     url.append('?');

@@ -46,7 +46,7 @@ RenderIFrame::RenderIFrame(HTMLIFrameElement& element, PassRef<RenderStyle> styl
 
 HTMLIFrameElement& RenderIFrame::iframeElement() const
 {
-    return toHTMLIFrameElement(RenderFrameBase::frameOwnerElement());
+    return downcast<HTMLIFrameElement>(RenderFrameBase::frameOwnerElement());
 }
 
 bool RenderIFrame::shouldComputeSizeAsReplaced() const

@@ -108,13 +108,13 @@ void RenderProgress::updateAnimationState()
 HTMLProgressElement* RenderProgress::progressElement() const
 {
     if (!element())
-        return 0;
+        return nullptr;
 
     if (isHTMLProgressElement(element()))
-        return toHTMLProgressElement(element());
+        return downcast<HTMLProgressElement>(element());
 
     ASSERT(element()->shadowHost());
-    return toHTMLProgressElement(element()->shadowHost());
+    return downcast<HTMLProgressElement>(element()->shadowHost());
 }    
 
 } // namespace WebCore

@@ -37,8 +37,8 @@ class HTMLOptionsCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
-    HTMLSelectElement& selectElement() { return toHTMLSelectElement(ownerNode()); }
-    const HTMLSelectElement& selectElement() const { return toHTMLSelectElement(ownerNode()); }
+    HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
+    const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }
 
     void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
     void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);

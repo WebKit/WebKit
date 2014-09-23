@@ -1267,7 +1267,7 @@ Frame* EventHandler::subframeForTargetNode(Node* node)
 #if ENABLE(CURSOR_SUPPORT)
 static bool isSubmitImage(Node* node)
 {
-    return node && isHTMLInputElement(node) && toHTMLInputElement(node)->isImageButton();
+    return node && isHTMLInputElement(node) && downcast<HTMLInputElement>(*node).isImageButton();
 }
 
 // Returns true if the node's editable block is not current focused for editing

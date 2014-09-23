@@ -100,7 +100,7 @@ RenderListBox::~RenderListBox()
 
 HTMLSelectElement& RenderListBox::selectElement() const
 {
-    return toHTMLSelectElement(nodeForNonAnonymous());
+    return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
 void RenderListBox::updateFromElement()
@@ -117,9 +117,9 @@ void RenderListBox::updateFromElement()
             String text;
             Font itemFont = style().font();
             if (isHTMLOptionElement(element))
-                text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
+                text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             else if (isHTMLOptGroupElement(element)) {
-                text = toHTMLOptGroupElement(element)->groupLabelText();
+                text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
@@ -387,13 +387,13 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     String itemText;
     bool isOptionElement = isHTMLOptionElement(listItemElement);
     if (isOptionElement)
-        itemText = toHTMLOptionElement(listItemElement)->textIndentedToRespectGroupLabel();
+        itemText = downcast<HTMLOptionElement>(*listItemElement).textIndentedToRespectGroupLabel();
     else if (isHTMLOptGroupElement(listItemElement))
-        itemText = toHTMLOptGroupElement(listItemElement)->groupLabelText();
+        itemText = downcast<HTMLOptGroupElement>(*listItemElement).groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
     Color textColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyColor) : style().visitedDependentColor(CSSPropertyColor);
-    if (isOptionElement && toHTMLOptionElement(listItemElement)->selected()) {
+    if (isOptionElement && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             textColor = theme().activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
@@ -426,7 +426,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     HTMLElement* listItemElement = listItems[listIndex];
 
     Color backColor;
-    if (isHTMLOptionElement(listItemElement) && toHTMLOptionElement(listItemElement)->selected()) {
+    if (isHTMLOptionElement(listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor();
         else

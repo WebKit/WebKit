@@ -35,7 +35,7 @@ RenderFrame::RenderFrame(HTMLFrameElement& frame, PassRef<RenderStyle> style)
 
 HTMLFrameElement& RenderFrame::frameElement() const
 {
-    return toHTMLFrameElement(RenderFrameBase::frameOwnerElement());
+    return downcast<HTMLFrameElement>(RenderFrameBase::frameOwnerElement());
 }
 
 FrameEdgeInfo RenderFrame::edgeInfo() const

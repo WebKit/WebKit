@@ -314,11 +314,11 @@ void WebChromeClientIOS::focusedElementChanged(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (!inputElement->isText())
+    HTMLInputElement& inputElement = downcast<HTMLInputElement>(*element);
+    if (!inputElement.isText())
         return;
 
-    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document().frame()));
+    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(inputElement.document().frame()));
 }
 
 void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo)

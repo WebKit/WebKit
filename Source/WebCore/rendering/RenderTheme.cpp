@@ -980,7 +980,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     if (!input)
         return;
 
-    HTMLDataListElement* dataList = toHTMLDataListElement(input->list());
+    HTMLDataListElement* dataList = downcast<HTMLDataListElement>(input->list());
     if (!dataList)
         return;
 
@@ -1036,8 +1036,8 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     paintInfo.context->setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(isHTMLOptionElement(node));
-        HTMLOptionElement* optionElement = toHTMLOptionElement(node);
-        String value = optionElement->value();
+        HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
+        String value = optionElement.value();
         if (!input->isValidValue(value))
             continue;
         double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));

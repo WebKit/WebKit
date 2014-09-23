@@ -70,7 +70,7 @@ RenderFileUploadControl::~RenderFileUploadControl()
 
 HTMLInputElement& RenderFileUploadControl::inputElement() const
 {
-    return toHTMLInputElement(nodeForNonAnonymous());
+    return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
 
 void RenderFileUploadControl::updateFromElement()
@@ -255,7 +255,7 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
     ASSERT(inputElement().shadowRoot());
     Node* buttonNode = inputElement().shadowRoot()->firstChild();
-    return buttonNode && buttonNode->isHTMLElement() && isHTMLInputElement(buttonNode) ? toHTMLInputElement(buttonNode) : 0;
+    return buttonNode && buttonNode->isHTMLElement() && isHTMLInputElement(buttonNode) ? downcast<HTMLInputElement>(buttonNode) : nullptr;
 }
 
 String RenderFileUploadControl::buttonValue()

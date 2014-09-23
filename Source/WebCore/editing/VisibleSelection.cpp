@@ -658,13 +658,13 @@ Element* VisibleSelection::rootEditableElement() const
 
 Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const
 {
-    return start().deprecatedNode() ? start().deprecatedNode()->nonBoundaryShadowTreeRootNode() : 0;
+    return start().deprecatedNode() ? start().deprecatedNode()->nonBoundaryShadowTreeRootNode() : nullptr;
 }
 
 bool VisibleSelection::isInPasswordField() const
 {
     HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
-    return textControl && isHTMLInputElement(textControl) && toHTMLInputElement(textControl)->isPasswordField();
+    return textControl && isHTMLInputElement(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
 }
 
 #ifndef NDEBUG

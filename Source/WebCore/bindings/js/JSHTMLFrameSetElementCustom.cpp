@@ -51,7 +51,7 @@ EncodedJSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSObject* slot
 {
     HTMLElement& element = jsCast<JSHTMLElement*>(slotBase)->impl();
     Node* frameElement = element.children()->namedItem(propertyNameToAtomicString(propertyName));
-    if (Document* document = toHTMLFrameElement(frameElement)->contentDocument()) {
+    if (Document* document = downcast<HTMLFrameElement>(frameElement)->contentDocument()) {
         if (JSDOMWindowShell* window = toJSDOMWindowShell(document->frame(), currentWorld(exec)))
             return JSValue::encode(window);
     }

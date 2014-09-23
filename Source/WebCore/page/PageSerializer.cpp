@@ -231,19 +231,19 @@ void PageSerializer::serializeFrame(Frame* frame)
             retrieveResourcesForProperties(toStyledElement(element)->inlineStyle(), document);
 
         if (isHTMLImageElement(element)) {
-            HTMLImageElement* imageElement = toHTMLImageElement(element);
-            URL url = document->completeURL(imageElement->fastGetAttribute(HTMLNames::srcAttr));
-            CachedImage* cachedImage = imageElement->cachedImage();
-            addImageToResources(cachedImage, imageElement->renderer(), url);
-        } else if (element->hasTagName(HTMLNames::linkTag)) {
-            HTMLLinkElement* linkElement = toHTMLLinkElement(element);
-            if (CSSStyleSheet* sheet = linkElement->sheet()) {
-                URL url = document->completeURL(linkElement->getAttribute(HTMLNames::hrefAttr));
+            HTMLImageElement& imageElement = downcast<HTMLImageElement>(*element);
+            URL url = document->completeURL(imageElement.fastGetAttribute(HTMLNames::srcAttr));
+            CachedImage* cachedImage = imageElement.cachedImage();
+            addImageToResources(cachedImage, imageElement.renderer(), url);
+        } else if (isHTMLLinkElement(element)) {
+            HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*element);
+            if (CSSStyleSheet* sheet = linkElement.sheet()) {
+                URL url = document->completeURL(linkElement.getAttribute(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }
         } else if (isHTMLStyleElement(element)) {
-            if (CSSStyleSheet* sheet = toHTMLStyleElement(element)->sheet())
+            if (CSSStyleSheet* sheet = downcast<HTMLStyleElement>(*element).sheet())
                 serializeCSSStyleSheet(sheet, URL());
         }
     }

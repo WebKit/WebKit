@@ -160,7 +160,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Node* nod
 
     if (!(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(targetNode))) {
 #if ENABLE(TEMPLATE_ELEMENT)
-        Node* current = targetNode.hasTagName(templateTag) ? toHTMLTemplateElement(targetNode).content()->firstChild() : targetNode.firstChild();
+        Node* current = targetNode.hasTagName(templateTag) ? downcast<HTMLTemplateElement>(targetNode).content()->firstChild() : targetNode.firstChild();
 #else
         Node* current = targetNode.firstChild();
 #endif

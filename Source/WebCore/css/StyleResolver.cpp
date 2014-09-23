@@ -1338,7 +1338,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     if (e && e->isFormControlElement() && style.fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
-        if (!isHTMLInputElement(e) || !toHTMLInputElement(e)->isImageButton())
+        if (!isHTMLInputElement(e) || !downcast<HTMLInputElement>(*e).isImageButton())
             addIntrinsicMargins(style);
     }
 

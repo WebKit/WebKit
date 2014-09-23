@@ -75,7 +75,7 @@ PassRefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
 
     RefPtr<Node> clone = cloneElementWithChildren();
     if (m_content)
-        content()->cloneChildNodes(toHTMLTemplateElement(clone.get())->content());
+        content()->cloneChildNodes(downcast<HTMLTemplateElement>(clone.get())->content());
     return clone.release();
 }
 

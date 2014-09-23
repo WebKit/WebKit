@@ -141,7 +141,7 @@ PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::cre
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 {
     // On mousedown, bring up a menu, if needed
-    HTMLInputElement* input = toHTMLInputElement(shadowHost());
+    HTMLInputElement* input = downcast<HTMLInputElement>(shadowHost());
     if (input && event->type() == eventNames().mousedownEvent && event->isMouseEvent() && toMouseEvent(event)->button() == LeftButton) {
         input->focus();
         input->select();
@@ -192,7 +192,7 @@ void SearchFieldCancelButtonElement::willDetachRenderers()
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
-    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowHost()));
+    RefPtr<HTMLInputElement> input(downcast<HTMLInputElement>(shadowHost()));
     if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -232,7 +232,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 #if !PLATFORM(IOS)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = toHTMLInputElement(shadowHost());
+    const HTMLInputElement* input = downcast<HTMLInputElement>(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 

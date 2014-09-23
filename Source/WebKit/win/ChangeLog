@@ -1,3 +1,50 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Use downcast<HTML*Element>() instead of toHTML*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137007
+
+        Reviewed by Benjamin Poulain.
+
+        Use downcast<HTML*Element>() instead of toHTML*Element().
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::URL):
+        (DOMHTMLDocument::body):
+        (DOMHTMLDocument::forms):
+        (DOMHTMLFormElement::action):
+        (DOMHTMLFormElement::method):
+        (DOMHTMLSelectElement::options):
+        (DOMHTMLSelectElement::activateItemAtIndex):
+        (DOMHTMLOptionElement::text):
+        (DOMHTMLOptionElement::label):
+        (DOMHTMLInputElement::form):
+        (DOMHTMLInputElement::disabled):
+        (DOMHTMLInputElement::readOnly):
+        (DOMHTMLInputElement::setType):
+        (DOMHTMLInputElement::value):
+        (DOMHTMLInputElement::setValue):
+        (DOMHTMLInputElement::setValueForUser):
+        (DOMHTMLInputElement::select):
+        (DOMHTMLInputElement::setSelectionStart):
+        (DOMHTMLInputElement::selectionStart):
+        (DOMHTMLInputElement::setSelectionEnd):
+        (DOMHTMLInputElement::selectionEnd):
+        (DOMHTMLInputElement::isTextField):
+        (DOMHTMLInputElement::replaceCharactersInRange):
+        (DOMHTMLInputElement::selectedRange):
+        (DOMHTMLInputElement::setAutofilled):
+        (DOMHTMLInputElement::isAutofilled):
+        (DOMHTMLInputElement::isUserEdited):
+        (DOMHTMLTextAreaElement::form):
+        (DOMHTMLTextAreaElement::value):
+        (DOMHTMLTextAreaElement::setValue):
+        (DOMHTMLTextAreaElement::select):
+        (DOMHTMLTextAreaElement::isUserEdited):
+        (DOMHTMLIFrameElement::contentFrame):
+        * WebFrame.cpp:
+        (formElementFromDOMElement):
+        (inputElementFromDOMElement):
+
 2014-09-21  Chris Dumez  <cdumez@apple.com>
 
         Generate Element casting helper functions

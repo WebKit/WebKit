@@ -211,14 +211,14 @@ void ImageDocument::createDocumentStructure()
 {
     RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
     appendChild(rootElement);
-    toHTMLHtmlElement(rootElement.get())->insertedByParser();
+    downcast<HTMLHtmlElement>(*rootElement).insertedByParser();
 
     frame()->injectUserScripts(InjectAtDocumentStart);
 
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px");
     if (MIMETypeRegistry::isPDFMIMEType(document().loader()->responseMIMEType()))
-        toHTMLBodyElement(body.get())->setInlineStyleProperty(CSSPropertyBackgroundColor, "white", CSSPrimitiveValue::CSS_IDENT);
+        downcast<HTMLBodyElement>(*body).setInlineStyleProperty(CSSPropertyBackgroundColor, "white", CSSPrimitiveValue::CSS_IDENT);
     rootElement->appendChild(body);
     
     RefPtr<ImageDocumentElement> imageElement = ImageDocumentElement::create(*this);
