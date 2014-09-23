@@ -363,6 +363,12 @@ webkit.org/b/133319 crypto/subtle/sha-224.html [ Pass ]
 webkit.org/b/133319 crypto/subtle/sha-256.html [ Pass ]
 webkit.org/b/133319 crypto/subtle/sha-384.html [ Pass ]
 webkit.org/b/133319 crypto/subtle/sha-512.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-check-algorithm.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-export-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-generate-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-import-jwk.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify-empty-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]

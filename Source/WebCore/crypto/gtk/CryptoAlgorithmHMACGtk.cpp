@@ -31,35 +31,72 @@
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
-#include "NotImplemented.h"
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
+#include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
+static gnutls_mac_algorithm_t getGnutlsDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+{
+    switch (hashFunction) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        return GNUTLS_MAC_SHA1;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        return GNUTLS_MAC_SHA224;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        return GNUTLS_MAC_SHA256;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        return GNUTLS_MAC_SHA384;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        return GNUTLS_MAC_SHA512;
+    default:
+        return GNUTLS_MAC_UNKNOWN;
+    }
+}
+
+static Vector<uint8_t> calculateSignature(gnutls_mac_algorithm_t algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
+{
+    size_t digestLength = gnutls_hmac_get_len(algorithm);
+
+    Vector<uint8_t> result(digestLength);
+    const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>("");
+    int ret = gnutls_hmac_fast(algorithm, keyData, key.size(), data.first, data.second, result.data());
+    ASSERT(ret == GNUTLS_E_SUCCESS);
+    UNUSED_PARAM(ret);
+
+    return result;
+}
+
 void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-    failureCallback();
+    gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
+    if (algorithm == GNUTLS_MAC_UNKNOWN) {
+        ec = NOT_SUPPORTED_ERR;
+        failureCallback();
+        return;
+    }
 
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(ec);
+    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
+
+    callback(signature);
 }
 
 void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    notImplemented();
-    ec = NOT_SUPPORTED_ERR;
-    failureCallback();
+    gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
+    if (algorithm == GNUTLS_MAC_UNKNOWN) {
+        ec = NOT_SUPPORTED_ERR;
+        failureCallback();
+        return;
+    }
 
-    UNUSED_PARAM(parameters);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(expectedSignature);
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(ec);
+    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
+
+    // Using a constant time comparison to prevent timing attacks.
+    bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
+
+    callback(result);
 }
 
 }

@@ -1,5 +1,20 @@
 2014-09-23  Eduardo Lima Mitev  <elima@igalia.com>
 
+        [GTK] Adds implementation of subtle crypto HMAC algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=133320
+
+        Reviewed by Philippe Normand.
+
+        Tests are already in place under crypto/subtle/hmac-*.html
+
+        * crypto/gtk/CryptoAlgorithmHMACGtk.cpp:
+        (WebCore::getGnutlsDigestAlgorithm):
+        (WebCore::calculateSignature):
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+
+2014-09-23  Eduardo Lima Mitev  <elima@igalia.com>
+
         [GTK] Adds implementation of Subtle Crypto digest algorithms
         https://bugs.webkit.org/show_bug.cgi?id=133319
 

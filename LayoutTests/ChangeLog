@@ -1,3 +1,12 @@
+2014-09-23  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Adds implementation of subtle crypto HMAC algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=133320
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: Whitelists HMAC related tests that are passing
+
 2014-09-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r173864.
