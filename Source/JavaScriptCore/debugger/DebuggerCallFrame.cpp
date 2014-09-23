@@ -208,14 +208,13 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
 
 void DebuggerCallFrame::invalidate()
 {
-    m_callFrame = nullptr;
-    if (m_scope) {
-        m_scope->invalidateChain();
-        m_scope.clear();
-    }
-    RefPtr<DebuggerCallFrame> frame = m_caller.release();
+    RefPtr<DebuggerCallFrame> frame = this;
     while (frame) {
         frame->m_callFrame = nullptr;
+        if (frame->m_scope) {
+            frame->m_scope->invalidateChain();
+            frame->m_scope.clear();
+        }
         frame = frame->m_caller.release();
     }
 }

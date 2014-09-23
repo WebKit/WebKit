@@ -142,12 +142,14 @@ DebuggerScope* DebuggerScope::next()
 
 void DebuggerScope::invalidateChain()
 {
+    if (!isValid())
+        return;
+
     DebuggerScope* scope = this;
     while (scope) {
-        ASSERT(scope->isValid());
         DebuggerScope* nextScope = scope->m_next.get();
         scope->m_next.clear();
-        scope->m_scope.clear();
+        scope->m_scope.clear(); // This also marks this scope as invalid.
         scope = nextScope;
     }
 }

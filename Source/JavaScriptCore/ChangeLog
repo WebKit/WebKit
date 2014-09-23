@@ -1,5 +1,22 @@
 2014-09-23  Mark Lam  <mark.lam@apple.com>
 
+        DebuggerCallFrame::invalidate() should invalidate all DebuggerScope chains.
+        <https://webkit.org/b/137045>
+
+        Reviewed by Geoffrey Garen.
+
+        DebuggerCallFrame::invalidate() currently invalidates all DebuggerCallFrames
+        in the debugger stack, but only invalidates the DebuggerScope chain of the
+        top most frame.  We should also invalidate all the DebuggerScope chains of
+        the other frames in the debugger stack.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::invalidate):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::invalidateChain):
+
+2014-09-23  Mark Lam  <mark.lam@apple.com>
+
         Renamed DebuggerCallFrameScope to DebuggerPausedScope.
         <https://webkit.org/b/137042>
 
