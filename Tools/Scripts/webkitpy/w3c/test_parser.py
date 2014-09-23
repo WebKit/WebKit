@@ -108,6 +108,13 @@ class TestParser(object):
                     reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
                     test_info['reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
 
+        # not all reference tests have a <link rel='match'> element in WPT repo
+        elif self.is_wpt_reftest():
+            test_info = {'test': self.filename, 'reference': self.potential_ref_filename()}
+            test_info['reference_support_info'] = {}
+        # we check for wpt manual test before checking for jstest, as some WPT manual tests can be classified as CSS JS tests
+        elif self.is_wpt_manualtest():
+            test_info = None
         elif self.is_jstest():
             test_info = {'test': self.filename, 'jstest': True}
         elif self.options['all'] is True and not('-ref' in self.filename) and not('reference' in self.filename):
@@ -121,6 +128,19 @@ class TestParser(object):
     def is_jstest(self):
         """Returns whether the file appears to be a jstest, by searching for usage of W3C-style testharness paths."""
         return bool(self.test_doc.find(src=re.compile('[\'\"/]?/resources/testharness')))
+
+    def is_wpt_manualtest(self):
+        """Returns whether the test is a manual test according WPT rules (i.e. file ends with -manual.htm path)."""
+        return self.filename.endswith('-manual.htm') or self.filename.endswith('-manual.html')
+
+    def potential_ref_filename(self):
+        parts = self.filesystem.splitext(self.filename)
+        return  parts[0] + '-ref' + parts[1]
+
+    def is_wpt_reftest(self):
+        """Returns whether the test is a ref test according WPT rules (i.e. file has a -ref.html counterpart)."""
+        parts = self.filesystem.splitext(self.filename)
+        return  self.filesystem.isfile(self.potential_ref_filename())
 
     def support_files(self, doc):
         """ Searches the file for all paths specified in url()'s, href or src attributes."""

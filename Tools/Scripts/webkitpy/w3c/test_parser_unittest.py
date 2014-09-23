@@ -155,6 +155,20 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertTrue('jstest' in test_info.keys(), 'test should be a jstest')
 
+    def test_analyze_manual_wpt_test(self):
+        """ Tests analyze_test() using a manual jstest """
+
+        test_html = """<head>
+<link href="/resources/testharness.css" rel="stylesheet" type="text/css">
+<script src="/resources/testharness.js"></script>
+</head>
+"""
+        test_path = '/some/madeup/path/'
+        parser = TestParser(options, test_path + 'somefile-manual.html')
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertEqual(test_info, None, 'test_info is None')
+
     def test_analyze_pixel_test_all_true(self):
         """ Tests analyze_test() using a test that is neither a reftest or jstest with all=False """
 

@@ -1,3 +1,19 @@
+2014-09-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should detect manual and reference tests according their filenames
+        https://bugs.webkit.org/show_bug.cgi?id=133852
+
+        Reviewed by Bem Jones-Bey.
+
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test): Adding checks based on WPT filename rules.
+        (TestParser.is_wpt_manualtest): Detecting whether the test is a manual test based on its filename.
+        (TestParser):
+        (TestParser.potential_ref_filename): Getting the potential reference filename of a test from its filename.
+        (TestParser.is_wpt_reftest): Detecting whether the test is a ref test based on its filename.
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        (test_analyze_manual_wpt_test): Adding a test for a "-manual.html" file with testharness.js link in it. 
+
 2014-09-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Unreviewed, add Rebecca Hauck as a contributor.
