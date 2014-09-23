@@ -1,3 +1,18 @@
+2014-09-23  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] The composited layers isolated by the page group should blend with the default white background color.
+        https://bugs.webkit.org/show_bug.cgi?id=136563
+
+        Reviewed by Simon Fraser.
+
+        * css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt:
+        * css3/blending/blend-mode-body-composited-child-background-color-expected.html: Added.
+        * css3/blending/blend-mode-body-composited-child-background-color.html: Added.
+        * css3/blending/blend-mode-body-composited-child-expected.html: Added.
+        * css3/blending/blend-mode-body-composited-child.html: Added.
+        * css3/blending/blend-mode-parent-of-composited-blended-has-layer-expected.txt:
+        * css3/blending/blend-mode-with-composited-descendant-should-have-layer-expected.txt:
+
 2014-09-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Unskip media test on EFL port. Almost media tests

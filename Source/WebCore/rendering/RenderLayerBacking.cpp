@@ -1706,6 +1706,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (renderer().isRenderNamedFlowFragmentContainer())
         return false;
 
+    if (renderer().isRoot() && m_owningLayer.isolatesCompositedBlending())
+        return false;
+
     if (renderer().isRenderView()) {
         // Look to see if the root object has a non-simple background
         RenderObject* rootObject = renderer().document().documentElement() ? renderer().document().documentElement()->renderer() : 0;

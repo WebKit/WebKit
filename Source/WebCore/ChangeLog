@@ -1,3 +1,21 @@
+2014-09-23  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] The composited layers isolated by the page group should blend with the default white background color.
+        https://bugs.webkit.org/show_bug.cgi?id=136563
+
+        Reviewed by Simon Fraser.
+
+        If a blending layer is not isolated, then it should blend with a white backdrop:
+        http://dev.w3.org/fxtf/compositing-1/#pagebackdrop
+
+        Tests: css3/blending/blend-mode-body-composited-child-background-color.html
+               css3/blending/blend-mode-body-composited-child.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        If the isolating composited layer is the root renderer, then it should have a backing store
+        into which the initial white backdrop will be painted.
+
 2014-09-22  Christophe Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r173859.
