@@ -1,5 +1,13 @@
 2014-09-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Unskip media test on EFL port. Almost media tests
+        are passed except for some tests. Unfortunately what revision fixed this crash on media test.
+        To maintain media test on EFL port again, this commit unskips those tests.
+
+        * platform/efl/TestExpectations:
+
+2014-09-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. Unskip batterystatus, which doesn't come to crash anymore.
 
         * platform/efl/TestExpectations:
