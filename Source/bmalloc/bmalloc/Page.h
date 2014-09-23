@@ -39,9 +39,10 @@ public:
     typedef typename Traits::Chunk Chunk;
     typedef typename Traits::Line Line;
     static const size_t lineSize = Traits::lineSize;
+    static const size_t lineCount = vmPageSize / lineSize;
 
     static const unsigned char maxRefCount = std::numeric_limits<unsigned char>::max();
-    static_assert(vmPageSize / lineSize < maxRefCount, "maximum line count must fit in Page");
+    static_assert(lineCount < maxRefCount, "maximum line count must fit in Page");
     
     static Page* get(Line*);
 
@@ -49,15 +50,15 @@ public:
     bool deref(std::lock_guard<StaticMutex>&);
     unsigned refCount(std::lock_guard<StaticMutex>&) { return m_refCount; }
     
-    size_t smallSizeClass() { return m_smallSizeClass; }
-    void setSmallSizeClass(size_t smallSizeClass) { m_smallSizeClass = smallSizeClass; }
+    size_t sizeClass() { return m_sizeClass; }
+    void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
     Line* begin();
     Line* end();
 
 private:
     unsigned char m_refCount;
-    unsigned char m_smallSizeClass;
+    unsigned char m_sizeClass;
 };
 
 template<typename Traits>
@@ -89,14 +90,14 @@ inline auto Page<Traits>::begin() -> Line*
 {
     Chunk* chunk = Chunk::get(this);
     size_t pageNumber = this - chunk->pages();
-    size_t lineNumber = pageNumber * vmPageSize / lineSize;
+    size_t lineNumber = pageNumber * lineCount;
     return &chunk->lines()[lineNumber];
 }
 
 template<typename Traits>
 inline auto Page<Traits>::end() -> Line*
 {
-    return begin() + vmPageSize / lineSize;
+    return begin() + lineCount;
 }
 
 } // namespace bmalloc

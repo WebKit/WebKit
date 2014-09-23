@@ -11,6 +11,8 @@
 		1400274A18F89C2300115C97 /* VMHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 144F7BFC18BFC517003537F3 /* VMHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274B18F89C3D00115C97 /* BoundaryTagInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14105E7B18DBD7AF003A106E /* BoundaryTagInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274C18F89C3D00115C97 /* SegregatedFreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00219CE429C00FFD3C8 /* BumpRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00419CE4B6800FFD3C8 /* LineMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
 		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
@@ -26,7 +28,6 @@
 		14DD789818F48D4A00950702 /* Allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6856179DC8CA00D65598 /* Allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD789918F48D4A00950702 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469E517A46BFE00F9EA1D /* Cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD789A18F48D4A00950702 /* Deallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F685A179DC90200D65598 /* Deallocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD789B18F48D4A00950702 /* MediumAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E47018A0661700546D68 /* MediumAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E462189DE1CD00546D68 /* BumpAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78B418F48D6B00950702 /* Chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA9418CE5CA6002201E4 /* Chunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78B518F48D6B00950702 /* Line.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA32071885F9E6007269E0 /* Line.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -72,12 +73,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		140FA00219CE429C00FFD3C8 /* BumpRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpRange.h; path = bmalloc/BumpRange.h; sourceTree = "<group>"; };
+		140FA00419CE4B6800FFD3C8 /* LineMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineMetadata.h; path = bmalloc/LineMetadata.h; sourceTree = "<group>"; };
 		14105E7B18DBD7AF003A106E /* BoundaryTagInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryTagInlines.h; path = bmalloc/BoundaryTagInlines.h; sourceTree = "<group>"; };
 		14105E8318E14374003A106E /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectType.cpp; path = bmalloc/ObjectType.cpp; sourceTree = "<group>"; };
 		1413E460189DCE1E00546D68 /* Inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Inline.h; path = bmalloc/Inline.h; sourceTree = "<group>"; };
 		1413E462189DE1CD00546D68 /* BumpAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BumpAllocator.h; path = bmalloc/BumpAllocator.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
-		1413E47018A0661700546D68 /* MediumAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumAllocator.h; path = bmalloc/MediumAllocator.h; sourceTree = "<group>"; };
 		1417F64518B54A700076FA3F /* BeginTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BeginTag.h; path = bmalloc/BeginTag.h; sourceTree = "<group>"; };
 		1417F64618B54A700076FA3F /* EndTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EndTag.h; path = bmalloc/EndTag.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
@@ -235,7 +237,6 @@
 				144469E517A46BFE00F9EA1D /* Cache.h */,
 				145F6859179DC90200D65598 /* Deallocator.cpp */,
 				145F685A179DC90200D65598 /* Deallocator.h */,
-				1413E47018A0661700546D68 /* MediumAllocator.h */,
 				1413E462189DE1CD00546D68 /* BumpAllocator.h */,
 			);
 			name = cache;
@@ -244,8 +245,10 @@
 		14D9DB4E17F2866E00EAAB79 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
 				14DA320C18875B09007269E0 /* Heap.h */,
+				140FA00419CE4B6800FFD3C8 /* LineMetadata.h */,
 				14105E8318E14374003A106E /* ObjectType.cpp */,
 				1485656018A43DBA00ED6942 /* ObjectType.h */,
 				145F6874179DF84100D65598 /* Sizes.h */,
@@ -296,6 +299,7 @@
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
 				14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */,
 				14DD789218F48CFC00950702 /* EndTag.h in Headers */,
+				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
@@ -309,7 +313,6 @@
 				14DD78CD18F48D7500950702 /* Range.h in Headers */,
 				14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */,
 				14DD789918F48D4A00950702 /* Cache.h in Headers */,
-				14DD789B18F48D4A00950702 /* MediumAllocator.h in Headers */,
 				14DD78BE18F48D6B00950702 /* SmallTraits.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
@@ -322,6 +325,7 @@
 				1400274A18F89C2300115C97 /* VMHeap.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
 				14DD78B818F48D6B00950702 /* MediumPage.h in Headers */,
+				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				1400274B18F89C3D00115C97 /* BoundaryTagInlines.h in Headers */,

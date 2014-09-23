@@ -50,6 +50,42 @@ Heap::Heap(std::lock_guard<StaticMutex>&)
     : m_isAllocatingPages(false)
     , m_scavenger(*this, &Heap::concurrentScavenge)
 {
+    initializeLineMetadata();
+}
+
+void Heap::initializeLineMetadata()
+{
+    for (unsigned short size = alignment; size <= smallMax; size += alignment) {
+        unsigned short startOffset = 0;
+        for (size_t lineNumber = 0; lineNumber < SmallPage::lineCount - 1; ++lineNumber) {
+            unsigned short objectCount;
+            unsigned short remainder;
+            divideRoundingUp(static_cast<unsigned short>(SmallPage::lineSize - startOffset), size, objectCount, remainder);
+            BASSERT(objectCount);
+            m_smallLineMetadata[sizeClass(size)][lineNumber] = { startOffset, objectCount };
+            startOffset = remainder ? size - remainder : 0;
+        }
+
+        // The last line in the page rounds down instead of up because it's not allowed to overlap into its neighbor.
+        unsigned short objectCount = static_cast<unsigned short>((SmallPage::lineSize - startOffset) / size);
+        m_smallLineMetadata[sizeClass(size)][SmallPage::lineCount - 1] = { startOffset, objectCount };
+    }
+
+    for (unsigned short size = smallMax + alignment; size <= mediumMax; size += alignment) {
+        unsigned short startOffset = 0;
+        for (size_t lineNumber = 0; lineNumber < MediumPage::lineCount - 1; ++lineNumber) {
+            unsigned short objectCount;
+            unsigned short remainder;
+            divideRoundingUp(static_cast<unsigned short>(MediumPage::lineSize - startOffset), size, objectCount, remainder);
+            BASSERT(objectCount);
+            m_mediumLineMetadata[sizeClass(size)][lineNumber] = { startOffset, objectCount };
+            startOffset = remainder ? size - remainder : 0;
+        }
+
+        // The last line in the page rounds down instead of up because it's not allowed to overlap into its neighbor.
+        unsigned short objectCount = static_cast<unsigned short>((MediumPage::lineSize - startOffset) / size);
+        m_mediumLineMetadata[sizeClass(size)][MediumPage::lineCount - 1] = { startOffset, objectCount };
+    }
 }
 
 void Heap::concurrentScavenge()
@@ -116,11 +152,93 @@ void Heap::scavengeLargeRanges(std::unique_lock<StaticMutex>& lock, std::chrono:
     }
 }
 
-SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock, size_t smallSizeClass)
+void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, SmallBumpRangeCache& rangeCache)
 {
+    BASSERT(!rangeCache.size());
+    SmallPage* page = allocateSmallPage(lock, sizeClass);
+    SmallLine* lines = page->begin();
+
+    // Due to overlap from the previous line, the last line in the page may not be able to fit any objects.
+    size_t end = SmallPage::lineCount;
+    if (!m_smallLineMetadata[sizeClass][SmallPage::lineCount - 1].objectCount)
+        --end;
+
+    // Find a free line.
+    for (size_t lineNumber = 0; lineNumber < end; ++lineNumber) {
+        if (lines[lineNumber].refCount(lock))
+            continue;
+
+        LineMetadata& lineMetadata = m_smallLineMetadata[sizeClass][lineNumber];
+        char* begin = lines[lineNumber].begin() + lineMetadata.startOffset;
+        unsigned short objectCount = lineMetadata.objectCount;
+        lines[lineNumber].ref(lock, lineMetadata.objectCount);
+        page->ref(lock);
+
+        // Merge with subsequent free lines.
+        while (++lineNumber < end) {
+            if (lines[lineNumber].refCount(lock))
+                break;
+
+            LineMetadata& lineMetadata = m_smallLineMetadata[sizeClass][lineNumber];
+            objectCount += lineMetadata.objectCount;
+            lines[lineNumber].ref(lock, lineMetadata.objectCount);
+            page->ref(lock);
+        }
+
+        rangeCache.push({ begin, objectCount });
+    }
+}
+
+void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, MediumBumpRangeCache& rangeCache)
+{
+    MediumPage* page = allocateMediumPage(lock, sizeClass);
+    BASSERT(!rangeCache.size());
+    MediumLine* lines = page->begin();
+
+    // Due to overlap from the previous line, the last line in the page may not be able to fit any objects.
+    size_t end = MediumPage::lineCount;
+    if (!m_mediumLineMetadata[sizeClass][MediumPage::lineCount - 1].objectCount)
+        --end;
+
+    // Find a free line.
+    for (size_t lineNumber = 0; lineNumber < end; ++lineNumber) {
+        if (lines[lineNumber].refCount(lock))
+            continue;
+
+        LineMetadata& lineMetadata = m_mediumLineMetadata[sizeClass][lineNumber];
+        char* begin = lines[lineNumber].begin() + lineMetadata.startOffset;
+        unsigned short objectCount = lineMetadata.objectCount;
+        lines[lineNumber].ref(lock, lineMetadata.objectCount);
+        page->ref(lock);
+        
+        // Merge with subsequent free lines.
+        while (++lineNumber < end) {
+            if (lines[lineNumber].refCount(lock))
+                break;
+
+            LineMetadata& lineMetadata = m_mediumLineMetadata[sizeClass][lineNumber];
+            objectCount += lineMetadata.objectCount;
+            lines[lineNumber].ref(lock, lineMetadata.objectCount);
+            page->ref(lock);
+        }
+
+        rangeCache.push({ begin, objectCount });
+    }
+}
+
+SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
+{
+    Vector<SmallPage*>& smallPagesWithFreeLines = m_smallPagesWithFreeLines[sizeClass];
+    while (smallPagesWithFreeLines.size()) {
+        SmallPage* page = smallPagesWithFreeLines.pop();
+        if (!page->refCount(lock) || page->sizeClass() != sizeClass) // Page was promoted to the pages list.
+            continue;
+        return page;
+    }
+    
     m_isAllocatingPages = true;
 
-    SmallPage* page = [this]() {
+    SmallPage* page = [this, sizeClass]() {
         if (m_smallPages.size())
             return m_smallPages.pop();
         
@@ -129,22 +247,23 @@ SmallLine* Heap::allocateSmallLineSlowCase(std::lock_guard<StaticMutex>& lock, s
         return page;
     }();
 
-    SmallLine* line = page->begin();
-    Vector<SmallLine*>& smallLines = m_smallLines[smallSizeClass];
-    for (auto it = line + 1; it != page->end(); ++it)
-        smallLines.push(it);
-
-    BASSERT(!line->refCount(lock));
-    page->setSmallSizeClass(smallSizeClass);
-    page->ref(lock);
-    return line;
+    page->setSizeClass(sizeClass);
+    return page;
 }
 
-MediumLine* Heap::allocateMediumLineSlowCase(std::lock_guard<StaticMutex>& lock)
+MediumPage* Heap::allocateMediumPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
 {
+    Vector<MediumPage*>& mediumPagesWithFreeLines = m_mediumPagesWithFreeLines[sizeClass];
+    while (mediumPagesWithFreeLines.size()) {
+        MediumPage* page = mediumPagesWithFreeLines.pop();
+        if (!page->refCount(lock) || page->sizeClass() != sizeClass) // Page was promoted to the pages list.
+            continue;
+        return page;
+    }
+    
     m_isAllocatingPages = true;
 
-    MediumPage* page = [this]() {
+    MediumPage* page = [this, sizeClass]() {
         if (m_mediumPages.size())
             return m_mediumPages.pop();
         
@@ -153,12 +272,52 @@ MediumLine* Heap::allocateMediumLineSlowCase(std::lock_guard<StaticMutex>& lock)
         return page;
     }();
 
-    MediumLine* line = page->begin();
-    for (auto it = line + 1; it != page->end(); ++it)
-        m_mediumLines.push(it);
+    page->setSizeClass(sizeClass);
+    return page;
+}
 
-    page->ref(lock);
-    return line;
+void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)
+{
+    BASSERT(!line->refCount(lock));
+    SmallPage* page = SmallPage::get(line);
+    size_t refCount = page->refCount(lock);
+    page->deref(lock);
+
+    switch (refCount) {
+    case SmallPage::lineCount: {
+        // First free line in the page.
+        m_smallPagesWithFreeLines[page->sizeClass()].push(page);
+        break;
+    }
+    case 1: {
+        // Last free line in the page.
+        m_smallPages.push(page);
+        m_scavenger.run();
+        break;
+    }
+    }
+}
+
+void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)
+{
+    BASSERT(!line->refCount(lock));
+    MediumPage* page = MediumPage::get(line);
+    size_t refCount = page->refCount(lock);
+    page->deref(lock);
+
+    switch (refCount) {
+    case MediumPage::lineCount: {
+        // First free line in the page.
+        m_mediumPagesWithFreeLines[page->sizeClass()].push(page);
+        break;
+    }
+    case 1: {
+        // Last free line in the page.
+        m_mediumPages.push(page);
+        m_scavenger.run();
+        break;
+    }
+    }
 }
 
 void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)

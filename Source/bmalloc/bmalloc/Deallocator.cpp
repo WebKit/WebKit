@@ -72,15 +72,11 @@ void Deallocator::processObjectLog()
     for (auto object : m_objectLog) {
         if (isSmall(object)) {
             SmallLine* line = SmallLine::get(object);
-            if (!line->deref(lock))
-                continue;
-            heap->deallocateSmallLine(lock, line);
+            heap->derefSmallLine(lock, line);
         } else {
-            BASSERT(isSmallOrMedium(object));
+            BASSERT(isMedium(object));
             MediumLine* line = MediumLine::get(object);
-            if (!line->deref(lock))
-                continue;
-            heap->deallocateMediumLine(lock, line);
+            heap->derefMediumLine(lock, line);
         }
     }
     

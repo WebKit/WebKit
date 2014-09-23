@@ -23,72 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Allocator_h
-#define Allocator_h
+#ifndef BumpRange_h
+#define BumpRange_h
 
-#include "BumpAllocator.h"
 #include "FixedVector.h"
-#include "Heap.h"
+#include "Range.h"
 #include "Sizes.h"
-#include "SmallLine.h"
-#include <array>
 
 namespace bmalloc {
 
-class Deallocator;
-
-// Per-cache object allocator.
-
-class Allocator {
-public:
-    Allocator(Deallocator&);
-    ~Allocator();
-
-    void* allocate(size_t);
-    bool allocateFastCase(size_t, void*&);
-    void* allocateSlowCase(size_t);
-    
-    void scavenge();
-
-private:
-    void* allocateFastCase(BumpAllocator&);
-
-    void* allocateMedium(size_t);
-    void* allocateLarge(size_t);
-    void* allocateXLarge(size_t);
-    
-    BumpRange allocateSmallBumpRange(size_t sizeClass);
-    BumpRange allocateMediumBumpRange(size_t sizeClass);
-    
-    Deallocator& m_deallocator;
-
-    std::array<BumpAllocator, mediumMax / alignment> m_bumpAllocators;
-
-    std::array<SmallBumpRangeCache, smallMax / alignment> m_smallBumpRangeCaches;
-    std::array<MediumBumpRangeCache, mediumMax / alignment> m_mediumBumpRangeCaches;
+struct BumpRange {
+    char* begin;
+    unsigned short objectCount;
 };
 
-inline bool Allocator::allocateFastCase(size_t size, void*& object)
-{
-    if (size > mediumMax)
-        return false;
-
-    BumpAllocator& allocator = m_bumpAllocators[sizeClass(size)];
-    if (!allocator.canAllocate())
-        return false;
-
-    object = allocator.allocate();
-    return true;
-}
-
-inline void* Allocator::allocate(size_t size)
-{
-    void* object;
-    if (!allocateFastCase(size, object))
-        return allocateSlowCase(size);
-    return object;
-}
+typedef FixedVector<BumpRange, smallRangeCacheCapacity> SmallBumpRangeCache;
+typedef FixedVector<BumpRange, mediumRangeCacheCapacity> MediumBumpRangeCache;
 
 } // namespace bmalloc
 
-#endif // Allocator_h
+#endif // BumpRange_h

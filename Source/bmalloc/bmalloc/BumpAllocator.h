@@ -27,6 +27,7 @@
 #define BumpAllocator_h
 
 #include "BAssert.h"
+#include "BumpRange.h"
 #include "ObjectType.h"
 
 namespace bmalloc {
@@ -36,49 +37,38 @@ namespace bmalloc {
 class BumpAllocator {
 public:
     BumpAllocator();
-    template<typename Line> void init(size_t);
+    void init(size_t);
+    
+    size_t size() { return m_size; }
     
     bool isNull() { return !m_ptr; }
-    template<typename Line> Line* line();
+    void clear();
 
     bool canAllocate() { return !!m_remaining; }
     void* allocate();
 
-    template<typename Line> void refill(Line*);
-    void clear();
+    void refill(const BumpRange&);
 
 private:
     void validate(void*);
 
     char* m_ptr;
     unsigned short m_size;
-    unsigned char m_remaining;
-    unsigned char m_maxObjectCount;
+    unsigned short m_remaining;
 };
 
 inline BumpAllocator::BumpAllocator()
     : m_ptr()
     , m_size()
     , m_remaining()
-    , m_maxObjectCount()
 {
 }
 
-template<typename Line>
 inline void BumpAllocator::init(size_t size)
 {
-    BASSERT(size >= Line::minimumObjectSize);
-
     m_ptr = nullptr;
     m_size = size;
     m_remaining = 0;
-    m_maxObjectCount = Line::lineSize / size;
-}
-
-template<typename Line>
-inline Line* BumpAllocator::line()
-{
-    return Line::get(canAllocate() ? m_ptr : m_ptr - 1);
 }
 
 inline void BumpAllocator::validate(void* ptr)
@@ -104,13 +94,11 @@ inline void* BumpAllocator::allocate()
     return result;
 }
 
-template<typename Line>
-inline void BumpAllocator::refill(Line* line)
+inline void BumpAllocator::refill(const BumpRange& bumpRange)
 {
     BASSERT(!canAllocate());
-    line->concurrentRef(m_maxObjectCount);
-    m_ptr = line->begin();
-    m_remaining = m_maxObjectCount;
+    m_ptr = bumpRange.begin;
+    m_remaining = bumpRange.objectCount;
 }
 
 inline void BumpAllocator::clear()

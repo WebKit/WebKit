@@ -45,8 +45,8 @@ public:
 
     static Line* get(void*);
 
-    void concurrentRef(unsigned char = 1);
-    bool deref(std::lock_guard<StaticMutex>&, unsigned char = 1);
+    void ref(std::lock_guard<StaticMutex>&, unsigned char);
+    bool deref(std::lock_guard<StaticMutex>&);
     unsigned refCount(std::lock_guard<StaticMutex>&) { return m_refCount; }
     
     char* begin();
@@ -81,18 +81,18 @@ inline char* Line<Traits>::end()
 }
 
 template<class Traits>
-inline void Line<Traits>::concurrentRef(unsigned char count)
+inline void Line<Traits>::ref(std::lock_guard<StaticMutex>&, unsigned char refCount)
 {
-    BASSERT(!m_refCount); // Up-ref from zero can be lock-free because there are no other clients.
-    BASSERT(count <= maxRefCount);
-    m_refCount = count;
+    BASSERT(!m_refCount);
+    BASSERT(refCount <= maxRefCount);
+    m_refCount = refCount;
 }
 
 template<class Traits>
-inline bool Line<Traits>::deref(std::lock_guard<StaticMutex>&, unsigned char count)
+inline bool Line<Traits>::deref(std::lock_guard<StaticMutex>&)
 {
-    BASSERT(count <= m_refCount);
-    m_refCount -= count;
+    BASSERT(m_refCount);
+    --m_refCount;
     return !m_refCount;
 }
 

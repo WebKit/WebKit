@@ -1,3 +1,122 @@
+2014-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Allocation should be more precise
+        https://bugs.webkit.org/show_bug.cgi?id=136993
+
+        Reviewed by Gavin Barraclough.
+
+        13% reduction in heap size on the MallocBench *_memory_warning benchmarks.
+
+        This patch teaches the allocator to merge adjacent free lines into a
+        single allocatable range. This allows us to shrink the size of an
+        individual line without increasing fragmentation or the rate of allocator
+        slow paths.
+
+        We'll only take more slow paths when available memory is sparse, which
+        is exactly when it's worth it. When available memory is dense, we'll
+        take fewer slow paths.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Algorithm.h:
+        (bmalloc::divideRoundingUp):
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator): Updated for interface changes.
+
+        (bmalloc::Allocator::scavenge): Scavenge by object instead of by line.
+        Now that we merge lines, it's not convenient to scavenge by line.
+
+        (bmalloc::Allocator::allocateSmallBumpRange):
+        (bmalloc::Allocator::allocateMediumBumpRange): Allocate whole ranges
+        instead of individual lines.
+
+        (bmalloc::Allocator::allocateSlowCase):
+        (bmalloc::Allocator::allocateSmallLine): Deleted.
+        (bmalloc::Allocator::allocateMediumLine): Deleted.
+        (bmalloc::Allocator::allocateMedium): Deleted.
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::allocateFastCase): Folded medium allocations
+        into the standard fast path with small allocations. Since a BumpAllocator
+        just allocates out of an arbitrary range, it doesn't need to distinguish
+        between small and medium lines.
+
+        * bmalloc/BumpAllocator.h:
+        (bmalloc::BumpAllocator::size):
+        (bmalloc::BumpAllocator::BumpAllocator):
+        (bmalloc::BumpAllocator::init):
+        (bmalloc::BumpAllocator::refill):
+        (bmalloc::BumpAllocator::line): Deleted. No need to track line information
+        anymore: the heap just gives us a pointer and a pre-computed number of
+        objects, and we allocate them.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog): Updated for interface changes.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::initializeLineMetadata): Pre-compute precise metadata
+        detailing where all objects will lie in memory. After we merge two lines,
+        we might allocate an object that spans from one line to the next. This
+        metadata details which bits of memory overlap in that way, and how they
+        overlap.
+
+        (bmalloc::Heap::refillSmallBumpRangeCache):
+        (bmalloc::Heap::refillMediumBumpRangeCache): Scan a whole page at a time,
+        and merge adjacent free lines into BumpRanges.
+
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateMediumPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::deallocateMediumLine): Track pages rather than lines,
+        since we scan for free memory a page at a time.
+
+        (bmalloc::Heap::allocateSmallLineSlowCase): Deleted.
+        (bmalloc::Heap::allocateMediumLineSlowCase): Deleted. Folded into the
+        fast path.
+
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::derefSmallLine):
+        (bmalloc::Heap::derefMediumLine):
+        (bmalloc::Heap::deallocateSmallLine): Deleted.
+        (bmalloc::Heap::allocateSmallLine): Deleted.
+        (bmalloc::Heap::deallocateMediumLine): Deleted.
+        (bmalloc::Heap::allocateMediumLine): Deleted. Updated for interface changes.
+
+        * bmalloc/Line.h:
+        (bmalloc::Line<Traits>::ref):
+        (bmalloc::Line<Traits>::deref):
+        (bmalloc::Line<Traits>::concurrentRef): Deleted. We don't pass a derefCount
+        anymore, since we only ever deref by 1 now.
+
+        * bmalloc/MediumAllocator.h:
+        (bmalloc::MediumAllocator::isNull): Deleted.
+        (bmalloc::MediumAllocator::MediumAllocator): Deleted.
+        (bmalloc::MediumAllocator::line): Deleted.
+        (bmalloc::MediumAllocator::allocate): Deleted.
+        (bmalloc::MediumAllocator::derefCount): Deleted.
+        (bmalloc::MediumAllocator::refill): Deleted.
+        (bmalloc::MediumAllocator::clear): Deleted. Deleted some code that's
+        been dead for a while, since it doesn't build anymore with this patch.
+
+        * bmalloc/Page.h:
+        (bmalloc::Page::sizeClass):
+        (bmalloc::Page::setSizeClass):
+        (bmalloc::Page::smallSizeClass): Deleted.
+        (bmalloc::Page::setSmallSizeClass): Deleted. Renamed setSmallSizeClass
+        to sizeClass, since we use it for medium sizes too.
+
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::sizeClass):
+        (bmalloc::Sizes::objectSize): Shrank line sizes to save memory.
+
+        (bmalloc::Sizes::smallSizeClassFor): Deleted.
+        (bmalloc::Sizes::mediumSizeClassFor): Deleted.
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::realloc): Now that we have precise objects sizes, realloc
+        can be a bit more precise. It also has to be, since we can't guarantee
+        that an object ends at the end of a line anymore.
+
 2014-09-19  Daniel Bates  <dabates@apple.com>
 
         Always assume internal SDK when building configuration Production
