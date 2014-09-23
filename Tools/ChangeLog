@@ -1,3 +1,15 @@
+2014-09-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should copy .htaccess files
+        https://bugs.webkit.org/show_bug.cgi?id=136850
+
+        Reviewed by Bem Jones-Bey.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.should_skip_file): Helper function to check whether to skip file or not. Added ".htaccess" file specific check.
+        (TestImporter):
+        (TestImporter.find_importable_tests): Making use of new helper function.
+
 2014-09-23  Alexey Proskuryakov  <ap@apple.com>
 
         Trying to revive bot watcher's dashboard after HSTS.

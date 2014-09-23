@@ -164,6 +164,14 @@ class TestImporter(object):
         should_skip = subdir.startswith('.') or (root == self.source_directory and subdir in DIRS_TO_SKIP)
         return not should_skip
 
+    def should_skip_file(self, filename):
+        # For some reason the w3c repo contains random perl scripts we don't care about.
+        if filename.endswith('.pl'):
+            return True
+        if filename.startswith('.'):
+            return not filename == '.htaccess'
+        return False
+
     def find_importable_tests(self, directory):
         # FIXME: use filesystem
         for root, dirs, files in os.walk(directory):
@@ -179,8 +187,8 @@ class TestImporter(object):
             for filename in files:
                 # FIXME: This block should really be a separate function, but the early-continues make that difficult.
 
-                if filename.startswith('.') or filename.endswith('.pl'):
-                    continue  # For some reason the w3c repo contains random perl scripts we don't care about.
+                if self.should_skip_file(filename):
+                    continue
 
                 fullpath = os.path.join(root, filename)
 
