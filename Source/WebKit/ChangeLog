@@ -1,3 +1,10 @@
+2014-09-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct 64-bit Windows export definitions after r173804.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Provide proper
+        64-bit mangled symbol names.
+
 2014-09-21  Chris Dumez  <cdumez@apple.com>
 
         Generate Element casting helper functions
