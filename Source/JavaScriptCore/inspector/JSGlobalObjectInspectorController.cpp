@@ -61,6 +61,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent.get());
 
+    m_debuggerAgent = debuggerAgent.get();
     m_consoleAgent = consoleAgent.get();
     m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
@@ -84,7 +85,7 @@ void JSGlobalObjectInspectorController::globalObjectDestroyed()
     m_injectedScriptManager->disconnect();
 }
 
-void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel)
+void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel, bool isAutomaticInspection)
 {
     ASSERT(!m_inspectorFrontendChannel);
     ASSERT(!m_inspectorBackendDispatcher);
@@ -93,6 +94,15 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
     m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
+
+    if (isAutomaticInspection) {
+        // FIXME: We should not always pause for automatic inspection.
+        // Currently if we don't automatically pause, then we may miss a breakpoint, since breakpoints
+        // come from the frontend and might be received after some evaluateScript message. We should
+        // have the frontend signal the backend when its setup messages are complete.
+        m_debuggerAgent->enable(nullptr);
+        m_debuggerAgent->pause(nullptr);
+    }
 }
 
 void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectReason reason)

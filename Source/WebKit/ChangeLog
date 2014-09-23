@@ -1,3 +1,12 @@
+2014-09-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed
+        https://bugs.webkit.org/show_bug.cgi?id=136893
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-09-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct 64-bit Windows export definitions after r173804.

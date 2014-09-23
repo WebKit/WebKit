@@ -47,6 +47,7 @@ class InjectedScriptManager;
 class InspectorConsoleAgent;
 class InspectorBackendDispatcher;
 class InspectorConsoleAgent;
+class InspectorDebuggerAgent;
 class InspectorFrontendChannel;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
@@ -58,7 +59,7 @@ public:
     JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
     ~JSGlobalObjectInspectorController();
 
-    void connectFrontend(InspectorFrontendChannel*);
+    void connectFrontend(InspectorFrontendChannel*, bool isAutomaticInspection);
     void disconnectFrontend(InspectorDisconnectReason reason);
     void dispatchMessageFromFrontend(const String&);
 
@@ -85,6 +86,7 @@ private:
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     InspectorConsoleAgent* m_consoleAgent;
+    InspectorDebuggerAgent* m_debuggerAgent;
     InspectorAgentRegistry m_agents;
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;

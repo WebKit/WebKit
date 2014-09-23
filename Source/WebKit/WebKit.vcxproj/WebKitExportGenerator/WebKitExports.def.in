@@ -219,7 +219,7 @@ EXPORTS
         symbolWithPointer(??1InspectorFrontendClientLocal@WebCore@@UAE@XZ, ??1InspectorFrontendClientLocal@WebCore@@UEAA@XZ)
         symbolWithPointer(?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)
         symbolWithPointer(?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)
-        symbolWithPointer(?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@@Z, ?connectFrontend@InspectorController@WebCore@@QEAAXPEAVInspectorFrontendChannel@Inspector@@@Z)
+        symbolWithPointer(?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@_N@Z, ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@_N@Z)
         symbolWithPointer(?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z, ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPEAVPage@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ, ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UEAAXXZ)
         symbolWithPointer(?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z, ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UEAA?AVString@WTF@@AEBV45@@Z)

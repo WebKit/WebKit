@@ -37,12 +37,14 @@
 #define WIRServiceAvailabilityCheckNotification "com.apple.webinspectord.availability_check"
 #define WIRServiceEnabledNotification           "com.apple.webinspectord.enabled"
 #define WIRServiceDisabledNotification          "com.apple.webinspectord.disabled"
+#define WIRAutomaticInspectionEnabledState      "com.apple.webinspectord.automatic_inspection_enabled"
 
 
 #define WIRApplicationIdentifierKey             @"WIRApplicationIdentifierKey"
 #define WIRApplicationBundleIdentifierKey       @"WIRApplicationBundleIdentifierKey"
 #define WIRApplicationNameKey                   @"WIRApplicationNameKey"
 #define WIRIsApplicationProxyKey                @"WIRIsApplicationProxyKey"
+#define WIRIsApplicationActiveKey               @"WIRIsApplicationActiveKey"
 #define WIRHostApplicationIdentifierKey         @"WIRHostApplicationIdentifierKey"
 #define WIRHostApplicationNameKey               @"WIRHostApplicationNameKey"
 #define WIRConnectionIdentifierKey              @"WIRConnectionIdentifierKey"
@@ -70,6 +72,12 @@
 #define WIRTypeKey                              @"WIRTypeKey"
 #define WIRTypeJavaScript                       @"WIRTypeJavaScript"
 #define WIRTypeWeb                              @"WIRTypeWeb"
+
+#define WIRAutomaticInspectionEnabledKey           @"WIRAutomaticInspectionEnabledKey"
+#define WIRAutomaticInspectionSessionIdentifierKey @"WIRAutomaticInspectionSessionIdentifierKey"
+#define WIRAutomaticInspectionConfigurationMessage @"WIRAutomaticInspectionConfigurationMessage"
+#define WIRAutomaticInspectionRejectMessage        @"WIRAutomaticInspectionRejectMessage"
+#define WIRAutomaticInspectionCandidateMessage     @"WIRAutomaticInspectionCandidateMessage"
 
 // These definitions are shared with a Simulator webinspectord and
 // OS X process communicating with it.

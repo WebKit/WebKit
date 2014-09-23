@@ -1,3 +1,13 @@
+2014-09-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed
+        https://bugs.webkit.org/show_bug.cgi?id=136893
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::remoteFrontendConnected):
+
 2014-09-22  Daniel Bates  <dabates@apple.com>
 
         [Cocoa] Add UI delegate callback when window.close() is called

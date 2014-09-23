@@ -1477,7 +1477,8 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
 
     m_frontendChannel = adoptPtr(new InspectorFrontendChannelDummy(frontendPage));
 
-    page->inspectorController().connectFrontend(m_frontendChannel.get());
+    bool isAutomaticInspection = false;
+    page->inspectorController().connectFrontend(m_frontendChannel.get(), isAutomaticInspection);
 
     return m_frontendWindow;
 }

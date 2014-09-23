@@ -331,8 +331,9 @@ void WebInspector::remoteFrontendConnected()
     ASSERT(!m_remoteFrontendConnected);
     // Switching between in-process and remote inspectors isn't supported yet.
     ASSERT(!m_inspectorPage);
-    
-    m_page->corePage()->inspectorController().connectFrontend(m_frontendChannel);
+
+    bool isAutomaticInspection = false;
+    m_page->corePage()->inspectorController().connectFrontend(m_frontendChannel, isAutomaticInspection);
     m_remoteFrontendConnected = true;
 }
 
