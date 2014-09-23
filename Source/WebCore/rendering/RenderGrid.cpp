@@ -609,7 +609,10 @@ void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizing
     }
 
     // FIXME: We should pass different values for |tracksForGrowthAboveMaxBreadth|.
-    distributeSpaceToTracks(sizingData.filteredTracks, &sizingData.filteredTracks, trackGetter, trackGrowthFunction, sizingData, additionalBreadthSpace);
+    // Specs mandate to floor additionalBreadthSpace (extra-space in specs) to 0. Instead we directly avoid the function
+    // call in those cases as it will be a noop in terms of track sizing.
+    if (additionalBreadthSpace > 0)
+        distributeSpaceToTracks(sizingData.filteredTracks, &sizingData.filteredTracks, trackGetter, trackGrowthFunction, sizingData, additionalBreadthSpace);
 }
 
 static bool sortByGridTrackGrowthPotential(const GridTrack* track1, const GridTrack* track2)
@@ -619,6 +622,7 @@ static bool sortByGridTrackGrowthPotential(const GridTrack* track1, const GridTr
 
 void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction, GridSizingData& sizingData, LayoutUnit& availableLogicalSpace)
 {
+    ASSERT(availableLogicalSpace > 0);
     std::sort(tracks.begin(), tracks.end(), sortByGridTrackGrowthPotential);
 
     size_t tracksSize = tracks.size();
@@ -626,12 +630,16 @@ void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<Grid
 
     for (size_t i = 0; i < tracksSize; ++i) {
         GridTrack& track = *tracks[i];
-        LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
         LayoutUnit trackBreadth = (tracks[i]->*trackGetter)();
-        LayoutUnit growthShare = std::max(LayoutUnit(), std::min(availableLogicalSpaceShare, track.m_maxBreadth - trackBreadth));
-        // We should never shrink any grid track or else we can't guarantee we abide by our min-sizing function.
-        sizingData.distributeTrackVector[i] = trackBreadth + growthShare;
-        availableLogicalSpace -= growthShare;
+        LayoutUnit trackGrowthPotential = track.m_maxBreadth - trackBreadth;
+        sizingData.distributeTrackVector[i] = trackBreadth;
+        if (trackGrowthPotential > 0) {
+            LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
+            LayoutUnit growthShare = std::min(availableLogicalSpaceShare, trackGrowthPotential);
+            // We should never shrink any grid track or else we can't guarantee we abide by our min-sizing function.
+            sizingData.distributeTrackVector[i] += growthShare;
+            availableLogicalSpace -= growthShare;
+        }
     }
 
     if (availableLogicalSpace > 0 && tracksForGrowthAboveMaxBreadth) {

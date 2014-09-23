@@ -1,3 +1,26 @@
+2014-09-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Do not grow tracks when the growth factor is 0
+        https://bugs.webkit.org/show_bug.cgi?id=136575
+
+        Reviewed by Darin Adler.
+
+        A couple of performance optimizations for the track sizing
+        algorithm. On the one hand we avoid the computation of the
+        available logical space share if the track has no growth potential
+        (the current breadth is the maximum breadth) and on the other
+        hand, we avoid calling RenderGrid::distributeSpaceToTracks() if
+        the available logical space is not greater than 0.
+
+        The combined effect of these two changes is an impressive +16%
+        improvement in auto-grid-lots-of-data.html performance test.
+
+        No new tests as there is no change in the functionality.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+
 2014-09-23  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] The composited layers isolated by the page group should blend with the default white background color.
