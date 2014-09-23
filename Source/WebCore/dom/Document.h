@@ -443,8 +443,11 @@ public:
 
     NamedFlowCollection& namedFlows();
 
-    Element* elementFromPoint(int x, int y) const;
+    Element* elementFromPoint(int x, int y) { return elementFromPoint(LayoutPoint(x, y)); }
+    Element* elementFromPoint(const LayoutPoint& clientPoint);
+
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
+    PassRefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
     String readyState() const;
 
@@ -1343,6 +1346,8 @@ private:
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
     PageVisibilityState pageVisibilityState() const;
+
+    Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint = nullptr);
 
     PassRefPtr<HTMLCollection> ensureCachedCollection(CollectionType);
 

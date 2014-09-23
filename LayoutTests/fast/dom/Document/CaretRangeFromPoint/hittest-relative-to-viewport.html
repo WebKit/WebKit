@@ -26,13 +26,10 @@
 <div id="subpixel-test"></div>
 
 <script>
-    var r = document.getElementById('subpixel-test').getBoundingClientRect();
-    var hasSubpixelSupport = r.right - r.left == 4.5;
-    
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    description('This checks for proper behavior of caretRangeFromPoint before and after scrolling.');        
+    description('This checks for proper behavior of caretRangeFromPoint before and after scrolling.');
 
     var elementTop = document.getElementById('test-top'),
         elementBottom = document.getElementById('test-bottom');
@@ -71,10 +68,10 @@
         }
 
         if (zoomOrNot == "zoom") {
-            test(hasSubpixelSupport ? 0 : 1, 0, 0);
-            test(hasSubpixelSupport ? 12 : 13, 0, 25);
+            test(0, 0, 0);
+            test(6, 0, 25);
             test(4, 50, 0);
-            test(16, 50, 25);
+            test(10, 50, 25);
         } else {
             test(0, 0, 0);
             test(12, 0, 25);

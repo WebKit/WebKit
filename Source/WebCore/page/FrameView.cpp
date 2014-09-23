@@ -3126,7 +3126,6 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
 
         frame().document()->enqueueOverflowEvent(overflowEvent.release());
     }
-    
 }
 
 const Pagination& FrameView::pagination() const
