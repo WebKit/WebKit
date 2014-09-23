@@ -1,5 +1,16 @@
 2014-09-23  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
+        Make Tools/BuildSlaveSupport/wait-for-SVN-server.py handle server donwtime
+        https://bugs.webkit.org/show_bug.cgi?id=137026
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/wait-for-SVN-server.py:
+        (getLatestSVNRevision):
+        (waitForSVNRevision):
+
+2014-09-23  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
         Remove unlinkZeroFiles from build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=137018
 
