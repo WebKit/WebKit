@@ -3382,6 +3382,10 @@ void RenderLayer::updateScrollInfoAfterLayout()
     // FIXME: Ensure that offsets are also updated in case of programmatic style changes.
     // https://bugs.webkit.org/show_bug.cgi?id=135964
     updateSnapOffsets();
+#if PLATFORM(MAC)
+    if (existingScrollAnimator())
+        scrollAnimator()->updateScrollAnimatorsAndTimers();
+#endif
 #endif
 }
 

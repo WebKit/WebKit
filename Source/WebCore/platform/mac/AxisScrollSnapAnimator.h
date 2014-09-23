@@ -59,13 +59,13 @@ protected:
 public:
     virtual LayoutUnit scrollOffsetInAxis(ScrollEventAxis) = 0;
     virtual void immediateScrollInAxis(ScrollEventAxis, float velocity) = 0;
-    virtual void startScrollSnapTimer() = 0;
-    virtual void stopScrollSnapTimer() = 0;
+    virtual void startScrollSnapTimer(ScrollEventAxis) = 0;
+    virtual void stopScrollSnapTimer(ScrollEventAxis) = 0;
 };
 
 class AxisScrollSnapAnimator {
 public:
-    AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient*, Vector<LayoutUnit>* snapOffsets, ScrollEventAxis);
+    AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient*, const Vector<LayoutUnit>* snapOffsets, ScrollEventAxis);
     void handleWheelEvent(const PlatformWheelEvent&);
     bool shouldOverrideWheelEvent(const PlatformWheelEvent&) const;
     void scrollSnapAnimationUpdate();
@@ -85,7 +85,7 @@ private:
     static const int wheelDeltaWindowSize = 3;
 
     AxisScrollSnapAnimatorClient* m_client;
-    Vector<LayoutUnit>* m_snapOffsets;
+    const Vector<LayoutUnit>* m_snapOffsets;
     ScrollEventAxis m_axis;
     // Used to track both snapping and gliding behaviors.
     ScrollSnapState m_currentState;

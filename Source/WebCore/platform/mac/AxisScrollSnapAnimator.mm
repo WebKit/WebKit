@@ -82,7 +82,7 @@ static inline float projectedInertialScrollDistance(float initialWheelDelta)
     return inertialScrollPredictionFactor * initialWheelDelta;
 }
 
-AxisScrollSnapAnimator::AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient* client, Vector<LayoutUnit>* snapOffsets, ScrollEventAxis axis)
+AxisScrollSnapAnimator::AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient* client, const Vector<LayoutUnit>* snapOffsets, ScrollEventAxis axis)
     : m_client(client)
     , m_snapOffsets(snapOffsets)
     , m_axis(axis)
@@ -184,7 +184,7 @@ void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
         initializeGlideParameters(glideRequiresBoost);
         clearInitialWheelDeltaWindow();
     }
-    m_client->startScrollSnapTimer();
+    m_client->startScrollSnapTimer(m_axis);
 }
 
 void AxisScrollSnapAnimator::endScrollSnapAnimation(ScrollSnapState newState)
@@ -194,7 +194,7 @@ void AxisScrollSnapAnimator::endScrollSnapAnimation(ScrollSnapState newState)
         clearInitialWheelDeltaWindow();
 
     m_currentState = newState;
-    m_client->stopScrollSnapTimer();
+    m_client->stopScrollSnapTimer(m_axis);
 }
 
 // Computes the amount to scroll by when performing a "snap" operation, i.e. when a user releases the trackpad without flicking. The snap delta

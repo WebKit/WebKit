@@ -37,6 +37,11 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+#include "AxisScrollSnapAnimator.h"
+#include "Timer.h"
+#endif
+
 namespace WebCore {
 
 class FloatPoint;
@@ -44,7 +49,11 @@ class PlatformTouchEvent;
 class ScrollableArea;
 class Scrollbar;
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+class ScrollAnimator : public AxisScrollSnapAnimatorClient {
+#else
 class ScrollAnimator {
+#endif
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
@@ -106,14 +115,35 @@ public:
 
     virtual bool isRubberBandInProgress() const { return false; }
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    void updateScrollAnimatorsAndTimers();
+    virtual LayoutUnit scrollOffsetInAxis(ScrollEventAxis) override;
+    virtual void immediateScrollInAxis(ScrollEventAxis, float delta) override;
+    virtual void startScrollSnapTimer(ScrollEventAxis) override;
+    virtual void stopScrollSnapTimer(ScrollEventAxis) override;
+#endif
+
 protected:
     explicit ScrollAnimator(ScrollableArea*);
 
     virtual void notifyPositionChanged(const FloatSize& delta);
 
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    // Trivial wrappers around the actual update loop in AxisScrollSnapAnimator, since WebCore Timer requires a Timer argument.
+    void horizontalScrollSnapTimerFired(Timer<ScrollAnimator>&);
+    void verticalScrollSnapTimerFired(Timer<ScrollAnimator>&);
+#endif
+
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    std::unique_ptr<AxisScrollSnapAnimator> m_horizontalScrollSnapAnimator;
+    std::unique_ptr<Timer<ScrollAnimator>> m_horizontalScrollSnapTimer;
+    // FIXME: Find a way to consolidate both timers into one variable.
+    std::unique_ptr<AxisScrollSnapAnimator> m_verticalScrollSnapAnimator;
+    std::unique_ptr<Timer<ScrollAnimator>> m_verticalScrollSnapTimer;
+#endif
 };
 
 } // namespace WebCore

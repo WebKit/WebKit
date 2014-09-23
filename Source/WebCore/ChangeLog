@@ -1,3 +1,37 @@
+2014-09-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement snapping behavior for Mac overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=135774
+
+        Reviewed by Beth Dakin.
+
+        Hooks into AxisScrollSnapAnimator to implement overflow scroll snapping on Mac.
+
+        We need to find a way to test this!
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBoxForSingleAxis):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        (WebCore::ScrollAnimator::updateScrollAnimatorsAndTimers):
+        (WebCore::ScrollAnimator::scrollOffsetInAxis):
+        (WebCore::ScrollAnimator::immediateScrollInAxis):
+        (WebCore::ScrollAnimator::startScrollSnapTimer):
+        (WebCore::ScrollAnimator::stopScrollSnapTimer):
+        (WebCore::ScrollAnimator::horizontalScrollSnapTimerFired):
+        (WebCore::ScrollAnimator::verticalScrollSnapTimerFired):
+        * platform/ScrollAnimator.h:
+        * platform/mac/AxisScrollSnapAnimator.h:
+        * platform/mac/AxisScrollSnapAnimator.mm:
+        (WebCore::AxisScrollSnapAnimator::AxisScrollSnapAnimator):
+        (WebCore::AxisScrollSnapAnimator::beginScrollSnapAnimation):
+        (WebCore::AxisScrollSnapAnimator::endScrollSnapAnimation):
+        (WebCore::AxisScrollSnapAnimator::initializeGlideParameters):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
         Use downcast<HTML*Element>() instead of toHTML*Element()

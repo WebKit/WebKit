@@ -82,6 +82,18 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    if (m_verticalScrollSnapAnimator) {
+        m_verticalScrollSnapAnimator->handleWheelEvent(e);
+        if (m_verticalScrollSnapAnimator->shouldOverrideWheelEvent(e))
+            return false;
+    }
+    if (m_horizontalScrollSnapAnimator) {
+        m_horizontalScrollSnapAnimator->handleWheelEvent(e);
+        if (m_horizontalScrollSnapAnimator->shouldOverrideWheelEvent(e))
+            return false;
+    }
+#endif
 #if PLATFORM(COCOA)
     // Events in the PlatformWheelEventPhaseMayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
     // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.
@@ -157,5 +169,65 @@ void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
     UNUSED_PARAM(delta);
     m_scrollableArea->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
+
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+void ScrollAnimator::updateScrollAnimatorsAndTimers()
+{
+    // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
+    if (m_scrollableArea->horizontalSnapOffsets()) {
+        m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
+        m_horizontalScrollSnapTimer = std::make_unique<Timer<ScrollAnimator>>(this, &ScrollAnimator::horizontalScrollSnapTimerFired);
+    } else if (m_horizontalScrollSnapAnimator) {
+        m_horizontalScrollSnapAnimator = nullptr;
+        m_horizontalScrollSnapTimer = nullptr;
+    }
+    if (m_scrollableArea->verticalSnapOffsets()) {
+        m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->verticalSnapOffsets(), ScrollEventAxis::Vertical);
+        m_verticalScrollSnapTimer = std::make_unique<Timer<ScrollAnimator>>(this, &ScrollAnimator::verticalScrollSnapTimerFired);
+    } else if (m_verticalScrollSnapAnimator) {
+        m_verticalScrollSnapAnimator = nullptr;
+        m_verticalScrollSnapTimer = nullptr;
+    }
+}
+
+LayoutUnit ScrollAnimator::scrollOffsetInAxis(ScrollEventAxis axis)
+{
+    FloatPoint currentPosition = this->currentPosition();
+    return axis == ScrollEventAxis::Horizontal ? currentPosition.x() : currentPosition.y();
+}
+
+void ScrollAnimator::immediateScrollInAxis(ScrollEventAxis axis, float delta)
+{
+    FloatPoint currentPosition = this->currentPosition();
+    if (axis == ScrollEventAxis::Horizontal)
+        scrollToOffsetWithoutAnimation(FloatPoint(currentPosition.x() + delta, currentPosition.y()));
+    else
+        scrollToOffsetWithoutAnimation(FloatPoint(currentPosition.x(), currentPosition.y() + delta));
+}
+
+void ScrollAnimator::startScrollSnapTimer(ScrollEventAxis axis)
+{
+    Timer<ScrollAnimator>* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
+    if (!scrollSnapTimer->isActive())
+        scrollSnapTimer->startRepeating(1.0 / 60.0);
+}
+
+void ScrollAnimator::stopScrollSnapTimer(ScrollEventAxis axis)
+{
+    Timer<ScrollAnimator>* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
+    if (scrollSnapTimer->isActive())
+        scrollSnapTimer->stop();
+}
+
+void ScrollAnimator::horizontalScrollSnapTimerFired(Timer<ScrollAnimator>&)
+{
+    m_horizontalScrollSnapAnimator->scrollSnapAnimationUpdate();
+}
+
+void ScrollAnimator::verticalScrollSnapTimerFired(Timer<ScrollAnimator>&)
+{
+    m_verticalScrollSnapAnimator->scrollSnapAnimationUpdate();
+}
+#endif
 
 } // namespace WebCore
