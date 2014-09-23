@@ -1,3 +1,15 @@
+2014-09-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, rolling out r173864.
+
+        It still make tests failes on EFL bots
+
+        Reverted changeset:
+
+        "Unreviewed, EFL gardening. Unskip media test on EFL port.
+        Almost media tests"
+        http://trac.webkit.org/changeset/173864
+
 2014-09-23  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Adds implementation of Subtle Crypto digest algorithms
