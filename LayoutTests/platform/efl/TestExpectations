@@ -489,7 +489,6 @@ webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Timeout Pa
 webkit.org/b/131044 media [ Skip ]
 
 # A lot of crash happen since buildbot bagan to use Ubuntu 13.10.
-webkit.org/b/131729 batterystatus [ Skip ]
 webkit.org/b/131729 fast/canvas/webgl [ Skip ]
 webkit.org/b/131729 fast/events/touch [ Skip ]
 webkit.org/b/131729 http/tests [ Skip ]
