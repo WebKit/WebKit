@@ -82,9 +82,6 @@ http/tests/security/cross-frame-access-protocol.html
 # The following needs a rebaseline
 webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
 
-# <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
-http/tests/media/video-error-abort.html [ Failure ]
-
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html
@@ -864,8 +861,6 @@ webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Failure ]
 
 # Failing media tests on windows <http://webkit.org/b/29047>
 webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Failure ]
-webkit.org/b/29047 media/video-controls-transformed.html [ Failure ]
-webkit.org/b/29047 media/video-controls-zoomed.html [ Failure ]
 
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html [ Failure ]
@@ -1149,9 +1144,7 @@ fast/events/constructors/keyboard-event-constructor.html
 fast/events/constructors/focus-event-constructor.html
 
 # Disable until the windows WebKit API supports injecting in the top frame only.
-webkit.org/b/41800 userscripts/user-script-all-frames.html [ Failure ]
 webkit.org/b/41800 userscripts/user-script-top-frame-only.html [ Failure ]
-webkit.org/b/41800 userscripts/user-style-all-frames.html [ Failure ]
 webkit.org/b/41800 userscripts/user-style-top-frame-only.html [ Failure ]
 
 # Directory upload is not enabled.
@@ -1292,7 +1285,6 @@ fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
 
-webkit.org/b/56167 http/tests/media/reload-after-dialog.html [ Failure ]
 webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Failure ]
 
 webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure ]
@@ -1667,9 +1659,7 @@ media/controls-strict.html [ Failure ]
 media/controls-without-preload.html [ Failure ]
 media/video-controls-rendering.html [ Failure ]
 media/video-display-toggle.html [ Failure ]
-media/video-no-audio.html [ Failure ]
 media/video-pause-immediately.html [ Failure ]
-media/video-play-require-user-gesture.html [ Failure ]
 printing/iframe-print.html
 svg/as-image/img-preserveAspectRatio-support-1.html
 svg/carto.net/tabgroup.svg
@@ -1949,7 +1939,6 @@ webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Skip ]
 
 webkit.org/b/97132 media/track/track-cue-rendering-vertical.html [ Failure ]
 
-webkit.org/b/106477 media/video-controls-captions-trackmenu-localized.html [ Failure ]
 webkit.org/b/106477 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
 webkit.org/b/106477 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/106477 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
@@ -2275,7 +2264,6 @@ fast/loader/file-protocol-fragment.html [ Failure ]
 media/track/track-in-band-legacy-api.html [ Crash ]
 media/track/track-in-band-mode.html [ Crash ]
 security/block-test-no-port.html [ Failure ]
-svg/dom/SVGViewSpec.html [ Failure ]
 editing/selection/caret-rtl-2-left.html [ Failure ]
 editing/selection/caret-rtl-right.html [ Failure ]
 editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
@@ -2309,23 +2297,18 @@ js/dom/random-array-gc-stress.html [ Skip ]
 # They need to be rebaselined.
 # REGRESSION(r156730): 18 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
-webkit.org/b/122021 media/video-controls-no-scripting.html [ Failure ]
 webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
-webkit.org/b/122021 media/video-rtl.html [ Failure ]
-webkit.org/b/122021 media/volume-bar-empty-when-muted.html [ Failure ]
 
 # The following tests also seem affected by r156730
 webkit.org/b/122166 media/track/audio-track.html [ Failure ]
 webkit.org/b/122166 media/track/video-track.html [ Failure ]
 webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Failure ]
-webkit.org/b/122166 media/controls-drag-timebar.html [ Failure ]
 webkit.org/b/122166 media/controls-right-click-on-timebar.html [ Failure ]
 webkit.org/b/122166 media/media-captions-no-controls.html [ Failure ]
 webkit.org/b/122166 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Failure ]
 webkit.org/b/122166 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
-webkit.org/b/122166 media/track/track-cue-rendering-tree-is-removed-properly.html [ Failure ]
 
 # Flaky test fails on only certain machine configurations
 printing/print-close-crash.html
@@ -2341,10 +2324,6 @@ media/media-source [ Failure ]
 
 # isIndeterminate is not implemented in mac
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
-
-# Subpixel failures
-# Subpixel: misplaced zoomed svg content.
-webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 # Subpixel: incorrect caret position
 webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
@@ -2365,8 +2344,6 @@ webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-two-
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003.htm [ Failure ]
 webkit.org/b/128061 media/video-zoom.html [ Failure ]
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
@@ -2601,8 +2578,6 @@ editing/inserting/typing-002.html [ Pass Timeout ]
 editing/pasteboard/5006779.html [ Pass Timeout ]
 editing/pasteboard/5028447.html [ Pass Timeout ]
 editing/pasteboard/4806874.html [ Pass Timeout ]
-editing/pasteboard/copy-text-with-backgroundcolor.html [ Failure ]
-editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
 editing/pasteboard/crash-accessing-clipboardData-types.html [ Pass Failure ]
 editing/pasteboard/paste-table-001.html [ Pass Timeout ]
 editing/pasteboard/paste-text-with-style-5.html [ Pass Failure ]
@@ -2704,7 +2679,6 @@ js/regress/for-of-iterate-array-keys.html [ Pass Failure Timeout ]
 imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html.html [ Pass Timeout ]
 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Failure ]
 svg/animations/animate-linear-discrete-additive.svg [ Pass Timeout ]
-svg/as-image/animated-svg-as-image-same-image.html [ ImageOnlyFailure Failure ]
 svg/custom/use-display-none.svg [ Pass Timeout ]
 svg/custom/bug86781.html [ Pass Timeout ]
 svg/custom/bug78700.svg  [ Pass Timeout ]
@@ -2749,7 +2723,6 @@ fast/replaced/width100percent-textarea.html [ Pass Timeout ImageOnlyFailure ]
 fast/table/border-collapsing/cached-change-row-border-color.html [ Pass Timeout ImageOnlyFailure ]
 
 # Regressions in svg/clip-path
-webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
@@ -2779,3 +2752,16 @@ fast/css-generated-content/initial-letter-clearance.html [ Failure ]
 fast/css-generated-content/initial-letter-descender.html [ Failure ]
 fast/css-generated-content/initial-letter-raised.html [ Failure ]
 fast/css-generated-content/initial-letter-sunken.html [ Failure ]
+
+# Skip image only failures that have very low percentage differences
+css3/masking/clip-path-inset.html [ ImageOnlyFailure ]
+editing/inserting/insert-br-at-tabspan-002.html [ ImageOnlyFailure ]
+fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
+fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
+svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
+svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
+svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
+svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-64-t.svg [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-65-t.svg [ ImageOnlyFailure ]
