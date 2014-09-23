@@ -54,7 +54,7 @@ WebKitBuildbot = function()
         "EFL Linux 64-bit Release WK2 (Perf)": {platform: Dashboard.Platform.LinuxEFL, performance: true}
     };
 
-    Buildbot.call(this, "http://build.webkit.org/", queueInfo);
+    Buildbot.call(this, "https://build.webkit.org/", queueInfo);
 };
 
 BaseObject.addConstructorFunctions(WebKitBuildbot);
