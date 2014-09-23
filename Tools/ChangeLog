@@ -1,3 +1,9 @@
+2014-09-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Unreviewed, add Rebecca Hauck as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-23  David Kilzer  <ddkilzer@apple.com>
 
         Switch build.webkit.org URLs to https
