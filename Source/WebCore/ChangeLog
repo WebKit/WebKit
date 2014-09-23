@@ -1,3 +1,15 @@
+2014-09-22  Pratik Solanki  <psolanki@apple.com>
+
+        Follow on fix for [iOS] ASSERTION FAILED: WTF::isMainThread() in WebCore::memoryCache() when using WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=136962
+
+        Rubber-stamped by Simon Fraser.
+
+        Remove the const per review comment. It is not needed.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor):
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Move nodeFromPoint() back to Document where it belongs
