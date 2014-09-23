@@ -1257,7 +1257,7 @@ public:
 
 #if ENABLE(TEMPLATE_ELEMENT)
     const Document* templateDocument() const;
-    Document* ensureTemplateDocument();
+    Document& ensureTemplateDocument();
     void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = templateDocumentHost; }
     Document* templateDocumentHost() { return m_templateDocumentHost; }
 #endif

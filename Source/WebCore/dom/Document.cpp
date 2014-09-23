@@ -6126,10 +6126,10 @@ Locale& Document::getCachedLocale(const AtomicString& locale)
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-Document* Document::ensureTemplateDocument()
+Document& Document::ensureTemplateDocument()
 {
     if (const Document* document = templateDocument())
-        return const_cast<Document*>(document);
+        return const_cast<Document&>(*document);
 
     if (isHTMLDocument())
         m_templateDocument = HTMLDocument::create(nullptr, blankURL());
@@ -6138,7 +6138,7 @@ Document* Document::ensureTemplateDocument()
 
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
 
-    return m_templateDocument.get();
+    return *m_templateDocument;
 }
 #endif
 
