@@ -1,3 +1,9 @@
+2014-09-22  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] More test expectation gardening.
+
+        * platform/win/TestExpectations:
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Move nodeFromPoint() back to Document where it belongs

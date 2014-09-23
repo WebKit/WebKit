@@ -1342,6 +1342,8 @@ webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html
 webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
 
 # failing webgl tests
+webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html
+webgl/1.0.1/conformance/canvas/buffer-preserve-test.html
 webgl/1.0.1/conformance/context/context-lost-restored.html
 webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html
 webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html
@@ -1357,7 +1359,10 @@ webgl/1.0.1/conformance/reading/read-pixels-test.html
 webgl/1.0.1/conformance/textures/origin-clean-conformance.html
 webgl/1.0.1/conformance/textures/texture-npot-video.html
 webgl/1.0.1/conformance/uniforms/uniform-location.html
+webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html
+webgl/1.0.2/conformance/canvas/buffer-preserve-test.html
 webgl/1.0.2/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
+webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html
 webgl/1.0.2/conformance/glsl/misc/large-loop-compile.html
 webgl/1.0.2/conformance/more/functions/uniformfArrayLen1.html
@@ -1368,7 +1373,10 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html
 webgl/1.0.2/conformance/textures/texture-npot-video.html
 webgl/1.0.2/conformance/uniforms/uniform-location.html
 webgl/1.0.2/conformance/rendering/more-than-65536-indices.html
+webgl/conformance/canvas/buffer-offscreen-test.html
+webgl/conformance/canvas/buffer-preserve-test.html
 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
+webgl/conformance/context/context-attribute-preserve-drawing-buffer.html
 webgl/conformance/context/context-creation-and-destruction.html
 webgl/conformance/context/context-lost-restored.html
 webgl/conformance/extensions/oes-texture-float-with-video.html
@@ -2118,6 +2126,8 @@ webkit.org/b/129006 fast/workers/storage [ Skip ]
 webkit.org/b/119002 mathml/presentation/bug97990.html [ ImageOnlyFailure ]
 webkit.org/b/119002 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 webkit.org/b/127495 mathml/presentation/maction-toggle.html [ ImageOnlyFailure ]
+mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
+mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # After switching to NRWT, we find that some of the new image tests do not pass.
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnlyFailure ]
