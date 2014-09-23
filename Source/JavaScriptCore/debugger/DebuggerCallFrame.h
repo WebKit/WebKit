@@ -82,7 +82,7 @@ private:
     CallFrame* m_callFrame;
     RefPtr<DebuggerCallFrame> m_caller;
     TextPosition m_position;
-    // The DebuggerCallFrameScope is responsible for calling invalidate() which,
+    // The DebuggerPausedScope is responsible for calling invalidate() which,
     // in turn, will clear this strong ref.
     Strong<DebuggerScope> m_scope;
 };

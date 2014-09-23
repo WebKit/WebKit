@@ -96,9 +96,9 @@ inline void Recompiler::operator()(JSCell* cell)
 
 namespace JSC {
 
-class DebuggerCallFrameScope {
+class DebuggerPausedScope {
 public:
-    DebuggerCallFrameScope(Debugger& debugger)
+    DebuggerPausedScope(Debugger& debugger)
         : m_debugger(debugger)
     {
         ASSERT(!m_debugger.m_currentDebuggerCallFrame);
@@ -106,7 +106,7 @@ public:
             m_debugger.m_currentDebuggerCallFrame = DebuggerCallFrame::create(debugger.m_currentCallFrame);
     }
 
-    ~DebuggerCallFrameScope()
+    ~DebuggerPausedScope()
     {
         if (m_debugger.m_currentDebuggerCallFrame) {
             m_debugger.m_currentDebuggerCallFrame->invalidate();
@@ -644,7 +644,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     bool pauseNow = m_pauseOnNextStatement;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
 
-    DebuggerCallFrameScope debuggerCallFrameScope(*this);
+    DebuggerPausedScope debuggerPausedScope(*this);
 
     intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_currentCallFrame);

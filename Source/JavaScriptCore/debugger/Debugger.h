@@ -207,7 +207,7 @@ private:
 
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
 
-    friend class DebuggerCallFrameScope;
+    friend class DebuggerPausedScope;
     friend class TemporaryPausedState;
     friend class LLIntOffsetsExtractor;
 };
