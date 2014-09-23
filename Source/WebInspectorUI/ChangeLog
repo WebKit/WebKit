@@ -1,3 +1,14 @@
+2014-09-23  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove UserInterface/Images/gtk from Apple builds
+        https://bugs.webkit.org/show_bug.cgi?id=136955
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Remove Images/Legacy and Images/gtk on Mac and Windows builds by looking
+        at the MAC_OS_X_VERSION_MAJOR and OFFICIAL_BUILD environment vars.
+
 2014-09-21  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: fix TypeSet hierarchy in TypeTokenView

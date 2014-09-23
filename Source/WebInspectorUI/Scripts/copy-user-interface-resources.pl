@@ -2,7 +2,7 @@
 
 use English;
 use File::Copy qw(copy);
-use File::Path qw(make_path);
+use File::Path qw(make_path remove_tree);
 use File::Spec;
 
 my $useDirCopy = 0;
@@ -177,6 +177,12 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
     copy($derivedSourcesMainHTML, File::Spec->catfile($targetResourcePath, 'Main.html'));
 
     ditto(File::Spec->catdir($uiRoot, 'Images'), File::Spec->catdir($targetResourcePath, 'Images'));
+
+    # Remove Images/Legacy on modern systems (OS X 10.10 Yosemite and greater or Windows).
+    remove_tree(File::Spec->catdir($targetResourcePath, 'Images', 'Legacy')) if (defined $ENV{'MAC_OS_X_VERSION_MAJOR'} && $ENV{'MAC_OS_X_VERSION_MAJOR'} ge 101000) or defined $ENV{'OFFICIAL_BUILD'};
+
+    # Remove Images/gtk on Mac and Windows builds.
+    remove_tree(File::Spec->catdir($targetResourcePath, 'Images', 'gtk')) if defined $ENV{'MAC_OS_X_VERSION_MAJOR'} or defined $ENV{'OFFICIAL_BUILD'};
 
     # Copy the Legacy directory.
     ditto(File::Spec->catfile($uiRoot, 'Protocol', 'Legacy'), File::Spec->catfile($protocolDir, 'Legacy'));
