@@ -1,3 +1,10 @@
+2014-09-23  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Add some logging to debug a problem with the Windows bots that causes layout tests to exit early.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver):
+
 2014-09-23  Jer Noble  <jer.noble@apple.com>
 
         [Tools] git-commit uses wrong ChangeLog when run from a subdirectory
