@@ -56,7 +56,7 @@ namespace WebCore {
 
         Vector<String> types() const;
 
-        FileList* files() const;
+        FileList& files() const;
 
         void clearData(const String& type);
         void clearData();

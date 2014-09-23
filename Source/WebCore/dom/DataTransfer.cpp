@@ -159,7 +159,7 @@ Vector<String> DataTransfer::types() const
     return m_pasteboard->types();
 }
 
-FileList* DataTransfer::files() const
+FileList& DataTransfer::files() const
 {
     bool newlyCreatedFileList = !m_fileList;
     if (!m_fileList)
@@ -167,13 +167,13 @@ FileList* DataTransfer::files() const
 
     if (!canReadData()) {
         m_fileList->clear();
-        return m_fileList.get();
+        return *m_fileList;
     }
 
 #if ENABLE(DRAG_SUPPORT)
     if (m_forDrag && !m_forFileDrag) {
         ASSERT(m_fileList->isEmpty());
-        return m_fileList.get();
+        return *m_fileList;
     }
 #endif
 
@@ -181,7 +181,7 @@ FileList* DataTransfer::files() const
         for (const String& filename : m_pasteboard->readFilenames())
             m_fileList->append(File::create(filename));
     }
-    return m_fileList.get();
+    return *m_fileList;
 }
 
 bool DataTransfer::hasFileOfType(const String& type)

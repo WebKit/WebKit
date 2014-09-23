@@ -1,5 +1,21 @@
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Have DataTransfer::files() return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=137039
+
+        Reviewed by Ryosuke Niwa.
+
+        Have DataTransfer::files() return a reference instead of a pointer as
+        it can never return null.
+
+        No new tests, no behavior change.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::files):
+        * dom/DataTransfer.h:
+
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
         Have NamedNodeMap::element() and DOMStringMap::element() return a reference
         https://bugs.webkit.org/show_bug.cgi?id=137040
 
