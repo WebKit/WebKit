@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="16"
+   height="16"
+   id="svg6044">
+  <defs
+     id="defs6046" />
+  <metadata
+     id="metadata6049">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       d="M 8.0001395,14.207483 7.2813727,13.519983 2.2812568,8.5199832 a 1.0164896,1.016466 0 0 1 -0.2812566,-0.8437496 1.0164896,1.016466 0 0 1 0,-0.09375 l 0,-0.78125 0.8437696,0 0.1562536,0 a 1.0164896,1.016466 0 0 1 0.7187667,0.28125 L 8.0001395,11.363733 12.281489,7.0824836 a 1.0164896,1.016466 0 0 1 0.843769,-0.28125 l 0.09375,0 0.781268,0 0,0.84375 a 1.0164896,1.016466 0 0 1 0,0.1562496 1.0164896,1.016466 0 0 1 -0.281256,0.71875 l -5.0001159,4.9999998 -0.7187666,0.6875 z"
+       id="path8420"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+    <path
+       d="M 8.000138,9.2074834 7.2813714,8.5199834 2.2812565,3.519984 A 1.0164894,1.016466 0 0 1 2,2.676234 1.0164894,1.016466 0 0 1 2,2.582484 l 0,-0.78125 0.8437694,0 0.1562536,0 a 1.0164894,1.016466 0 0 1 0.7187665,0.28125 L 8.000138,6.3637336 12.281487,2.082484 a 1.0164894,1.016466 0 0 1 0.843769,-0.28125 l 0.09375,0 0.781268,0 0,0.84375 a 1.0164894,1.016466 0 0 1 0,0.15625 1.0164894,1.016466 0 0 1 -0.281256,0.71875 l -5.0001131,4.9999994 -0.7187669,0.6875 z"
+       id="path8420-0"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+  </g>
+</svg>

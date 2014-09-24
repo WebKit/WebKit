@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="16"
+   height="16"
+   id="svg8338">
+  <defs
+     id="defs8340" />
+  <metadata
+     id="metadata8343">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0.86440678,0.3559065)"
+     id="g8935-4">
+    <g
+       id="layer1-1">
+      <g
+         id="text8346-9"
+         style="font-size:12.55424404px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:1.79903996px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;font-family:Cantarell;-inkscape-font-specification:Sans Bold">
+        <path
+           d="m 6.8502775,4.8997764 -5.85027771,2.8749219 0,1.3307499 5.85027771,2.7744878 0,-1.56928 -3.9671411,-1.9082455 3.9671411,-1.9961248 0,-1.5065093"
+           id="path8351-9" />
+        <path
+           d="m 8.1327727,4.8997764 0,1.5065093 3.9671413,1.9961248 -3.9671413,1.9082455 0,1.56928 5.8502783,-2.7744878 0,-1.3307499 -5.8502783,-2.8749219"
+           id="path8353-1" />
+      </g>
+    </g>
+  </g>
+  <g
+     transform="translate(0.15254243,-1.1356189)"
+     id="g8935">
+    <g
+       id="layer1">
+      <g
+         id="text8346"
+         style="font-size:12.55424404px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:1.79903996px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;font-family:Cantarell;-inkscape-font-specification:Sans Bold">
+        <path
+           d="m 6.8502775,4.8997764 -5.85027771,2.8749219 0,1.3307499 5.85027771,2.7744878 0,-1.56928 -3.9671411,-1.9082455 3.9671411,-1.9961248 0,-1.5065093"
+           id="path8351" />
+        <path
+           d="m 8.1327727,4.8997764 0,1.5065093 3.9671413,1.9961248 -3.9671413,1.9082455 0,1.56928 5.8502783,-2.7744878 0,-1.3307499 -5.8502783,-2.8749219"
+           id="path8353" />
+      </g>
+    </g>
+  </g>
+</svg>
