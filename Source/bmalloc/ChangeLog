@@ -1,5 +1,39 @@
 2014-09-23  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled out r173346.
+
+            bmalloc should honor the FastMalloc statistics API
+            https://bugs.webkit.org/show_bug.cgi?id=136592
+
+        This didn't really work. Because we allow ranges with and without
+        physical pages to merge, and we allow double-committing and
+        double-decommitting, we can't rely on commit actions to track memory
+        footprint.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::size): Deleted.
+        (bmalloc::Heap::capacity): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::allocateMediumChunk):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeRange):
+        (bmalloc::VMHeap::deallocateSmallPage):
+        (bmalloc::VMHeap::deallocateMediumPage):
+        (bmalloc::VMHeap::deallocateLargeRange):
+        (bmalloc::VMHeap::size): Deleted.
+        (bmalloc::VMHeap::capacity): Deleted.
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::heapSize): Deleted.
+        (bmalloc::api::heapCapacity): Deleted.
+
+2014-09-23  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Allocation should be more precise
         https://bugs.webkit.org/show_bug.cgi?id=136993
 

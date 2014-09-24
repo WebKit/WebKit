@@ -45,9 +45,6 @@ class VMHeap {
 public:
     VMHeap();
 
-    size_t size() { return m_size; }
-    size_t capacity() { return m_capacity; }
-
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
     Range allocateLargeRange(size_t);
@@ -61,9 +58,6 @@ private:
     void allocateMediumChunk();
     Range allocateLargeChunk();
 
-    size_t m_size;
-    size_t m_capacity;
-
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeRanges;
@@ -74,7 +68,6 @@ inline SmallPage* VMHeap::allocateSmallPage()
     if (!m_smallPages.size())
         allocateSmallChunk();
 
-    m_size -= vmPageSize;
     return m_smallPages.pop();
 }
 
@@ -83,7 +76,6 @@ inline MediumPage* VMHeap::allocateMediumPage()
     if (!m_mediumPages.size())
         allocateMediumChunk();
 
-    m_size -= vmPageSize;
     return m_mediumPages.pop();
 }
 
@@ -92,7 +84,6 @@ inline Range VMHeap::allocateLargeRange(size_t size)
     Range range = m_largeRanges.take(size);
     if (!range)
         range = allocateLargeChunk();
-    m_size -= range.size();
     return range;
 }
 
@@ -102,7 +93,6 @@ inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, Sma
     vmDeallocatePhysicalPages(page->begin()->begin(), vmPageSize);
     lock.lock();
     
-    m_size += vmPageSize;
     m_smallPages.push(page);
 }
 
@@ -112,7 +102,6 @@ inline void VMHeap::deallocateMediumPage(std::unique_lock<StaticMutex>& lock, Me
     vmDeallocatePhysicalPages(page->begin()->begin(), vmPageSize);
     lock.lock();
     
-    m_size += vmPageSize;
     m_mediumPages.push(page);
 }
 
@@ -136,7 +125,6 @@ inline void VMHeap::deallocateLargeRange(std::unique_lock<StaticMutex>& lock, Ra
     beginTag->setHasPhysicalPages(false);
     endTag->setHasPhysicalPages(false);
 
-    m_size += range.size();
     m_largeRanges.insert(range);
 }
 
