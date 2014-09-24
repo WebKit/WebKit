@@ -601,6 +601,7 @@
       "D\u00E1niel B\u00E1tyai" : {
          "emails" : [
             "dbatyai.u-szeged@partner.samsung.com",
+            "dbatyai@inf.u-szeged.hu",
             "Batyai.Daniel@stud.u-szeged.hu"
          ],
          "nicks" : [
@@ -1586,7 +1587,9 @@
       },
       "Kristof Kosztyo" : {
          "emails" : [
-            "kkristof@inf.u-szeged.hu"
+            "kkristof@inf.u-szeged.hu",
+            "kkosztyo.u-szeged@partner.samsung.com",
+            "Kosztyo.Kristof@stud.u-szeged.hu"
          ],
          "nicks" : [
             "kkristof"
@@ -2095,7 +2098,8 @@
       },
       "Peter Gal" : {
          "emails" : [
-            "galpeter@inf.u-szeged.hu"
+            "galpeter@inf.u-szeged.hu",
+            "pgal.u-szeged@partner.samsung.com"
          ],
          "expertise": "Python, CURL HTTP backend",
          "nicks" : [
@@ -2114,7 +2118,8 @@
       },
       "Peter Molnar" : {
          "emails" : [
-            "pmolnar.u-szeged@partner.samsung.com"
+            "pmolnar.u-szeged@partner.samsung.com",
+            "molnarp@inf.u-szeged.hu"
          ],
          "nicks" : [
             "molnarp"
@@ -2237,6 +2242,7 @@
       "Renata Hodovan" : {
          "emails" : [
             "rhodovan.u-szeged@partner.samsung.com",
+            "reni@inf.u-szeged.hu",
             "reni@webkit.org"
          ],
          "nicks" : [
@@ -2284,7 +2290,8 @@
       },
       "Roland Takacs" : {
          "emails" : [
-            "rtakacs@inf.u-szeged.hu"
+            "rtakacs@inf.u-szeged.hu",
+            "rtakacs.u-szeged@partner.samsung.com"
          ],
          "nicks" : [
             "rtakacs"
@@ -2826,6 +2833,14 @@
             "aharon@google.com"
          ]
       },
+      "Akos Kiss" : {
+         "emails" : [
+            "akiss@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "akiss"
+         ]
+      },
       "Alan Cutter" : {
          "emails" : [
             "alancutter@chromium.org"
@@ -3245,7 +3260,8 @@
       "Tibor Meszaros" : {
          "emails" : [
             "tmeszaros.u-szeged@partner.samsung.com",
-            "mtibor@inf.u-szeged.hu"
+            "mtibor@inf.u-szeged.hu",
+            "tmeszaros@inf.u-szeged.hu"
          ],
          "nicks" : [
             "mtibor"
@@ -3716,7 +3732,8 @@
       },
       "Csaba Osztrogon\u00e1c" : {
          "emails" : [
-            "ossy@webkit.org"
+            "ossy@webkit.org",
+            "oszi@inf.u-szeged.hu"
          ],
          "nicks" : [
             "ossy"

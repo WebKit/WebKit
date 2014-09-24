@@ -1,3 +1,11 @@
+2014-09-24  Langó László  <llango.u-szeged@partner.samsung.com>
+
+        Update the list of u-szeged contributors.
+
+        Rubber-stamped by Csaba Osztrogonác <ossy@webkit.org>.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-23  Roger Fong  <roger_fong@apple.com>
 
         [Windows] More debugging for the Windows bots.

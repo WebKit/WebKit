@@ -1,3 +1,11 @@
+2014-09-24  Langó László  <llango.u-szeged@partner.samsung.com>
+
+        Update the list of u-szeged contributors.
+
+        Rubber-stamped by Csaba Osztrogonác <ossy@webkit.org>.
+
+        * team.html:
+
 2014-09-18  Dean Jackson  <dino@apple.com>
 
         Expand the srcset demo to have 3x and 4x images.
