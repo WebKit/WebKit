@@ -316,7 +316,7 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         FormAssociatedElement& control = *m_associatedElements[i];
         HTMLElement& element = control.asHTMLElement();
-        if (!isHTMLInputElement(element))
+        if (!is<HTMLInputElement>(element))
             continue;
         HTMLInputElement& input = downcast<HTMLInputElement>(element);
         if (!input.isTextField())
@@ -592,7 +592,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     for (auto& element : descendants) {
         if (&element == &associatedHTMLElement)
             return i;
-        if (!isHTMLFormControlElement(element) && !isHTMLObjectElement(element))
+        if (!isHTMLFormControlElement(element) && !is<HTMLObjectElement>(element))
             continue;
         if (element.form() != this)
             continue;

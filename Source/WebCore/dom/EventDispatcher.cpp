@@ -356,7 +356,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
 
     InputElementClickState clickHandlingState;
-    if (isHTMLInputElement(node.get()))
+    if (is<HTMLInputElement>(node.get()))
         downcast<HTMLInputElement>(*node).willDispatchEvent(*event, clickHandlingState);
 
     if (!event->propagationStopped() && !eventPath.isEmpty())

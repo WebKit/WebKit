@@ -116,7 +116,7 @@ void RenderListBox::updateFromElement()
             HTMLElement* element = listItems[i];
             String text;
             Font itemFont = style().font();
-            if (isHTMLOptionElement(element))
+            if (is<HTMLOptionElement>(element))
                 text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             else if (isHTMLOptGroupElement(element)) {
                 text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
@@ -330,7 +330,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (isHTMLOptionElement(element) && !element->isDisabledFormControl()) {
+        if (is<HTMLOptionElement>(element) && !element->isDisabledFormControl()) {
             selectElement().setActiveSelectionEndIndex(i);
             rects.append(snappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
@@ -385,7 +385,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     String itemText;
-    bool isOptionElement = isHTMLOptionElement(listItemElement);
+    bool isOptionElement = is<HTMLOptionElement>(listItemElement);
     if (isOptionElement)
         itemText = downcast<HTMLOptionElement>(*listItemElement).textIndentedToRespectGroupLabel();
     else if (isHTMLOptGroupElement(listItemElement))
@@ -426,7 +426,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     HTMLElement* listItemElement = listItems[listIndex];
 
     Color backColor;
-    if (isHTMLOptionElement(listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
+    if (is<HTMLOptionElement>(listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor();
         else

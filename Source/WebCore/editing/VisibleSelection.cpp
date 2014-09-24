@@ -664,7 +664,7 @@ Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const
 bool VisibleSelection::isInPasswordField() const
 {
     HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
-    return textControl && isHTMLInputElement(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
+    return textControl && is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
 }
 
 #ifndef NDEBUG

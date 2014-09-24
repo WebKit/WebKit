@@ -516,7 +516,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     for (size_t i = 0; i < nodesSize; ++i) {
         Node& node = *nodes[i];
         Frame* childFrame;
-        if ((isHTMLFrameElement(node) || isHTMLIFrameElement(node) || isHTMLObjectElement(node))
+        if ((is<HTMLFrameElement>(node) || is<HTMLIFrameElement>(node) || is<HTMLObjectElement>(node))
             && (childFrame = toHTMLFrameOwnerElement(node).contentFrame())) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;

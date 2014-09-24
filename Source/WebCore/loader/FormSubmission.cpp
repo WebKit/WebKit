@@ -189,7 +189,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         HTMLElement& element = control.asHTMLElement();
         if (!element.isDisabledFormControl())
             control.appendFormData(*domFormData, isMultiPartForm);
-        if (isHTMLInputElement(element)) {
+        if (is<HTMLInputElement>(element)) {
             HTMLInputElement& input = downcast<HTMLInputElement>(element);
             if (input.isTextField()) {
                 formValues.append(std::pair<String, String>(input.name().string(), input.value()));

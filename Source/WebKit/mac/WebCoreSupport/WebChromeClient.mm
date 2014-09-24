@@ -220,7 +220,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
 {
     if (!element)
         return;
-    if (!isHTMLInputElement(element))
+    if (!is<HTMLInputElement>(element))
         return;
 
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*element);

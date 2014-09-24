@@ -22,7 +22,7 @@ big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
 body generateTypeHelpers
 br interfaceName=HTMLBRElement
-button constructorNeedsFormElement
+button constructorNeedsFormElement, generateTypeHelpers
 canvas generateTypeHelpers
 caption interfaceName=HTMLTableCaptionElement, generateTypeHelpers
 center interfaceName=HTMLElement

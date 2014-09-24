@@ -1414,7 +1414,7 @@ void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
         m_embeddedObjectsToUpdate = std::make_unique<ListHashSet<RenderEmbeddedObject*>>();
 
     HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
-    if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
+    if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
         // Tell the DOM element that it needs a widget update.
         HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
         if (!pluginElement.needsCheckForSizeChange())
@@ -2788,7 +2788,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
 
     if (embeddedObject.isSnapshottedPlugIn()) {
-        if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
+        if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
             HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
             pluginElement.checkSnapshotStatus();
         }
@@ -2799,7 +2799,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(PluginCreationOption) on HTMLElement.
-    if (isHTMLObjectElement(element) || isHTMLEmbedElement(element) || isHTMLAppletElement(element)) {
+    if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element) || is<HTMLAppletElement>(element)) {
         HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
         if (pluginElement.needsCheckForSizeChange()) {
             pluginElement.checkSnapshotStatus();

@@ -612,7 +612,7 @@ void WebPage::setAssistedNodeValue(const String& value)
 {
     if (!m_assistedNode)
         return;
-    if (isHTMLInputElement(*m_assistedNode)) {
+    if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValue(value, DispatchInputAndChangeEvent);
     }
@@ -623,7 +623,7 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 {
     if (!m_assistedNode)
         return;
-    if (isHTMLInputElement(*m_assistedNode)) {
+    if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
     }
@@ -631,7 +631,7 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!m_assistedNode || !isHTMLSelectElement(*m_assistedNode))
+    if (!m_assistedNode || !is<HTMLSelectElement>(*m_assistedNode))
         return;
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
     select.optionSelectedByUser(index, true, allowMultipleSelection);
@@ -1990,11 +1990,11 @@ void WebPage::performActionOnElement(uint32_t action)
 
 static inline bool isAssistableNode(Node* node)
 {
-    if (isHTMLSelectElement(node))
+    if (is<HTMLSelectElement>(node))
         return true;
-    if (isHTMLTextAreaElement(node))
+    if (is<HTMLTextAreaElement>(node))
         return !downcast<HTMLTextAreaElement>(*node).isReadOnlyNode();
-    if (isHTMLInputElement(node)) {
+    if (is<HTMLInputElement>(node)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*node);
         return !element.isReadOnlyNode() && (element.isTextField() || element.isDateField() || element.isDateTimeLocalField() || element.isMonthField() || element.isTimeField());
     }
@@ -2066,7 +2066,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
     information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);
 
-    if (isHTMLSelectElement(*m_assistedNode)) {
+    if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
         information.elementType = InputType::Select;
         const Vector<HTMLElement*>& items = element.listItems();
@@ -2077,7 +2077,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         // If a select does not have groups, all the option elements have group ID 0.
         for (size_t i = 0; i < count; ++i) {
             HTMLElement* item = items[i];
-            if (isHTMLOptionElement(item)) {
+            if (is<HTMLOptionElement>(item)) {
                 HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
                 information.selectOptions.append(OptionItem(option.text(), false, parentGroupID, option.selected(), option.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
             } else if (isHTMLOptGroupElement(item)) {
@@ -2088,14 +2088,14 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
         information.selectedIndex = element.selectedIndex();
         information.isMultiSelect = element.multiple();
-    } else if (isHTMLTextAreaElement(*m_assistedNode)) {
+    } else if (is<HTMLTextAreaElement>(*m_assistedNode)) {
         HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*m_assistedNode);
         information.autocapitalizeType = static_cast<WebAutocapitalizeType>(element.autocapitalizeType());
         information.isAutocorrect = element.autocorrect();
         information.elementType = InputType::TextArea;
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
-    } else if (isHTMLInputElement(*m_assistedNode)) {
+    } else if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         HTMLFormElement* form = element.form();
         if (form)

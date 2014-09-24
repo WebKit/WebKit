@@ -3569,7 +3569,7 @@ inline static bool resizeTextPermitted(RenderObject* render)
         // Get the first non-shadow HTMLElement and see if it's an input.
         if (renderer->element() && renderer->element()->isHTMLElement() && !renderer->element()->isInShadowTree()) {
             const HTMLElement& element = toHTMLElement(*renderer->element());
-            return !isHTMLInputElement(element) && !isHTMLTextAreaElement(element);
+            return !is<HTMLInputElement>(element) && !is<HTMLTextAreaElement>(element);
         }
         renderer = renderer->parent();
     }

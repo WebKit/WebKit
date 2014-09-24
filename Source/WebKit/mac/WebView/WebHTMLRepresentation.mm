@@ -305,7 +305,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     Element* node = core(element);
-    return node && isHTMLInputElement(node) ? downcast<HTMLInputElement>(node) : nullptr;
+    return node && is<HTMLInputElement>(node) ? downcast<HTMLInputElement>(node) : nullptr;
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element

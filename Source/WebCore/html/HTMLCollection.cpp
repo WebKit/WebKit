@@ -191,9 +191,9 @@ inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& ele
     case SelectOptions:
         return element.hasTagName(optionTag);
     case SelectedOptions:
-        return isHTMLOptionElement(element) && downcast<HTMLOptionElement>(element).selected();
+        return is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(element).selected();
     case DataListOptions:
-        if (isHTMLOptionElement(element)) {
+        if (is<HTMLOptionElement>(element)) {
             HTMLOptionElement& option = downcast<HTMLOptionElement>(element);
             if (!option.isDisabledFormControl() && !option.value().isEmpty())
                 return true;
@@ -202,7 +202,7 @@ inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& ele
     case MapAreas:
         return element.hasTagName(areaTag);
     case DocApplets:
-        return element.hasTagName(appletTag) || (isHTMLObjectElement(element) && downcast<HTMLObjectElement>(element).containsJavaApplet());
+        return is<HTMLAppletElement>(element) || (is<HTMLObjectElement>(element) && downcast<HTMLObjectElement>(element).containsJavaApplet());
     case DocEmbeds:
         return element.hasTagName(embedTag);
     case DocLinks:

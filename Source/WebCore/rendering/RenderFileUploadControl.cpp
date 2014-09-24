@@ -255,7 +255,7 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
     ASSERT(inputElement().shadowRoot());
     Node* buttonNode = inputElement().shadowRoot()->firstChild();
-    return buttonNode && buttonNode->isHTMLElement() && isHTMLInputElement(buttonNode) ? downcast<HTMLInputElement>(buttonNode) : nullptr;
+    return buttonNode && is<HTMLInputElement>(buttonNode) ? downcast<HTMLInputElement>(buttonNode) : nullptr;
 }
 
 String RenderFileUploadControl::buttonValue()

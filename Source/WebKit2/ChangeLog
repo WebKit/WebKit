@@ -1,3 +1,37 @@
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<HTML*Element>() instead of isHTML*Element() - Part 1
+        https://bugs.webkit.org/show_bug.cgi?id=137068
+
+        Reviewed by Ryosuke Niwa.
+
+        Start using is<HTML*Element>() instead of isHTML*Element().
+        Remaining usages will be updated in a follow-up patch to
+        reduce the size of the change.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementValueForUser):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutofilled):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutofilled):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::isTextField):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedElementChanged):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::containsAnyFormControls):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setAssistedNodeValue):
+        (WebKit::WebPage::setAssistedNodeValueAsNumber):
+        (WebKit::WebPage::setAssistedNodeSelectedIndex):
+
 2014-09-23  Ada Chan  <adachan@apple.com>
 
         Add stub implementation of WKPageIsPlayingAudio().

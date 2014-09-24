@@ -145,7 +145,7 @@ bool RenderDetailsMarker::isOpen() const
             continue;
         if (renderer->node()->hasTagName(detailsTag))
             return !toElement(renderer->node())->getAttribute(openAttr).isNull();
-        if (isHTMLInputElement(renderer->node()))
+        if (is<HTMLInputElement>(renderer->node()))
             return true;
     }
 

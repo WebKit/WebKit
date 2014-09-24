@@ -82,11 +82,11 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
 
 static const AtomicString& elementURL(Element& element)
 {
-    if (isHTMLImageElement(element) || isHTMLInputElement(element))
+    if (is<HTMLImageElement>(element) || is<HTMLInputElement>(element))
         return element.fastGetAttribute(HTMLNames::srcAttr);
     if (is<SVGImageElement>(element))
         return element.fastGetAttribute(XLinkNames::hrefAttr);
-    if (isHTMLEmbedElement(element) || isHTMLObjectElement(element))
+    if (is<HTMLEmbedElement>(element) || is<HTMLObjectElement>(element))
         return element.imageSourceURL();
     return nullAtom;
 }

@@ -234,7 +234,7 @@ String StyledMarkupAccumulator::takeResults()
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
 {    
-    const bool parentIsTextarea = text.parentElement() && isHTMLTextAreaElement(text.parentElement());
+    const bool parentIsTextarea = text.parentElement() && is<HTMLTextAreaElement>(text.parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
         RefPtr<EditingStyle> wrappingStyle = m_wrappingStyle->copy();
@@ -743,7 +743,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
 
 bool isPlainTextMarkup(Node* node)
 {
-    if (!isHTMLDivElement(node))
+    if (!is<HTMLDivElement>(node))
         return false;
 
     HTMLDivElement& element = downcast<HTMLDivElement>(*node);
@@ -929,7 +929,7 @@ static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNod
 {
     Vector<Ref<HTMLElement>> toRemove;
     for (auto& element : childrenOfType<HTMLElement>(container)) {
-        if (isHTMLHtmlElement(element)) {
+        if (is<HTMLHtmlElement>(element)) {
             toRemove.append(element);
             collectElementsToRemoveFromFragment(element);
             continue;

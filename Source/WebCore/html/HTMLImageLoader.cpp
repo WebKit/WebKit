@@ -54,7 +54,7 @@ void HTMLImageLoader::dispatchLoadEvent()
 
     bool errorOccurred = image()->errorOccurred();
     if (!errorOccurred && image()->response().httpStatusCode() >= 400)
-        errorOccurred = isHTMLObjectElement(element()); // An <object> considers a 404 to be an error and should fire onerror.
+        errorOccurred = is<HTMLObjectElement>(element()); // An <object> considers a 404 to be an error and should fire onerror.
     element().dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, false, false));
 }
 
@@ -85,7 +85,7 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
         }
     }
 
-    if (loadError && isHTMLObjectElement(element()))
+    if (loadError && is<HTMLObjectElement>(element()))
         downcast<HTMLObjectElement>(element()).renderFallbackContent();
 }
 

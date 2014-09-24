@@ -199,7 +199,7 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange() c
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
-    if (!isHTMLInputElement(*m_node))
+    if (!is<HTMLInputElement>(*m_node))
         return;
 
     downcast<HTMLInputElement>(*m_node).setValueForUser(value);
@@ -207,7 +207,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& val
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutofilled() const
 {
-    if (!isHTMLInputElement(*m_node))
+    if (!is<HTMLInputElement>(*m_node))
         return false;
     
     return downcast<HTMLInputElement>(*m_node).isAutofilled();
@@ -215,7 +215,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutofilled() const
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
 {
-    if (!isHTMLInputElement(*m_node))
+    if (!is<HTMLInputElement>(*m_node))
         return;
 
     downcast<HTMLInputElement>(*m_node).setAutofilled(filled);
@@ -223,7 +223,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
 
 bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 {
-    if (!isHTMLInputElement(*m_node))
+    if (!is<HTMLInputElement>(*m_node))
         return false;
 
     return downcast<HTMLInputElement>(*m_node).lastChangeWasUserEdit();
@@ -231,7 +231,7 @@ bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
 {
-    if (!isHTMLTextAreaElement(*m_node))
+    if (!is<HTMLTextAreaElement>(*m_node))
         return false;
 
     return downcast<HTMLTextAreaElement>(*m_node).lastChangeWasUserEdit();
@@ -239,7 +239,7 @@ bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
 
 bool InjectedBundleNodeHandle::isTextField() const
 {
-    return isHTMLInputElement(*m_node) && downcast<HTMLInputElement>(*m_node).isText();
+    return is<HTMLInputElement>(*m_node) && downcast<HTMLInputElement>(*m_node).isText();
 }
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()

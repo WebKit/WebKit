@@ -58,7 +58,7 @@ ALWAYS_INLINE bool isDefaultButtonForForm(const Element* element)
 
 ALWAYS_INLINE bool isDisabled(const Element* element)
 {
-    if (element->isFormControlElement() || isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
+    if (element->isFormControlElement() || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
         return element->isDisabledFormControl();
     return false;
 }
@@ -66,10 +66,10 @@ ALWAYS_INLINE bool isDisabled(const Element* element)
 ALWAYS_INLINE bool isEnabled(const Element* element)
 {
     bool isEnabled = false;
-    if (element->isFormControlElement() || isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
+    if (element->isFormControlElement() || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
         isEnabled = !element->isDisabledFormControl();
     else if (element->isLink())
-        isEnabled = isHTMLAnchorElement(element) || isHTMLAreaElement(element);
+        isEnabled = is<HTMLAnchorElement>(element) || is<HTMLAreaElement>(element);
     return isEnabled;
 }
 
@@ -86,7 +86,7 @@ ALWAYS_INLINE bool isChecked(Element* element)
     const HTMLInputElement* inputElement = element->toInputElement();
     if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
         return true;
-    if (isHTMLOptionElement(element) && downcast<HTMLOptionElement>(*element).selected())
+    if (is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(*element).selected())
         return true;
     return false;
 }

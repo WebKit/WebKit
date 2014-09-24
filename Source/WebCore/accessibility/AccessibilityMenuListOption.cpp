@@ -41,7 +41,7 @@ AccessibilityMenuListOption::AccessibilityMenuListOption()
 
 void AccessibilityMenuListOption::setElement(HTMLElement* element)
 {
-    ASSERT_ARG(element, isHTMLOptionElement(element));
+    ASSERT_ARG(element, is<HTMLOptionElement>(element));
     m_element = element;
 }
 

@@ -868,7 +868,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         return;
     }
     if (token->name() == optgroupTag || token->name() == optionTag) {
-        if (isHTMLOptionElement(m_tree.currentStackItem()->node())) {
+        if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
             AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
             processEndTag(&endOption);
         }
@@ -1359,7 +1359,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optionTag) {
-            if (isHTMLOptionElement(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(&endOption);
             }
@@ -1367,7 +1367,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optgroupTag) {
-            if (isHTMLOptionElement(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(&endOption);
             }
@@ -2233,7 +2233,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
     case InsertionMode::InSelect:
         ASSERT(insertionMode() == InsertionMode::InSelect || insertionMode() == InsertionMode::InSelectInTable);
         if (token->name() == optgroupTag) {
-            if (isHTMLOptionElement(m_tree.currentStackItem()->node()) && m_tree.oneBelowTop() && isHTMLOptGroupElement(m_tree.oneBelowTop()->node()))
+            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node()) && m_tree.oneBelowTop() && isHTMLOptGroupElement(m_tree.oneBelowTop()->node()))
                 processFakeEndTag(optionTag);
             if (isHTMLOptGroupElement(m_tree.currentStackItem()->node())) {
                 m_tree.openElements()->pop();
@@ -2243,7 +2243,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optionTag) {
-            if (isHTMLOptionElement(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
                 m_tree.openElements()->pop();
                 return;
             }

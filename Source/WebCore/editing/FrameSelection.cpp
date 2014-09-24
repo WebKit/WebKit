@@ -1670,7 +1670,7 @@ void FrameSelection::selectAll()
     Document* document = m_frame->document();
 
     Element* focusedElement = document->focusedElement();
-    if (focusedElement && isHTMLSelectElement(focusedElement)) {
+    if (focusedElement && is<HTMLSelectElement>(focusedElement)) {
         HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*focusedElement);
         if (selectElement.canSelectAll()) {
             selectElement.selectAll();

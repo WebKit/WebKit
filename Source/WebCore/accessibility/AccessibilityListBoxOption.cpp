@@ -81,7 +81,7 @@ bool AccessibilityListBoxOption::isSelected() const
     if (!m_optionElement)
         return false;
 
-    if (!isHTMLOptionElement(m_optionElement))
+    if (!is<HTMLOptionElement>(m_optionElement))
         return false;
 
     return downcast<HTMLOptionElement>(*m_optionElement).selected();
@@ -134,7 +134,7 @@ bool AccessibilityListBoxOption::canSetSelectedAttribute() const
     if (!m_optionElement)
         return false;
     
-    if (!isHTMLOptionElement(m_optionElement))
+    if (!is<HTMLOptionElement>(m_optionElement))
         return false;
     
     if (m_optionElement->isDisabledFormControl())
@@ -156,7 +156,7 @@ String AccessibilityListBoxOption::stringValue() const
     if (!ariaLabel.isNull())
         return ariaLabel;
     
-    if (isHTMLOptionElement(m_optionElement))
+    if (is<HTMLOptionElement>(m_optionElement))
         return downcast<HTMLOptionElement>(*m_optionElement).text();
     
     if (isHTMLOptGroupElement(m_optionElement))
@@ -202,7 +202,7 @@ HTMLSelectElement* AccessibilityListBoxOption::listBoxOptionParentNode() const
     if (!m_optionElement)
         return nullptr;
 
-    if (isHTMLOptionElement(m_optionElement))
+    if (is<HTMLOptionElement>(m_optionElement))
         return downcast<HTMLOptionElement>(*m_optionElement).ownerSelectElement();
 
     if (isHTMLOptGroupElement(m_optionElement))

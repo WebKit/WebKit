@@ -62,7 +62,7 @@ MediaControlElementType mediaControlElementType(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(node->isMediaControlElement());
     HTMLElement* element = toHTMLElement(node);
-    if (isHTMLInputElement(element))
+    if (is<HTMLInputElement>(element))
         return static_cast<MediaControlInputElement*>(element)->displayType();
     return static_cast<MediaControlDivElement*>(element)->displayType();
 }

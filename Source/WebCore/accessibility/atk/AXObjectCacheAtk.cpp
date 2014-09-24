@@ -133,7 +133,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
 
     // Only support HTML select elements so far (ARIA selectors not supported).
     Node* node = object->node();
-    if (!node || !isHTMLSelectElement(node))
+    if (!node || !is<HTMLSelectElement>(node))
         return;
 
     // Emit signal from the listbox's point of view first.

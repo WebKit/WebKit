@@ -219,7 +219,7 @@ static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && isHTMLInputElement(ele))
+        if (SUCCEEDED(hr) && ele && is<HTMLInputElement>(ele))
             return downcast<HTMLInputElement>(ele);
     }
     return nullptr;

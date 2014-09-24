@@ -412,7 +412,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     loadEventSender().cancelEvent(*this);
     m_hasPendingLoadEvent = false;
     
-    if (isHTMLObjectElement(element()))
+    if (is<HTMLObjectElement>(element()))
         downcast<HTMLObjectElement>(element()).renderFallbackContent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning

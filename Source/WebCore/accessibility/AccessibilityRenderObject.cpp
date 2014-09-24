@@ -523,7 +523,7 @@ bool AccessibilityRenderObject::isAttachment() const
 
 bool AccessibilityRenderObject::isFileUploadButton() const
 {
-    if (m_renderer && m_renderer->node() && isHTMLInputElement(m_renderer->node())) {
+    if (m_renderer && m_renderer->node() && is<HTMLInputElement>(m_renderer->node())) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*m_renderer->node());
         return input.isFileUpload();
     }
@@ -950,7 +950,7 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         return;
     
     Node* node = m_renderer->node();
-    if (!node || !isHTMLInputElement(node))
+    if (!node || !is<HTMLInputElement>(node))
         return;
     
     HTMLInputElement& input = downcast<HTMLInputElement>(*node);
@@ -968,7 +968,7 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         unsigned length = list->length();
         for (unsigned i = 0; i < length; ++i) {
             Node* item = list->item(i);
-            if (isHTMLInputElement(item)) {
+            if (is<HTMLInputElement>(item)) {
                 HTMLInputElement& associateElement = downcast<HTMLInputElement>(*item);
                 if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
                     if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
@@ -1687,9 +1687,9 @@ void AccessibilityRenderObject::setValue(const String& string)
     RenderBoxModelObject* renderer = toRenderBoxModelObject(m_renderer);
 
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer->isTextField() && isHTMLInputElement(element))
+    if (renderer->isTextField() && is<HTMLInputElement>(element))
         downcast<HTMLInputElement>(element).setValue(string);
-    else if (renderer->isTextArea() && isHTMLTextAreaElement(element))
+    else if (renderer->isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
 }
 
@@ -2211,7 +2211,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     if (isHTMLAreaElement(node))
         return accessibilityImageMapHitTest(downcast<HTMLAreaElement>(node), point);
     
-    if (isHTMLOptionElement(node))
+    if (is<HTMLOptionElement>(node))
         node = downcast<HTMLOptionElement>(*node).ownerSelectElement();
     
     RenderObject* obj = node->renderer();
@@ -2483,7 +2483,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isText())
         return StaticTextRole;
     if (cssBox && cssBox->isImage()) {
-        if (node && isHTMLInputElement(node))
+        if (node && is<HTMLInputElement>(node))
             return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
         if (isSVGImage())
             return SVGRootRole;
@@ -2502,7 +2502,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (cssBox && cssBox->isTextArea())
         return TextAreaRole;
 
-    if (node && isHTMLInputElement(node)) {
+    if (node && is<HTMLInputElement>(node)) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*node);
         if (input.isCheckbox())
             return CheckBoxRole;
@@ -2836,7 +2836,7 @@ void AccessibilityRenderObject::updateChildrenIfNecessary()
 void AccessibilityRenderObject::addTextFieldChildren()
 {
     Node* node = this->node();
-    if (!node || !isHTMLInputElement(node))
+    if (!node || !is<HTMLInputElement>(node))
         return;
     
     HTMLInputElement& input = downcast<HTMLInputElement>(*node);

@@ -1270,7 +1270,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setZIndex(0);
 
     // Textarea considers overflow visible as auto.
-    if (e && isHTMLTextAreaElement(e)) {
+    if (e && is<HTMLTextAreaElement>(e)) {
         style.setOverflowX(style.overflowX() == OVISIBLE ? OAUTO : style.overflowX());
         style.setOverflowY(style.overflowY() == OVISIBLE ? OAUTO : style.overflowY());
     }
@@ -1338,7 +1338,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     if (e && e->isFormControlElement() && style.fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
-        if (!isHTMLInputElement(e) || !downcast<HTMLInputElement>(*e).isImageButton())
+        if (!is<HTMLInputElement>(e) || !downcast<HTMLInputElement>(*e).isImageButton())
             addIntrinsicMargins(style);
     }
 

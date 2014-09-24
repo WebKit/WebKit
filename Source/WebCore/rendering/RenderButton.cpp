@@ -144,7 +144,7 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
 void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
-    if (isHTMLInputElement(formControlElement())) {
+    if (is<HTMLInputElement>(formControlElement())) {
         HTMLInputElement& input = downcast<HTMLInputElement>(formControlElement());
         String value = input.valueWithDefault();
         setText(value);
@@ -178,7 +178,7 @@ bool RenderButton::canHaveGeneratedChildren() const
     // Input elements can't have generated children, but button elements can. We'll
     // write the code assuming any other button types that might emerge in the future
     // can also have children.
-    return !isHTMLInputElement(formControlElement());
+    return !is<HTMLInputElement>(formControlElement());
 }
 
 LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) const

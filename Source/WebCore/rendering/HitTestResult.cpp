@@ -278,7 +278,7 @@ String HitTestResult::altDisplayString() const
         return displayString(image.fastGetAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
-    if (isHTMLInputElement(*m_innerNonSharedNode)) {
+    if (is<HTMLInputElement>(*m_innerNonSharedNode)) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*m_innerNonSharedNode);
         return displayString(input.alt(), m_innerNonSharedNode.get());
     }
@@ -317,14 +317,12 @@ URL HitTestResult::absoluteImageURL() const
         return URL();
 
     AtomicString urlString;
-    if (m_innerNonSharedNode->hasTagName(embedTag)
-        || isHTMLImageElement(m_innerNonSharedNode.get())
-        || isHTMLInputElement(m_innerNonSharedNode.get())
-        || m_innerNonSharedNode->hasTagName(objectTag)
-        || is<SVGImageElement>(m_innerNonSharedNode.get()))
-        {
-        Element* element = toElement(m_innerNonSharedNode.get());
-        urlString = element->imageSourceURL();
+    if (is<HTMLEmbedElement>(*m_innerNonSharedNode)
+        || is<HTMLImageElement>(*m_innerNonSharedNode)
+        || is<HTMLInputElement>(*m_innerNonSharedNode)
+        || is<HTMLObjectElement>(*m_innerNonSharedNode)
+        || is<SVGImageElement>(*m_innerNonSharedNode)) {
+        urlString = toElement(*m_innerNonSharedNode).imageSourceURL();
     } else
         return URL();
 
@@ -336,7 +334,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!m_innerNonSharedNode)
         return URL();
 
-    if (!isHTMLEmbedElement(*m_innerNonSharedNode) && !isHTMLObjectElement(*m_innerNonSharedNode))
+    if (!is<HTMLEmbedElement>(*m_innerNonSharedNode) && !is<HTMLObjectElement>(*m_innerNonSharedNode))
         return URL();
 
     HTMLPlugInImageElement& element = toHTMLPlugInImageElement(*m_innerNonSharedNode);
@@ -556,10 +554,10 @@ bool HitTestResult::isContentEditable() const
     if (!m_innerNonSharedNode)
         return false;
 
-    if (isHTMLTextAreaElement(*m_innerNonSharedNode))
+    if (is<HTMLTextAreaElement>(*m_innerNonSharedNode))
         return true;
 
-    if (isHTMLInputElement(*m_innerNonSharedNode))
+    if (is<HTMLInputElement>(*m_innerNonSharedNode))
         return downcast<HTMLInputElement>(*m_innerNonSharedNode).isTextField();
 
     return m_innerNonSharedNode->hasEditableStyle();

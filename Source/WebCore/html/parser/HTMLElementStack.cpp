@@ -120,7 +120,7 @@ inline bool isButtonScopeMarker(HTMLStackItem* item)
 
 inline bool isSelectScopeMarker(HTMLStackItem* item)
 {
-    return !isHTMLOptGroupElement(item->node()) && !isHTMLOptionElement(item->node());
+    return !is<HTMLOptGroupElement>(item->node()) && !is<HTMLOptionElement>(item->node());
 }
 
 }

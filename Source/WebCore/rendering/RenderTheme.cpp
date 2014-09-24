@@ -1035,7 +1035,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     paintInfo.context->setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
-        ASSERT(isHTMLOptionElement(node));
+        ASSERT(is<HTMLOptionElement>(node));
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
         String value = optionElement.value();
         if (!input->isValidValue(value))

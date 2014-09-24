@@ -192,7 +192,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
 
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
-    if (isHTMLInputElement(element))
+    if (is<HTMLInputElement>(element))
         return !downcast<HTMLInputElement>(*element).isInputTypeHidden();
     if (element->hasTagName(selectTag))
         return true;
@@ -200,7 +200,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return true;
     if (element->hasTagName(buttonTag))
         return true;
-    if (isHTMLTextAreaElement(element))
+    if (is<HTMLTextAreaElement>(element))
         return true;
 
     return false;

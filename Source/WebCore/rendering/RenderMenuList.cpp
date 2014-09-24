@@ -64,7 +64,7 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 
     size_t count = 0;
     for (size_t i = 0; i < numberOfItems; ++i) {
-        if (isHTMLOptionElement(listItems[i]) && downcast<HTMLOptionElement>(*listItems[i]).selected())
+        if (is<HTMLOptionElement>(listItems[i]) && downcast<HTMLOptionElement>(*listItems[i]).selected())
             ++count;
     }
     return count;
@@ -214,7 +214,7 @@ void RenderMenuList::updateOptionsWidth()
 
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (!isHTMLOptionElement(element))
+        if (!is<HTMLOptionElement>(element))
             continue;
 
         String text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
@@ -270,7 +270,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     String text = emptyString();
     if (i >= 0 && i < size) {
         Element* element = listItems[i];
-        if (isHTMLOptionElement(element)) {
+        if (is<HTMLOptionElement>(element)) {
             text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             m_optionStyle = element->computedStyle();
         }
@@ -452,7 +452,7 @@ String RenderMenuList::itemText(unsigned listIndex) const
     Element* element = listItems[listIndex];
     if (isHTMLOptGroupElement(element))
         itemString = downcast<HTMLOptGroupElement>(*element).groupLabelText();
-    else if (isHTMLOptionElement(element))
+    else if (is<HTMLOptionElement>(element))
         itemString = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
 
     applyTextTransform(style(), itemString, ' ');
@@ -492,7 +492,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
     if (listIndex >= listItems.size())
         return false;
     HTMLElement* element = listItems[listIndex];
-    if (!isHTMLOptionElement(element))
+    if (!is<HTMLOptionElement>(element))
         return false;
 
     bool groupEnabled = true;
@@ -654,7 +654,7 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
     if (listIndex >= listItems.size())
         return false;
     HTMLElement* element = listItems[listIndex];
-    return isHTMLOptionElement(element) && downcast<HTMLOptionElement>(*element).selected();
+    return is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(*element).selected();
 }
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)

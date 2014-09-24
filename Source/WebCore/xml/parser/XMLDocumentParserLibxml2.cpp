@@ -858,7 +858,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     pushCurrentNode(newElement.get());
 #endif
 
-    if (isHTMLHtmlElement(*newElement))
+    if (is<HTMLHtmlElement>(*newElement))
         downcast<HTMLHtmlElement>(*newElement).insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())

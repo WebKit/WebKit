@@ -574,7 +574,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
                 return;
 
             if (Node* shadowAncestorNode = root->deprecatedShadowAncestorNode()) {
-                if (!isHTMLInputElement(shadowAncestorNode) && !isHTMLTextAreaElement(shadowAncestorNode))
+                if (!is<HTMLInputElement>(shadowAncestorNode) && !is<HTMLTextAreaElement>(shadowAncestorNode))
                     return;
             }
         }

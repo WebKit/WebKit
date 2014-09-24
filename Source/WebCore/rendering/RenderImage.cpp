@@ -655,7 +655,7 @@ void RenderImage::updateAltText()
     if (!element())
         return;
 
-    if (isHTMLInputElement(*element()))
+    if (is<HTMLInputElement>(*element()))
         m_altText = downcast<HTMLInputElement>(*element()).altText();
     else if (isHTMLImageElement(*element()))
         m_altText = downcast<HTMLImageElement>(*element()).altText();
