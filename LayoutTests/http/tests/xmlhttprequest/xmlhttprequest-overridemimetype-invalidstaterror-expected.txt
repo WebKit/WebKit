@@ -1,0 +1,17 @@
+Test XMLHttpRequest overrideMimeType for exceptions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing overrideMimeType when readyState = 0
+PASS req.overrideMimeType("text/plain") did not throw exception.
+Testing overrideMimeType when readyState = 1
+PASS req.overrideMimeType("text/plain") did not throw exception.
+Testing overrideMimeType when readyState = 1
+PASS req.overrideMimeType("text/plain") did not throw exception.
+Testing overrideMimeType when readyState = 2
+PASS req.overrideMimeType("text/plain") did not throw exception.
+Testing overrideMimeType when readyState = 3
+PASS req.overrideMimeType("text/plain") threw exception Error: InvalidStateError: DOM Exception 11.
+Testing overrideMimeType when readyState = 4
+PASS req.overrideMimeType("text/plain") threw exception Error: InvalidStateError: DOM Exception 11.
+

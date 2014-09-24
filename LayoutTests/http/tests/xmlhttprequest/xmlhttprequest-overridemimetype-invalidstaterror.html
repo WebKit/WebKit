@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+
+description("Test XMLHttpRequest overrideMimeType for exceptions.");
+
+window.jsTestIsAsync = true;
+
+var req = new XMLHttpRequest();
+debug('Testing overrideMimeType when readyState = ' + req.readyState);
+shouldNotThrow('req.overrideMimeType("text/plain")');
+
+function processStateChange() {
+	
+    if (req.readyState == req.DONE || req.readyState == req.LOADING) {
+        debug('Testing overrideMimeType when readyState = ' + req.readyState);
+        shouldThrow('req.overrideMimeType("text/plain")');
+    } else {
+        debug('Testing overrideMimeType when readyState = ' + req.readyState);
+        shouldNotThrow('req.overrideMimeType("text/plain")');
+    }
+
+    if (req.readyState == req.DONE) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }     
+}
+
+function runTest(type) {
+    req.open('GET', type, true);
+    debug('Testing overrideMimeType when readyState = ' + req.readyState);
+    shouldNotThrow('req.overrideMimeType("text/plain")');
+    req.onreadystatechange = processStateChange;
+    req.send(null);
+    debug('Testing overrideMimeType when readyState = ' + req.readyState);
+    shouldNotThrow('req.overrideMimeType("text/plain")');
+}
+
+runTest('resources/get.txt');
+
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+</body>
+</html>
