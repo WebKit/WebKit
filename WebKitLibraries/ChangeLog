@@ -1,3 +1,9 @@
+2014-09-23  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Enable CSS Supports Rule on Windows.
+
+        * win/tools/vsprops/FeatureDefines.props:
+
 2014-09-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Turn off SSE Instructions for 32-bit Builds
