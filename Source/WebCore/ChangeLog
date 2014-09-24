@@ -1,3 +1,15 @@
+2014-09-22  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        REGRESSION(r173631): It broke the !ENABLE(VIDEO) build
+        https://bugs.webkit.org/show_bug.cgi?id=136946
+
+        Reviewed by Jer Noble.
+
+        No new tests required, no new functionality.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Assertion failure and null dereference crash when using animations and regions

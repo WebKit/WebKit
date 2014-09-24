@@ -723,7 +723,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);
 
     // FIXME(136836): Investigate whether all elements should use the containsIncludingShadowDOM() path here.
-    bool includeShadowDOM = state.source->isMediaElement();
+    bool includeShadowDOM = false;
+#if ENABLE(VIDEO)
+    includeShadowDOM = state.source->isMediaElement();
+#endif
     bool sourceContainsHitNode;
     if (!includeShadowDOM)
         sourceContainsHitNode = state.source->contains(hitTestResult.innerNode());
