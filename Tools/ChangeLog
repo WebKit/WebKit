@@ -1,3 +1,46 @@
+2014-09-23  David Farler  <dfarler@apple.com>
+
+        [iOS] run-webkit-tests should support minor versions under devices and create a testing device under the right runtime
+        https://bugs.webkit.org/show_bug.cgi?id=136895
+
+        Reviewed by David Kilzer.
+
+        Create Device, DeviceType, and Runtime data classes.
+        Create Simulator class represent simctl output.
+
+        Wherever possible, use structured data classes anywhere a raw
+        identifier or UDID string was used for a cleaner implementation
+        and to encapsulate the inherent fragility of scraping simctl output.
+
+        Create a suitably named testing device if one doesn't exist.
+
+        Finally, accurately handle having multiple simulator runtimes (SDKs)
+        installed in the active Xcode.app bundle.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line):
+        Construct DeviceType and Runtime objects from identifiers passed at the
+        command line, still providing sensible defaults for 32- and 64-bit testing.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.testing_device):
+        Cache the testing device once it is created or found.
+        (IOSSimulatorPort.reset_preferences):
+        Get the device path from the Device object instead of consructing it
+        in the port class.
+        (IOSSimulatorPort.simulator_udid): Deleted.
+        Get the UDID from the testing_device :: Device object itself.
+        * Scripts/webkitpy/xcode/simulator.py:
+        Created Device, DeviceType, Runtime, and Simulator classes.
+        (get_runtimes): Deleted.
+        (get_devices): Deleted.
+        (get_device_types): Deleted.
+        (get_latest_runtime): Deleted.
+
 2014-09-24  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Tentative fix for Windows test bots.

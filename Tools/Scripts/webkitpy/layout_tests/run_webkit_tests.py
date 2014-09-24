@@ -394,10 +394,15 @@ def _set_up_derived_options(port, options):
     if options.platform == 'ios-simulator':
         from webkitpy import xcode
         if options.runtime is None:
-            options.runtime = xcode.simulator.get_latest_runtime()['identifier']
+            options.runtime = xcode.simulator.Simulator().latest_runtime
+        else:
+            options.runtime = xcode.simulator.Runtime.from_identifier(options.runtime)
         if options.device_type is None:
-            device_types = xcode.simulator.get_device_types()
-            options.device_type = device_types['iPhone 5'] if options.architecture == 'x86' else device_types['iPhone 5s']
+            iphone5 = xcode.simulator.DeviceType.from_name('iPhone 5')
+            iphone5s = xcode.simulator.DeviceType.from_name('iPhone 5s')
+            options.device_type = iphone5 if options.architecture == 'x86' else iphone5s
+        else:
+            options.device_type = xcode.simulator.DeviceType.from_identifier(options.device_type)
 
 
 def run(port, options, args, logging_stream):

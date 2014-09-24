@@ -511,8 +511,8 @@ class IOSSimulatorDriver(Driver):
         runtime = self._port.get_option('runtime')
         device_type = self._port.get_option('device_type')
         relay_args = [
-            '-runtime', runtime,
-            '-deviceType', device_type,
+            '-runtime', runtime.identifier,
+            '-deviceType', device_type.identifier,
             '-suffix', str(self._worker_number),
             '-productDir', product_dir,
             '-app', dump_tool,

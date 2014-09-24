@@ -35,6 +35,7 @@ from webkitpy.port import driver, image_diff
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector import LeakDetector
 from webkitpy.port import config as port_config
+from webkitpy.xcode import simulator
 
 
 _log = logging.getLogger(__name__)
@@ -66,6 +67,8 @@ class IOSSimulatorPort(Port):
             self.set_option_default("batch_size", 1000)
         mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
         self._mac_build_directory = mac_config.build_directory(self.get_option('configuration'))
+
+        self._testing_device = None
 
     def driver_name(self):
         if self.get_option('driver_name'):
@@ -157,7 +160,7 @@ class IOSSimulatorPort(Port):
         time.sleep(2)
         self._executive.run_command([
             'open', '-a', os.path.join(self.developer_dir, 'Applications', 'iOS Simulator.app'),
-            '--args', '-CurrentDeviceUDID', self.simulator_udid()])
+            '--args', '-CurrentDeviceUDID', self.testing_device.udid])
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
@@ -252,21 +255,15 @@ class IOSSimulatorPort(Port):
             return stderr, None
         return stderr, crash_log
 
-    def simulator_udid(self):
-        device_name = self.get_option('device_type').split('.')[-1].replace('-', ' ') + ' WebKit Tester'
-        stdout = subprocess.check_output(['xcrun', '--sdk', 'iphonesimulator', 'simctl', 'list'])
-        lines = stdout.splitlines()
-        try:
-            devices_index = lines.index('== Devices ==')
-            device_regex = re.compile('(?P<device_name>[^(]+) \((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)')
-            for device_line in itertools.takewhile(lambda line: not line.startswith('=='), lines[devices_index + 1:]):
-                device = device_regex.match(device_line.lstrip().rstrip())
-                if not device:
-                    continue
-                if device.group('device_name') == device_name:
-                    return device.group('udid')
-        except ValueError:
-            pass
+    @property
+    def testing_device(self):
+        if self._testing_device is not None:
+            return self._testing_device
+
+        device_type = self.get_option('device_type')
+        runtime = self.get_option('runtime')
+        self._testing_device = simulator.Simulator().testing_device(device_type, runtime)
+        return self.testing_device
 
     def simulator_path(self, udid):
         if udid:
@@ -323,9 +320,7 @@ class IOSSimulatorPort(Port):
         return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
-        simulator_path = self.simulator_path(self.simulator_udid())
-        if not simulator_path:
-            return
+        simulator_path = self.testing_device.path
         data_path = os.path.join(simulator_path, 'data')
         if os.path.isdir(data_path):
             shutil.rmtree(data_path)
