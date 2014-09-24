@@ -1506,16 +1506,16 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     } else if (e->hasTagName(iframeTag)) {
         DOMHTMLIFrameElement* newElement = new DOMHTMLIFrameElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<HTMLInputElement>(e)) {
+    } else if (WebCore::is<WebCore::HTMLInputElement>(e)) {
         DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<HTMLOptionElement>(e)) {
+    } else if (WebCore::is<WebCore::HTMLOptionElement>(e)) {
         DOMHTMLOptionElement* newElement = new DOMHTMLOptionElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(selectTag)) {
         DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<HTMLTextAreaElement>(e)) {
+    } else if (WebCore::is<WebCore::HTMLTextAreaElement>(e)) {
         DOMHTMLTextAreaElement* newElement = new DOMHTMLTextAreaElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->isHTMLElement()) {
