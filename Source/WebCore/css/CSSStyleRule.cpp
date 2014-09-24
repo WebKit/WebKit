@@ -59,12 +59,11 @@ CSSStyleRule::~CSSStyleRule()
     }
 }
 
-CSSStyleDeclaration* CSSStyleRule::style()
+CSSStyleDeclaration& CSSStyleRule::style()
 {
-    if (!m_propertiesCSSOMWrapper) {
+    if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_styleRule->mutableProperties(), *this);
-    }
-    return m_propertiesCSSOMWrapper.get();
+    return *m_propertiesCSSOMWrapper;
 }
 
 String CSSStyleRule::generateSelectorText() const

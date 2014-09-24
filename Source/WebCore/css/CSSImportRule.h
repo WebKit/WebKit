@@ -42,7 +42,7 @@ public:
     virtual void reattach(StyleRuleBase*) override;
 
     String href() const;
-    MediaList* media() const;
+    MediaList& media() const;
     CSSStyleSheet* styleSheet() const;
 
 private:

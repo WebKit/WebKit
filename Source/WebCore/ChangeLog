@@ -1,3 +1,51 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Have CSS classes' methods return more references
+        https://bugs.webkit.org/show_bug.cgi?id=137036
+
+        Reviewed by Ryosuke Niwa.
+
+        Have CSS classes' methods return more references instead of pointers
+        when possible.
+
+        No new tests, no behavior change.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::style):
+        * css/CSSFontFaceRule.h:
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::cssRules):
+        * css/CSSGroupingRule.h:
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::media):
+        * css/CSSImportRule.h:
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::style):
+        * css/CSSPageRule.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::style):
+        * css/CSSStyleRule.h:
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::style):
+        * css/WebKitCSSKeyframeRule.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::cssRules):
+        * css/WebKitCSSKeyframesRule.h:
+        * css/WebKitCSSViewportRule.cpp:
+        (WebCore::WebKitCSSViewportRule::style):
+        * css/WebKitCSSViewportRule.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyleSheet::setRuleSelector):
+        (WebCore::InspectorStyleSheet::deleteRule):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::styleForId):
+        (WebCore::InspectorStyleSheet::ruleIndexByStyle):
+        (WebCore::InspectorStyleSheet::ruleId):
+        (WebCore::InspectorStyleSheet::revalidateStyle):
+
 2014-09-23  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Enable CSS Supports Rule on Windows.

@@ -38,7 +38,7 @@ public:
 
     virtual void reattach(StyleRuleBase*) override;
 
-    CSSRuleList* cssRules() const;
+    CSSRuleList& cssRules() const;
 
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);

@@ -52,12 +52,12 @@ WebKitCSSViewportRule::~WebKitCSSViewportRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* WebKitCSSViewportRule::style()
+CSSStyleDeclaration& WebKitCSSViewportRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_viewportRule->mutableProperties(), *this);
 
-    return m_propertiesCSSOMWrapper.get();
+    return *m_propertiesCSSOMWrapper;
 }
 
 String WebKitCSSViewportRule::cssText() const

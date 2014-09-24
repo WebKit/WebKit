@@ -76,7 +76,7 @@ public:
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String& s) { m_keyframe->setKeyText(s); }
 
-    CSSStyleDeclaration* style();
+    CSSStyleDeclaration& style();
 
 private:
     WebKitCSSKeyframeRule(StyleKeyframe*, WebKitCSSKeyframesRule* parent);

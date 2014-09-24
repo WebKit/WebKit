@@ -215,14 +215,14 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
         return nullptr;
 
     if (rule->type() == CSSRule::MEDIA_RULE)
-        return toCSSMediaRule(rule)->cssRules();
+        return &toCSSMediaRule(rule)->cssRules();
 
     if (rule->type() == CSSRule::WEBKIT_KEYFRAMES_RULE)
-        return static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
+        return &static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     if (rule->type() == CSSRule::SUPPORTS_RULE)
-        return toCSSSupportsRule(rule)->cssRules();
+        return &toCSSSupportsRule(rule)->cssRules();
 #endif
 
     return nullptr;
@@ -242,7 +242,7 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CS
             parentStyleSheet = mediaRule->parentStyleSheet();
         } else if (parentRule->type() == CSSRule::IMPORT_RULE) {
             CSSImportRule* importRule = toCSSImportRule(parentRule);
-            mediaList = importRule->media();
+            mediaList = &importRule->media();
             parentStyleSheet = importRule->parentStyleSheet();
             isMediaRule = false;
         } else
@@ -846,7 +846,7 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     }
 
     rule->setSelectorText(selector);
-    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(rule->style());
+    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(&rule->style());
     if (!sourceData) {
         ec = NOT_FOUND_ERR;
         return false;
@@ -929,7 +929,7 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
         return false;
     }
 
-    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(rule->style());
+    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(&rule->style());
     if (!sourceData) {
         ec = NOT_FOUND_ERR;
         return false;
@@ -1018,7 +1018,7 @@ PassRefPtr<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObj
 {
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
-        sourceData = ruleSourceDataFor(rule->style());
+        sourceData = ruleSourceDataFor(&rule->style());
     RefPtr<Inspector::Protocol::Array<String>> selectors;
 
     // This intentionally does not rely on the source data to avoid catching the trailing comments (before the declaration starting '{').
@@ -1051,7 +1051,7 @@ PassRefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectFo
         .setSelectorList(buildObjectForSelectorList(rule))
         .setSourceLine(rule->styleRule()->sourceLine())
         .setOrigin(m_origin)
-        .setStyle(buildObjectForStyle(rule->style()));
+        .setStyle(buildObjectForStyle(&rule->style()));
 
     // "sourceURL" is present only for regular rules, otherwise "origin" should be used in the frontend.
     if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Regular)
@@ -1165,7 +1165,7 @@ CSSStyleDeclaration* InspectorStyleSheet::styleForId(const InspectorCSSId& id) c
     if (!rule)
         return nullptr;
 
-    return rule->style();
+    return &rule->style();
 }
 
 void InspectorStyleSheet::fireStyleSheetChanged()
@@ -1228,7 +1228,7 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) c
     ensureFlatRules();
     unsigned index = 0;
     for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
-        if (m_flatRules.at(i)->style() == pageStyle)
+        if (&m_flatRules.at(i)->style() == pageStyle)
             return index;
 
         ++index;
@@ -1334,7 +1334,7 @@ bool InspectorStyleSheet::styleSheetTextWithChangedStyle(CSSStyleDeclaration* st
 
 InspectorCSSId InspectorStyleSheet::ruleId(CSSStyleRule* rule) const
 {
-    return ruleOrStyleId(rule->style());
+    return ruleOrStyleId(&rule->style());
 }
 
 void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
@@ -1346,7 +1346,7 @@ void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
     ensureFlatRules();
     for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
         CSSStyleRule* parsedRule = m_flatRules.at(i).get();
-        if (parsedRule->style() == pageStyle) {
+        if (&parsedRule->style() == pageStyle) {
             if (parsedRule->styleRule()->properties().asText() != pageStyle->cssText()) {
                 // Clear the disabled properties for the invalid style here.
                 m_inspectorStyles.remove(pageStyle);

@@ -185,11 +185,11 @@ WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
     return rule.get(); 
 }
 
-CSSRuleList* WebKitCSSKeyframesRule::cssRules()
+CSSRuleList& WebKitCSSKeyframesRule::cssRules()
 {
     if (!m_ruleListCSSOMWrapper)
         m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<WebKitCSSKeyframesRule>>(this);
-    return m_ruleListCSSOMWrapper.get();
+    return *m_ruleListCSSOMWrapper;
 }
 
 void WebKitCSSKeyframesRule::reattach(StyleRuleBase* rule)

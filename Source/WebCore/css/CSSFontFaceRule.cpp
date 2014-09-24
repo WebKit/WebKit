@@ -41,11 +41,11 @@ CSSFontFaceRule::~CSSFontFaceRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* CSSFontFaceRule::style()
+CSSStyleDeclaration& CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_fontFaceRule->mutableProperties(), *this);
-    return m_propertiesCSSOMWrapper.get();
+    return *m_propertiesCSSOMWrapper;
 }
 
 String CSSFontFaceRule::cssText() const

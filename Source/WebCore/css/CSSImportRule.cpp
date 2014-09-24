@@ -53,11 +53,11 @@ String CSSImportRule::href() const
     return m_importRule->href();
 }
 
-MediaList* CSSImportRule::media() const
+MediaList& CSSImportRule::media() const
 {
     if (!m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper = MediaList::create(m_importRule->mediaQueries(), const_cast<CSSImportRule*>(this));
-    return m_mediaCSSOMWrapper.get();
+    return *m_mediaCSSOMWrapper;
 }
 
 String CSSImportRule::cssText() const

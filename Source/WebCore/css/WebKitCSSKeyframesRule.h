@@ -78,7 +78,7 @@ public:
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);
 
-    CSSRuleList* cssRules();
+    CSSRuleList& cssRules();
 
     void insertRule(const String& rule);
     void deleteRule(const String& key);

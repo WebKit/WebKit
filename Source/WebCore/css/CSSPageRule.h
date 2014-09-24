@@ -41,7 +41,7 @@ public:
     virtual String cssText() const override;
     virtual void reattach(StyleRuleBase*) override;
 
-    CSSStyleDeclaration* style();
+    CSSStyleDeclaration& style();
 
     String selectorText() const;
     void setSelectorText(const String&);

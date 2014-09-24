@@ -46,11 +46,11 @@ CSSPageRule::~CSSPageRule()
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration* CSSPageRule::style()
+CSSStyleDeclaration& CSSPageRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->mutableProperties(), *this);
-    return m_propertiesCSSOMWrapper.get();
+    return *m_propertiesCSSOMWrapper;
 }
 
 String CSSPageRule::selectorText() const

@@ -141,11 +141,11 @@ CSSRule* CSSGroupingRule::item(unsigned index) const
     return rule.get();
 }
 
-CSSRuleList* CSSGroupingRule::cssRules() const
+CSSRuleList& CSSGroupingRule::cssRules() const
 {
     if (!m_ruleListCSSOMWrapper)
         m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<CSSGroupingRule>>(const_cast<CSSGroupingRule*>(this));
-    return m_ruleListCSSOMWrapper.get();
+    return *m_ruleListCSSOMWrapper;
 }
 
 void CSSGroupingRule::reattach(StyleRuleBase* rule)

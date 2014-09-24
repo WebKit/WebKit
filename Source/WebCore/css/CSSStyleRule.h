@@ -43,7 +43,7 @@ public:
     String selectorText() const;
     void setSelectorText(const String&);
 
-    CSSStyleDeclaration* style();
+    CSSStyleDeclaration& style();
 
     // FIXME: Not CSSOM. Remove.
     StyleRule* styleRule() const { return m_styleRule.get(); }

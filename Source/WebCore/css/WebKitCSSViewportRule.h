@@ -53,7 +53,7 @@ public:
     virtual String cssText() const override;
     virtual void reattach(StyleRuleBase*) override;
 
-    CSSStyleDeclaration* style();
+    CSSStyleDeclaration& style();
 
 private:
     WebKitCSSViewportRule(StyleRuleViewport*, CSSStyleSheet*);
