@@ -1,3 +1,19 @@
+2014-09-24  Dean Jackson  <dino@apple.com>
+
+        Add a deprecated stub for WKPreferencesSetMultithreadedWebGLEnabled (and Get)
+        https://bugs.webkit.org/show_bug.cgi?id=137071
+
+        Reviewed by Brent Fulgham.
+
+        Put in stubs for WKPreferencesSetMultithreadedWebGLEnabled and
+        WKPreferencesGetMultithreadedWebGLEnabled. These were removed in
+        r173776 but are still needed for nightly builds to link
+        (or will be once Yosemite nightlies are available).
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPreferencesSetMultithreadedWebGLEnabled):
+        (WKPreferencesGetMultithreadedWebGLEnabled):
+
 2014-09-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the iOS build after <http://trac.webkit.org/changeset/173893>

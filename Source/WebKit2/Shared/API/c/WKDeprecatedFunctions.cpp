@@ -50,6 +50,9 @@ WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStrin
 WK_EXPORT void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 
+WK_EXPORT void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef);
+
 #if PLATFORM(MAC)
 WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext);
 #endif
@@ -86,6 +89,15 @@ void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef)
 {
     return true;
+}
+
+void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef)
+{
+    return false;
 }
 
 #if PLATFORM(MAC)
