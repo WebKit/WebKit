@@ -392,7 +392,6 @@ class Driver(object):
         else:
             command = self._port.abspath_for_test(driver_input.test_name)
             if sys.platform == 'cygwin':
-                _log.error("Command for cygpath: %s" % command)
                 command = path.cygpath(command)
 
         assert not driver_input.image_hash or driver_input.should_run_pixel_test

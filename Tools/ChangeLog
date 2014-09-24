@@ -1,5 +1,12 @@
 2014-09-23  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] More debugging for the Windows bots.
+
+        * Scripts/webkitpy/common/system/path.py:
+        (_CygPath):
+
+2014-09-23  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Fix for r173899, those tabs should be spaces.
 
         * Scripts/webkitpy/port/driver.py:
