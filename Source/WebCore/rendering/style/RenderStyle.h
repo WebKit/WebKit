@@ -277,7 +277,6 @@ public:
         static ETableLayout initialTableLayout() { return TAUTO; }
 
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
-        static uint64_t flagIsUnique() { return oneBitMask << isUniqueOffset; }
         static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
         static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
         static uint64_t flagPseudoStyle(PseudoId pseudo) { return oneBitMask << (pseudoBitsOffset - 1 + pseudo); }
@@ -309,6 +308,7 @@ public:
             return static_cast<unsigned>((m_flags >> offset) & positionIndependentMask);
         }
 
+        static uint64_t flagIsUnique() { return oneBitMask << isUniqueOffset; }
         static uint64_t flagFirstChildState() { return oneBitMask << firstChildStateOffset; }
         static uint64_t flagLastChildState() { return oneBitMask << lastChildStateOffset; }
 

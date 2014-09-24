@@ -695,11 +695,6 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
                         element->setChildIndex(count);
                 }
 
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    if (RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle())
-                        childStyle->setUnique();
-                }
-
                 if (selector->matchNth(count))
                     return true;
             }

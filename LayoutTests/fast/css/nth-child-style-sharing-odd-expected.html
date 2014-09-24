@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<style>
+div {
+    background-color: white;
+}
+</style>
+</head>
+<body>
+    <section>
+        <p><!-- To avoid styling the description. --></p>
+        <p>This tests basic style sharing with :nth-child(odd). If the test pass, lines with the text "green" should have a green background.</p>
+        <div style="background-color: lime">Green</div>
+        <div>White</div>
+        <div style="background-color: lime">Green</div>
+        <div>White</div>
+        <div style="background-color: lime">Green</div>
+        <div>
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+            <div style="background-color: lime">Green</div>
+        </div>
+        <div style="background-color: lime">
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+            <div style="background-color: lime">Green</div>
+        </div>
+    </section>
+
+    <section>
+        <div style="background-color: lime">Green</div>
+        <div>White</div>
+        <div style="background-color: lime">Green</div>
+        <div>
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+            <div style="background-color: lime">Green</div>
+            <div>White</div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,3 +1,33 @@
+2014-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the style marking from :nth-child()
+        https://bugs.webkit.org/show_bug.cgi?id=137055
+
+        Reviewed by Andreas Kling.
+
+        Previously, :nth-child() had to mark the RenderStyle as unique in order
+        to prevent it from being used for style sharing.
+
+        After r173229, :nth-child() use the more generic element marking
+        "StyleIsAffectedByPreviousSibling".
+
+        In StyleResolver::canShareStyleWithElement(), StyleIsAffectedByPreviousSibling
+        is already used to prevent style sharing of those elements, making the "Unique"
+        flag redundant.
+
+        Since it is now useless, remove the style marking from SelectorChecker and the CSS JIT.
+
+        Tests: fast/css/nth-child-style-sharing-even.html
+               fast/css/nth-child-style-sharing-fixed-integer.html
+               fast/css/nth-child-style-sharing-odd.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::setElementChildIndexAndUpdateStyle): Deleted.
+        * rendering/style/RenderStyle.h:
+
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
         Add support for is<HTML*Element>() for type checking
