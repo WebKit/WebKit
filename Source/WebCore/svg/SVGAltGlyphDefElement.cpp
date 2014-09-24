@@ -90,7 +90,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
     bool foundFirstAltGlyphItem = false;
 
     for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (!foundFirstAltGlyphItem && isSVGGlyphRefElement(child)) {
+        if (!foundFirstAltGlyphItem && is<SVGGlyphRefElement>(child)) {
             fountFirstGlyphRef = true;
             String referredGlyphName;
 
@@ -104,7 +104,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
                 glyphNames.clear();
                 return false;
             }
-        } else if (!fountFirstGlyphRef && isSVGAltGlyphItemElement(child)) {
+        } else if (!fountFirstGlyphRef && is<SVGAltGlyphItemElement>(child)) {
             foundFirstAltGlyphItem = true;
 
             // As the spec says "The first 'altGlyphItem' in which all referenced glyphs

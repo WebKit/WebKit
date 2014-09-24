@@ -320,25 +320,25 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
     SVGGraphicsElement& svgElement = shape.graphicsElement();
     SVGLengthContext lengthContext(&svgElement);
 
-    if (isSVGRectElement(svgElement)) {
+    if (is<SVGRectElement>(svgElement)) {
         const SVGRectElement& element = downcast<SVGRectElement>(svgElement);
         writeNameValuePair(ts, "x", element.x().value(lengthContext));
         writeNameValuePair(ts, "y", element.y().value(lengthContext));
         writeNameValuePair(ts, "width", element.width().value(lengthContext));
         writeNameValuePair(ts, "height", element.height().value(lengthContext));
-    } else if (isSVGLineElement(svgElement)) {
+    } else if (is<SVGLineElement>(svgElement)) {
         const SVGLineElement& element = downcast<SVGLineElement>(svgElement);
         writeNameValuePair(ts, "x1", element.x1().value(lengthContext));
         writeNameValuePair(ts, "y1", element.y1().value(lengthContext));
         writeNameValuePair(ts, "x2", element.x2().value(lengthContext));
         writeNameValuePair(ts, "y2", element.y2().value(lengthContext));
-    } else if (isSVGEllipseElement(svgElement)) {
+    } else if (is<SVGEllipseElement>(svgElement)) {
         const SVGEllipseElement& element = downcast<SVGEllipseElement>(svgElement);
         writeNameValuePair(ts, "cx", element.cx().value(lengthContext));
         writeNameValuePair(ts, "cy", element.cy().value(lengthContext));
         writeNameValuePair(ts, "rx", element.rx().value(lengthContext));
         writeNameValuePair(ts, "ry", element.ry().value(lengthContext));
-    } else if (isSVGCircleElement(svgElement)) {
+    } else if (is<SVGCircleElement>(svgElement)) {
         const SVGCircleElement& element = downcast<SVGCircleElement>(svgElement);
         writeNameValuePair(ts, "cx", element.cx().value(lengthContext));
         writeNameValuePair(ts, "cy", element.cy().value(lengthContext));
@@ -346,7 +346,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
     } else if (svgElement.hasTagName(SVGNames::polygonTag) || svgElement.hasTagName(SVGNames::polylineTag)) {
         const SVGPolyElement& element = toSVGPolyElement(svgElement);
         writeNameAndQuotedValue(ts, "points", element.pointList().valueAsString());
-    } else if (isSVGPathElement(svgElement)) {
+    } else if (is<SVGPathElement>(svgElement)) {
         const SVGPathElement& element = downcast<SVGPathElement>(svgElement);
         String pathString;
         // FIXME: We should switch to UnalteredParsing here - this will affect the path dumping output of dozens of tests.

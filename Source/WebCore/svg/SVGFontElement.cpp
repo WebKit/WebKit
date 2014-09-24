@@ -119,7 +119,7 @@ void SVGFontElement::ensureGlyphCache()
     const SVGMissingGlyphElement* firstMissingGlyphElement = nullptr;
     Vector<String> ligatures;
     for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (isSVGGlyphElement(child)) {
+        if (is<SVGGlyphElement>(child)) {
             SVGGlyphElement& glyph = downcast<SVGGlyphElement>(child);
             AtomicString unicode = glyph.fastGetAttribute(SVGNames::unicodeAttr);
             AtomicString glyphId = glyph.getIdAttribute();
@@ -131,17 +131,17 @@ void SVGFontElement::ensureGlyphCache()
             // Register ligatures, if needed, don't mix up with surrogate pairs though!
             if (unicode.length() > 1 && !U16_IS_SURROGATE(unicode[0]))
                 ligatures.append(unicode.string());
-        } else if (isSVGHKernElement(child)) {
+        } else if (is<SVGHKernElement>(child)) {
             SVGHKernElement& hkern = downcast<SVGHKernElement>(child);
             SVGKerningPair kerningPair;
             if (hkern.buildHorizontalKerningPair(kerningPair))
                 m_horizontalKerningMap.insert(kerningPair);
-        } else if (isSVGVKernElement(child)) {
+        } else if (is<SVGVKernElement>(child)) {
             SVGVKernElement& vkern = downcast<SVGVKernElement>(child);
             SVGKerningPair kerningPair;
             if (vkern.buildVerticalKerningPair(kerningPair))
                 m_verticalKerningMap.insert(kerningPair);
-        } else if (isSVGMissingGlyphElement(child) && !firstMissingGlyphElement)
+        } else if (is<SVGMissingGlyphElement>(child) && !firstMissingGlyphElement)
             firstMissingGlyphElement = &downcast<SVGMissingGlyphElement>(child);
     }
 

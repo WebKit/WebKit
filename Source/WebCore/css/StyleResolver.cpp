@@ -1883,7 +1883,7 @@ bool StyleResolver::useSVGZoomRules()
 // Scale with/height properties on inline SVG root.
 bool StyleResolver::useSVGZoomRulesForLength()
 {
-    return m_state.element() && m_state.element()->isSVGElement() && !(isSVGSVGElement(m_state.element()) && m_state.element()->parentNode());
+    return m_state.element() && m_state.element()->isSVGElement() && !(is<SVGSVGElement>(m_state.element()) && m_state.element()->parentNode());
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)

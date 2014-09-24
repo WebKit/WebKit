@@ -71,7 +71,7 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
 {
     for (auto& child : childrenOfType<SVGElement>(*svgElement)) {
-        if (isSVGFEDistantLightElement(child) || isSVGFEPointLightElement(child) || isSVGFESpotLightElement(child))
+        if (is<SVGFEDistantLightElement>(child) || is<SVGFEPointLightElement>(child) || is<SVGFESpotLightElement>(child))
             return static_cast<SVGFELightElement*>(const_cast<SVGElement*>(&child));
     }
     return nullptr;

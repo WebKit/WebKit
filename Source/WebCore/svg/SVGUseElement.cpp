@@ -282,7 +282,7 @@ static void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstan
     SVGElement* element = targetInstance->correspondingElement();
     ASSERT(element);
 
-    if (isSVGUseElement(element)) {
+    if (is<SVGUseElement>(element)) {
         if (downcast<SVGUseElement>(*element).cachedDocumentIsStillLoading())
             return;
     }
@@ -710,7 +710,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
     // contains <use> tags, we'd miss them. So once we're done with settin' up the
     // actual shadow tree (after the special case modification for svg/symbol) we have
     // to walk it completely and expand all <use> elements.
-    if (isSVGUseElement(element)) {
+    if (is<SVGUseElement>(element)) {
         SVGUseElement& use = downcast<SVGUseElement>(*element);
         ASSERT(!use.cachedDocumentIsStillLoading());
 

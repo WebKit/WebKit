@@ -1,3 +1,91 @@
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<SVG*Element>() instead of isSVG*Element()
+        https://bugs.webkit.org/show_bug.cgi?id=137058
+
+        Reviewed by Dirk Schulze.
+
+        Use is<SVG*Element>() instead of isSVG*Element() and drop support for
+        generated isSVG*Element().
+
+        No new tests, no behavior change.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::resourceReferencedByCursorElement):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::useSVGZoomRulesForLength):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/ScriptElement.cpp:
+        (WebCore::toScriptElementIfPossible):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::elementURL):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::isLiveLink):
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromCircleElement):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        * svg/SVGAltGlyphDefElement.cpp:
+        (WebCore::SVGAltGlyphDefElement::hasValidGlyphElements):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::rootElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isOutermostSVGSVGElement):
+        (WebCore::SVGElement::ownerSVGElement):
+        (WebCore::SVGElement::viewportElement):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::findLightElement):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::srcValue):
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto):
+        (WebCore::SVGHKernElement::removedFrom):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport):
+        * svg/SVGLocatable.cpp:
+        (WebCore::isViewportElement):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::pathElement):
+        (WebCore::SVGMPathElement::notifyParentOfPathChange):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setupInitialView):
+        * svg/SVGUseElement.cpp:
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto):
+        (WebCore::SVGVKernElement::removedFrom):
+
 2014-09-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the style marking from :nth-child()

@@ -305,7 +305,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             }
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.
-            if (isSVGStyleElement(element))
+            if (is<SVGStyleElement>(element))
                 sheet = downcast<SVGStyleElement>(element).sheet();
             else if (isHTMLLinkElement(element))
                 sheet = downcast<HTMLLinkElement>(element).sheet();

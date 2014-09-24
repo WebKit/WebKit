@@ -321,7 +321,7 @@ URL HitTestResult::absoluteImageURL() const
         || isHTMLImageElement(m_innerNonSharedNode.get())
         || isHTMLInputElement(m_innerNonSharedNode.get())
         || m_innerNonSharedNode->hasTagName(objectTag)
-        || isSVGImageElement(m_innerNonSharedNode.get())) 
+        || is<SVGImageElement>(m_innerNonSharedNode.get()))
         {
         Element* element = toElement(m_innerNonSharedNode.get());
         urlString = element->imageSourceURL();
@@ -521,7 +521,7 @@ bool HitTestResult::isLiveLink() const
     if (isHTMLAnchorElement(*m_innerURLElement))
         return downcast<HTMLAnchorElement>(*m_innerURLElement).isLiveLink();
 
-    if (isSVGAElement(*m_innerURLElement))
+    if (is<SVGAElement>(*m_innerURLElement))
         return m_innerURLElement->isLink();
 
     return false;

@@ -36,7 +36,7 @@ static bool isViewportElement(Node* node)
     return (node->hasTagName(SVGNames::svgTag)
         || node->hasTagName(SVGNames::symbolTag)
         || node->hasTagName(SVGNames::foreignObjectTag)
-        || isSVGImageElement(node));
+        || is<SVGImageElement>(node));
 }
 
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)

@@ -39,7 +39,7 @@ namespace WebCore {
 
 static void updatePathFromCircleElement(SVGElement* element, Path& path)
 {
-    ASSERT(isSVGCircleElement(element));
+    ASSERT(is<SVGCircleElement>(element));
 
     SVGLengthContext lengthContext(element);
     RenderElement* renderer = element->renderer();

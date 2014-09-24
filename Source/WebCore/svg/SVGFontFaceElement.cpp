@@ -216,7 +216,7 @@ String SVGFontFaceElement::fontFamily() const
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
 {
     ASSERT(parentNode() == m_fontElement);
-    ASSERT(!parentNode() || isSVGFontElement(parentNode()));
+    ASSERT(!parentNode() || is<SVGFontElement>(parentNode()));
     return m_fontElement;
 }
 
@@ -230,7 +230,7 @@ void SVGFontFaceElement::rebuildFontFace()
     // we currently ignore all but the first src element, alternatively we could concat them
     auto srcElement = childrenOfType<SVGFontFaceSrcElement>(*this).first();
 
-    bool describesParentFont = isSVGFontElement(parentNode());
+    bool describesParentFont = is<SVGFontElement>(parentNode());
     RefPtr<CSSValueList> list;
 
     if (describesParentFont) {

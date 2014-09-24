@@ -81,13 +81,13 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
     m_center = FloatPoint(
         lengthContext.valueForLength(style().svgStyle().cx(), LengthModeWidth),
         lengthContext.valueForLength(style().svgStyle().cy(), LengthModeHeight));
-    if (isSVGCircleElement(graphicsElement())) {
+    if (is<SVGCircleElement>(graphicsElement())) {
         float radius = lengthContext.valueForLength(style().svgStyle().r());
         m_radii = FloatSize(radius, radius);
         return;
     }
 
-    ASSERT(isSVGEllipseElement(graphicsElement()));
+    ASSERT(is<SVGEllipseElement>(graphicsElement()));
     m_radii = FloatSize(
         lengthContext.valueForLength(style().svgStyle().rx(), LengthModeWidth),
         lengthContext.valueForLength(style().svgStyle().ry(), LengthModeHeight));

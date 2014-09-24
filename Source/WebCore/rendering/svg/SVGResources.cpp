@@ -141,11 +141,11 @@ static HashSet<AtomicString>& chainableResourceTags()
 static inline String targetReferenceFromResource(SVGElement& element)
 {
     String target;
-    if (isSVGPatternElement(element))
+    if (is<SVGPatternElement>(element))
         target = downcast<SVGPatternElement>(element).href();
     else if (isSVGGradientElement(element))
         target = toSVGGradientElement(element).href();
-    else if (isSVGFilterElement(element))
+    else if (is<SVGFilterElement>(element))
         target = downcast<SVGFilterElement>(element).href();
     else
         ASSERT_NOT_REACHED();

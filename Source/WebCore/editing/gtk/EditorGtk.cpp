@@ -84,7 +84,7 @@ static const AtomicString& elementURL(Element& element)
 {
     if (isHTMLImageElement(element) || isHTMLInputElement(element))
         return element.fastGetAttribute(HTMLNames::srcAttr);
-    if (isSVGImageElement(element))
+    if (is<SVGImageElement>(element))
         return element.fastGetAttribute(XLinkNames::hrefAttr);
     if (isHTMLEmbedElement(element) || isHTMLObjectElement(element))
         return element.imageSourceURL();
