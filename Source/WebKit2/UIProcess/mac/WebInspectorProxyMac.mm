@@ -82,9 +82,7 @@ static const unsigned webViewCloseTimeout = 60;
 // WKWebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
 // for the sole purpose of getting back into the C++ code from an ObjC caller.
 
-@interface WKWebInspectorProxyObjCAdapter () {
-    BOOL _ignoreNextInspectedViewFrameDidChange;
-}
+@interface WKWebInspectorProxyObjCAdapter ()
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 - (void)close;

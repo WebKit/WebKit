@@ -37,6 +37,7 @@ const NSInteger WKInspectorViewTag = 1000;
 // actions that need to work when the Web Inspector window is key.
 WK_EXPORT @interface WKWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate> {
     void* _inspectorProxy;
+    BOOL _ignoreNextInspectedViewFrameDidChange;
 }
 
 @property (readonly) WKInspectorRef inspectorRef;
