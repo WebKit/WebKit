@@ -392,7 +392,7 @@ _handleUncaughtException:
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
 
-    loadp CallerFrame + PayloadOffset[cfr], cfr
+    loadp CallerFrame[cfr], cfr
 
     if ARMv7
         vmEntryRecord(cfr, t3)
@@ -689,7 +689,7 @@ macro functionArityCheck(doneLabel, slowPath)
 end
 
 macro branchIfException(label)
-    loadp Callee[cfr], t3
+    loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     bieq VM::m_exception + TagOffset[t3], EmptyValueTag, .noException
@@ -2136,7 +2136,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp JSFunction::m_executable[t1], t1
         checkStackPointerAlignment(t3, 0xdead0001)
         call executableOffsetToFunction[t1]
-        loadp Callee[cfr], t3
+        loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         addp 8, sp
@@ -2159,7 +2159,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         else
             call executableOffsetToFunction[t1]
         end
-        loadp Callee[cfr], t3
+        loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         addp 8, sp
@@ -2197,7 +2197,7 @@ macro resolveScope()
     loadp CodeBlock[cfr], t0
     loadisFromInstruction(4, t2)
 
-    loadp ScopeChain[cfr], t0
+    loadp ScopeChain + PayloadOffset[cfr], t0
     btiz t2, .resolveScopeLoopEnd
 
 .resolveScopeLoop:
@@ -2256,7 +2256,7 @@ _llint_op_resolve_scope:
 
 macro loadWithStructureCheck(operand, slowPath)
     loadisFromInstruction(operand, t0)
-    loadp [cfr, t0, 8], t0
+    loadp PayloadOffset[cfr, t0, 8], t0
     loadpFromInstruction(5, t1)
     bpneq JSCell::m_structureID[t0], t1, slowPath
 end

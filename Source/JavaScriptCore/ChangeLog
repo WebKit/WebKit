@@ -1,3 +1,13 @@
+2014-09-23  Tomas Popela  <tpopela@redhat.com>
+
+        [CLoop] - Fix CLoop on the 32-bit Big-Endians
+        https://bugs.webkit.org/show_bug.cgi?id=137020
+
+        Reviewed by Mark Lam.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
 2014-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Leak of mallocs under StructureSet::OutOfLineList::create
