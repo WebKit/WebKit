@@ -1,3 +1,117 @@
+2014-09-24  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed. Add more free icons for the Web Inspector in GTK+
+
+        * UserInterface/Images/gtk/AUTHORS:
+        * UserInterface/Images/gtk/ApplicationCache.png: Added.
+        * UserInterface/Images/gtk/ApplicationCache@2x.png: Added.
+        * UserInterface/Images/gtk/BottomUpTree.svg: Added.
+        * UserInterface/Images/gtk/Breakpoint.png: Added.
+        * UserInterface/Images/gtk/Breakpoint@2x.png: Added.
+        * UserInterface/Images/gtk/BreakpointButton.svg:
+        * UserInterface/Images/gtk/BreakpointInactive.png: Added.
+        * UserInterface/Images/gtk/BreakpointInactive@2x.png: Added.
+        * UserInterface/Images/gtk/BreakpointInactiveButton.svg:
+        * UserInterface/Images/gtk/COPYING:
+        * UserInterface/Images/gtk/COPYING_CCBYSA3: Copied from Source/WebInspectorUI/UserInterface/Images/gtk/COPYING.
+        * UserInterface/Images/gtk/ClippingCSS.png: Added.
+        * UserInterface/Images/gtk/ClippingCSS@2x.png: Added.
+        * UserInterface/Images/gtk/ClippingGeneric.png: Added.
+        * UserInterface/Images/gtk/ClippingGeneric@2x.png: Added.
+        * UserInterface/Images/gtk/ClippingJS.png: Added.
+        * UserInterface/Images/gtk/ClippingJS@2x.png: Added.
+        * UserInterface/Images/gtk/CloseTimeline.png: Added.
+        * UserInterface/Images/gtk/CloseTimeline@2x.png: Added.
+        * UserInterface/Images/gtk/ColorIcon.png: Added.
+        * UserInterface/Images/gtk/ColorIcon@2x.png: Added.
+        * UserInterface/Images/gtk/Colors.png: Added.
+        * UserInterface/Images/gtk/Colors@2x.png: Added.
+        * UserInterface/Images/gtk/ColorsLarge.png: Added.
+        * UserInterface/Images/gtk/ColorsLarge@2x.png: Added.
+        * UserInterface/Images/gtk/Database.png: Added.
+        * UserInterface/Images/gtk/Database@2x.png: Added.
+        * UserInterface/Images/gtk/DatabaseTable.png: Added.
+        * UserInterface/Images/gtk/DatabaseTable@2x.png: Added.
+        * UserInterface/Images/gtk/HierarchicalNavigationItemChevron.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner1.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner10.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner11.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner12.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner2.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner3.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner4.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner5.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner6.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner7.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner8.svg: Added.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner9.svg: Added.
+        * UserInterface/Images/gtk/Issues.svg: Added.
+        * UserInterface/Images/gtk/IssuesEnabled.svg: Added.
+        * UserInterface/Images/gtk/LayerBorders.svg: Added.
+        * UserInterface/Images/gtk/LessColumns.svg: Added.
+        * UserInterface/Images/gtk/LocalStorage.png: Added.
+        * UserInterface/Images/gtk/LocalStorage@2x.png: Added.
+        * UserInterface/Images/gtk/Locked.svg: Added.
+        * UserInterface/Images/gtk/Logs.svg: Added.
+        * UserInterface/Images/gtk/Memory.svg: Added.
+        * UserInterface/Images/gtk/MoreColumns.svg: Added.
+        * UserInterface/Images/gtk/Native.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemAngleBrackets.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemBrushAndRuler.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemBug.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemCurleyBraces.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemFile.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemLayers.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemLog.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemMagnifyingGlass.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemStopwatch.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemStorage.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemTrash.svg: Added.
+        * UserInterface/Images/gtk/NavigationItemVariable.svg: Added.
+        * UserInterface/Images/gtk/Network.png: Added.
+        * UserInterface/Images/gtk/Network@2x.png: Added.
+        * UserInterface/Images/gtk/NetworkLarge.png: Added.
+        * UserInterface/Images/gtk/NetworkLarge@2x.png: Added.
+        * UserInterface/Images/gtk/Pause.svg: Added.
+        * UserInterface/Images/gtk/Percent.svg: Added.
+        * UserInterface/Images/gtk/Plus.svg: Added.
+        * UserInterface/Images/gtk/PseudoElement.svg: Added.
+        * UserInterface/Images/gtk/Reflection.svg: Added.
+        * UserInterface/Images/gtk/Reload.svg: Added.
+        * UserInterface/Images/gtk/Request.svg: Added.
+        * UserInterface/Images/gtk/Response.svg: Added.
+        * UserInterface/Images/gtk/ResultLine.svg: Added.
+        * UserInterface/Images/gtk/Resume.svg: Added.
+        * UserInterface/Images/gtk/SessionStorage.png: Added.
+        * UserInterface/Images/gtk/SessionStorage@2x.png: Added.
+        * UserInterface/Images/gtk/ShadowDOM.svg: Added.
+        * UserInterface/Images/gtk/SourceCode.svg: Added.
+        * UserInterface/Images/gtk/SplitToggleDown.svg: Added.
+        * UserInterface/Images/gtk/SplitToggleUp.svg: Added.
+        * UserInterface/Images/gtk/StepInto.svg: Added.
+        * UserInterface/Images/gtk/StepOut.svg: Added.
+        * UserInterface/Images/gtk/StepOver.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleAuthor.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleInherited.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleInheritedElement.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleInspector.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleUser.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleUserAgent.svg: Added.
+        * UserInterface/Images/gtk/Time.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordAnimation.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordEvent.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordLayout.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordPaint.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordScriptEvaluated.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordStyle.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordTimer.svg: Added.
+        * UserInterface/Images/gtk/Undock.svg: Added.
+        * UserInterface/Images/gtk/UserInputPrompt.svg: Added.
+        * UserInterface/Images/gtk/UserInputPromptPrevious.svg: Added.
+        * UserInterface/Images/gtk/UserInputResult.svg: Added.
+        * UserInterface/Images/gtk/Warning.svg: Added.
+        * UserInterface/Images/gtk/Weight.svg: Added.
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Webkitgtk 2.5.3: tarball contains APPLE LICENSE file - stating not distributable
