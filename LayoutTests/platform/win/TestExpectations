@@ -2765,3 +2765,9 @@ svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-64-t.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-65-t.svg [ ImageOnlyFailure ]
+
+# Navigator Hardware Concurrency not enabled on Windows
+fast/dom/navigator-hardwareConcurrency.html
+
+# Tests that exceed maximum call stack on windows
+fast/dom/Window/window-postmessage-clone-deep-array.html
