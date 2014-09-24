@@ -516,6 +516,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueId) const
     case CSSValueButtontext:
         color = convertNSColorToColor([NSColor controlTextColor]);
         break;
+    case CSSValueActivebuttontext:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        color = 0xC0FFFFFF;
+#endif
+        break;
     case CSSValueCaptiontext:
         color = convertNSColorToColor([NSColor textColor]);
         break;

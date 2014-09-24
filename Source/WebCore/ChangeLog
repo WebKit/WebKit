@@ -1,3 +1,32 @@
+2014-09-23  Dean Jackson  <dino@apple.com>
+
+        [Yosemite] Button text doesn't go white while pushing the button, like it does for real buttons
+        https://bugs.webkit.org/show_bug.cgi?id=137054
+        rdar://problem/17559038
+
+        Reviewed by Sam Weinig.
+
+        On Yosemite and above, system buttons paint with white-ish text when they
+        are pressed. Since this isn't exposed by API, I've hardcoded the value
+        into RenderThemeMac.
+
+        The actual state is exposed by adding a :active rule to html.css that
+        uses a new CSSValueKeyword: ActiveButtonText.
+
+        Unfortunately I can't find a way to test this, because the active state isn't
+        testable. We should really expose the Inspector's forcePseudoState function into
+        window.internals.
+
+        * css/CSSValueKeywords.in: Add "activebuttontext".
+        * css/html.css:
+        (input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active): New rule for active
+        button elements.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor): Handle CSSValueActivebuttontext as black.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor): Handle CSSValueActivebuttontext as
+        white with 75% opacity.
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Use is<SVG*Element>() instead of isSVG*Element()

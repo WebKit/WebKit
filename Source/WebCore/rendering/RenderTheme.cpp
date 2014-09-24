@@ -1152,6 +1152,8 @@ Color RenderTheme::systemColor(CSSValueID cssValueId) const
         return 0xFF888888;
     case CSSValueButtontext:
         return 0xFF000000;
+    case CSSValueActivebuttontext:
+        return 0xFF000000;
     case CSSValueCaptiontext:
         return 0xFF000000;
     case CSSValueGraytext:

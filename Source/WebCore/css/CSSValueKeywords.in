@@ -162,6 +162,7 @@ buttonface
 buttonhighlight
 buttonshadow
 buttontext
+activebuttontext
 captiontext
 graytext
 highlight

@@ -690,6 +690,10 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     box-sizing: border-box
 }
 
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active {
+    color: ActiveButtonText;
+}
+
 input[type="range"] {
     -webkit-appearance: slider-horizontal;
     padding: initial;
