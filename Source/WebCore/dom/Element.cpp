@@ -2405,7 +2405,7 @@ bool Element::childShouldCreateRenderer(const Node& child) const
     if (child.isSVGElement()) {
         ASSERT(!isSVGElement());
         const SVGElement& childElement = downcast<SVGElement>(child);
-        return isSVGSVGElement(childElement) && childElement.isValid();
+        return is<SVGSVGElement>(childElement) && childElement.isValid();
     }
     return true;
 }

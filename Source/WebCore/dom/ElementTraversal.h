@@ -116,9 +116,9 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::firstChildTemplate(CurrentType* current)
 {
     Node* node = current->firstChild();
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = node->nextSibling();
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
@@ -126,9 +126,9 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::lastChildTemplate(CurrentType* current)
 {
     Node* node = current->lastChild();
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = node->previousSibling();
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
@@ -136,9 +136,9 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::firstWithinTemplate(CurrentType* current)
 {
     Node* node = current->firstChild();
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::next(node, current);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
@@ -146,9 +146,9 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::lastWithinTemplate(CurrentType* current)
 {
     Node* node = NodeTraversal::last(current);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::previous(node, current);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
@@ -156,9 +156,9 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType* current)
 {
     Node* node = NodeTraversal::next(current);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::next(node);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
@@ -166,63 +166,63 @@ template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::next(current, stayWithin);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::next(node, stayWithin);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node* current)
 {
     Node* node = NodeTraversal::previous(current);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::previous(node);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::previous(current, stayWithin);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::previous(node, stayWithin);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSibling(const Node* current)
 {
     Node* node = current->nextSibling();
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = node->nextSibling();
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previousSibling(const Node* current)
 {
     Node* node = current->previousSibling();
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = node->previousSibling();
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSkippingChildren(const Node* current)
 {
     Node* node = NodeTraversal::nextSkippingChildren(current);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::nextSkippingChildren(node);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::nextSkippingChildren(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::nextSkippingChildren(current, stayWithin);
-    while (node && !isElementOfType<const ElementType>(*node))
+    while (node && !is<ElementType>(*node))
         node = NodeTraversal::nextSkippingChildren(node, stayWithin);
-    return static_cast<ElementType*>(node);
+    return downcast<ElementType>(node);
 }
 
 template <typename ElementType>

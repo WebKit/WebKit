@@ -1551,7 +1551,7 @@ void Document::setTitle(const String& title)
     // The DOM API has no method of specifying direction, so assume LTR.
     updateTitle(StringWithDirection(title, LTR));
 
-    if (m_titleElement && isHTMLTitleElement(*m_titleElement))
+    if (m_titleElement && is<HTMLTitleElement>(*m_titleElement))
         downcast<HTMLTitleElement>(*m_titleElement).setText(title);
 }
 

@@ -1,3 +1,47 @@
+2014-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for is<HTML*Element>() for type checking
+        https://bugs.webkit.org/show_bug.cgi?id=137015
+
+        Reviewed by Benjamin Poulain.
+
+        Add support for is<HTML*Element>() for type checking while keeping
+        support for the legacy toHTML*Element() form until the code base is
+        ported.
+
+        toHTML*Element() helpers are now macros to the new is<HTML*Element>()
+        type checking helpers.
+
+        No new tests, no behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        (WebCore::is):
+        (WebCore::downcast):
+        (WebCore::isElementOfType): Deleted.
+        * dom/ElementAncestorIterator.h:
+        (WebCore::lineageOfType):
+        * dom/ElementIterator.h:
+        (WebCore::findElementAncestorOfType):
+        * dom/ElementTraversal.h:
+        (WebCore::Traversal<ElementType>::firstChildTemplate):
+        (WebCore::Traversal<ElementType>::lastChildTemplate):
+        (WebCore::Traversal<ElementType>::firstWithinTemplate):
+        (WebCore::Traversal<ElementType>::lastWithinTemplate):
+        (WebCore::Traversal<ElementType>::nextTemplate):
+        (WebCore::Traversal<ElementType>::previous):
+        (WebCore::Traversal<ElementType>::nextSibling):
+        (WebCore::Traversal<ElementType>::previousSibling):
+        (WebCore::Traversal<ElementType>::nextSkippingChildren):
+        * dom/TypedElementDescendantIterator.h:
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::from):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::from):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+
 2014-09-23  Benjamin Poulain  <bpoulain@apple.com>
 
         The style resolution cache applies properties incorrectly whenever direction != ltr

@@ -633,37 +633,34 @@ sub printTypeHelpers
         }
 
         my $class = $parsedTags{$name}{interfaceName};
-        # FIXME: Rename these helpers to is<*Element>().
-        my $checkHelper = "is$class";
-
         print F <<END
 class $class;
-void $checkHelper(const $class&); // Catch unnecessary runtime check of type known at compile time.
-void $checkHelper(const $class*); // Catch unnecessary runtime check of type known at compile time.
-END
-        ;
-
-        if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
-            # We need to check for HTMLUnknownElement if it might have been created by the factory.
-            print F <<END
-inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
-inline bool $checkHelper(const Node& node) { return node.isHTMLElement() && $checkHelper(toHTMLElement(node)); }
-END
-            ;
-        } else {
-            print F <<END
-inline bool $checkHelper(const $parameters{namespace}Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
-inline bool $checkHelper(const Node& node) { return node.hasTagName($parameters{namespace}Names::${name}Tag); }
-END
-            ;
-        }
-        print F <<END
-inline bool $checkHelper(const $parameters{namespace}Element* element) { ASSERT(element); return $checkHelper(*element); }
-inline bool $checkHelper(const Node* node) { ASSERT(node); return $checkHelper(*node); }
 template <typename ArgType>
-struct ElementTypeCastTraits<const $class, ArgType> {
-    static bool is(ArgType& node) { return $checkHelper(node); }
+class ElementTypeCastTraits<const $class, ArgType> {
+public:
+    static bool is(ArgType& node) { return checkTagName(node); }
+private:
+END
+       ;
+       if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
+           print F <<END
+    static bool checkTagName(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
+    static bool checkTagName(const Node& node) { return node.isHTMLElement() && checkTagName(toHTMLElement(node)); }
+END
+           ;
+       } else {
+           print F <<END
+    static bool checkTagName(const $parameters{namespace}Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
+    static bool checkTagName(const Node& node) { return node.hasTagName($parameters{namespace}Names::${name}Tag); }
+END
+           ;
+       }
+       print F <<END
 };
+
+// FIXME: Remove these macros once the code has been ported to using
+// is<*Element>().
+#define is$class(x) WebCore::is<WebCore::$class>(x)
 END
         ;
         print F "\n";

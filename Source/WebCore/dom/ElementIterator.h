@@ -183,10 +183,16 @@ template <typename ElementType>
 inline ElementType* findElementAncestorOfType(const Element& current)
 {
     for (Element* ancestor = current.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (isElementOfType<const ElementType>(*ancestor))
-            return static_cast<ElementType*>(ancestor);
+        if (is<ElementType>(*ancestor))
+            return downcast<ElementType>(ancestor);
     }
     return nullptr;
+}
+
+template <>
+inline Element* findElementAncestorOfType<Element>(const Element& current)
+{
+    return current.parentElement();
 }
 
 template <typename ElementType>
