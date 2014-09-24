@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,20 +84,21 @@ void WebInspectorClient::inspectorDestroyed()
 
 WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* controller)
 {
-    WebPage* inspectorPage = controller->isUnderTest() ? m_page->inspector()->createInspectorPageForTest() : m_page->inspector()->createInspectorPage();
-    ASSERT_UNUSED(inspectorPage, inspectorPage);
-    return this;
+    m_page->inspector()->createInspectorPage(controller->isUnderTest());
+
+    return m_page->inspector();
 }
 
 void WebInspectorClient::closeInspectorFrontend()
 {
     if (m_page->inspector())
-        m_page->inspector()->didClose();
+        m_page->inspector()->closeFrontend();
 }
 
 void WebInspectorClient::bringFrontendToFront()
 {
-    m_page->inspector()->bringToFront();
+    if (m_page->inspector())
+        m_page->inspector()->bringToFront();
 }
 
 void WebInspectorClient::didResizeMainFrame(Frame*)
@@ -196,34 +197,6 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
         m_page->disableInspectorNodeSearch();
 }
 #endif
-
-bool WebInspectorClient::sendMessageToFrontend(const String& message)
-{
-    WebInspector* inspector = m_page->inspector();
-    if (!inspector)
-        return false;
-
-#if ENABLE(INSPECTOR_SERVER)
-    if (inspector->hasRemoteFrontendConnected()) {
-        inspector->sendMessageToRemoteFrontend(message);
-        return true;
-    }
-#endif
-
-    WebPage* inspectorPage = inspector->inspectorPage();
-    if (inspectorPage)
-        return doDispatchMessageOnFrontendPage(inspectorPage->corePage(), message);
-
-    return false;
-}
-
-bool WebInspectorClient::supportsFrameInstrumentation()
-{
-#if USE(COORDINATED_GRAPHICS)
-    return true;
-#endif
-    return false;
-}
 
 void WebInspectorClient::pageOverlayDestroyed(PageOverlay*)
 {

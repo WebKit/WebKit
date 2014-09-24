@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,30 +22,25 @@
 
 #if ENABLE(INSPECTOR)
 
-messages -> WebInspectorProxy {
-    CreateInspectorPage(IPC::Attachment connectionIdentifier, bool canAttach, bool underTest)
+messages -> WebInspectorUI {
+    EstablishConnection(IPC::Attachment connectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest)
 
-    DidClose()
-    BringToFront()
+    AttachedBottom()
+    AttachedRight()
+    Detached()
 
-    InspectedURLChanged(String urlString)
+    ShowConsole()
+    ShowResources()
 
-    Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
-    Append(String filename, String content)
+    ShowMainResourceForFrame(String frameIdentifier)
 
-    AttachBottom()
-    AttachRight()
-    Detach()
+    StartPageProfiling()
+    StopPageProfiling()
 
-    AttachAvailabilityChanged(bool available)
+    DidSave(String url)
+    DidAppend(String url)
 
-    SetAttachedWindowHeight(unsigned height)
-    SetAttachedWindowWidth(unsigned width)
-    SetToolbarHeight(unsigned height)
-
-#if ENABLE(INSPECTOR_SERVER)
-    SendMessageToRemoteFrontend(String message)
-#endif
+    SendMessageToFrontend(String message)
 }
 
 #endif

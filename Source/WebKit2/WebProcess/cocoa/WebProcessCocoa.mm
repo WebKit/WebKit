@@ -205,7 +205,11 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
 #if !PLATFORM(IOS)
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    NSString *applicationName;
+    if (parameters.extraInitializationData.get(ASCIILiteral("inspector-process")) == "1")
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    else
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 #endif
 }

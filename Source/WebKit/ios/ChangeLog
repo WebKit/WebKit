@@ -1,3 +1,16 @@
+2014-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector use a separate web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135120
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::WebInspectorClient):
+        Removed m_frontendClient initialization since it is
+        now a std::unique_ptr that defaults to nullptr.
+
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
         Use downcast<HTML*Element>() instead of toHTML*Element()

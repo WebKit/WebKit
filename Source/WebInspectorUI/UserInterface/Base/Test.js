@@ -55,15 +55,16 @@ WebInspector.loaded = function()
 
     // Perform one-time tasks.
     WebInspector.CSSCompletions.requestCSSNameCompletions();
-
-    // Establish communication with the InspectorBackend.
-    InspectorFrontendHost.loaded();
 }
 
 WebInspector.contentLoaded = function()
 {
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
+
+    // Tell the InspectorFrontendHost we loaded, which causes the window to display
+    // and pending InspectorFrontendAPI commands to be sent.
+    InspectorFrontendHost.loaded();
 }
 
 WebInspector.UIString = function(string)

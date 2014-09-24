@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,106 +30,80 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "MessageReceiver.h"
 #include <WebCore/InspectorForwarding.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class WebInspectorFrontendClient;
 class WebPage;
 
-class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector> {
+class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, public IPC::Connection::Client, public WebCore::InspectorFrontendChannel {
 public:
-    static PassRefPtr<WebInspector> create(WebPage*, WebCore::InspectorFrontendChannel*);
+    static PassRefPtr<WebInspector> create(WebPage*);
 
     WebPage* page() const { return m_page; }
-    WebPage* inspectorPage() const { return m_inspectorPage; }
+
+    void updateDockingAvailability();
+
+    virtual bool sendMessageToFrontend(const String& message) override;
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
-    void didReceiveWebInspectorMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
+
+    // IPC::Connection::Client
+    void didClose(IPC::Connection*) { close(); }
+    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) { close(); }
 
     // Called by WebInspector messages
+    void connectionEstablished();
+
     void show();
     void close();
 
-    void didSave(const String& url);
-    void didAppend(const String& url);
+    void openInNewTab(const String& urlString);
 
-    void attachedBottom();
-    void attachedRight();
-    void detached();
+    void canAttachWindow(bool& result);
+
+    void showConsole();
+    void showResources();
+
+    void showMainResourceForFrame(uint64_t frameIdentifier);
+
+    void setAttached(bool attached) { m_attached = attached; }
 
     void evaluateScriptForTest(const String& script);
 
-    void setJavaScriptProfilingEnabled(bool);
     void startPageProfiling();
     void stopPageProfiling();
 
+    void sendMessageToBackend(const String&);
+
 #if ENABLE(INSPECTOR_SERVER)
-    bool hasRemoteFrontendConnected() const { return m_remoteFrontendConnected; }
-    void sendMessageToRemoteFrontend(const String& message);
-    void dispatchMessageFromRemoteFrontend(const String& message);
     void remoteFrontendConnected();
     void remoteFrontendDisconnected();
 #endif
 
 private:
     friend class WebInspectorClient;
-    friend class WebInspectorFrontendClient;
 
-    explicit WebInspector(WebPage*, WebCore::InspectorFrontendChannel*);
+    explicit WebInspector(WebPage*);
+
+    bool canAttachWindow();
 
     // Called from WebInspectorClient
-    WebPage* createInspectorPage();
-    WebPage* createInspectorPageForTest();
-    void destroyInspectorPage();
+    void createInspectorPage(bool underTest);
 
-    // Called from WebInspectorFrontendClient
-    void didClose();
+    void closeFrontend();
     void bringToFront();
-    void inspectedURLChanged(const String&);
-
-    bool canSave() const;
-    void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
-    void append(const String& filename, const String& content);
-
-    void attachBottom();
-    void attachRight();
-    void detach();
-
-    void setAttachedWindowHeight(unsigned);
-    void setAttachedWindowWidth(unsigned);
-    void setToolbarHeight(unsigned);
-
-    // Implemented in platform WebInspector file
-    String localizedStringsURL() const;
-
-    void showConsole();
-
-    void showResources();
-
-    void showMainResourceForFrame(uint64_t frameID);
-
-    void startJavaScriptDebugging();
-    void stopJavaScriptDebugging();
-
-    void startJavaScriptProfiling();
-    void stopJavaScriptProfiling();
-
-    void updateDockingAvailability();
 
     WebPage* m_page;
-    WebPage* m_inspectorPage;
-    WebInspectorFrontendClient* m_frontendClient;
-    WebCore::InspectorFrontendChannel* m_frontendChannel;
-#if PLATFORM(COCOA)
-    mutable String m_localizedStringsURL;
-    mutable bool m_hasLocalizedStringsURL;
-#endif
-#if ENABLE(INSPECTOR_SERVER)
-    bool m_remoteFrontendConnected;
-#endif
+
+    RefPtr<IPC::Connection> m_frontendConnection;
+
+    bool m_attached;
+    bool m_previousCanAttach;
 };
 
 } // namespace WebKit

@@ -1,3 +1,38 @@
+2014-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector use a separate web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135120
+
+        Reviewed by Anders Carlsson.
+
+        * English.lproj/Localizable.strings: Updated.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptGlobalObject.h:
+        * bindings/js/ScriptState.h:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorPageAgent.h:
+        * page/Chrome.h:
+        Exported a few functions and private headers.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setInspectorFrontendClient):
+        (WebCore::InspectorController::hasInspectorFrontendClient):
+        (WebCore::InspectorController::show):
+        * inspector/InspectorController.h:
+        Make InspectorFrontendClient a pointer instead of a std::unique_ptr.
+        This makes it easier to implement InspectorFrontendClient as
+        part of an existing object that is externally owned.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend):
+        (WebCore::Internals::closeDummyInspectorFrontend):
+        * testing/Internals.h:
+        Change InspectorFrontendClientDummy from being moved to owned.
+
 2014-09-23  Dean Jackson  <dino@apple.com>
 
         [Yosemite] Button text doesn't go white while pushing the button, like it does for real buttons

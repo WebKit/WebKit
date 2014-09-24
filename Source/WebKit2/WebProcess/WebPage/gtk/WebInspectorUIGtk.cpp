@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +24,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKInspector_h
-#define WKInspector_h
+#include "config.h"
+#include "WebInspectorUI.h"
 
-#include <WebKit/WKBase.h>
+#if ENABLE(INSPECTOR)
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+#include <WebCore/FileSystem.h>
+#include <glib.h>
+#include <wtf/text/WTFString.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-WK_EXPORT WKTypeID WKInspectorGetTypeID();
-
-WK_EXPORT WKPageRef WKInspectorGetPage(WKInspectorRef inspector);
-
-WK_EXPORT bool WKInspectorIsConnected(WKInspectorRef inspector);
-WK_EXPORT bool WKInspectorIsVisible(WKInspectorRef inspector);
-WK_EXPORT bool WKInspectorIsFront(WKInspectorRef inspector);
-
-WK_EXPORT void WKInspectorConnect(WKInspectorRef inspector);
-
-WK_EXPORT void WKInspectorShow(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorHide(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorClose(WKInspectorRef inspector);
-
-WK_EXPORT void WKInspectorShowConsole(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorShowResources(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorShowMainResourceForFrame(WKInspectorRef inspector, WKFrameRef frame);
-
-WK_EXPORT bool WKInspectorIsAttached(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorAttach(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorDetach(WKInspectorRef inspector);
-
-WK_EXPORT bool WKInspectorIsProfilingPage(WKInspectorRef inspector);
-WK_EXPORT void WKInspectorTogglePageProfiling(WKInspectorRef inspector);
-
-#ifdef __cplusplus
+bool WebInspectorUI::canSave()
+{
+    return false;
 }
-#endif
 
-#endif // WKInspector_h
+String WebInspectorUI::localizedStringsURL()
+{
+    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)

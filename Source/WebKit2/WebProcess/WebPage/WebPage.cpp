@@ -80,6 +80,8 @@
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebInspectorMessages.h"
+#include "WebInspectorUI.h"
+#include "WebInspectorUIMessages.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
@@ -460,6 +462,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(INSPECTOR)
     WebProcess::shared().addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
+    WebProcess::shared().addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
 #endif
 #if ENABLE(FULLSCREEN_API)
     WebProcess::shared().addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, *this);
@@ -520,6 +523,7 @@ WebPage::~WebPage()
 #endif
 #if ENABLE(INSPECTOR)
     WebProcess::shared().removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
+    WebProcess::shared().removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
 #endif
 #if ENABLE(FULLSCREEN_API)
     WebProcess::shared().removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
@@ -2886,18 +2890,26 @@ void WebPage::didFlushLayerTreeAtTime(std::chrono::milliseconds timestamp)
 }
 #endif
 
-    
 #if ENABLE(INSPECTOR)
 WebInspector* WebPage::inspector()
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
     if (!m_inspector)
-        m_inspector = WebInspector::create(this, m_inspectorClient);
+        m_inspector = WebInspector::create(this);
     return m_inspector.get();
 }
+
+WebInspectorUI* WebPage::inspectorUI()
+{
+    if (m_isClosed)
+        return nullptr;
+    if (!m_inspectorUI)
+        m_inspectorUI = WebInspectorUI::create(this);
+    return m_inspectorUI.get();
+}
 #endif
-    
+
 #if PLATFORM(IOS)
 WebVideoFullscreenManager* WebPage::videoFullscreenManager()
 {
@@ -3479,7 +3491,13 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())
-            inspector->didReceiveWebInspectorMessage(connection, decoder);
+            inspector->didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::WebInspectorUI::messageReceiverName()) {
+        if (WebInspectorUI* inspectorUI = this->inspectorUI())
+            inspectorUI->didReceiveMessage(connection, decoder);
         return;
     }
 #endif

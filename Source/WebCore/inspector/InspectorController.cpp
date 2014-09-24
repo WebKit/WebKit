@@ -86,6 +86,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     , m_inspectorFrontendChannel(nullptr)
     , m_page(page)
     , m_inspectorClient(inspectorClient)
+    , m_inspectorFrontendClient(nullptr)
     , m_isUnderTest(false)
 #if ENABLE(REMOTE_INSPECTOR)
     , m_hasRemoteFrontend(false)
@@ -188,9 +189,9 @@ void InspectorController::inspectedPageDestroyed()
     m_inspectorClient = nullptr;
 }
 
-void InspectorController::setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient> inspectorFrontendClient)
+void InspectorController::setInspectorFrontendClient(InspectorFrontendClient* inspectorFrontendClient)
 {
-    m_inspectorFrontendClient = WTF::move(inspectorFrontendClient);
+    m_inspectorFrontendClient = inspectorFrontendClient;
 }
 
 bool InspectorController::hasLocalFrontend() const
@@ -213,7 +214,7 @@ bool InspectorController::hasRemoteFrontend() const
 
 bool InspectorController::hasInspectorFrontendClient() const
 {
-    return m_inspectorFrontendClient.get();
+    return m_inspectorFrontendClient;
 }
 
 void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
@@ -283,9 +284,10 @@ void InspectorController::show()
     if (m_inspectorFrontendChannel)
         m_inspectorClient->bringFrontendToFront();
     else {
-        InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this);
-        if (frontendChannel)
-            connectFrontend(frontendChannel, false);
+        if (InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this)) {
+            bool isAutomaticInspection = false;
+            connectFrontend(frontendChannel, isAutomaticInspection);
+        }
     }
 }
 

@@ -39,6 +39,7 @@
 #include "WebUserContentControllerProxy.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
+#include "WebInspectorProxy.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
@@ -115,6 +116,8 @@ WebProcessProxy::~WebProcessProxy()
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::WebProcess;
+    if (&m_context.get() == &WebInspectorProxy::inspectorContext())
+        launchOptions.extraInitializationData.add(ASCIILiteral("inspector-process"), ASCIILiteral("1"));
     platformGetLaunchOptions(launchOptions);
 }
 

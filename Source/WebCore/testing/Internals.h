@@ -50,6 +50,7 @@ class DocumentMarker;
 class Element;
 class Frame;
 class InspectorFrontendChannelDummy;
+class InspectorFrontendClientDummy;
 class InternalSettings;
 class MallocStatistics;
 class MemoryInfo;
@@ -350,7 +351,8 @@ private:
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
 #if ENABLE(INSPECTOR)
     RefPtr<DOMWindow> m_frontendWindow;
-    OwnPtr<InspectorFrontendChannelDummy> m_frontendChannel;
+    std::unique_ptr<InspectorFrontendClientDummy> m_frontendClient;
+    std::unique_ptr<InspectorFrontendChannelDummy> m_frontendChannel;
 #endif
 };
 

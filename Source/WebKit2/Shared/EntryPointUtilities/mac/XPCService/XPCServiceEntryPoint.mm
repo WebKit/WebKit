@@ -92,8 +92,14 @@ bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessNa
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>&)
+bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
 {
+    xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
+
+    String inspectorProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process");
+    if (!inspectorProcess.isEmpty())
+        extraInitializationData.add(ASCIILiteral("inspector-process"), inspectorProcess);
+
     return true;
 }
 

@@ -49,10 +49,7 @@ WebInspector.TypeIdentifierCookieKey = "represented-object-type";
 
 WebInspector.loaded = function()
 {
-    // Tell the InspectorFrontendHost we loaded first to establish communication with InspectorBackend.
-    InspectorFrontendHost.loaded();
-
-    // Initialize WebSocket to communication
+    // Initialize WebSocket to communication.
     this._initializeWebSocketIfNeeded();
 
     // Register observers for events from the InspectorBackend.
@@ -328,11 +325,12 @@ WebInspector.contentLoaded = function()
     if (this._detailsSidebarWidthSetting.value)
         this.detailsSidebar.width = this._detailsSidebarWidthSetting.value;
 
-    // Update the docked state based on the query string passed when the Web Inspector was loaded.
-    this.updateDockedState(parseLocationQueryParameters().dockSide || "undocked");
-
-    // Tell the frontend API we are loaded so any pending frontend commands can be dispatched.
+    // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
+
+    // Tell the InspectorFrontendHost we loaded, which causes the window to display
+    // and pending InspectorFrontendAPI commands to be sent.
+    InspectorFrontendHost.loaded();
 
     // Set collapsed after loading the pending frontend commands are dispatched so only the final
     // selected sidebar panel gets shown and has a say in what content view gets shown.

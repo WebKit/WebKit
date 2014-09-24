@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,26 +22,25 @@
 
 #if ENABLE(INSPECTOR)
 
-messages -> WebInspector LegacyReceiver {
+messages -> WebInspector {
     Show()
     Close()
-    AttachedBottom()
-    AttachedRight()
-    Detached()
-    DidSave(String url)
-    DidAppend(String url)
+
+    SetAttached(bool attached)
+
     ShowConsole()
     ShowResources()
-    ShowMainResourceForFrame(uint64_t frameID)
-    StartJavaScriptDebugging()
-    StopJavaScriptDebugging()
-    StartJavaScriptProfiling()
-    StopJavaScriptProfiling()
+
+    ShowMainResourceForFrame(uint64_t frameIdentifier)
+
+    OpenInNewTab(String url)
+
     StartPageProfiling()
     StopPageProfiling()
 
+    SendMessageToBackend(String message)
+
 #if ENABLE(INSPECTOR_SERVER)
-    DispatchMessageFromRemoteFrontend(String message)
     RemoteFrontendConnected()
     RemoteFrontendDisconnected()
 #endif

@@ -121,6 +121,7 @@ MESSAGE_RECEIVERS = \
     WebIconDatabaseProxy \
     WebInspector \
     WebInspectorProxy \
+    WebInspectorUI \
     WebMediaCacheManager \
     WebMediaCacheManagerProxy \
     WebNotificationManager \

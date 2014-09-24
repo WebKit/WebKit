@@ -155,7 +155,7 @@ public:
     Frame* mainFrame();
     String createIdentifier();
     Frame* frameForId(const String& frameId);
-    String frameId(Frame*);
+    WEBCORE_EXPORT String frameId(Frame*);
     bool hasIdForFrame(Frame*) const;
     String loaderId(DocumentLoader*);
     Frame* findFrameWithSecurityOrigin(const String& originRawString);

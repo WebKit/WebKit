@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT void show();
     WEBCORE_EXPORT void close();
 
-    WEBCORE_EXPORT void setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient>);
+    WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient*);
     bool hasInspectorFrontendClient() const;
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
 
@@ -121,7 +121,7 @@ public:
     void resume();
 
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
-    InspectorPageAgent* pageAgent() const { return m_pageAgent; }
+    WEBCORE_EXPORT InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
     virtual bool developerExtrasEnabled() const override;
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override;
@@ -146,10 +146,10 @@ private:
     InspectorTimelineAgent* m_timelineAgent;
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
-    std::unique_ptr<InspectorFrontendClient> m_inspectorFrontendClient;
     Inspector::InspectorFrontendChannel* m_inspectorFrontendChannel;
     Page& m_page;
     InspectorClient* m_inspectorClient;
+    InspectorFrontendClient* m_inspectorFrontendClient;
     Inspector::InspectorAgentRegistry m_agents;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
     bool m_isUnderTest;

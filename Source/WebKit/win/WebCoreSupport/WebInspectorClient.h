@@ -75,7 +75,7 @@ public:
 
     void releaseFrontend();
 
-    WebInspectorFrontendClient* frontendClient() { return m_frontendClient; }
+    WebInspectorFrontendClient* frontendClient() { return m_frontendClient.get(); }
 
     void updateHighlight();
 
@@ -85,7 +85,7 @@ private:
 
     WebView* m_inspectedWebView;
     WebCore::Page* m_frontendPage;
-    WebInspectorFrontendClient* m_frontendClient;
+    std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
     HWND m_inspectedWebViewHandle;
     HWND m_frontendHandle;
 

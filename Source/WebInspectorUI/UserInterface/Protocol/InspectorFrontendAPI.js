@@ -25,28 +25,16 @@
 
 InspectorFrontendAPI = {
     _loaded: false,
-
     _pendingCommands: [],
 
     savedURL: function(url)
     {
-        // FIXME: Not implemented.
+        // Not used yet.
     },
 
     appendedToURL: function(url)
     {
-        // FIXME: Not implemented.
-    },
-
-    isDebuggingEnabled: function()
-    {
-        // FIXME: Not implemented.
-        return false;
-    },
-
-    setDebuggingEnabled: function(enabled)
-    {
-        // FIXME: Not implemented.
+        // Not used yet.
     },
 
     isTimelineProfilingEnabled: function()
@@ -108,11 +96,6 @@ InspectorFrontendAPI = {
         WebInspector.resourceSidebarPanel.showSourceCodeForFrame(frameIdentifier, true);
     },
 
-    setDockingUnavailable: function(unavailable)
-    {
-        // Not used.
-    },
-
     contextMenuItemSelected: function(id)
     {
         WebInspector.contextMenuItemSelected(id);
@@ -141,6 +124,10 @@ InspectorFrontendAPI = {
         }
 
         var methodName = signature.shift();
+        console.assert(InspectorFrontendAPI[methodName], "Unexpected InspectorFrontendAPI method name: " + InspectorFrontendAPI[methodName]);
+        if (!InspectorFrontendAPI[methodName])
+            return;
+
         return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI, signature);
     },
 
@@ -151,6 +138,6 @@ InspectorFrontendAPI = {
         for (var i = 0; i < InspectorFrontendAPI._pendingCommands.length; ++i)
             InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);
 
-        InspectorFrontendAPI._pendingCommands = [];
+        delete InspectorFrontendAPI._pendingCommands;
     }
 };

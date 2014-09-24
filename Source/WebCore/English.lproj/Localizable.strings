@@ -49,6 +49,9 @@
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
+/* Visible name of Web Inspector's web process. The argument is the application name. */
+"%@ Web Inspector" = "%@ Web Inspector";
+
 /* Name of application's single WebCrypto master key in Keychain */
 "%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
 

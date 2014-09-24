@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #if PLATFORM(MAC) && ENABLE(INSPECTOR)
 
 #import "WKAPICast.h"
-#import "WebContext.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKMutableArray.h"
 #import "WKOpenPanelParameters.h"
@@ -37,17 +36,20 @@
 #import "WKRetainPtr.h"
 #import "WKURLCF.h"
 #import "WKViewPrivate.h"
+#import "WebContext.h"
 #import "WebInspectorMessages.h"
+#import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
-#import <algorithm>
-#import <mach-o/dyld.h>
-#import <WebKitSystemInterface.h>
+#import <QuartzCore/CoreAnimation.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
+#import <WebKitSystemInterface.h>
+#import <algorithm>
+#import <mach-o/dyld.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
 
@@ -73,10 +75,16 @@ static const CGFloat dockButtonSpacing = dockButtonMargin * 2;
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
 #endif
 
+// The time we keep our WebView alive before closing it and its process.
+// Reusing the WebView improves start up time for people that jump in and out of the Inspector.
+static const unsigned webViewCloseTimeout = 60;
+
 // WKWebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
 // for the sole purpose of getting back into the C++ code from an ObjC caller.
 
-@interface WKWebInspectorProxyObjCAdapter ()
+@interface WKWebInspectorProxyObjCAdapter () {
+    BOOL _ignoreNextInspectedViewFrameDidChange;
+}
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 - (void)close;
@@ -114,7 +122,7 @@ static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowM
 
 - (void)close
 {
-    _inspectorProxy = 0;
+    _inspectorProxy = nullptr;
 }
 
 - (void)windowDidMove:(NSNotification *)notification
@@ -132,8 +140,18 @@ static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowM
     static_cast<WebInspectorProxy*>(_inspectorProxy)->close();
 }
 
+- (void)ignoreNextInspectedViewFrameDidChange
+{
+    _ignoreNextInspectedViewFrameDidChange = YES;
+}
+
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
+    if (_ignoreNextInspectedViewFrameDidChange)
+        return;
+
+    _ignoreNextInspectedViewFrameDidChange = NO;
+
     // Resizing the views while inside this notification can lead to bad results when entering
     // or exiting full screen. To avoid that we need to perform the work after a delay. We only
     // depend on this for enforcing the height constraints, so a small delay isn't terrible. Most
@@ -269,6 +287,18 @@ WKRect WebInspectorProxy::inspectorWindowFrame()
     return WKRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
+void WebInspectorProxy::closeTimerFired()
+{
+    ASSERT(!m_isAttached || !m_inspectorWindow);
+    if (m_isAttached || m_inspectorWindow)
+        return;
+
+    m_inspectorView = nil;
+
+    [m_inspectorProxyObjCAdapter close];
+    m_inspectorProxyObjCAdapter = nil;
+}
+
 static NSButton *createDockButton(NSString *imageName)
 {
     // Create a full screen button so we can turn it into a dock button.
@@ -395,7 +425,16 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
     ASSERT(m_page);
+
+    m_closeTimer.stop();
+
+    if (m_inspectorView) {
+        ASSERT(m_inspectorProxyObjCAdapter);
+        return toImpl(m_inspectorView.get().pageRef);
+    }
+
     ASSERT(!m_inspectorView);
+    ASSERT(!m_inspectorProxyObjCAdapter);
 
     NSRect initialRect;
     if (m_isAttached) {
@@ -418,7 +457,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&page()->process().context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
+    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&inspectorContext()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:nullptr]);
     ASSERT(m_inspectorView);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
@@ -426,8 +465,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 #endif
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
+    ASSERT(m_inspectorProxyObjCAdapter);
 
     WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
+    ASSERT(inspectorPage);
 
     WKPageUIClientV2 uiClient = {
         { 2, this },
@@ -499,13 +540,10 @@ void WebInspectorProxy::platformDidClose()
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
         [m_inspectorWindow orderOut:nil];
-        m_inspectorWindow = 0;
+        m_inspectorWindow = nil;
     }
 
-    m_inspectorView = 0;
-
-    [m_inspectorProxyObjCAdapter close];
-    m_inspectorProxyObjCAdapter = 0;
+    m_closeTimer.startOneShot(webViewCloseTimeout);
 }
 
 void WebInspectorProxy::platformHide()
@@ -518,7 +556,7 @@ void WebInspectorProxy::platformHide()
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
         [m_inspectorWindow orderOut:nil];
-        m_inspectorWindow = 0;
+        m_inspectorWindow = nil;
     }
 }
 
@@ -589,7 +627,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-        m_page->process().send(Messages::WebInspector::DidSave([actualURL absoluteString]), m_page->pageID());
+        m_inspectorPage->process().send(Messages::WebInspectorUI::DidSave([actualURL absoluteString]), m_inspectorPage->pageID());
     };
 
     if (!forceSaveDialog) {
@@ -623,7 +661,7 @@ void WebInspectorProxy::platformAppend(const String& suggestedURL, const String&
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    m_page->process().send(Messages::WebInspector::DidAppend([actualURL absoluteString]), m_page->pageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]), m_inspectorPage->pageID());
 }
 
 void WebInspectorProxy::windowFrameDidChange()
@@ -679,6 +717,11 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         }
     }
 
+    if (NSEqualRects([m_inspectorView frame], inspectorFrame) && NSEqualRects([inspectedView frame], inspectedViewFrame))
+        return;
+
+    [m_inspectorProxyObjCAdapter ignoreNextInspectedViewFrameDidChange];
+
     // Disable screen updates to make sure the layers for both views resize in sync.
     [[m_inspectorView window] disableScreenUpdatesUntilFlush];
 
@@ -708,7 +751,7 @@ void WebInspectorProxy::platformAttach()
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
         [m_inspectorWindow orderOut:nil];
-        m_inspectorWindow = 0;
+        m_inspectorWindow = nil;
     }
 
     [m_inspectorView removeFromSuperview];

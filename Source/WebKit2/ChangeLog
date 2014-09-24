@@ -1,3 +1,180 @@
+2014-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector use a separate web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135120
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added new WebInspectorUI files and removed WebInspectorFrontendClient.cpp.
+
+        * Shared/APIObject.h: Added BundleInspectorUI.
+
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.mm:
+        (WebKit::ChildProcessMainDelegate::getExtraInitializationData):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        Add support for "inspector-process" data, a boolean that is used by
+        WebProcess::initializeProcessName.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorIsDebuggingJavaScript):
+        (WKInspectorToggleJavaScriptDebugging):
+        (WKInspectorIsProfilingJavaScript):
+        (WKInspectorToggleJavaScriptProfiling):
+        * UIProcess/API/C/WKInspector.h:
+        Stub out functions we don't support but need to keep for nightly compatibility.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorPageGroups::createInspectorPageGroup):
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::showConsole):
+        (WebKit::WebInspectorProxy::showResources):
+        (WebKit::WebInspectorProxy::showMainResourceForFrame):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::inspectorContext):
+        (WebKit::WebInspectorProxy::dispatchMessageFromRemoteFrontend):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::open):
+        (WebKit::WebInspectorProxy::didClose):
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isConnected):
+        (WebKit::WebInspectorProxy::canAttach):
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformAttach):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter close]):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::platformHide):
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit::WebInspectorProxy::platformAppend):
+        (WebKit::WebInspectorProxy::platformAttach):
+        Changed how the Inspector page is created by making it in a new WebContext for
+        the Inspector. This removes us from the main process pool and guarantees no process
+        sharing for our user interface. Also send new WebInspectorUI messages to the Inspector
+        page and not the inspected page when appropriate.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions): Add "inspector-process" to extraInitializationData
+        if the context is the Inspector context. This is used by WebProcess::initializeProcessName.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openInspectorFrontend):
+        (WebKit::WebInspectorClient::closeInspectorFrontend):
+        (WebKit::WebInspectorClient::bringFrontendToFront):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        Remove the InspectorFrontendChannel class from WebInspectorClient and clean up a little.
+        InspectorFrontendChannel implementation moved to WebInspector.
+
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp: Removed. Superseded by WebInspectorUI.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::create):
+        (WebKit::WebInspector::WebInspector):
+        (WebKit::WebInspector::createInspectorPage):
+        (WebKit::WebInspector::closeFrontend):
+        (WebKit::WebInspector::openInNewTab):
+        (WebKit::WebInspector::showConsole):
+        (WebKit::WebInspector::showResources):
+        (WebKit::WebInspector::showMainResourceForFrame):
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::canAttachWindow):
+        (WebKit::WebInspector::updateDockingAvailability):
+        (WebKit::WebInspector::sendMessageToBackend):
+        (WebKit::WebInspector::sendMessageToFrontend):
+        (WebKit::WebInspector::remoteFrontendConnected):
+        (WebKit::WebInspector::remoteFrontendDisconnected):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::didClose):
+        (WebKit::WebInspector::didReceiveInvalidMessage):
+        (WebKit::WebInspector::setAttached):
+        * WebProcess/WebPage/WebInspector.messages.in:
+        Stop taking an optional InspectorFrontendChannel and inherit it instead. Create a connection that
+        can be passed to the other web process for WebInspectorUI to use. Stop referencing Inspector's page
+        directly, since it is in another process now.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp: Added.
+        (WebKit::WebInspectorUI::create):
+        (WebKit::WebInspectorUI::WebInspectorUI):
+        (WebKit::WebInspectorUI::establishConnection):
+        (WebKit::WebInspectorUI::windowObjectCleared):
+        (WebKit::WebInspectorUI::frontendLoaded):
+        (WebKit::WebInspectorUI::moveWindowBy):
+        (WebKit::WebInspectorUI::bringToFront):
+        (WebKit::WebInspectorUI::closeWindow):
+        (WebKit::WebInspectorUI::requestSetDockSide):
+        (WebKit::WebInspectorUI::setDockSide):
+        (WebKit::WebInspectorUI::changeAttachedWindowHeight):
+        (WebKit::WebInspectorUI::changeAttachedWindowWidth):
+        (WebKit::WebInspectorUI::setToolbarHeight):
+        (WebKit::WebInspectorUI::openInNewTab):
+        (WebKit::WebInspectorUI::save):
+        (WebKit::WebInspectorUI::append):
+        (WebKit::WebInspectorUI::inspectedURLChanged):
+        (WebKit::WebInspectorUI::showConsole):
+        (WebKit::WebInspectorUI::showResources):
+        (WebKit::WebInspectorUI::showMainResourceForFrame):
+        (WebKit::WebInspectorUI::startPageProfiling):
+        (WebKit::WebInspectorUI::stopPageProfiling):
+        (WebKit::WebInspectorUI::didSave):
+        (WebKit::WebInspectorUI::didAppend):
+        (WebKit::WebInspectorUI::sendMessageToFrontend):
+        (WebKit::WebInspectorUI::sendMessageToBackend):
+        (WebKit::WebInspectorUI::evaluateCommandOnLoad):
+        (WebKit::WebInspectorUI::evaluateExpressionOnLoad):
+        (WebKit::WebInspectorUI::evaluatePendingExpressions):
+        * WebProcess/WebPage/WebInspectorUI.h: Added.
+        (WebKit::WebInspectorUI::page):
+        (WebKit::WebInspectorUI::didClose):
+        (WebKit::WebInspectorUI::didReceiveInvalidMessage):
+        (WebKit::WebInspectorUI::attachedBottom):
+        (WebKit::WebInspectorUI::attachedRight):
+        (WebKit::WebInspectorUI::detached):
+        (WebKit::WebInspectorUI::evaluateCommandOnLoad):
+        * WebProcess/WebPage/WebInspectorUI.messages.in: Added.
+        * WebProcess/WebPage/efl/WebInspectorUIEfl.cpp: Added.
+        (WebKit::WebInspectorUI::canSave):
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp: Added.
+        (WebKit::WebInspectorUI::canSave):
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm: Added.
+        (WebKit::WebInspectorUI::canSave):
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        Implement the InspectorFrontendClient and handle a connection to the inspected page's WebInspector.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::inspector):
+        (WebKit::WebPage::inspectorUI):
+        (WebKit::WebPage::didReceiveMessage):
+        Setup as a listener for WebInspectorUI messages.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isInspectorPage): It is an Inspector page if we have a m_inspectorUI.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+        Name the process "%@ Web Inspector" if it is an Inspector content process. Processes in that
+        context are not shared with multiple pages.
+
 2014-09-24  Dean Jackson  <dino@apple.com>
 
         Add a deprecated stub for WKPreferencesSetMultithreadedWebGLEnabled (and Get)

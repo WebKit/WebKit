@@ -68,7 +68,6 @@ static const IntRect& defaultWindowRect()
 WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
     , m_frontendPage(0)
-    , m_frontendClient(0)
 {
     ASSERT(m_inspectedWebView);
     m_inspectedWebView->viewWindow(&m_inspectedWebViewHandle);
@@ -171,9 +170,8 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
         return 0;
 
     m_frontendPage = core(frontendWebView.get());
-    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHandle, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
-    m_frontendClient = frontendClient.get();
-    m_frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
+    m_frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHandle, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
+    m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
     m_frontendHandle = frontendHwnd;
     return this;
 }
@@ -219,7 +217,7 @@ void WebInspectorClient::updateHighlight()
 
 void WebInspectorClient::releaseFrontend()
 {
-    m_frontendClient = 0;
+    m_frontendClient = nullptr;
     m_frontendPage = 0;
     m_frontendHandle = 0;
 }

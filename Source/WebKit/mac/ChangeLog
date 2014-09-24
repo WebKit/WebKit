@@ -1,3 +1,18 @@
+2014-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector use a separate web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135120
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorClient::releaseFrontend):
+        Own WebInspectorFrontendClient instead of moving it.
+
 2014-09-23  Chris Dumez  <cdumez@apple.com>
 
         Use downcast<HTML*Element>() instead of toHTML*Element()

@@ -153,6 +153,7 @@ class WebFullScreenManager;
 class WebImage;
 class WebInspector;
 class WebInspectorClient;
+class WebInspectorUI;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNotificationClient;
@@ -226,8 +227,10 @@ public:
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
+    WebInspectorUI* inspectorUI();
+    bool isInspectorPage() { return !!m_inspectorUI; }
 #endif
-    
+
 #if PLATFORM(IOS)
     WebVideoFullscreenManager* videoFullscreenManager();
 #endif
@@ -1159,6 +1162,7 @@ private:
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
+    RefPtr<WebInspectorUI> m_inspectorUI;
 #endif
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;

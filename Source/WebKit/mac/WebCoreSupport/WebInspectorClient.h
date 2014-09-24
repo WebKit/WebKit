@@ -100,7 +100,7 @@ private:
     WebView *m_webView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
     WebCore::Page* m_frontendPage;
-    WebInspectorFrontendClient* m_frontendClient;
+    std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
 };
 
 

@@ -133,8 +133,7 @@ using namespace WebCore;
 WebInspectorClient::WebInspectorClient(WebView *webView)
     : m_webView(webView)
     , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:webView]))
-    , m_frontendPage(0)
-    , m_frontendClient(0)
+    , m_frontendPage(nullptr)
 {
 }
 
@@ -150,11 +149,13 @@ InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorCon
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
-    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings());
-    m_frontendClient = frontendClient.get();
-    RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
+    m_frontendClient = std::make_unique<WebInspectorFrontendClient>(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings());
+
+    RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:m_frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
-    m_frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
+
+    m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
+
     return this;
 }
 
@@ -199,8 +200,8 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 
 void WebInspectorClient::releaseFrontend()
 {
-    m_frontendClient = 0;
-    m_frontendPage = 0;
+    m_frontendClient = nullptr;
+    m_frontendPage = nullptr;
 }
 
 

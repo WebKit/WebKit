@@ -1,3 +1,33 @@
+2014-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector use a separate web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135120
+
+        Reviewed by Anders Carlsson.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        Move InspectorFrontendHost.loaded to later in the load.
+        Calling it early just shows the window before we have
+        a user interface to show.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        Match the changes in Main.js.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.savedURL): Change comment.
+        (InspectorFrontendAPI.appendedToURL): Change comment.
+        (InspectorFrontendAPI.dispatch): Add an assert and early
+        return to be safe from unknown commands.
+        (InspectorFrontendAPI.loadCompleted): Delete _pendingCommands,
+        no need to keep an empty array around a one time use.
+
 2014-09-24  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add more free icons for the Web Inspector in GTK+

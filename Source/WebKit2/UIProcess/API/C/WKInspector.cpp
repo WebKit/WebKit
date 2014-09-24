@@ -174,44 +174,6 @@ void WKInspectorDetach(WKInspectorRef inspectorRef)
 #endif
 }
 
-bool WKInspectorIsDebuggingJavaScript(WKInspectorRef inspectorRef)
-{
-#if ENABLE(INSPECTOR)
-    return toImpl(inspectorRef)->isDebuggingJavaScript();
-#else
-    UNUSED_PARAM(inspectorRef);
-    return false;
-#endif
-}
-
-void WKInspectorToggleJavaScriptDebugging(WKInspectorRef inspectorRef)
-{
-#if ENABLE(INSPECTOR)
-    toImpl(inspectorRef)->toggleJavaScriptDebugging();
-#else
-    UNUSED_PARAM(inspectorRef);
-#endif
-}
-
-bool WKInspectorIsProfilingJavaScript(WKInspectorRef inspectorRef)
-{
-#if ENABLE(INSPECTOR)
-    return toImpl(inspectorRef)->isProfilingJavaScript();
-#else
-    UNUSED_PARAM(inspectorRef);
-    return false;
-#endif
-}
-
-void WKInspectorToggleJavaScriptProfiling(WKInspectorRef inspectorRef)
-{
-#if ENABLE(INSPECTOR)
-    toImpl(inspectorRef)->toggleJavaScriptProfiling();
-#else
-    UNUSED_PARAM(inspectorRef);
-#endif
-}
-
 bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
 {
 #if ENABLE(INSPECTOR)

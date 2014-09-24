@@ -1470,13 +1470,11 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     Page* frontendPage = m_frontendWindow->document()->page();
     ASSERT(frontendPage);
 
-    auto frontendClient = std::make_unique<InspectorFrontendClientDummy>(&page->inspectorController(), frontendPage);
-
-    frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
-
-    m_frontendChannel = adoptPtr(new InspectorFrontendChannelDummy(frontendPage));
+    m_frontendClient = std::make_unique<InspectorFrontendClientDummy>(&page->inspectorController(), frontendPage);
+    frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
 
     bool isAutomaticInspection = false;
+    m_frontendChannel = std::make_unique<InspectorFrontendChannelDummy>(frontendPage);
     page->inspectorController().connectFrontend(m_frontendChannel.get(), isAutomaticInspection);
 
     return m_frontendWindow;
@@ -1490,10 +1488,11 @@ void Internals::closeDummyInspectorFrontend()
 
     page->inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
 
-    m_frontendChannel.release();
+    m_frontendClient = nullptr;
+    m_frontendChannel = nullptr;
 
     m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());
-    m_frontendWindow.release();
+    m_frontendWindow.clear();
 }
 
 void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)

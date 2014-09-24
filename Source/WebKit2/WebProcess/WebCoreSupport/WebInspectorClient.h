@@ -45,22 +45,23 @@ namespace WebKit {
 class WebPage;
 class RepaintIndicatorLayerClient;
 
-class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel, private PageOverlay::Client {
+class WebInspectorClient : public WebCore::InspectorClient, private PageOverlay::Client {
 friend class RepaintIndicatorLayerClient;
 public:
     WebInspectorClient(WebPage*);
     virtual ~WebInspectorClient();
 
 private:
-    virtual void inspectorDestroyed() override;
+    // WebCore::InspectorClient
+    void inspectorDestroyed() override;
 
-    virtual InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
-    virtual void closeInspectorFrontend() override;
-    virtual void bringFrontendToFront() override;
-    virtual void didResizeMainFrame(WebCore::Frame*) override;
+    WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
+    void closeInspectorFrontend() override;
+    void bringFrontendToFront() override;
+    void didResizeMainFrame(WebCore::Frame*) override;
 
-    virtual void highlight() override;
-    virtual void hideHighlight() override;
+    void highlight() override;
+    void hideHighlight() override;
 
 #if PLATFORM(IOS)
     virtual void showInspectorIndication() override;
@@ -71,10 +72,6 @@ private:
 
     virtual bool overridesShowPaintRects() const override { return true; }
     virtual void showPaintRect(const WebCore::FloatRect&) override;
-
-    virtual bool sendMessageToFrontend(const String&) override;
-
-    virtual bool supportsFrameInstrumentation();
 
     // PageOverlay::Client
     virtual void pageOverlayDestroyed(PageOverlay*) override;

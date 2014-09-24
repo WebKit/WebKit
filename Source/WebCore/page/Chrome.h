@@ -102,8 +102,8 @@ public:
 
     void contentsSizeChanged(Frame*, const IntSize&) const;
 
-    void setWindowRect(const FloatRect&) const;
-    FloatRect windowRect() const;
+    WEBCORE_EXPORT void setWindowRect(const FloatRect&) const;
+    WEBCORE_EXPORT FloatRect windowRect() const;
 
     FloatRect pageRect() const;
 
@@ -117,7 +117,7 @@ public:
     void focusedFrameChanged(Frame*) const;
 
     WEBCORE_EXPORT Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
-    void show() const;
+    WEBCORE_EXPORT void show() const;
 
     bool canRunModal() const;
     bool canRunModalNow() const;

@@ -88,8 +88,11 @@ bool ChildProcessMainDelegate::getClientProcessName(String& clientProcessName)
     return true;
 }
 
-bool ChildProcessMainDelegate::getExtraInitializationData(HashMap<String, String>&)
+bool ChildProcessMainDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
 {
+    String inspectorProcess = m_commandLine["inspector-process"];
+    if (!inspectorProcess.isEmpty())
+        extraInitializationData.add(ASCIILiteral("inspector-process"), inspectorProcess);
     return true;
 }
 

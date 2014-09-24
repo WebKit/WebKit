@@ -194,7 +194,7 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
 
-    WebProcess/WebPage/efl/WebInspectorEfl.cpp
+    WebProcess/WebPage/efl/WebInspectorUIEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
     WebProcess/efl/SeccompFiltersWebProcessEfl.cpp

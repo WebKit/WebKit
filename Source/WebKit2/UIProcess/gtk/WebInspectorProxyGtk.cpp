@@ -62,7 +62,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
     ASSERT(m_page);
     ASSERT(!m_inspectorView);
-    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&page()->process().context(), nullptr, inspectorPageGroup(), nullptr, m_page));
+    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorContext(), nullptr, inspectorPageGroup(), nullptr, nullptr));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
@@ -182,8 +182,11 @@ void WebInspectorProxy::platformAttach()
         m_inspectorWindow = 0;
     }
 
-    // Set a default attached size based on InspectorFrontendClientLocal.
+    // Set a default sizes based on InspectorFrontendClientLocal.
     static const unsigned defaultAttachedSize = 300;
+    static const unsigned minimumAttachedWidth = 750;
+    static const unsigned minimumAttachedHeight = 250;
+
     if (m_attachmentSide == AttachmentSideBottom) {
         unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));

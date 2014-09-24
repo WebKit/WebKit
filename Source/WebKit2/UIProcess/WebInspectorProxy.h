@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "APIObject.h"
+#include "Attachment.h"
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -40,6 +41,7 @@
 #include "WKGeometry.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
 OBJC_CLASS NSButton;
 OBJC_CLASS NSURL;
@@ -59,10 +61,10 @@ OBJC_CLASS WKWebInspectorWKView;
 
 namespace WebKit {
 
+class WebContext;
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
-struct WebPageCreationParameters;
 
 enum AttachmentSide {
     AttachmentSideBottom,
@@ -83,7 +85,7 @@ public:
     // Public APIs
     WebPageProxy* page() const { return m_page; }
 
-    bool isConnected() const { return m_createdInspectorPage; }
+    bool isConnected() const { return !!m_inspectorPage; }
     bool isVisible() const { return m_isVisible; }
     bool isFront();
 
@@ -102,6 +104,8 @@ public:
 
     void setInspectorWindowFrame(WKRect&);
     WKRect inspectorWindowFrame();
+
+    void closeTimerFired();
 #endif
 
 #if PLATFORM(GTK)
@@ -123,16 +127,11 @@ public:
     void setAttachedWindowWidth(unsigned);
     void setToolbarHeight(unsigned height) { platformSetToolbarHeight(height); }
 
-    bool isDebuggingJavaScript() const { return m_isDebuggingJavaScript; }
-    void toggleJavaScriptDebugging();
-
-    bool isProfilingJavaScript() const { return m_isProfilingJavaScript; }
-    void toggleJavaScriptProfiling();
-
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
     static bool isInspectorPage(WebPageProxy&);
+    static WebContext& inspectorContext();
 
     // Provided by platform WebInspectorProxy implementations.
     String inspectorPageURL() const;
@@ -150,9 +149,10 @@ public:
 private:
     explicit WebInspectorProxy(WebPageProxy*);
 
+    void eagerlyCreateInspectorPage();
+
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();
@@ -173,8 +173,7 @@ private:
     void platformAppend(const String& filename, const String& content);
 
     // Called by WebInspectorProxy messages
-    void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
-    void createInspectorPageForTest(uint64_t& inspectorPageID, WebPageCreationParameters&);
+    void createInspectorPage(IPC::Attachment, bool canAttach, bool underTest);
     void didClose();
     void bringToFront();
     void attachAvailabilityChanged(bool);
@@ -187,7 +186,7 @@ private:
     void sendMessageToRemoteFrontend(const String& message);
 #endif
 
-    bool canAttach();
+    bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();
 
     void open();
@@ -204,19 +203,15 @@ private:
     static const unsigned initialWindowWidth;
     static const unsigned initialWindowHeight;
 
-    // Keep this in sync with the value in InspectorFrontendClientLocal.
-    static const unsigned minimumAttachedWidth;
-    static const unsigned minimumAttachedHeight;
-
     WebPageProxy* m_page;
+    WebPageProxy* m_inspectorPage;
 
+    bool m_underTest;
     bool m_isVisible;
     bool m_isAttached;
-    bool m_isDebuggingJavaScript;
-    bool m_isProfilingJavaScript;
+    bool m_canAttach;
     bool m_isProfilingPage;
     bool m_showMessageSent;
-    bool m_createdInspectorPage;
     bool m_ignoreFirstBringToFront;
 
     // The debugger stops all the pages in the same PageGroup. Having
@@ -232,8 +227,9 @@ private:
     RetainPtr<NSButton> m_dockBottomButton;
     RetainPtr<NSButton> m_dockRightButton;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
-    String m_urlString;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    RunLoop::Timer<WebInspectorProxy> m_closeTimer;
+    String m_urlString;
 #elif PLATFORM(GTK)
     WebInspectorClientGtk m_client;
     GtkWidget* m_inspectorView;

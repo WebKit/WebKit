@@ -46,7 +46,6 @@ WebInspectorClient::WebInspectorClient(WebView *webView)
     : m_webView(webView)
     , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:webView]))
     , m_frontendPage(0)
-    , m_frontendClient(0)
 {
 }
 
