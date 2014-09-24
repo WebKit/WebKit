@@ -89,6 +89,7 @@ typedef void (*WKPagePinnedStateDidChangeCallback)(WKPageRef page, const void* c
 typedef void (*WKPageDidBeginTrackingPotentialLongMousePressCallback)(WKPageRef page, WKPoint mouseDownPosition, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidRecognizeLongMousePressCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidCancelTrackingPotentialLongMousePressCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageIsPlayingAudioDidChangeCallback)(WKPageRef page, const void* clientInfo);
 
 // Deprecated    
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -374,6 +375,7 @@ typedef struct WKPageUIClientV4 {
     WKPageDidBeginTrackingPotentialLongMousePressCallback               didBeginTrackingPotentialLongMousePress;
     WKPageDidRecognizeLongMousePressCallback                            didRecognizeLongMousePress;
     WKPageDidCancelTrackingPotentialLongMousePressCallback              didCancelTrackingPotentialLongMousePress;
+    WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
 } WKPageUIClientV4;
 
 enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };

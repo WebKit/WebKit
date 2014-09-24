@@ -1882,6 +1882,12 @@ void WKPageSetAddsVisitedLinks(WKPageRef page, bool addsVisitedLinks)
     toImpl(page)->setAddsVisitedLinks(addsVisitedLinks);
 }
 
+bool WKPageIsPlayingAudio(WKPageRef page)
+{
+    // FIXME: To be implemented (https://bugs.webkit.org/show_bug.cgi?id=137048).
+    return false;
+}
+
 void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
 {
     // FIXME: Remove this function when doing so won't break WebKit nightlies.

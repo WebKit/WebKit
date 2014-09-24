@@ -114,6 +114,8 @@ WK_EXPORT void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBeh
 WK_EXPORT bool WKPageGetAddsVisitedLinks(WKPageRef page);
 WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
 
+WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

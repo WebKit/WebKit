@@ -1,3 +1,17 @@
+2014-09-23  Ada Chan  <adachan@apple.com>
+
+        Add stub implementation of WKPageIsPlayingAudio().
+        https://bugs.webkit.org/show_bug.cgi?id=137044
+
+        Reviewed by Anders Carlsson.
+
+        Also add an isPlayingAudioDidChange callback to WKPageUIClient.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsPlayingAudio):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/C/WKPageUIClient.h:
+
 2014-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector use a separate web process.
