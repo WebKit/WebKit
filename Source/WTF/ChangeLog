@@ -1,3 +1,18 @@
+2014-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out r173346.
+
+            bmalloc should honor the FastMalloc statistics API
+            https://bugs.webkit.org/show_bug.cgi?id=136592
+
+        This didn't really work. Because we allow ranges with and without
+        physical pages to merge, and we allow double-committing and
+        double-decommitting, we can't rely on commit actions to track memory
+        footprint.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocStatistics):
+
 2014-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed

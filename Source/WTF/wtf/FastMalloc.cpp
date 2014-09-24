@@ -477,11 +477,7 @@ void releaseFastMallocFreeMemory()
 
 FastMallocStatistics fastMallocStatistics()
 {
-    FastMallocStatistics statistics;
-    statistics.committedVMBytes = bmalloc::api::heapSize();
-    statistics.reservedVMBytes = bmalloc::api::heapCapacity();
-    statistics.freeListBytes = 0; // bmalloc doesn't really have free lists.
-
+    FastMallocStatistics statistics = { 0, 0, 0 };
     return statistics;
 }
 
