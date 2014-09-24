@@ -1,3 +1,9 @@
+2014-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.0 release.
+
+        * gtk/NEWS: Add release notes for 2.6.0.
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.90 release.

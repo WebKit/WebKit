@@ -1,4 +1,19 @@
 =================
+WebKitGTK+  2.6.0
+=================
+
+What's new in WebKitGTK+ 2.4.0?
+
+  - Make vimeo videos work again with the GStreamer media backend.
+  - Add more free icons for the web inspector.
+  - Fix a WebSocket crash when a connection is closed from server side.
+  - Fixed a memory leak in JavaScriptCore.
+  - Fix the build with video support disabled.
+  - Fix CLoop on the 32-bit Big-Endians.
+  - Translation updates: Gujarati, Odia, Assamese, Tamil, Hebrew,
+    Polish, Marathi, Kannada
+
+=================
 WebKitGTK+ 2.5.90
 =================
 
