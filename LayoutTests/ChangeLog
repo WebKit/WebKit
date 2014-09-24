@@ -1,3 +1,13 @@
+2014-09-22  David Hyatt  <hyatt@apple.com>
+
+        ASSERT in RenderMultiColumnSet::requiresBalancing.
+        https://bugs.webkit.org/show_bug.cgi?id=136376.
+
+        Reviewed by David Kilzer.
+
+        * fast/multicol/multicol-selection-expected.txt: Added.
+        * fast/multicol/multicol-selection.html: Added.
+
 2014-09-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Assertion failure and null dereference crash when using animations and regions
