@@ -101,6 +101,10 @@
 #endif
 #endif
 
+#if (PLATFORM(COCOA) && (CPU(X86_64) || CPU(ARM64)))
+#define USE_BMALLOC 1
+#endif
+
 #if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) && defined(NDEBUG)
 #define FORCE_SYSTEM_MALLOC 0
 #else
