@@ -715,6 +715,8 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (void)destroyInspectorView:(bool)notifyInspectorController
 {
+    RetainPtr<WebInspectorWindowController> protect(self);
+
     [[_inspectedWebView.get() inspector] releaseFrontend];
     _inspectorClient->releaseFrontend();
 
@@ -732,7 +734,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
             inspectedPage->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
     }
 
-    RetainPtr<WebInspectorWindowController> protect(self);
     [_webView close];
 }
 
