@@ -631,7 +631,7 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!m_assistedNode || !isHTMLSelectElement(*m_assistedNode)
+    if (!m_assistedNode || !isHTMLSelectElement(*m_assistedNode))
         return;
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
     select.optionSelectedByUser(index, true, allowMultipleSelection);
@@ -2066,7 +2066,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
     information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);
 
-    if (isHTMLSelectElement(*m_assistedNode) {
+    if (isHTMLSelectElement(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
         information.elementType = InputType::Select;
         const Vector<HTMLElement*>& items = element.listItems();
