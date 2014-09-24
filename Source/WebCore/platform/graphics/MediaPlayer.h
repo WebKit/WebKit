@@ -471,8 +471,6 @@ public:
 
     void currentPlaybackTargetIsWirelessChanged();
     void playbackTargetAvailabilityChanged();
-
-    void setHasPlaybackTargetAvailabilityListeners(bool);
 #endif
 
     double minFastReverseRate() const;

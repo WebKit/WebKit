@@ -1,3 +1,18 @@
+2014-09-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Remove MediaPlayer::setHasPlaybackTargetAvailabilityListeners
+        https://bugs.webkit.org/show_bug.cgi?id=137075
+
+        Reviewed by Dean Jackson.
+
+        No new tests, this just removes unused code.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setHasPlaybackTargetAvailabilityListeners): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setHasPlaybackTargetAvailabilityListeners): Deleted.
+
 2014-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector use a separate web process.

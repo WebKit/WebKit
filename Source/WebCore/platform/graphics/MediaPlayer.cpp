@@ -880,11 +880,6 @@ void MediaPlayer::setWirelessVideoPlaybackDisabled(bool disabled)
     m_private->setWirelessVideoPlaybackDisabled(disabled);
 }
 
-void MediaPlayer::setHasPlaybackTargetAvailabilityListeners(bool hasListeners)
-{
-    m_private->setHasPlaybackTargetAvailabilityListeners(hasListeners);
-}
-
 void MediaPlayer::currentPlaybackTargetIsWirelessChanged()
 {
     if (m_mediaPlayerClient)

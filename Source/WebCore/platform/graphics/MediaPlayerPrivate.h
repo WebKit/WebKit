@@ -164,8 +164,6 @@ public:
 
     virtual bool wirelessVideoPlaybackDisabled() const { return false; }
     virtual void setWirelessVideoPlaybackDisabled(bool) { }
-
-    virtual void setHasPlaybackTargetAvailabilityListeners(bool) { }
 #endif
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
