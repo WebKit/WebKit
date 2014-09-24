@@ -27,7 +27,7 @@ var checkout = checkout || {};
 
 (function() {
 
-var kWebKitTrunk = 'http://svn.webkit.org/repository/webkit/trunk/';
+var kWebKitTrunk = 'https://svn.webkit.org/repository/webkit/trunk/';
 
 var g_haveSeenCheckoutAvailable = false;
 

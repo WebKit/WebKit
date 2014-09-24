@@ -127,7 +127,7 @@ config.kPlatforms = {
     },
 };
 
-config.kTracURL = 'http://trac.webkit.org';
+config.kTracURL = 'https://trac.webkit.org';
 config.kBugzillaURL = 'https://bugs.webkit.org';
 
 config.kRevisionAttr = 'data-revision';

@@ -35,7 +35,7 @@ EWS = function()
 
     BaseObject.call(this);
 
-    this.baseURL = "http://webkit-queues.appspot.com/";
+    this.baseURL = "https://webkit-queues.appspot.com/";
     this.queues = {};
 
     for (var id in queueInfo)

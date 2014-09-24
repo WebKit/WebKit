@@ -249,7 +249,7 @@ ViewController.prototype = {
     _domForBuildName: function(builder, buildName) {
         var parsed = this._buildbot.parseBuildName(buildName);
 
-        var sourceLink = base.createLinkNode('http://trac.webkit.org/changeset/' + parsed.revision, 'r' + parsed.revision);
+        var sourceLink = base.createLinkNode('https://trac.webkit.org/changeset/' + parsed.revision, 'r' + parsed.revision);
         var buildLink = base.createLinkNode(builder.buildURL(parsed.buildNumber), parsed.buildNumber);
         var resultsLink = base.createLinkNode(builder.resultsPageURL(buildName), 'results.html');
 
