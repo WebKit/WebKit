@@ -1928,7 +1928,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
     // which would jump us around during this animation. See <rdar://problem/6699741>.
     FrameView* view = document().view();
-    bool isFormControl = view && isFormControlElement();
+    bool isFormControl = view && is<HTMLFormControlElement>(*this);
     if (isFormControl)
         view->setProhibitsScrolling(true);
 #endif

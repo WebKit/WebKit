@@ -85,13 +85,13 @@ void RadioNodeList::setValue(const String& value)
 
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(const Element& testElement) const
 {
-    ASSERT(testElement.hasTagName(objectTag) || testElement.isFormControlElement());
+    ASSERT(is<HTMLObjectElement>(testElement) || is<HTMLFormControlElement>(testElement));
     if (isHTMLFormElement(ownerNode())) {
         HTMLFormElement* formElement = nullptr;
         if (testElement.hasTagName(objectTag))
             formElement = downcast<HTMLObjectElement>(testElement).form();
         else
-            formElement = toHTMLFormControlElement(testElement).form();
+            formElement = downcast<HTMLFormControlElement>(testElement).form();
         if (!formElement || formElement != &ownerNode())
             return false;
     }
@@ -101,7 +101,7 @@ bool RadioNodeList::checkElementMatchesRadioNodeListFilter(const Element& testEl
 
 bool RadioNodeList::elementMatches(Element& testElement) const
 {
-    if (!testElement.hasTagName(objectTag) && !testElement.isFormControlElement())
+    if (!is<HTMLObjectElement>(testElement) && !is<HTMLFormControlElement>(testElement))
         return false;
 
     if (HTMLInputElement* inputElement = testElement.toInputElement()) {

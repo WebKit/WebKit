@@ -915,7 +915,7 @@ inline bool isHTMLMediaElement(const Element& element) { return element.isMediaE
 inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && toElement(node).isMediaElement(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const HTMLMediaElement, ArgType> {
+struct NodeTypeCastTraits<const HTMLMediaElement, ArgType> {
     static bool is(ArgType& node) { return isHTMLMediaElement(node); }
 };
 

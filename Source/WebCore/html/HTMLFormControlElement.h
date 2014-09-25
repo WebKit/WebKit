@@ -190,18 +190,11 @@ private:
     bool m_hasAutofocused : 1;
 };
 
-void isHTMLFormControlElement(const HTMLFormControlElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
-inline bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
-
-template <typename ArgType>
-struct ElementTypeCastTraits<const HTMLFormControlElement, ArgType> {
-    static bool is(ArgType& node) { return isHTMLFormControlElement(node); }
-};
-
-NODE_TYPE_CASTS(HTMLFormControlElement)
-
-FORM_ASSOCIATED_ELEMENT_TYPE_CASTS(HTMLFormControlElement, isFormControlElement())
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLFormControlElement)
+    static bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
+    static bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
+    static bool isHTMLFormControlElement(const FormAssociatedElement& element) { return element.isFormControlElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace
 

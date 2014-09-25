@@ -508,10 +508,10 @@ void HTMLFormControlElement::setAutocapitalize(const AtomicString& value)
 HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node* node)
 {
     for (; node; node = node->parentNode()) {
-        if (node->isElementNode() && toElement(node)->isFormControlElement())
-            return toHTMLFormControlElement(node);
+        if (is<HTMLFormControlElement>(node))
+            return downcast<HTMLFormControlElement>(node);
     }
-    return 0;
+    return nullptr;
 }
 
 } // namespace Webcore

@@ -162,7 +162,7 @@ inline bool isHTMLPlugInImageElement(const HTMLPlugInElement& element) { return 
 inline bool isHTMLPlugInImageElement(const Node& node) { return node.isPluginElement() && toHTMLPlugInElement(node).isPlugInImageElement(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const HTMLPlugInImageElement, ArgType> {
+struct NodeTypeCastTraits<const HTMLPlugInImageElement, ArgType> {
     static bool is(ArgType& node) { return isHTMLPlugInImageElement(node); }
 };
 

@@ -626,9 +626,9 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
 
-    bool isControl = element->isFormControlElement();
+    bool isControl = is<HTMLFormControlElement>(element);
 
-    if (isControl != state.element()->isFormControlElement())
+    if (isControl != is<HTMLFormControlElement>(state.element()))
         return false;
 
     if (isControl && !canShareStyleWithControl(element))
@@ -1335,7 +1335,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
-    if (e && e->isFormControlElement() && style.fontSize() >= 11) {
+    if (e && is<HTMLFormControlElement>(e) && style.fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
         if (!is<HTMLInputElement>(e) || !downcast<HTMLInputElement>(*e).isImageButton())

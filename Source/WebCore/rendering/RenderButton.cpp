@@ -51,7 +51,7 @@ RenderButton::~RenderButton()
 
 HTMLFormControlElement& RenderButton::formControlElement() const
 {
-    return toHTMLFormControlElement(nodeForNonAnonymous());
+    return downcast<HTMLFormControlElement>(nodeForNonAnonymous());
 }
 
 bool RenderButton::canBeSelectionLeaf() const

@@ -1,5 +1,18 @@
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
+        Add initial is<>() / downcast<>() support for any type of Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=137056
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<HTMLFormControlElement>() / downcast<HTMLFormControlElement>()
+        instead of isFormControlElement() / toHTMLFormControlElement().
+
+        * WebView/WebHTMLRepresentation.mm:
+        (searchForLabelsBeforeElement):
+
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
         Use is<HTML*Element>() instead of isHTML*Element() - Part 1
         https://bugs.webkit.org/show_bug.cgi?id=137068
 

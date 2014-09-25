@@ -843,9 +843,9 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& o) const
 bool RenderTheme::isReadOnlyControl(const RenderObject& o) const
 {
     Node* node = o.node();
-    if (!node || !node->isElementNode() || !toElement(node)->isFormControlElement())
+    if (!node || !is<HTMLFormControlElement>(node))
         return false;
-    return !toElement(node)->matchesReadWritePseudoClass();
+    return !toElement(*node).matchesReadWritePseudoClass();
 }
 
 bool RenderTheme::isHovered(const RenderObject& o) const

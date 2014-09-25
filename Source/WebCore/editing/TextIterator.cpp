@@ -256,7 +256,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
 
     if (renderer->node() && renderer->node()->isElementNode()) {
         Element& element = toElement(*renderer->node());
-        if (element.isFormControlElement() || element.hasTagName(legendTag) || element.hasTagName(meterTag) || element.hasTagName(progressTag))
+        if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element))
             return true;
         if (equalIgnoringCase(element.fastGetAttribute(roleAttr), "img"))
             return true;

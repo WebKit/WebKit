@@ -2381,7 +2381,7 @@ static inline bool disallowTelephoneNumberParsing(const Node& node)
     return node.isLink()
         || node.nodeType() == Node::COMMENT_NODE
         || node.hasTagName(scriptTag)
-        || (node.isHTMLElement() && toHTMLElement(node).isFormControlElement())
+        || is<HTMLFormControlElement>(node)
         || node.hasTagName(styleTag)
         || node.hasTagName(ttTag)
         || node.hasTagName(preTag)

@@ -739,7 +739,7 @@ bool AccessibilityNodeObject::isReadOnly() const
         return true;
 
     if (is<HTMLTextAreaElement>(node))
-        return toHTMLFormControlElement(node)->isReadOnly();
+        return downcast<HTMLTextAreaElement>(node)->isReadOnly();
 
     if (is<HTMLInputElement>(node)) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*node);
@@ -760,8 +760,8 @@ bool AccessibilityNodeObject::isRequired() const
         return false;
 
     Node* n = this->node();
-    if (n && (n->isElementNode() && toElement(n)->isFormControlElement()))
-        return toHTMLFormControlElement(n)->isRequired();
+    if (n && is<HTMLFormControlElement>(n))
+        return downcast<HTMLFormControlElement>(n)->isRequired();
 
     return false;
 }
@@ -898,8 +898,7 @@ bool AccessibilityNodeObject::isControl() const
     if (!node)
         return false;
 
-    return ((node->isElementNode() && toElement(node)->isFormControlElement())
-        || AccessibilityObject::isARIAControl(ariaRoleAttribute()));
+    return is<HTMLFormControlElement>(node) || AccessibilityObject::isARIAControl(ariaRoleAttribute());
 }
 
 bool AccessibilityNodeObject::isFieldset() const

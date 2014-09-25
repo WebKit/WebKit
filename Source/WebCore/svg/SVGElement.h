@@ -225,7 +225,7 @@ void isSVGElement(const SVGElement&); // Catch unnecessary runtime check of type
 inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const SVGElement, ArgType> {
+struct NodeTypeCastTraits<const SVGElement, ArgType> {
     static bool is(ArgType& node) { return isSVGElement(node); }
 };
 

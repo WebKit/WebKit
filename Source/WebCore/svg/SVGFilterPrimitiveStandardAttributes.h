@@ -87,7 +87,7 @@ inline bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { 
 inline bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isFilterEffect(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const SVGFilterPrimitiveStandardAttributes, ArgType> {
+struct NodeTypeCastTraits<const SVGFilterPrimitiveStandardAttributes, ArgType> {
     static bool is(ArgType& node) { return isSVGFilterPrimitiveStandardAttributes(node); }
 };
 

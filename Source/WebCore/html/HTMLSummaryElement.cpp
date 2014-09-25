@@ -24,6 +24,7 @@
 #if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
 #include "HTMLDetailsElement.h"
+#include "HTMLFormControlElement.h"
 #include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
@@ -104,10 +105,10 @@ static bool isClickableControl(Node* node)
     if (!node->isElementNode())
         return false;
     Element* element = toElement(node);
-    if (element->isFormControlElement())
+    if (is<HTMLFormControlElement>(element))
         return true;
     Element* host = element->shadowHost();
-    return host && host->isFormControlElement();
+    return host && is<HTMLFormControlElement>(host);
 }
 
 bool HTMLSummaryElement::supportsFocus() const

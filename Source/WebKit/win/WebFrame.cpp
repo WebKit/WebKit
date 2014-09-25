@@ -1101,12 +1101,12 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
         const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
         AtomicString targetName((UChar*)name, SysStringLen(name));
         for (unsigned int i = 0; i < elements.size(); i++) {
-            if (!elements[i]->isFormControlElement())
+            if (!is<HTMLFormControlElement>(elements[i]))
                 continue;
-            HTMLFormControlElement* elt = toHTMLFormControlElement(elements[i]);
+            HTMLFormControlElement& elt = downcast<HTMLFormControlElement>(*elements[i]);
             // Skip option elements, other duds
-            if (elt->name() == targetName) {
-                *element = DOMElement::createInstance(elt);
+            if (elt.name() == targetName) {
+                *element = DOMElement::createInstance(&elt);
                 return S_OK;
             }
         }

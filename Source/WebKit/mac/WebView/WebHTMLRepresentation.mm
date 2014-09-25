@@ -445,15 +445,13 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
     unsigned lengthSearched = 0;
     Node* n;
     for (n = NodeTraversal::previous(element);
-         n && lengthSearched < charsSearchedThreshold;
-         n = NodeTraversal::previous(n))
-    {
-        if (n->hasTagName(formTag)
-            || (n->isHTMLElement() && toElement(n)->isFormControlElement()))
-        {
+        n && lengthSearched < charsSearchedThreshold;
+        n = NodeTraversal::previous(n)) {
+        if (is<HTMLFormElement>(n) || is<HTMLFormControlElement>(n)) {
             // We hit another form element or the start of the form - bail out
             break;
-        } else if (n->hasTagName(tdTag) && !startingTableCell) {
+        }
+        if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString* result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance);

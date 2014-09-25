@@ -2025,8 +2025,8 @@ static HTMLFormElement* scanForForm(Element* start)
         HTMLElement& element = *it;
         if (isHTMLFormElement(&element))
             return downcast<HTMLFormElement>(&element);
-        if (isHTMLFormControlElement(element))
-            return toHTMLFormControlElement(element).form();
+        if (is<HTMLFormControlElement>(element))
+            return downcast<HTMLFormControlElement>(element).form();
         if (isHTMLFrameElementBase(element)) {
             Document* contentDocument = toHTMLFrameElementBase(element).contentDocument();
             if (!contentDocument)

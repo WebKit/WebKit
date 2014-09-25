@@ -836,7 +836,7 @@ void ContextMenuController::populate()
     if (!node)
         return;
 #if PLATFORM(GTK)
-    if (!m_context.hitTestResult().isContentEditable() && (node->isElementNode() && toElement(node)->isFormControlElement()))
+    if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(node))
         return;
 #endif
     Frame* frame = node->document().frame();

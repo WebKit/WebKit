@@ -670,51 +670,10 @@ inline bool isElement(const Node& node) { return node.isElementNode(); }
 
 NODE_TYPE_CASTS(Element)
 
-template <typename ExpectedType, typename ArgType>
-struct ElementTypeCastTraits {
-    static bool is(ArgType&);
-};
-
-// Type checking function for Elements, to use before casting with downcast<>().
-template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType& node)
-{
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return ElementTypeCastTraits<const ExpectedType, const ArgType>::is(node);
-}
-
-template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType* node)
-{
-    ASSERT(node);
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return ElementTypeCastTraits<const ExpectedType, const ArgType>::is(*node);
-}
-
 template <>
-struct ElementTypeCastTraits<const Element, const Node> {
+struct NodeTypeCastTraits<const Element, const Node> {
     static bool is(const Node& node) { return node.isElementNode(); }
 };
-
-template <typename ExpectedType>
-struct ElementTypeCastTraits<ExpectedType, ExpectedType> {
-    static bool is(ExpectedType&) { return true; }
-};
-
-// Downcasting functions for Element types.
-template<typename Target, typename Source>
-inline typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type downcast(Source& source)
-{
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
-    ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type>(source);
-}
-template<typename Target, typename Source> inline typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type downcast(Source* source)
-{
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
-    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type>(source);
-}
 
 inline bool Node::hasAttributes() const
 {

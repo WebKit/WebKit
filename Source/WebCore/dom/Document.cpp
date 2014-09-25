@@ -973,7 +973,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
             // Either they are imported along with their host node, or created implicitly.
             break;
         }
-        DocumentFragment& oldFragment = toDocumentFragment(*importedNode);
+        DocumentFragment& oldFragment = downcast<DocumentFragment>(*importedNode);
         RefPtr<DocumentFragment> newFragment = createDocumentFragment();
         if (deep) {
             for (Node* oldChild = oldFragment.firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
@@ -3410,10 +3410,10 @@ bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, Focus
         oldFocusedElement->setFocus(false);
 
         // Dispatch a change event for form control elements that have been edited.
-        if (oldFocusedElement->isFormControlElement()) {
-            HTMLFormControlElement* formControlElement = toHTMLFormControlElement(oldFocusedElement.get());
-            if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
-                formControlElement->dispatchFormControlChangeEvent();
+        if (is<HTMLFormControlElement>(*oldFocusedElement)) {
+            HTMLFormControlElement& formControlElement = downcast<HTMLFormControlElement>(*oldFocusedElement);
+            if (formControlElement.wasChangedSinceLastFormControlChangeEvent())
+                formControlElement.dispatchFormControlChangeEvent();
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)

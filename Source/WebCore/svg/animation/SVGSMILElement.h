@@ -242,7 +242,7 @@ inline bool isSVGSMILElement(const SVGElement& element) { return element.isSMILE
 inline bool isSVGSMILElement(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isSMILElement(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const SVGSMILElement, ArgType> {
+struct NodeTypeCastTraits<const SVGSMILElement, ArgType> {
     static bool is(ArgType& node) { return isSVGSMILElement(node); }
 };
 

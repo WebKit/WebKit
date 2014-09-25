@@ -150,7 +150,7 @@ void isHTMLElement(const HTMLElement&); // Catch unnecessary runtime check of ty
 inline bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
 
 template <typename ArgType>
-struct ElementTypeCastTraits<const HTMLElement, ArgType> {
+struct NodeTypeCastTraits<const HTMLElement, ArgType> {
     static bool is(ArgType& node) { return isHTMLElement(node); }
 };
 
