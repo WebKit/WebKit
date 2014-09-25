@@ -1,3 +1,15 @@
+2014-09-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the iOS build; add case statements for kCLAuthorizationStatusAuthorized
+        https://bugs.webkit.org/show_bug.cgi?id=137101
+        <rdar://problem/18449815>
+
+        Reviewed by Mark Lam.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider requestGeolocationAuthorization]):
+        (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Use is<HTML*Element>() instead of isHTML*Element() - Part 1

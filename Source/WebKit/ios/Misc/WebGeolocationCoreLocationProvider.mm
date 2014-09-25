@@ -109,6 +109,10 @@ using namespace WebCore;
         }
         break;
     }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    case kCLAuthorizationStatusAuthorized:
+#pragma clang diagnostic pop
     case kCLAuthorizationStatusAuthorizedAlways:
     case kCLAuthorizationStatusAuthorizedWhenInUse: {
         [_positionListener geolocationAuthorizationGranted];
@@ -158,6 +162,10 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
             _isWaitingForAuthorization = NO;
             [_positionListener geolocationAuthorizationDenied];
             break;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        case kCLAuthorizationStatusAuthorized:
+#pragma clang diagnostic pop
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
