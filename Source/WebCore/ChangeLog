@@ -1,3 +1,40 @@
+2014-08-25  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] ASSERT failure in WebKitWebSource in StreamingClient
+        https://bugs.webkit.org/show_bug.cgi?id=136132
+
+        adoptGRef() has an ASSERT failure if it's used on a floating pointer. For some reason,
+        WebKitWebSrc* src in StreamingClient's constructor is floating. Since we
+        don't construct this ourselves, I assume this is happening in Playbin.
+
+        If we remove the ref and adopt, GRefPtr's constructor calls gst_object_ref_sink,
+        which removes the floating reference and doesn't increment the reference count.
+        This should work, but actually causes the page to either lock up or crash (different
+        results for different testers).
+
+        In this case, it seems like the adoptGRef / gst_object_ref was the correct thing to do,
+        but adoptGRef won't actually let us do. Removing the ASSERT is a bad idea, because
+        usually we don't want to adopt floating pointers.
+
+        This is all a long way of saying that making m_src a raw pointer and manually
+        calling gst_object_ref(), and calling gst_object_unref in the destructor is the
+        best solution in this case, since it fixes the problem while leaving the ASSERT
+        to protect us in the much more common case where adopting a floating reference is bad.
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::StreamingClient): Make m_src a raw pointer instead of a GRefPtr.
+        (StreamingClient::~StreamingClient): Unref m_src.
+        (StreamingClient::createReadBuffer): Replace m_src.get() with m_src, since it's a raw pointer now.
+        (StreamingClient::handleResponseReceived): Same.
+        (StreamingClient::handleDataReceived): Same.
+        (StreamingClient::handleNotifyFinished): Same.
+        (CachedResourceStreamingClient::notifyFinished): Same.
+        (ResourceHandleStreamingClient::didFail): Same.
+        (ResourceHandleStreamingClient::wasBlocked): Same.
+        (ResourceHandleStreamingClient::cannotShowURL): Same.
+
 2014-08-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Toggle buttons visually broken with GTK+ 3.13.7

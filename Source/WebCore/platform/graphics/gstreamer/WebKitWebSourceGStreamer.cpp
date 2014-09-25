@@ -69,7 +69,7 @@ class StreamingClient {
         void handleDataReceived(const char*, int);
         void handleNotifyFinished();
 
-        GRefPtr<GstElement> m_src;
+        GstElement* m_src;
 };
 
 class CachedResourceStreamingClient : public CachedRawResourceClient, public StreamingClient {
@@ -821,17 +821,18 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
 }
 
 StreamingClient::StreamingClient(WebKitWebSrc* src)
-    : m_src(adoptGRef(static_cast<GstElement*>(gst_object_ref(src))))
+    : m_src(static_cast<GstElement*>(gst_object_ref(src)))
 {
 }
 
 StreamingClient::~StreamingClient()
 {
+    gst_object_unref(m_src);
 }
 
 char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     ASSERT(!priv->buffer);
@@ -850,7 +851,7 @@ char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize
 
 void StreamingClient::handleResponseReceived(const ResourceResponse& response, CORSAccessCheckResult corsAccessCheck)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
@@ -962,7 +963,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response, C
 
 void StreamingClient::handleDataReceived(const char* data, int length)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
@@ -1029,7 +1030,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
 
 void StreamingClient::handleNotifyFinished()
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Have EOS");
@@ -1102,7 +1103,7 @@ void CachedResourceStreamingClient::dataReceived(CachedResource*, const char* da
 void CachedResourceStreamingClient::notifyFinished(CachedResource* resource)
 {
     if (resource->loadFailedOrCanceled()) {
-        WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+        WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
 
         if (!resource->wasCanceled()) {
             const ResourceError& error = resource->resourceError();
@@ -1179,7 +1180,7 @@ void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*, double)
 
 void ResourceHandleStreamingClient::didFail(ResourceHandle*, const ResourceError& error)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
 
     GST_ERROR_OBJECT(src, "Have failure: %s", error.localizedDescription().utf8().data());
     GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (0));
@@ -1188,7 +1189,7 @@ void ResourceHandleStreamingClient::didFail(ResourceHandle*, const ResourceError
 
 void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     GUniquePtr<gchar> uri;
 
     GST_ERROR_OBJECT(src, "Request was blocked");
@@ -1202,7 +1203,7 @@ void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
 
 void ResourceHandleStreamingClient::cannotShowURL(ResourceHandle*)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     GUniquePtr<gchar> uri;
 
     GST_ERROR_OBJECT(src, "Cannot show URL");
