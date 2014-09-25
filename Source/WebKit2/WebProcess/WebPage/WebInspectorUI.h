@@ -49,7 +49,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection*) { closeWindow(); }
-    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) { closeWindow(); }
+    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference) { closeWindow(); }
 
     // Called by WebInspectorUI messages
     void establishConnection(IPC::Attachment connectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest);

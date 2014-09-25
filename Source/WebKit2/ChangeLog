@@ -1,3 +1,17 @@
+2014-09-25  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [WebKit2] Fix build warning in WebKit2/WebProcess module.
+        https://bugs.webkit.org/show_bug.cgi?id=137105
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix build warning by removing unused parameter names
+
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::didReceiveInvalidMessage):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::didReceiveInvalidMessage):
+
 2014-09-24  Sam Weinig  <sam@webkit.org>
 
         Remove incorrect use of the BKSProcessAssertionAllowSuspendOnSleep flag for process suspension in iOS WebKit2

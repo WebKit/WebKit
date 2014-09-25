@@ -54,7 +54,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection*) { close(); }
-    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) { close(); }
+    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference) { close(); }
 
     // Called by WebInspector messages
     void connectionEstablished();
