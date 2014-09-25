@@ -2400,6 +2400,9 @@
     <ClCompile Include="..\rendering\InlineFlowBox.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\InlineIterator.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\InlineTextBox.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
