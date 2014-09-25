@@ -73,13 +73,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/win/GDIObject.h>
 
-#if OS(WINCE)
-#undef LOG_NPERROR
-#define LOG_NPERROR(x)
-#undef LOG_PLUGIN_NET_ERROR
-#define LOG_PLUGIN_NET_ERROR()
-#endif
-
 #if USE(CAIRO)
 #include "PlatformContextCairo.h"
 #include <cairo-win32.h>
@@ -118,7 +111,6 @@ using namespace HTMLNames;
 const LPCWSTR kWebPluginViewdowClassName = L"WebPluginView";
 const LPCWSTR kWebPluginViewProperty = L"WebPluginViewProperty";
 
-#if !OS(WINCE)
 // The code used to hook BeginPaint/EndPaint originally came from
 // <http://www.fengyuan.com/article/wmprint.html>.
 // Copyright (C) 2000 by Feng Yuan (www.fengyuan.com).
@@ -270,7 +262,6 @@ static void setUpOffscreenPaintingHooks(HDC (WINAPI*hookedBeginPaint)(HWND, PAIN
     hook("user32.dll", "EndPaint", endPaintSysCall, endPaint, reinterpret_cast<const void *>(reinterpret_cast<ptrdiff_t>(hookedEndPaint)));
 
 }
-#endif
 
 static bool registerPluginView()
 {
@@ -286,18 +277,10 @@ static bool registerPluginView()
 
     ASSERT(WebCore::instanceHandle());
 
-#if OS(WINCE)
-    WNDCLASS wcex = { 0 };
-#else
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.hIconSm        = 0;
-#endif
-
     wcex.style          = CS_DBLCLKS;
-#if OS(WINCE)
-    wcex.style          |= CS_PARENTDC;
-#endif
     wcex.lpfnWndProc    = DefWindowProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
@@ -308,11 +291,7 @@ static bool registerPluginView()
     wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = kWebPluginViewdowClassName;
 
-#if OS(WINCE)
-    return !!RegisterClass(&wcex);
-#else
     return !!RegisterClassEx(&wcex);
-#endif
 }
 
 LRESULT CALLBACK PluginView::PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -394,7 +373,6 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         m_popPopupsStateTimer.startOneShot(0);
     }
 
-#if !OS(WINCE)
     if (message == WM_PRINTCLIENT) {
         // Most (all?) windowed plugins don't respond to WM_PRINTCLIENT, so we
         // change the message to WM_PAINT and rely on our hooked versions of
@@ -402,7 +380,6 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         message = WM_PAINT;
         m_wmPrintHDC = reinterpret_cast<HDC>(wParam);
     }
-#endif
 
     // Call the plug-in's window proc.
     LRESULT result = ::CallWindowProc(m_pluginWndProc, hWnd, message, wParam, lParam);
@@ -425,11 +402,7 @@ void PluginView::updatePluginWidget()
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-#if OS(WINCE)
-    m_windowRect = frameView->contentsToWindow(frameRect());
-#else
     m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
-#endif
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -529,9 +502,7 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
 void PluginView::paintIntoTransformedContext(HDC hdc)
 {
     if (m_isWindowed) {
-#if !OS(WINCE)
         SendMessage(platformPluginWidget(), WM_PRINTCLIENT, reinterpret_cast<WPARAM>(hdc), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
-#endif
         return;
     }
 
@@ -641,7 +612,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     // of the window and the plugin expects that the passed in DC has window coordinates.
     // In the GTK and Qt ports we always draw in an offscreen buffer and therefore need
     // to preserve the translation set in getWindowsContext.
-#if !PLATFORM(GTK) && !OS(WINCE)
+#if !PLATFORM(GTK)
     if (!context->isInTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
@@ -679,9 +650,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-#if !OS(WINCE)
 extern bool ignoreNextSetCursor;
-#endif
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
@@ -749,7 +718,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
-#if !PLATFORM(GTK) && !OS(WINCE)
+#if !PLATFORM(GTK)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
@@ -762,15 +731,6 @@ void PluginView::setParent(ScrollView* parent)
 {
     Widget::setParent(parent);
 
-#if OS(WINCE)
-    if (parent) {
-        init();
-        if (parent->isVisible())
-            show();
-        else
-            hide();
-    }
-#else
     if (parent)
         init();
     else {
@@ -784,7 +744,6 @@ void PluginView::setParent(ScrollView* parent)
         if (platformPluginWidget() == focusedWindow || ::IsChild(platformPluginWidget(), focusedWindow))
             ::SetFocus(0);
     }
-#endif
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -807,18 +766,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     if (!m_isStarted)
         return;
 
-#if OS(WINCE)
-    IntRect r = toFrameView(parent())->contentsToWindow(rect);
-    m_npWindow.x = r.x();
-    m_npWindow.y = r.y();
-
-    m_npWindow.width = r.width();
-    m_npWindow.height = r.height();
-
-    m_npWindow.clipRect.right = r.width();
-    m_npWindow.clipRect.bottom = r.height();
-#else
-    // In the GTK and Qt ports we draw in an offscreen buffer and don't want to use the window
+    // In the GTK port we draw in an offscreen buffer and don't want to use the window
     // coordinates.
 # if PLATFORM(GTK)
     IntPoint p = rect.location();
@@ -833,7 +781,6 @@ void PluginView::setNPWindowRect(const IntRect& rect)
 
     m_npWindow.clipRect.right = rect.width();
     m_npWindow.clipRect.bottom = rect.height();
-#endif
     m_npWindow.clipRect.left = 0;
     m_npWindow.clipRect.top = 0;
 
@@ -850,17 +797,9 @@ void PluginView::setNPWindowRect(const IntRect& rect)
 
         ASSERT(platformPluginWidget());
 
-#if OS(WINCE)
-        if (!m_pluginWndProc) {
-            WNDPROC currentWndProc = (WNDPROC)GetWindowLong(platformPluginWidget(), GWL_WNDPROC);
-            if (currentWndProc != PluginViewWndProc)
-                m_pluginWndProc = (WNDPROC)SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)PluginViewWndProc);
-        }
-#else
         WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC);
         if (currentWndProc != PluginViewWndProc)
             m_pluginWndProc = (WNDPROC)SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)PluginViewWndProc);
-#endif
     }
 }
 
@@ -988,9 +927,7 @@ bool PluginView::platformStart()
 
     if (m_isWindowed) {
         registerPluginView();
-#if !OS(WINCE)
         setUpOffscreenPaintingHooks(hookedBeginPaint, hookedEndPaint);
-#endif
 
         DWORD flags = WS_CHILD;
         if (isSelfVisible())
@@ -1010,8 +947,6 @@ bool PluginView::platformStart()
         // the Shockwave Director plug-in.
 #if OS(WINDOWS) && CPU(X86_64)
         ::SetWindowLongPtrA(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)DefWindowProcA);
-#elif OS(WINCE)
-        ::SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)DefWindowProc);
 #else
         ::SetWindowLongPtrA(platformPluginWidget(), GWL_WNDPROC, (LONG)DefWindowProcA);
 #endif

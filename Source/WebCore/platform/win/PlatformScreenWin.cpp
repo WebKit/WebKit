@@ -55,13 +55,8 @@ static DEVMODE deviceInfoForWidget(Widget* widget)
     DEVMODE deviceInfo;
     deviceInfo.dmSize = sizeof(DEVMODE);
     deviceInfo.dmDriverExtra = 0;
-#if OS(WINCE)
-    if (!EnumDisplaySettings(0, ENUM_CURRENT_SETTINGS, &deviceInfo))
-        deviceInfo.dmBitsPerPel = 16;
-#else
     MONITORINFOEX monitorInfo = monitorInfoForWidget(widget);
     EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &deviceInfo);
-#endif
 
     return deviceInfo;
 }
@@ -85,13 +80,8 @@ int screenDepthPerComponent(Widget* widget)
 
 bool screenIsMonochrome(Widget* widget)
 {
-#if OS(WINCE)
-    // EnumDisplaySettings doesn't set dmColor in DEVMODE.
-    return false;
-#else
     DEVMODE deviceInfo = deviceInfoForWidget(widget);
     return deviceInfo.dmColor == DMCOLOR_MONOCHROME;
-#endif
 }
 
 FloatRect screenRect(Widget* widget)

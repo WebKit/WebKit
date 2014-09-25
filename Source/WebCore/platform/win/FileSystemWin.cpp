@@ -156,19 +156,6 @@ bool deleteEmptyDirectory(const String& path)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-#if OS(WINCE)
-    StringBuilder builder;
-
-    builder.append(path);
-
-    UChar lastPathCharacter = path[path.length() - 1];
-    if (lastPathCharacter != L'\\' && lastPathCharacter != L'/' && component[0] != L'\\' && component[0] != L'/')
-        builder.append(PlatformFilePathSeparator);
-
-    builder.append(component);
-
-    return builder.toString();
-#else
     Vector<UChar> buffer(MAX_PATH);
 
     if (path.length() + 1 > buffer.size())
@@ -183,7 +170,6 @@ String pathByAppendingComponent(const String& path, const String& component)
     buffer.shrink(wcslen(buffer.data()));
 
     return String::adopt(buffer);
-#endif
 }
 
 #if !USE(CF)
@@ -226,24 +212,7 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& path)
 {
-#if OS(WINCE)
-    size_t positionSlash = path.reverseFind('/');
-    size_t positionBackslash = path.reverseFind('\\');
-
-    size_t position;
-    if (positionSlash == notFound)
-        position = positionBackslash;
-    else if (positionBackslash == notFound)
-        position =  positionSlash;
-    else
-        position = std::max(positionSlash, positionBackslash);
-
-    if (position == notFound)
-        return path;
-    return path.substring(position + 1);
-#else
     return String(::PathFindFileName(String(path).charactersWithNullTermination().data()));
-#endif
 }
 
 String directoryName(const String& path)
@@ -278,9 +247,6 @@ static String bundleName()
 
 static String storageDirectory(DWORD pathIdentifier)
 {
-#if OS(WINCE)
-    return String();
-#else
     Vector<UChar> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(0, pathIdentifier | CSIDL_FLAG_CREATE, 0, 0, buffer.data())))
         return String();
@@ -293,7 +259,6 @@ static String storageDirectory(DWORD pathIdentifier)
         return String();
 
     return directory;
-#endif
 }
 
 static String cachedStorageDirectory(DWORD pathIdentifier)

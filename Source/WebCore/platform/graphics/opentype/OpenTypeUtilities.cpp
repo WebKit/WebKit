@@ -408,7 +408,6 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<cha
     return true;
 }
 
-#if !OS(WINCE)
 // Rename the font and install the new font data into the system
 HANDLE renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
 {
@@ -426,6 +425,5 @@ HANDLE renameAndActivateFont(const SharedBuffer& fontData, const String& fontNam
 
     return fontHandle;
 }
-#endif
 
 }

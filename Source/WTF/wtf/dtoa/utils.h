@@ -49,7 +49,7 @@
 defined(__ARMEL__) || \
 defined(_MIPS_ARCH_MIPS32R2)
 #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
-#elif CPU(MIPS) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || OS(WINCE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA)
+#elif CPU(MIPS) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA)
 #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #elif defined(_M_IX86) || defined(__i386__)
 #if defined(_WIN32)
@@ -58,8 +58,6 @@ defined(_MIPS_ARCH_MIPS32R2)
 #else
 #undef DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS
 #endif  // _WIN32
-#elif defined(WINCE) || defined(_WIN32_WCE)
-#define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #else
 #error Target architecture was not detected as supported by Double-Conversion.
 #endif

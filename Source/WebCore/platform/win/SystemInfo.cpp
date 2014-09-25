@@ -39,23 +39,13 @@ WindowsVersion windowsVersion(int* major, int* minor)
 
     if (!initialized) {
         initialized = true;
-#if OS(WINCE)
-        OSVERSIONINFO versionInfo;
-#else
         OSVERSIONINFOEX versionInfo;
-#endif
         ZeroMemory(&versionInfo, sizeof(versionInfo));
         versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
         GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&versionInfo));
         majorVersion = versionInfo.dwMajorVersion;
         minorVersion = versionInfo.dwMinorVersion;
 
-#if OS(WINCE)
-        if (majorVersion >= 1 && majorVersion <= 7)
-            version = static_cast<WindowsVersion>(WindowsCE1 + (majorVersion - 1));
-        else
-            version = (majorVersion < 1) ? WindowsCE1 : WindowsCE7;
-#else
         if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32s)
             version = Windows3_1;
         else if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
@@ -77,7 +67,6 @@ WindowsVersion windowsVersion(int* major, int* minor)
             } else
                 version = (majorVersion == 4) ? WindowsNT4 : WindowsNT3;
         }
-#endif
     }
 
     if (major)
@@ -114,7 +103,6 @@ static String osVersionForUAString()
     return familyName + String::number(major) + '.' + String::number(minor);
 }
 
-#if !OS(WINCE)
 static bool isWOW64()
 {
     static bool initialized = false;
@@ -158,18 +146,15 @@ static WORD processorArchitecture()
 
     return architecture;
 }
-#endif
 
 static String architectureTokenForUAString()
 {
-#if !OS(WINCE)
     if (isWOW64())
         return "; WOW64";
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_AMD64)
         return "; Win64; x64";
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_IA64)
         return "; Win64; IA64";
-#endif
     return String();
 }
 

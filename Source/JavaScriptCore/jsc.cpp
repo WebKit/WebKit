@@ -78,7 +78,7 @@
 #include <signal.h>
 #endif
 
-#if COMPILER(MSVC) && !OS(WINCE)
+#if COMPILER(MSVC)
 #include <crtdbg.h>
 #include <mmsystem.h>
 #include <windows.h>
@@ -1109,7 +1109,7 @@ EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
 // be in a separate main function because the jscmain function requires object
 // unwinding.
 
-#if COMPILER(MSVC) && !defined(_DEBUG) && !OS(WINCE)
+#if COMPILER(MSVC) && !defined(_DEBUG)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
 #else
@@ -1141,7 +1141,6 @@ int main(int argc, char** argv)
 #endif
 
 #if OS(WINDOWS)
-#if !OS(WINCE)
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
@@ -1154,7 +1153,6 @@ int main(int argc, char** argv)
     _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
-#endif
 #endif
 
     timeBeginPeriod(1);
@@ -1170,7 +1168,6 @@ int main(int argc, char** argv)
 #endif
     JSC::initializeThreading();
 
-#if !OS(WINCE)
     if (char* timeoutString = getenv("JSC_timeout")) {
         if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
             dataLog(
@@ -1179,7 +1176,6 @@ int main(int argc, char** argv)
         } else
             createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
     }
-#endif
 
 #if PLATFORM(IOS)
     Options::crashIfCantAllocateJITMemory() = true;

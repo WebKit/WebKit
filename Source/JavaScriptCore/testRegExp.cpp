@@ -39,7 +39,7 @@
 #include <sys/time.h>
 #endif
 
-#if COMPILER(MSVC) && !OS(WINCE)
+#if COMPILER(MSVC)
 #include <crtdbg.h>
 #include <mmsystem.h>
 #include <windows.h>
@@ -150,7 +150,7 @@ GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& a
 // be in a separate main function because the realMain function requires object
 // unwinding.
 
-#if COMPILER(MSVC) && !defined(_DEBUG) && !OS(WINCE)
+#if COMPILER(MSVC) && !defined(_DEBUG)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
 #else
@@ -163,12 +163,10 @@ int realMain(int argc, char** argv);
 int main(int argc, char** argv)
 {
 #if OS(WINDOWS)
-#if !OS(WINCE)
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
-#endif
 
 #if defined(_DEBUG)
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);

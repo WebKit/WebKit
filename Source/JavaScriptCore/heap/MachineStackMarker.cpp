@@ -69,18 +69,6 @@ using namespace WTF;
 
 namespace JSC {
 
-static inline void swapIfBackwards(void*& begin, void*& end)
-{
-#if OS(WINCE)
-    if (begin <= end)
-        return;
-    std::swap(begin, end);
-#else
-UNUSED_PARAM(begin);
-UNUSED_PARAM(end);
-#endif
-}
-
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
@@ -248,12 +236,10 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
 
     void* registersBegin = &registers;
     void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&registers + 1)));
-    swapIfBackwards(registersBegin, registersEnd);
     conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
 
     void* stackBegin = stackCurrent;
     void* stackEnd = wtfThreadData().stack().origin();
-    swapIfBackwards(stackBegin, stackEnd);
     conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
 }
 
@@ -453,7 +439,6 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
 
     void* stackPointer = otherThreadStackPointer(regs);
     void* stackBase = thread->stackBase;
-    swapIfBackwards(stackPointer, stackBase);
     stackPointer = reinterpret_cast<void*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackPointer)));
     conservativeRoots.add(stackPointer, stackBase, jitStubRoutines, codeBlocks);
 

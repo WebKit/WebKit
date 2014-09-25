@@ -197,7 +197,7 @@ CString sharedResourcesPath();
 uint64_t getVolumeFreeSizeForPath(const char*);
 #endif
 
-#if PLATFORM(WIN) && !OS(WINCE)
+#if PLATFORM(WIN)
 String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
 #endif

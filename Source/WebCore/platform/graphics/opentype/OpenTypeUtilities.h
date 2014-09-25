@@ -37,10 +37,6 @@ struct BigEndianUShort;
 struct EOTPrefix;
 class SharedBuffer;
 
-#if OS(WINCE)
-typedef unsigned __int8 UInt8;
-#endif
-
 struct EOTHeader {
     EOTHeader();
 

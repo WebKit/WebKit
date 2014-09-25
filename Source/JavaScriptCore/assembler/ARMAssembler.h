@@ -1119,8 +1119,6 @@ namespace JSC {
                 linuxPageFlush(current, current + page);
 
             linuxPageFlush(current, end);
-#elif OS(WINCE)
-            CacheRangeFlush(code, size, CACHE_SYNC_ALL);
 #else
 #error "The cacheFlush support is missing on this platform."
 #endif

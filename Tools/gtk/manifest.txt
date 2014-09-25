@@ -4,7 +4,6 @@ exclude ChangeLog
 exclude Makefile
 exclude PlatformEfl.cmake
 exclude PlatformWin.cmake
-exclude PlatformWinCE.cmake
 exclude tags$
 exclude ~$
 exclude \.#$
@@ -42,7 +41,7 @@ exclude \.xcconfig$
 exclude \.xcodeproj$
 
 # Exclude directories from other ports
-exclude .*\/(mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win|wince)\/.*$
+exclude .*\/(mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win)\/.*$
 
 directory Source
 exclude Source/JavaScriptCore/tests
@@ -54,7 +53,6 @@ exclude Source/bmalloc
 exclude Source/cmake/EFLHelpers.cmake$
 exclude Source/cmake/OptionsWinCairo.cmake$
 exclude Source/cmake/OptionsWindows.cmake$
-exclude Source/cmake/OptionsWinCE.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsEfl.cmake$
 exclude Source/cmake/eflsymbols.filter$

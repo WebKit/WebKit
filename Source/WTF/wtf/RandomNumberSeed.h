@@ -45,9 +45,6 @@ inline void initializeRandomNumberGenerator()
 {
 #if OS(DARWIN)
     // On Darwin we use arc4random which initialises itself.
-#elif OS(WINCE)
-    // initialize rand()
-    srand(GetTickCount());
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
     // On Windows we use rand_s which initialises itself
 #elif OS(UNIX)

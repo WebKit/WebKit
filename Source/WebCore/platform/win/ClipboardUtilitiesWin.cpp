@@ -31,14 +31,12 @@
 #include "TextEncoding.h"
 #include "markup.h"
 #include <shlobj.h>
+#include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if !OS(WINCE)
-#include <shlwapi.h>
-#endif
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>

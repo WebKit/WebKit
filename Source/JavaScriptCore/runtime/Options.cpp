@@ -105,7 +105,6 @@ static bool parse(const char* string, GCLogging::Level& value)
 template<typename T>
 bool overrideOptionWithHeuristic(T& variable, const char* name)
 {
-#if !OS(WINCE)
     const char* stringValue = getenv(name);
     if (!stringValue)
         return false;
@@ -114,7 +113,6 @@ bool overrideOptionWithHeuristic(T& variable, const char* name)
         return true;
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
-#endif
     return false;
 }
 

@@ -39,12 +39,7 @@
         return library; \
     }
 
-#if OS(WINCE)
-#define SOFT_LINK_GETPROCADDRESS GetProcAddressA
-#else
 #define SOFT_LINK_GETPROCADDRESS GetProcAddress
-#endif
-
 #define SOFT_LINK_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L".dll")
 #define SOFT_LINK_DEBUG_LIBRARY(lib) SOFT_LINK_LIBRARY_HELPER(lib, L"_debug.dll")
 

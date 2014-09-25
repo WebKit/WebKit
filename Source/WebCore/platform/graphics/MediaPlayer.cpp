@@ -66,9 +66,6 @@
 #include "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #endif
 #endif
-#elif OS(WINCE)
-#include "MediaPlayerPrivateWinCE.h"
-#define PlatformMediaEngineClassName MediaPlayerPrivate
 #elif PLATFORM(WIN) && !USE(GSTREAMER)
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationCF.h"

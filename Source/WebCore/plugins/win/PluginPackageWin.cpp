@@ -237,9 +237,6 @@ bool PluginPackage::load()
         m_loadCount++;
         return true;
     } else {
-#if OS(WINCE)
-        m_module = ::LoadLibraryW(m_path.charactersWithNullTermination().data());
-#else
         WCHAR currentPath[MAX_PATH];
 
         if (!::GetCurrentDirectoryW(MAX_PATH, currentPath))
@@ -258,7 +255,6 @@ bool PluginPackage::load()
                 ::FreeLibrary(m_module);
             return false;
         }
-#endif
     }
 
     if (!m_module)
@@ -270,15 +266,9 @@ bool PluginPackage::load()
     NP_InitializeFuncPtr NP_Initialize = 0;
     NPError npErr;
 
-#if OS(WINCE)
-    NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, L"NP_Initialize");
-    NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, L"NP_GetEntryPoints");
-    m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, L"NP_Shutdown");
-#else
     NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, "NP_Initialize");
     NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, "NP_GetEntryPoints");
     m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, "NP_Shutdown");
-#endif
 
     if (!NP_Initialize || !NP_GetEntryPoints || !m_NPP_Shutdown)
         goto abort;

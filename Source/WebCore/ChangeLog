@@ -1,3 +1,149 @@
+2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WinCE port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=136951
+
+        Reviewed by Alex Christensen.
+
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp:
+        * PlatformWinCE.cmake: Removed.
+        * accessibility/AXObjectCache.cpp:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modifyMovingRight):
+        * loader/icon/wince/IconDatabaseWinCE.cpp: Removed.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        * page/Settings.cpp:
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        * platform/ContextMenu.h:
+        * platform/DragImage.cpp:
+        * platform/FileSystem.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::mayFillWithSolidColor):
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        (WebCore::renameAndActivateFont):
+        * platform/graphics/opentype/OpenTypeUtilities.h:
+        * platform/graphics/win/DIBPixelData.cpp:
+        (WebCore::DIBPixelData::setRGBABitmapAlpha):
+        * platform/graphics/win/GDIExtras.cpp: Removed.
+        * platform/graphics/win/GDIExtras.h:
+        (WebCore::hasAlphaBlendSupport):
+        (WebCore::alphaBlendIfSupported):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::boundsForGDIGlyph):
+        (WebCore::SimpleFontData::widthForGDIGlyph):
+        (WebCore::SimpleFontData::scriptFontProperties):
+        * platform/graphics/wince/FontCacheWinCE.cpp: Removed.
+        * platform/graphics/wince/FontCustomPlatformData.cpp: Removed.
+        * platform/graphics/wince/FontCustomPlatformData.h: Removed.
+        * platform/graphics/wince/FontPlatformData.cpp: Removed.
+        * platform/graphics/wince/FontPlatformData.h: Removed.
+        * platform/graphics/wince/FontWinCE.cpp: Removed.
+        * platform/graphics/wince/GlyphPageTreeNodeWinCE.cpp: Removed.
+        * platform/graphics/wince/GradientWinCE.cpp: Removed.
+        * platform/graphics/wince/GraphicsContextWinCE.cpp: Removed.
+        * platform/graphics/wince/ImageBufferDataWince.h: Removed.
+        * platform/graphics/wince/ImageBufferWinCE.cpp: Removed.
+        * platform/graphics/wince/ImageWinCE.cpp: Removed.
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h: Removed.
+        * platform/graphics/wince/MediaPlayerProxy.cpp: Removed.
+        * platform/graphics/wince/MediaPlayerProxy.h: Removed.
+        * platform/graphics/wince/PathWinCE.cpp: Removed.
+        * platform/graphics/wince/PlatformPathWinCE.cpp: Removed.
+        * platform/graphics/wince/PlatformPathWinCE.h: Removed.
+        * platform/graphics/wince/SharedBitmap.cpp: Removed.
+        * platform/graphics/wince/SharedBitmap.h: Removed.
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp: Removed.
+        * platform/graphics/wince/WinCEGraphicsExtras.h: Removed.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/network/win/NetworkStateNotifierWin.cpp:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/win/COMPtr.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        * platform/win/ContextMenuItemWin.cpp:
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::getContextMenuItems):
+        (WebCore::ContextMenu::createPlatformContextMenuFromItems):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::dragLabelFont):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::pathByAppendingComponent):
+        (WebCore::pathGetFileName):
+        (WebCore::storageDirectory):
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::PasteboardOwnerWndProc):
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::pathRemoveBadFSCharacters):
+        (WebCore::filesystemPathFromUrlOrTitle):
+        (WebCore::createGlobalHDropContent):
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::messageToEventType):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::deviceInfoForWidget):
+        (WebCore::screenIsMonochrome):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::show):
+        (WebCore::PopupMenuWin::paint):
+        (WebCore::PopupMenuWin::registerClass):
+        (WebCore::PopupMenuWin::wndProc):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintButton):
+        * platform/win/SharedBufferWin.cpp:
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        (WebCore::initializeOffScreenTimerWindow):
+        (WebCore::queueTimerProc):
+        (WebCore::setSharedTimerFireInterval):
+        (WebCore::stopSharedTimer):
+        * platform/win/SoftLinking.h:
+        * platform/win/SystemInfo.cpp:
+        (WebCore::windowsVersion):
+        (WebCore::processorArchitecture):
+        (WebCore::architectureTokenForUAString):
+        * platform/win/WCDataObject.cpp:
+        (WebCore::WCDataObject::CopyMedium):
+        * plugins/PluginDatabase.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop):
+        * plugins/PluginViewNone.cpp:
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addWindowsMediaPlayerPluginDirectory):
+        (WebCore::addMacromediaPluginDirectories):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::setUpOffscreenPaintingHooks):
+        (WebCore::registerPluginView):
+        (WebCore::PluginView::wndProc):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paintIntoTransformedContext):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::platformStart):
+        * rendering/RenderThemeWinCE.cpp: Removed.
+        * rendering/RenderThemeWinCE.h: Removed.
+        * storage/wince/DatabaseThreadWinCE.cpp: Removed.
+        * storage/wince/DatabaseThreadWinCE.h: Removed.
+        * storage/wince/StorageThreadWinCE.cpp: Removed.
+        * storage/wince/StorageThreadWinCE.h: Removed.
+
 2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r173944.

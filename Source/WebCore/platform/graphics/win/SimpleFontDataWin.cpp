@@ -96,13 +96,11 @@ void SimpleFontData::initGDIFont()
     m_avgCharWidth = textMetrics.tmAveCharWidth;
     m_maxCharWidth = textMetrics.tmMaxCharWidth;
     float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
-#if !OS(WINCE)
     GLYPHMETRICS gm;
     static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
     DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
     if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
         xHeight = gm.gmptGlyphOrigin.y;
-#endif
     m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
 
@@ -121,10 +119,8 @@ void SimpleFontData::platformCharWidthInit()
 
 void SimpleFontData::platformDestroy()
 {
-#if !OS(WINCE)
     ScriptFreeCache(&m_scriptCache);
     delete m_scriptFontProperties;
-#endif
 }
 
 PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
@@ -200,9 +196,6 @@ void SimpleFontData::determinePitch()
 
 FloatRect SimpleFontData::boundsForGDIGlyph(Glyph glyph) const
 {
-#if OS(WINCE)
-    return FloatRect();
-#else
     HWndDC hdc(0);
     SetGraphicsMode(hdc, GM_ADVANCED);
     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
@@ -215,35 +208,24 @@ FloatRect SimpleFontData::boundsForGDIGlyph(Glyph glyph) const
 
     return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
         gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY); 
-#endif
 }
 
 float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
 {
     HWndDC hdc(0);
-#if !OS(WINCE)
     SetGraphicsMode(hdc, GM_ADVANCED);
-#endif
     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
 
-#if OS(WINCE)
-    WCHAR c = glyph;
-    SIZE fontSize;
-    GetTextExtentPoint32W(hdc, &c, 1, &fontSize);
-    float result = fontSize.cx * m_platformData.size() / 72.f;
-#else
     GLYPHMETRICS gdiMetrics;
     static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
     GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
     float result = gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
-#endif
 
     SelectObject(hdc, oldFont);
 
     return result;
 }
 
-#if !OS(WINCE)
 SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const
 {
     if (!m_scriptFontProperties) {
@@ -261,6 +243,5 @@ SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const
     }
     return m_scriptFontProperties;
 }
-#endif
 
 } // namespace WebCore

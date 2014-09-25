@@ -269,7 +269,6 @@ STDMETHODIMP DRTDataObject::SetData(FORMATETC* pformatetc, STGMEDIUM* pmedium, B
 void DRTDataObject::CopyMedium(STGMEDIUM* pMedDest, STGMEDIUM* pMedSrc, FORMATETC* pFmtSrc)
 {
     switch (pMedSrc->tymed) {
-#if !OS(WINCE)
     case TYMED_HGLOBAL:
         pMedDest->hGlobal = static_cast<HGLOBAL>(OleDuplicateData(pMedSrc->hGlobal, pFmtSrc->cfFormat, 0));
         break;
@@ -285,7 +284,6 @@ void DRTDataObject::CopyMedium(STGMEDIUM* pMedDest, STGMEDIUM* pMedSrc, FORMATET
     case TYMED_FILE:
         pMedSrc->lpszFileName = static_cast<LPOLESTR>(OleDuplicateData(pMedSrc->lpszFileName, pFmtSrc->cfFormat, 0));
         break;
-#endif
     case TYMED_ISTREAM:
         pMedDest->pstm = pMedSrc->pstm;
         pMedSrc->pstm->AddRef();

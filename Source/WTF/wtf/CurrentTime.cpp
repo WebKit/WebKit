@@ -72,11 +72,7 @@ static double lowResUTCTime()
 {
     FILETIME fileTime;
 
-#if OS(WINCE)
-    GetCurrentFT(&fileTime);
-#else
     GetSystemTimeAsFileTime(&fileTime);
-#endif
 
     // As per Windows documentation for FILETIME, copy the resulting FILETIME structure to a
     // ULARGE_INTEGER structure using memcpy (using memcpy instead of direct assignment can

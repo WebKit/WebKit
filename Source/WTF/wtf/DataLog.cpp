@@ -35,12 +35,6 @@
 #include <unistd.h>
 #endif
 
-#if OS(WINCE)
-#ifndef _IONBF
-#define _IONBF 0x0004
-#endif
-#endif
-
 #define DATA_LOG_TO_FILE 0
 
 // Set to 1 to use the temp directory from confstr instead of hardcoded directory.

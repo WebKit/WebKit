@@ -69,25 +69,6 @@ inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_l
 // vsnprintf does not null terminate the buffer. WebKit can rely on the null termination.
 #define vsnprintf(buffer, count, format, args) wtf_vsnprintf(buffer, count, format, args)
 
-#if OS(WINCE)
-
-inline int strnicmp(const char* string1, const char* string2, size_t count)
-{
-    return _strnicmp(string1, string2, count);
-}
-
-inline int stricmp(const char* string1, const char* string2)
-{
-    return _stricmp(string1, string2);
-}
-
-inline char* strdup(const char* strSource)
-{
-    return _strdup(strSource);
-}
-
-#endif
-
 inline int strncasecmp(const char* s1, const char* s2, size_t len)
 {
     return _strnicmp(s1, s2, len);

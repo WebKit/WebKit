@@ -39,34 +39,17 @@ namespace WTF {
 
 inline HRESULT getRegistryValue(HKEY hkey, LPCWSTR pszSubKey, LPCWSTR pszValue, LPDWORD pdwType, LPVOID pvData, LPDWORD pcbData)
 {
-#if OS(WINCE)
-    HKEY key;
-    if (::RegOpenKeyExW(hkey, pszSubKey, 0, 0, &key) != ERROR_SUCCESS)
-        return ERROR_INVALID_NAME;
-    HRESULT result = ::RegQueryValueExW(key, pszValue, 0, pdwType, static_cast<LPBYTE>(pvData), pcbData);
-    ::RegCloseKey(key);
-    return result;
-#else
     return ::SHGetValueW(hkey, pszSubKey, pszValue, pdwType, pvData, pcbData);
-#endif
 }
 
 inline void* getWindowPointer(HWND hWnd, int index)
 {
-#if OS(WINCE)
-    return reinterpret_cast<void*>(::GetWindowLong(hWnd, index));
-#else
     return reinterpret_cast<void*>(::GetWindowLongPtr(hWnd, index));
-#endif
 }
 
 inline void* setWindowPointer(HWND hWnd, int index, void* value)
 {
-#if OS(WINCE)
-    return reinterpret_cast<void*>(::SetWindowLong(hWnd, index, reinterpret_cast<LONG>(value)));
-#else
     return reinterpret_cast<void*>(::SetWindowLongPtr(hWnd, index, reinterpret_cast<LONG_PTR>(value)));
-#endif
 }
 
 } // namespace WTF

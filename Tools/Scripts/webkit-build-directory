@@ -50,7 +50,6 @@ Usage: $programName [options]
   --efl                 Find the build directory for the EFL port
   --gtk                 Find the build directory for the GTK+ port
   --wincairo            Find the build directory for using Cairo (rather than CoreGraphics) on Windows
-  --wince               Find the build directory for the WinCE port
 
 Either --configuration or --top-level is required.
 EOF

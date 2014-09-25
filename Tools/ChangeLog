@@ -1,3 +1,39 @@
+2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WinCE port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=136951
+
+        Reviewed by Alex Christensen.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        (ShouldBuildTest):
+        * CMakeLists.txt:
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (DRTDataObject::CopyMedium):
+        * Scripts/build-webkit:
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (builtDylibPathForName):
+        (isAppleWinWebKit):
+        (launcherPath):
+        (launcherName):
+        (shouldRemoveCMakeCache):
+        (cmakeBasedPortArguments):
+        (cmakeBasedPortName):
+        (isCMakeBuild):
+        (isWinCE): Deleted.
+        (determineIsWinCE): Deleted.
+        * Scripts/webkitperl/FeatureList.pm:
+        * Scripts/webkitpy/port/port_testcase.py:
+        (test_apache_config_file_name_for_platform):
+        * TestWebKitAPI/config.h:
+        * WinCELauncher/CMakeLists.txt: Removed.
+        * WinCELauncher/main.cpp: Removed.
+        * gtk/manifest.txt:
+
 2014-09-23  David Farler  <dfarler@apple.com>
 
         [iOS] run-webkit-tests should support minor versions under devices and create a testing device under the right runtime

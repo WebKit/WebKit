@@ -239,7 +239,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif /* PLATFORM(MAC) */
 
 /* --------- Apple Windows port --------- */
-#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO)
+#if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
 
 #if !defined(ENABLE_FULLSCREEN_API)
 #define ENABLE_FULLSCREEN_API 1
@@ -253,26 +253,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEBGL 1
 #endif
 
-#endif /* PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO) */
-
-/* --------- WinCE port --------- */
-/* WinCE port is a specialization of PLATFORM(WIN). */
-/* PLATFORM(WIN) is always enabled when building for the WinCE port. */
-#if PLATFORM(WIN) && OS(WINCE)
-
-#if !defined(ENABLE_DRAG_SUPPORT)
-#define ENABLE_DRAG_SUPPORT 0
-#endif
-
-#if !defined(ENABLE_FTPDIR)
-#define ENABLE_FTPDIR 0
-#endif
-
-#if !defined(ENABLE_INSPECTOR)
-#define ENABLE_INSPECTOR 0
-#endif
-
-#endif /* PLATFORM(WIN) && OS(WINCE) */
+#endif /* PLATFORM(WIN) && !PLATFORM(WIN_CAIRO) */
 
 /* --------- Windows CAIRO port --------- */
 /* PLATFORM(WIN_CAIRO) is a specialization of PLATFORM(WIN). */

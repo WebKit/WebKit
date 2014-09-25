@@ -394,11 +394,6 @@
 #define WTF_OS_SOLARIS 1
 #endif
 
-/* OS(WINCE) - Windows CE; note that for this platform OS(WINDOWS) is also defined */
-#if defined(_WIN32_WCE)
-#define WTF_OS_WINCE 1
-#endif
-
 /* OS(WINDOWS) - Any version of Windows */
 #if defined(WIN32) || defined(_WIN32)
 #define WTF_OS_WINDOWS 1
@@ -600,7 +595,7 @@
 
 #endif /* OS(DARWIN) */
 
-#if OS(WINDOWS) && !OS(WINCE)
+#if OS(WINDOWS)
 
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_ALIGNED_MALLOC 1
@@ -655,8 +650,7 @@
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k and Windows. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
-    && !CPU(APPLE_ARMV7K)                                                           \
-    && !OS(WINCE)
+    && !CPU(APPLE_ARMV7K)
 #define ENABLE_JIT 1
 #endif
 
@@ -943,7 +937,7 @@
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
-#if !defined(WTF_USE_IMLANG_FONT_LINK2) && !OS(WINCE)
+#if !defined(WTF_USE_IMLANG_FONT_LINK2)
 #define WTF_USE_IMLANG_FONT_LINK2 1
 #endif
 

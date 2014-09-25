@@ -40,10 +40,6 @@
 #include "JSReplayInputs.h"
 #endif
 
-#if OS(WINCE)
-extern "C" time_t time(time_t* timer); // Provided by libce.
-#endif
-
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif

@@ -63,7 +63,6 @@ static HANDLE timer;
 static HWND timerWindowHandle = 0;
 const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
 
-#if !OS(WINCE)
 static UINT timerFiredMessage = 0;
 static HANDLE timerQueue;
 static bool highResTimerActive;
@@ -73,7 +72,6 @@ static LONG pendingTimers;
 const int timerResolution = 1; // To improve timer resolution, we call timeBeginPeriod/timeEndPeriod with this value to increase timer resolution to 1ms.
 const int highResolutionThresholdMsec = 16; // Only activate high-res timer for sub-16ms timers (Windows can fire timers at 16ms intervals without changing the system resolution).
 const int stopHighResTimerInMsec = 300; // Stop high-res timer after 0.3 seconds to lessen power consumption (we don't use a smaller time since oscillating between high and low resolution breaks timer accuracy on XP).
-#endif
 
 enum {
     sharedTimerID = 1000,
@@ -98,7 +96,6 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
             KillTimer(timerWindowHandle, sharedTimerID);
             sharedTimerFiredFunction();
         }
-#if !OS(WINCE)
         else if (wParam == endHighResTimerID) {
             KillTimer(timerWindowHandle, endHighResTimerID);
             highResTimerActive = false;
@@ -109,7 +106,6 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         processingCustomTimerMessage = true;
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
-#endif
     } else
         return DefWindowProc(hWnd, message, wParam, lParam);
 
@@ -121,30 +117,19 @@ static void initializeOffScreenTimerWindow()
     if (timerWindowHandle)
         return;
 
-#if OS(WINCE)
-    WNDCLASS wcex;
-    memset(&wcex, 0, sizeof(WNDCLASS));
-#else
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(WNDCLASSEX));
     wcex.cbSize = sizeof(WNDCLASSEX);
-#endif
 
     wcex.lpfnWndProc    = TimerWindowWndProc;
     wcex.hInstance      = WebCore::instanceHandle();
     wcex.lpszClassName  = kTimerWindowClassName;
-#if OS(WINCE)
-    RegisterClass(&wcex);
-#else
     RegisterClassEx(&wcex);
-#endif
 
     timerWindowHandle = CreateWindow(kTimerWindowClassName, 0, 0,
        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, WebCore::instanceHandle(), 0);
 
-#if !OS(WINCE)
     timerFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.TimerFired");
-#endif
 }
 
 void setSharedTimerFiredFunction(void (*f)())
@@ -152,13 +137,11 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-#if !OS(WINCE)
 static void NTAPI queueTimerProc(PVOID, BOOLEAN)
 {
     if (InterlockedIncrement(&pendingTimers) == 1)
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
 }
-#endif
 
 void setSharedTimerFireInterval(double interval)
 {
@@ -174,7 +157,6 @@ void setSharedTimerFireInterval(double interval)
     initializeOffScreenTimerWindow();
     bool timerSet = false;
 
-#if !OS(WINCE)
     if (Settings::shouldUseHighResolutionTimers()) {
         if (interval < highResolutionThresholdMsec) {
             if (!highResTimerActive) {
@@ -206,7 +188,6 @@ void setSharedTimerFireInterval(double interval)
             }
         }
     }
-#endif // !OS(WINCE)
 
     if (timerSet) {
         if (timerID) {
@@ -221,12 +202,10 @@ void setSharedTimerFireInterval(double interval)
 
 void stopSharedTimer()
 {
-#if !OS(WINCE)
     if (timerQueue && timer) {
         DeleteTimerQueueTimer(timerQueue, timer, 0);
         timer = 0;
     }
-#endif
 
     if (timerID) {
         KillTimer(timerWindowHandle, timerID);

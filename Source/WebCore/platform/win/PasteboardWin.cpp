@@ -79,12 +79,10 @@ static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM w
         break;
     case WM_DESTROY:
         break;
-#if !OS(WINCE)
     case WM_DRAWCLIPBOARD:
         break;
     case WM_CHANGECBCHAIN:
         break;
-#endif
     default:
         lresult = DefWindowProc(hWnd, message, wParam, lParam);
         break;
@@ -96,10 +94,8 @@ PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
     OwnPtr<Pasteboard> pasteboard = adoptPtr(new Pasteboard);
     COMPtr<IDataObject> clipboardData;
-#if !OS(WINCE)
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
-#endif
     pasteboard->setExternalDataObject(clipboardData.get());
     return pasteboard.release();
 }
@@ -525,7 +521,6 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
     writePlainTextToDataObject(text, smartReplaceOption);
 }
 
-#if !OS(WINCE)
 static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
 {
     size_t writeTo = 0;
@@ -539,14 +534,9 @@ static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
     }
     psz[writeTo] = 0;
 }
-#endif
 
 static String filesystemPathFromUrlOrTitle(const String& url, const String& title, const UChar* extension, bool isLink)
 {
-#if OS(WINCE)
-    notImplemented();
-    return String();
-#else
     static const size_t fsPathMaxLengthExcludingNullTerminator = MAX_PATH - 1;
     bool usedURL = false;
     WCHAR fsPathBuffer[MAX_PATH];
@@ -589,7 +579,6 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
     }
 
     return makeString(static_cast<const UChar*>(fsPathBuffer), extension);
-#endif
 }
 
 // writeFileToDataObject takes ownership of fileDescriptor and fileContent
@@ -966,10 +955,6 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         else
             return 0;
     } else {
-#if OS(WINCE)
-        notImplemented();
-        return 0;
-#else
         WCHAR tempPath[MAX_PATH];
         WCHAR extension[MAX_PATH];
         if (!::GetTempPath(WTF_ARRAY_LENGTH(tempPath), tempPath))
@@ -1001,7 +986,6 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         CloseHandle(tempFileHandle);
         if (!tempWriteSucceeded)
             return 0;
-#endif
     }
 
     SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (wcslen(filePath) + 2));

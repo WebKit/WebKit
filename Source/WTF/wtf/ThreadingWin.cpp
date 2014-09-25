@@ -94,6 +94,7 @@
 
 #include "MainThread.h"
 #include "ThreadFunctionInvocation.h"
+#include <process.h>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
@@ -105,10 +106,6 @@
 
 #if !USE(PTHREADS) && OS(WINDOWS)
 #include "ThreadSpecific.h"
-#endif
-
-#if !OS(WINCE)
-#include <process.h>
 #endif
 
 #if HAVE(ERRNO_H)
@@ -218,17 +215,9 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
     OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
-#if OS(WINCE)
-    // This is safe on WINCE, since CRT is in the core and innately multithreaded.
-    // On desktop Windows, need to use _beginthreadex (not available on WinCE) if using any CRT functions
-    HANDLE threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)wtfThreadEntryPoint, invocation.get(), 0, (LPDWORD)&threadIdentifier);
-#else
     HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation.get(), 0, &threadIdentifier));
-#endif
     if (!threadHandle) {
-#if OS(WINCE)
-        LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, ::GetLastError());
-#elif !HAVE(ERRNO_H)
+#if !HAVE(ERRNO_H)
         LOG_ERROR("Failed to create thread at entry point %p with data %p.", entryPoint, data);
 #else
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);

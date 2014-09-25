@@ -35,7 +35,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN) && !OS(WINCE)
+#if PLATFORM(WIN)
 #ifndef WTF_USE_CG
 #define WTF_USE_CG 1
 #endif

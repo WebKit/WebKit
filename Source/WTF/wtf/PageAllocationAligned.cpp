@@ -78,7 +78,7 @@ void PageAllocationAligned::deallocate()
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(tmp.base()), tmp.size());
 #else
     ASSERT(tmp.m_reservation.contains(tmp.base(), tmp.size()));
-    OSAllocator::decommitAndRelease(tmp.m_reservation.base(), tmp.m_reservation.size(), tmp.base(), tmp.size());
+    OSAllocator::decommitAndRelease(tmp.m_reservation.base(), tmp.m_reservation.size());
 #endif
 }
 

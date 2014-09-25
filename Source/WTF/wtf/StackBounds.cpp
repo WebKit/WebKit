@@ -124,16 +124,6 @@ void StackBounds::initialize()
     // stackOrigin.AllocationBase points to the reserved stack memory base address.
 
     m_origin = static_cast<char*>(stackOrigin.BaseAddress) + stackOrigin.RegionSize;
-#if OS(WINCE)
-    SYSTEM_INFO systemInfo;
-    GetSystemInfo(&systemInfo);
-    DWORD pageSize = systemInfo.dwPageSize;
-
-    MEMORY_BASIC_INFORMATION stackMemory;
-    VirtualQuery(m_origin, &stackMemory, sizeof(stackMemory));
-
-    m_bound = static_cast<char*>(m_origin) - stackMemory.RegionSize + pageSize;
-#else
     // The stack on Windows consists out of three parts (uncommitted memory, a guard page and present
     // committed memory). The 3 regions have different BaseAddresses but all have the same AllocationBase
     // since they are all from the same VirtualAlloc. The 3 regions are laid out in memory (from high to
@@ -173,7 +163,6 @@ void StackBounds::initialize()
     ASSERT(endOfStack == computedEnd);
 #endif // NDEBUG
     m_bound = static_cast<char*>(endOfStack) + guardPage.RegionSize;
-#endif // OS(WINCE)
 }
 
 #else

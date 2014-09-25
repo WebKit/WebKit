@@ -46,7 +46,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if (PLATFORM(WIN) && !OS(WINCE))
+#if PLATFORM(WIN)
 #include <usp10.h>
 #endif
 
@@ -230,10 +230,8 @@ public:
 
 #if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
-#if !OS(WINCE) // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
-#endif
     static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
@@ -254,7 +252,7 @@ private:
     PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
     PassRefPtr<SimpleFontData> platformCreateScaledFontData(const FontDescription&, float scaleFactor) const;
 
-#if (PLATFORM(WIN) && !OS(WINCE))
+#if PLATFORM(WIN)
     void initGDIFont();
     void platformCommonDestroy();
     FloatRect boundsForGDIGlyph(Glyph glyph) const;
@@ -336,10 +334,8 @@ private:
 
 #if PLATFORM(WIN)
     bool m_isSystemFont;
-#if !OS(WINCE) // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
-#endif
 #endif
 #if PLATFORM(IOS)
     bool m_shouldNotBeUsedForArabic;

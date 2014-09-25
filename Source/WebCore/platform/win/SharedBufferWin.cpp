@@ -31,11 +31,6 @@
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 
-// INVALID_FILE_SIZE is not defined on WinCE.
-#ifndef INVALID_FILE_SIZE
-#define INVALID_FILE_SIZE 0xffffffff
-#endif
-
 namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)

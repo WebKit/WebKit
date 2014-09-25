@@ -119,7 +119,6 @@ if (NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
             "/qt/" "/Qt/" "qt\\\\." "Qt\\\\."
             "/qt4/" "/Qt4/" "qt4\\\\." "Qt4\\\\."
             "/win/" "/Win/" "win\\\\." "Win\\\\."
-            "/wince/" "/Wince/" "wince\\\\." "Wince\\\\."
             "/wxcode/" "/Wxcode/" "wxcode\\\\." "Wxcode\\\\."
             "/WebKitLibraries/"
             "/English\\\\.lproj/"

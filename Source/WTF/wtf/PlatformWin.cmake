@@ -5,15 +5,9 @@ list(APPEND WTF_SOURCES
     win/RunLoopWin.cpp
 )
 
-if (WINCE)
-    list(APPEND WTF_LIBRARIES
-        mmtimer
-    )
-else ()
-    list(APPEND WTF_LIBRARIES
-        winmm
-    )
-endif ()
+list(APPEND WTF_LIBRARIES
+    winmm
+)
 
 list(APPEND WTF_HEADERS
     "${DERIVED_SOURCES_WTF_DIR}/WTFHeaderDetection.h"

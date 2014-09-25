@@ -34,7 +34,7 @@
 #include "ExceptionCode.h"
 #include "MediaPlayer.h"
 
-#if PLATFORM(IOS) || OS(WINCE)
+#if PLATFORM(IOS)
 #include "SoftLinking.h"
 #endif
 

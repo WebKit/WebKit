@@ -566,7 +566,7 @@ void AXObjectCache::remove(Widget* view)
 }
     
     
-#if !PLATFORM(WIN) || OS(WINCE)
+#if !PLATFORM(WIN)
 AXID AXObjectCache::platformGenerateAXID() const
 {
     static AXID lastUsedID = 0;

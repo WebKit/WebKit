@@ -122,11 +122,6 @@ namespace WTF {
 
 #if OS(WINDOWS)
 
-// TLS_OUT_OF_INDEXES is not defined on WinCE.
-#ifndef TLS_OUT_OF_INDEXES
-#define TLS_OUT_OF_INDEXES 0xffffffff
-#endif
-
 static DWORD isForibiddenTlsIndex = TLS_OUT_OF_INDEXES;
 static const LPVOID kTlsAllowValue = reinterpret_cast<LPVOID>(0); // Must be zero.
 static const LPVOID kTlsForbiddenValue = reinterpret_cast<LPVOID>(1);

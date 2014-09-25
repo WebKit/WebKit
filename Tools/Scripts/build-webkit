@@ -96,7 +96,6 @@ Usage: $programName [options] [options to pass to build system]
   --efl                             Build the EFL port
   --gtk                             Build the GTK+ port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
-  --wince                           Build the WinCE port
 
   --inspector-frontend              Copy Web Inspector user interface resources to the build directory
 
@@ -230,11 +229,9 @@ if (isInspectorFrontend()) {
 if (isCMakeBuild()) {
 
     # By default we build using all of the available CPUs.
-    if (!isWinCE()) {
-        $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
-        my $maxCPULoad = maxCPULoad() if $makeArgs !~ /-l\s*\d+\.?\d*/;
-        $makeArgs .= " -l" . maxCPULoad() if defined $maxCPULoad;
-    }
+    $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
+    my $maxCPULoad = maxCPULoad() if $makeArgs !~ /-l\s*\d+\.?\d*/;
+    $makeArgs .= " -l" . maxCPULoad() if defined $maxCPULoad;
 
     # We remove CMakeCache to avoid the bots to reuse cached flags when
     # we enable new features. This forces a reconfiguration.

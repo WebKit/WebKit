@@ -676,11 +676,7 @@ bool BitmapImage::mayFillWithSolidColor()
 {
     if (!m_checkedForSolidColor && frameCount() > 0) {
         checkForSolidColor();
-        // WINCE PORT: checkForSolidColor() doesn't set m_checkedForSolidColor until
-        // it gets enough information to make final decision.
-#if !OS(WINCE)
         ASSERT(m_checkedForSolidColor);
-#endif
     }
     return m_isSolidColor && !m_currentFrame;
 }

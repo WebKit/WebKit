@@ -16,8 +16,6 @@ elseif ("${PORT}" STREQUAL "GTK")
     if (ENABLE_X11_TARGET)
         add_subdirectory(DumpRenderTree/TestNetscapePlugIn)
     endif ()
-elseif ("${PORT}" STREQUAL "WinCE")
-    add_subdirectory(WinCELauncher)
 endif ()
 
 if (ENABLE_WEBKIT2 AND ENABLE_API_TESTS)

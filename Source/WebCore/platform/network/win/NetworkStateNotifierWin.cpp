@@ -107,14 +107,11 @@ NetworkStateNotifier::NetworkStateNotifier()
 
     memset(&m_overlapped, 0, sizeof(m_overlapped));
 
-// FIXME: Check m_overlapped on WinCE.
-#if !OS(WINCE)
     m_overlapped.hEvent = ::CreateEvent(0, false, false, 0);
 
     ::RegisterWaitForSingleObject(&m_waitHandle, m_overlapped.hEvent, addrChangeCallback, this, INFINITE, 0);
 
     registerForAddressChange();
-#endif
 }
 
 } // namespace WebCore

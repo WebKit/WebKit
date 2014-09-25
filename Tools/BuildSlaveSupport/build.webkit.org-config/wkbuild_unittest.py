@@ -49,7 +49,6 @@ class ShouldBuildTest(unittest.TestCase):
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
         (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
-        (["Source/WebCore/rendering/RenderThemeWinCE.h"], []),
         (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 

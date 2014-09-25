@@ -34,10 +34,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
 
-#if !OS(WINCE)
-#include <guiddef.h>
-#endif
-
 typedef long HRESULT;
 
 // FIXME: Should we put this into the WebCore namespace and use "using" on it

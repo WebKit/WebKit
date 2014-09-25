@@ -92,7 +92,6 @@ void CodeProfiling::sample(void* pc, void** framePointer)
 
 void CodeProfiling::notifyAllocator(WTF::MetaAllocator* allocator)
 {
-#if !OS(WINCE)
     // Check for JSC_CODE_PROFILING.
     const char* codeProfilingMode = getenv("JSC_CODE_PROFILING");
     if (!codeProfilingMode)
@@ -119,7 +118,6 @@ void CodeProfiling::notifyAllocator(WTF::MetaAllocator* allocator)
     ASSERT(!s_tracker);
     s_tracker = new WTF::MetaAllocatorTracker();
     allocator->trackAllocations(s_tracker);
-#endif
 }
 
 void* CodeProfiling::getOwnerUIDForPC(void* address)

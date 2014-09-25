@@ -375,7 +375,7 @@ bool PluginDatabase::addDisabledPluginFile(const String& fileName)
     return m_disabledPluginFiles.add(fileName).isNewEntry;
 }
 
-#if (!OS(WINCE)) && (!OS(WINDOWS) || !ENABLE(NETSCAPE_PLUGIN_API))
+#if (!OS(WINDOWS) || !ENABLE(NETSCAPE_PLUGIN_API))
 // For Safari/Win the following three methods are implemented
 // in PluginDatabaseWin.cpp, but if we can use WebCore constructs
 // for the logic we should perhaps move it here under XP_WIN?

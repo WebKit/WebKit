@@ -51,7 +51,6 @@ def _should_file_trigger_build(target_platform, file):
         ("opengl", []),
         ("opentype", []),
         ("openvg", []),
-        ("wince", []),
         ("wx", []),
 
         # Directories that should trigger builds on only some bots.
@@ -84,7 +83,6 @@ def _should_file_trigger_build(target_platform, file):
         (r"/LICENSE[^/]+$", []),
         (r"ARM(?:v7)?\.(?:cpp|h)$", []),
         (r"MIPS\.(?:cpp|h)$", []),
-        (r"WinCE\.(?:cpp|h|mm)$", []),
         (r"\.(?:bkl|mk)$", []),
 
         # Patterns that should trigger builds on only some bots.

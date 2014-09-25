@@ -158,11 +158,6 @@ inline void ThreadSpecific<T>::set(T* ptr)
 
 #elif OS(WINDOWS)
 
-// TLS_OUT_OF_INDEXES is not defined on WinCE.
-#ifndef TLS_OUT_OF_INDEXES
-#define TLS_OUT_OF_INDEXES 0xffffffff
-#endif
-
 // The maximum number of TLS keys that can be created. For simplification, we assume that:
 // 1) Once the instance of ThreadSpecific<> is created, it will not be destructed until the program dies.
 // 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.

@@ -94,11 +94,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 #if ENABLE(DRAG_SUPPORT)
 PassRefPtr<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
-#if OS(WINCE)
-    return 0;
-#else
     return DataTransfer::createForDragAndDrop();
-#endif
 }
 #endif
 

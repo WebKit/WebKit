@@ -340,17 +340,10 @@ void PluginView::stop()
 #if defined(XP_WIN) && !PLATFORM(GTK)
     // Unsubclass the window
     if (m_isWindowed) {
-#if OS(WINCE)
-        WNDPROC currentWndProc = (WNDPROC)GetWindowLong(platformPluginWidget(), GWL_WNDPROC);
-
-        if (currentWndProc == PluginViewWndProc)
-            SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)m_pluginWndProc);
-#else
         WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC);
 
         if (currentWndProc == PluginViewWndProc)
             SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)m_pluginWndProc);
-#endif
     }
 #endif // !defined(XP_WIN) || PLATFORM(GTK)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

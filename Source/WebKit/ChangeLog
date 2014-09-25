@@ -1,3 +1,30 @@
+2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WinCE port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=136951
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWinCE.cmake: Removed.
+        * wince/WebCoreSupport/ChromeClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/ChromeClientWinCE.h: Removed.
+        * wince/WebCoreSupport/ContextMenuClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/ContextMenuClientWinCE.h: Removed.
+        * wince/WebCoreSupport/DragClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/DragClientWinCE.h: Removed.
+        * wince/WebCoreSupport/EditorClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/EditorClientWinCE.h: Removed.
+        * wince/WebCoreSupport/FrameLoaderClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/FrameLoaderClientWinCE.h: Removed.
+        * wince/WebCoreSupport/FrameNetworkingContextWinCE.cpp: Removed.
+        * wince/WebCoreSupport/FrameNetworkingContextWinCE.h: Removed.
+        * wince/WebCoreSupport/InspectorClientWinCE.cpp: Removed.
+        * wince/WebCoreSupport/InspectorClientWinCE.h: Removed.
+        * wince/WebCoreSupport/PlatformStrategiesWinCE.cpp: Removed.
+        * wince/WebCoreSupport/PlatformStrategiesWinCE.h: Removed.
+        * wince/WebView.cpp: Removed.
+        * wince/WebView.h: Removed.
+
 2014-09-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] 64-bit Build fix after r173882.

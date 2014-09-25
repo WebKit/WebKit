@@ -33,38 +33,6 @@
 #include "PluginPackage.h"
 #include <wtf/WindowsExtras.h>
 
-#if OS(WINCE)
-// WINCE doesn't support Registry Key Access Rights. The parameter should always be 0
-#ifndef KEY_ENUMERATE_SUB_KEYS
-#define KEY_ENUMERATE_SUB_KEYS 0
-#endif
-
-BOOL PathRemoveFileSpec(LPWSTR moduleFileNameStr)
-{
-    if (!*moduleFileNameStr)
-        return FALSE;
-
-    LPWSTR lastPos = 0;
-    LPWSTR curPos = moduleFileNameStr;
-    do {
-        if (*curPos == L'/' || *curPos == L'\\')
-            lastPos = curPos;
-    } while (*++curPos);
-
-    if (lastPos == curPos - 1)
-        return FALSE;
-
-    if (lastPos)
-        *lastPos = 0;
-    else {
-        moduleFileNameStr[0] = L'\\';
-        moduleFileNameStr[1] = 0;
-    }
-
-    return TRUE;
-}
-#endif
-
 namespace WebCore {
 
 static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& paths)
@@ -238,14 +206,12 @@ static inline void addMozillaPluginDirectories(Vector<String>& directories)
 
 static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& directories)
 {
-#if !OS(WINCE)
     // The new WMP Firefox plugin is installed in \PFiles\Plugins if it can't find any Firefox installs
     WCHAR pluginDirectoryStr[_MAX_PATH + 1];
     DWORD pluginDirectorySize = ::ExpandEnvironmentStringsW(TEXT("%SYSTEMDRIVE%\\PFiles\\Plugins"), pluginDirectoryStr, WTF_ARRAY_LENGTH(pluginDirectoryStr));
 
     if (pluginDirectorySize > 0 && pluginDirectorySize <= WTF_ARRAY_LENGTH(pluginDirectoryStr))
         directories.append(String(pluginDirectoryStr, pluginDirectorySize - 1));
-#endif
 
     DWORD type;
     WCHAR installationDirectoryStr[_MAX_PATH];
@@ -377,7 +343,6 @@ exit:
 
 static inline void addMacromediaPluginDirectories(Vector<String>& directories)
 {
-#if !OS(WINCE)
     WCHAR systemDirectoryStr[MAX_PATH];
 
     if (!GetSystemDirectory(systemDirectoryStr, WTF_ARRAY_LENGTH(systemDirectoryStr)))
@@ -390,7 +355,6 @@ static inline void addMacromediaPluginDirectories(Vector<String>& directories)
 
     PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Shockwave 10"));
     directories.append(macromediaDirectoryStr);
-#endif
 }
 
 Vector<String> PluginDatabase::defaultPluginDirectories()

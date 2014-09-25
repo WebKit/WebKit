@@ -49,10 +49,6 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#if OS(WINCE)
-#include <ResDefCE.h>
-#define MAKEPOINTS(l) (*((POINTS FAR *)&(l)))
-#endif
 
 #define HIGH_BIT_MASK_SHORT 0x8000
 
@@ -164,7 +160,6 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
             setFocusedIndex(index);
     }
 
-#if !OS(WINCE)
     ::SystemParametersInfo(SPI_GETCOMBOBOXANIMATION, 0, &shouldAnimate, 0);
 
     if (shouldAnimate) {
@@ -173,9 +168,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
         if (!::IsRectEmpty(&viewRect))
             ::AnimateWindow(m_popup, defaultAnimationDuration, AW_BLEND);
     } else
-#endif
-
-    ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
+        ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
 
     m_showPopup = true;
 
@@ -199,7 +192,6 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
                 break;
 
             // Steal mouse messages.
-#if !OS(WINCE)
             case WM_NCMOUSEMOVE:
             case WM_NCLBUTTONDOWN:
             case WM_NCLBUTTONUP:
@@ -210,7 +202,6 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
             case WM_NCMBUTTONDOWN:
             case WM_NCMBUTTONUP:
             case WM_NCMBUTTONDBLCLK:
-#endif
             case WM_MOUSEWHEEL:
                 msg.hwnd = m_popup;
                 break;
@@ -601,11 +592,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
             m_bmp.clear();
     }
     if (!m_bmp) {
-#if OS(WINCE)
-        BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size(), BitmapInfo::BitCount16);
-#else
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
-#endif
         void* pixels = 0;
         m_bmp = adoptGDIObject(::CreateDIBSection(m_DC.get(), &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
         if (!m_bmp)
@@ -767,14 +754,10 @@ void PopupMenuWin::registerClass()
     if (haveRegisteredWindowClass)
         return;
 
-#if OS(WINCE)
-    WNDCLASS wcex;
-#else
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.hIconSm        = 0;
     wcex.style          = CS_DROPSHADOW;
-#endif
 
     wcex.lpfnWndProc    = PopupMenuWndProc;
     wcex.cbClsExtra     = 0;
@@ -788,11 +771,7 @@ void PopupMenuWin::registerClass()
 
     haveRegisteredWindowClass = true;
 
-#if OS(WINCE)
-    RegisterClass(&wcex);
-#else
     RegisterClassEx(&wcex);
-#endif
 }
 
 
@@ -819,10 +798,8 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     LRESULT lResult = 0;
 
     switch (message) {
-#if !OS(WINCE)
         case WM_MOUSEACTIVATE:
             return MA_NOACTIVATE;
-#endif
         case WM_SIZE: {
             if (!scrollbar())
                 break;
@@ -966,9 +943,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             }
 
             BOOL shouldHotTrack = FALSE;
-#if !OS(WINCE)
             ::SystemParametersInfo(SPI_GETHOTTRACKING, 0, &shouldHotTrack, 0);
-#endif
 
             RECT bounds;
             GetClientRect(popupHandle(), &bounds);
@@ -1070,11 +1045,9 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             lResult = 0;
             break;
         }
-#if !OS(WINCE)
         case WM_PRINTCLIENT:
             paint(clientRect(), (HDC)wParam);
             break;
-#endif
         default:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
     }

@@ -27,11 +27,6 @@
 #include <windows.h>
 #include <wtf/text/WTFString.h>
 
-#if OS(WINCE)
-// SHGFI_SHELLICONSIZE is not available on WINCE
-#define SHGFI_SHELLICONSIZE         0
-#endif
-
 namespace WebCore {
 
 static const int shell32MultipleFileIconIndex = 54;
@@ -64,9 +59,6 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         return adoptRef(new Icon(sfi.hIcon));
     }
 
-#if OS(WINCE)
-    return 0;
-#else
     WCHAR buffer[MAX_PATH];
     UINT length = ::GetSystemDirectoryW(buffer, WTF_ARRAY_LENGTH(buffer));
     if (!length)
@@ -79,7 +71,6 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     if (!::ExtractIconExW(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
         return 0;
     return adoptRef(new Icon(hIcon));
-#endif
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& r)
@@ -87,12 +78,8 @@ void Icon::paint(GraphicsContext* context, const IntRect& r)
     if (context->paintingDisabled())
         return;
 
-#if OS(WINCE)
-    context->drawIcon(m_hIcon, r, DI_NORMAL);
-#else
     LocalWindowsContext windowContext(context, r);
     DrawIconEx(windowContext.hdc(), r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
-#endif
 }
 
 }

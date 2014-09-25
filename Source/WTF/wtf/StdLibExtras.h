@@ -297,31 +297,6 @@ WTF_EXPORT_PRIVATE bool isCompilationThread();
 
 } // namespace WTF
 
-#if OS(WINCE)
-// Windows CE CRT has does not implement bsearch().
-inline void* wtf_bsearch(const void* key, const void* base, size_t count, size_t size, int (*compare)(const void *, const void *))
-{
-    const char* first = static_cast<const char*>(base);
-
-    while (count) {
-        size_t pos = (count - 1) >> 1;
-        const char* item = first + pos * size;
-        int compareResult = compare(item, key);
-        if (!compareResult)
-            return const_cast<char*>(item);
-        if (compareResult < 0) {
-            count -= (pos + 1);
-            first += (pos + 1) * size;
-        } else
-            count = pos;
-    }
-
-    return 0;
-}
-
-#define bsearch(key, base, count, size, compare) wtf_bsearch(key, base, count, size, compare)
-#endif
-
 // This version of placement new omits a 0 check.
 enum NotNullTag { NotNull };
 inline void* operator new(size_t, NotNullTag, void* location)

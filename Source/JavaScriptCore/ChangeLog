@@ -1,3 +1,32 @@
+2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WinCE port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=136951
+
+        Reviewed by Alex Christensen.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::cacheFlush):
+        * config.h:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherFromOtherThread):
+        (JSC::swapIfBackwards): Deleted.
+        * jit/ExecutableAllocator.h:
+        * jsc.cpp:
+        (main):
+        * runtime/DateConstructor.cpp:
+        * runtime/Options.cpp:
+        (JSC::overrideOptionWithHeuristic):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * testRegExp.cpp:
+        (main):
+        * tools/CodeProfiling.cpp:
+        (JSC::CodeProfiling::notifyAllocator):
+
 2014-09-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: subtract elapsed time while debugger is paused from profile nodes

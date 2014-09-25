@@ -55,12 +55,6 @@
 #include <unistd.h>
 #endif
 
-#if OS(WINCE)
-// From pkfuncs.h (private header file from the Platform Builder)
-#define CACHE_SYNC_ALL 0x07F
-extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLength, DWORD dwFlags);
-#endif
-
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
