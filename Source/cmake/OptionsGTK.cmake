@@ -362,20 +362,26 @@ macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
     set(${_list_name} "${${_list_name}_TMP}")
 endmacro()
 
-build_command(COMMAND_LINE_TO_BUILD)
-# build_command unconditionally adds -i (ignore errors) for make, and there's
-# no reasonable way to turn that off, so we just replace it with -k, which has
-# the same effect, except that the return code will indicate that an error occurred.
-# See: http://www.cmake.org/cmake/help/v3.0/command/build_command.html
-string(REPLACE " -i" " -k" COMMAND_LINE_TO_BUILD ${COMMAND_LINE_TO_BUILD})
-file(WRITE
-    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
-    "#!/bin/sh\n"
-    "${COMMAND_LINE_TO_BUILD} $@"
-)
-file(COPY ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
-  DESTINATION ${CMAKE_BINARY_DIR}
-  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+if (CMAKE_MAJOR_VERSION LESS 3)
+    # Before CMake 3 it was necessary to use a build script instead of using cmake --build directly
+    # to preserve colors and pretty-printing.
+
+    build_command(COMMAND_LINE_TO_BUILD)
+    # build_command unconditionally adds -i (ignore errors) for make, and there's
+    # no reasonable way to turn that off, so we just replace it with -k, which has
+    # the same effect, except that the return code will indicate that an error occurred.
+    # See: http://www.cmake.org/cmake/help/v3.0/command/build_command.html
+    string(REPLACE " -i" " -k" COMMAND_LINE_TO_BUILD ${COMMAND_LINE_TO_BUILD})
+    file(WRITE
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
+        "#!/bin/sh\n"
+        "${COMMAND_LINE_TO_BUILD} $@"
+    )
+    file(COPY ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
+        DESTINATION ${CMAKE_BINARY_DIR}
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE
+    )
+endif ()
 
 if (ENABLE_SUBTLE_CRYPTO)
     find_package(GnuTLS 3.0.0 REQUIRED)
