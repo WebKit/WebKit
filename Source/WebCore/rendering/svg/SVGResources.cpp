@@ -143,8 +143,8 @@ static inline String targetReferenceFromResource(SVGElement& element)
     String target;
     if (is<SVGPatternElement>(element))
         target = downcast<SVGPatternElement>(element).href();
-    else if (isSVGGradientElement(element))
-        target = toSVGGradientElement(element).href();
+    else if (is<SVGGradientElement>(element))
+        target = downcast<SVGGradientElement>(element).href();
     else if (is<SVGFilterElement>(element))
         target = downcast<SVGFilterElement>(element).href();
     else

@@ -82,17 +82,10 @@ private:
 
 void invalidateFilterPrimitiveParent(SVGElement*);
 
-void isSVGFilterPrimitiveStandardAttributes(const SVGFilterPrimitiveStandardAttributes&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { return element.isFilterEffect(); }
-inline bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isFilterEffect(); }
-
-template <typename ArgType>
-struct NodeTypeCastTraits<const SVGFilterPrimitiveStandardAttributes, ArgType> {
-    static bool is(ArgType& node) { return isSVGFilterPrimitiveStandardAttributes(node); }
-};
-
-NODE_TYPE_CASTS(SVGFilterPrimitiveStandardAttributes)
-
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGFilterPrimitiveStandardAttributes)
+    static bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { return element.isFilterEffect(); }
+    static bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return is<SVGElement>(node) && isSVGFilterPrimitiveStandardAttributes(downcast<SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

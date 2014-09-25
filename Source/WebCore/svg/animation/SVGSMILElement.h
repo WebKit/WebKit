@@ -237,17 +237,10 @@ private:
     friend class ConditionEventListener;
 };
 
-void isSVGSMILElement(const SVGSMILElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isSVGSMILElement(const SVGElement& element) { return element.isSMILElement(); }
-inline bool isSVGSMILElement(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isSMILElement(); }
-
-template <typename ArgType>
-struct NodeTypeCastTraits<const SVGSMILElement, ArgType> {
-    static bool is(ArgType& node) { return isSVGSMILElement(node); }
-};
-
-
-NODE_TYPE_CASTS(SVGSMILElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGSMILElement)
+    static bool isSVGSMILElement(const SVGElement& element) { return element.isSMILElement(); }
+    static bool isSVGSMILElement(const Node& node) { return is<SVGElement>(node) && isSVGSMILElement(downcast<SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 }
 

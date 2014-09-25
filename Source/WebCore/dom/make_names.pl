@@ -638,7 +638,7 @@ class $class;
 template <typename ArgType>
 class NodeTypeCastTraits<const $class, ArgType> {
 public:
-    static bool is(ArgType& node) { return checkTagName(node); }
+    static bool isType(ArgType& node) { return checkTagName(node); }
 private:
 END
        ;

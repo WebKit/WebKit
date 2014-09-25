@@ -741,12 +741,12 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 
 template <typename ExpectedType, typename ArgType>
 struct NodeTypeCastTraits {
-    static bool is(ArgType&);
+    static bool isType(ArgType&);
 };
 
 template <typename ExpectedType>
 struct NodeTypeCastTraits<ExpectedType, ExpectedType> {
-    static bool is(ExpectedType&) { return true; }
+    static bool isType(ExpectedType&) { return true; }
 };
 
 // Type checking function for Nodes, to use before casting with downcast<>().
@@ -754,7 +754,7 @@ template <typename ExpectedType, typename ArgType>
 inline bool is(ArgType& node)
 {
     static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return NodeTypeCastTraits<const ExpectedType, const ArgType>::is(node);
+    return NodeTypeCastTraits<const ExpectedType, const ArgType>::isType(node);
 }
 
 template <typename ExpectedType, typename ArgType>
@@ -762,7 +762,7 @@ inline bool is(ArgType* node)
 {
     ASSERT(node);
     static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return NodeTypeCastTraits<const ExpectedType, const ArgType>::is(*node);
+    return NodeTypeCastTraits<const ExpectedType, const ArgType>::isType(*node);
 }
 
 // Downcasting functions for Node types.
@@ -785,7 +785,7 @@ template<typename Target, typename Source> inline typename std::conditional<std:
     template <typename ArgType> \
     class NodeTypeCastTraits<const ClassName, ArgType> { \
     public: \
-        static bool is(ArgType& node) { return is##ClassName(node); } \
+        static bool isType(ArgType& node) { return is##ClassName(node); } \
     private:
 
 #define SPECIALIZE_TYPE_TRAITS_END() \

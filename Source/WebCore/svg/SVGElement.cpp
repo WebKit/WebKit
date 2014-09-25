@@ -452,8 +452,8 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 
 bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
-    if (isSVGGraphicsElement()) {
-        rect = toSVGGraphicsElement(*this).getBBox(styleUpdateStrategy);
+    if (is<SVGGraphicsElement>(*this)) {
+        rect = downcast<SVGGraphicsElement>(*this).getBBox(styleUpdateStrategy);
         return true;
     }
     return false;

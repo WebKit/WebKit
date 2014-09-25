@@ -543,16 +543,16 @@ void SVGUseElement::toClipPath(Path& path)
 {
     ASSERT(path.isEmpty());
 
-    Node* node = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : nullptr;
-    if (!node)
+    SVGElement* element = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : nullptr;
+    if (!element)
         return;
 
-    if (node->isSVGElement() && downcast<SVGElement>(*node).isSVGGraphicsElement()) {
-        if (!isDirectReference(downcast<SVGElement>(*node))) {
+    if (is<SVGGraphicsElement>(element)) {
+        if (!isDirectReference(*element)) {
             // Spec: Indirect references are an error (14.3.5)
             document().accessSVGExtensions().reportError("Not allowed to use indirect reference in <clip-path>");
         } else {
-            toSVGGraphicsElement(*node).toClipPath(path);
+            downcast<SVGGraphicsElement>(*element).toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
             SVGLengthContext lengthContext(this);
             path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));

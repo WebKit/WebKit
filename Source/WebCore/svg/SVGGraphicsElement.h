@@ -82,10 +82,10 @@ private:
     bool m_shouldIsolateBlending;
 };
 
-void isSVGGraphicsElement(const SVGGraphicsElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isSVGGraphicsElement(const SVGElement& element) { return element.isSVGGraphicsElement(); }
-inline bool isSVGGraphicsElement(const Node& node) { return node.isSVGElement() && downcast<SVGElement>(node).isSVGGraphicsElement(); }
-NODE_TYPE_CASTS(SVGGraphicsElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGGraphicsElement)
+    static bool isSVGGraphicsElement(const SVGElement& element) { return element.isSVGGraphicsElement(); }
+    static bool isSVGGraphicsElement(const Node& node) { return is<SVGElement>(node) && isSVGGraphicsElement(downcast<SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

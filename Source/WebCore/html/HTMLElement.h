@@ -151,7 +151,7 @@ inline bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
 
 template <typename ArgType>
 struct NodeTypeCastTraits<const HTMLElement, ArgType> {
-    static bool is(ArgType& node) { return isHTMLElement(node); }
+    static bool isType(ArgType& node) { return isHTMLElement(node); }
 };
 
 NODE_TYPE_CASTS(HTMLElement)

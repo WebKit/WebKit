@@ -74,9 +74,14 @@ private:
     std::unique_ptr<SVGAnimatedTypeAnimator> m_animator;
 };
 
-void isSVGAnimateElement(const SVGAnimateElement&); // Catch unnecessary runtime check of type known at compile time.
-bool isSVGAnimateElement(const Node&);
-NODE_TYPE_CASTS(SVGAnimateElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGAnimateElement)
+    static bool isSVGAnimateElement(const SVGElement& element)
+    {
+        return element.hasTagName(SVGNames::animateTag) || element.hasTagName(SVGNames::animateColorTag)
+            || element.hasTagName(SVGNames::animateTransformTag) || element.hasTagName(SVGNames::setTag);
+    }
+    static bool isSVGAnimateElement(const Node& node) { return is<SVGElement>(node) && isSVGAnimateElement(downcast<SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

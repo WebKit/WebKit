@@ -78,7 +78,7 @@ inline bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
 
 template <typename ArgType>
 struct NodeTypeCastTraits<const MathMLElement, ArgType> {
-    static bool is(ArgType& node) { return isMathMLElement(node); }
+    static bool isType(ArgType& node) { return isMathMLElement(node); }
 };
 
 NODE_TYPE_CASTS(MathMLElement)

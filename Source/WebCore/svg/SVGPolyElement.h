@@ -62,9 +62,10 @@ protected:
     mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
 };
 
-void isSVGPolyElement(const SVGPolyElement&); // Catch unnecessary runtime check of type known at compile time.
-bool isSVGPolyElement(const Node&);
-NODE_TYPE_CASTS(SVGPolyElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGPolyElement)
+    static bool isSVGPolyElement(const SVGElement& element) { return element.hasTagName(SVGNames::polygonTag) || element.hasTagName(SVGNames::polylineTag); }
+    static bool isSVGPolyElement(const Node& node) { return is<SVGElement>(node) && isSVGPolyElement(downcast<SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

@@ -672,7 +672,7 @@ NODE_TYPE_CASTS(Element)
 
 template <>
 struct NodeTypeCastTraits<const Element, const Node> {
-    static bool is(const Node& node) { return node.isElementNode(); }
+    static bool isType(const Node& node) { return node.isElementNode(); }
 };
 
 inline bool Node::hasAttributes() const

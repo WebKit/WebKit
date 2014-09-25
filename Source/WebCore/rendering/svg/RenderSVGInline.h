@@ -30,7 +30,7 @@ class RenderSVGInline : public RenderInline {
 public:
     RenderSVGInline(SVGGraphicsElement&, PassRef<RenderStyle>);
 
-    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(nodeForNonAnonymous()); }
+    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
 
 private:
     void element() const = delete;

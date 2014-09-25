@@ -191,8 +191,8 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     while (true) {
         // Respect xlink:href, take attributes from referenced element
         Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
-        if (refNode && isSVGGradientElement(*refNode)) {
-            current = toSVGGradientElement(refNode);
+        if (refNode && is<SVGGradientElement>(*refNode)) {
+            current = downcast<SVGGradientElement>(refNode);
 
             // Cycle detection
             if (processedGradients.contains(current))

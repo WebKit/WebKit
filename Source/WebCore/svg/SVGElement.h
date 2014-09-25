@@ -221,15 +221,9 @@ struct SVGAttributeHashTranslator {
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
 
-void isSVGElement(const SVGElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
-
-template <typename ArgType>
-struct NodeTypeCastTraits<const SVGElement, ArgType> {
-    static bool is(ArgType& node) { return isSVGElement(node); }
-};
-
-NODE_TYPE_CASTS(SVGElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGElement)
+    static bool isSVGElement(const Node& node) { return node.isSVGElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 inline bool Node::hasTagName(const SVGQualifiedName& name) const
 {

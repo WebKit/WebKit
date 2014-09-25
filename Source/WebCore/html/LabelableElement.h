@@ -56,7 +56,7 @@ inline bool isLabelableElement(const Node& node) { return node.isHTMLElement() &
 
 template <typename ArgType>
 struct NodeTypeCastTraits<const LabelableElement, ArgType> {
-    static bool is(ArgType& node) { return isLabelableElement(node); }
+    static bool isType(ArgType& node) { return isLabelableElement(node); }
 };
 
 NODE_TYPE_CASTS(LabelableElement)

@@ -110,7 +110,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
 
-    SVGAnimateElement& resultAnimationElement = toSVGAnimateElement(*resultElement);
+    SVGAnimateElement& resultAnimationElement = downcast<SVGAnimateElement>(*resultElement);
     ASSERT(resultAnimationElement.m_animatedType);
     ASSERT(resultAnimationElement.m_animatedPropertyType == m_animatedPropertyType);
 
@@ -457,14 +457,6 @@ SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
         m_animator = SVGAnimatorFactory::create(this, targetElement(), m_animatedPropertyType);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return m_animator.get();
-}
-
-bool isSVGAnimateElement(const Node& node)
-{
-    return node.hasTagName(SVGNames::animateTag)
-        || node.hasTagName(SVGNames::animateColorTag)
-        || node.hasTagName(SVGNames::animateTransformTag)
-        || node.hasTagName(SVGNames::setTag);
 }
 
 }

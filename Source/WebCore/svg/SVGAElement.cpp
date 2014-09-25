@@ -160,8 +160,8 @@ void SVGAElement::defaultEventHandler(Event* event)
 
             if (url[0] == '#') {
                 Element* targetElement = treeScope().getElementById(url.substringSharingImpl(1));
-                if (targetElement && isSVGSMILElement(*targetElement)) {
-                    toSVGSMILElement(*targetElement).beginByLinkActivation();
+                if (targetElement && is<SVGSMILElement>(*targetElement)) {
+                    downcast<SVGSMILElement>(*targetElement).beginByLinkActivation();
                     event->setDefaultHandled();
                     return;
                 }
