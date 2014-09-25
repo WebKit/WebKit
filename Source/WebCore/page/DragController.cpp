@@ -639,13 +639,13 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         }
         if (dragMode == DRAG_AUTO) {
             if ((m_dragSourceAction & DragSourceActionImage)
-                && isHTMLImageElement(element)
+                && is<HTMLImageElement>(element)
                 && sourceFrame->settings().loadsImagesAutomatically()) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
                 return element;
             }
             if ((m_dragSourceAction & DragSourceActionLink)
-                && isHTMLAnchorElement(element)
+                && is<HTMLAnchorElement>(element)
                 && downcast<HTMLAnchorElement>(*element).isLiveLink()) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
                 return element;

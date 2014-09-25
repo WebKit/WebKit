@@ -202,7 +202,7 @@ static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && isHTMLFormElement(ele))
+        if (SUCCEEDED(hr) && ele && is<HTMLFormElement>(ele))
             return downcast<HTMLFormElement>(ele);
     }
     return nullptr;

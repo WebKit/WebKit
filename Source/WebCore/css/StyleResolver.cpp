@@ -783,7 +783,7 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
     }
 
     bool needsCollection = false;
-    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
+    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(*element, needsCollection);
     if (needsCollection)
         m_ruleSets.collectFeatures();
 
@@ -1170,7 +1170,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             if (e->hasTagName(tdTag)) {
                 style.setDisplay(TABLE_CELL);
                 style.setFloating(NoFloat);
-            } else if (isHTMLTableElement(e))
+            } else if (is<HTMLTableElement>(e))
                 style.setDisplay(style.isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
@@ -1187,7 +1187,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         }
 
         // Tables never support the -webkit-* values for text-align and will reset back to the default.
-        if (e && isHTMLTableElement(e) && (style.textAlign() == WEBKIT_LEFT || style.textAlign() == WEBKIT_CENTER || style.textAlign() == WEBKIT_RIGHT))
+        if (e && is<HTMLTableElement>(e) && (style.textAlign() == WEBKIT_LEFT || style.textAlign() == WEBKIT_CENTER || style.textAlign() == WEBKIT_RIGHT))
             style.setTextAlign(TASTART);
 
         // Frames and framesets never honor position:relative or position:absolute. This is necessary to

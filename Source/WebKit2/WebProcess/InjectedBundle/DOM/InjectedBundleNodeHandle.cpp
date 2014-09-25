@@ -276,7 +276,7 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
 {
-    if (!isHTMLIFrameElement(*m_node))
+    if (!is<HTMLIFrameElement>(*m_node))
         return nullptr;
 
     Frame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();

@@ -1918,7 +1918,7 @@ void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* 
         document = contextDocument();
     else if (node->isDocumentNode())
         document = toDocument(node);
-    else if (isHTMLIFrameElement(node))
+    else if (is<HTMLIFrameElement>(node))
         document = downcast<HTMLIFrameElement>(*node).contentDocument();
     else {
         ec = TypeError;

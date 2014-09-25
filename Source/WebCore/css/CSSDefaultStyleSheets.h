@@ -45,7 +45,7 @@ public:
     static StyleSheetContents* plugInsStyleSheet;
     static StyleSheetContents* imageControlsStyleSheet;
 
-    static void ensureDefaultStyleSheetsForElement(Element*, bool& changedDefaultStyle);
+    static void ensureDefaultStyleSheetsForElement(Element&, bool& changedDefaultStyle);
     static void loadFullDefaultStyle();
     static void loadSimpleDefaultStyle();
     static void initDefaultStyle(Element*);

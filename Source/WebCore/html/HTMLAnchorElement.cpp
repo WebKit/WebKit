@@ -158,7 +158,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event* event)
     ASSERT(event->target());
     Node* target = event->target()->toNode();
     ASSERT(target);
-    if (!isHTMLImageElement(target))
+    if (!is<HTMLImageElement>(target))
         return;
 
     HTMLImageElement& imageElement = downcast<HTMLImageElement>(*target);

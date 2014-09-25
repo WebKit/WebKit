@@ -40,7 +40,7 @@ HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
     , m_cachedElement(nullptr)
     , m_cachedElementOffsetInArray(0)
 {
-    ASSERT(isHTMLFormElement(ownerNode) || isHTMLFieldSetElement(ownerNode));
+    ASSERT(is<HTMLFormElement>(ownerNode) || is<HTMLFieldSetElement>(ownerNode));
 }
 
 PassRef<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode& ownerNode, CollectionType)
@@ -54,15 +54,15 @@ HTMLFormControlsCollection::~HTMLFormControlsCollection()
 
 const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
 {
-    ASSERT(isHTMLFormElement(ownerNode()) || ownerNode().hasTagName(fieldsetTag));
-    if (isHTMLFormElement(ownerNode()))
+    ASSERT(is<HTMLFormElement>(ownerNode()) || is<HTMLFieldSetElement>(ownerNode()));
+    if (is<HTMLFormElement>(ownerNode()))
         return downcast<HTMLFormElement>(ownerNode()).associatedElements();
     return downcast<HTMLFieldSetElement>(ownerNode()).associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
-    ASSERT(isHTMLFormElement(ownerNode()));
+    ASSERT(is<HTMLFormElement>(ownerNode()));
     return downcast<HTMLFormElement>(ownerNode()).imageElements();
 }
 
@@ -128,7 +128,7 @@ Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    const Vector<HTMLImageElement*>* imagesElements = ownerNode().hasTagName(fieldsetTag) ? nullptr : &formImageElements();
+    const Vector<HTMLImageElement*>* imagesElements = is<HTMLFieldSetElement>(ownerNode()) ? nullptr : &formImageElements();
     if (HTMLElement* item = firstNamedItem(formControlElements(), imagesElements, idAttr, name))
         return item;
 
@@ -161,7 +161,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         }
     }
 
-    if (isHTMLFormElement(ownerNode())) {
+    if (is<HTMLFormElement>(ownerNode())) {
         const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
         for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
             HTMLImageElement& element = *imageElementsArray[i];

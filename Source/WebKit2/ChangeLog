@@ -1,3 +1,21 @@
+2014-09-25  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<HTML*Element>() instead of isHTML*Element() - Part 2
+        https://bugs.webkit.org/show_bug.cgi?id=137103
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<HTML*Element>() instead of isHTML*Element().
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::containsAnyFormElements):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-09-25  Anders Carlsson  <andersca@apple.com>
 
         Expand WK_MAC_TBA and WK_IOS_TBA to the current deployment target version (or NA).

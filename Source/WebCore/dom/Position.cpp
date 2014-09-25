@@ -529,7 +529,7 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
         return true;
         
     // Don't include inline tables.
-    if (isHTMLTableElement(node))
+    if (is<HTMLTableElement>(node))
         return false;
     
     // There is a VisiblePosition inside an empty inline-block container.

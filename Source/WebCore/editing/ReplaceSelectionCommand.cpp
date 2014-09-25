@@ -721,7 +721,7 @@ static void removeHeadContents(ReplacementFragment& fragment)
     auto it = descendantsOfType<Element>(*fragment.fragment()).begin();
     auto end = descendantsOfType<Element>(*fragment.fragment()).end();
     while (it != end) {
-        if (it->hasTagName(baseTag) || it->hasTagName(linkTag) || it->hasTagName(metaTag) || it->hasTagName(styleTag) || isHTMLTitleElement(*it)) {
+        if (is<HTMLBaseElement>(*it) || is<HTMLLinkElement>(*it) || is<HTMLMetaElement>(*it) || is<HTMLStyleElement>(*it) || is<HTMLTitleElement>(*it)) {
             toRemove.append(&*it);
             it.traverseNextSkippingChildren();
             continue;

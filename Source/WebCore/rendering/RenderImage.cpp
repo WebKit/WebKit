@@ -130,7 +130,7 @@ RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImag
     updateAltText();
     imageResource().initialize(this);
 
-    if (isHTMLImageElement(element))
+    if (is<HTMLImageElement>(element))
         m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
 
@@ -514,7 +514,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
         return;
 
     Element* focusedElement = document().focusedElement();
-    if (!focusedElement || !isHTMLAreaElement(focusedElement))
+    if (!focusedElement || !is<HTMLAreaElement>(focusedElement))
         return;
 
     HTMLAreaElement& areaElement = downcast<HTMLAreaElement>(*focusedElement);
@@ -560,7 +560,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
     if (!img || img->isNull())
         return;
 
-    HTMLImageElement* imageElement = (element() && isHTMLImageElement(element())) ? downcast<HTMLImageElement>(element()) : nullptr;
+    HTMLImageElement* imageElement = (element() && is<HTMLImageElement>(element())) ? downcast<HTMLImageElement>(element()) : nullptr;
     CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
     Image* image = imageResource().image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, LayoutSize(rect.size()));
@@ -622,7 +622,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 HTMLMapElement* RenderImage::imageMap() const
 {
-    HTMLImageElement* image = element() && isHTMLImageElement(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
+    HTMLImageElement* image = element() && is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     return image ? image->treeScope().getImageMap(image->fastGetAttribute(usemapAttr)) : nullptr;
 }
 
@@ -657,7 +657,7 @@ void RenderImage::updateAltText()
 
     if (is<HTMLInputElement>(*element()))
         m_altText = downcast<HTMLInputElement>(*element()).altText();
-    else if (isHTMLImageElement(*element()))
+    else if (is<HTMLImageElement>(*element()))
         m_altText = downcast<HTMLImageElement>(*element()).altText();
 }
 

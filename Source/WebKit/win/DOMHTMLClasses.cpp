@@ -559,7 +559,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAcceptCharset(
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::action( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && isHTMLFormElement(m_element));
+    ASSERT(m_element && is<HTMLFormElement>(m_element));
     WTF::String actionString = downcast<HTMLFormElement>(*m_element).action();
     *result = BString(actionString).release();
     return S_OK;
@@ -589,7 +589,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setEnctype(
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::method( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && isHTMLFormElement(m_element));
+    ASSERT(m_element && is<HTMLFormElement>(m_element));
     WTF::String methodString = downcast<HTMLFormElement>(*m_element).method();
     *result = BString(methodString).release();
     return S_OK;

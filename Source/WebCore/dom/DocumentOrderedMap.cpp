@@ -53,23 +53,23 @@ inline bool keyMatchesName(const AtomicStringImpl& key, const Element& element)
 
 inline bool keyMatchesMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && downcast<HTMLMapElement>(element).getName().impl() == &key;
+    return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName().impl() == &key;
 }
 
 inline bool keyMatchesLowercasedMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && downcast<HTMLMapElement>(element).getName().lower().impl() == &key;
+    return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName().lower().impl() == &key;
 }
 
 inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl& key, const Element& element)
 {
     // FIXME: HTML5 specification says we should match both image and object elements.
-    return isHTMLImageElement(element) && downcast<HTMLImageElement>(element).matchesLowercasedUsemap(key);
+    return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).matchesLowercasedUsemap(key);
 }
 
 inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLLabelElement(element) && element.fastGetAttribute(forAttr).impl() == &key;
+    return is<HTMLLabelElement>(element) && element.fastGetAttribute(forAttr).impl() == &key;
 }
 
 inline bool keyMatchesWindowNamedItem(const AtomicStringImpl& key, const Element& element)

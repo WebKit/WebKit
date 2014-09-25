@@ -2021,7 +2021,7 @@ static HTMLFormElement* scanForForm(Element* start)
     auto descendants = descendantsOfType<HTMLElement>(start->document());
     for (auto it = descendants.from(*start), end = descendants.end(); it != end; ++it) {
         HTMLElement& element = *it;
-        if (isHTMLFormElement(&element))
+        if (is<HTMLFormElement>(&element))
             return downcast<HTMLFormElement>(&element);
         if (is<HTMLFormControlElement>(element))
             return downcast<HTMLFormControlElement>(element).form();

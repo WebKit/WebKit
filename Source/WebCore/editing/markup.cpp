@@ -452,7 +452,7 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
 
     if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
         ContainerNode* table = commonAncestorBlock->parentNode();
-        while (table && !isHTMLTableElement(table))
+        while (table && !is<HTMLTableElement>(table))
             table = table->parentNode();
 
         return table;
@@ -934,7 +934,7 @@ static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNod
             collectElementsToRemoveFromFragment(element);
             continue;
         }
-        if (isHTMLHeadElement(element) || isHTMLBodyElement(element))
+        if (is<HTMLHeadElement>(element) || is<HTMLBodyElement>(element))
             toRemove.append(element);
     }
     return toRemove;

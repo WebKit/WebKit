@@ -1392,7 +1392,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
         return false;
     Element* ownerElement = toElement(ownerNode);
 
-    if (!isHTMLStyleElement(ownerElement) && !ownerElement->hasTagName(SVGNames::styleTag))
+    if (!is<HTMLStyleElement>(ownerElement) && !is<SVGStyleElement>(ownerElement))
         return false;
     *result = ownerElement->textContent();
     return true;

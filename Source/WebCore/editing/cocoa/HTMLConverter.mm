@@ -2034,7 +2034,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         if (!listStyleType.length())
             listStyleType = "decimal";
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
-        if (isHTMLOListElement(element)) {
+        if (is<HTMLOListElement>(element)) {
             NSInteger startingItemNumber = downcast<HTMLOListElement>(element).start();
             [list setStartingItemNumber:startingItemNumber];
         }

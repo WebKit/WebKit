@@ -4609,7 +4609,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             inflatedPluginRect.inflateY(yOffset);
 
             if (element != &plugInImageElement) {
-                if (!(isHTMLImageElement(element)
+                if (!(is<HTMLImageElement>(element)
                     && inflatedPluginRect.contains(elementRectRelativeToTopDocument)
                     && elementRectRelativeToTopDocument.width() > pluginRenderBox.width() * minimumOverlappingImageToPluginDimensionScale
                     && elementRectRelativeToTopDocument.height() > pluginRenderBox.height() * minimumOverlappingImageToPluginDimensionScale))

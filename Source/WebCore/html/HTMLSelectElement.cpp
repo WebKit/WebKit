@@ -790,7 +790,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
-        if (isHTMLOptGroupElement(current)) {
+        if (is<HTMLOptGroupElement>(current)) {
             m_listItems.append(current);
             if (Element* nextElement = ElementTraversal::firstWithin(current)) {
                 currentElement = nextElement;

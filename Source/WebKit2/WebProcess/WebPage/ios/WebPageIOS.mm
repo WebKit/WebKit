@@ -2080,7 +2080,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
             if (is<HTMLOptionElement>(item)) {
                 HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
                 information.selectOptions.append(OptionItem(option.text(), false, parentGroupID, option.selected(), option.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
-            } else if (isHTMLOptGroupElement(item)) {
+            } else if (is<HTMLOptGroupElement>(item)) {
                 HTMLOptGroupElement& group = downcast<HTMLOptGroupElement>(*item);
                 parentGroupID++;
                 information.selectOptions.append(OptionItem(group.groupLabelText(), true, 0, false, group.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));

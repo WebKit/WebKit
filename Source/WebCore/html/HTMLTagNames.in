@@ -21,7 +21,7 @@ bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
 body generateTypeHelpers
-br interfaceName=HTMLBRElement
+br interfaceName=HTMLBRElement, generateTypeHelpers
 button constructorNeedsFormElement, generateTypeHelpers
 canvas generateTypeHelpers
 caption interfaceName=HTMLTableCaptionElement, generateTypeHelpers
@@ -60,7 +60,7 @@ h6 interfaceName=HTMLHeadingElement
 head generateTypeHelpers
 header interfaceName=HTMLElement
 hgroup interfaceName=HTMLElement
-hr interfaceName=HTMLHRElement
+hr interfaceName=HTMLHRElement, generateTypeHelpers
 html generateTypeHelpers
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, generateTypeHelpers
@@ -112,7 +112,7 @@ section interfaceName=HTMLElement
 select constructorNeedsFormElement, generateTypeHelpers
 small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, generateTypeHelpers
-span
+span generateTypeHelpers
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser, generateTypeHelpers

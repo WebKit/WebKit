@@ -176,7 +176,7 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
     Element* focusedElement = focusedDocument->focusedElement();
-    if (focusedElement && isHTMLAreaElement(focusedElement))
+    if (focusedElement && is<HTMLAreaElement>(focusedElement))
         return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
 
     AccessibilityObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
@@ -386,7 +386,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 
     bool insideMeterElement = false;
 #if ENABLE(METER_ELEMENT)
-    insideMeterElement = isHTMLMeterElement(node->parentElement());
+    insideMeterElement = is<HTMLMeterElement>(node->parentElement());
 #endif
     
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
@@ -917,7 +917,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
         textChanged(element);
-    else if (attrName == forAttr && isHTMLLabelElement(element))
+    else if (attrName == forAttr && is<HTMLLabelElement>(element))
         labelChanged(element);
 
     if (!attrName.localName().string().startsWith("aria-"))
@@ -947,7 +947,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
 
 void AXObjectCache::labelChanged(Element* element)
 {
-    ASSERT(isHTMLLabelElement(element));
+    ASSERT(is<HTMLLabelElement>(element));
     HTMLElement* correspondingControl = downcast<HTMLLabelElement>(element)->control();
     textChanged(correspondingControl);
 }

@@ -284,7 +284,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             Element& element = toElement(*node);
             AtomicString title = element.fastGetAttribute(titleAttr);
             bool enabledViaScript = false;
-            if (isHTMLLinkElement(element)) {
+            if (is<HTMLLinkElement>(element)) {
                 // <LINK> element
                 HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(element);
                 if (linkElement.isDisabled())
@@ -307,7 +307,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             // set of sheets that will be enabled.
             if (is<SVGStyleElement>(element))
                 sheet = downcast<SVGStyleElement>(element).sheet();
-            else if (isHTMLLinkElement(element))
+            else if (is<HTMLLinkElement>(element))
                 sheet = downcast<HTMLLinkElement>(element).sheet();
             else
                 sheet = downcast<HTMLStyleElement>(element).sheet();
@@ -322,7 +322,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set. Otherwise, just ignore
                     // this sheet.
-                    if (isHTMLStyleElement(element) || !rel.contains("alternate"))
+                    if (is<HTMLStyleElement>(element) || !rel.contains("alternate"))
                         m_preferredStylesheetSetName = m_selectedStylesheetSetName = title;
                 }
                 if (title != m_preferredStylesheetSetName)

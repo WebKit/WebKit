@@ -62,7 +62,7 @@ static bool hasImpliedEndTag(const HTMLStackItem* item)
         || item->hasTagName(dtTag)
         || item->hasTagName(liTag)
         || is<HTMLOptionElement>(item->node())
-        || isHTMLOptGroupElement(item->node())
+        || is<HTMLOptGroupElement>(item->node())
         || item->hasTagName(pTag)
         || item->hasTagName(rbTag)
         || item->hasTagName(rpTag)
@@ -85,7 +85,7 @@ static inline bool isAllWhitespace(const String& string)
 static inline void insert(HTMLConstructionSiteTask& task)
 {
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (isHTMLTemplateElement(*task.parent))
+    if (is<HTMLTemplateElement>(*task.parent))
         task.parent = downcast<HTMLTemplateElement>(*task.parent).content();
 #endif
 
@@ -458,7 +458,7 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
 void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool isDemoted)
 {
     RefPtr<Element> element = createHTMLElement(token);
-    ASSERT(isHTMLFormElement(element.get()));
+    ASSERT(is<HTMLFormElement>(element.get()));
     RefPtr<HTMLFormElement> form = static_pointer_cast<HTMLFormElement>(element.release());
     if (!insideTemplateElement())
         m_form = form;
@@ -531,7 +531,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         findFosterSite(task);
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (isHTMLTemplateElement(*task.parent))
+    if (is<HTMLTemplateElement>(*task.parent))
         task.parent = downcast<HTMLTemplateElement>(*task.parent).content();
 #endif
 
@@ -618,7 +618,7 @@ PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken* token, 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (isHTMLTemplateElement(currentNode()))
+    if (is<HTMLTemplateElement>(currentNode()))
         return downcast<HTMLTemplateElement>(*currentElement()).content()->document();
 #endif
     return currentNode()->document();

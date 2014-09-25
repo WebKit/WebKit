@@ -41,7 +41,7 @@ using namespace HTMLNames;
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomicString& name)
     : CachedLiveNodeList(rootNode, InvalidateForFormControls)
     , m_name(name)
-    , m_isRootedAtDocument(isHTMLFormElement(ownerNode()))
+    , m_isRootedAtDocument(is<HTMLFormElement>(ownerNode()))
 {
 }
 
@@ -86,7 +86,7 @@ void RadioNodeList::setValue(const String& value)
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(const Element& testElement) const
 {
     ASSERT(is<HTMLObjectElement>(testElement) || is<HTMLFormControlElement>(testElement));
-    if (isHTMLFormElement(ownerNode())) {
+    if (is<HTMLFormElement>(ownerNode())) {
         HTMLFormElement* formElement = nullptr;
         if (testElement.hasTagName(objectTag))
             formElement = downcast<HTMLObjectElement>(testElement).form();

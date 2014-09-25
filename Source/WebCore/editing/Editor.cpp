@@ -330,7 +330,7 @@ static HTMLImageElement* imageElementFromImageDocument(Document& document)
     Node* node = body->firstChild();
     if (!node)
         return nullptr;
-    if (!isHTMLImageElement(node))
+    if (!is<HTMLImageElement>(node))
         return nullptr;
     return downcast<HTMLImageElement>(node);
 }

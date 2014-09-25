@@ -257,7 +257,7 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
 HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 {
     for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {
-        if (isHTMLDataListElement(parent))
+        if (is<HTMLDataListElement>(parent))
             return downcast<HTMLDataListElement>(parent);
     }
     return nullptr;
@@ -302,7 +302,7 @@ void HTMLOptionElement::willResetComputedStyle()
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     ContainerNode* parent = parentNode();
-    if (parent && isHTMLOptGroupElement(parent))
+    if (parent && is<HTMLOptGroupElement>(parent))
         return "    " + text();
     return text();
 }
@@ -316,7 +316,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
         return false;
 
     HTMLElement& parentElement = toHTMLElement(*parentNode());
-    return isHTMLOptGroupElement(parentElement) && parentElement.isDisabledFormControl();
+    return is<HTMLOptGroupElement>(parentElement) && parentElement.isDisabledFormControl();
 }
 
 Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode& insertionPoint)

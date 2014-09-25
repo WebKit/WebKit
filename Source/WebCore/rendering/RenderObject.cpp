@@ -41,6 +41,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "LogicalSelectionOffsetCaches.h"
@@ -1917,7 +1918,7 @@ RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
 #endif
     // Respect the image's orientation if it's being used as a full-page image or it's
     // an <img> and the setting to respect it everywhere is set.
-    return (frame().settings().shouldRespectImageOrientation() && node() && isHTMLImageElement(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
+    return (frame().settings().shouldRespectImageOrientation() && node() && is<HTMLImageElement>(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 bool RenderObject::hasOutlineAnnotation() const
@@ -2297,7 +2298,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         curr = curr->parent();
         if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
             curr = toRenderBlock(curr)->continuation();
-    } while (curr && decorations && (!quirksMode || !curr->node() || (!isHTMLAnchorElement(curr->node()) && !curr->node()->hasTagName(fontTag))));
+    } while (curr && decorations && (!quirksMode || !curr->node() || (!is<HTMLAnchorElement>(curr->node()) && !curr->node()->hasTagName(fontTag))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
@@ -2443,7 +2444,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     auto curr = parent();
     while (curr && (!curr->element() || (!curr->isPositioned() && !curr->isBody())) && !curr->isRenderNamedFlowThread()) {
         Element* element = curr->element();
-        if (!skipTables && element && (isHTMLTableElement(element) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
+        if (!skipTables && element && (is<HTMLTableElement>(*element) || isHTMLTableCellElement(*element)))
             break;
  
         float newZoom = curr->style().effectiveZoom();

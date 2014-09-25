@@ -1500,7 +1500,7 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     HRESULT hr;
     IDOMElement* domElement = 0;
 
-    if (isHTMLFormElement(e)) {
+    if (WebCore::is<WebCore::HTMLFormElement>(e)) {
         DOMHTMLFormElement* newElement = new DOMHTMLFormElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(iframeTag)) {

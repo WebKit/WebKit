@@ -81,7 +81,7 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     Node* node = &element();
     while ((node = (forward ? NodeTraversal::next(node) : NodeTraversal::previous(node)))) {
         // Once we encounter a form element, we know we're through.
-        if (isHTMLFormElement(node))
+        if (is<HTMLFormElement>(node))
             break;
         // Look for more radio buttons.
         if (!is<HTMLInputElement>(node))

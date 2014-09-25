@@ -585,7 +585,7 @@ Element* AccessibilityRenderObject::anchorElement() const
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     Node* node = currRenderer->node();
     for ( ; node; node = node->parentNode()) {
-        if (isHTMLAnchorElement(node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
+        if (is<HTMLAnchorElement>(node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
             return toElement(node);
     }
     
@@ -782,7 +782,7 @@ HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
     
     // find if this has a parent that is a label
     for (Node* parentNode = m_renderer->node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (isHTMLLabelElement(parentNode))
+        if (is<HTMLLabelElement>(parentNode))
             return downcast<HTMLLabelElement>(parentNode);
     }
     
@@ -914,7 +914,7 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
         return nullptr;
     
     // Right now, we do not support ARIA links as internal link elements
-    if (!isHTMLAnchorElement(element))
+    if (!is<HTMLAnchorElement>(element))
         return nullptr;
     HTMLAnchorElement& anchor = downcast<HTMLAnchorElement>(*element);
     
@@ -1275,7 +1275,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     
     // don't ignore labels, because they serve as TitleUIElements
     Node* node = m_renderer->node();
-    if (node && isHTMLLabelElement(node))
+    if (node && is<HTMLLabelElement>(node))
         return false;
     
     // Anything that is content editable should not be ignored.
@@ -1507,7 +1507,7 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 
 URL AccessibilityRenderObject::url() const
 {
-    if (isAnchor() && isHTMLAnchorElement(m_renderer->node())) {
+    if (isAnchor() && is<HTMLAnchorElement>(m_renderer->node())) {
         if (HTMLAnchorElement* anchor = downcast<HTMLAnchorElement>(anchorElement()))
             return anchor->href();
     }
@@ -1515,7 +1515,7 @@ URL AccessibilityRenderObject::url() const
     if (isWebArea())
         return m_renderer->document().url();
     
-    if (isImage() && m_renderer->node() && isHTMLImageElement(m_renderer->node()))
+    if (isImage() && m_renderer->node() && is<HTMLImageElement>(m_renderer->node()))
         return downcast<HTMLImageElement>(*m_renderer->node()).src();
     
     if (isInputImage())
@@ -1759,7 +1759,7 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
                 result.append(axobj);
         } else {
             Node* parent = curr->parentNode();
-            if (parent && isHTMLAreaElement(curr) && isHTMLMapElement(parent)) {
+            if (parent && is<HTMLAreaElement>(curr) && is<HTMLMapElement>(parent)) {
                 AccessibilityImageMapLink* areaObject = toAccessibilityImageMapLink(axObjectCache()->getOrCreate(ImageMapLinkRole));
                 HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
                 areaObject->setHTMLAreaElement(downcast<HTMLAreaElement>(curr));
@@ -2158,7 +2158,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
 
     AccessibilityObject* parent = nullptr;
     for (Element* mapParent = area->parentElement(); mapParent; mapParent = mapParent->parentElement()) {
-        if (isHTMLMapElement(mapParent)) {
+        if (is<HTMLMapElement>(mapParent)) {
             parent = accessibilityParentForImageMap(downcast<HTMLMapElement>(mapParent));
             break;
         }
@@ -2208,7 +2208,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
         return nullptr;
     Node* node = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
 
-    if (isHTMLAreaElement(node))
+    if (is<HTMLAreaElement>(node))
         return accessibilityImageMapHitTest(downcast<HTMLAreaElement>(node), point);
     
     if (is<HTMLOptionElement>(node))
@@ -2572,7 +2572,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(trTag))
         return RowRole;
 
-    if (node && isHTMLTableElement(node))
+    if (node && is<HTMLTableElement>(node))
         return TableRole;
 #endif
 
@@ -2586,7 +2586,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(pTag))
         return ParagraphRole;
 
-    if (node && isHTMLLabelElement(node))
+    if (node && is<HTMLLabelElement>(node))
         return LabelRole;
 
     if (node && node->hasTagName(dfnTag))
@@ -2595,7 +2595,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(divTag))
         return DivRole;
 
-    if (node && isHTMLFormElement(node))
+    if (node && is<HTMLFormElement>(node))
         return FormRole;
 
     if (node && node->hasTagName(articleTag))
@@ -2617,9 +2617,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return LandmarkContentInfoRole;
 
 #if ENABLE(VIDEO)
-    if (node && isHTMLVideoElement(node))
+    if (node && is<HTMLVideoElement>(node))
         return VideoRole;
-    if (node && isHTMLAudioElement(node))
+    if (node && is<HTMLAudioElement>(node))
         return AudioRole;
 #endif
     
@@ -3269,7 +3269,7 @@ String AccessibilityRenderObject::stringValueForMSAA() const
 {
     if (isLinkable(*this)) {
         Element* anchor = anchorElement();
-        if (anchor && isHTMLAnchorElement(anchor))
+        if (anchor && is<HTMLAnchorElement>(anchor))
             return downcast<HTMLAnchorElement>(*anchor).href();
     }
 
@@ -3282,7 +3282,7 @@ bool AccessibilityRenderObject::isLinked() const
         return false;
 
     Element* anchor = anchorElement();
-    if (!anchor || !isHTMLAnchorElement(anchor))
+    if (!anchor || !is<HTMLAnchorElement>(anchor))
         return false;
 
     return !downcast<HTMLAnchorElement>(*anchor).href().isEmpty();

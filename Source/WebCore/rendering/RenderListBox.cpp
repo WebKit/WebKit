@@ -118,7 +118,7 @@ void RenderListBox::updateFromElement()
             Font itemFont = style().font();
             if (is<HTMLOptionElement>(element))
                 text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-            else if (isHTMLOptGroupElement(element)) {
+            else if (is<HTMLOptGroupElement>(element)) {
                 text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
@@ -388,7 +388,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     bool isOptionElement = is<HTMLOptionElement>(listItemElement);
     if (isOptionElement)
         itemText = downcast<HTMLOptionElement>(*listItemElement).textIndentedToRespectGroupLabel();
-    else if (isHTMLOptGroupElement(listItemElement))
+    else if (is<HTMLOptGroupElement>(listItemElement))
         itemText = downcast<HTMLOptGroupElement>(*listItemElement).groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
@@ -409,7 +409,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
-    if (isHTMLOptGroupElement(listItemElement)) {
+    if (is<HTMLOptGroupElement>(listItemElement)) {
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());

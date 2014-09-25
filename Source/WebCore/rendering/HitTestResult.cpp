@@ -273,7 +273,7 @@ String HitTestResult::altDisplayString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    if (isHTMLImageElement(*m_innerNonSharedNode)) {
+    if (is<HTMLImageElement>(*m_innerNonSharedNode)) {
         HTMLImageElement& image = downcast<HTMLImageElement>(*m_innerNonSharedNode);
         return displayString(image.fastGetAttribute(altAttr), m_innerNonSharedNode.get());
     }
@@ -362,7 +362,7 @@ bool HitTestResult::mediaSupportsFullscreen() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElt(mediaElement());
-    return (mediaElt && isHTMLVideoElement(mediaElt) && mediaElt->supportsFullscreen());
+    return (mediaElt && is<HTMLVideoElement>(mediaElt) && mediaElt->supportsFullscreen());
 #else
     return false;
 #endif
@@ -377,7 +377,7 @@ HTMLMediaElement* HitTestResult::mediaElement() const
     if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
         return 0;
 
-    if (isHTMLVideoElement(m_innerNonSharedNode.get()) || isHTMLAudioElement(m_innerNonSharedNode.get()))
+    if (is<HTMLVideoElement>(m_innerNonSharedNode.get()) || is<HTMLAudioElement>(m_innerNonSharedNode.get()))
         return toHTMLMediaElement(m_innerNonSharedNode.get());
     return 0;
 }
@@ -424,7 +424,7 @@ void HitTestResult::enterFullscreenForVideo() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement(this->mediaElement());
-    if (mediaElement && isHTMLVideoElement(mediaElement)) {
+    if (mediaElement && is<HTMLVideoElement>(mediaElement)) {
         HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen()) {
             UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
@@ -482,7 +482,7 @@ bool HitTestResult::mediaIsVideo() const
 {
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElt = mediaElement())
-        return isHTMLVideoElement(mediaElt);
+        return is<HTMLVideoElement>(mediaElt);
 #endif
     return false;
 }
@@ -516,7 +516,7 @@ bool HitTestResult::isLiveLink() const
     if (!m_innerURLElement)
         return false;
 
-    if (isHTMLAnchorElement(*m_innerURLElement))
+    if (is<HTMLAnchorElement>(*m_innerURLElement))
         return downcast<HTMLAnchorElement>(*m_innerURLElement).isLiveLink();
 
     if (is<SVGAElement>(*m_innerURLElement))

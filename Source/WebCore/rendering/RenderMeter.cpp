@@ -43,7 +43,7 @@ HTMLMeterElement* RenderMeter::meterElement() const
 {
     ASSERT(element());
 
-    if (isHTMLMeterElement(element()))
+    if (is<HTMLMeterElement>(element()))
         return downcast<HTMLMeterElement>(element());
 
     ASSERT(element()->shadowHost());

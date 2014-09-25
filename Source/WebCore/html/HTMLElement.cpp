@@ -427,7 +427,7 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
         ContainerNode* container = this;
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (isHTMLTemplateElement(*this))
+        if (is<HTMLTemplateElement>(*this))
             container = downcast<HTMLTemplateElement>(*this).content();
 #endif
         replaceChildrenWithFragment(*container, fragment.release(), ec);

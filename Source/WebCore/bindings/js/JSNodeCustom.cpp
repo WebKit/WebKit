@@ -105,12 +105,12 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& v
             // because it is the only thing keeping the image element alive, and if
             // the element is destroyed, its load event will not fire.
             // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
-            if (isHTMLImageElement(element)) {
+            if (is<HTMLImageElement>(element)) {
                 if (downcast<HTMLImageElement>(element).hasPendingActivity())
                     return true;
             }
 #if ENABLE(VIDEO)
-            else if (isHTMLAudioElement(element)) {
+            else if (is<HTMLAudioElement>(element)) {
                 if (!downcast<HTMLAudioElement>(element).paused())
                     return true;
             }

@@ -77,8 +77,8 @@ private:
 };
 
 void isHTMLFrameElementBase(const HTMLFrameElementBase&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLFrameElementBase(const HTMLElement& element) { return isHTMLFrameElement(element) || isHTMLIFrameElement(element); }
-inline bool isHTMLFrameElementBase(const Node& node) { return isHTMLFrameElement(node) || isHTMLIFrameElement(node); }
+inline bool isHTMLFrameElementBase(const HTMLElement& element) { return is<HTMLFrameElement>(element) || is<HTMLIFrameElement>(element); }
+inline bool isHTMLFrameElementBase(const Node& node) { return is<HTMLFrameElement>(node) || is<HTMLIFrameElement>(node); }
 
 NODE_TYPE_CASTS(HTMLFrameElementBase)
 

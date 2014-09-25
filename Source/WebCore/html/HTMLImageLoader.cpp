@@ -49,7 +49,7 @@ HTMLImageLoader::~HTMLImageLoader()
 void HTMLImageLoader::dispatchLoadEvent()
 {
     // HTMLVideoElement uses this class to load the poster image, but it should not fire events for loading or failure.
-    if (isHTMLVideoElement(element()))
+    if (is<HTMLVideoElement>(element()))
         return;
 
     bool errorOccurred = image()->errorOccurred();

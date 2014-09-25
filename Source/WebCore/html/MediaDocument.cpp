@@ -160,7 +160,7 @@ PassRefPtr<DocumentParser> MediaDocument::createParser()
 
 static inline HTMLVideoElement* descendentVideoElement(ContainerNode& node)
 {
-    if (isHTMLVideoElement(node))
+    if (is<HTMLVideoElement>(node))
         return downcast<HTMLVideoElement>(&node);
 
     RefPtr<NodeList> nodeList = node.getElementsByTagNameNS(videoTag.namespaceURI(), videoTag.localName());
@@ -173,7 +173,7 @@ static inline HTMLVideoElement* descendentVideoElement(ContainerNode& node)
 
 static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 {
-    while (node && !isHTMLVideoElement(node))
+    while (node && !is<HTMLVideoElement>(node))
         node = node->parentOrShadowHostNode();
 
     return downcast<HTMLVideoElement>(node);

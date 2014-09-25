@@ -33,6 +33,7 @@
 #include "ChromeClient.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAudioElement.h"
+#include "HTMLBRElement.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "RenderTheme.h"
@@ -62,9 +63,12 @@ StyleSheetContents* CSSDefaultStyleSheets::imageControlsStyleSheet;
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
 
-static inline bool elementCanUseSimpleDefaultStyle(Element* e)
+static inline bool elementCanUseSimpleDefaultStyle(Element& element)
 {
-    return e->hasTagName(htmlTag) || e->hasTagName(headTag) || e->hasTagName(bodyTag) || e->hasTagName(divTag) || e->hasTagName(spanTag) || e->hasTagName(brTag) || isHTMLAnchorElement(e);
+    return is<HTMLHtmlElement>(element) || is<HTMLHeadElement>(element)
+        || is<HTMLBodyElement>(element) || is<HTMLDivElement>(element)
+        || is<HTMLSpanElement>(element) || is<HTMLBRElement>(element)
+        || is<HTMLAnchorElement>(element);
 }
 
 static const MediaQueryEvaluator& screenEval()
@@ -94,7 +98,7 @@ static StyleSheetContents* parseUASheet(const char* characters, unsigned size)
 void CSSDefaultStyleSheets::initDefaultStyle(Element* root)
 {
     if (!defaultStyle) {
-        if (!root || elementCanUseSimpleDefaultStyle(root))
+        if (!root || elementCanUseSimpleDefaultStyle(*root))
             loadSimpleDefaultStyle();
         else
             loadFullDefaultStyle();
@@ -146,14 +150,14 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
 
-void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element, bool& changedDefaultStyle)
+void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element, bool& changedDefaultStyle)
 {
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
         loadFullDefaultStyle();
         changedDefaultStyle = true;
     }
 
-    if (element->isSVGElement() && !svgStyleSheet) {
+    if (element.isSVGElement() && !svgStyleSheet) {
         // SVG rules.
         svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
@@ -162,7 +166,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
     }
 
 #if ENABLE(MATHML)
-    if (element->isMathMLElement() && !mathMLStyleSheet) {
+    if (element.isMathMLElement() && !mathMLStyleSheet) {
         // MathML rules.
         mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
@@ -172,10 +176,10 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
 #endif
 
 #if ENABLE(VIDEO)
-    if (!mediaControlsStyleSheet && (element->hasTagName(videoTag) || isHTMLAudioElement(element))) {
-        String mediaRules = RenderTheme::themeForPage(element->document().page())->mediaControlsStyleSheet();
+    if (!mediaControlsStyleSheet && (is<HTMLVideoElement>(element) || is<HTMLAudioElement>(element))) {
+        String mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
         if (mediaRules.isEmpty())
-            mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document().page())->extraMediaControlsStyleSheet();
+            mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();
         mediaControlsStyleSheet = parseUASheet(mediaRules);
         defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
@@ -184,7 +188,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (!fullscreenStyleSheet && element->document().webkitIsFullScreen()) {
+    if (!fullscreenStyleSheet && element.document().webkitIsFullScreen()) {
         String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
         fullscreenStyleSheet = parseUASheet(fullscreenRules);
         defaultStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
@@ -194,8 +198,8 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (!imageControlsStyleSheet && element->isImageControlsRootElement()) {
-        String imageControlsRules = RenderTheme::themeForPage(element->document().page())->imageControlsStyleSheet();
+    if (!imageControlsStyleSheet && element.isImageControlsRootElement()) {
+        String imageControlsRules = RenderTheme::themeForPage(element.document().page())->imageControlsStyleSheet();
         imageControlsStyleSheet = parseUASheet(imageControlsRules);
         defaultStyle->addRulesFromSheet(imageControlsStyleSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(imageControlsStyleSheet, printEval());
@@ -203,8 +207,8 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
     }
 #endif
 
-    if (!plugInsStyleSheet && (element->hasTagName(objectTag) || element->hasTagName(embedTag))) {
-        String plugInsRules = RenderTheme::themeForPage(element->document().page())->extraPlugInsStyleSheet() + element->document().page()->chrome().client().plugInExtraStyleSheet();
+    if (!plugInsStyleSheet && (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element))) {
+        String plugInsRules = RenderTheme::themeForPage(element.document().page())->extraPlugInsStyleSheet() + element.document().page()->chrome().client().plugInExtraStyleSheet();
         if (plugInsRules.isEmpty())
             plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
         plugInsStyleSheet = parseUASheet(plugInsRules);

@@ -110,7 +110,7 @@ HTMLProgressElement* RenderProgress::progressElement() const
     if (!element())
         return nullptr;
 
-    if (isHTMLProgressElement(element()))
+    if (is<HTMLProgressElement>(element()))
         return downcast<HTMLProgressElement>(element());
 
     ASSERT(element()->shadowHost());

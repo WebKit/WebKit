@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
+#include "HTMLHRElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "RenderElement.h"
@@ -114,7 +115,7 @@ void InsertLineBreakCommand::doApply()
     // FIXME: Need to merge text nodes when inserting just after or before text.
     
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
-        bool needExtraLineBreak = !pos.deprecatedNode()->hasTagName(hrTag) && !isHTMLTableElement(pos.deprecatedNode());
+        bool needExtraLineBreak = !is<HTMLHRElement>(pos.deprecatedNode()) && !is<HTMLTableElement>(pos.deprecatedNode());
         
         insertNodeAt(nodeToInsert.get(), pos);
         

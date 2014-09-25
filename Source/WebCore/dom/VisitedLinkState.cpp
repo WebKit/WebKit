@@ -69,7 +69,7 @@ void VisitedLinkState::invalidateStyleForAllLinks()
 
 inline static LinkHash linkHashForElement(Document& document, Element& element)
 {
-    if (isHTMLAnchorElement(element))
+    if (is<HTMLAnchorElement>(element))
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
     if (const AtomicString* attribute = linkAttribute(element))
         return WebCore::visitedLinkHash(document.baseURL(), *attribute);
@@ -100,7 +100,7 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element& element)
         return InsideVisitedLink;
 
     LinkHash hash;
-    if (isHTMLAnchorElement(element))
+    if (is<HTMLAnchorElement>(element))
         hash = downcast<HTMLAnchorElement>(element).visitedLinkHash();
     else
         hash = WebCore::visitedLinkHash(element.document().baseURL(), *attribute);

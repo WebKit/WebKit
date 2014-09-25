@@ -1,3 +1,20 @@
+2014-09-25  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<HTML*Element>() instead of isHTML*Element() - Part 2
+        https://bugs.webkit.org/show_bug.cgi?id=137103
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<HTML*Element>() instead of isHTML*Element().
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::createInstance):
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLFormElement::action):
+        (DOMHTMLFormElement::method):
+        * WebFrame.cpp:
+        (formElementFromDOMElement):
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Add initial is<>() / downcast<>() support for any type of Nodes
