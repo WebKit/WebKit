@@ -50,6 +50,7 @@ public:
     DownloadClient(Download* download)
         : m_download(download)
         , m_handleResponseLaterID(0)
+        , m_allowOverwrite(false)
     {
     }
 
@@ -90,8 +91,7 @@ public:
             suggestedFilename = decodeURLEscapeSequences(url.lastPathComponent());
         }
 
-        bool overwrite;
-        m_destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, overwrite);
+        m_destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, m_allowOverwrite);
         if (m_destinationURI.isEmpty()) {
 #if PLATFORM(GTK)
             GUniquePtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
@@ -139,7 +139,7 @@ public:
         ASSERT(m_intermediateFile);
         GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_uri(m_destinationURI.utf8().data()));
         GUniqueOutPtr<GError> error;
-        if (!g_file_move(m_intermediateFile.get(), destinationFile.get(), G_FILE_COPY_NONE, nullptr, nullptr, nullptr, &error.outPtr())) {
+        if (!g_file_move(m_intermediateFile.get(), destinationFile.get(), m_allowOverwrite ? G_FILE_COPY_OVERWRITE : G_FILE_COPY_NONE, nullptr, nullptr, nullptr, &error.outPtr())) {
             downloadFailed(platformDownloadDestinationError(m_response, error->message));
             return;
         }
@@ -206,6 +206,7 @@ public:
     GRefPtr<GFile> m_intermediateFile;
     ResourceResponse m_delayedResponse;
     unsigned m_handleResponseLaterID;
+    bool m_allowOverwrite;
 };
 
 void Download::start()
