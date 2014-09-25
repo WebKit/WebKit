@@ -1,3 +1,9 @@
+2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r173944.
+
+        * page/ContextMenuController.cpp: Add missing include.
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Use tighter typing for render objects in RenderGeometryMap
