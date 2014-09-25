@@ -1,3 +1,12 @@
+2014-09-16  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Typo in  webkit_security_manager_register_uri_scheme_as_empty_document documentation
+        https://bugs.webkit.org/show_bug.cgi?id=136852
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] generate-inspector-gresource-manifest.py should receive the list of files from the makefile
