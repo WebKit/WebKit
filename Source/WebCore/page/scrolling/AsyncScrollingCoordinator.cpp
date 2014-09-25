@@ -114,10 +114,10 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
 #if ENABLE(CSS_SCROLL_SNAP)
     frameView->updateSnapOffsets();
     if (const Vector<LayoutUnit>* horizontalSnapOffsets = frameView->horizontalSnapOffsets())
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, *horizontalSnapOffsets, frameView->frame().document()->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, *horizontalSnapOffsets, m_page->deviceScaleFactor());
 
     if (const Vector<LayoutUnit>* verticalSnapOffsets = frameView->verticalSnapOffsets())
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, *verticalSnapOffsets, frameView->frame().document()->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, *verticalSnapOffsets, m_page->deviceScaleFactor());
 #endif
 
     ScrollableAreaParameters scrollParameters;
@@ -423,8 +423,8 @@ void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID node
         node->setReachableContentsSize(scrollingGeometry->reachableContentSize);
         node->setScrollableAreaSize(scrollingGeometry->scrollableAreaSize);
 #if ENABLE(CSS_SCROLL_SNAP)
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, scrollingGeometry->horizontalSnapOffsets, scrolledContentsLayer->deviceScaleFactor());
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, scrollingGeometry->verticalSnapOffsets, scrolledContentsLayer->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, scrollingGeometry->horizontalSnapOffsets, m_page->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, scrollingGeometry->verticalSnapOffsets, m_page->deviceScaleFactor());
 #endif
     }
 }
