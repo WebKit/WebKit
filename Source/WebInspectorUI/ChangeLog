@@ -1,3 +1,16 @@
+2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: sort probe details sidebar sections by source code location string
+        https://bugs.webkit.org/show_bug.cgi?id=137080
+
+        Reviewed by Timothy Hatcher.
+
+        Probe sections should display in the same order as associated breakpoint tree elements.
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.inspect.inspectedProbeSets):
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.inspect):
+
 2014-09-25  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add more free icons for the Web Inspector in GTK+.

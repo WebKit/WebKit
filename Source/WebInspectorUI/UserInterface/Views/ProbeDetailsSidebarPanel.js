@@ -72,9 +72,25 @@ WebInspector.ProbeDetailsSidebarPanel.prototype = {
         if (!(objects instanceof Array))
             objects = [objects];
 
-        this.inspectedProbeSets = objects.filter(function(object) {
+        var inspectedProbeSets = objects.filter(function(object) {
             return object instanceof WebInspector.ProbeSet;
         });
+
+        inspectedProbeSets.sort(function sortBySourceLocation(aProbeSet, bProbeSet) {
+            var aLocation = aProbeSet.breakpoint.sourceCodeLocation;
+            var bLocation = bProbeSet.breakpoint.sourceCodeLocation;
+            var comparisonResult = aLocation.sourceCode.displayName.localeCompare(bLocation.sourceCode.displayName);
+            if (comparisonResult !== 0)
+                return comparisonResult;
+
+            comparisonResult = aLocation.displayLineNumber - bLocation.displayLineNumber;
+            if (comparisonResult !== 0)
+                return comparisonResult;
+
+            return aLocation.displayColumnNumber - bLocation.displayColumnNumber;
+        });
+
+        this.inspectedProbeSets = inspectedProbeSets;
 
         return !!this._inspectedProbeSets.length;
     },
