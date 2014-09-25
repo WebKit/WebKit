@@ -48,9 +48,6 @@ public:
     virtual bool isCapturing() const override { return true; }
     virtual bool isReplaying() const override { return false; }
 
-    void setWithinEventLoopInputExtent(bool);
-    bool withinEventLoopInputExtent() const { return m_withinEventLoopInputExtent; }
-
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
 
@@ -61,7 +58,6 @@ private:
     virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
 
     RefPtr<ReplaySessionSegment> m_segment;
-    bool m_withinEventLoopInputExtent;
 };
 
 } // namespace WebCore

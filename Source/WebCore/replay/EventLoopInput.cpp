@@ -28,25 +28,24 @@
 
 #if ENABLE(WEB_REPLAY)
 
-#include "CapturingInputCursor.h"
+#include <replay/InputCursor.h>
 
 namespace WebCore {
 
-EventLoopInputExtent::EventLoopInputExtent(InputCursor& cursor)
+EventLoopInputExtent::EventLoopInputExtent(JSC::InputCursor& cursor)
+    : EventLoopInputExtent(&cursor) { }
+
+EventLoopInputExtent::EventLoopInputExtent(JSC::InputCursor* cursor)
     : m_cursor(cursor)
 {
-    if (!m_cursor.isCapturing())
-        return;
-
-    static_cast<CapturingInputCursor&>(cursor).setWithinEventLoopInputExtent(true);
+    if (m_cursor)
+        m_cursor->setWithinEventLoopInputExtent(true);
 }
 
 EventLoopInputExtent::~EventLoopInputExtent()
 {
-    if (!m_cursor.isCapturing())
-        return;
-
-    static_cast<CapturingInputCursor&>(m_cursor).setWithinEventLoopInputExtent(false);
+    if (m_cursor)
+        m_cursor->setWithinEventLoopInputExtent(false);
 }
 
 }; // namespace WebCore

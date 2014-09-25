@@ -40,12 +40,27 @@ namespace JSC {
 class InputCursor : public RefCounted<InputCursor> {
     WTF_MAKE_NONCOPYABLE(InputCursor);
 public:
-    InputCursor() { }
+    InputCursor()
+        : m_withinEventLoopInputExtent(false)
+    {
+    }
 
     virtual ~InputCursor() { }
 
     virtual bool isCapturing() const = 0;
     virtual bool isReplaying() const = 0;
+
+    void setWithinEventLoopInputExtent(bool withinEventLoopInputExtent)
+    {
+        // We can be within two input extents when a nested run loop
+        // processes additional user inputs while the debugger is paused.
+        // However, the debugger should not pause when capturing, and we
+        // should not replay event loop inputs while in a nested run loop.
+        ASSERT(m_withinEventLoopInputExtent != withinEventLoopInputExtent || !(isCapturing() || isReplaying()));
+        m_withinEventLoopInputExtent = withinEventLoopInputExtent;
+    }
+
+    bool withinEventLoopInputExtent() const { return m_withinEventLoopInputExtent; }
 
     template <class InputType, class... Args> inline
     void appendInput(Args&&... args)
@@ -64,6 +79,9 @@ public:
     virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) = 0;
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) = 0;
+
+private:
+    bool m_withinEventLoopInputExtent;
 };
 
 } // namespace JSC

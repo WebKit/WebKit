@@ -40,7 +40,6 @@ namespace WebCore {
 
 CapturingInputCursor::CapturingInputCursor(PassRefPtr<ReplaySessionSegment> segment)
     : m_segment(segment)
-    , m_withinEventLoopInputExtent(false)
 {
     LOG(WebReplay, "%-30sCreated capture cursor=%p.\n", "[ReplayController]", this);
 }
@@ -80,13 +79,6 @@ NondeterministicInputBase* CapturingInputCursor::uncheckedLoadInput(InputQueue)
     // Can't load inputs from capturing cursor.
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-void CapturingInputCursor::setWithinEventLoopInputExtent(bool withinEventLoopInputExtent)
-{
-    // We cannot enter more than one extent at a time, since they represent a single run loop.
-    ASSERT(withinEventLoopInputExtent != m_withinEventLoopInputExtent);
-    m_withinEventLoopInputExtent = withinEventLoopInputExtent;
 }
 
 }; // namespace WebCore

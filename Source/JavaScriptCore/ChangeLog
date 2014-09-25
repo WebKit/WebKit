@@ -1,3 +1,29 @@
+2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: Check event loop input extents during replaying too
+        https://bugs.webkit.org/show_bug.cgi?id=136316
+
+        Reviewed by Timothy Hatcher.
+
+        Sometimes we see different nondeterminism during capture and replay
+        executions, so we should add determinism checks during replay too.
+
+        Move the withinEventLoopInputExtent flag to the base class, and tighten
+        the assertion to address <http://webkit.org/b/133019>.
+
+        * replay/InputCursor.h:
+        (JSC::InputCursor::InputCursor):
+        (JSC::InputCursor::setWithinEventLoopInputExtent): Added.
+        This assertion is slightly wrong because it does not account for nested run loops.
+        We can be within two input extents when a nested run loop processes additional
+        user inputs while the debugger is paused.
+
+        This should only be the case when execution is being neither captured or
+        replayed. The debugger should not pause when capturing, and we should not replay
+        event loop inputs while in a nested run loop.
+
+        (JSC::InputCursor::withinEventLoopInputExtent): Added.
+
 2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WinCE port from trunk

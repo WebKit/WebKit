@@ -48,9 +48,10 @@ class EventLoopInputExtent {
     WTF_MAKE_NONCOPYABLE(EventLoopInputExtent);
 public:
     EventLoopInputExtent(JSC::InputCursor&);
+    EventLoopInputExtent(JSC::InputCursor*);
     ~EventLoopInputExtent();
 private:
-    JSC::InputCursor& m_cursor;
+    JSC::InputCursor* m_cursor;
 };
 
 class EventLoopInputBase : public NondeterministicInputBase {
