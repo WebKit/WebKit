@@ -1,5 +1,12 @@
 2014-09-25  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Followup to r173972. Don’t set child process to none before reading from stdout.
+
+        * Scripts/webkitpy/common/system/path.py:
+        (_CygPath.convert):
+
+2014-09-25  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Close stdin to force a flush to stdout if no test path is read during layout tests.
 
         * Scripts/webkitpy/common/system/path.py:
