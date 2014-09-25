@@ -312,6 +312,9 @@ int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, NULL);
 
+    // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
+    g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
+
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/download/create", test_webkit_download_create);
     g_test_add_func("/webkit/download/synch", test_webkit_download_synch);

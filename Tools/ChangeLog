@@ -1,3 +1,23 @@
+2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
+
+        * TestWebKitAPI/Tests/WebKitGtk/testcontextmenu.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testdownload.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testfavicondatabase.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testhittestresult.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testloading.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testmimehandling.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testwebresource.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/testwebview.c:
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] generate-inspector-gresource-manifest.py should receive the list of files from the makefile

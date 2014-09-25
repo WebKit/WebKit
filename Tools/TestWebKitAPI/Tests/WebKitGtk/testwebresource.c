@@ -296,6 +296,9 @@ int main(int argc, char** argv)
 
     gtk_test_init(&argc, &argv, NULL);
 
+    // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
+    g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
+
     server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
     soup_server_run_async(server);
 

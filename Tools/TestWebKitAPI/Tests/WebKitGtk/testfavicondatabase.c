@@ -245,6 +245,9 @@ int main(int argc, char **argv)
 {
     gtk_test_init(&argc, &argv, NULL);
 
+    // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
+    g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
+
     /* This hopefully makes the test independent of the path it's called from. */
     testutils_relative_chdir("Tools/TestWebKitAPI/Tests/WebKitGtk/resources/test.html", argv[0]);
 
