@@ -3,8 +3,8 @@ inspector_files += \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.html) \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.js) \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.css) \
-	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.png) \
-	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.svg) \
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/gtk/*.png) \
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/gtk/*.svg) \
 	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*.js) \
 	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*.css)
 
