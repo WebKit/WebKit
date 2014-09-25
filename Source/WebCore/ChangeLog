@@ -1,3 +1,25 @@
+2014-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Minor refactoring to mediaType/presentationType
+        https://bugs.webkit.org/show_bug.cgi?id=137085
+
+        Reviewed by Eric Carlson.
+
+        Add overloads for presentationType for the audio and video
+        HTML elements so that we don't have to explicity check the
+        tag name (via string comparison) to identify the type of
+        element.
+
+        No new tests. Should create no change in behavior.
+
+        * html/HTMLAudioElement.h: Overload presentationType to always
+        indicate audio type.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaType): Use the presentationType
+        method implementation, rather than duplicating that code.
+        * html/HTMLVideoElement.h: Overload presentationType to always
+        return video type.
+
 2014-09-25  Javier Fernandez  <jfernandez@igalia.com>
 
         ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow

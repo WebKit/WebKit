@@ -5914,10 +5914,7 @@ MediaSession::MediaType HTMLMediaElement::mediaType() const
     if (m_player && m_readyState >= HAVE_METADATA)
         return hasVideo() ? MediaSession::Video : MediaSession::Audio;
 
-    if (hasTagName(HTMLNames::videoTag))
-        return MediaSession::Video;
-
-    return MediaSession::Audio;
+    return presentationType();
 }
 
 MediaSession::MediaType HTMLMediaElement::presentationType() const

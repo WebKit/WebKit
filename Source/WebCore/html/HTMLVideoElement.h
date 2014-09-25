@@ -97,6 +97,8 @@ private:
     virtual void didMoveToNewDocument(Document* oldDocument) override;
     virtual void setDisplayMode(DisplayMode) override;
 
+    virtual MediaSession::MediaType presentationType() const override { return MediaSession::Video; }
+
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
     AtomicString m_defaultPosterURL;
