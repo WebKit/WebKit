@@ -248,6 +248,9 @@ class AbstractPatchQueue(AbstractQueue):
         self._update_status(message, patch)
         self._release_work_item(patch)
 
+    def _unlock_patch(self, patch):
+        self._tool.status_server.release_lock(self.name, patch)
+
     def work_item_log_path(self, patch):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
@@ -425,19 +428,10 @@ class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
         return self._next_patch()
 
     def process_work_item(self, patch):
-        try:
-            if not self.review_patch(patch):
-                return False
+        passed = self.review_patch(patch)
+        if passed:
             self._did_pass(patch)
-            return True
-        except ScriptError, e:
-            if e.exit_code != QueueEngine.handled_error_code:
-                self._did_fail(patch)
-            else:
-                # The subprocess handled the error, but won't have released the patch, so we do.
-                # FIXME: We need to simplify the rules by which _release_work_item is called.
-                self._release_work_item(patch)
-            raise e
+        return passed
 
     def handle_unexpected_error(self, patch, message):
         _log.error(message)
@@ -461,7 +455,11 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
             self._did_error(patch, "%s did not process patch." % self.name)
             return False
         try:
-            return task.run()
+            style_check_succeeded = task.run()
+            if not style_check_succeeded:
+                # Caller unlocks when review_patch returns True, so we only need to unlock on transient failure.
+                self._unlock_patch(patch)
+            return style_check_succeeded
         except UnableToApplyPatch, e:
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False

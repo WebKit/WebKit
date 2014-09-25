@@ -1,3 +1,48 @@
+2014-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        EWS only repeats its cycle every two hours
+        https://bugs.webkit.org/show_bug.cgi?id=137129
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Updated version.
+
+        * QueueStatusServer/config/queues.py: Moved timeout from activeworkitems.py to configuration.
+
+        * QueueStatusServer/handlers/releaselock.py: Added. Releases the lock without removing
+        the patch from work items.
+
+        * QueueStatusServer/index.yaml: No real change, just let AppEngine have its way with entry order.
+
+        * QueueStatusServer/main.py: Added release-lock.
+
+        * QueueStatusServer/model/activeworkitems.py:
+        (ActiveWorkItems.deactivate_expired): Use timeout from configuration.
+
+        * QueueStatusServer/model/workitems.py: Added move_to_end. When we unlock a patch,
+        we don't want it to be immediately picked up again, it's better to give other patches
+        a chance.
+
+        * QueueStatusServer/templates/releaselock.html: Added. Not sure why all commands have
+        these interactive versions, but OK.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: (AbstractEarlyWarningSystem.review_patch):
+        Unlock the patch when a non-final failure occurs (e.g. can't build even without the patch,
+        or svn is down).
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractReviewQueue.process_work_item): Do not try/catch ScriptError around review_patch.
+        Style queue never raises these, and EWS already calls _did_fail, before re-throwing,
+        meaning that these handlers could never do the right thing. We'd either get a duplicate
+        _did_fail, or try to unlock an already unlocked patch.
+        (StyleQueue.review_patch): Unlock the patch on transient failure (such as svn failure),
+        making it eligible for retry immediately.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer._post_release_lock):
+        (StatusServer.release_lock):
+        Added a call to release-lock.
+
 2014-09-25  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Followup to r173972. Don’t set child process to none before reading from stdout.

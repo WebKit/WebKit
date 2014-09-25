@@ -137,6 +137,18 @@ class StatusServer:
         _log.info("Releasing work item %s from %s" % (patch.id(), queue_name))
         return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_work_item(queue_name, patch))
 
+    def _post_release_lock(self, queue_name, patch):
+        release_lock_url = "%s/release-lock" % (self.url)
+        self._browser.open(release_lock_url)
+        self._browser.select_form(name="release_lock")
+        self._browser["queue_name"] = queue_name
+        self._browser["attachment_id"] = unicode(patch.id())
+        self._browser.submit()
+
+    def release_lock(self, queue_name, patch):
+        _log.info("Releasing lock for work item %s from %s" % (patch.id(), queue_name))
+        return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_lock(queue_name, patch))
+
     def update_work_items(self, queue_name, work_items):
         _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
         return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))

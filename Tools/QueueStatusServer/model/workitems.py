@@ -75,3 +75,15 @@ class WorkItems(db.Model, QueuePropertyMixin):
     # Because this uses .key() self.is_saved() must be True or this will throw NotSavedError.
     def remove_work_item(self, attachment_id):
         db.run_in_transaction(self._unguarded_remove, self.key(), attachment_id)
+
+    @staticmethod
+    def _unguarded_move_to_end(key, attachment_id):
+        work_items = db.get(key)
+        if attachment_id in work_items.item_ids:
+            # We should never have more than one entry for a work item, so we only need remove the first.
+            work_items.item_ids.remove(attachment_id)
+            work_items.item_ids.append(attachment_id)
+        work_items.put()
+
+    def move_to_end(self, attachment_id):
+        db.run_in_transaction(self._unguarded_move_to_end, self.key(), attachment_id)

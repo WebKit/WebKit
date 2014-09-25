@@ -1,0 +1,6 @@
+<form name="release_lock" enctype="multipart/form-data" method="post">
+<p>Release queue lock.</p>
+<p>Only use this when a patch is locked erroneously, and there is no bot processing it.
+Patches are also unlocked automatically after a short timeout (currently set to {{ timeout }}), so this is rarely necessary.</p>
+Patch to unlock: <input name="attachment_id" placeholder="patch id in Bugzilla"> from <input name="queue_name" placeholder="queue name"><input type="submit" value="Release lock to re-run"></div>
+</form>

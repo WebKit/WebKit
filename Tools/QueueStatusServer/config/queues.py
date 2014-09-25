@@ -1,3 +1,4 @@
+# Copyright (C) 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from datetime import timedelta
+
 # Eventually the list of queues may be stored in the data store.
 all_queue_names = [
     "commit-queue",
@@ -36,3 +39,7 @@ all_queue_names = [
     "win-ews",
     "efl-wk2-ews",
 ]
+
+# If the patch is still active after this much time, then a bot must have frozen or rebooted,
+# and dropped the patch on the floor. We will ignore the lock in this case, and let another bot pick up.
+work_item_lock_timeout = timedelta(minutes=120)
