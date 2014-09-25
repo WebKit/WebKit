@@ -1,0 +1,5 @@
+#EXTM3U
+
+#EXT-X-STREAM-INF:PROGRAM-ID=1
+sub-playlist-with-cookie.php
+
