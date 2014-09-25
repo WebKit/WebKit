@@ -935,56 +935,56 @@ GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const cha
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformInactiveSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformActiveSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
 {
     GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
