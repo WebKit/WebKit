@@ -1,3 +1,9 @@
+2014-09-25  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed typo fix.
+
+        * UIProcess/API/C/soup/WKContextSoup.cpp:
+
 2014-09-25  Shivakumar JM  <shiva.jm@samsung.com>
 
         [WebKit2] Fix build warning in WebKit2/WebProcess module.
