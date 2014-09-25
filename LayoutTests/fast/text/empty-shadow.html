@@ -1,4 +1,20 @@
-This tests that text drawn with text-shadows of radius 0 and (0, 0) offset are not drawn.
-This is a better outcome than them being drawn in an ugly way.
-This test is successful if the text below is completely invisible.
-<div style="color:#fff;text-shadow:0 0 #000">This is some text</div>
+<p>This tests that text drawn with text-shadows of radius 0 and (0, 0) offset are not drawn.</p>
+<p>In the following tests, the actual text is green while the shadows are blue.</p>
+
+<div style="color: green;">
+<div style="text-shadow: 5px 5px blue;">Text with a single shadow.</div>
+<div style="text-shadow: 0px 0px blue;">Text with one empty (undrawn) shadow.</div>
+<div style="text-shadow: 5px 5px blue, 10px 10px blue;">Text with two shadows</div>
+<div style="text-shadow: 5px 5px blue, 0px 0px blue;">Text with two shadows: first drawn and second empty (undrawn).</div>
+<div style="text-shadow: 0px 0px blue, 10px 10px blue;">Text with two shadows: first empty (undrawn) and second drawn.</div>
+<div style="text-shadow: 0px 0px blue, 0px 0px blue;">Text with two empty (undrawn) shadows.</div>
+</div>
+
+<div style="color: transparent;">
+<div style="text-shadow: 5px 5px blue;">Transparent text with a single shadow.</div>
+<div style="text-shadow: 0px 0px blue;">Transparent text with one empty shadow.</div>
+<div style="text-shadow: 5px 5px blue, 10px 10px blue;">Transparent text with two shadows</div>
+<div style="text-shadow: 7px 7px blue, 0px 0px blue;">Transparent text with two shadows: first drawn and second empty.</div>
+<div style="text-shadow: 0px 0px blue, 10px 10px blue;">Transparent text with two shadows: first drawn and second empty.</div>
+<div style="text-shadow: 0px 0px blue, 0px 0px blue;">Transparent text with two empty shadows.</div>
+</div>

@@ -154,9 +154,6 @@ public:
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
     virtual float positionForOffset(int offset) const;
 
-    // Needs to be public, so the static paintTextWithShadows() function can use it.
-    static FloatSize applyShadowToGraphicsContext(GraphicsContext&, const ShadowData*, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal, bool& didSaveContext);
-
 protected:
     void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);

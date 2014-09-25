@@ -37,6 +37,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextRunRenderingContext.h"
+#include "TextPainter.h"
 
 namespace WebCore {
 
@@ -594,23 +595,17 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyl
         if (!prepareGraphicsContextForTextPainting(context, scalingFactor, textRun, style))
             break;
 
-        FloatSize extraOffset;
-        bool didSaveContext = false;
-        if (shadow)
-            extraOffset = applyShadowToGraphicsContext(*context, shadow, shadowRect, false /* stroked */, true /* opaque */, true /* horizontal */, didSaveContext);
+        {
+            ShadowApplier shadowApplier(*context, shadow, shadowRect);
 
-        context->save();
-        context->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
+            if (!shadowApplier.didSaveContext())
+                context->save();
+            context->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
 
-        scaledFont.drawText(context, textRun, textOrigin + extraOffset, startPosition, endPosition);
+            scaledFont.drawText(context, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 
-        context->restore();
-
-        if (shadow) {
-            if (didSaveContext)
+            if (!shadowApplier.didSaveContext())
                 context->restore();
-            else
-                context->clearShadow();
         }
 
         restoreGraphicsContextAfterTextPainting(context, textRun);
