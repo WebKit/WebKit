@@ -101,7 +101,8 @@ using namespace WebCore;
         return;
     }
 
-    switch ([getCLLocationManagerClass() authorizationStatus]) {
+    CLAuthorizationStatus authorizationStatus = [getCLLocationManagerClass() authorizationStatus];
+    switch (authorizationStatus) {
     case kCLAuthorizationStatusNotDetermined: {
         if (!_isWaitingForAuthorization) {
             _isWaitingForAuthorization = YES;
@@ -109,10 +110,6 @@ using namespace WebCore;
         }
         break;
     }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    case kCLAuthorizationStatusAuthorized:
-#pragma clang diagnostic pop
     case kCLAuthorizationStatusAuthorizedAlways:
     case kCLAuthorizationStatusAuthorizedWhenInUse: {
         [_positionListener geolocationAuthorizationGranted];
@@ -122,6 +119,16 @@ using namespace WebCore;
     case kCLAuthorizationStatusDenied:
         [_positionListener geolocationAuthorizationDenied];
         break;
+    default: // FIXME: Remove this default statement once we have the fix for <rdar://problem/18448331>.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        if (authorizationStatus == kCLAuthorizationStatusAuthorized) {
+            [_positionListener geolocationAuthorizationGranted];
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        break;
+#pragma clang diagnostic pop
     }
 }
 
@@ -162,15 +169,22 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
             _isWaitingForAuthorization = NO;
             [_positionListener geolocationAuthorizationDenied];
             break;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        case kCLAuthorizationStatusAuthorized:
-#pragma clang diagnostic pop
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
             [_positionListener geolocationAuthorizationGranted];
             break;
+        default: // FIXME: Remove this default statement once we have the fix for <rdar://problem/18448331>.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            if (status == kCLAuthorizationStatusAuthorized) {
+                _isWaitingForAuthorization = NO;
+                [_positionListener geolocationAuthorizationGranted];
+                break;
+            }
+            ASSERT_NOT_REACHED();
+            break;
+#pragma clang diagnostic pop
         }
     } else {
         if (!(isAuthorizationGranted(_lastAuthorizationStatus) && isAuthorizationGranted(status))) {
