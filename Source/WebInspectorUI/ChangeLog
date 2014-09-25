@@ -1,3 +1,9 @@
+2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Files in EXTRA_DIST need to be explicitly listed.
+
 2014-09-25  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add more free icons for the Web Inspector in GTK+.
