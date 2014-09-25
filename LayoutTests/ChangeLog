@@ -1,3 +1,11 @@
+2014-09-25  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures after r173515 and r173582.
+        * platform/gtk/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+        Update expectations after r173857.
+
 2014-09-24  Darin Adler  <darin@apple.com>
 
         Old Turkic characters behave as left-to-right instead of right-to-left, because they are encoded as surrogate pairs.
