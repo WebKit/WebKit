@@ -1,3 +1,12 @@
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r173941.
+
+        Rename shadow to m_shadow.
+
+        * rendering/TextPainter.h:
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText):
+
 2014-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION: Text with a zero offset, zero blur shadow vanishes

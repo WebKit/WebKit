@@ -90,7 +90,7 @@ private:
 
     bool shadowIsCompletelyCoveredByText(bool textIsOpaque)
     {
-        return textIsOpaque && shadow && m_shadow->location() == IntPoint() && !m_shadow->radius();
+        return textIsOpaque && m_shadow && m_shadow->location() == IntPoint() && !m_shadow->radius();
     }
 
     FloatSize m_extraOffset;
