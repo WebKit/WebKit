@@ -1,3 +1,9 @@
+2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.6 release.
+
+        * NEWS: Added release notes for 2.4.6.
+
 2014-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.4.5 release.

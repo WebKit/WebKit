@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.4.6
+=================
+
+What's new in WebKitGTK+ 2.4.6?
+
+  - Use free icons for the web inspector.
+  - Make vimeo videos work again with the GStreamer media backend.
+  - Fix selection rendering when unfocused with recent GTK+ versions.
+  - Fix toggle buttons rendering with recent GTK+ versions.
+  - Fix race condition when downloading a file due to the intermediate
+    temporary file.
+
+=================
 WebKitGTK+  2.4.5
 =================
 
