@@ -1,3 +1,18 @@
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] generate-inspector-gresource-manifest.py should receive the list of files from the makefile
+        https://bugs.webkit.org/show_bug.cgi?id=136943
+
+        Reviewed by Philippe Normand.
+
+        Update the script to receive the list of files from the command
+        line instead of scanning the given directories.
+
+        * gtk/generate-inspector-gresource-manifest.py:
+        (get_filenames): Convert filenames to use relative paths.
+        (find_all_files_in_directory): Deleted.
+        (find_all_files_in_directory.select_file): Deleted.
+
 2014-07-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GLib tests fail with recent GTK+ due to runtime warning about deprecated properties

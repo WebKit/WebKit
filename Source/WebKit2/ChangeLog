@@ -1,3 +1,13 @@
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] generate-inspector-gresource-manifest.py should receive the list of files from the makefile
+        https://bugs.webkit.org/show_bug.cgi?id=136943
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Fix the inspector file list and pass it to
+        the generate-inspector-gresource-manifest.py script.
+
 2014-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Older versions of WebKit should use the plugins cache in read only mode

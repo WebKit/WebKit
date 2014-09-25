@@ -124,6 +124,7 @@ DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
 pkgconfig_DATA :=
 gdom_symbol_files :=
+inspector_files :=
 
 if ENABLE_INTROSPECTION
 gir_DATA :=
