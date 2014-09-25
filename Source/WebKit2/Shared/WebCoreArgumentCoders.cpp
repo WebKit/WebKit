@@ -98,12 +98,83 @@ bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTran
 
 void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const TransformationMatrix& transformationMatrix)
 {
-    SimpleArgumentCoder<TransformationMatrix>::encode(encoder, transformationMatrix);
+    encoder << transformationMatrix.m11();
+    encoder << transformationMatrix.m12();
+    encoder << transformationMatrix.m13();
+    encoder << transformationMatrix.m14();
+
+    encoder << transformationMatrix.m21();
+    encoder << transformationMatrix.m22();
+    encoder << transformationMatrix.m23();
+    encoder << transformationMatrix.m24();
+
+    encoder << transformationMatrix.m31();
+    encoder << transformationMatrix.m32();
+    encoder << transformationMatrix.m33();
+    encoder << transformationMatrix.m34();
+
+    encoder << transformationMatrix.m41();
+    encoder << transformationMatrix.m42();
+    encoder << transformationMatrix.m43();
+    encoder << transformationMatrix.m44();
 }
 
 bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, TransformationMatrix& transformationMatrix)
 {
-    return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
+    double m11;
+    if (!decoder.decode(m11))
+        return false;
+    double m12;
+    if (!decoder.decode(m12))
+        return false;
+    double m13;
+    if (!decoder.decode(m13))
+        return false;
+    double m14;
+    if (!decoder.decode(m14))
+        return false;
+
+    double m21;
+    if (!decoder.decode(m21))
+        return false;
+    double m22;
+    if (!decoder.decode(m22))
+        return false;
+    double m23;
+    if (!decoder.decode(m23))
+        return false;
+    double m24;
+    if (!decoder.decode(m24))
+        return false;
+
+    double m31;
+    if (!decoder.decode(m31))
+        return false;
+    double m32;
+    if (!decoder.decode(m32))
+        return false;
+    double m33;
+    if (!decoder.decode(m33))
+        return false;
+    double m34;
+    if (!decoder.decode(m34))
+        return false;
+
+    double m41;
+    if (!decoder.decode(m41))
+        return false;
+    double m42;
+    if (!decoder.decode(m42))
+        return false;
+    double m43;
+    if (!decoder.decode(m43))
+        return false;
+    double m44;
+    if (!decoder.decode(m44))
+        return false;
+
+    transformationMatrix.setMatrix(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
+    return true;
 }
 
 void ArgumentCoder<LinearTimingFunction>::encode(ArgumentEncoder& encoder, const LinearTimingFunction& timingFunction)
