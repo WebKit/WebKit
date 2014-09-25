@@ -56,29 +56,29 @@ namespace JSC {
 
         struct Call {
         public:
-            Call(double startTime, double totalTime = NAN)
+            Call(double startTime, double elapsedTime = NAN)
                 : m_startTime(startTime)
-                , m_totalTime(totalTime)
+                , m_elapsedTime(elapsedTime)
             {
             }
 
             double startTime() const { return m_startTime; }
             void setStartTime(double time)
             {
-                ASSERT_ARG(time, time >= 0.0);
+                ASSERT_ARG(time, time >= 0.0 || isnan(time));
                 m_startTime = time;
             }
 
-            double totalTime() const { return m_totalTime; }
-            void setTotalTime(double time)
+            double elapsedTime() const { return m_elapsedTime; }
+            void setElapsedTime(double time)
             {
-                ASSERT_ARG(time, time >= 0.0);
-                m_totalTime = time;
+                ASSERT_ARG(time, time >= 0.0 || isnan(time));
+                m_elapsedTime = time;
             }
 
         private:
             double m_startTime;
-            double m_totalTime;
+            double m_elapsedTime;
         };
 
         bool operator==(ProfileNode* node) { return m_callIdentifier == node->callIdentifier(); }
@@ -170,7 +170,7 @@ namespace JSC {
         {
             double selfTime = 0.0;
             for (const ProfileNode::Call& call : node->calls())
-                selfTime += call.totalTime();
+                selfTime += call.elapsedTime();
 
             double totalTime = selfTime;
             for (RefPtr<ProfileNode> child : node->children()) {

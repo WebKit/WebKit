@@ -1,3 +1,34 @@
+2014-09-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: subtract elapsed time while debugger is paused from profile nodes
+        https://bugs.webkit.org/show_bug.cgi?id=136796
+
+        Reviewed by Timothy Hatcher.
+
+        Rather than accruing no time to any profile node created while the debugger is paused,
+        we can instead count a node's elapsed time and exclude time elapsed while paused.
+
+        Time for a node may elapse in a non-contiguous fashion depending on the interleaving of
+        didPause, didContinue, willExecute, and didExecute. A node's start time is set to the
+        start of the last such interval that accrues elapsed time.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::ProfileGenerator::beginCallEntry):
+        (JSC::ProfileGenerator::endCallEntry):
+        (JSC::ProfileGenerator::didPause): Added.
+        (JSC::ProfileGenerator::didContinue): Added.
+        * profiler/ProfileGenerator.h:
+        (JSC::ProfileGenerator::didPause): Deleted.
+        (JSC::ProfileGenerator::didContinue): Deleted.
+        * profiler/ProfileNode.h: Rename totalTime to elapsedTime.
+        (JSC::ProfileNode::Call::Call):
+        (JSC::ProfileNode::Call::elapsedTime): Added.
+        (JSC::ProfileNode::Call::setElapsedTime): Added.
+        (JSC::CalculateProfileSubtreeDataFunctor::operator()):
+        (JSC::ProfileNode::Call::totalTime): Deleted.
+        (JSC::ProfileNode::Call::setTotalTime): Deleted.
+
 2014-09-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173839.

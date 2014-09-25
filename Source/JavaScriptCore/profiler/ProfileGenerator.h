@@ -54,8 +54,8 @@ namespace JSC {
         void didExecute(ExecState* callerCallFrame, const CallIdentifier&);
         void exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&);
 
-        void didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&) { m_debuggerPaused = true; }
-        void didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&) { m_debuggerPaused = false; }
+        void didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
+        void didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
 
         void stopProfiling();
 
@@ -74,10 +74,11 @@ namespace JSC {
         RefPtr<Profile> m_profile;
         JSGlobalObject* m_origin;
         unsigned m_profileGroup;
+        // Timestamp is set to NAN when the debugger is not currently paused.
+        double m_debuggerPausedTimestamp;
         RefPtr<ProfileNode> m_rootNode;
         RefPtr<ProfileNode> m_currentNode;
         bool m_foundConsoleStartParent;
-        bool m_debuggerPaused;
     };
 
 } // namespace JSC

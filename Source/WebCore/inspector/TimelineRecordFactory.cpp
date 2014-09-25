@@ -274,7 +274,7 @@ static PassRefPtr<Protocol::Timeline::CPUProfileNodeCall> buildInspectorObject(c
 {
     RefPtr<Protocol::Timeline::CPUProfileNodeCall> result = Protocol::Timeline::CPUProfileNodeCall::create()
         .setStartTime(call.startTime())
-        .setTotalTime(call.totalTime());
+        .setTotalTime(call.elapsedTime());
     return result.release();
 }
 
