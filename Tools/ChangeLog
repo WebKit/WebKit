@@ -1,3 +1,25 @@
+2014-09-25  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [EFL] Split the list of dependencies to make sure that at least the universally available packages get installed
+        https://bugs.webkit.org/show_bug.cgi?id=137117
+
+        Tools/efl/install-dependencies relies on apt-get to install packages.
+        Unfortunately, if a package does not exist (e.g., for a given
+        architecture) then apt-get install is not able to ignore the missing
+        package and install the rest but fails to run entirely (and there
+        seems to be no intent to change this behaviour).
+
+        On ARM64, the luajit package is missing and currently it needs manual
+        editing of install-dependencies to get the script install as much as it
+        can.
+
+        This patch separates the installation of the universally available
+        packages from those which might not be available for all architectures.
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/install-dependencies:
+
 2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WinCE port from trunk

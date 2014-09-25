@@ -71,11 +71,14 @@ function installDependenciesWithApt {
         libxss-dev \
         libxt-dev \
         libxtst-dev \
-        luajit \
         ragel \
         ruby \
         subversion \
         x11proto-print-dev
+
+    # These are dependencies necessary for building WebKitEFL and not available on ARM64.
+    apt-get install \
+        luajit
 
     # These are dependencies necessary for running tests.
     apt-get install \
