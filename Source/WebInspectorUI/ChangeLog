@@ -1,5 +1,14 @@
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: FunctionCall timeline records omit profile data if the debugger has paused
+        https://bugs.webkit.org/show_bug.cgi?id=136805
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Test.html: Add missing include for ScopeChainNode.js.
+
+2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: sort probe details sidebar sections by source code location string
         https://bugs.webkit.org/show_bug.cgi?id=137080
 

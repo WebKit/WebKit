@@ -1,5 +1,21 @@
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: FunctionCall timeline records omit profile data if the debugger has paused
+        https://bugs.webkit.org/show_bug.cgi?id=136805
+
+        Reviewed by Timothy Hatcher.
+
+        Add a test to see that script timeline records contain profiles even when
+        the debugger pauses during timeline capturing.
+
+        * inspector/timeline/debugger-paused-while-recording-expected.txt: Added.
+        * inspector/timeline/debugger-paused-while-recording.html: Added.
+        * inspector/timeline/resources/timeline-helper.js: Added.
+        (callFunction):
+        (hook):
+
+2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
+
         StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
         https://bugs.webkit.org/show_bug.cgi?id=129642
 

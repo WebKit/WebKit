@@ -231,19 +231,19 @@ void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scri
 {
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 
-    if (frame && !m_recordingProfileDepth) {
-        ++m_recordingProfileDepth;
+    if (frame && !m_callStackDepth)
         startProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
-    }
+
+    ++m_callStackDepth;
 }
 
 void InspectorTimelineAgent::didCallFunction(Frame* frame)
 {
-    if (frame && m_recordingProfileDepth) {
-        --m_recordingProfileDepth;
-        ASSERT(m_recordingProfileDepth >= 0);
+    if (frame && m_callStackDepth) {
+        --m_callStackDepth;
+        ASSERT(m_callStackDepth >= 0);
 
-        if (!m_recordingProfileDepth) {
+        if (!m_callStackDepth) {
             if (m_recordStack.isEmpty())
                 return;
 
@@ -405,19 +405,19 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 {
     pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, frame);
 
-    if (frame && !m_recordingProfileDepth) {
-        ++m_recordingProfileDepth;
+    if (frame && !m_callStackDepth) {
+        ++m_callStackDepth;
         startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
     }
 }
 
 void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
 {
-    if (frame && m_recordingProfileDepth) {
-        --m_recordingProfileDepth;
-        ASSERT(m_recordingProfileDepth >= 0);
+    if (frame && m_callStackDepth) {
+        --m_callStackDepth;
+        ASSERT(m_callStackDepth >= 0);
         
-        if (!m_recordingProfileDepth) {
+        if (!m_callStackDepth) {
             if (m_recordStack.isEmpty())
                 return;
 
@@ -691,10 +691,10 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_pageAgent(pageAgent)
     , m_scriptDebugServer(nullptr)
     , m_id(1)
+    , m_callStackDepth(0)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)
     , m_client(client)
-    , m_recordingProfileDepth(0)
     , m_enabled(false)
     , m_enabledFromFrontend(false)
 {

@@ -279,13 +279,13 @@ private:
     Vector<TimelineRecordEntry> m_recordStack;
 
     int m_id;
+    int m_callStackDepth;
     int m_maxCallStackDepth;
     InspectorType m_inspectorType;
     InspectorClient* m_client;
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
-    int m_recordingProfileDepth;
     bool m_enabled;
     bool m_enabledFromFrontend;
 };
