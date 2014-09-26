@@ -1,3 +1,12 @@
+2014-09-26  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Decrease default number of child processes used by Windows.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes):
+        Having too many seems to cause many tests to crash or timeout. 
+        We may even need to make it have only 1 child process if we’re still seeing problems after this.
+
 2014-09-26  Alexey Proskuryakov  <ap@apple.com>
 
         Mac EWS bots do not keep logs as promised
