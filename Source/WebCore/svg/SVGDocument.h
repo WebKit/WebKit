@@ -52,10 +52,10 @@ private:
     FloatPoint m_translate;
 };
 
-inline bool isSVGDocument(const Document& document) { return document.isSVGDocument(); }
-void isSVGDocument(const SVGDocument&); // Catch unnecessary runtime check of type known at compile time.
-
-DOCUMENT_TYPE_CASTS(SVGDocument)
+SPECIALIZE_TYPE_TRAITS_BEGIN(SVGDocument)
+    static bool isSVGDocument(const Document& document) { return document.isSVGDocument(); }
+    static bool isSVGDocument(const Node& node) { return node.isDocumentNode() && isSVGDocument(toDocument(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

@@ -1960,8 +1960,8 @@ bool FrameView::scrollToAnchor(const String& name)
     // Setting to null will clear the current target.
     frame().document()->setCSSTarget(anchorElement);
 
-    if (frame().document()->isSVGDocument()) {
-        if (SVGSVGElement* svg = toSVGDocument(*frame().document()).rootElement()) {
+    if (is<SVGDocument>(frame().document())) {
+        if (SVGSVGElement* svg = downcast<SVGDocument>(*frame().document()).rootElement()) {
             svg->setupInitialView(name, anchorElement);
             if (!anchorElement)
                 return true;

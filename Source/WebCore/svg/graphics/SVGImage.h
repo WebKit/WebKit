@@ -37,6 +37,7 @@ class FrameView;
 class ImageBuffer;
 class Page;
 class RenderBox;
+class SVGSVGElement;
 class SVGImageChromeClient;
 class SVGImageForContainer;
 
@@ -94,6 +95,8 @@ private:
     void drawForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
     void drawPatternForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
         CompositeOperator, const FloatRect&, BlendMode);
+
+    SVGSVGElement* rootElement() const;
 
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;

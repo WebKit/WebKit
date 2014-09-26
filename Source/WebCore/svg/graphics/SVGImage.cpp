@@ -63,12 +63,16 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
-bool SVGImage::hasSingleSecurityOrigin() const
+inline SVGSVGElement* SVGImage::rootElement() const
 {
     if (!m_page)
-        return true;
+        return nullptr;
+    return downcast<SVGDocument>(*m_page->mainFrame().document()).rootElement();
+}
 
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+bool SVGImage::hasSingleSecurityOrigin() const
+{
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return true;
 
@@ -83,10 +87,10 @@ bool SVGImage::hasSingleSecurityOrigin() const
 
 void SVGImage::setContainerSize(const FloatSize& size)
 {
-    if (!m_page || !usesContainerSize())
+    if (!usesContainerSize())
         return;
 
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return;
     RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
@@ -101,9 +105,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
 
 IntSize SVGImage::containerSize() const
 {
-    if (!m_page)
-        return IntSize();
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return IntSize();
 
@@ -262,26 +264,22 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
 
 RenderBox* SVGImage::embeddedContentBox() const
 {
-    if (!m_page)
-        return 0;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
-        return 0;
+        return nullptr;
     return toRenderBox(rootElement->renderer());
 }
 
 FrameView* SVGImage::frameView() const
 {
     if (!m_page)
-        return 0;
+        return nullptr;
     return m_page->mainFrame().view();
 }
 
 bool SVGImage::hasRelativeWidth() const
 {
-    if (!m_page)
-        return false;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicWidth().isPercent();
@@ -289,9 +287,7 @@ bool SVGImage::hasRelativeWidth() const
 
 bool SVGImage::hasRelativeHeight() const
 {
-    if (!m_page)
-        return false;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicHeight().isPercent();
@@ -299,9 +295,7 @@ bool SVGImage::hasRelativeHeight() const
 
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    if (!m_page)
-        return;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return;
 
@@ -318,9 +312,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 // FIXME: support catchUpIfNecessary.
 void SVGImage::startAnimation(CatchUpAnimation)
 {
-    if (!m_page)
-        return;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return;
     rootElement->unpauseAnimations();
@@ -329,9 +321,7 @@ void SVGImage::startAnimation(CatchUpAnimation)
 
 void SVGImage::stopAnimation()
 {
-    if (!m_page)
-        return;
-    SVGSVGElement* rootElement = toSVGDocument(m_page->mainFrame().document())->rootElement();
+    SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return;
     rootElement->pauseAnimations();
