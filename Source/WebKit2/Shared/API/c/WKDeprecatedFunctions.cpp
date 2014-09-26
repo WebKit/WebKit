@@ -53,6 +53,12 @@ WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef);
 
+WK_EXPORT bool WKInspectorIsDebuggingJavaScript(WKInspectorRef);
+WK_EXPORT void WKInspectorToggleJavaScriptDebugging(WKInspectorRef);
+
+WK_EXPORT bool WKInspectorIsProfilingJavaScript(WKInspectorRef);
+WK_EXPORT void WKInspectorToggleJavaScriptProfiling(WKInspectorRef);
+
 #if PLATFORM(MAC)
 WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext);
 #endif
@@ -98,6 +104,24 @@ void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef)
 {
     return false;
+}
+
+bool WKInspectorIsDebuggingJavaScript(WKInspectorRef)
+{
+    return false;
+}
+
+void WKInspectorToggleJavaScriptDebugging(WKInspectorRef)
+{
+}
+
+bool WKInspectorIsProfilingJavaScript(WKInspectorRef)
+{
+    return false;
+}
+
+void WKInspectorToggleJavaScriptProfiling(WKInspectorRef)
+{
 }
 
 #if PLATFORM(MAC)

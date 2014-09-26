@@ -1,3 +1,14 @@
+2014-09-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add WKInspector back function stubs that went missing from r173929.
+        My changes to WKDeprecatedFunctions.cpp got lost in the shuffle.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKInspectorIsDebuggingJavaScript):
+        (WKInspectorToggleJavaScriptDebugging):
+        (WKInspectorIsProfilingJavaScript):
+        (WKInspectorToggleJavaScriptProfiling):
+
 2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r173929): Web inspector doesn't work after r173929 when INSPECTOR_SERVER is enabled
