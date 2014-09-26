@@ -1,3 +1,15 @@
+2014-09-25  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Minibrowser : Fix the 'Escape' button issue to exit fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=136854
+
+        Reviewed by Gyuyoung Kim.
+
+        'Escape' key should exit fullscreen first and then should be used to stop page load.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
 2014-09-25  Dean Jackson  <dino@apple.com>
 
         Add Said to the contributors list so his name completes in bugzilla.

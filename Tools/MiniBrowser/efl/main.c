@@ -545,8 +545,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "F5") || (!strcmp(ev->key, "r") && ctrlPressed)) {
         info("Reload (F5 or Ctrl+r) was pressed, reloading...");
         ewk_view_reload(ewk_view);
-    } else if (!strcmp(ev->key, "F6") || !strcmp(ev->key, "Escape")) {
-        info("Stop (F6 or Escape) was pressed, stop loading.");
+    } else if (!strcmp(ev->key, "F6")) {
+        info("Stop (F6) was pressed, stop loading.");
         ewk_view_stop(ewk_view);
     } else if (!strcmp(ev->key, "F7")) {
         Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
@@ -578,6 +578,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
             history_list_hide(window);
         else if (elm_win_fullscreen_get(window->elm_window))
             ewk_view_fullscreen_exit(ewk_view);
+        else
+            ewk_view_stop(ewk_view);
     } else if (ctrlPressed && (!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract"))) {
         if (zoom_level_set(ewk_view, window->current_zoom_level - 1))
             window->current_zoom_level--;
