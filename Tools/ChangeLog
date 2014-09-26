@@ -1,3 +1,13 @@
+2014-09-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix the gst-libav build on ARM Thumb2
+        https://bugs.webkit.org/show_bug.cgi?id=137022
+
+        Reviewed by Zoltan Herczeg.
+
+        * efl/jhbuild.modules:
+        * efl/patches/gst-libav.patch: Added.
+
 2014-09-26  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [EFL] Bump up dependencies not to conflict with the GTK port.

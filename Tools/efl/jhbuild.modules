@@ -262,7 +262,9 @@
     </dependencies>
     <branch repo="gstreamer"
             module="gst-libav/gst-libav-1.2.1.tar.xz" version="1.2.1"
-            hash="sha256:fd152b7aec56ae76ad58b9759913a8bfe1792bdf64f260d0acaba75b75076676"/>
+            hash="sha256:fd152b7aec56ae76ad58b9759913a8bfe1792bdf64f260d0acaba75b75076676">
+      <patch file="gst-libav.patch" strip="1"/>
+    </branch>
   </autotools> 
 
   <autotools id="libseccomp" autogen-sh="configure">
