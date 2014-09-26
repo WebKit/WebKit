@@ -1,5 +1,14 @@
 2014-09-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Mac EWS bots do not keep logs as promised
+        https://bugs.webkit.org/show_bug.cgi?id=137151
+
+        Reviewed by Ryosuke Niwa.
+
+        * EWSTools/start-queue-mac.sh: Actually keep the logs for 14 days.
+
+2014-09-26  Alexey Proskuryakov  <ap@apple.com>
+
         Get rid of webkit-queues dashboard
         https://bugs.webkit.org/show_bug.cgi?id=137141
 

@@ -1,5 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -45,8 +46,9 @@ while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +
     # Delete log files older than 14 days, move aside the main mac-ews.log file to prevent it from growing extra large.
     cd /Volumes/Data/EWS/$QUEUE_NAME-logs
     find . -mtime +14 -delete
-    rm $QUEUE_NAME.old
-    mv $QUEUE_NAME.log $QUEUE_NAME.old
+    if [ -s $QUEUE_NAME.log ]; then
+        mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
+    fi
     cd /Volumes/Data/EWS/Webkit
     
     # Delete WebKitBuild to force a clean build
