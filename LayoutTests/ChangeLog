@@ -1,3 +1,9 @@
+2014-09-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Mark SVG 1.1 tests are flaky.
+
+        * platform/efl/TestExpectations:
+
 2014-09-25  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should sink object allocations
