@@ -130,6 +130,9 @@ private:
     void appendCFFTable(Vector<char>&) const;
     void appendVORGTable(Vector<char>&) const;
 
+    template <typename T>
+    Vector<char> transcodeGlyphPaths(float width, const T& glyphElement, FloatRect& boundingBox) const;
+
     void addCodepointRanges(const UnicodeRanges&, HashSet<uint16_t>& glyphSet) const;
     void addCodepoints(const HashSet<String>& codepoints, HashSet<uint16_t>& glyphSet) const;
     void addGlyphNames(const HashSet<String>& glyphNames, HashSet<uint16_t>& glyphSet) const;
@@ -228,10 +231,10 @@ void SVGToOTFFontConverter::appendHEADTable(Vector<char>& result) const
     write32(result, 0); // Last half of creation date
     write32(result, 0); // First half of modification date
     write32(result, 0); // Last half of modification date
-    write16(result, std::numeric_limits<int16_t>::min()); // Minimum X
-    write16(result, std::numeric_limits<int16_t>::min()); // Minimum Y
-    write16(result, std::numeric_limits<int16_t>::max()); // Maximum X
-    write16(result, std::numeric_limits<int16_t>::max()); // Maximum Y
+    write16(result, m_boundingBox.x()); // Minimum X
+    write16(result, m_boundingBox.y()); // Minimum Y
+    write16(result, m_boundingBox.maxX()); // Maximum X
+    write16(result, m_boundingBox.maxY()); // Maximum Y
     write16(result, (m_italic ? 1 << 1 : 0) | (m_weight >= 7 ? 1 : 0));
     write16(result, 3); // Smallest readable size in pixels
     write16(result, 0); // Might contain LTR or RTL glyphs
@@ -603,7 +606,7 @@ void SVGToOTFFontConverter::appendVMTXTable(Vector<char>& result) const
 void SVGToOTFFontConverter::addCodepointRanges(const UnicodeRanges& unicodeRanges, HashSet<Glyph>& glyphSet) const
 {
     for (auto& unicodeRange : unicodeRanges) {
-        for (auto codepoint = unicodeRange.first; codepoint < unicodeRange.second; ++codepoint) {
+        for (auto codepoint = unicodeRange.first; codepoint <= unicodeRange.second; ++codepoint) {
             if (!codepoint || codepoint >= std::numeric_limits<Codepoint>::max())
                 continue;
             auto iterator = m_codepointToIndexMap.find(codepoint);
@@ -660,7 +663,7 @@ auto SVGToOTFFontConverter::computeKerningData(bool (T::*buildKerningPair)(SVGKe
             addGlyphNames(kerningPair.glyphName1, glyphSet1);
             addGlyphNames(kerningPair.glyphName2, glyphSet2);
             addCodepoints(kerningPair.unicodeName1, glyphSet1);
-            addCodepoints(kerningPair.unicodeName2, glyphSet1);
+            addCodepoints(kerningPair.unicodeName2, glyphSet2);
 
             // FIXME: Use table format 2 so we don't have to append each of these one by one
             for (auto& glyph1 : glyphSet1) {
@@ -835,7 +838,7 @@ private:
 };
 
 template <typename T>
-static Vector<char> transcodeGlyphPaths(float width, const T& glyphElement, FloatRect& boundingBox)
+Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const T& glyphElement, FloatRect& boundingBox) const
 {
     Vector<char> result;
     auto& dAttribute = glyphElement.fastGetAttribute(SVGNames::dAttr);
@@ -851,11 +854,11 @@ static Vector<char> transcodeGlyphPaths(float width, const T& glyphElement, Floa
     // FIXME: If we are vertical, use vert_origin_x and vert_origin_y
     bool ok;
     float horizontalOriginX = glyphElement.fastGetAttribute(SVGNames::horiz_origin_xAttr).toFloat(&ok);
-    if (!ok)
-        horizontalOriginX = 0;
+    if (!ok && m_fontFaceElement)
+        horizontalOriginX = m_fontFaceElement->horizontalOriginX();
     float horizontalOriginY = glyphElement.fastGetAttribute(SVGNames::horiz_origin_yAttr).toFloat(&ok);
-    if (!ok)
-        horizontalOriginY = 0;
+    if (!ok && m_fontFaceElement)
+        horizontalOriginY = m_fontFaceElement->horizontalOriginY();
 
     CFFBuilder builder(result, width, FloatPoint(horizontalOriginX, horizontalOriginY));
     SVGPathStringSource source(dAttribute);
@@ -1062,7 +1065,6 @@ Vector<char> SVGToOTFFontConverter::convertSVGToOTFFont()
     for (size_t i = 0; i < kDirectoryEntrySize * numTables; ++i)
         result.append(0);
 
-    // FIXME: Implement more tables, like vhea and vmtx (and kern!)
     appendTable("CFF ", result, &SVGToOTFFontConverter::appendCFFTable);
     appendTable("OS/2", result, &SVGToOTFFontConverter::appendOS2Table);
     appendTable("VORG", result, &SVGToOTFFontConverter::appendVORGTable);
