@@ -1,3 +1,9 @@
+2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2014-08-25  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] ASSERT failure in WebKitWebSource in StreamingClient

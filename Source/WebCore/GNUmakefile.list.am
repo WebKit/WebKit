@@ -6329,6 +6329,7 @@ platform_sources += \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.h \
+	Source/WebCore/platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/TextCombinerGStreamer.cpp \
