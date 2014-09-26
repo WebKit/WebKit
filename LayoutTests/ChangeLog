@@ -1,3 +1,10 @@
+2014-09-26  Roger Fong  <roger_fong@apple.com>
+
+        [Mac] Some inspector tests time out following r173992.
+        https://bugs.webkit.org/show_bug.cgi?id=137157
+
+        * platform/mac/TestExpectations:
+
 2014-09-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix the handling of infinity in track growth limits

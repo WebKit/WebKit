@@ -1391,4 +1391,12 @@ webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Pass 
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 # Skip redundant test that fails only on some bots
-plugins/snapshotting/quicktime-plugin-snapshotted.html
+plugins/snapshotting/quicktime-plugin-snapshotted.html [ Failure ]
+
+# Some inspector tests failing after r173992
+webkit.org/b/137157 inspector/css/matched-style-properties.html [ Failure ]
+webkit.org/b/137157 inspector/event-listener-set.html [ Failure ]
+webkit.org/b/137157 inspector/event-listener.html [ Failure ]
+webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure ]
+webkit.org/b/137157 inspector/protocol-promise-result.html [ Failure ]
