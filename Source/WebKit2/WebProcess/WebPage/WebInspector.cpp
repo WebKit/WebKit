@@ -64,6 +64,9 @@ WebInspector::WebInspector(WebPage* page)
     : m_page(page)
     , m_attached(false)
     , m_previousCanAttach(false)
+#if ENABLE(INSPECTOR_SERVER)
+    , m_remoteFrontendConnected(false)
+#endif
 {
 }
 
@@ -213,23 +216,26 @@ void WebInspector::sendMessageToBackend(const String& message)
 
 bool WebInspector::sendMessageToFrontend(const String& message)
 {
-#if !ENABLE(INSPECTOR_SERVER)
-    m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);
-#else
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
+#if ENABLE(INSPECTOR_SERVER)
+    if (m_remoteFrontendConnected)
+        WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
+    else
 #endif
+        m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);
     return true;
 }
 
 #if ENABLE(INSPECTOR_SERVER)
 void WebInspector::remoteFrontendConnected()
 {
+    m_remoteFrontendConnected = true;
     bool isAutomaticInspection = false;
     m_page->corePage()->inspectorController().connectFrontend(this, isAutomaticInspection);
 }
 
 void WebInspector::remoteFrontendDisconnected()
 {
+    m_remoteFrontendConnected = false;
     m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
 }
 #endif

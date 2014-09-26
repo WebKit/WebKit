@@ -104,6 +104,9 @@ private:
 
     bool m_attached;
     bool m_previousCanAttach;
+#if ENABLE(INSPECTOR_SERVER)
+    bool m_remoteFrontendConnected;
+#endif
 };
 
 } // namespace WebKit
