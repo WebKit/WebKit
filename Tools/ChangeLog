@@ -1,3 +1,9 @@
+2014-09-25  Dean Jackson  <dino@apple.com>
+
+        Add Said to the contributors list so his name completes in bugzilla.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         EWS only repeats its cycle every two hours
