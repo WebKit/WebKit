@@ -1,3 +1,11 @@
+2014-09-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Unreviewed gardening after r173992. Skip inspector/timelines/.
+
+        * TestExpectations: mark inspector/timelines/ as Skip, since
+        it seems to be running into unexplained nondeterminism similar to
+        inspector/debugger/ tests. These should be investigated together.
+
 2014-09-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Mark SVG 1.1 tests are flaky.
