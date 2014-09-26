@@ -109,6 +109,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case HardPhantom:
     case Check:
     case ExtractOSREntryLocal:
+    case CheckStructureImmediate:
         return;
         
     case BitAnd:
@@ -273,6 +274,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ProfileDidCall:
     case StoreBarrier:
     case StoreBarrierWithNullCheck:
+    case PutByOffsetHint:
+    case PutStructureHint:
         write(SideState);
         return;
         
@@ -787,17 +790,15 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case NewObject:
     case NewRegexp:
     case NewStringObject:
-        read(HeapObjectCount);
-        write(HeapObjectCount);
-        return;
-        
+    case PhantomNewObject:
+    case MaterializeNewObject:
     case NewFunctionNoCheck:
     case NewFunction:
     case NewFunctionExpression:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
-
+        
     case RegExpExec:
     case RegExpTest:
         read(RegExpState);

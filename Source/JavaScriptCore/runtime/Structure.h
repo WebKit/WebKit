@@ -433,6 +433,10 @@ public:
 
     PassRefPtr<StructureShape> toStructureShape(JSValue);
     
+    // Determines if the two structures match enough that this one could be used for allocations
+    // of the other one.
+    bool canUseForAllocationsOf(Structure*);
+    
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dumpBrief(PrintStream&, const CString&) const;

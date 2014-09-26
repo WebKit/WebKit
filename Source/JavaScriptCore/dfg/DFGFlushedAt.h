@@ -52,8 +52,6 @@ public:
     {
         if (format == DeadFlush)
             ASSERT(!virtualRegister.isValid());
-        else
-            ASSERT(virtualRegister.isValid());
     }
     
     bool operator!() const { return m_format == DeadFlush; }

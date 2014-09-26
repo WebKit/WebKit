@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -368,6 +368,7 @@
     <ClCompile Include="..\dfg\DFGArrayMode.cpp" />
     <ClCompile Include="..\dfg\DFGAtTailAbstractState.cpp" />
     <ClCompile Include="..\dfg\DFGAvailability.cpp" />
+    <ClCompile Include="..\dfg\DFGAvailabilityMap.cpp" />
     <ClCompile Include="..\dfg\DFGBackwardsPropagationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGBasicBlock.cpp" />
     <ClCompile Include="..\dfg\DFGBinarySwitch.cpp" />
@@ -410,6 +411,7 @@
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGInsertOSRHintsForUpdate.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGJITCode.cpp" />
@@ -439,12 +441,17 @@
     <ClCompile Include="..\dfg\DFGOSRExitCompilerCommon.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitJumpPlaceholder.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp" />
+    <ClCompile Include="..\dfg\DFGObjectAllocationSinkingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGObjectMaterializationData.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomCanonicalizationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPhiChildren.cpp" />
     <ClCompile Include="..\dfg\DFGPlan.cpp" />
+    <ClCompile Include="..\dfg\DFGPrePostNumbering.cpp" />
     <ClCompile Include="..\dfg\DFGPredictionInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPromotedHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGPureValue.cpp" />
     <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
@@ -493,7 +500,9 @@
     <ClCompile Include="..\ftl\FTLDWARFRegister.cpp" />
     <ClCompile Include="..\ftl\FTLExitArgument.cpp" />
     <ClCompile Include="..\ftl\FTLExitArgumentForOperand.cpp" />
+    <ClCompile Include="..\ftl\FTLExitPropertyValue.cpp" />
     <ClCompile Include="..\ftl\FTLExitThunkGenerator.cpp" />
+    <ClCompile Include="..\ftl\FTLExitTimeObjectMaterialization.cpp" />
     <ClCompile Include="..\ftl\FTLExitValue.cpp" />
     <ClCompile Include="..\ftl\FTLFail.cpp" />
     <ClCompile Include="..\ftl\FTLForOSREntryJITCode.cpp" />
@@ -508,6 +517,7 @@
     <ClCompile Include="..\ftl\FTLOSREntry.cpp" />
     <ClCompile Include="..\ftl\FTLOSRExit.cpp" />
     <ClCompile Include="..\ftl\FTLOSRExitCompiler.cpp" />
+    <ClCompile Include="..\ftl\FTLOperations.cpp" />
     <ClCompile Include="..\ftl\FTLOutput.cpp" />
     <ClCompile Include="..\ftl\FTLRecoveryOpcode.cpp" />
     <ClCompile Include="..\ftl\FTLRegisterAtOffset.cpp" />
@@ -993,6 +1003,7 @@
     <ClInclude Include="..\dfg\DFGArrayMode.h" />
     <ClInclude Include="..\dfg\DFGAtTailAbstractState.h" />
     <ClInclude Include="..\dfg\DFGAvailability.h" />
+    <ClInclude Include="..\dfg\DFGAvailabilityMap.h" />
     <ClInclude Include="..\dfg\DFGBackwardsPropagationPhase.h" />
     <ClInclude Include="..\dfg\DFGBasicBlock.h" />
     <ClInclude Include="..\dfg\DFGBasicBlockInlines.h" />
@@ -1049,6 +1060,7 @@
     <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
     <ClInclude Include="..\dfg\DFGHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
+    <ClInclude Include="..\dfg\DFGInsertOSRHintsForUpdate.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
     <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
@@ -1073,6 +1085,8 @@
     <ClInclude Include="..\dfg\DFGNodeFlags.h" />
     <ClInclude Include="..\dfg\DFGNodeOrigin.h" />
     <ClInclude Include="..\dfg\DFGNodeType.h" />
+    <ClInclude Include="..\dfg\DFGObjectAllocationSinkingPhase.h" />
+    <ClInclude Include="..\dfg\DFGObjectMaterializationData.h" />
     <ClInclude Include="..\dfg\DFGOperations.h" />
     <ClInclude Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.h" />
     <ClInclude Include="..\dfg\DFGOSREntry.h" />
@@ -1087,9 +1101,13 @@
     <ClInclude Include="..\dfg\DFGPhantomCanonicalizationPhase.h" />
     <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGPhase.h" />
+    <ClInclude Include="..\dfg\DFGPhiChildren.h" />
     <ClInclude Include="..\dfg\DFGPlan.h" />
+    <ClInclude Include="..\dfg\DFGPrePostNumbering.h" />
     <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h" />
+    <ClInclude Include="..\dfg\DFGPromoteHeapAccess.h" />
+    <ClInclude Include="..\dfg\DFGPromotedHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGPureValue.h" />
     <ClInclude Include="..\dfg\DFGRegisterBank.h" />
     <ClInclude Include="..\dfg\DFGRegisterSet.h" />
@@ -1150,7 +1168,9 @@
     <ClInclude Include="..\ftl\FTLExitArgument.h" />
     <ClInclude Include="..\ftl\FTLExitArgumentForOperand.h" />
     <ClInclude Include="..\ftl\FTLExitArgumentList.h" />
+    <ClInclude Include="..\ftl\FTLExitPropertyValue.h" />
     <ClInclude Include="..\ftl\FTLExitThunkGenerator.h" />
+    <ClInclude Include="..\ftl\FTLExitTimeObjectMaterialization.h" />
     <ClInclude Include="..\ftl\FTLExitValue.h" />
     <ClInclude Include="..\ftl\FTLFail.h" />
     <ClInclude Include="..\ftl\FTLFormattedValue.h" />
@@ -1170,6 +1190,7 @@
     <ClInclude Include="..\ftl\FTLOSRExit.h" />
     <ClInclude Include="..\ftl\FTLOSRExitCompilationInfo.h" />
     <ClInclude Include="..\ftl\FTLOSRExitCompiler.h" />
+    <ClInclude Include="..\ftl\FTLOperations.h" />
     <ClInclude Include="..\ftl\FTLOutput.h" />
     <ClInclude Include="..\ftl\FTLRecoveryOpcode.h" />
     <ClInclude Include="..\ftl\FTLRegisterAtOffset.h" />

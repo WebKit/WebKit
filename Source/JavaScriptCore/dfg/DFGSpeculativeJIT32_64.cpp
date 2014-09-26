@@ -4912,6 +4912,11 @@ void SpeculativeJIT::compile(Node* node)
     case NativeConstruct:
     case CheckBadCell:
     case BottomValue:
+    case PhantomNewObject:
+    case PutByOffsetHint:
+    case CheckStructureImmediate:
+    case PutStructureHint:
+    case MaterializeNewObject:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

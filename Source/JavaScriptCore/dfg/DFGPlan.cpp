@@ -49,6 +49,7 @@
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
+#include "DFGObjectAllocationSinkingPhase.h"
 #include "DFGPhantomCanonicalizationPhase.h"
 #include "DFGPhantomRemovalPhase.h"
 #include "DFGPredictionInjectionPhase.h"
@@ -277,6 +278,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     if (validationEnabled()) {
         dfg.m_dominators.computeIfNecessary(dfg);
         dfg.m_naturalLoops.computeIfNecessary(dfg);
+        dfg.m_prePostNumbering.computeIfNecessary(dfg);
     }
 
     switch (mode) {
@@ -325,11 +327,16 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCFA(dfg);
         performConstantFolding(dfg);
         performPhantomCanonicalization(dfg); // Reduce the graph size a lot.
-        if (performStrengthReduction(dfg)) {
+        changed = false;
+        changed |= performStrengthReduction(dfg);
+        changed |= performCriticalEdgeBreaking(dfg);
+        changed |= performObjectAllocationSinking(dfg);
+        if (changed) {
             // State-at-tail and state-at-head will be invalid if we did strength reduction since
             // it might increase live ranges.
             performLivenessAnalysis(dfg);
             performCFA(dfg);
+            performConstantFolding(dfg);
         }
         performLICM(dfg);
         performPhantomCanonicalization(dfg);

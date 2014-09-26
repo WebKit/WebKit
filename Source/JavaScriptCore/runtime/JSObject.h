@@ -724,8 +724,6 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(inherits(info()));
-        ASSERT(!structure()->outOfLineCapacity());
-        ASSERT(structure()->isEmpty());
         ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
         ASSERT(structure()->isObject());
         ASSERT(classInfo());
@@ -1052,7 +1050,7 @@ public:
         return (maxSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);
     }
 
-    static JSFinalObject* create(ExecState*, Structure*);
+    static JSFinalObject* create(ExecState*, Structure*, Butterfly* = nullptr);
     static JSFinalObject* create(VM&, Structure*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
     {
@@ -1076,15 +1074,16 @@ protected:
 private:
     friend class LLIntOffsetsExtractor;
 
-    explicit JSFinalObject(VM& vm, Structure* structure)
-        : JSObject(vm, structure)
+    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
+        : JSObject(vm, structure, butterfly)
     {
     }
 
     static const unsigned StructureFlags = JSObject::StructureFlags;
 };
 
-inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structure)
+inline JSFinalObject* JSFinalObject::create(
+    ExecState* exec, Structure* structure, Butterfly* butterfly)
 {
     JSFinalObject* finalObject = new (
         NotNull, 
@@ -1092,7 +1091,7 @@ inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structur
             *exec->heap(),
             allocationSize(structure->inlineCapacity())
         )
-    ) JSFinalObject(exec->vm(), structure);
+    ) JSFinalObject(exec->vm(), structure, butterfly);
     finalObject->finishCreation(exec->vm());
     return finalObject;
 }

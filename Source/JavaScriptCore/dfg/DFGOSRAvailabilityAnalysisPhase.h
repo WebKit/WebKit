@@ -37,7 +37,9 @@ class Graph;
 
 // Computes BasicBlock::ssa->availabiltiyAtHead/Tail. This is a forward flow type inference
 // over MovHints and SetLocals. This analysis is run directly by the Plan for preparing for
-// lowering to LLVM IR, but it can also be used as a utility.
+// lowering to LLVM IR, but it can also be used as a utility. Note that if you run it before
+// stack layout, all of the flush availability will omit the virtual register - but it will
+// tell you the format.
 
 bool performOSRAvailabilityAnalysis(Graph&);
 
@@ -49,9 +51,10 @@ public:
     ~LocalOSRAvailabilityCalculator();
     
     void beginBlock(BasicBlock*);
+    void endBlock(BasicBlock*); // Useful if you want to get data for the end of the block. You don't need to call this if you did beginBlock() and then executeNode() for every node.
     void executeNode(Node*);
     
-    Operands<Availability> m_availability;
+    AvailabilityMap m_availability;
 };
 
 } } // namespace JSC::DFG

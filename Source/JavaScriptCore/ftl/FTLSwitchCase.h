@@ -35,6 +35,12 @@ namespace JSC { namespace FTL {
 
 class SwitchCase {
 public:
+    SwitchCase()
+        : m_value(nullptr)
+        , m_target(nullptr)
+    {
+    }
+
     SwitchCase(LValue value, LBasicBlock target, Weight weight)
         : m_value(value)
         , m_target(target)

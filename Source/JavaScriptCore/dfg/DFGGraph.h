@@ -39,6 +39,7 @@
 #include "DFGNode.h"
 #include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
+#include "DFGPrePostNumbering.h"
 #include "DFGScannable.h"
 #include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -54,6 +55,47 @@ class CodeBlock;
 class ExecState;
 
 namespace DFG {
+
+#define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
+        Node* _node = (node);                                           \
+        if (_node->flags() & NodeHasVarArgs) {                          \
+            for (unsigned _childIdx = _node->firstChild();              \
+                _childIdx < _node->firstChild() + _node->numChildren(); \
+                _childIdx++) {                                          \
+                if (!!(graph).m_varArgChildren[_childIdx])              \
+                    thingToDo(_node, (graph).m_varArgChildren[_childIdx]); \
+            }                                                           \
+        } else {                                                        \
+            if (!_node->child1()) {                                     \
+                ASSERT(                                                 \
+                    !_node->child2()                                    \
+                    && !_node->child3());                               \
+                break;                                                  \
+            }                                                           \
+            thingToDo(_node, _node->child1());                          \
+                                                                        \
+            if (!_node->child2()) {                                     \
+                ASSERT(!_node->child3());                               \
+                break;                                                  \
+            }                                                           \
+            thingToDo(_node, _node->child2());                          \
+                                                                        \
+            if (!_node->child3())                                       \
+                break;                                                  \
+            thingToDo(_node, _node->child3());                          \
+        }                                                               \
+    } while (false)
+
+#define DFG_ASSERT(graph, node, assertion) do {                         \
+        if (!!(assertion))                                              \
+            break;                                                      \
+        (graph).handleAssertionFailure(                                 \
+            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+    } while (false)
+
+#define DFG_CRASH(graph, node, reason)                                  \
+    (graph).handleAssertionFailure(                                     \
+        (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason));
 
 struct InlineVariableData {
     InlineCallFrame* inlineCallFrame;
@@ -565,6 +607,8 @@ public:
     void determineReachability();
     void resetReachability();
     
+    void mergeRelevantToOSR();
+    
     void computeRefCounts();
     
     unsigned varArgNumChildren(Node* node)
@@ -676,6 +720,100 @@ public:
     BlockList blocksInPreOrder();
     BlockList blocksInPostOrder();
     
+    class NaturalBlockIterable {
+    public:
+        NaturalBlockIterable()
+            : m_graph(nullptr)
+        {
+        }
+        
+        NaturalBlockIterable(Graph& graph)
+            : m_graph(&graph)
+        {
+        }
+        
+        class iterator {
+        public:
+            iterator()
+                : m_graph(nullptr)
+                , m_index(0)
+            {
+            }
+            
+            iterator(Graph& graph, BlockIndex index)
+                : m_graph(&graph)
+                , m_index(findNext(index))
+            {
+            }
+            
+            BasicBlock *operator*()
+            {
+                return m_graph->block(m_index);
+            }
+            
+            iterator& operator++()
+            {
+                m_index = findNext(m_index + 1);
+                return *this;
+            }
+            
+            bool operator==(const iterator& other) const
+            {
+                return m_index == other.m_index;
+            }
+            
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+            
+        private:
+            BlockIndex findNext(BlockIndex index)
+            {
+                while (index < m_graph->numBlocks() && !m_graph->block(index))
+                    index++;
+                return index;
+            }
+            
+            Graph* m_graph;
+            BlockIndex m_index;
+        };
+        
+        iterator begin()
+        {
+            return iterator(*m_graph, 0);
+        }
+        
+        iterator end()
+        {
+            return iterator(*m_graph, m_graph->numBlocks());
+        }
+        
+    private:
+        Graph* m_graph;
+    };
+    
+    NaturalBlockIterable blocksInNaturalOrder()
+    {
+        return NaturalBlockIterable(*this);
+    }
+    
+    template<typename ChildFunctor>
+    void doToChildrenWithNode(Node* node, const ChildFunctor& functor)
+    {
+        DFG_NODE_DO_TO_CHILDREN(*this, node, functor);
+    }
+    
+    template<typename ChildFunctor>
+    void doToChildren(Node* node, const ChildFunctor& functor)
+    {
+        doToChildrenWithNode(
+            node,
+            [&functor] (Node*, Edge& edge) {
+                functor(edge);
+            });
+    }
+    
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
@@ -736,12 +874,14 @@ public:
     Bag<SwitchData> m_switchData;
     Bag<MultiGetByOffsetData> m_multiGetByOffsetData;
     Bag<MultiPutByOffsetData> m_multiPutByOffsetData;
+    Bag<ObjectMaterializationData> m_objectMaterializationData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_lazyVars;
     Dominators m_dominators;
+    PrePostNumbering m_prePostNumbering;
     NaturalLoops m_naturalLoops;
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
@@ -785,47 +925,6 @@ private:
         return bytecodeCanTruncateInteger(add->arithNodeFlags()) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
     }
 };
-
-#define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
-        Node* _node = (node);                                           \
-        if (_node->flags() & NodeHasVarArgs) {                          \
-            for (unsigned _childIdx = _node->firstChild();              \
-                _childIdx < _node->firstChild() + _node->numChildren(); \
-                _childIdx++) {                                          \
-                if (!!(graph).m_varArgChildren[_childIdx])              \
-                    thingToDo(_node, (graph).m_varArgChildren[_childIdx]); \
-            }                                                           \
-        } else {                                                        \
-            if (!_node->child1()) {                                     \
-                ASSERT(                                                 \
-                    !_node->child2()                                    \
-                    && !_node->child3());                               \
-                break;                                                  \
-            }                                                           \
-            thingToDo(_node, _node->child1());                          \
-                                                                        \
-            if (!_node->child2()) {                                     \
-                ASSERT(!_node->child3());                               \
-                break;                                                  \
-            }                                                           \
-            thingToDo(_node, _node->child2());                          \
-                                                                        \
-            if (!_node->child3())                                       \
-                break;                                                  \
-            thingToDo(_node, _node->child3());                          \
-        }                                                               \
-    } while (false)
-
-#define DFG_ASSERT(graph, node, assertion) do {                         \
-        if (!!(assertion))                                              \
-            break;                                                      \
-        (graph).handleAssertionFailure(                                 \
-            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-    } while (false)
-
-#define DFG_CRASH(graph, node, reason)                                  \
-    (graph).handleAssertionFailure(                                     \
-        (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason));
 
 } } // namespace JSC::DFG
 

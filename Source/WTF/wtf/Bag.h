@@ -46,17 +46,23 @@ private:
     
 public:
     Bag()
-        : m_head(0)
+        : m_head(nullptr)
     {
     }
     
     ~Bag()
+    {
+        clear();
+    }
+    
+    void clear()
     {
         while (m_head) {
             Node* current = m_head;
             m_head = current->m_next;
             delete current;
         }
+        m_head = nullptr;
     }
     
     template<typename... Args>

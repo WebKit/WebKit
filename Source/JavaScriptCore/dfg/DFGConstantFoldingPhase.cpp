@@ -124,6 +124,42 @@ private:
                 break;
             }
                 
+            case CheckStructureImmediate: {
+                AbstractValue& value = m_state.forNode(node->child1());
+                StructureSet& set = node->structureSet();
+                
+                if (value.value()) {
+                    if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
+                        if (set.contains(structure)) {
+                            m_interpreter.execute(indexInBlock);
+                            node->convertToPhantom();
+                            eliminated = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (PhiChildren* phiChildren = m_interpreter.phiChildren()) {
+                    bool allGood = true;
+                    phiChildren->forAllTransitiveIncomingValues(
+                        node,
+                        [&] (Node* incoming) {
+                            if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
+                                if (set.contains(structure))
+                                    return;
+                            }
+                            allGood = false;
+                        });
+                    if (allGood) {
+                        m_interpreter.execute(indexInBlock);
+                        node->convertToPhantom();
+                        eliminated = true;
+                        break;
+                    }
+                }
+                break;
+            }
+                
             case CheckArray:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))

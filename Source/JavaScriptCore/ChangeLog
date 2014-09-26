@@ -1,3 +1,302 @@
+2014-09-25  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should sink object allocations
+        https://bugs.webkit.org/show_bug.cgi?id=136330
+
+        Reviewed by Oliver Hunt.
+        
+        This adds a comprehensive infrastructure for sinking object allocations in DFG SSA form. The
+        ultimate goal of sinking is to sink an allocation "past the points of its death" - i.e. to
+        eliminate it completely. The way sinking reasons about the CFG means that it resembles a
+        partial escape analysis: we create paths through a function where some allocation(s) don't
+        have to be done at all even if there are other paths along which those allocations still have
+        to happen. But it also produces other side benefits. Even if an allocation isn't eliminated
+        along any path, the act of sinking reduces the number of barriers that have to execute.
+        
+        Because this was a fairly ambituous SSA analysis and transformation, I added a bunch of C++11
+        sugar to the DFG's internal APIs to allow for easier iteration over blocks, nodes, and
+        successors; and to add more functor goodness to allow for more lambdas.
+        
+        This is just the beginning. The bug has a bunch of other bugs that depend on it. So far this
+        is a spectacular speed-up on microbenchmarks but it's still too limited to affect big
+        benchmarks. For example, doing o == p makes the sinking phase think that o and p escape.
+        That's just an omission and there are likely others; we can easily fix them. I think it's
+        best to land it in its current form and then to worry about the big benchmarks in subsequent
+        work (see bug 137126).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::iterator::iterator):
+        (JSC::StructureSet::iterator::operator*):
+        (JSC::StructureSet::iterator::operator++):
+        (JSC::StructureSet::iterator::operator==):
+        (JSC::StructureSet::iterator::operator!=):
+        (JSC::StructureSet::begin):
+        (JSC::StructureSet::end):
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::phiChildren):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::AbstractInterpreter):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::startExecuting):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::execute):
+        * dfg/DFGAvailability.h:
+        (JSC::DFG::Availability::shouldUseNode):
+        (JSC::DFG::Availability::isFlushUseful):
+        (JSC::DFG::Availability::isDead):
+        (JSC::DFG::Availability::operator!=):
+        * dfg/DFGAvailabilityMap.cpp: Added.
+        (JSC::DFG::AvailabilityMap::prune):
+        (JSC::DFG::AvailabilityMap::clear):
+        (JSC::DFG::AvailabilityMap::dump):
+        (JSC::DFG::AvailabilityMap::operator==):
+        (JSC::DFG::AvailabilityMap::merge):
+        * dfg/DFGAvailabilityMap.h: Added.
+        (JSC::DFG::AvailabilityMap::forEachAvailability):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::SSAData::SSAData):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::begin):
+        (JSC::DFG::BasicBlock::end):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::SuccessorsIterable):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::iterator):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator*):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator++):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator==):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::iterator::operator!=):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::begin):
+        (JSC::DFG::BasicBlock::SuccessorsIterable::end):
+        (JSC::DFG::BasicBlock::successors):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFlushedAt.cpp:
+        (JSC::DFG::FlushedAt::dump):
+        * dfg/DFGFlushedAt.h:
+        (JSC::DFG::FlushedAt::FlushedAt):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::mergeRelevantToOSR):
+        (JSC::DFG::Graph::invalidateCFG):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::NaturalBlockIterable::NaturalBlockIterable):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::iterator):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::operator*):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::operator++):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::operator==):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::operator!=):
+        (JSC::DFG::Graph::NaturalBlockIterable::iterator::findNext):
+        (JSC::DFG::Graph::NaturalBlockIterable::begin):
+        (JSC::DFG::Graph::NaturalBlockIterable::end):
+        (JSC::DFG::Graph::blocksInNaturalOrder):
+        (JSC::DFG::Graph::doToChildrenWithNode):
+        (JSC::DFG::Graph::doToChildren):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGInsertOSRHintsForUpdate.cpp: Added.
+        (JSC::DFG::insertOSRHintsForUpdate):
+        * dfg/DFGInsertOSRHintsForUpdate.h: Added.
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::graph):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPutByOffsetHint):
+        (JSC::DFG::Node::convertToPutStructureHint):
+        (JSC::DFG::Node::convertToPhantomNewObject):
+        (JSC::DFG::Node::isCellConstant):
+        (JSC::DFG::Node::castConstant):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasStorageAccessData):
+        (JSC::DFG::Node::hasObjectMaterializationData):
+        (JSC::DFG::Node::objectMaterializationData):
+        (JSC::DFG::Node::isPhantomObjectAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::endBlock):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp: Added.
+        (JSC::DFG::ObjectAllocationSinkingPhase::ObjectAllocationSinkingPhase):
+        (JSC::DFG::ObjectAllocationSinkingPhase::run):
+        (JSC::DFG::ObjectAllocationSinkingPhase::performSinking):
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        (JSC::DFG::ObjectAllocationSinkingPhase::resolve):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize):
+        (JSC::DFG::ObjectAllocationSinkingPhase::populateMaterialize):
+        (JSC::DFG::performObjectAllocationSinking):
+        * dfg/DFGObjectAllocationSinkingPhase.h: Added.
+        * dfg/DFGObjectMaterializationData.cpp: Added.
+        (JSC::DFG::PhantomPropertyValue::dump):
+        (JSC::DFG::ObjectMaterializationData::dump):
+        (JSC::DFG::ObjectMaterializationData::oneWaySimilarityScore):
+        (JSC::DFG::ObjectMaterializationData::similarityScore):
+        * dfg/DFGObjectMaterializationData.h: Added.
+        (JSC::DFG::PhantomPropertyValue::PhantomPropertyValue):
+        (JSC::DFG::PhantomPropertyValue::operator==):
+        * dfg/DFGPhantomCanonicalizationPhase.cpp:
+        (JSC::DFG::PhantomCanonicalizationPhase::run):
+        * dfg/DFGPhantomRemovalPhase.cpp:
+        (JSC::DFG::PhantomRemovalPhase::run):
+        * dfg/DFGPhiChildren.cpp: Added.
+        (JSC::DFG::PhiChildren::PhiChildren):
+        (JSC::DFG::PhiChildren::~PhiChildren):
+        (JSC::DFG::PhiChildren::upsilonsOf):
+        * dfg/DFGPhiChildren.h: Added.
+        (JSC::DFG::PhiChildren::forAllIncomingValues):
+        (JSC::DFG::PhiChildren::forAllTransitiveIncomingValues):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPrePostNumbering.cpp: Added.
+        (JSC::DFG::PrePostNumbering::PrePostNumbering):
+        (JSC::DFG::PrePostNumbering::~PrePostNumbering):
+        (JSC::DFG::PrePostNumbering::compute):
+        (WTF::printInternal):
+        * dfg/DFGPrePostNumbering.h: Added.
+        (JSC::DFG::PrePostNumbering::preNumber):
+        (JSC::DFG::PrePostNumbering::postNumber):
+        (JSC::DFG::PrePostNumbering::isStrictAncestorOf):
+        (JSC::DFG::PrePostNumbering::isAncestorOf):
+        (JSC::DFG::PrePostNumbering::isStrictDescendantOf):
+        (JSC::DFG::PrePostNumbering::isDescendantOf):
+        (JSC::DFG::PrePostNumbering::edgeKind):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPromoteHeapAccess.h: Added.
+        (JSC::DFG::promoteHeapAccess):
+        * dfg/DFGPromotedHeapLocation.cpp: Added.
+        (JSC::DFG::PromotedLocationDescriptor::dump):
+        (JSC::DFG::PromotedHeapLocation::createHint):
+        (JSC::DFG::PromotedHeapLocation::dump):
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h: Added.
+        (JSC::DFG::PromotedLocationDescriptor::PromotedLocationDescriptor):
+        (JSC::DFG::PromotedLocationDescriptor::operator!):
+        (JSC::DFG::PromotedLocationDescriptor::kind):
+        (JSC::DFG::PromotedLocationDescriptor::info):
+        (JSC::DFG::PromotedLocationDescriptor::hash):
+        (JSC::DFG::PromotedLocationDescriptor::operator==):
+        (JSC::DFG::PromotedLocationDescriptor::operator!=):
+        (JSC::DFG::PromotedLocationDescriptor::isHashTableDeletedValue):
+        (JSC::DFG::PromotedHeapLocation::PromotedHeapLocation):
+        (JSC::DFG::PromotedHeapLocation::operator!):
+        (JSC::DFG::PromotedHeapLocation::kind):
+        (JSC::DFG::PromotedHeapLocation::base):
+        (JSC::DFG::PromotedHeapLocation::info):
+        (JSC::DFG::PromotedHeapLocation::descriptor):
+        (JSC::DFG::PromotedHeapLocation::hash):
+        (JSC::DFG::PromotedHeapLocation::operator==):
+        (JSC::DFG::PromotedHeapLocation::isHashTableDeletedValue):
+        (JSC::DFG::PromotedHeapLocationHash::hash):
+        (JSC::DFG::PromotedHeapLocationHash::equal):
+        * dfg/DFGSSACalculator.cpp:
+        (JSC::DFG::SSACalculator::reset):
+        * dfg/DFGSSACalculator.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLExitPropertyValue.cpp: Added.
+        (JSC::FTL::ExitPropertyValue::dump):
+        * ftl/FTLExitPropertyValue.h: Added.
+        (JSC::FTL::ExitPropertyValue::ExitPropertyValue):
+        (JSC::FTL::ExitPropertyValue::operator!):
+        (JSC::FTL::ExitPropertyValue::location):
+        (JSC::FTL::ExitPropertyValue::value):
+        * ftl/FTLExitTimeObjectMaterialization.cpp: Added.
+        (JSC::FTL::ExitTimeObjectMaterialization::ExitTimeObjectMaterialization):
+        (JSC::FTL::ExitTimeObjectMaterialization::~ExitTimeObjectMaterialization):
+        (JSC::FTL::ExitTimeObjectMaterialization::add):
+        (JSC::FTL::ExitTimeObjectMaterialization::get):
+        (JSC::FTL::ExitTimeObjectMaterialization::dump):
+        * ftl/FTLExitTimeObjectMaterialization.h: Added.
+        (JSC::FTL::ExitTimeObjectMaterialization::type):
+        (JSC::FTL::ExitTimeObjectMaterialization::properties):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::materializeNewObject):
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::isObjectMaterialization):
+        (JSC::FTL::ExitValue::objectMaterialization):
+        (JSC::FTL::ExitValue::withVirtualRegister):
+        (JSC::FTL::ExitValue::valueFormat):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileNewObject):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructureImmediate):
+        (JSC::FTL::LowerDFGToLLVM::compileMaterializeNewObject):
+        (JSC::FTL::LowerDFGToLLVM::checkStructure):
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::LowerDFGToLLVM::storeStructure):
+        (JSC::FTL::LowerDFGToLLVM::allocateObject):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringObjectForStructureID):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::LowerDFGToLLVM::weakStructureID):
+        (JSC::FTL::LowerDFGToLLVM::weakStructure):
+        (JSC::FTL::LowerDFGToLLVM::availabilityMap):
+        (JSC::FTL::LowerDFGToLLVM::availability): Deleted.
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+        (JSC::FTL::compileStub):
+        * ftl/FTLOperations.cpp: Added.
+        (JSC::FTL::operationNewObjectWithButterfly):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * ftl/FTLOperations.h: Added.
+        * ftl/FTLSwitchCase.h:
+        (JSC::FTL::SwitchCase::SwitchCase):
+        * runtime/JSObject.h:
+        (JSC::JSObject::finishCreation):
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::JSFinalObject::create):
+        * runtime/Structure.cpp:
+        (JSC::Structure::canUseForAllocationsOf):
+        * runtime/Structure.h:
+        * tests/stress/elidable-new-object-roflcopter-then-exit.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * tests/stress/elide-new-object-dag-then-exit.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (verify):
+        (foo):
+        * tests/stress/obviously-elidable-new-object-then-exit.js: Added.
+        (sumOfArithSeries):
+        (foo):
+
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: Check event loop input extents during replaying too

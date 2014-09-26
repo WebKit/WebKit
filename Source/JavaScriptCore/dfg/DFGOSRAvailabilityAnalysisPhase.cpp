@@ -32,6 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "DFGPromoteHeapAccess.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
@@ -51,25 +52,18 @@ public:
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
-            block->ssa->availabilityAtHead.fill(Availability());
-            block->ssa->availabilityAtTail.fill(Availability());
+            block->ssa->availabilityAtHead.clear();
+            block->ssa->availabilityAtTail.clear();
         }
         
         BasicBlock* root = m_graph.block(0);
-        for (unsigned argument = root->ssa->availabilityAtHead.numberOfArguments(); argument--;) {
-            root->ssa->availabilityAtHead.argument(argument) =
+        root->ssa->availabilityAtHead.m_locals.fill(Availability::unavailable());
+        for (unsigned argument = root->ssa->availabilityAtHead.m_locals.numberOfArguments(); argument--;) {
+            root->ssa->availabilityAtHead.m_locals.argument(argument) =
                 Availability::unavailable().withFlush(
                     FlushedAt(FlushedJSValue, virtualRegisterForArgument(argument)));
         }
 
-        if (m_graph.m_plan.mode == FTLForOSREntryMode) {
-            for (unsigned local = m_graph.m_profiledBlock->m_numCalleeRegisters; local--;)
-                root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
-        } else {
-            for (unsigned local = root->ssa->availabilityAtHead.numberOfLocals(); local--;)
-                root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
-        }
-        
         // This could be made more efficient by processing blocks in reverse postorder.
         
         LocalOSRAvailabilityCalculator calculator;
@@ -87,6 +81,8 @@ public:
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex)
                     calculator.executeNode(block->at(nodeIndex));
                 
+                calculator.m_availability.prune();
+                
                 if (calculator.m_availability == block->ssa->availabilityAtTail)
                     continue;
                 
@@ -95,11 +91,7 @@ public:
                 
                 for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                     BasicBlock* successor = block->successor(successorIndex);
-                    for (unsigned i = calculator.m_availability.size(); i--;) {
-                        successor->ssa->availabilityAtHead[i] =
-                            calculator.m_availability[i].merge(
-                                successor->ssa->availabilityAtHead[i]);
-                    }
+                    successor->ssa->availabilityAtHead.merge(calculator.m_availability);
                 }
             }
         } while (changed);
@@ -127,38 +119,50 @@ void LocalOSRAvailabilityCalculator::beginBlock(BasicBlock* block)
     m_availability = block->ssa->availabilityAtHead;
 }
 
+void LocalOSRAvailabilityCalculator::endBlock(BasicBlock* block)
+{
+    m_availability = block->ssa->availabilityAtTail;
+}
+
 void LocalOSRAvailabilityCalculator::executeNode(Node* node)
 {
     switch (node->op()) {
     case SetLocal: {
         VariableAccessData* variable = node->variableAccessData();
-        m_availability.operand(variable->local()) =
+        m_availability.m_locals.operand(variable->local()) =
             Availability(node->child1().node(), variable->flushedAt());
         break;
     }
 
     case GetArgument: {
         VariableAccessData* variable = node->variableAccessData();
-        m_availability.operand(variable->local()) =
+        m_availability.m_locals.operand(variable->local()) =
             Availability(node, variable->flushedAt());
         break;
     }
 
     case MovHint: {
-        m_availability.operand(node->unlinkedLocal()) =
+        m_availability.m_locals.operand(node->unlinkedLocal()) =
             Availability(node->child1().node());
         break;
     }
 
     case ZombieHint: {
-        m_availability.operand(node->unlinkedLocal()) =
+        m_availability.m_locals.operand(node->unlinkedLocal()) =
             Availability::unavailable();
         break;
     }
-
+        
     default:
         break;
     }
+    
+    promoteHeapAccess(
+        node,
+        [&] (PromotedHeapLocation location, Edge value) {
+            m_availability.m_heap.set(location, Availability(value.node()));
+        },
+        [&] (PromotedHeapLocation) { });
 }
 
 } } // namespace JSC::DFG

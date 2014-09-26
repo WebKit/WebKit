@@ -30,6 +30,7 @@
 
 #include "DFGAbstractValue.h"
 #include "DFGAvailability.h"
+#include "DFGAvailabilityMap.h"
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
@@ -46,6 +47,7 @@ class Graph;
 class InsertionSet;
 
 typedef Vector<BasicBlock*, 2> PredecessorList;
+typedef Vector<Node*, 8> BlockNodeList;
 
 struct BasicBlock : RefCounted<BasicBlock> {
     BasicBlock(
@@ -85,6 +87,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
     bool isInPhis(Node* node) const;
     bool isInBlock(Node* myNode) const;
     
+    BlockNodeList::iterator begin() { return m_nodes.begin(); }
+    BlockNodeList::iterator end() { return m_nodes.end(); }
+    
     unsigned numSuccessors() { return last()->numSuccessors(); }
     
     BasicBlock*& successor(unsigned index)
@@ -94,6 +99,76 @@ struct BasicBlock : RefCounted<BasicBlock> {
     BasicBlock*& successorForCondition(bool condition)
     {
         return last()->successorForCondition(condition);
+    }
+    
+    class SuccessorsIterable {
+    public:
+        SuccessorsIterable()
+            : m_block(nullptr)
+        {
+        }
+        
+        SuccessorsIterable(BasicBlock* block)
+            : m_block(block)
+        {
+        }
+        
+        class iterator {
+        public:
+            iterator()
+                : m_block(nullptr)
+                , m_index(UINT_MAX)
+            {
+            }
+            
+            iterator(BasicBlock* block, unsigned index)
+                : m_block(block)
+                , m_index(index)
+            {
+            }
+            
+            BasicBlock* operator*()
+            {
+                return m_block->successor(m_index);
+            }
+            
+            iterator& operator++()
+            {
+                m_index++;
+                return *this;
+            }
+            
+            bool operator==(const iterator& other) const
+            {
+                return m_index == other.m_index;
+            }
+            
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+        private:
+            BasicBlock* m_block;
+            unsigned m_index;
+        };
+        
+        iterator begin()
+        {
+            return iterator(m_block, 0);
+        }
+        
+        iterator end()
+        {
+            return iterator(m_block, m_block->numSuccessors());
+        }
+        
+    private:
+        BasicBlock* m_block;
+    };
+    
+    SuccessorsIterable successors()
+    {
+        return SuccessorsIterable(this);
     }
     
     void removePredecessor(BasicBlock* block);
@@ -169,8 +244,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
     unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
 
     struct SSAData {
-        Operands<Availability> availabilityAtHead;
-        Operands<Availability> availabilityAtTail;
+        AvailabilityMap availabilityAtHead;
+        AvailabilityMap availabilityAtTail;
+        
         HashSet<Node*> liveAtHead;
         HashSet<Node*> liveAtTail;
         HashMap<Node*, AbstractValue> valuesAtHead;
@@ -183,7 +259,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
 private:
     friend class InsertionSet;
-    Vector<Node*, 8> m_nodes;
+    BlockNodeList m_nodes;
 };
 
 typedef Vector<BasicBlock*, 5> BlockList;

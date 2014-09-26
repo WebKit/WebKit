@@ -43,6 +43,8 @@ AbstractInterpreter<AbstractStateType>::AbstractInterpreter(Graph& graph, Abstra
     , m_graph(graph)
     , m_state(state)
 {
+    if (m_graph.m_form == SSA)
+        m_phiChildren = std::make_unique<PhiChildren>(m_graph);
 }
 
 template<typename AbstractStateType>
@@ -81,20 +83,12 @@ AbstractInterpreter<AbstractStateType>::booleanResult(
 }
 
 template<typename AbstractStateType>
-bool AbstractInterpreter<AbstractStateType>::startExecuting(Node* node)
+void AbstractInterpreter<AbstractStateType>::startExecuting()
 {
     ASSERT(m_state.block());
     ASSERT(m_state.isValid());
     
     m_state.setDidClobber(false);
-    
-    return node->shouldGenerate();
-}
-
-template<typename AbstractStateType>
-bool AbstractInterpreter<AbstractStateType>::startExecuting(unsigned indexInBlock)
-{
-    return startExecuting(m_state.block()->at(indexInBlock));
 }
 
 template<typename AbstractStateType>
@@ -1260,6 +1254,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(m_graph, node->structure());
         break;
         
+    case PhantomNewObject:
+    case BottomValue:
+        m_state.setDidClobber(true); // Prevent constant folding.
+        // This claims to return bottom.
+        break;
+        
+    case PutByOffsetHint:
+    case PutStructureHint:
+        break;
+        
+    case MaterializeNewObject: {
+        StructureSet set;
+        
+        m_phiChildren->forAllTransitiveIncomingValues(
+            m_graph.varArgChild(node, 0).node(),
+            [&] (Node* incoming) {
+                set.add(incoming->castConstant<Structure*>());
+            });
+        
+        forNode(node).set(m_graph, set);
+        break;
+    }
+        
     case CreateActivation:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->activationStructure());
@@ -1459,7 +1476,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case CheckStructure: {
-        // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
         AbstractValue& value = forNode(node->child1());
         ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
 
@@ -1475,6 +1491,50 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
 
         filter(value, set);
+        break;
+    }
+        
+    case CheckStructureImmediate: {
+        // FIXME: This currently can only reason about one structure at a time.
+        // https://bugs.webkit.org/show_bug.cgi?id=136988
+        
+        AbstractValue& value = forNode(node->child1());
+        StructureSet& set = node->structureSet();
+        
+        if (value.value()) {
+            if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
+                if (set.contains(structure)) {
+                    m_state.setFoundConstants(true);
+                    break;
+                }
+            }
+            m_state.setIsValid(false);
+            break;
+        }
+        
+        if (m_phiChildren) {
+            bool allGood = true;
+            m_phiChildren->forAllTransitiveIncomingValues(
+                node,
+                [&] (Node* incoming) {
+                    if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
+                        if (set.contains(structure))
+                            return;
+                    }
+                    allGood = false;
+                });
+            if (allGood) {
+                m_state.setFoundConstants(true);
+                break;
+            }
+        }
+            
+        if (Structure* structure = set.onlyStructure()) {
+            filterByValue(node->child1(), *m_graph.freeze(structure));
+            break;
+        }
+        
+        // Aw shucks, we can't do anything!
         break;
     }
         
@@ -1957,15 +2017,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case CheckTierUpAndOSREnter:
     case LoopHint:
-        // We pretend that it can exit because it may want to get all state.
+    case ZombieHint:
         break;
 
-    case ZombieHint:
     case Unreachable:
     case LastNodeType:
     case ArithIMul:
     case FiatInt52:
-    case BottomValue:
         DFG_CRASH(m_graph, node, "Unexpected node type");
         break;
     }
@@ -1983,9 +2041,8 @@ template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::execute(unsigned indexInBlock)
 {
     Node* node = m_state.block()->at(indexInBlock);
-    if (!startExecuting(node))
-        return true;
     
+    startExecuting();
     executeEdges(node);
     return executeEffects(indexInBlock, node);
 }
@@ -1993,9 +2050,7 @@ bool AbstractInterpreter<AbstractStateType>::execute(unsigned indexInBlock)
 template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::execute(Node* node)
 {
-    if (!startExecuting(node))
-        return true;
-    
+    startExecuting();
     executeEdges(node);
     return executeEffects(UINT_MAX, node);
 }

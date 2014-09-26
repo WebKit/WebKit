@@ -168,6 +168,11 @@ inline CapabilityLevel canCompile(Node* node)
     case GetEnumeratorPname:
     case ToIndexString:
     case BottomValue:
+    case PhantomNewObject:
+    case PutByOffsetHint:
+    case CheckStructureImmediate:
+    case PutStructureHint:
+    case MaterializeNewObject:
         // These are OK.
         break;
     case ProfiledCall:

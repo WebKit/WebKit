@@ -105,6 +105,8 @@ public:
     SSACalculator(Graph&);
     ~SSACalculator();
     
+    void reset();
+    
     class Variable {
     public:
         unsigned index() const { return m_index; }

@@ -122,6 +122,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGArrayMode.cpp
     dfg/DFGAtTailAbstractState.cpp
     dfg/DFGAvailability.cpp
+    dfg/DFGAvailabilityMap.cpp
     dfg/DFGBackwardsPropagationPhase.cpp
     dfg/DFGBasicBlock.cpp
     dfg/DFGBinarySwitch.cpp
@@ -164,6 +165,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGGraphSafepoint.cpp
     dfg/DFGHeapLocation.cpp
     dfg/DFGInPlaceAbstractState.cpp
+    dfg/DFGInsertOSRHintsForUpdate.cpp
     dfg/DFGIntegerCheckCombiningPhase.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp
     dfg/DFGJITCode.cpp
@@ -192,13 +194,18 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSRExitCompilerCommon.cpp
     dfg/DFGOSRExitJumpPlaceholder.cpp
     dfg/DFGOSRExitPreparation.cpp
+    dfg/DFGObjectAllocationSinkingPhase.cpp
+    dfg/DFGObjectMaterializationData.cpp
     dfg/DFGOperations.cpp
     dfg/DFGPhantomCanonicalizationPhase.cpp
     dfg/DFGPhantomRemovalPhase.cpp
     dfg/DFGPhase.cpp
+    dfg/DFGPhiChildren.cpp
     dfg/DFGPlan.cpp
+    dfg/DFGPrePostNumbering.cpp
     dfg/DFGPredictionInjectionPhase.cpp
     dfg/DFGPredictionPropagationPhase.cpp
+    dfg/DFGPromotedHeapLocation.cpp
     dfg/DFGPureValue.cpp
     dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSACalculator.cpp
@@ -774,7 +781,9 @@ if (ENABLE_FTL_JIT)
         ftl/FTLDataSection.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
+        ftl/FTLExitPropertyValue.cpp
         ftl/FTLExitThunkGenerator.cpp
+        ftl/FTLExitTimeObjectMaterialization.cpp
         ftl/FTLExitValue.cpp
         ftl/FTLFail.cpp
         ftl/FTLForOSREntryJITCode.cpp
@@ -789,6 +798,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLOSREntry.cpp
         ftl/FTLOSRExitCompiler.cpp
         ftl/FTLOSRExit.cpp
+        ftl/FTLOperations.cpp
         ftl/FTLOutput.cpp
         ftl/FTLRecoveryOpcode.cpp
         ftl/FTLRegisterAtOffset.cpp

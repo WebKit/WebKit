@@ -118,9 +118,9 @@ void BasicBlock::dump(PrintStream& out) const
 }
 
 BasicBlock::SSAData::SSAData(BasicBlock* block)
-    : availabilityAtHead(OperandsLike, block->variablesAtHead)
-    , availabilityAtTail(OperandsLike, block->variablesAtHead)
 {
+    availabilityAtHead.m_locals = Operands<Availability>(OperandsLike, block->variablesAtHead);
+    availabilityAtTail.m_locals = Operands<Availability>(OperandsLike, block->variablesAtHead);
 }
 
 BasicBlock::SSAData::~SSAData() { }

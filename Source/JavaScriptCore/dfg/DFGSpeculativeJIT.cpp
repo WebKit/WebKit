@@ -1415,7 +1415,7 @@ void SpeculativeJIT::compileCurrentBlock()
         else
             m_canExit = mayExit(m_jit.graph(), m_currentNode);
         
-        bool shouldExecuteEffects = m_interpreter.startExecuting(m_currentNode);
+        m_interpreter.startExecuting();
         m_jit.setForNode(m_currentNode);
         m_codeOriginForExitTarget = m_currentNode->origin.forExit;
         m_codeOriginForExitProfile = m_currentNode->origin.semantic;
@@ -1472,8 +1472,7 @@ void SpeculativeJIT::compileCurrentBlock()
         }
         
         // Make sure that the abstract state is rematerialized for the next node.
-        if (shouldExecuteEffects)
-            m_interpreter.executeEffects(m_indexInBlock);
+        m_interpreter.executeEffects(m_indexInBlock);
     }
     
     // Perform the most basic verification that children have been used correctly.

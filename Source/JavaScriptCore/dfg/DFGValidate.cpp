@@ -187,8 +187,6 @@ public:
                 Node* node = block->node(i);
                 if (m_graph.m_refCountState == ExactRefCount)
                     V_EQUAL((node), m_myRefCounts.get(node), node->adjustedRefCount());
-                else
-                    V_EQUAL((node), node->refCount(), 1);
             }
             
             for (size_t i = 0 ; i < block->size() - 1; ++i) {

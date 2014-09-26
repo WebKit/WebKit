@@ -43,6 +43,8 @@ public:
     {
     }
     
+    Graph& graph() { return m_graph; }
+    
     Node* insert(const Insertion& insertion)
     {
         ASSERT(!m_insertions.size() || m_insertions.last().index() <= insertion.index());

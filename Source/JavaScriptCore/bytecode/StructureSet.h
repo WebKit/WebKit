@@ -166,6 +166,37 @@ public:
         return structureList()->list()[structureList()->m_length - 1];
     }
     
+    class iterator {
+    public:
+        iterator()
+            : m_set(nullptr)
+            , m_index(0)
+        {
+        }
+        
+        iterator(const StructureSet* set, size_t index)
+            : m_set(set)
+            , m_index(index)
+        {
+        }
+        
+        Structure* operator*() const { return m_set->at(m_index); }
+        iterator& operator++()
+        {
+            m_index++;
+            return *this;
+        }
+        bool operator==(const iterator& other) const { return m_index == other.m_index; }
+        bool operator!=(const iterator& other) const { return !(*this == other); }
+        
+    private:
+        const StructureSet* m_set;
+        size_t m_index;
+    };
+    
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, size()); }
+    
     bool operator==(const StructureSet& other) const;
     
     SpeculatedType speculationFromStructures() const;

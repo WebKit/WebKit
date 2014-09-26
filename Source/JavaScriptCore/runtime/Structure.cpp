@@ -1105,6 +1105,13 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
     return baseShape.release();
 }
 
+bool Structure::canUseForAllocationsOf(Structure* other)
+{
+    return inlineCapacity() == other->inlineCapacity()
+        && storedPrototype() == other->storedPrototype()
+        && objectInitializationBlob() == other->objectInitializationBlob();
+}
+
 void Structure::dump(PrintStream& out) const
 {
     out.print(RawPointer(this), ":[", classInfo()->className, ", {");

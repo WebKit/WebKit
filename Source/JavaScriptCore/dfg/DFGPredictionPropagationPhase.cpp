@@ -560,7 +560,12 @@ private:
         case DoubleConstant:
         case Int52Constant:
         case Identity:
-        case BooleanToNumber: {
+        case BooleanToNumber:
+        case PhantomNewObject:
+        case PutByOffsetHint:
+        case CheckStructureImmediate:
+        case PutStructureHint:
+        case MaterializeNewObject: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();

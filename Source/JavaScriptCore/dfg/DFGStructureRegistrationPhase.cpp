@@ -47,6 +47,7 @@ public:
         // These are pretty dumb, but needed to placate subsequent assertions. We don't actually
         // have to watch these because there is no way to transition away from it, but they are
         // watchable and so we will assert if they aren't watched.
+        registerStructure(m_graph.m_vm.structureStructure.get());
         registerStructure(m_graph.m_vm.stringStructure.get());
         registerStructure(m_graph.m_vm.getterSetterStructure.get());
         

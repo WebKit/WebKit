@@ -52,18 +52,7 @@ public:
         ASSERT(m_graph.m_form == SSA);
         
         m_graph.clearFlagsOnAllNodes(NodeNeedsPhantom | NodeNeedsHardPhantom | NodeRelevantToOSR);
-        
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            
-            for (unsigned i = block->size(); i--;) {
-                Node* node = block->at(i);
-                if (node->op() == MovHint)
-                    node->child1()->mergeFlags(NodeRelevantToOSR);
-            }
-        }
+        m_graph.mergeRelevantToOSR();
         
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);

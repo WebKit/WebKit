@@ -147,6 +147,10 @@ void printInternal(PrintStream& out, LocationKind kind)
     case AllocationProfileWatchpointLoc:
         out.print("AllocationProfileWatchpointLoc");
         return;
+        
+    case StructureLoc:
+        out.print("StructureLoc");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

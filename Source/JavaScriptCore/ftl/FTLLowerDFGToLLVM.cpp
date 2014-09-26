@@ -38,6 +38,7 @@
 #include "FTLFormattedValue.h"
 #include "FTLInlineCacheSize.h"
 #include "FTLLoweredNodeValue.h"
+#include "FTLOperations.h"
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
@@ -341,7 +342,7 @@ private:
         
         m_availableRecoveries.resize(0);
         
-        bool shouldExecuteEffects = m_interpreter.startExecuting(m_node);
+        m_interpreter.startExecuting();
         
         switch (m_node->op()) {
         case Upsilon:
@@ -725,6 +726,12 @@ private:
         case ToIndexString:
             compileToIndexString();
             break;
+        case CheckStructureImmediate:
+            compileCheckStructureImmediate();
+            break;
+        case MaterializeNewObject:
+            compileMaterializeNewObject();
+            break;
 
         case PhantomLocal:
         case SetArgument:
@@ -735,6 +742,10 @@ private:
         case AllocationProfileWatchpoint:
         case MovHint:
         case ZombieHint:
+        case PhantomNewObject:
+        case PutByOffsetHint:
+        case PutStructureHint:
+        case BottomValue:
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
@@ -742,9 +753,7 @@ private:
         }
         
         m_availabilityCalculator.executeNode(m_node);
-        
-        if (shouldExecuteEffects)
-            m_interpreter.executeEffects(nodeIndex);
+        m_interpreter.executeEffects(nodeIndex);
         
         return true;
     }
@@ -1704,30 +1713,7 @@ private:
         
         LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         
-        if (m_node->structureSet().size() == 1) {
-            speculate(
-                exitKind, jsValueValue(cell), 0,
-                m_out.notEqual(structureID, weakStructure(m_node->structureSet()[0])));
-            return;
-        }
-        
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CheckStructure continuation"));
-        
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
-        for (unsigned i = 0; i < m_node->structureSet().size() - 1; ++i) {
-            LBasicBlock nextStructure = FTL_NEW_BLOCK(m_out, ("CheckStructure nextStructure"));
-            m_out.branch(
-                m_out.equal(structureID, weakStructure(m_node->structureSet()[i])),
-                unsure(continuation), unsure(nextStructure));
-            m_out.appendTo(nextStructure);
-        }
-        
-        speculate(
-            exitKind, jsValueValue(cell), 0,
-            m_out.notEqual(structureID, weakStructure(m_node->structureSet().last())));
-        
-        m_out.jump(continuation);
-        m_out.appendTo(continuation, lastNext);
+        checkStructure(structureID, jsValueValue(cell), exitKind, m_node->structureSet());
     }
     
     void compileCheckCell()
@@ -1762,7 +1748,7 @@ private:
         LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         
         m_out.branch(
-            m_out.notEqual(structureID, weakStructure(m_node->structure())),
+            m_out.notEqual(structureID, weakStructureID(m_node->structure())),
             rarely(unexpectedStructure), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(unexpectedStructure, continuation);
@@ -1806,7 +1792,7 @@ private:
         structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
-            m_out.notEqual(structureID, weakStructure(m_node->structure())));
+            m_out.notEqual(structureID, weakStructureID(m_node->structure())));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -1824,7 +1810,7 @@ private:
 
         LValue cell = lowCell(m_node->child1()); 
         m_out.store32(
-            weakStructure(newStructure),
+            weakStructureID(newStructure),
             cell, m_heaps.JSCell_structureID);
     }
     
@@ -2649,28 +2635,7 @@ private:
     
     void compileNewObject()
     {
-        Structure* structure = m_node->structure();
-        size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-        MarkedAllocator* allocator = &vm().heap.allocatorForObjectWithoutDestructor(allocationSize);
-        
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("NewObject slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NewObject continuation"));
-        
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
-        ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constIntPtr(allocator), structure, m_out.intPtrZero, slowPath));
-        
-        m_out.jump(continuation);
-        
-        m_out.appendTo(slowPath, continuation);
-        
-        ValueFromBlock slowResult = m_out.anchor(vmCall(
-            m_out.operation(operationNewObject), m_callFrame, m_out.constIntPtr(structure)));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(m_out.intPtr, fastResult, slowResult));
+        setJSValue(allocateObject(m_node->structure()));
     }
     
     void compileNewArray()
@@ -3290,7 +3255,7 @@ private:
             GetByIdVariant variant = data.variants[i];
             for (unsigned j = variant.structureSet().size(); j--;) {
                 cases.append(SwitchCase(
-                    weakStructure(variant.structureSet()[j]), blocks[i], Weight(1)));
+                    weakStructureID(variant.structureSet()[j]), blocks[i], Weight(1)));
             }
         }
         m_out.switchInstruction(
@@ -3361,7 +3326,7 @@ private:
             PutByIdVariant variant = data.variants[i];
             for (unsigned j = variant.oldStructure().size(); j--;) {
                 cases.append(
-                    SwitchCase(weakStructure(variant.oldStructure()[j]), blocks[i], Weight(1)));
+                    SwitchCase(weakStructureID(variant.oldStructure()[j]), blocks[i], Weight(1)));
             }
         }
         m_out.switchInstruction(
@@ -3370,7 +3335,7 @@ private:
         LBasicBlock lastNext = m_out.m_nextBlock;
         
         for (unsigned i = data.variants.size(); i--;) {
-            m_out.appendTo(blocks[i], i  + 1 < data.variants.size() ? blocks[i + 1] : exit);
+            m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
             
             PutByIdVariant variant = data.variants[i];
             
@@ -3393,7 +3358,7 @@ private:
                 ASSERT(variant.oldStructureForTransition()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
                 ASSERT(variant.oldStructureForTransition()->typeInfo().type() == variant.newStructure()->typeInfo().type());
                 m_out.store32(
-                    weakStructure(variant.newStructure()), base, m_heaps.JSCell_structureID);
+                    weakStructureID(variant.newStructure()), base, m_heaps.JSCell_structureID);
             }
             
             storeProperty(value, storage, data.identifierNumber, variant.offset());
@@ -3953,12 +3918,13 @@ private:
     void compileInvalidationPoint()
     {
         if (verboseCompilationEnabled())
-            dataLog("    Invalidation point with availability: ", availability(), "\n");
+            dataLog("    Invalidation point with availability: ", availabilityMap(), "\n");
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            availability().numberOfArguments(), availability().numberOfLocals()));
+            availabilityMap().m_locals.numberOfArguments(),
+            availabilityMap().m_locals.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -4360,6 +4326,120 @@ private:
         LValue index = lowInt32(m_node->child1());
         setJSValue(vmCall(m_out.operation(operationToIndexString), m_callFrame, index));
     }
+    
+    void compileCheckStructureImmediate()
+    {
+        LValue structureID = lowCell(m_node->child1());
+        checkStructure(structureID, noValue(), BadCache, m_node->structureSet());
+    }
+    
+    void compileMaterializeNewObject()
+    {
+        ObjectMaterializationData& data = m_node->objectMaterializationData();
+        
+        // Lower the values first, to avoid creating values inside a control flow diamond.
+        
+        Vector<LValue, 8> values;
+        for (unsigned i = 0; i < data.m_properties.size(); ++i)
+            values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
+        
+        StructureSet set;
+        m_interpreter.phiChildren()->forAllTransitiveIncomingValues(
+            m_graph.varArgChild(m_node, 0).node(),
+            [&] (Node* incoming) {
+                set.add(incoming->castConstant<Structure*>());
+            });
+        
+        Vector<LBasicBlock, 1> blocks(set.size());
+        for (unsigned i = set.size(); i--;)
+            blocks[i] = FTL_NEW_BLOCK(m_out, ("MaterializeNewObject case ", i));
+        LBasicBlock dummyDefault = FTL_NEW_BLOCK(m_out, ("MaterializeNewObject default case"));
+        LBasicBlock outerContinuation = FTL_NEW_BLOCK(m_out, ("MaterializeNewObject continuation"));
+        
+        Vector<SwitchCase, 1> cases(set.size());
+        for (unsigned i = set.size(); i--;)
+            cases[i] = SwitchCase(weakStructure(set[i]), blocks[i], Weight(1));
+        m_out.switchInstruction(
+            lowCell(m_graph.varArgChild(m_node, 0)), cases, dummyDefault, Weight(0));
+        
+        LBasicBlock outerLastNext = m_out.m_nextBlock;
+        
+        Vector<ValueFromBlock, 1> results;
+        
+        for (unsigned i = set.size(); i--;) {
+            m_out.appendTo(blocks[i], i + 1 < set.size() ? blocks[i + 1] : dummyDefault);
+            
+            Structure* structure = set[i];
+            
+            LValue object;
+            LValue butterfly;
+            
+            if (structure->outOfLineCapacity()) {
+                size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
+                MarkedAllocator* allocator = &vm().heap.allocatorForObjectWithoutDestructor(allocationSize);
+                
+                LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("MaterializeNewObject complex object allocation slow path"));
+                LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MaterializeNewObject complex object allocation continuation"));
+                
+                LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+                
+                LValue endOfStorage = allocateBasicStorageAndGetEnd(
+                    m_out.constIntPtr(structure->outOfLineCapacity() * sizeof(JSValue)),
+                    slowPath);
+                
+                LValue fastButterflyValue = m_out.add(
+                    m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage);
+                
+                LValue fastObjectValue = allocateObject(
+                    m_out.constIntPtr(allocator), structure, fastButterflyValue, slowPath);
+
+                ValueFromBlock fastObject = m_out.anchor(fastObjectValue);
+                ValueFromBlock fastButterfly = m_out.anchor(fastButterflyValue);
+                m_out.jump(continuation);
+                
+                m_out.appendTo(slowPath, continuation);
+                
+                ValueFromBlock slowObject = m_out.anchor(vmCall(
+                    m_out.operation(operationNewObjectWithButterfly),
+                    m_callFrame, m_out.constIntPtr(structure)));
+                ValueFromBlock slowButterfly = m_out.anchor(
+                    m_out.loadPtr(slowObject.value(), m_heaps.JSObject_butterfly));
+                
+                m_out.jump(continuation);
+                
+                m_out.appendTo(continuation, lastNext);
+                
+                object = m_out.phi(m_out.intPtr, fastObject, slowObject);
+                butterfly = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+            } else {
+                // In the easy case where we can do a one-shot allocation, we simply allocate the
+                // object to directly have the desired structure.
+                object = allocateObject(structure);
+                butterfly = nullptr; // Don't have one, don't need one.
+            }
+            
+            for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
+                for (unsigned i = data.m_properties.size(); i--;) {
+                    PhantomPropertyValue value = data.m_properties[i];
+                    if (m_graph.identifiers()[value.m_identifierNumber] != entry.key)
+                        continue;
+                    
+                    LValue base = isInlineOffset(entry.offset) ? object : butterfly;
+                    storeProperty(values[i], base, value.m_identifierNumber, entry.offset);
+                    break;
+                }
+            }
+            
+            results.append(m_out.anchor(object));
+            m_out.jump(outerContinuation);
+        }
+        
+        m_out.appendTo(dummyDefault, outerContinuation);
+        m_out.unreachable();
+        
+        m_out.appendTo(outerContinuation, outerLastNext);
+        setJSValue(m_out.phi(m_out.intPtr, results));
+    }
 
 #if ENABLE(FTL_NATIVE_CALL_INLINING)
     LValue getFunctionBySymbol(const CString symbol)
@@ -4523,6 +4603,36 @@ private:
         }
         
         return m_out.booleanFalse;
+    }
+    
+    void checkStructure(
+        LValue structureID, const FormattedValue& formattedValue, ExitKind exitKind,
+        const StructureSet& set)
+    {
+        if (set.size() == 1) {
+            speculate(
+                exitKind, formattedValue, 0,
+                m_out.notEqual(structureID, weakStructureID(set[0])));
+            return;
+        }
+        
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("checkStructure continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
+        for (unsigned i = 0; i < set.size() - 1; ++i) {
+            LBasicBlock nextStructure = FTL_NEW_BLOCK(m_out, ("checkStructure nextStructure"));
+            m_out.branch(
+                m_out.equal(structureID, weakStructureID(set[i])),
+                unsure(continuation), unsure(nextStructure));
+            m_out.appendTo(nextStructure);
+        }
+        
+        speculate(
+            exitKind, formattedValue, 0,
+            m_out.notEqual(structureID, weakStructureID(set.last())));
+        
+        m_out.jump(continuation);
+        m_out.appendTo(continuation, lastNext);
     }
     
     LValue numberOrNotCellToInt32(Edge edge, LValue value)
@@ -4831,7 +4941,7 @@ private:
         setBoolean(m_out.phi(m_out.boolean, fastResult, slowResult));
     }
 
-    LValue allocateCell(LValue allocator, Structure* structure, LBasicBlock slowPath)
+    LValue allocateCell(LValue allocator, LBasicBlock slowPath)
     {
         LBasicBlock success = FTL_NEW_BLOCK(m_out, ("object allocation success"));
         
@@ -4846,12 +4956,21 @@ private:
             m_out.loadPtr(result, m_heaps.JSCell_freeListNext),
             allocator, m_heaps.MarkedAllocator_freeListHead);
         
-        m_out.store32(m_out.constInt32(structure->id()), result, m_heaps.JSCell_structureID);
-        
+        return result;
+    }
+    
+    void storeStructure(LValue object, Structure* structure)
+    {
+        m_out.store32(m_out.constInt32(structure->id()), object, m_heaps.JSCell_structureID);
         m_out.store32(
             m_out.constInt32(structure->objectInitializationBlob()),
-            result, m_heaps.JSCell_usefulBytes);
-        
+            object, m_heaps.JSCell_usefulBytes);
+    }
+
+    LValue allocateCell(LValue allocator, Structure* structure, LBasicBlock slowPath)
+    {
+        LValue result = allocateCell(allocator, slowPath);
+        storeStructure(result, structure);
         return result;
     }
 
@@ -4896,6 +5015,31 @@ private:
         m_out.storePtr(newRemaining, m_out.absolute(&allocator.m_currentRemaining));
         return m_out.sub(
             m_out.loadPtr(m_out.absolute(&allocator.m_currentPayloadEnd)), newRemaining);
+    }
+    
+    LValue allocateObject(Structure* structure)
+    {
+        size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
+        MarkedAllocator* allocator = &vm().heap.allocatorForObjectWithoutDestructor(allocationSize);
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("allocateObject slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("allocateObject continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        ValueFromBlock fastResult = m_out.anchor(allocateObject(
+            m_out.constIntPtr(allocator), structure, m_out.intPtrZero, slowPath));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        ValueFromBlock slowResult = m_out.anchor(vmCall(
+            m_out.operation(operationNewObject), m_callFrame, m_out.constIntPtr(structure)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.intPtr, fastResult, slowResult);
     }
     
     struct ArrayValues {
@@ -6107,7 +6251,7 @@ private:
         
         speculate(
             NotStringObject, noValue(), 0,
-            m_out.notEqual(structureID, weakStructure(stringObjectStructure)));
+            m_out.notEqual(structureID, weakStructureID(stringObjectStructure)));
     }
     
     void speculateNonNullObject(Edge edge, LValue cell)
@@ -6334,7 +6478,7 @@ private:
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
         if (verboseCompilationEnabled()) {
-            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", availability(), "\n");
+            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", availabilityMap(), "\n");
             if (!m_availableRecoveries.isEmpty())
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
@@ -6344,7 +6488,8 @@ private:
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            availability().numberOfArguments(), availability().numberOfLocals()));
+            availabilityMap().m_locals.numberOfArguments(),
+            availabilityMap().m_locals.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -6384,56 +6529,52 @@ private:
         if (!!lowValue)
             arguments.append(lowValue.value());
         
+        AvailabilityMap availabilityMap = this->availabilityMap();
+        
         for (unsigned i = 0; i < exit.m_values.size(); ++i) {
             int operand = exit.m_values.operandForIndex(i);
             bool isLive = m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin);
-            if (!isLive) {
-                exit.m_values[i] = ExitValue::dead();
-                continue;
+            if (!isLive)
+                availabilityMap.m_locals[i] = Availability();
+        }
+        
+        availabilityMap.prune();
+        
+        HashMap<Node*, ExitTimeObjectMaterialization*> map;
+        availabilityMap.forEachAvailability(
+            [&] (Availability availability) {
+                if (!availability.shouldUseNode())
+                    return;
+                
+                Node* node = availability.node();
+                if (!node->isPhantomObjectAllocation())
+                    return;
+                
+                auto result = map.add(node, nullptr);
+                if (result.isNewEntry)
+                    result.iterator->value = exit.m_materializations.add(node->op());
+            });
+        
+        for (unsigned i = 0; i < exit.m_values.size(); ++i) {
+            int operand = exit.m_values.operandForIndex(i);
+            
+            Availability availability = availabilityMap.m_locals[i];
+            
+            if (Options::validateFTLOSRExitLiveness()) {
+                DFG_ASSERT(
+                    m_graph, m_node,
+                    !(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin)));
             }
             
-            Availability availability = this->availability()[i];
-            FlushedAt flush = availability.flushedAt();
-            switch (flush.format()) {
-            case DeadFlush:
-            case ConflictingFlush:
-                if (availability.hasNode()) {
-                    exit.m_values[i] = exitValueForNode(arguments, availability.node());
-                    break;
-                }
-                
-                if (Options::validateFTLOSRExitLiveness())
-                    DFG_CRASH(m_graph, m_node, toCString("Expected r", operand, " to be available but it wasn't.").data());
-                
-                // This means that the DFG's DCE proved that the value is dead in bytecode
-                // even though the bytecode liveness analysis thinks it's live. This is
-                // acceptable since the DFG's DCE is by design more aggressive while still
-                // being sound.
-                exit.m_values[i] = ExitValue::dead();
-                break;
-
-            case FlushedJSValue:
-            case FlushedCell:
-            case FlushedBoolean:
-                exit.m_values[i] = ExitValue::inJSStack(flush.virtualRegister());
-                break;
-                
-            case FlushedInt32:
-                exit.m_values[i] = ExitValue::inJSStackAsInt32(flush.virtualRegister());
-                break;
-                
-            case FlushedInt52:
-                exit.m_values[i] = ExitValue::inJSStackAsInt52(flush.virtualRegister());
-                break;
-                
-            case FlushedDouble:
-                exit.m_values[i] = ExitValue::inJSStackAsDouble(flush.virtualRegister());
-                break;
-                
-            case FlushedArguments:
-                exit.m_values[i] = ExitValue::argumentsObjectThatWasNotCreated();
-                break;
-            }
+            exit.m_values[i] = exitValueForAvailability(arguments, map, availability);
+        }
+        
+        for (auto heapPair : availabilityMap.m_heap) {
+            Node* node = heapPair.key.base();
+            ExitTimeObjectMaterialization* materialization = map.get(node);
+            materialization->add(
+                heapPair.key.descriptor(),
+                exitValueForAvailability(arguments, map, heapPair.value));
         }
         
         if (verboseCompilationEnabled())
@@ -6449,13 +6590,57 @@ private:
         m_out.call(m_out.stackmapIntrinsic(), arguments);
     }
     
-    ExitValue exitValueForNode(ExitArgumentList& arguments, Node* node)
+    ExitValue exitValueForAvailability(
+        ExitArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
+        Availability availability)
+    {
+        FlushedAt flush = availability.flushedAt();
+        switch (flush.format()) {
+        case DeadFlush:
+        case ConflictingFlush:
+            if (availability.hasNode())
+                return exitValueForNode(arguments, map, availability.node());
+            
+            // This means that the value is dead. It could be dead in bytecode or it could have
+            // been killed by our DCE, which can sometimes kill things even if they were live in
+            // bytecode.
+            return ExitValue::dead();
+
+        case FlushedJSValue:
+        case FlushedCell:
+        case FlushedBoolean:
+            return ExitValue::inJSStack(flush.virtualRegister());
+                
+        case FlushedInt32:
+            return ExitValue::inJSStackAsInt32(flush.virtualRegister());
+                
+        case FlushedInt52:
+            return ExitValue::inJSStackAsInt52(flush.virtualRegister());
+                
+        case FlushedDouble:
+            return ExitValue::inJSStackAsDouble(flush.virtualRegister());
+                
+        case FlushedArguments:
+            return ExitValue::argumentsObjectThatWasNotCreated();
+        }
+        
+        DFG_CRASH(m_graph, m_node, "Invalid flush format");
+    }
+    
+    ExitValue exitValueForNode(
+        ExitArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
+        Node* node)
     {
         ASSERT(node->shouldGenerate());
         ASSERT(node->hasResult());
 
         if (node) {
             switch (node->op()) {
+            case BottomValue:
+                // This might arise in object materializations. I actually doubt that it would,
+                // but it seems worthwhile to be conservative.
+                return ExitValue::dead();
+                
             case JSConstant:
             case Int52Constant:
             case DoubleConstant:
@@ -6463,6 +6648,9 @@ private:
                 
             case PhantomArguments:
                 return ExitValue::argumentsObjectThatWasNotCreated();
+                
+            case PhantomNewObject:
+                return ExitValue::materializeNewObject(map.get(node));
                 
             default:
                 break;
@@ -6647,10 +6835,15 @@ private:
         return m_out.constIntPtr(pointer);
     }
 
-    LValue weakStructure(Structure* structure)
+    LValue weakStructureID(Structure* structure)
     {
         addWeakReference(structure);
         return m_out.constInt32(structure->id());
+    }
+    
+    LValue weakStructure(Structure* structure)
+    {
+        return weakPointer(structure);
     }
     
     TypedPointer addressFor(LValue base, int operand, ptrdiff_t offset = 0)
@@ -6711,7 +6904,7 @@ private:
         m_out.unreachable();
     }
     
-    Operands<Availability>& availability() { return m_availabilityCalculator.m_availability; }
+    AvailabilityMap& availabilityMap() { return m_availabilityCalculator.m_availability; }
     
     VM& vm() { return m_graph.m_vm; }
     CodeBlock* codeBlock() { return m_graph.m_codeBlock; }

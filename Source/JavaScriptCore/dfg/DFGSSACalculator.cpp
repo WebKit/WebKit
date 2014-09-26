@@ -66,6 +66,17 @@ SSACalculator::~SSACalculator()
 {
 }
 
+void SSACalculator::reset()
+{
+    m_variables.clear();
+    m_defs.clear();
+    m_phis.clear();
+    for (BlockIndex blockIndex = m_data.size(); blockIndex--;) {
+        m_data[blockIndex].m_defs.clear();
+        m_data[blockIndex].m_phis.clear();
+    }
+}
+
 SSACalculator::Variable* SSACalculator::newVariable()
 {
     return &m_variables.alloc(Variable(m_variables.size()));

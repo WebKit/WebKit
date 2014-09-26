@@ -52,8 +52,11 @@ enum ExitValueKind {
     ExitValueInJSStackAsInt52,
     ExitValueInJSStackAsDouble,
     ExitValueArgumentsObjectThatWasNotCreated,
-    ExitValueRecovery
+    ExitValueRecovery,
+    ExitValueMaterializeNewObject
 };
+
+class ExitTimeObjectMaterialization;
 
 class ExitValue {
 public:
@@ -137,6 +140,8 @@ public:
         return result;
     }
     
+    static ExitValue materializeNewObject(ExitTimeObjectMaterialization*);
+    
     ExitValueKind kind() const { return m_kind; }
     
     bool isDead() const { return kind() == ExitValueDead; }
@@ -156,6 +161,7 @@ public:
     bool isArgument() const { return kind() == ExitValueArgument; }
     bool isArgumentsObjectThatWasNotCreated() const { return kind() == ExitValueArgumentsObjectThatWasNotCreated; }
     bool isRecovery() const { return kind() == ExitValueRecovery; }
+    bool isObjectMaterialization() const { return kind() == ExitValueMaterializeNewObject; }
     
     ExitArgument exitArgument() const
     {
@@ -199,7 +205,13 @@ public:
         return VirtualRegister(u.virtualRegister);
     }
     
-    ExitValue withVirtualRegister(VirtualRegister virtualRegister)
+    ExitTimeObjectMaterialization* objectMaterialization() const
+    {
+        ASSERT(isObjectMaterialization());
+        return u.newObjectMaterializationData;
+    }
+
+    ExitValue withVirtualRegister(VirtualRegister virtualRegister) const
     {
         ASSERT(isInJSStackSomehow());
         ExitValue result;
@@ -207,7 +219,7 @@ public:
         result.u.virtualRegister = virtualRegister.offset();
         return result;
     }
-
+    
     // If it's in the JSStack somehow, this will tell you what format it's in, in a manner
     // that is compatible with exitArgument().format(). If it's a constant or it's dead, it
     // will claim to be a JSValue. If it's an argument then it will tell you the argument's
@@ -223,6 +235,7 @@ public:
         case ExitValueConstant:
         case ExitValueInJSStack:
         case ExitValueArgumentsObjectThatWasNotCreated:
+        case ExitValueMaterializeNewObject:
             return ValueFormatJSValue;
             
         case ExitValueArgument:
@@ -260,6 +273,7 @@ private:
             uint16_t opcode;
             uint16_t format;
         } recovery;
+        ExitTimeObjectMaterialization* newObjectMaterializationData;
     } u;
 };
 

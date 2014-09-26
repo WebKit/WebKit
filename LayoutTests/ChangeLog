@@ -1,3 +1,62 @@
+2014-09-25  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should sink object allocations
+        https://bugs.webkit.org/show_bug.cgi?id=136330
+
+        Reviewed by Oliver Hunt.
+
+        * js/math-denorm.html: Added.
+        * js/regress/elidable-new-object-dag-expected.txt: Added.
+        * js/regress/elidable-new-object-dag.html: Added.
+        * js/regress/elidable-new-object-roflcopter-expected.txt: Added.
+        * js/regress/elidable-new-object-roflcopter.html: Added.
+        * js/regress/elidable-new-object-tree-expected.txt: Added.
+        * js/regress/elidable-new-object-tree.html: Added.
+        * js/regress/obvious-sink-pathology-expected.txt: Added.
+        * js/regress/obvious-sink-pathology-taken-expected.txt: Added.
+        * js/regress/obvious-sink-pathology-taken.html: Added.
+        * js/regress/obvious-sink-pathology.html: Added.
+        * js/regress/obviously-elidable-new-object-expected.txt: Added.
+        * js/regress/obviously-elidable-new-object.html: Added.
+        * js/regress/script-tests/elidable-new-object-dag.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * js/regress/script-tests/elidable-new-object-roflcopter.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * js/regress/script-tests/elidable-new-object-tree.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * js/regress/script-tests/obvious-sink-pathology-taken.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (foo):
+        * js/regress/script-tests/obvious-sink-pathology.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (foo):
+        * js/regress/script-tests/obviously-elidable-new-object.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * js/regress/script-tests/sinkable-new-object-dag.js: Added.
+        (sumOfArithSeries):
+        (verify):
+        (foo):
+        * js/regress/script-tests/sinkable-new-object-taken.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (foo):
+        * js/regress/script-tests/sinkable-new-object.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (foo):
+        * js/regress/sinkable-new-object-dag-expected.txt: Added.
+        * js/regress/sinkable-new-object-dag.html: Added.
+        * js/regress/sinkable-new-object-expected.txt: Added.
+        * js/regress/sinkable-new-object-taken-expected.txt: Added.
+        * js/regress/sinkable-new-object-taken.html: Added.
+        * js/regress/sinkable-new-object.html: Added.
+
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: FunctionCall timeline records omit profile data if the debugger has paused

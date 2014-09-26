@@ -28,9 +28,18 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "FTLExitTimeObjectMaterialization.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
+
+ExitValue ExitValue::materializeNewObject(ExitTimeObjectMaterialization* data)
+{
+    ExitValue result;
+    result.m_kind = ExitValueMaterializeNewObject;
+    result.u.newObjectMaterializationData = data;
+    return result;
+}
 
 void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
@@ -64,6 +73,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case ExitValueRecovery:
         out.print("Recovery(", recoveryOpcode(), ", arg", leftRecoveryArgument(), ", arg", rightRecoveryArgument(), ", ", recoveryFormat(), ")");
+        return;
+    case ExitValueMaterializeNewObject:
+        out.print("Materialize(", pointerDump(objectMaterialization()), ")");
         return;
     }
     

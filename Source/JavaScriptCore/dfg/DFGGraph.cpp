@@ -323,6 +323,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(JSValue(node->typedArray()), context));
     if (node->hasStoragePointer())
         out.print(comma, RawPointer(node->storagePointer()));
+    if (node->hasObjectMaterializationData())
+        out.print(comma, node->objectMaterializationData());
     if (node->isConstant())
         out.print(comma, pointerDumpInContext(node->constant(), context));
     if (node->isJump())
@@ -368,12 +370,21 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
     for (size_t i = 0; i < block->predecessors.size(); ++i)
         out.print(" ", *block->predecessors[i]);
     out.print("\n");
+    out.print(prefix, "  Successors:");
+    for (BasicBlock* successor : block->successors()) {
+        out.print(" ", *successor);
+        if (m_prePostNumbering.isValid())
+            out.print(" (", m_prePostNumbering.edgeKind(block, successor), ")");
+    }
+    out.print("\n");
     if (m_dominators.isValid()) {
         out.print(prefix, "  Dominated by: ", m_dominators.dominatorsOf(block), "\n");
         out.print(prefix, "  Dominates: ", m_dominators.blocksDominatedBy(block), "\n");
         out.print(prefix, "  Dominance Frontier: ", m_dominators.dominanceFrontierOf(block), "\n");
         out.print(prefix, "  Iterated Dominance Frontier: ", m_dominators.iteratedDominanceFrontierOf(BlockList(1, block)), "\n");
     }
+    if (m_prePostNumbering.isValid())
+        out.print(prefix, "  Pre/Post Numbering: ", m_prePostNumbering.preNumber(block), "/", m_prePostNumbering.postNumber(block), "\n");
     if (m_naturalLoops.isValid()) {
         if (const NaturalLoop* loop = m_naturalLoops.headerOf(block)) {
             out.print(prefix, "  Loop header, contains:");
@@ -562,6 +573,27 @@ void Graph::resetReachability()
     determineReachability();
 }
 
+void Graph::mergeRelevantToOSR()
+{
+    for (BasicBlock* block : blocksInNaturalOrder()) {
+        for (Node* node : *block) {
+            switch (node->op()) {
+            case MovHint:
+                node->child1()->mergeFlags(NodeRelevantToOSR);
+                break;
+                
+            case PutStructureHint:
+            case PutByOffsetHint:
+                node->child2()->mergeFlags(NodeRelevantToOSR);
+                break;
+                
+            default:
+                break;
+            }
+        }
+    }
+}
+
 namespace {
 
 class RefCountCalculator {
@@ -707,6 +739,7 @@ void Graph::invalidateCFG()
 {
     m_dominators.invalidate();
     m_naturalLoops.invalidate();
+    m_prePostNumbering.invalidate();
 }
 
 void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal)

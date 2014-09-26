@@ -38,6 +38,7 @@
 #include "DFGNodeFlags.h"
 #include "DFGNodeOrigin.h"
 #include "DFGNodeType.h"
+#include "DFGObjectMaterializationData.h"
 #include "DFGTransition.h"
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
@@ -500,6 +501,35 @@ struct Node {
         m_flags &= ~NodeClobbersWorld;
     }
     
+    void convertToPutByOffsetHint()
+    {
+        ASSERT(m_op == PutByOffset);
+        m_opInfo = storageAccessData().identifierNumber;
+        m_op = PutByOffsetHint;
+        child1() = child2();
+        child2() = child3();
+        child3() = Edge();
+    }
+    
+    void convertToPutStructureHint(Node* structure)
+    {
+        ASSERT(m_op == PutStructure);
+        ASSERT(structure->castConstant<Structure*>() == transition()->next);
+        m_op = PutStructureHint;
+        m_opInfo = 0;
+        child2() = Edge(structure, KnownCellUse);
+    }
+    
+    void convertToPhantomNewObject()
+    {
+        ASSERT(m_op == NewObject || m_op == MaterializeNewObject);
+        m_op = PhantomNewObject;
+        m_flags &= ~NodeHasVarArgs;
+        m_opInfo = 0;
+        m_opInfo2 = 0;
+        children = AdjacencyList();
+    }
+    
     void convertToPhantomLocal()
     {
         ASSERT(m_op == Phantom && (child1()->op() == Phi || child1()->op() == SetLocal || child1()->op() == SetArgument));
@@ -580,7 +610,7 @@ struct Node {
      
     bool isCellConstant()
     {
-        return isConstant() && constant()->value().isCell();
+        return isConstant() && constant()->value() && constant()->value().isCell();
     }
      
     JSCell* asCell()
@@ -594,6 +624,14 @@ struct Node {
         if (!isCellConstant())
             return nullptr;
         return jsDynamicCast<T>(asCell());
+    }
+    
+    template<typename T>
+    T castConstant()
+    {
+        T result = dynamicCastConstant<T>();
+        RELEASE_ASSERT(result);
+        return result;
     }
      
     bool containsMovHint()
@@ -704,6 +742,7 @@ struct Node {
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
+        case PutByOffsetHint:
             return true;
         default:
             return false;
@@ -1155,7 +1194,14 @@ struct Node {
     
     bool hasStorageAccessData()
     {
-        return op() == GetByOffset || op() == GetGetterSetterByOffset || op() == PutByOffset;
+        switch (op()) {
+        case GetByOffset:
+        case PutByOffset:
+        case GetGetterSetterByOffset:
+            return true;
+        default:
+            return false;
+        }
     }
     
     StorageAccessData& storageAccessData()
@@ -1182,6 +1228,26 @@ struct Node {
     MultiPutByOffsetData& multiPutByOffsetData()
     {
         return *reinterpret_cast<MultiPutByOffsetData*>(m_opInfo);
+    }
+    
+    bool hasObjectMaterializationData()
+    {
+        return op() == MaterializeNewObject;
+    }
+    
+    ObjectMaterializationData& objectMaterializationData()
+    {
+        return *reinterpret_cast<ObjectMaterializationData*>(m_opInfo);
+    }
+    
+    bool isPhantomObjectAllocation()
+    {
+        switch (op()) {
+        case PhantomNewObject:
+            return true;
+        default:
+            return false;
+        }
     }
     
     bool hasFunctionDeclIndex()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "DFGOSRExitBase.h"
 #include "FTLAbbreviations.h"
 #include "FTLExitArgumentList.h"
+#include "FTLExitTimeObjectMaterialization.h"
 #include "FTLExitValue.h"
 #include "FTLFormattedValue.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -160,6 +161,7 @@ struct OSRExit : public DFG::OSRExitBase {
     unsigned m_patchableCodeOffset;
     
     Operands<ExitValue> m_values;
+    Bag<ExitTimeObjectMaterialization> m_materializations;
     
     uint32_t m_stackmapID;
     

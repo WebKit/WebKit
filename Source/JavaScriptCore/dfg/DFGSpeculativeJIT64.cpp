@@ -4982,6 +4982,11 @@ void SpeculativeJIT::compile(Node* node)
     case FiatInt52:
     case CheckBadCell:
     case BottomValue:
+    case PhantomNewObject:
+    case PutByOffsetHint:
+    case CheckStructureImmediate:
+    case PutStructureHint:
+    case MaterializeNewObject:
         DFG_CRASH(m_jit.graph(), node, "Unexpected node");
         break;
     }

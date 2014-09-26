@@ -228,6 +228,13 @@ namespace JSC { namespace DFG {
     macro(NewTypedArray, NodeResultJS | NodeClobbersWorld | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
     \
+    /* Support for allocation sinking. */\
+    macro(PhantomNewObject, NodeResultJS) \
+    macro(PutByOffsetHint, NodeMustGenerate) \
+    macro(CheckStructureImmediate, NodeMustGenerate) \
+    macro(PutStructureHint, NodeMustGenerate) \
+    macro(MaterializeNewObject, NodeResultJS | NodeHasVarArgs) \
+    \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
     macro(ProfileWillCall, NodeMustGenerate) \

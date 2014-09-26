@@ -199,6 +199,10 @@ bool doesGC(Graph& graph, Node* node)
     case BooleanToNumber:
     case CheckBadCell:
     case BottomValue:
+    case PhantomNewObject:
+    case PutByOffsetHint:
+    case CheckStructureImmediate:
+    case PutStructureHint:
         return false;
 
     case CreateActivation:
@@ -225,6 +229,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetGenericPropertyEnumerator:
     case GetEnumeratorPname:
     case ToIndexString:
+    case MaterializeNewObject:
         return true;
         
     case MultiPutByOffset:

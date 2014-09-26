@@ -1013,6 +1013,11 @@ private:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
+        case PhantomNewObject:
+        case PutByOffsetHint:
+        case CheckStructureImmediate:
+        case PutStructureHint:
+        case MaterializeNewObject:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
