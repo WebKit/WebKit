@@ -337,7 +337,7 @@ static Node* ancestorRespondingToClickEvents(const HitTestResult& hitTestResult,
             pointerCursorStillValid = false;
 
         // If we haven't reached the body, and we are still paying attention to pointer cursors, and the node has a pointer cursor...
-        if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CURSOR_POINTER)
+        if (pointerCursorStillValid && node->renderStyle() && node->renderStyle()->cursor() == CursorPointer)
             pointerCursorNode = node;
         // We want the lowest unbroken chain of pointer cursors.
         else if (pointerCursorNode)
