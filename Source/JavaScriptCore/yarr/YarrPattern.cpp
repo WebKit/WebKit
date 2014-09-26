@@ -297,7 +297,7 @@ public:
     
     void assertionBOL()
     {
-        if (!m_alternative->m_terms.size() & !m_invertParentheticalAssertion) {
+        if (!m_alternative->m_terms.size() && !m_invertParentheticalAssertion) {
             m_alternative->m_startsWithBOL = true;
             m_alternative->m_containsBOL = true;
             m_pattern.m_containsBOL = true;
