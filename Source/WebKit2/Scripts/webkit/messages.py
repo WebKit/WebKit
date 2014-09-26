@@ -611,13 +611,16 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
+        use_connection = True
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceiveSync%sMessage(IPC::Connection*%s, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+            if not sync_delayed_messages:
+                use_connection = False
+            result.append('void %s::didReceiveSync%sMessage(IPC::Connection*%s, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if use_connection else ''))
         else:
             result.append('void %s::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
-        if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
+        if use_connection:
             result.append('    UNUSED_PARAM(connection);\n')
         result.append('    UNUSED_PARAM(decoder);\n')
         result.append('    UNUSED_PARAM(replyEncoder);\n')

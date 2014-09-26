@@ -1,3 +1,16 @@
+2014-09-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=137107
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        Sometimes generated code doesn't use `connection` parameter. So `UNUSED_PARAM(connection)` is necessary.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsPlayingAudio):
+
 2014-09-25  Christophe Dumez  <cdumez@apple.com>
 
         Use is<HTML*Element>() instead of isHTML*Element() - Part 2

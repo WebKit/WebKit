@@ -1882,7 +1882,7 @@ void WKPageSetAddsVisitedLinks(WKPageRef page, bool addsVisitedLinks)
     toImpl(page)->setAddsVisitedLinks(addsVisitedLinks);
 }
 
-bool WKPageIsPlayingAudio(WKPageRef page)
+bool WKPageIsPlayingAudio(WKPageRef)
 {
     // FIXME: To be implemented (https://bugs.webkit.org/show_bug.cgi?id=137048).
     return false;
