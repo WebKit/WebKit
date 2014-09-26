@@ -1,3 +1,9 @@
+2014-09-25  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix. Ensure that python2.7 is used for Windows builds.
+
+        * WTF.vcxproj/WTFGenerated.make:
+
 2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WinCE port from trunk

@@ -2,7 +2,7 @@ all: WTFHeaderDetection.h
     touch "%ConfigurationBuildDir%\buildfailed"
     perl build-generated-files.pl "%ConfigurationBuildDir%" "$(WEBKIT_LIBRARIES)" "$(DEBUGSUFFIX)" "%PlatformArchitecture%"
 !IF "$(OFFICIAL_BUILD)"!="1"
-    python work-around-vs-dependency-tracking-bugs.py
+    python2.7 work-around-vs-dependency-tracking-bugs.py
 !ENDIF
     copy-files.cmd
 
