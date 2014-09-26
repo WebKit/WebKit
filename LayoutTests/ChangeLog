@@ -1,3 +1,14 @@
+2014-09-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename CSSKeyframesRule insertRule to appendRule (57910)
+        https://bugs.webkit.org/show_bug.cgi?id=57910
+
+        Reviewed by Dean Jackson.
+
+        * animations/change-keyframes.html:
+        -- Ensure both WebKitCSSKeyframesRule methods insertRule() and appendRule() are 
+           both supported.
+
 2014-09-25  Javier Fernandez  <jfernandez@igalia.com>
 
         ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow

@@ -33,6 +33,7 @@ interface WebKitCSSKeyframesRule : CSSRule {
     readonly attribute CSSRuleList cssRules;
     
     void insertRule([Default=Undefined] optional DOMString rule);
+    void appendRule([Default=Undefined] optional DOMString rule);
     void deleteRule([Default=Undefined] optional DOMString key);
     WebKitCSSKeyframeRule findRule([Default=Undefined] optional DOMString key);
 
