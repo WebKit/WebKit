@@ -1,3 +1,14 @@
+2014-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Automatic Inspection should continue once all breakpoints are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=137038
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        Send the initialized message after we have sent all other setup messages,
+        such as enabling features and setting breakpoints.
+
 2014-09-26  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Type Token View shows type information on hover when it shouldn't

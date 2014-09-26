@@ -1,3 +1,56 @@
+2014-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Automatic Inspection should continue once all breakpoints are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=137038
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new protocol command "Inspector.initialized" that signifies to the backend
+        when the frontend has sent all its initialization messages to the backend. This
+        can include information like breakpoints, which we would want to have loaded
+        before any JavaScript evaluates in the context.
+
+        * inspector/protocol/InspectorDomain.json:
+        New protocol command, Inspector.initialized.
+
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::InspectorAgent):
+        (Inspector::InspectorAgent::initialized):
+        Tell the InspectorEnvironment (the Controller) the frontend has initialized.
+
+        * inspector/InspectorEnvironment.h:
+        Abstract virtual method to handle frontend initialization. To be
+        implemented by all of the InspectorControllers.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::frontendInitialized):
+        When a frontend is initialized, if it was automatic inspection unpause the debuggable.
+
+        * inspector/remote/RemoteInspectorDebuggable.cpp:
+        (Inspector::RemoteInspectorDebuggable::unpauseForInitializedInspector):
+        Complete setup for this debuggable.
+
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        Move the setup complete to later, when the frontend sends an "initialized" message.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateDebuggableAutomaticInspectCandidate):
+        Provide a longer timeout now that the frontend must send messages after the connection
+        has established. The longest I have seen in  600ms, but the average tends to be 200ms.
+        So bump the timeout to 800ms for a buffer.
+
+        (Inspector::RemoteInspector::setupSucceeded): Deleted.
+        (Inspector::RemoteInspector::setupCompleted):
+        Rename, as this happens at a slightly different time.
+
 2014-09-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG shouldn't insert store barriers when it has it on good authority that we're not storing a cell

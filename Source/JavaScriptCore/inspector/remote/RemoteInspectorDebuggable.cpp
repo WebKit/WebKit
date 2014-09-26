@@ -91,6 +91,11 @@ void RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection()
         loop.cycle();
 }
 
+void RemoteInspectorDebuggable::unpauseForInitializedInspector()
+{
+    RemoteInspector::shared().setupCompleted(identifier());
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

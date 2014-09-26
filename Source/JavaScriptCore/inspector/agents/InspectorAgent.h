@@ -40,10 +40,10 @@
 
 namespace Inspector {
 
-class InspectorObject;
-class InstrumentingAgents;
+class InspectorEnvironment;
 class InspectorInspectorBackendDispatcher;
 class InspectorInspectorFrontendDispatchers;
+class InspectorObject;
 
 typedef String ErrorString;
 
@@ -51,7 +51,7 @@ class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorAgent();
+    InspectorAgent(InspectorEnvironment&);
     virtual ~InspectorAgent();
 
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
@@ -59,11 +59,13 @@ public:
 
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
+    virtual void initialized(ErrorString*) override;
 
     void inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(const String& script);
 
 private:
+    InspectorEnvironment& m_environment;
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     Vector<String> m_pendingEvaluateTestCommands;

@@ -73,6 +73,7 @@ public:
     virtual Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
+    virtual void frontendInitialized() override { }
 
 private:
     friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);

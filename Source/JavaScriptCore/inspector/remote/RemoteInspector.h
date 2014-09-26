@@ -55,7 +55,7 @@ public:
     void updateDebuggableAutomaticInspectCandidate(RemoteInspectorDebuggable*);
     void sendMessageToRemoteFrontend(unsigned identifier, const String& message);
     void setupFailed(unsigned identifier);
-    void setupSucceeded(unsigned identifier);
+    void setupCompleted(unsigned identifier);
     bool waitingForAutomaticInspection(unsigned identifier);
 
     bool enabled() const { return m_enabled; }

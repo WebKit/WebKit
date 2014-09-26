@@ -166,7 +166,6 @@ bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection)
             } else {
                 m_debuggable->connect(this, isAutomaticInspection);
                 m_connected = true;
-                RemoteInspector::shared().setupSucceeded(identifier());
             }
         }
         deref();

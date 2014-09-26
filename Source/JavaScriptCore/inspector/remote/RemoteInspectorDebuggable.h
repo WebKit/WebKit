@@ -69,6 +69,7 @@ public:
 
     virtual bool automaticInspectionAllowed() const { return false; }
     virtual void pauseWaitingForAutomaticInspection();
+    virtual void unpauseForInitializedInspector();
 
 private:
     unsigned m_identifier;

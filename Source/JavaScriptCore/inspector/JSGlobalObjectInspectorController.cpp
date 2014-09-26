@@ -47,6 +47,10 @@
 #include <dlfcn.h>
 #include <execinfo.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include "JSGlobalObjectDebuggable.h"
+#endif
+
 using namespace JSC;
 
 namespace Inspector {
@@ -56,6 +60,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_inspectorFrontendChannel(nullptr)
     , m_includeNativeCallStackWithExceptions(true)
+    , m_isAutomaticInspection(false)
 {
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
@@ -67,7 +72,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 
     runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
-    m_agents.append(std::make_unique<InspectorAgent>());
+    m_agents.append(std::make_unique<InspectorAgent>(*this));
     m_agents.append(WTF::move(runtimeAgent));
     m_agents.append(WTF::move(consoleAgent));
     m_agents.append(WTF::move(debuggerAgent));
@@ -90,19 +95,12 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
     ASSERT(!m_inspectorFrontendChannel);
     ASSERT(!m_inspectorBackendDispatcher);
 
+    m_isAutomaticInspection = isAutomaticInspection;
+
     m_inspectorFrontendChannel = frontendChannel;
     m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
-
-    if (isAutomaticInspection) {
-        // FIXME: We should not always pause for automatic inspection.
-        // Currently if we don't automatically pause, then we may miss a breakpoint, since breakpoints
-        // come from the frontend and might be received after some evaluateScript message. We should
-        // have the frontend signal the backend when its setup messages are complete.
-        m_debuggerAgent->enable(nullptr);
-        m_debuggerAgent->pause(nullptr);
-    }
 }
 
 void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
@@ -115,6 +113,8 @@ void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectRe
     m_inspectorBackendDispatcher->clearFrontend();
     m_inspectorBackendDispatcher.clear();
     m_inspectorFrontendChannel = nullptr;
+
+    m_isAutomaticInspection = false;
 }
 
 void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String& message)
@@ -190,6 +190,14 @@ InspectorFunctionCallHandler JSGlobalObjectInspectorController::functionCallHand
 InspectorEvaluateHandler JSGlobalObjectInspectorController::evaluateHandler() const
 {
     return JSC::evaluate;
+}
+
+void JSGlobalObjectInspectorController::frontendInitialized()
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (m_isAutomaticInspection)
+        m_globalObject.inspectorDebuggable().unpauseForInitializedInspector();
+#endif
 }
 
 } // namespace Inspector

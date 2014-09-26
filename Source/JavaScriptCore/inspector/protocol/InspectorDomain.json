@@ -9,6 +9,10 @@
         {
             "name": "disable",
             "description": "Disables inspector domain notifications."
+        },
+        {
+            "name": "initialized",
+            "description": "Sent by the frontend after all initialization messages have been sent."
         }
     ],
     "events": [

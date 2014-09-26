@@ -78,6 +78,7 @@ public:
     virtual InspectorEvaluateHandler evaluateHandler() const override;
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
+    virtual void frontendInitialized() override;
 
 private:
     void appendAPIBacktrace(ScriptCallStack* callStack);
@@ -91,6 +92,7 @@ private:
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     bool m_includeNativeCallStackWithExceptions;
+    bool m_isAutomaticInspection;
 };
 
 } // namespace Inspector

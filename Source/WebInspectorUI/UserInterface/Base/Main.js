@@ -117,6 +117,12 @@ WebInspector.loaded = function()
     if (window.ConsoleAgent)
         ConsoleAgent.enable();
 
+    // Tell the backend we are initialized after all our initialization messages have been sent.
+    setTimeout(function() {
+        if (window.InspectorAgent && InspectorAgent.initialized)
+            InspectorAgent.initialized();
+    }, 0);
+
     // Register for events.
     this.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureDidStart, this);
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);

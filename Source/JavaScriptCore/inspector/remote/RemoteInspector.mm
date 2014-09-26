@@ -221,7 +221,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
         }
 
         // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a short period of time.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.8 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             std::lock_guard<std::mutex> lock(m_mutex);
             if (m_automaticInspectionCandidateIdentifier == identifier) {
                 LOG_ERROR("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateIdentifier);
@@ -286,7 +286,7 @@ void RemoteInspector::setupFailed(unsigned identifier)
     pushListingSoon();
 }
 
-void RemoteInspector::setupSucceeded(unsigned identifier)
+void RemoteInspector::setupCompleted(unsigned identifier)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 

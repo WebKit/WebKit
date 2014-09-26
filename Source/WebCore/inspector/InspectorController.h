@@ -129,6 +129,7 @@ public:
     virtual Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
+    virtual void frontendInitialized() override;
 
 private:
     friend InstrumentingAgents* instrumentationForPage(Page*);
@@ -153,6 +154,7 @@ private:
     Inspector::InspectorAgentRegistry m_agents;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
     bool m_isUnderTest;
+    bool m_isAutomaticInspection;
 
 #if ENABLE(REMOTE_INSPECTOR)
     bool m_hasRemoteFrontend;

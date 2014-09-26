@@ -410,6 +410,10 @@ public:
 
     PageConsoleClient& console() { return *m_consoleClient; }
 
+#if ENABLE(REMOTE_INSPECTOR)
+    PageDebuggable& inspectorDebuggable() const { return *m_inspectorDebuggable.get(); }
+#endif
+
     void hiddenPageCSSAnimationSuspensionStateChanged();
 
 #if ENABLE(VIDEO_TRACK)
