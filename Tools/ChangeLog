@@ -1,5 +1,33 @@
 2014-09-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Get rid of webkit-queues dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=137141
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Updated version.
+
+        * QueueStatusServer/templates/dashboard.html: Removed.
+        * QueueStatusServer/handlers/dashboard.py: Removed.
+        * QueueStatusServer/main.py:
+        Kill it!
+
+        * QueueStatusServer/stylesheets/common.css: Copied from Tools/QueueStatusServer/stylesheets/dashboard.css.
+        (.status-cell): Deleted.
+        (.status-cell:hover): Deleted.
+        (.status-cell.pass): Deleted.
+        (.status-cell.fail): Deleted.
+        (.status-cell.pending): Deleted.
+        (.status-cell.error): Deleted.
+        * QueueStatusServer/stylesheets/dashboard.css: Removed.
+        * QueueStatusServer/templates/activebots.html:
+        * QueueStatusServer/templates/patch.html:
+        * QueueStatusServer/templates/queuestatus.html:
+        * QueueStatusServer/templates/recentstatus.html:
+        Renamed dashboard.css to common.css, and removed dashboard-only rules.
+
+2014-09-26  Alexey Proskuryakov  <ap@apple.com>
+
         Get rid of Retry status in webkit-queues
         https://bugs.webkit.org/show_bug.cgi?id=137135
 

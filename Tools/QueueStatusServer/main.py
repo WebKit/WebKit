@@ -34,7 +34,6 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 from handlers.activebots import ActiveBots
-from handlers.dashboard import Dashboard
 from handlers.gc import GC
 from handlers.nextpatch import NextPatch
 from handlers.patch import Patch
@@ -60,7 +59,6 @@ webapp.template.register_template_library('filters.webkit_extras')
 
 routes = [
     ('/', QueuesOverview),
-    ('/dashboard', Dashboard),
     ('/gc', GC),
     ('/sync-queue-logs', SyncQueueLogs),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
