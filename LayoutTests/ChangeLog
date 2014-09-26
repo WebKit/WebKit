@@ -1,3 +1,12 @@
+2014-09-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip quicktime-plugin-snapshotted.html 
+
+        Quicktime plugin snapshotting is now covered by all other snapshotting tests 
+        and this test in particular seems to fail only on a few bots.
+
+        * platform/mac/TestExpectations:
+
 2014-09-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rename CSSKeyframesRule insertRule to appendRule (57910)
