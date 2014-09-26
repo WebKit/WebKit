@@ -1146,112 +1146,112 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case CURSOR_AUTO:
+    case CursorAuto:
         m_value.valueID = CSSValueAuto;
         break;
-    case CURSOR_CROSS:
+    case CursorCross:
         m_value.valueID = CSSValueCrosshair;
         break;
-    case CURSOR_DEFAULT:
+    case CursorDefault:
         m_value.valueID = CSSValueDefault;
         break;
-    case CURSOR_POINTER:
+    case CursorPointer:
         m_value.valueID = CSSValuePointer;
         break;
-    case CURSOR_MOVE:
+    case CursorMove:
         m_value.valueID = CSSValueMove;
         break;
-    case CURSOR_CELL:
+    case CursorCell:
         m_value.valueID = CSSValueCell;
         break;
-    case CURSOR_VERTICAL_TEXT:
+    case CursorVerticalText:
         m_value.valueID = CSSValueVerticalText;
         break;
-    case CURSOR_CONTEXT_MENU:
+    case CursorContextMenu:
         m_value.valueID = CSSValueContextMenu;
         break;
-    case CURSOR_ALIAS:
+    case CursorAlias:
         m_value.valueID = CSSValueAlias;
         break;
-    case CURSOR_COPY:
+    case CursorCopy:
         m_value.valueID = CSSValueCopy;
         break;
-    case CURSOR_NONE:
+    case CursorNone:
         m_value.valueID = CSSValueNone;
         break;
-    case CURSOR_PROGRESS:
+    case CursorProgress:
         m_value.valueID = CSSValueProgress;
         break;
-    case CURSOR_NO_DROP:
+    case CursorNoDrop:
         m_value.valueID = CSSValueNoDrop;
         break;
-    case CURSOR_NOT_ALLOWED:
+    case CursorNotAllowed:
         m_value.valueID = CSSValueNotAllowed;
         break;
-    case CURSOR_WEBKIT_ZOOM_IN:
-        m_value.valueID = CSSValueWebkitZoomIn;
+    case CursorZoomIn:
+        m_value.valueID = CSSValueZoomIn;
         break;
-    case CURSOR_WEBKIT_ZOOM_OUT:
-        m_value.valueID = CSSValueWebkitZoomOut;
+    case CursorZoomOut:
+        m_value.valueID = CSSValueZoomOut;
         break;
-    case CURSOR_E_RESIZE:
+    case CursorEResize:
         m_value.valueID = CSSValueEResize;
         break;
-    case CURSOR_NE_RESIZE:
+    case CursorNeResize:
         m_value.valueID = CSSValueNeResize;
         break;
-    case CURSOR_NW_RESIZE:
+    case CursorNwResize:
         m_value.valueID = CSSValueNwResize;
         break;
-    case CURSOR_N_RESIZE:
+    case CursorNResize:
         m_value.valueID = CSSValueNResize;
         break;
-    case CURSOR_SE_RESIZE:
+    case CursorSeResize:
         m_value.valueID = CSSValueSeResize;
         break;
-    case CURSOR_SW_RESIZE:
+    case CursorSwResize:
         m_value.valueID = CSSValueSwResize;
         break;
-    case CURSOR_S_RESIZE:
+    case CursorSResize:
         m_value.valueID = CSSValueSResize;
         break;
-    case CURSOR_W_RESIZE:
+    case CursorWResize:
         m_value.valueID = CSSValueWResize;
         break;
-    case CURSOR_EW_RESIZE:
+    case CursorEwResize:
         m_value.valueID = CSSValueEwResize;
         break;
-    case CURSOR_NS_RESIZE:
+    case CursorNsResize:
         m_value.valueID = CSSValueNsResize;
         break;
-    case CURSOR_NESW_RESIZE:
+    case CursorNeswResize:
         m_value.valueID = CSSValueNeswResize;
         break;
-    case CURSOR_NWSE_RESIZE:
+    case CursorNwseResize:
         m_value.valueID = CSSValueNwseResize;
         break;
-    case CURSOR_COL_RESIZE:
+    case CursorColResize:
         m_value.valueID = CSSValueColResize;
         break;
-    case CURSOR_ROW_RESIZE:
+    case CursorRowResize:
         m_value.valueID = CSSValueRowResize;
         break;
-    case CURSOR_TEXT:
+    case CursorText:
         m_value.valueID = CSSValueText;
         break;
-    case CURSOR_WAIT:
+    case CursorWait:
         m_value.valueID = CSSValueWait;
         break;
-    case CURSOR_HELP:
+    case CursorHelp:
         m_value.valueID = CSSValueHelp;
         break;
-    case CURSOR_ALL_SCROLL:
+    case CursorAllScroll:
         m_value.valueID = CSSValueAllScroll;
         break;
-    case CURSOR_WEBKIT_GRAB:
+    case CursorWebkitGrab:
         m_value.valueID = CSSValueWebkitGrab;
         break;
-    case CURSOR_WEBKIT_GRABBING:
+    case CursorWebkitGrabbing:
         m_value.valueID = CSSValueWebkitGrabbing;
         break;
     }
@@ -1260,14 +1260,19 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
 template<> inline CSSPrimitiveValue::operator ECursor() const
 {
     ASSERT(isValueID());
-
-    if (m_value.valueID == CSSValueCopy)
-        return CURSOR_COPY;
-    if (m_value.valueID == CSSValueNone)
-        return CURSOR_NONE;
-    return static_cast<ECursor>(m_value.valueID - CSSValueAuto);
+    switch (m_value.valueID) {
+    case CSSValueCopy:
+        return CursorCopy;
+    case CSSValueWebkitZoomIn:
+        return CursorZoomIn;
+    case CSSValueWebkitZoomOut:
+        return CursorZoomOut;
+    case CSSValueNone:
+        return CursorNone;
+    default:
+        return static_cast<ECursor>(m_value.valueID - CSSValueAuto);
+    }
 }
-
 
 #if ENABLE(CURSOR_VISIBILITY)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CursorVisibility e)

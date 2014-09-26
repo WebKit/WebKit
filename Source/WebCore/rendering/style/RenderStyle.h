@@ -1800,7 +1800,7 @@ public:
     static EWhiteSpace initialWhiteSpace() { return NORMAL; }
     static short initialHorizontalBorderSpacing() { return 0; }
     static short initialVerticalBorderSpacing() { return 0; }
-    static ECursor initialCursor() { return CURSOR_AUTO; }
+    static ECursor initialCursor() { return CursorAuto; }
 #if ENABLE(CURSOR_VISIBILITY)
     static CursorVisibility initialCursorVisibility() { return CursorVisibilityAuto; }
 #endif

@@ -1222,7 +1222,7 @@ public:
         if (value->isValueList()) {
             CSSValueList* list = toCSSValueList(value);
             int len = list->length();
-            styleResolver->style()->setCursor(CURSOR_AUTO);
+            styleResolver->style()->setCursor(CursorAuto);
             for (int i = 0; i < len; i++) {
                 CSSValue* item = list->itemWithoutBoundsCheck(i);
                 if (item->isCursorImageValue()) {

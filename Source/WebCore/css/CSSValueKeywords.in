@@ -383,8 +383,8 @@ alias
 progress
 no-drop
 not-allowed
--webkit-zoom-in
--webkit-zoom-out
+zoom-in
+zoom-out
 e-resize
 ne-resize
 nw-resize
@@ -405,6 +405,8 @@ help
 all-scroll
 -webkit-grab
 -webkit-grabbing
+-webkit-zoom-in
+-webkit-zoom-out
 // none
 //
 // CSS_PROP_CURSOR_VISIBILITY:

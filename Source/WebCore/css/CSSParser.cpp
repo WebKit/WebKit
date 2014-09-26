@@ -1980,8 +1980,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize |
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help |
-        // vertical-text | cell | context-menu | alias | copy | no-drop | not-allowed | -webkit-zoom-in
-        // -webkit-zoom-out | all-scroll | -webkit-grab | -webkit-grabbing ] ] | inherit
+        // vertical-text | cell | context-menu | alias | copy | no-drop | not-allowed |
+        // zoom-in | zoom-out | all-scroll | -webkit-grab | -webkit-grabbing | -webkit-zoom-in |
+        // -webkit-zoom-out ] ] | inherit
         RefPtr<CSSValueList> list;
         while (value) {
             RefPtr<CSSValue> image = 0;
@@ -2030,7 +2031,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                     return false;
             } else if (inQuirksMode() && value->id == CSSValueHand) // MSIE 5 compatibility :/
                 list->append(cssValuePool().createIdentifierValue(CSSValuePointer));
-            else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
+            else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitZoomOut) || value->id == CSSValueCopy || value->id == CSSValueNone)
                 list->append(cssValuePool().createIdentifierValue(value->id));
             m_valueList->next();
             parsedValue = list.release();
@@ -2040,7 +2041,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             if (inQuirksMode() && value->id == CSSValueHand) { // MSIE 5 compatibility :/
                 id = CSSValuePointer;
                 validPrimitive = true;
-            } else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
+            } else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitZoomOut) || value->id == CSSValueCopy || value->id == CSSValueNone)
                 validPrimitive = true;
         } else {
             ASSERT_NOT_REACHED();
