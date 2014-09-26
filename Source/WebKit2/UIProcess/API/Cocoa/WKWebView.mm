@@ -406,6 +406,23 @@ static int32_t deviceOrientation()
     return navigation.autorelease();
 }
 
+- (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
+{
+    if (![URL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
+
+    if (![readAccessURL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
+
+    uint64_t navigationID = _page->loadFile([URL _web_originalDataAsWTFString], [readAccessURL _web_originalDataAsWTFString]);
+    if (!navigationID)
+        return nil;
+
+    auto navigation = _navigationState->createLoadRequestNavigation(navigationID, [NSURLRequest requestWithURL:URL]);
+
+    return navigation.autorelease();
+}
+
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
     uint64_t navigationID = _page->loadHTMLString(string, baseURL.absoluteString);

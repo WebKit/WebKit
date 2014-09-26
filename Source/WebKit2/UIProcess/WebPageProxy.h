@@ -302,7 +302,7 @@ public:
     bool isClosed() const { return m_isClosed; }
 
     uint64_t loadRequest(const WebCore::ResourceRequest&, API::Object* userData = nullptr);
-    void loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
+    uint64_t loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
     void loadData(API::Data*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
     uint64_t loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData = nullptr);

@@ -89,6 +89,15 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
+/*! @abstract Navigates to the requested file URL on the filesystem.
+ @param URL The file URL to which to navigate.
+ @param readAccessURL The URL to allow read access to.
+ @discussion If readAccessURL references a single file, only that file may be loaded by WebKit.
+ If readAccessURL references a directory, files inside that file may be loaded by WebKit.
+ @result A new navigation for the given file URL.
+ */
+- (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! @abstract Sets the webpage contents and base URL.
  @param string The string to use as the contents of the webpage.
  @param baseURL A URL that is used to resolve relative URLs within the document.
