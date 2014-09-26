@@ -50,17 +50,17 @@ using namespace WTF;
 WebIconDatabase* WebIconDatabase::m_sharedWebIconDatabase = 0;
 
 WebIconDatabase::WebIconDatabase()
-: m_refCount(0)
-, m_deliveryRequested(false)
+    : m_refCount(0)
+    , m_deliveryRequested(false)
 {
     gClassCount++;
-    gClassNameCount.add("WebIconDatabase");
+    gClassNameCount().add("WebIconDatabase");
 }
 
 WebIconDatabase::~WebIconDatabase()
 {
     gClassCount--;
-    gClassNameCount.remove("WebIconDatabase");
+    gClassNameCount().remove("WebIconDatabase");
 }
 
 void WebIconDatabase::init()

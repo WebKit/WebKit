@@ -253,7 +253,7 @@ WebFrame::WebFrame()
 {
     WebFrameCount++;
     gClassCount++;
-    gClassNameCount.add("WebFrame");
+    gClassNameCount().add("WebFrame");
 }
 
 WebFrame::~WebFrame()
@@ -261,7 +261,7 @@ WebFrame::~WebFrame()
     delete d;
     WebFrameCount--;
     gClassCount--;
-    gClassNameCount.remove("WebFrame");
+    gClassNameCount().remove("WebFrame");
 }
 
 WebFrame* WebFrame::createInstance()

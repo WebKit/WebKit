@@ -44,13 +44,13 @@ DefaultPolicyDelegate::DefaultPolicyDelegate()
     : m_refCount(0)
 {
     gClassCount++;
-    gClassNameCount.add("DefaultPolicyDelegate");
+    gClassNameCount().add("DefaultPolicyDelegate");
 }
 
 DefaultPolicyDelegate::~DefaultPolicyDelegate()
 {
     gClassCount--;
-    gClassNameCount.remove("DefaultPolicyDelegate");
+    gClassNameCount().remove("DefaultPolicyDelegate");
 }
 
 DefaultPolicyDelegate* DefaultPolicyDelegate::sharedInstance()

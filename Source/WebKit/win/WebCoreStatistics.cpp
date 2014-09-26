@@ -49,13 +49,13 @@ WebCoreStatistics::WebCoreStatistics()
 : m_refCount(0)
 {
     gClassCount++;
-    gClassNameCount.add("WebCoreStatistics");
+    gClassNameCount().add("WebCoreStatistics");
 }
 
 WebCoreStatistics::~WebCoreStatistics()
 {
     gClassCount--;
-    gClassNameCount.remove("WebCoreStatistics");
+    gClassNameCount().remove("WebCoreStatistics");
 }
 
 WebCoreStatistics* WebCoreStatistics::createInstance()

@@ -43,13 +43,13 @@ WebGeolocationPolicyListener::WebGeolocationPolicyListener(PassRefPtr<Geolocatio
     , m_geolocation(geolocation)
 {
     gClassCount++;
-    gClassNameCount.add("WebGeolocationPolicyListener");
+    gClassNameCount().add("WebGeolocationPolicyListener");
 }
 
 WebGeolocationPolicyListener::~WebGeolocationPolicyListener()
 {
     gClassCount--;
-    gClassNameCount.remove("WebGeolocationPolicyListener");
+    gClassNameCount().remove("WebGeolocationPolicyListener");
 }
 
 // IUnknown -------------------------------------------------------------------

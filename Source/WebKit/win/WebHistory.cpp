@@ -158,7 +158,7 @@ WebHistory::WebHistory()
 , m_preferences(0)
 {
     gClassCount++;
-    gClassNameCount.add("WebHistory");
+    gClassNameCount().add("WebHistory");
 
     m_preferences = WebPreferences::sharedStandardPreferences();
 }
@@ -166,7 +166,7 @@ WebHistory::WebHistory()
 WebHistory::~WebHistory()
 {
     gClassCount--;
-    gClassNameCount.remove("WebHistory");
+    gClassNameCount().remove("WebHistory");
 }
 
 WebHistory* WebHistory::createInstance()

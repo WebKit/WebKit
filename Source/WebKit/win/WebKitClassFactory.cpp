@@ -88,13 +88,13 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
     WTF::initializeMainThread();
 
     gClassCount++;
-    gClassNameCount.add("WebKitClassFactory");
+    gClassNameCount().add("WebKitClassFactory");
 }
 
 WebKitClassFactory::~WebKitClassFactory()
 {
     gClassCount--;
-    gClassNameCount.remove("WebKitClassFactory");
+    gClassNameCount().remove("WebKitClassFactory");
 }
 
 // IUnknown -------------------------------------------------------------------

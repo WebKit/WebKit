@@ -41,13 +41,13 @@ WebFramePolicyListener::WebFramePolicyListener(PassRefPtr<Frame> frame)
     , m_frame(frame)
 {
     gClassCount++;
-    gClassNameCount.add("WebFramePolicyListener");
+    gClassNameCount().add("WebFramePolicyListener");
 }
 
 WebFramePolicyListener::~WebFramePolicyListener()
 {
     gClassCount--;
-    gClassNameCount.remove("WebFramePolicyListener");
+    gClassNameCount().remove("WebFramePolicyListener");
 }
 
 WebFramePolicyListener* WebFramePolicyListener::createInstance(PassRefPtr<Frame> frame)

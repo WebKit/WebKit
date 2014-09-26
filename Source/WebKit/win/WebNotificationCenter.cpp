@@ -59,13 +59,13 @@ WebNotificationCenter::WebNotificationCenter()
     , d(adoptPtr(new WebNotificationCenterPrivate))
 {
     gClassCount++;
-    gClassNameCount.add("WebNotificationCenter");
+    gClassNameCount().add("WebNotificationCenter");
 }
 
 WebNotificationCenter::~WebNotificationCenter()
 {
     gClassCount--;
-    gClassNameCount.remove("WebNotificationCenter");
+    gClassNameCount().remove("WebNotificationCenter");
 }
 
 WebNotificationCenter* WebNotificationCenter::createInstance()

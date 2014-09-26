@@ -40,6 +40,7 @@
 #include <shlobj.h>
 #include <wchar.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
@@ -101,7 +102,11 @@ static bool booleanValueForPreferencesValue(CFPropertyListRef value)
 
 static CFDictionaryRef defaultSettings;
 
-static HashMap<WTF::String, COMPtr<WebPreferences> > webPreferencesInstances;
+static HashMap<WTF::String, COMPtr<WebPreferences>>& webPreferencesInstances()
+{
+    static NeverDestroyed<HashMap<WTF::String, COMPtr<WebPreferences>>> webPreferencesInstances;
+    return webPreferencesInstances;
+}
 
 WebPreferences* WebPreferences::sharedStandardPreferences()
 {
@@ -122,13 +127,13 @@ WebPreferences::WebPreferences()
     , m_numWebViews(0)
 {
     gClassCount++;
-    gClassNameCount.add("WebPreferences");
+    gClassNameCount().add("WebPreferences");
 }
 
 WebPreferences::~WebPreferences()
 {
     gClassCount--;
-    gClassNameCount.remove("WebPreferences");
+    gClassNameCount().remove("WebPreferences");
 }
 
 WebPreferences* WebPreferences::createInstance()
@@ -157,7 +162,7 @@ WebPreferences* WebPreferences::getInstanceForIdentifier(BSTR identifier)
     if (identifierString.isEmpty())
         return sharedStandardPreferences();
 
-    return webPreferencesInstances.get(identifierString).get();
+    return webPreferencesInstances().get(identifierString).get();
 }
 
 void WebPreferences::setInstance(WebPreferences* instance, BSTR identifier)
@@ -167,20 +172,20 @@ void WebPreferences::setInstance(WebPreferences* instance, BSTR identifier)
     WTF::String identifierString(identifier, SysStringLen(identifier));
     if (identifierString.isEmpty())
         return;
-    webPreferencesInstances.add(identifierString, instance);
+    webPreferencesInstances().add(identifierString, instance);
 }
 
 void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
 {
-    if (!identifier || webPreferencesInstances.isEmpty())
+    if (!identifier || webPreferencesInstances().isEmpty())
         return;
 
     WTF::String identifierString(identifier, SysStringLen(identifier));
     if (identifierString.isEmpty())
         return;
-    WebPreferences* webPreference = webPreferencesInstances.get(identifierString).get();
+    WebPreferences* webPreference = webPreferencesInstances().get(identifierString).get();
     if (webPreference && webPreference->m_refCount == 1)
-        webPreferencesInstances.remove(identifierString);
+        webPreferencesInstances().remove(identifierString);
 }
 
 void WebPreferences::initializeDefaultSettings()

@@ -39,13 +39,13 @@ WebURLProtectionSpace::WebURLProtectionSpace(const ProtectionSpace& protectionSp
     , m_protectionSpace(protectionSpace)
 {
     gClassCount++;
-    gClassNameCount.add("WebURLProtectionSpace");
+    gClassNameCount().add("WebURLProtectionSpace");
 }
 
 WebURLProtectionSpace::~WebURLProtectionSpace()
 {
     gClassCount--;
-    gClassNameCount.remove("WebURLProtectionSpace");
+    gClassNameCount().remove("WebURLProtectionSpace");
 }
 
 WebURLProtectionSpace* WebURLProtectionSpace::createInstance()

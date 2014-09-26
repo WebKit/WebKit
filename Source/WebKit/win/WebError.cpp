@@ -44,13 +44,13 @@ WebError::WebError(const ResourceError& error, IPropertyBag* userInfo)
     , m_userInfo(userInfo)
 {
     gClassCount++;
-    gClassNameCount.add("WebError");
+    gClassNameCount().add("WebError");
 }
 
 WebError::~WebError()
 {
     gClassCount--;
-    gClassNameCount.remove("WebError");
+    gClassNameCount().remove("WebError");
 }
 
 WebError* WebError::createInstance(const ResourceError& error, IPropertyBag* userInfo)

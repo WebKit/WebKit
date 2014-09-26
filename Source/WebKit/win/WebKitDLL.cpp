@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,13 +40,13 @@
 #include <WebCore/Widget.h>
 #include <olectl.h>
 #include <wchar.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
 
 ULONG gLockCount;
 ULONG gClassCount;
-HashCountedSet<String> gClassNameCount;
 HINSTANCE gInstance;
 
 #define CLSID_FOR_CLASS(cls) CLSID_##cls,
@@ -54,6 +54,13 @@ CLSID gRegCLSIDs[] = {
     FOR_EACH_COCLASS(CLSID_FOR_CLASS)
 };
 #undef CLSID_FOR_CLASS
+
+HashCountedSet<String>& gClassNameCount()
+{
+    static NeverDestroyed<HashCountedSet<String>> gClassNameCount;
+    return gClassNameCount.get();
+}
+
 
 STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpReserved*/)
 {

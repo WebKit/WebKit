@@ -48,13 +48,13 @@ WebSecurityOrigin::WebSecurityOrigin(SecurityOrigin* securityOrigin)
     , m_securityOrigin(securityOrigin)
 {
     gClassCount++;
-    gClassNameCount.add("WebSecurityOrigin");
+    gClassNameCount().add("WebSecurityOrigin");
 }
 
 WebSecurityOrigin::~WebSecurityOrigin()
 {
     gClassCount--;
-    gClassNameCount.remove("WebSecurityOrigin");
+    gClassNameCount().remove("WebSecurityOrigin");
 }
 
 // IUnknown ------------------------------------------------------------------------

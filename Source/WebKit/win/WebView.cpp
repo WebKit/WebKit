@@ -202,7 +202,11 @@ using namespace std;
 using JSC::JSLock;
 
 static HMODULE accessibilityLib;
-static HashSet<WebView*> pendingDeleteBackingStoreSet;
+static HashSet<WebView*>& pendingDeleteBackingStoreSet()
+{
+    static NeverDestroyed<HashSet<WebView*>> pendingDeleteBackingStoreSet;
+    return pendingDeleteBackingStoreSet;
+}
 
 static CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
 
@@ -424,7 +428,7 @@ WebView::WebView()
 
     WebViewCount++;
     gClassCount++;
-    gClassNameCount.add("WebView");
+    gClassNameCount().add("WebView");
 }
 
 WebView::~WebView()
@@ -445,7 +449,7 @@ WebView::~WebView()
 
     WebViewCount--;
     gClassCount--;
-    gClassNameCount.remove("WebView");
+    gClassNameCount().remove("WebView");
 }
 
 WebView* WebView::createInstance()
@@ -815,7 +819,7 @@ void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, b
 
 void WebView::deleteBackingStore()
 {
-    pendingDeleteBackingStoreSet.remove(this);
+    pendingDeleteBackingStoreSet().remove(this);
 
     if (m_deleteBackingStoreTimerActive) {
         KillTimer(m_viewWindow, DeleteBackingStoreTimer);
@@ -3435,17 +3439,17 @@ void WebView::updateActiveStateSoon() const
 
 void WebView::deleteBackingStoreSoon()
 {
-    if (pendingDeleteBackingStoreSet.size() > 2) {
+    if (pendingDeleteBackingStoreSet().size() > 2) {
         Vector<WebView*> views;
-        HashSet<WebView*>::iterator end = pendingDeleteBackingStoreSet.end();
-        for (HashSet<WebView*>::iterator it = pendingDeleteBackingStoreSet.begin(); it != end; ++it)
+        HashSet<WebView*>::iterator end = pendingDeleteBackingStoreSet().end();
+        for (HashSet<WebView*>::iterator it = pendingDeleteBackingStoreSet().begin(); it != end; ++it)
             views.append(*it);
         for (int i = 0; i < views.size(); ++i)
             views[i]->deleteBackingStore();
-        ASSERT(pendingDeleteBackingStoreSet.isEmpty());
+        ASSERT(pendingDeleteBackingStoreSet().isEmpty());
     }
 
-    pendingDeleteBackingStoreSet.add(this);
+    pendingDeleteBackingStoreSet().add(this);
     m_deleteBackingStoreTimerActive = true;
     SetTimer(m_viewWindow, DeleteBackingStoreTimer, delayBeforeDeletingBackingStoreMsec, 0);
 }
@@ -3454,7 +3458,7 @@ void WebView::cancelDeleteBackingStoreSoon()
 {
     if (!m_deleteBackingStoreTimerActive)
         return;
-    pendingDeleteBackingStoreSet.remove(this);
+    pendingDeleteBackingStoreSet().remove(this);
     m_deleteBackingStoreTimerActive = false;
     KillTimer(m_viewWindow, DeleteBackingStoreTimer);
 }

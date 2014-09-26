@@ -253,10 +253,17 @@ void Node::dumpStatistics()
 }
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"));
-DEFINE_DEBUG_ONLY_GLOBAL(HashSet<Node*>, ignoreSet, );
 
 #ifndef NDEBUG
 static bool shouldIgnoreLeaks = false;
+
+static HashSet<Node*>& ignoreSet()
+{
+    static NeverDestroyed<HashSet<Node*>> ignore;
+
+    return ignore;
+}
+
 #endif
 
 void Node::startIgnoringLeaks()
@@ -277,7 +284,7 @@ void Node::trackForDebugging()
 {
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
-        ignoreSet.add(this);
+        ignoreSet().add(this);
     else
         nodeCounter.increment();
 #endif
@@ -304,7 +311,7 @@ Node::Node(Document& document, ConstructionType type)
 Node::~Node()
 {
 #ifndef NDEBUG
-    if (!ignoreSet.remove(this))
+    if (!ignoreSet().remove(this))
         nodeCounter.decrement();
 #endif
 

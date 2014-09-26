@@ -44,13 +44,13 @@ WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(PassRef
 {
     ASSERT(m_client);
     gClassCount++;
-    gClassNameCount.add("WebURLAuthenticationChallengeSender");
+    gClassNameCount().add("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender()
 {
     gClassCount--;
-    gClassNameCount.remove("WebURLAuthenticationChallengeSender");
+    gClassNameCount().remove("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(PassRefPtr<WebCore::AuthenticationClient> client)

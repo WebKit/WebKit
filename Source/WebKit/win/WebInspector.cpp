@@ -55,13 +55,13 @@ WebInspector::WebInspector(WebView* webView, WebInspectorClient* inspectorClient
     ASSERT_ARG(webView, webView);
 
     gClassCount++;
-    gClassNameCount.add("WebInspector");
+    gClassNameCount().add("WebInspector");
 }
 
 WebInspector::~WebInspector()
 {
     gClassCount--;
-    gClassNameCount.remove("WebInspector");
+    gClassNameCount().remove("WebInspector");
 }
 
 WebInspectorFrontendClient* WebInspector::frontendClient()

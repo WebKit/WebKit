@@ -40,13 +40,13 @@ WebCookieManager::WebCookieManager()
     : m_refCount(0)
 {
     gClassCount++;
-    gClassNameCount.add("WebCookieManager");
+    gClassNameCount().add("WebCookieManager");
 }
 
 WebCookieManager::~WebCookieManager()
 {
     gClassCount--;
-    gClassNameCount.remove("WebCookieManager");
+    gClassNameCount().remove("WebCookieManager");
 }
 
 // IUnknown ---------------------------------------------------------------

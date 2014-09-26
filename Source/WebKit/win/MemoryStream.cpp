@@ -33,18 +33,18 @@ using namespace WebCore;
 // MemoryStream ---------------------------------------------------------------
 
 MemoryStream::MemoryStream(PassRefPtr<SharedBuffer> buffer)
-: m_refCount(0)
-, m_buffer(buffer)
-, m_pos(0)
+    : m_refCount(0)
+    , m_buffer(buffer)
+    , m_pos(0)
 {
     gClassCount++;
-    gClassNameCount.add("MemoryStream");
+    gClassNameCount().add("MemoryStream");
 }
 
 MemoryStream::~MemoryStream()
 {
     gClassCount--;
-    gClassNameCount.remove("MemoryStream");
+    gClassNameCount().remove("MemoryStream");
 }
 
 COMPtr<MemoryStream> MemoryStream::createInstance(PassRefPtr<SharedBuffer> buffer)

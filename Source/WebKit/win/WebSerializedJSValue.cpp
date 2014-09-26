@@ -34,13 +34,13 @@ WebSerializedJSValue::WebSerializedJSValue()
     : m_refCount(0)
 {
     ++gClassCount;
-    gClassNameCount.add("WebSerializedJSValue");
+    gClassNameCount().add("WebSerializedJSValue");
 }
 
 WebSerializedJSValue::~WebSerializedJSValue()
 {
     --gClassCount;
-    gClassNameCount.remove("WebSerializedJSValue");
+    gClassNameCount().remove("WebSerializedJSValue");
 }
 
 COMPtr<WebSerializedJSValue> WebSerializedJSValue::createInstance()

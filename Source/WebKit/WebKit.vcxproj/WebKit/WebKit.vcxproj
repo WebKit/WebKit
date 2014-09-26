@@ -191,6 +191,9 @@
     <Link />
     <ClCompile />
     <Link />
+    <Link>
+      <OptimizeReferences>false</OptimizeReferences>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
     <ClCompile />
@@ -275,6 +278,11 @@
     <ClCompile />
     <Link />
     <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp" />

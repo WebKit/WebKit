@@ -1,3 +1,175 @@
+2014-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Debug builds of TestWebKitAPI are crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=133553
+
+        Reviewed by Dean Jackson.
+
+        Switch from global static HashTable to a NeverDestroyed object.
+        Modify all accessors of the global static to use the new
+        NeverDestroyed accessor method.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::AccessibleBase):
+        (AccessibleBase::~AccessibleBase):
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::CFDictionaryPropertyBag):
+        (CFDictionaryPropertyBag::~CFDictionaryPropertyBag):
+        * DefaultDownloadDelegate.cpp:
+        (DefaultDownloadDelegate::DefaultDownloadDelegate):
+        (DefaultDownloadDelegate::~DefaultDownloadDelegate):
+        * DefaultPolicyDelegate.cpp:
+        (DefaultPolicyDelegate::DefaultPolicyDelegate):
+        (DefaultPolicyDelegate::~DefaultPolicyDelegate):
+        * MemoryStream.cpp:
+        (MemoryStream::MemoryStream):
+        (MemoryStream::~MemoryStream):
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::WebActionPropertyBag):
+        (WebActionPropertyBag::~WebActionPropertyBag):
+        * WebArchive.cpp:
+        (WebArchive::WebArchive):
+        (WebArchive::~WebArchive):
+        * WebBackForwardList.cpp:
+        (WebBackForwardList::WebBackForwardList):
+        (WebBackForwardList::~WebBackForwardList):
+        * WebCache.cpp:
+        (WebCache::WebCache):
+        (WebCache::~WebCache):
+        * WebCookieManager.cpp:
+        (WebCookieManager::WebCookieManager):
+        (WebCookieManager::~WebCookieManager):
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::WebCoreStatistics):
+        (WebCoreStatistics::~WebCoreStatistics):
+        * WebDataSource.cpp:
+        (WebDataSource::~WebDataSource):
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::WebDatabaseManager):
+        (WebDatabaseManager::~WebDatabaseManager):
+        * WebDocumentLoader.cpp:
+        (WebDocumentLoader::WebDocumentLoader):
+        (WebDocumentLoader::~WebDocumentLoader):
+        * WebDownload.cpp:
+        (WebDownload::WebDownload):
+        (WebDownload::~WebDownload):
+        * WebDropSource.cpp:
+        (WebDropSource::WebDropSource):
+        (WebDropSource::~WebDropSource):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::WebElementPropertyBag):
+        (WebElementPropertyBag::~WebElementPropertyBag):
+        * WebError.cpp:
+        (WebError::WebError):
+        (WebError::~WebError):
+        * WebFrame.cpp:
+        (WebFrame::WebFrame):
+        (WebFrame::~WebFrame):
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::WebFramePolicyListener):
+        (WebFramePolicyListener::~WebFramePolicyListener):
+        * WebGeolocationPolicyListener.cpp:
+        (WebGeolocationPolicyListener::WebGeolocationPolicyListener):
+        (WebGeolocationPolicyListener::~WebGeolocationPolicyListener):
+        * WebGeolocationPosition.cpp:
+        (WebGeolocationPosition::WebGeolocationPosition):
+        (WebGeolocationPosition::~WebGeolocationPosition):
+        * WebHTMLRepresentation.cpp:
+        (WebHTMLRepresentation::WebHTMLRepresentation):
+        (WebHTMLRepresentation::~WebHTMLRepresentation):
+        * WebHistory.cpp:
+        (WebHistory::WebHistory):
+        (WebHistory::~WebHistory):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::WebHistoryItem):
+        (WebHistoryItem::~WebHistoryItem):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::WebIconDatabase):
+        (WebIconDatabase::~WebIconDatabase):
+        * WebInspector.cpp:
+        (WebInspector::WebInspector):
+        (WebInspector::~WebInspector):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::WebJavaScriptCollector):
+        (WebJavaScriptCollector::~WebJavaScriptCollector):
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory):
+        (WebKitClassFactory::~WebKitClassFactory):
+        * WebKitDLL.cpp: Also switch to NeverDestroyed HashTable for
+        the global class name count.
+        * WebKitDLL.h:
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::WebKitStatistics):
+        (WebKitStatistics::~WebKitStatistics):
+        (WebKitStatistics::comClassNameCounts):
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::WebMutableURLRequest):
+        (WebMutableURLRequest::~WebMutableURLRequest):
+        * WebNavigationData.cpp:
+        (WebNavigationData::WebNavigationData):
+        (WebNavigationData::~WebNavigationData):
+        * WebNotification.cpp:
+        (WebNotification::WebNotification):
+        (WebNotification::~WebNotification):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::WebNotificationCenter):
+        (WebNotificationCenter::~WebNotificationCenter):
+        * WebPreferences.cpp:
+        (webPreferencesInstances):
+        (WebPreferences::WebPreferences):
+        (WebPreferences::~WebPreferences):
+        (WebPreferences::getInstanceForIdentifier):
+        (WebPreferences::setInstance):
+        (WebPreferences::removeReferenceForIdentifier):
+        * WebResource.cpp:
+        (WebResource::WebResource):
+        (WebResource::~WebResource):
+        * WebScriptObject.cpp:
+        (WebScriptObject::WebScriptObject):
+        (WebScriptObject::~WebScriptObject):
+        * WebScriptWorld.cpp:
+        (WebScriptWorld::WebScriptWorld):
+        (WebScriptWorld::~WebScriptWorld):
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::WebSecurityOrigin):
+        (WebSecurityOrigin::~WebSecurityOrigin):
+        * WebSerializedJSValue.cpp:
+        (WebSerializedJSValue::WebSerializedJSValue):
+        (WebSerializedJSValue::~WebSerializedJSValue):
+        * WebTextRenderer.cpp:
+        (WebTextRenderer::WebTextRenderer):
+        (WebTextRenderer::~WebTextRenderer):
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::WebURLAuthenticationChallenge):
+        (WebURLAuthenticationChallenge::~WebURLAuthenticationChallenge):
+        * WebURLAuthenticationChallengeSender.cpp:
+        (WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender):
+        (WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender):
+        * WebURLCredential.cpp:
+        (WebURLCredential::WebURLCredential):
+        (WebURLCredential::~WebURLCredential):
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::WebURLProtectionSpace):
+        (WebURLProtectionSpace::~WebURLProtectionSpace):
+        * WebURLResponse.cpp:
+        (:m_refCount):
+        (WebURLResponse::~WebURLResponse):
+        * WebUserContentURLPattern.cpp:
+        (WebUserContentURLPattern::WebUserContentURLPattern):
+        (WebUserContentURLPattern::~WebUserContentURLPattern):
+        * WebView.cpp:
+        (pendingDeleteBackingStoreSet): Switch from a global static
+        value to a NeverDestroyed object wrapped by an accessor function.
+        (WebView::WebView): Ditto.
+        (WebView::~WebView): Ditto.
+        (WebView::deleteBackingStore): Ditto.
+        (WebView::deleteBackingStoreSoon): Ditto,
+        (WebView::cancelDeleteBackingStoreSoon): Ditto.
+        * WebWorkersPrivate.cpp: Switch from a global static value for
+        the preferences objects t a NeverDestroyed container.
+        (WebWorkersPrivate::WebWorkersPrivate): Ditto.
+        (WebWorkersPrivate::~WebWorkersPrivate): Ditto.
+
 2014-09-25  Christophe Dumez  <cdumez@apple.com>
 
         Use is<HTML*Element>() instead of isHTML*Element() - Part 2
