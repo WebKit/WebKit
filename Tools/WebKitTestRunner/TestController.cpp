@@ -515,6 +515,10 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient.base);
 
     m_mainWebView->didInitializeClients();
+
+    // Generally, the tests should default to running at 1x. updateWindowScaleForTest() will adjust the scale to
+    // something else for specific tests that need to run at a different window scale.
+    m_mainWebView->changeWindowScaleIfNeeded(1);
 }
 
 void TestController::ensureViewSupportsOptions(WKDictionaryRef options)

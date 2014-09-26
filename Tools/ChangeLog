@@ -1,3 +1,17 @@
+2014-09-26  Beth Dakin  <bdakin@apple.com>
+
+        Many platform/mac-wk2/tiled-drawing/ tests fail when run on a retina device
+        https://bugs.webkit.org/show_bug.cgi?id=137089
+
+        Reviewed by Tim Horton.
+
+        This is a little sneaky since updateWindowScaleForTest() should ensure that these 
+        tests run at 1x, but that code does not seem to execute at the right time for 
+        these tests, so if we just ensure we start out at 1x, that appears to fix these 
+        tests and does not break the HiDPI tests either.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-09-26  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Decrease default number of child processes used by Windows.
