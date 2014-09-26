@@ -1,3 +1,12 @@
+2014-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable VIDEO_TRACK by default
+        https://bugs.webkit.org/show_bug.cgi?id=134801
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable CSS_IMAGE_SET in production builds
