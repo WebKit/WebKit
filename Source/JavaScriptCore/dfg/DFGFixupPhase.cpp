@@ -644,7 +644,7 @@ private:
             case Array::Arguments:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
-                insertStoreBarrier(m_indexInBlock, child1);
+                insertStoreBarrier(m_indexInBlock, child1, child3);
                 break;
             default:
                 fixEdge<KnownCellUse>(child1);
@@ -682,7 +682,7 @@ private:
                 break;
             case Array::Contiguous:
             case Array::ArrayStorage:
-                insertStoreBarrier(m_indexInBlock, node->child1());
+                insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
                 break;
             default:
                 break;
@@ -854,7 +854,7 @@ private:
 
         case PutClosureVar: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
             break;
         }
 
@@ -899,7 +899,7 @@ private:
         case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
             break;
         }
 
@@ -942,13 +942,13 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
             break;
         }
             
         case MultiPutByOffset: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
             break;
         }
             
@@ -1640,10 +1640,45 @@ private:
         edge.setUseKind(useKind);
     }
     
-    void insertStoreBarrier(unsigned indexInBlock, Edge child1)
+    void insertStoreBarrier(unsigned indexInBlock, Edge base, Edge value = Edge())
     {
-        Node* barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->origin, child1);
-        m_insertionSet.insert(indexInBlock, barrierNode);
+        if (!!value) {
+            if (value->shouldSpeculateInt32()) {
+                insertCheck<Int32Use>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateBoolean()) {
+                insertCheck<BooleanUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateOther()) {
+                insertCheck<OtherUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateNumber()) {
+                insertCheck<NumberUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateNotCell()) {
+                insertCheck<NotCellUse>(indexInBlock, value.node());
+                return;
+            }
+        }
+
+        m_insertionSet.insertNode(
+            indexInBlock, SpecNone, StoreBarrier, m_currentNode->origin, base);
+    }
+    
+    template<UseKind useKind>
+    void insertCheck(unsigned indexInBlock, Node* node)
+    {
+        observeUseKindOnNode<useKind>(node);
+        m_insertionSet.insertNode(
+            indexInBlock, SpecNone, Check, m_currentNode->origin, Edge(node, useKind));
     }
 
     void fixIntConvertingEdge(Edge& edge)

@@ -1,3 +1,21 @@
+2014-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG shouldn't insert store barriers when it has it on good authority that we're not storing a cell
+        https://bugs.webkit.org/show_bug.cgi?id=137161
+
+        Reviewed by Mark Hahnenberg.
+        
+        This looks like a 1% Octane speed-up.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotCellSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        (JSC::DFG::FixupPhase::insertCheck):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateNotCell):
+
 2014-09-26  Peter Varga  <pvarga@webkit.org>
 
         Fix typo in YARR at BOL check
