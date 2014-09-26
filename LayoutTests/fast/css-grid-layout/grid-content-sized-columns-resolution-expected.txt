@@ -1,0 +1,27 @@
+PASS window.getComputedStyle(gridMinContentFixedAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "15px 75px"
+PASS window.getComputedStyle(gridAutoAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "45px 45px"
+PASS window.getComputedStyle(gridMinContentAndMinContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "20px 30px"
+PASS window.getComputedStyle(gridMaxContentAndMinContent, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px"
+PASS window.getComputedStyle(gridFixedMinContentAndMaxContent, '').getPropertyValue('-webkit-grid-template-columns') is "10px 80px"
+PASS window.getComputedStyle(gridFixedMaxContentAndMinContent, '').getPropertyValue('-webkit-grid-template-columns') is "60px 30px"
+PASS window.getComputedStyle(gridMinContentAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "20px 70px"
+PASS window.getComputedStyle(gridMaxContentFixedAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "65px 25px"
+PASS window.getComputedStyle(gridAutoMinContent, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px"
+PASS window.getComputedStyle(gridAutoMaxContent, '').getPropertyValue('-webkit-grid-template-columns') is "20px 70px"
+PASS window.getComputedStyle(gridMaxContentAndMinContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px"
+PASS window.getComputedStyle(gridMaxContentAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "55px 35px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX

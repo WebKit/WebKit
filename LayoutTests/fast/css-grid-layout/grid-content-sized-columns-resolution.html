@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+<link href="resources/grid.css" rel="stylesheet"/>
+<style>
+.grid {
+    font: 10px/1 Ahem;
+}
+.gridMinContentFixedAndAuto {
+    -webkit-grid-template-columns: minmax(-webkit-min-content, 15px) auto;
+}
+.gridMaxContentFixedAndAuto {
+    -webkit-grid-template-columns: minmax(-webkit-max-content, 15px) auto;
+}
+.gridAutoAndAuto {
+    -webkit-grid-template-columns: auto auto;
+}
+.gridMinContentAndMinContentFixed {
+    -webkit-grid-template-columns: -webkit-min-content minmax(-webkit-min-content, 30px);
+}
+.gridMinContentAndMaxContentFixed {
+    -webkit-grid-template-columns: -webkit-min-content minmax(-webkit-max-content, 30px);
+}
+.gridMaxContentAndMinContent {
+    -webkit-grid-template-columns: -webkit-max-content -webkit-min-content;
+}
+.gridFixedMinContentAndMaxContent {
+    -webkit-grid-template-columns: minmax(10px, -webkit-min-content) -webkit-max-content;
+}
+.gridFixedMaxContentAndMinContent {
+    -webkit-grid-template-columns: minmax(10px, -webkit-max-content) -webkit-min-content;
+}
+.gridAutoMinContent {
+    -webkit-grid-template-columns: auto -webkit-min-content;
+}
+.gridAutoMaxContent {
+    -webkit-grid-template-columns: auto -webkit-max-content;
+}
+.gridMaxContentAndMinContentFixed {
+    -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-min-content, 35px);
+}
+.gridMaxContentAndMaxContentFixed {
+    -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 35px);
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="grid gridMinContentFixedAndAuto" id="gridMinContentFixedAndAuto">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridAutoAndAuto" id="gridAutoAndAuto">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridMinContentAndMinContentFixed" id="gridMinContentAndMinContentFixed">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridMaxContentAndMinContent" id="gridMaxContentAndMinContent">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridFixedMinContentAndMaxContent" id="gridFixedMinContentAndMaxContent">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridFixedMaxContentAndMinContent" id="gridFixedMaxContentAndMinContent">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridMinContentAndMaxContentFixed" id="gridMinContentAndMaxContentFixed">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMaxContentFixedAndAuto" id="gridMaxContentFixedAndAuto">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+    </div>
+</div>
+
+<div class="grid gridAutoMinContent" id="gridAutoMinContent">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="grid gridAutoMaxContent" id="gridAutoMaxContent">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMaxContentAndMinContentFixed" id="gridMaxContentAndMinContentFixed">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+    </div>
+</div>
+
+<div class="grid gridMaxContentAndMaxContentFixed" id="gridMaxContentAndMaxContentFixed">
+    <div class="firstRowBothColumn">XXXX XXXX</div>
+</div>
+
+<script>
+function testGridColumnsValues(id, computedColumnValue)
+{
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-columns')", computedColumnValue);
+}
+
+testGridColumnsValues("gridMinContentFixedAndAuto", "15px 75px");
+testGridColumnsValues("gridAutoAndAuto", "45px 45px");
+testGridColumnsValues("gridMinContentAndMinContentFixed", "20px 30px");
+testGridColumnsValues("gridMaxContentAndMinContent", "70px 20px");
+testGridColumnsValues("gridFixedMinContentAndMaxContent", "10px 80px");
+testGridColumnsValues("gridFixedMaxContentAndMinContent", "60px 30px");
+testGridColumnsValues("gridMinContentAndMaxContentFixed", "20px 70px");
+testGridColumnsValues("gridMaxContentFixedAndAuto", "65px 25px");
+testGridColumnsValues("gridAutoMinContent", "70px 20px");
+testGridColumnsValues("gridAutoMaxContent", "20px 70px");
+testGridColumnsValues("gridMaxContentAndMinContentFixed", "70px 20px");
+testGridColumnsValues("gridMaxContentAndMaxContentFixed", "55px 35px");
+</script>
+</body>
+</html>

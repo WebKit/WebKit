@@ -1,3 +1,14 @@
+2014-09-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix the handling of infinity in track growth limits
+        https://bugs.webkit.org/show_bug.cgi?id=137019
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt: Added.
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html: Added.
+        * fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution-expected.txt:
+
 2014-09-26  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Fix support for the initial-letter CSS property to first-letter
