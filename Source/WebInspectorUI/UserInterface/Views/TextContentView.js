@@ -51,10 +51,9 @@ WebInspector.TextContentView = function(string, mimeType)
     this._prettyPrintButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
     this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
 
-    var showTypesImageSize = WebInspector.Platform.isLegacyMacOS ? 15 : 16;
     var toolTipTypes = WebInspector.UIString("Show type information");
     var activatedToolTipTypes = WebInspector.UIString("Hide type information");
-    this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", showTypesImageSize, showTypesImageSize);
+    this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
     this._showTypesButtonNavigationItem.enabled = false;
 };
 
