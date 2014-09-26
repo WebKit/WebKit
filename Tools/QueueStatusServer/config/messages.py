@@ -29,5 +29,4 @@
 # These must be in sync with webkit-patch's AbstractQueue.
 pass_status = "Pass"
 fail_status = "Fail"
-retry_status = "Retry"
 error_status = "Error"

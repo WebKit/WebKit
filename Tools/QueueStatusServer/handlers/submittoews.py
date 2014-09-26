@@ -45,14 +45,11 @@ class SubmitToEWS(UpdateBase):
         # in adding things to the commit-queue when they won't be processed by it.
         assert(queue.is_ews())
         latest_status = attachment.status_for_queue(queue)
-        if not latest_status:
-            return True
-        # Only ever re-submit to the EWS if the EWS specifically requested a retry.
-        # This allows us to restart the EWS feeder queue, without all r? patches
-        # being retried as a result of that restart!
-        # In some future version we might add a "force" button to allow the user
-        # to override this restriction.
-        return latest_status.is_retry_request()
+        # The feeder queue only submits each patch once normally, but it loses its memory
+        # when restarted. We do not want to re-add all patches if that happens.
+        # In the future we might add a "force" button to allow the user to retry patches
+        # that were previously submitted.
+        return not latest_status
 
     def _add_attachment_to_ews_queues(self, attachment):
         for queue in Queue.all_ews():  # all_ews() currently includes the style-queue

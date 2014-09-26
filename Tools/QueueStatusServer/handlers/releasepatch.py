@@ -54,13 +54,7 @@ class ReleasePatch(UpdateBase):
         # Ideally we should use a transaction for the calls to
         # WorkItems and ActiveWorkItems.
 
-        # Only remove it from the queue if the last message is not a retry request.
-        # Allow removing it from the queue even if there is no last_status for easier testing.
-        if not last_status or not last_status.is_retry_request():
-            queue.work_items().remove_work_item(attachment_id)
-            RecordPatchEvent.stopped(attachment_id, queue_name)
-        else:
-            RecordPatchEvent.retrying(attachment_id, queue_name)
+        queue.work_items().remove_work_item(attachment_id)
+        RecordPatchEvent.stopped(attachment_id, queue_name)
 
-        # Always release the lock on the item.
         queue.active_work_items().expire_item(attachment_id)

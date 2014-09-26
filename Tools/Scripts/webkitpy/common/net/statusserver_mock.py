@@ -52,6 +52,9 @@ class MockStatusServer(object):
     def release_work_item(self, queue_name, patch):
         _log.info("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))
 
+    def release_lock(self, queue_name, patch):
+        _log.info("MOCK: release_lock: %s %s" % (queue_name, patch.id()))
+
     def update_work_items(self, queue_name, work_items):
         self._work_items = work_items
         _log.info("MOCK: update_work_items: %s %s" % (queue_name, work_items))

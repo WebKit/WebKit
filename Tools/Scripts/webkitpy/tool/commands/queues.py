@@ -65,7 +65,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     _pass_status = "Pass"
     _fail_status = "Fail"
-    _retry_status = "Retry"
     _error_status = "Error"
 
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
@@ -239,10 +238,6 @@ class AbstractPatchQueue(AbstractQueue):
         self._update_status(self._fail_status, patch)
         self._release_work_item(patch)
 
-    def _did_retry(self, patch):
-        self._update_status(self._retry_status, patch)
-        self._release_work_item(patch)
-
     def _did_error(self, patch, reason):
         message = "%s: %s" % (self._error_status, reason)
         self._update_status(message, patch)
@@ -325,7 +320,8 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
             if task.run():
                 self._did_pass(patch)
                 return True
-            self._did_retry(patch)
+            self._unlock_patch(patch)
+            return False
         except ScriptError, e:
             validator = CommitterValidator(self._tool)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
@@ -333,6 +329,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)
             self._did_fail(patch)
+            return False
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)

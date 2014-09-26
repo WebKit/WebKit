@@ -405,8 +405,7 @@ Running: webkit-patch --status-host=example.com build --no-clean --no-update --b
 MOCK: update_status: commit-queue Built patch
 Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
 MOCK: update_status: commit-queue Passed tests
-MOCK: update_status: commit-queue Retry
-MOCK: release_work_item: commit-queue 10000
+MOCK: release_lock: commit-queue 10000
 """
         self.maxDiff = None
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_logs=expected_logs)

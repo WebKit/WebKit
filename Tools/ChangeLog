@@ -1,3 +1,39 @@
+2014-09-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of Retry status in webkit-queues
+        https://bugs.webkit.org/show_bug.cgi?id=137135
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/config/messages.py: Removed Retry.
+
+        * QueueStatusServer/handlers/releasepatch.py: This is now straightforward, as it
+        no longer needs to check the latest status. It just always both unlocks the patch
+        and removes it from WorkItems.
+
+        * QueueStatusServer/handlers/submittoews.py: (SubmitToEWS._should_add_to_ews_queue):
+        I don't understand why we even needed to check for retries here, but now that there
+        are no retries, that code can go to /dev/null.
+
+        * QueueStatusServer/loggers/recordpatchevent.py:
+        (RecordPatchEvent.started):
+        (RecordPatchEvent.retrying): Deleted.
+        Fixed retry counting, it should work for all queues now.
+
+        * QueueStatusServer/model/queuestatus.py:
+        (QueueStatus.is_retry_request): Deleted. These are no more.
+
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        (MockStatusServer.release_lock):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        Did whatever it took to keep passing the tests. The particular test doesn't seem
+        quite right, but whatever.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.process_work_item): Instead of posting a retry status, just unlock
+        and let others pick up. Also, added explicit returns for clarity.
+        (AbstractPatchQueue._did_retry): Deleted.
+
 2014-09-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix the gst-libav build on ARM Thumb2
