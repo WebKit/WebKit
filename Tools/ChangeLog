@@ -1,3 +1,18 @@
+2014-09-26  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [EFL] Bump up dependencies not to conflict with the GTK port.
+        https://bugs.webkit.org/show_bug.cgi?id=137143
+
+        Reviewed by Gyuyoung Kim.
+
+        Tools/efl/install-dependencies and Tools/gtk/install-dependencies keep
+        installing and removing different versions of libgnutls-dev, thus
+        hindering the development for both ports on the same machine. GTK is
+        using the newer version of the package, now bumping up EFL to use the 
+        same.
+
+        * efl/install-dependencies:
+
 2014-09-25  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2] Minibrowser : Fix the 'Escape' button issue to exit fullscreen
