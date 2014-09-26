@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderBlock {DIV} at (16,0) size 400x51
+        RenderBlock (floating) at (2,-3) size 24x69
+          RenderText {#text} at (0,13) size 24x68
+            text run at (0,13) width 24: "J"
+        RenderText {#text} at (28,34) size 289x17
+          text run at (28,34) width 289: "ust an example of first-letter. Short paragraph!"
+      RenderBlock {DIV} at (16,67) size 400x136
+        RenderBlock (floating) at (2,-3) size 24x69
+          RenderText {#text} at (0,13) size 24x68
+            text run at (0,13) width 24: "J"
+        RenderText {#text} at (28,34) size 400x102
+          text run at (28,34) width 370: "ust an example of first-letter. This letter should span 3 lines"
+          text run at (28,51) width 351: "of text, and so it should align itself cleanly with the cap-"
+          text run at (0,68) width 400: "height of the J lining up with the cap-height of the first line, and"
+          text run at (0,85) width 398: "the baseline of the J lining up with the baseline of the third line."
+          text run at (0,102) width 390: "The descender of the J is still avoided by following lines. This"
+          text run at (0,119) width 241: "paragraph cleared the short paragraph."
