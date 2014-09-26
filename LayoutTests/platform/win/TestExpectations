@@ -1506,6 +1506,25 @@ webkit.org/b/87919 fast/canvas/2d.backingStorePixelRatio.html
 webkit.org/b/87919 fast/canvas/2d.imageDataHD.html
 webkit.org/b/87919 fast/hidpi
 webkit.org/b/87919 svg/as-image/image-respects-deviceScaleFactor.html
+webkit.org/b/87919 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/87919 svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
+webkit.org/b/87919 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ ImageOnlyFailure ]
+webkit.org/b/87919 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [Failure]
+webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [Failure]
+webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [Failure]
+webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [Failure]
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
@@ -1864,12 +1883,6 @@ webkit.org/b/97485 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
 
 webkit.org/b/98079 http/tests/security/cross-origin-local-storage-wk1.html [ Skip ]
-
-# css3-conditionals support is not yet enabled. http://webkit.org/b/86146 http://webkit.org/b/104822 http://webkit.org/b/100324
-# FIXME: Why do these fail on Windows?
-css3/supports.html [ Failure ]
-css3/supports-cssom.html [ Failure ]
-css3/supports-dom-api.html [ Failure ]
 
 # MHTML is not yet enabled
 mhtml [ Skip ]
@@ -2757,10 +2770,7 @@ fast/css-generated-content/initial-letter-sunken.html [ Failure ]
 css3/masking/clip-path-inset.html [ ImageOnlyFailure ]
 editing/inserting/insert-br-at-tabspan-002.html [ ImageOnlyFailure ]
 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
-fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
-svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
-svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-64-t.svg [ ImageOnlyFailure ]

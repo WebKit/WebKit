@@ -1,5 +1,13 @@
 2014-09-26  Roger Fong  <roger_fong@apple.com>
 
+        [Win] Unreviewed. More gardening on Windows tests.
+
+        * platform/win/TestExpectations:
+	Enable some css3 conditional tests that are now passing.
+	Disable some failing hidpi tests since we don’t have hidpi test support on Windows.
+
+2014-09-26  Roger Fong  <roger_fong@apple.com>
+
         [Mac] Some inspector tests time out following r173992.
         https://bugs.webkit.org/show_bug.cgi?id=137157
 
