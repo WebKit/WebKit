@@ -1,3 +1,15 @@
+2014-09-27  Dan Bernstein  <mitz@apple.com>
+
+        WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=137053
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        In the build pre-action, pass the --wksi and --llvm options to
+        copy-webkitlibraries-to-product-directory.
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme: Ditto.
+
 2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable CSS_IMAGE_SET in production builds

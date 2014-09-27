@@ -10,7 +10,7 @@ installed</a> and that you have a copy of the <a href="checkout.html">WebKit sou
 
 <div class="windows-instructions">
 <h4>Windows</h4>
-<p>Building on Windows requires a few more steps.  For details, see <a href="http://trac.webkit.org/wiki/BuildingOnWindows">http://trac.webkit.org/wiki/BuildingOnWindows</a>.</p>
+<p>Building on Windows requires a few more steps. For details, see <a href="http://trac.webkit.org/wiki/BuildingOnWindows">http://trac.webkit.org/wiki/BuildingOnWindows</a>.</p>
 </div>
 
 <ol>
@@ -22,8 +22,8 @@ debugging symbols and assertions:</p>
 </li>
 </ol>
 
-<p>By default, <code>build-webkit</code> places build products in <code>WebKitBuild</code>.  You can specify a different build
-location on Mac in your Xcode preferences.  On other platforms, the <code>WEBKIT_OUTPUTDIR</code> environment variable can be used to
+<p>By default, <code>build-webkit</code> places build products in <code>WebKitBuild</code>. You can specify a different build
+location on Mac in your Xcode preferences. On other platforms, the <code>WEBKIT_OUTPUTDIR</code> environment variable can be used to
 set a different build products location. If you have set up a custom build location, then <code>build-webkit</code> will
 place the build products there.</p>
 
@@ -41,16 +41,7 @@ other <a href="/coding/scripts.html">scripts</a>, use the
 </ol>
 
 <h2>Building WebKit from Xcode</h2>
-<p>To build from within Xcode, you can use the WebKit workspace.  Before you build in Xcode:</p>
-
-<ol>
-<li>Build WebKit at least once using the command-line instructions above.  Be sure to build using
-    the same configuration on the command line as you intend to use in Xcode (typically debug).</li>
-<li><p>Ensure that the Products and Intermediates locations for the workspace match those used by <code>build-webkit</code> by choosing File > Workspace Settings. Then click the Advanced button, select Custom, Relative to Workspace, and enter <code>WebKitBuild</code> for both Products and Intermediates.</p>
-    <p>Note that if you have specified a custom build location in Xcode preferences, then you don&rsquo;t need to do this.</p></li>
-<li>If you get unexpected include or linker errors, try deleting the entire WebKitBuild directory, then rebuilding
-    on the command line <b>before</b> you try to build in Xcode.</li>
-</ol>
+<p>To build from within Xcode, you can use the WebKit workspace. Ensure that the Products and Intermediates locations for the workspace match those used by <code>build-webkit</code>: choose File > Workspace Settings, then click the Advanced button, select Custom, Relative to Workspace, and enter <code>WebKitBuild</code> for both Products and Intermediates. Note that if you have specified a custom build location in Xcode preferences, then you don&rsquo;t need to do this.</p>
 
 <?php
     include("../footer.inc");

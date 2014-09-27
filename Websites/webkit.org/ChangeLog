@@ -1,3 +1,12 @@
+2014-09-27  Dan Bernstein  <mitz@apple.com>
+
+        WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=137053
+
+        Reviewed by Mark Rowe.
+
+        * building/build.html: Removed instructions how to work around this bug, now that it’s fixed.
+
 2014-09-26  Alexey Proskuryakov  <ap@apple.com>
 
         WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1
