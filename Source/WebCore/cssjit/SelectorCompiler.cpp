@@ -848,8 +848,14 @@ static inline bool attributeValueTestingRequiresCaseFoldingRegister(const Attrib
 // Strict minimum to match anything interesting:
 // Element + BacktrackingRegister + ElementData + a pointer to values + an index on that pointer + the value we expect;
 static const unsigned minimumRequiredRegisterCount = 6;
+
 // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + (qualifiedNameImpl && expectedValue).
 static const unsigned minimumRequiredRegisterCountForAttributeFilter = 6;
+
+#if CPU(X86_64)
+// Element + SiblingCounter + SiblingCounterCopy + divisor + dividend + remainder.
+static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
+#endif
 
 static inline unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
@@ -876,6 +882,11 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragment& selec
 
         minimum = std::max(minimum, attributeMinimum);
     }
+
+#if CPU(X86_64)
+    if (!selectorFragment.nthChildFilters.isEmpty())
+        minimum = std::max(minimum, minimumRequiredRegisterCountForNthChildFilter + backtrackingRegisterRequirements);
+#endif
 
     // :not pseudo class filters cause some register pressure.
     for (const SelectorFragment& subFragment : selectorFragment.notFilters) {
@@ -1754,7 +1765,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     if (inputDividend != dividend) {
         bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(dividend);
         if (registerIsInUse) {
-            if (m_registerAllocator.availableRegisterCount()) {
+            if (m_registerAllocator.availableRegisterCount() > 1) {
                 temporaryDividendCopy = m_registerAllocator.allocateRegister();
                 m_assembler.move(dividend, temporaryDividendCopy);
                 dividendAllocation = RegisterAllocationType::CopiedToTemporary;
@@ -1776,7 +1787,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     if (inputDividend != remainder) {
         bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(remainder);
         if (registerIsInUse) {
-            if (m_registerAllocator.availableRegisterCount()) {
+            if (m_registerAllocator.availableRegisterCount() > 1) {
                 temporaryRemainderCopy = m_registerAllocator.allocateRegister();
                 m_assembler.move(remainder, temporaryRemainderCopy);
                 remainderAllocation = RegisterAllocationType::CopiedToTemporary;
@@ -1789,6 +1800,22 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
             remainderAllocation = RegisterAllocationType::AllocatedLocally;
         }
     }
+
+    // If the input register is used by idiv, save its value to restore it after the operation.
+    Assembler::RegisterID inputDividendCopy;
+    StackAllocator::StackReference pushedInputDividendStackReference;
+    RegisterAllocationType savedInputDividendAllocationType = RegisterAllocationType::External;
+    if (inputDividend == dividend || inputDividend == remainder) {
+        if (m_registerAllocator.availableRegisterCount() > 1) {
+            inputDividendCopy = m_registerAllocator.allocateRegister();
+            m_assembler.move(inputDividend, inputDividendCopy);
+            savedInputDividendAllocationType = RegisterAllocationType::CopiedToTemporary;
+        } else {
+            pushedInputDividendStackReference = m_stackAllocator.push(inputDividend);
+            savedInputDividendAllocationType = RegisterAllocationType::PushedToStack;
+        }
+    }
+
     m_assembler.m_assembler.cdq();
 
     // 2) Perform the division with idiv.
@@ -1815,6 +1842,14 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
         m_registerAllocator.deallocateRegister(temporaryDividendCopy);
     } else if (dividendAllocation == RegisterAllocationType::PushedToStack)
         m_stackAllocator.pop(temporaryDividendStackReference, dividend);
+
+    if (savedInputDividendAllocationType != RegisterAllocationType::External) {
+        if (savedInputDividendAllocationType == RegisterAllocationType::CopiedToTemporary) {
+            m_assembler.move(inputDividendCopy, inputDividend);
+            m_registerAllocator.deallocateRegister(inputDividendCopy);
+        } else if (savedInputDividendAllocationType == RegisterAllocationType::PushedToStack)
+            m_stackAllocator.pop(pushedInputDividendStackReference, inputDividend);
+    }
 
     // 4) Branch on the test.
     return m_assembler.branch(condition);
@@ -2998,9 +3033,13 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
                 // This is the common case 2n+1 (or "odd"), we can test for odd values without doing the arithmetic.
                 failureCases.append(m_assembler.branchTest32(Assembler::Zero, elementCounter, Assembler::TrustedImm32(1)));
             } else {
-                if (b)
-                    failureCases.append(m_assembler.branchSub32(Assembler::Signed, Assembler::TrustedImm32(b), elementCounter));
-                moduloIsZero(failureCases, elementCounter, a);
+                if (b) {
+                    LocalRegister elementCounterCopy(m_registerAllocator);
+                    m_assembler.move(elementCounter, elementCounterCopy);
+                    failureCases.append(m_assembler.branchSub32(Assembler::Signed, Assembler::TrustedImm32(b), elementCounterCopy));
+                    moduloIsZero(failureCases, elementCounterCopy, a);
+                } else
+                    moduloIsZero(failureCases, elementCounter, a);
             }
         } else {
             LocalRegister bRegister(m_registerAllocator);
