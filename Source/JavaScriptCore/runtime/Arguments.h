@@ -35,23 +35,28 @@
 
 namespace JSC {
 
+enum ArgumentsMode {
+    NormalArgumentsCreationMode,
+    FakeArgumentValuesCreationMode
+};
+
 class Arguments : public JSNonFinalObject {
     friend class JIT;
     friend class JSArgumentsIterator;
 public:
     typedef JSNonFinalObject Base;
 
-    static Arguments* create(VM& vm, CallFrame* callFrame)
+    static Arguments* create(VM& vm, CallFrame* callFrame, ArgumentsMode mode = NormalArgumentsCreationMode)
     {
         Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
-        arguments->finishCreation(callFrame);
+        arguments->finishCreation(callFrame, mode);
         return arguments;
     }
         
-    static Arguments* create(VM& vm, CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+    static Arguments* create(VM& vm, CallFrame* callFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode = NormalArgumentsCreationMode)
     {
         Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
-        arguments->finishCreation(callFrame, inlineCallFrame);
+        arguments->finishCreation(callFrame, inlineCallFrame, mode);
         return arguments;
     }
 
@@ -107,8 +112,8 @@ public:
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-    void finishCreation(CallFrame*);
-    void finishCreation(CallFrame*, InlineCallFrame*);
+    void finishCreation(CallFrame*, ArgumentsMode);
+    void finishCreation(CallFrame*, InlineCallFrame*, ArgumentsMode);
 
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
@@ -271,62 +276,88 @@ inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
     return m_lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
 }
 
-inline void Arguments::finishCreation(CallFrame* callFrame)
+inline void Arguments::finishCreation(CallFrame* callFrame, ArgumentsMode mode)
 {
     Base::finishCreation(callFrame->vm());
     ASSERT(inherits(info()));
 
     JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
-    m_numArguments = callFrame->argumentCount();
-    m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers());
     m_callee.set(callFrame->vm(), this, callee);
     m_overrodeLength = false;
     m_overrodeCallee = false;
     m_overrodeCaller = false;
     m_isStrictMode = callFrame->codeBlock()->isStrictMode();
 
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    if (codeBlock->hasSlowArguments()) {
-        SymbolTable* symbolTable = codeBlock->symbolTable();
-        const SlowArgument* slowArguments = codeBlock->machineSlowArguments();
-        allocateSlowArguments(callFrame->vm());
-        size_t count = std::min<unsigned>(m_numArguments, symbolTable->parameterCount());
-        for (size_t i = 0; i < count; ++i)
-            m_slowArgumentData->slowArguments()[i] = slowArguments[i];
-        m_slowArgumentData->setBytecodeToMachineCaptureOffset(
-            codeBlock->framePointerOffsetToGetActivationRegisters());
-    }
+    switch (mode) {
+    case NormalArgumentsCreationMode: {
+        m_numArguments = callFrame->argumentCount();
+        m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers());
 
-    // The bytecode generator omits op_tear_off_lexical_environment in cases of no
-    // declared parameters, so we need to tear off immediately.
-    if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        if (codeBlock->hasSlowArguments()) {
+            SymbolTable* symbolTable = codeBlock->symbolTable();
+            const SlowArgument* slowArguments = codeBlock->machineSlowArguments();
+            allocateSlowArguments(callFrame->vm());
+            size_t count = std::min<unsigned>(m_numArguments, symbolTable->parameterCount());
+            for (size_t i = 0; i < count; ++i)
+                m_slowArgumentData->slowArguments()[i] = slowArguments[i];
+            m_slowArgumentData->setBytecodeToMachineCaptureOffset(
+                codeBlock->framePointerOffsetToGetActivationRegisters());
+        }
+
+        // The bytecode generator omits op_tear_off_lexical_environment in cases of no
+        // declared parameters, so we need to tear off immediately.
+        if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
+            tearOff(callFrame);
+        break;
+    }
+        
+    case FakeArgumentValuesCreationMode: {
+        m_numArguments = 0;
+        m_registers = nullptr;
         tearOff(callFrame);
+        break;
+    } }
+        
 }
 
-inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)
 {
     Base::finishCreation(callFrame->vm());
     ASSERT(inherits(info()));
 
     JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
-    m_numArguments = inlineCallFrame->arguments.size() - 1;
-    
-    if (m_numArguments) {
-        int offsetForArgumentOne = inlineCallFrame->arguments[1].virtualRegister().offset();
-        m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + offsetForArgumentOne - virtualRegisterForArgument(1).offset();
-    } else
-        m_registers = 0;
     m_callee.set(callFrame->vm(), this, callee);
     m_overrodeLength = false;
     m_overrodeCallee = false;
     m_overrodeCaller = false;
     m_isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
-    ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable(inlineCallFrame->specializationKind())->slowArguments());
 
-    // The bytecode generator omits op_tear_off_lexical_environment in cases of no
-    // declared parameters, so we need to tear off immediately.
-    if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
-        tearOff(callFrame, inlineCallFrame);
+    switch (mode) {
+    case NormalArgumentsCreationMode: {
+        m_numArguments = inlineCallFrame->arguments.size() - 1;
+        
+        if (m_numArguments) {
+            int offsetForArgumentOne = inlineCallFrame->arguments[1].virtualRegister().offset();
+            m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + offsetForArgumentOne - virtualRegisterForArgument(1).offset();
+        } else
+            m_registers = 0;
+        
+        ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable(inlineCallFrame->specializationKind())->slowArguments());
+        
+        // The bytecode generator omits op_tear_off_lexical_environment in cases of no
+        // declared parameters, so we need to tear off immediately.
+        if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
+            tearOff(callFrame, inlineCallFrame);
+        break;
+    }
+        
+    case FakeArgumentValuesCreationMode: {
+        m_numArguments = 0;
+        m_registers = nullptr;
+        tearOff(callFrame);
+        break;
+    } }
 }
 
 } // namespace JSC

@@ -1,3 +1,14 @@
+2014-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Disable function.arguments
+        https://bugs.webkit.org/show_bug.cgi?id=137167
+
+        Rubber stamped by Geoffrey Garen
+        
+        Enable the feature by default during tests.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-09-26  Beth Dakin  <bdakin@apple.com>
 
         Many platform/mac-wk2/tiled-drawing/ tests fail when run on a retina device

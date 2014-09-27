@@ -1,3 +1,39 @@
+2014-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Disable function.arguments
+        https://bugs.webkit.org/show_bug.cgi?id=137167
+
+        Rubber stamped by Geoffrey Garen.
+        
+        Add an option to disable function.arguments. Add a test for disabling it.
+        
+        Disabling function.arguments means that it returns an Arguments object that claims that
+        there were zero arguments. All other Arguments functionality still works, so any code
+        that tries to inspect this object will still think that it is looking at a perfectly
+        valid Arguments object.
+        
+        This also makes function.arguments disabled by default. Note that the RJST harness will
+        enable them by default, to continue to get test coverage for the code that implements
+        the feature.
+        
+        We will rip out that code once we're confident that it's really safe to remove this
+        feature. Only once we rip out that support will we be able to do optimizations to
+        leverage the lack of this feature. It's important to keep the support code, and the test
+        infrastructure, in place before we are confident. The logic to keep this working touches
+        the entire compiler and a large chunk of the runtime, so reimplementing it - or even
+        merging it back in - would be a nightmare. That's also basically the reason why we want
+        to rip it out if at all possible. It's a lot of terrible code.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::finishCreation):
+        * runtime/Options.h:
+        * tests/stress/disable-function-dot-arguments.js: Added.
+        (foo):
+        (bar):
+
 2014-09-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Automatic Inspection should continue once all breakpoints are loaded

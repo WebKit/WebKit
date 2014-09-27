@@ -260,9 +260,9 @@ $hostOS = determineOS
 
 $numFailures = 0
 
+BASE_OPTIONS = ["--useFTLJIT=false", "--enableFunctionDotArguments=true"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 NO_CJIT_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
-NO_FTL_OPTIONS = ["--useFTLJIT=false"]
 FTL_OPTIONS = ["--useFTLJIT=true", "--enableExperimentalFTLCoverage=true"]
 
 $runlist = []
@@ -569,7 +569,7 @@ def slow!
 end
 
 def run(kind, *options)
-    addRunCommand(kind, [pathToVM.to_s] + NO_FTL_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
 end
 
 def runDefault
@@ -728,7 +728,7 @@ def runLayoutTest(kind, *options)
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
     prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
 
-    args = [pathToVM.to_s] + NO_FTL_OPTIONS + options +
+    args = [pathToVM.to_s] + BASE_OPTIONS + options +
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
@@ -810,7 +810,7 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         kind = "mozilla"
     end
     prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = [pathToVM.to_s] + NO_FTL_OPTIONS + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    args = [pathToVM.to_s] + BASE_OPTIONS + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = mozillaErrorHandler

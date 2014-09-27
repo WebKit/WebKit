@@ -261,15 +261,20 @@ Arguments* StackVisitor::Frame::createArguments()
     CallFrame* physicalFrame = m_callFrame;
     VM& vm = physicalFrame->vm();
     Arguments* arguments;
+    ArgumentsMode mode;
+    if (Options::enableFunctionDotArguments())
+        mode = NormalArgumentsCreationMode;
+    else
+        mode = FakeArgumentValuesCreationMode;
 #if ENABLE(DFG_JIT)
     if (isInlinedFrame()) {
         ASSERT(m_inlineCallFrame);
-        arguments = Arguments::create(vm, physicalFrame, m_inlineCallFrame);
+        arguments = Arguments::create(vm, physicalFrame, m_inlineCallFrame, mode);
         arguments->tearOff(physicalFrame, m_inlineCallFrame);
     } else 
 #endif
     {
-        arguments = Arguments::create(vm, physicalFrame);
+        arguments = Arguments::create(vm, physicalFrame, mode);
         arguments->tearOff(physicalFrame);
     }
     return arguments;
