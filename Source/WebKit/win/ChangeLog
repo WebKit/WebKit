@@ -1,3 +1,17 @@
+2014-09-26  Christophe Dumez  <cdumez@apple.com>
+
+        Stop using legacy NODE_TYPE_CASTS() macro for HTML Elements
+        https://bugs.webkit.org/show_bug.cgi?id=137137
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() where appropriate.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::idName):
+        (DOMHTMLElement::innerText):
+        (DOMHTMLElement::setInnerText):
+
 2014-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Debug builds of TestWebKitAPI are crashing.

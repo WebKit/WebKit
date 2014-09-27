@@ -35,19 +35,14 @@ using namespace HTMLNames;
 
 // JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
-static inline bool isPluginElement(HTMLElement& element)
-{
-    return element.hasTagName(objectTag) || element.hasTagName(embedTag) || element.hasTagName(appletTag);
-}
-
 Instance* pluginInstance(HTMLElement& element)
 {
     // The plugin element holds an owning reference, so we don't have to.
-    if (!isPluginElement(element))
-        return 0;
-    Instance* instance = toHTMLPlugInElement(element).getInstance().get();
+    if (!is<HTMLPlugInElement>(element))
+        return nullptr;
+    Instance* instance = downcast<HTMLPlugInElement>(element).getInstance().get();
     if (!instance || !instance->rootObject())
-        return 0;
+        return nullptr;
     return instance;
 }
 
@@ -55,10 +50,10 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginE
 {
     Widget* pluginWidget = pluginElement.pluginWidget();
     if (!pluginWidget)
-        return 0;
+        return nullptr;
     
     if (!pluginWidget->isPluginViewBase())
-        return 0;
+        return nullptr;
 
     PluginViewBase* pluginViewBase = toPluginViewBase(pluginWidget);
     return pluginViewBase->scriptObject(globalObject);
@@ -67,20 +62,20 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginE
 static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
 {
     HTMLElement& element = jsHTMLElement->impl();
-    if (!isPluginElement(element))
-        return 0;
+    if (!is<HTMLPlugInElement>(element))
+        return nullptr;
 
-    HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
+    HTMLPlugInElement& pluginElement = downcast<HTMLPlugInElement>(element);
     return pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject());
 }
 
 JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
     HTMLElement& element = jsHTMLElement->impl();
-    if (!isPluginElement(element))
-        return 0;
+    if (!is<HTMLPlugInElement>(element))
+        return nullptr;
 
-    HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
+    HTMLPlugInElement& pluginElement = downcast<HTMLPlugInElement>(element);
 
     // Choke point for script/plugin interaction; notify DOMTimer of the event.
     DOMTimer::scriptDidInteractWithPlugin(pluginElement);
@@ -98,7 +93,7 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     // The plugin element holds an owning reference, so we don't have to.
     Instance* instance = pluginElement.getInstance().get();
     if (!instance || !instance->rootObject())
-        return 0;
+        return nullptr;
 
     return instance->createRuntimeObject(exec);
 }
@@ -132,7 +127,7 @@ bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue 
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
-        return 0;
+        return false;
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
     scriptObject->methodTable()->put(scriptObject, exec, propertyName, value, slot);

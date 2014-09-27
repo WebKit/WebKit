@@ -53,18 +53,17 @@ HTMLMediaElement* parentMediaElement(Node* node)
     Node* mediaNode = node->shadowHost();
     if (!mediaNode)
         mediaNode = node;
-    if (!mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
+    if (!is<HTMLMediaElement>(mediaNode))
         return nullptr;
-    return toHTMLMediaElement(mediaNode);
+    return downcast<HTMLMediaElement>(mediaNode);
 }
 
 MediaControlElementType mediaControlElementType(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(node->isMediaControlElement());
-    HTMLElement* element = toHTMLElement(node);
-    if (is<HTMLInputElement>(element))
-        return static_cast<MediaControlInputElement*>(element)->displayType();
-    return static_cast<MediaControlDivElement*>(element)->displayType();
+    if (is<HTMLInputElement>(node))
+        return static_cast<MediaControlInputElement*>(node)->displayType();
+    return static_cast<MediaControlDivElement*>(node)->displayType();
 }
 
 MediaControlElement::MediaControlElement(MediaControlElementType displayType, HTMLElement* element)

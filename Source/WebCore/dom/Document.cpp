@@ -1036,8 +1036,8 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             ec = HIERARCHY_REQUEST_ERR;
             return nullptr;
         }
-        if (source->isFrameOwnerElement()) {
-            HTMLFrameOwnerElement& frameOwnerElement = toHTMLFrameOwnerElement(*source);
+        if (is<HTMLFrameOwnerElement>(*source)) {
+            HTMLFrameOwnerElement& frameOwnerElement = downcast<HTMLFrameOwnerElement>(*source);
             if (frame() && frame()->tree().isDescendantOf(frameOwnerElement.contentFrame())) {
                 ec = HIERARCHY_REQUEST_ERR;
                 return nullptr;
@@ -2345,7 +2345,7 @@ void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
         if (ec)
             return;
         
-        newBody = toHTMLElement(node.get());
+        newBody = downcast<HTMLElement>(node.get());
     }
 
     HTMLElement* b = body();
@@ -4650,7 +4650,7 @@ const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
     unsigned int length = children->length();
     for (unsigned int i = 0; i < length; ++i) {
         Node* child = children->item(i);
-        if (!child->hasTagName(linkTag))
+        if (!is<HTMLLinkElement>(child))
             continue;
         HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*child);
         if (!(linkElement.iconType() & iconTypesMask))
@@ -5540,8 +5540,8 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
             queue.append(documentElement());
 
 #if ENABLE(VIDEO)
-        if (shouldNotifyMediaElement && isHTMLMediaElement(*node))
-            toHTMLMediaElement(*node).enteredOrExitedFullscreen();
+        if (shouldNotifyMediaElement && is<HTMLMediaElement>(*node))
+            downcast<HTMLMediaElement>(*node).enteredOrExitedFullscreen();
 #endif
         node->dispatchEvent(Event::create(eventName, true, false));
     }
@@ -6073,8 +6073,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 elementsToRemoveFromChain.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
-        if (oldHoveredElement && oldHoveredElement->isFrameOwnerElement()) {
-            if (Document* contentDocument = toHTMLFrameOwnerElement(*oldHoveredElement).contentDocument())
+        if (oldHoveredElement && is<HTMLFrameOwnerElement>(*oldHoveredElement)) {
+            if (Document* contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr);
         }
     }

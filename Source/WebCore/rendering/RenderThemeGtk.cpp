@@ -258,13 +258,13 @@ static GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, co
 static HTMLMediaElement* getMediaElementFromRenderObject(const RenderObject& o)
 {
     Node* node = o.node();
-    Node* mediaNode = node ? node->shadowHost() : 0;
+    Node* mediaNode = node ? node->shadowHost() : nullptr;
     if (!mediaNode)
         mediaNode = node;
-    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
-        return 0;
+    if (!mediaNode || !is<HTMLMediaElement>(mediaNode))
+        return nullptr;
 
-    return toHTMLMediaElement(mediaNode);
+    return downcast<HTMLMediaElement>(mediaNode);
 }
 
 void RenderThemeGtk::initMediaColors()

@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLParagraphElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
@@ -813,9 +814,9 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
     // a newline both before and after the element.
     auto* renderer = node.renderer();
     if (!renderer) {
-        if (!node.isHTMLElement())
+        if (!is<HTMLElement>(node))
             return false;
-        auto& element = toHTMLElement(node);
+        auto& element = downcast<HTMLElement>(node);
         return hasHeaderTag(element)
             || element.hasTagName(blockquoteTag)
             || element.hasTagName(ddTag)
@@ -884,9 +885,11 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
         return false;
 
     // NOTE: We only do this for a select set of nodes, and WinIE appears not to do this at all.
-    if (!node.isHTMLElement())
+    if (!is<HTMLElement>(node))
         return false;
-    if (!(hasHeaderTag(toHTMLElement(node)) || toHTMLElement(node).hasTagName(pTag)))
+
+    HTMLElement& element = downcast<HTMLElement>(node);
+    if (!hasHeaderTag(element) && !is<HTMLParagraphElement>(element))
         return false;
 
     int bottomMargin = toRenderBox(renderer)->collapsedMarginAfter();

@@ -86,9 +86,9 @@ HTMLTableSectionElement* HTMLTableElement::tHead() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(theadTag))
-            return toHTMLTableSectionElement(child);
+            return downcast<HTMLTableSectionElement>(child);
     }
-    return 0;
+    return nullptr;
 }
 
 void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, ExceptionCode& ec)
@@ -107,9 +107,9 @@ HTMLTableSectionElement* HTMLTableElement::tFoot() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(tfootTag))
-            return toHTMLTableSectionElement(child);
+            return downcast<HTMLTableSectionElement>(child);
     }
-    return 0;
+    return nullptr;
 }
 
 void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, ExceptionCode& ec)
@@ -178,9 +178,9 @@ HTMLTableSectionElement* HTMLTableElement::lastBody() const
 {
     for (Node* child = lastChild(); child; child = child->previousSibling()) {
         if (child->hasTagName(tbodyTag))
-            return toHTMLTableSectionElement(child);
+            return downcast<HTMLTableSectionElement>(child);
     }
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)

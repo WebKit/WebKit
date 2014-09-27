@@ -83,19 +83,19 @@ bool MathMLElement::isPhrasingContent(const Node& node) const
     if (!node.isElementNode())
         return node.isTextNode();
 
-    if (node.isMathMLElement()) {
+    if (is<MathMLElement>(node)) {
         auto& mathmlElement = downcast<MathMLElement>(node);
-        return mathmlElement.hasTagName(MathMLNames::mathTag);
+        return is<MathMLMathElement>(mathmlElement);
     }
 
-    if (node.isSVGElement()) {
+    if (is<SVGElement>(node)) {
         auto& svgElement = downcast<SVGElement>(node);
-        return svgElement.hasTagName(SVGNames::svgTag);
+        return is<SVGSVGElement>(svgElement);
     }
 
-    if (node.isHTMLElement()) {
+    if (is<HTMLElement>(node)) {
         // FIXME: add the <data> and <time> tags when they are implemented.
-        auto& htmlElement = toHTMLElement(node);
+        auto& htmlElement = downcast<HTMLElement>(node);
         return htmlElement.hasTagName(HTMLNames::aTag)
             || htmlElement.hasTagName(HTMLNames::abbrTag)
             || (htmlElement.hasTagName(HTMLNames::areaTag) && ancestorsOfType<HTMLMapElement>(htmlElement).first())
@@ -158,10 +158,10 @@ bool MathMLElement::isFlowContent(const Node& node) const
     if (isPhrasingContent(node))
         return true;
 
-    if (!node.isHTMLElement())
+    if (!is<HTMLElement>(node))
         return false;
 
-    auto& htmlElement = toHTMLElement(node);
+    auto& htmlElement = downcast<HTMLElement>(node);
     // FIXME add the <dialog> tag when it is implemented.
     return htmlElement.hasTagName(HTMLNames::addressTag)
         || htmlElement.hasTagName(HTMLNames::articleTag)
@@ -268,26 +268,26 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 
         // See annotation-xml.model.mathml, annotation-xml.model.svg and annotation-xml.model.xhtml in the HTML5 RelaxNG schema.
 
-        if (child.isMathMLElement() && (MathMLSelectElement::isMathMLEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
+        if (is<MathMLElement>(child) && (MathMLSelectElement::isMathMLEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
             auto& mathmlElement = downcast<MathMLElement>(child);
-            return mathmlElement.hasTagName(MathMLNames::mathTag);
+            return is<MathMLMathElement>(mathmlElement);
         }
 
-        if (child.isSVGElement() && (MathMLSelectElement::isSVGEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
+        if (is<SVGElement>(child) && (MathMLSelectElement::isSVGEncoding(value) || MathMLSelectElement::isHTMLEncoding(value))) {
             auto& svgElement = downcast<SVGElement>(child);
-            return svgElement.hasTagName(SVGNames::svgTag);
+            return is<SVGSVGElement>(svgElement);
         }
 
-        if (child.isHTMLElement() && MathMLSelectElement::isHTMLEncoding(value)) {
-            auto& htmlElement = toHTMLElement(child);
-            return htmlElement.hasTagName(HTMLNames::htmlTag) || (isFlowContent(htmlElement) && StyledElement::childShouldCreateRenderer(child));
+        if (is<HTMLElement>(child) && MathMLSelectElement::isHTMLEncoding(value)) {
+            auto& htmlElement = downcast<HTMLElement>(child);
+            return is<HTMLHtmlElement>(htmlElement) || (isFlowContent(htmlElement) && StyledElement::childShouldCreateRenderer(child));
         }
 
         return false;
     }
 
     // In general, only MathML children are allowed. Text nodes are only visible in token MathML elements.
-    return child.isMathMLElement();
+    return is<MathMLElement>(child);
 }
 
 void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)

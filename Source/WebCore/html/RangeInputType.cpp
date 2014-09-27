@@ -268,7 +268,7 @@ HTMLElement* RangeInputType::sliderTrackElement() const
     ASSERT(element().userAgentShadowRoot()->firstChild()->isHTMLElement());
     ASSERT(element().userAgentShadowRoot()->firstChild()->firstChild()); // track
 
-    return &toHTMLElement(*element().userAgentShadowRoot()->firstChild()->firstChild());
+    return downcast<HTMLElement>(element().userAgentShadowRoot()->firstChild()->firstChild());
 }
 
 SliderThumbElement& RangeInputType::typedSliderThumbElement() const

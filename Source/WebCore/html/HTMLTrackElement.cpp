@@ -85,8 +85,8 @@ Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode&
 
 void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
 {
-    if (!parentNode() && isHTMLMediaElement(insertionPoint))
-        toHTMLMediaElement(insertionPoint).didRemoveTextTrack(this);
+    if (!parentNode() && is<HTMLMediaElement>(insertionPoint))
+        downcast<HTMLMediaElement>(insertionPoint).didRemoveTextTrack(this);
     HTMLElement::removedFrom(insertionPoint);
 }
 
@@ -343,10 +343,10 @@ void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, PassRefPtr<TextTrack
 HTMLMediaElement* HTMLTrackElement::mediaElement() const
 {
     Element* parent = parentElement();
-    if (parent && parent->isMediaElement())
-        return toHTMLMediaElement(parentNode());
+    if (parent && is<HTMLMediaElement>(parent))
+        return downcast<HTMLMediaElement>(parentNode());
 
-    return 0;
+    return nullptr;
 }
 
 }

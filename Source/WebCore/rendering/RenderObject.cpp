@@ -2444,7 +2444,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     auto curr = parent();
     while (curr && (!curr->element() || (!curr->isPositioned() && !curr->isBody())) && !curr->isRenderNamedFlowThread()) {
         Element* element = curr->element();
-        if (!skipTables && element && (is<HTMLTableElement>(*element) || isHTMLTableCellElement(*element)))
+        if (!skipTables && element && (is<HTMLTableElement>(*element) || is<HTMLTableCellElement>(*element)))
             break;
  
         float newZoom = curr->style().effectiveZoom();

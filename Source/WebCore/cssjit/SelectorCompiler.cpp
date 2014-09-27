@@ -2782,29 +2782,29 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
 #if ENABLE(CSS_SELECTORS_LEVEL4)
 static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, const SelectorChecker::CheckingContext* checkingContext)
 {
-    if (isHTMLTextFormControlElement(*element)) {
+    if (is<HTMLTextFormControlElement>(*element)) {
         if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
             checkingContext->elementStyle->setUnique();
-        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
+        return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
     }
     return false;
 }
 
 static bool makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, const SelectorChecker::CheckingContext* checkingContext)
 {
-    if (isHTMLTextFormControlElement(*element)) {
+    if (is<HTMLTextFormControlElement>(*element)) {
         if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle) {
             if (RenderStyle* style = element->renderStyle())
                 style->setUnique();
         }
-        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
+        return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
     }
     return false;
 }
 
 static bool isPlaceholderShown(Element* element)
 {
-    return isHTMLTextFormControlElement(*element) && toHTMLTextFormControlElement(*element).isPlaceholderVisible();
+    return is<HTMLTextFormControlElement>(*element) && downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
 }
 
 void SelectorCodeGenerator::generateElementHasPlaceholderShown(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

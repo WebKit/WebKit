@@ -15,7 +15,7 @@ audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedB
 b interfaceName=HTMLElement
 base generateTypeHelpers
 basefont interfaceName=HTMLBaseFontElement
-bdi interfaceName=HTMLBDIElement, JSInterfaceName=HTMLElement
+bdi interfaceName=HTMLBDIElement, JSInterfaceName=HTMLElement, generateTypeHelpers
 bdo interfaceName=HTMLElement
 bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement
@@ -46,7 +46,7 @@ embed constructorNeedsCreatedByParser, generateTypeHelpers
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement, generateTypeHelpers
 figcaption interfaceName=HTMLElement
 figure interfaceName=HTMLElement
-font
+font generateTypeHelpers
 footer interfaceName=HTMLElement
 form generateTypeHelpers
 frame generateTypeHelpers
@@ -94,7 +94,7 @@ ol interfaceName=HTMLOListElement, generateTypeHelpers
 optgroup interfaceName=HTMLOptGroupElement, generateTypeHelpers
 option generateTypeHelpers
 output constructorNeedsFormElement
-p interfaceName=HTMLParagraphElement
+p interfaceName=HTMLParagraphElement, generateTypeHelpers
 param generateTypeHelpers
 plaintext interfaceName=HTMLElement
 pre
@@ -132,7 +132,7 @@ tr interfaceName=HTMLTableRowElement, generateTypeHelpers
 track wrapperOnlyIfMediaIsAvailable, conditional=VIDEO_TRACK, generateTypeHelpers
 tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
-ul interfaceName=HTMLUListElement
+ul interfaceName=HTMLUListElement, generateTypeHelpers
 var interfaceName=HTMLElement
 video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, generateTypeHelpers
 wbr interfaceName=HTMLElement

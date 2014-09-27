@@ -208,9 +208,9 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
                 return namespaceURI.isEmpty() || namespaceURI == node.namespaceURI();
 
             if (node.document().isHTMLDocument()) {
-                if (node.isHTMLElement()) {
+                if (is<HTMLElement>(node)) {
                     // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
-                    return equalIgnoringCase(toHTMLElement(node).localName(), name) && (namespaceURI.isNull() || namespaceURI == node.namespaceURI());
+                    return equalIgnoringCase(downcast<HTMLElement>(node).localName(), name) && (namespaceURI.isNull() || namespaceURI == node.namespaceURI());
                 }
                 // An expression without any prefix shouldn't match no-namespace nodes (because HTML5 says so).
                 return toElement(node).hasLocalName(name) && namespaceURI == node.namespaceURI() && !namespaceURI.isNull();

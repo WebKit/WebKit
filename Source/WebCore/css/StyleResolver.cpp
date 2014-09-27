@@ -444,16 +444,16 @@ static inline bool parentElementPreventsSharing(const Element* parentElement)
 Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCount) const
 {
     if (visitedNodeCount >= cStyleSearchThreshold * cStyleSearchLevelThreshold)
-        return 0;
+        return nullptr;
     if (!parent || !parent->isStyledElement())
-        return 0;
+        return nullptr;
     StyledElement* styledParent = toStyledElement(parent);
     if (styledParent->inlineStyle())
-        return 0;
-    if (styledParent->isSVGElement() && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
-        return 0;
+        return nullptr;
+    if (is<SVGElement>(styledParent) && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
+        return nullptr;
     if (styledParent->hasID() && m_ruleSets.features().idsInRules.contains(styledParent->idForStyleResolution().impl()))
-        return 0;
+        return nullptr;
 
     RenderStyle* parentStyle = styledParent->renderStyle();
     unsigned subcount = 0;
@@ -546,7 +546,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
 static inline bool elementHasDirectionAuto(Element* element)
 {
     // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
-    return element->isHTMLElement() && toHTMLElement(element)->hasDirectionAuto();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(*element).hasDirectionAuto();
 }
 
 bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement* sharingCandidate) const

@@ -910,16 +910,10 @@ struct ValueToString<TextTrackCue*> {
 #endif
 #endif
 
-void isHTMLMediaElement(const HTMLMediaElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLMediaElement(const Element& element) { return element.isMediaElement(); }
-inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && toElement(node).isMediaElement(); }
-
-template <typename ArgType>
-struct NodeTypeCastTraits<const HTMLMediaElement, ArgType> {
-    static bool isType(ArgType& node) { return isHTMLMediaElement(node); }
-};
-
-NODE_TYPE_CASTS(HTMLMediaElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLMediaElement)
+    static bool isHTMLMediaElement(const Element& element) { return element.isMediaElement(); }
+    static bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && isHTMLMediaElement(toElement(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #ifndef NDEBUG
 template<>

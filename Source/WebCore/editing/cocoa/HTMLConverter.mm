@@ -1889,8 +1889,8 @@ void HTMLConverter::_addTableCellForElement(Element* element)
     RetainPtr<NSTextTableBlock> block;
     
     if (element) {
-        if (isHTMLTableCellElement(*element)) {
-            HTMLTableCellElement& tableCellElement = toHTMLTableCellElement(*element);
+        if (is<HTMLTableCellElement>(*element)) {
+            HTMLTableCellElement& tableCellElement = downcast<HTMLTableCellElement>(*element);
             
             rowSpan = tableCellElement.rowSpan();
             if (rowSpan < 1)
@@ -2002,8 +2002,8 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
-    } else if (element.hasTagName(frameTag) || element.hasTagName(iframeTag)) {
-        if (Document* contentDocument = toHTMLFrameElementBase(element).contentDocument()) {
+    } else if (is<HTMLFrameElementBase>(element)) {
+        if (Document* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument()) {
             _traverseNode(*contentDocument, depth + 1, true /* embedded */);
             retval = NO;
         }

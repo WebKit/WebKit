@@ -647,24 +647,24 @@ Element* enclosingAnchorElement(const Position& p)
 HTMLElement* enclosingList(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
         
     Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
-    for (ContainerNode* n = node->parentNode(); n; n = n->parentNode()) {
-        if (n->hasTagName(ulTag) || n->hasTagName(olTag))
-            return toHTMLElement(n);
-        if (n == root)
-            return 0;
+    for (ContainerNode* ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))
+            return downcast<HTMLElement>(ancestor);
+        if (ancestor == root)
+            return nullptr;
     }
     
-    return 0;
+    return nullptr;
 }
 
 Node* enclosingListChild(Node *node)
 {
     if (!node)
-        return 0;
+        return nullptr;
     // Check for a list item element, or for a node whose parent is a list element. Such a node
     // will appear visually as a list item (but without a list marker)
     Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
@@ -674,10 +674,10 @@ Node* enclosingListChild(Node *node)
         if (n->hasTagName(liTag) || (isListElement(n->parentNode()) && n != root))
             return n;
         if (n == root || isTableCell(n))
-            return 0;
+            return nullptr;
     }
     
-    return 0;
+    return nullptr;
 }
 
 static HTMLElement* embeddedSublist(Node* listItem)
@@ -685,10 +685,10 @@ static HTMLElement* embeddedSublist(Node* listItem)
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->firstChild(); n; n = n->nextSibling()) {
         if (isListElement(n))
-            return toHTMLElement(n);
+            return downcast<HTMLElement>(n);
     }
     
-    return 0;
+    return nullptr;
 }
 
 static Node* appendedSublist(Node* listItem)
@@ -696,12 +696,12 @@ static Node* appendedSublist(Node* listItem)
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
         if (isListElement(n))
-            return toHTMLElement(n);
+            return downcast<HTMLElement>(n);
         if (isListItem(listItem))
-            return 0;
+            return nullptr;
     }
     
-    return 0;
+    return nullptr;
 }
 
 // FIXME: This method should not need to call isStartOfParagraph/isEndOfParagraph

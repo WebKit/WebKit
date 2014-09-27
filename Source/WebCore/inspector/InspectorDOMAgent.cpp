@@ -1280,14 +1280,14 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
     if (node->isElementNode()) {
         Element* element = toElement(node);
         value->setAttributes(buildArrayForElementAttributes(element));
-        if (node->isFrameOwnerElement()) {
-            HTMLFrameOwnerElement* frameOwner = toHTMLFrameOwnerElement(node);
-            Frame* frame = frameOwner->contentFrame();
+        if (is<HTMLFrameOwnerElement>(node)) {
+            HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(*node);
+            Frame* frame = frameOwner.contentFrame();
             if (frame)
                 value->setFrameId(m_pageAgent->frameId(frame));
-            Document* doc = frameOwner->contentDocument();
-            if (doc)
-                value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
+            Document* document = frameOwner.contentDocument();
+            if (document)
+                value->setContentDocument(buildObjectForNode(document, 0, nodesMap));
         }
 
         if (ShadowRoot* root = element->shadowRoot()) {

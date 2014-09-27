@@ -1159,7 +1159,7 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
 
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
-    if (!element->isHTMLElement() || !toHTMLElement(element)->isLabelable())
+    if (!is<HTMLElement>(element) || !downcast<HTMLElement>(element)->isLabelable())
         return nullptr;
 
     const AtomicString& id = element->getIdAttribute();
@@ -1750,8 +1750,8 @@ String AccessibilityNodeObject::text() const
     if (!node)
         return String();
 
-    if (isNativeTextControl() && isHTMLTextFormControlElement(*node))
-        return toHTMLTextFormControlElement(*node).value();
+    if (isNativeTextControl() && is<HTMLTextFormControlElement>(*node))
+        return downcast<HTMLTextFormControlElement>(*node).value();
 
     if (!node->isElementNode())
         return String();

@@ -586,7 +586,7 @@ bool RenderLayerBacking::updateConfiguration()
     }
 #if ENABLE(VIDEO)
     else if (renderer().isVideo()) {
-        HTMLMediaElement* mediaElement = toHTMLMediaElement(renderer().element());
+        HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(renderer().element());
         m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerForMedia);
     }
 #endif
@@ -1681,10 +1681,10 @@ static bool isRestartedPlugin(RenderObject* renderer)
         return false;
 
     Element* element = toElement(renderer->node());
-    if (!element || !element->isPluginElement())
+    if (!element || !is<HTMLPlugInElement>(element))
         return false;
 
-    return toHTMLPlugInElement(element)->isRestartedPlugin();
+    return downcast<HTMLPlugInElement>(*element).isRestartedPlugin();
 }
 
 static bool isCompositedPlugin(RenderObject* renderer)

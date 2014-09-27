@@ -250,8 +250,8 @@ static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment
         return;
 
     // And only if the source Element and destination Element have the same HTML tag name.
-    const HTMLElement& oldElement = toHTMLElement(node);
-    HTMLElement& newElement = toHTMLElement(*firstChild);
+    const HTMLElement& oldElement = downcast<HTMLElement>(node);
+    HTMLElement& newElement = downcast<HTMLElement>(*firstChild);
     if (oldElement.localName() != newElement.localName())
         return;
 

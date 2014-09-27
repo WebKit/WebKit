@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
+#include "HTMLFrameElementBase.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "IconDatabase.h"
@@ -516,8 +517,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     for (size_t i = 0; i < nodesSize; ++i) {
         Node& node = *nodes[i];
         Frame* childFrame;
-        if ((is<HTMLFrameElement>(node) || is<HTMLIFrameElement>(node) || is<HTMLObjectElement>(node))
-            && (childFrame = toHTMLFrameOwnerElement(node).contentFrame())) {
+        if ((is<HTMLFrameElementBase>(node) || is<HTMLObjectElement>(node))
+            && (childFrame = downcast<HTMLFrameOwnerElement>(node).contentFrame())) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
                 

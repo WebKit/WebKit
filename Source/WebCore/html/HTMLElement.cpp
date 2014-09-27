@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "HTMLBDIElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -363,8 +364,8 @@ bool HTMLElement::matchesReadWritePseudoClass() const
 {
     const Element* currentElement = this;
     do {
-        if (currentElement->isHTMLElement()) {
-            switch (contentEditableType(toHTMLElement(*currentElement))) {
+        if (is<HTMLElement>(currentElement)) {
+            switch (contentEditableType(downcast<HTMLElement>(*currentElement))) {
             case ContentEditableType::True:
             case ContentEditableType::PlaintextOnly:
                 return true;
@@ -451,11 +452,11 @@ static void mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 {
     Element* p = parentElement();
-    if (!p || !p->isHTMLElement()) {
+    if (!p || !is<HTMLElement>(p)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    RefPtr<HTMLElement> parent = toHTMLElement(p);
+    RefPtr<HTMLElement> parent = downcast<HTMLElement>(p);
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
@@ -868,7 +869,10 @@ HTMLFormElement* HTMLElement::virtualForm() const
 
 static inline bool elementAffectsDirectionality(const Node& node)
 {
-    return node.isHTMLElement() && (toHTMLElement(node).hasTagName(bdiTag) || toHTMLElement(node).fastHasAttribute(dirAttr));
+    if (!is<HTMLElement>(node))
+        return false;
+    const HTMLElement& element = downcast<HTMLElement>(node);
+    return is<HTMLBDIElement>(element) || element.fastHasAttribute(dirAttr);
 }
 
 static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)
@@ -919,8 +923,8 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
-    if (isHTMLTextFormControlElement(*this)) {
-        HTMLTextFormControlElement& textElement = toHTMLTextFormControlElement(const_cast<HTMLElement&>(*this));
+    if (is<HTMLTextFormControlElement>(*this)) {
+        HTMLTextFormControlElement& textElement = downcast<HTMLTextFormControlElement>(const_cast<HTMLElement&>(*this));
         bool hasStrongDirectionality;
         UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)
@@ -966,8 +970,8 @@ void HTMLElement::dirAttributeChanged(const AtomicString& value)
 {
     Element* parent = parentElement();
 
-    if (parent && parent->isHTMLElement() && parent->selfOrAncestorHasDirAutoAttribute())
-        toHTMLElement(parent)->adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
+    if (parent && is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
+        downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalIgnoringCase(value, "auto"))
         calculateAndAdjustDirectionality();

@@ -488,16 +488,16 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         const StyleProperties* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
-            if (element->isHTMLElement()) {
+            if (is<HTMLElement>(element)) {
                 Vector<QualifiedName> attributes;
-                HTMLElement* htmlElement = toHTMLElement(element);
+                HTMLElement& htmlElement = downcast<HTMLElement>(*element);
 
-                if (newInlineStyle->conflictsWithImplicitStyleOfElement(htmlElement)) {
+                if (newInlineStyle->conflictsWithImplicitStyleOfElement(&htmlElement)) {
                     // e.g. <b style="font-weight: normal;"> is converted to <span style="font-weight: normal;">
-                    node = replaceElementWithSpanPreservingChildrenAndAttributes(htmlElement);
+                    node = replaceElementWithSpanPreservingChildrenAndAttributes(&htmlElement);
                     element = toStyledElement(node.get());
-                    insertedNodes.didReplaceNode(htmlElement, node.get());
-                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(htmlElement, EditingStyle::PreserveWritingDirection, 0, attributes,
+                    insertedNodes.didReplaceNode(&htmlElement, node.get());
+                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(&htmlElement, EditingStyle::PreserveWritingDirection, 0, attributes,
                     EditingStyle::DoNotExtractMatchingStyle)) {
                     // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
                     for (size_t i = 0; i < attributes.size(); i++)
@@ -626,10 +626,10 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
     for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
         next = NodeTraversal::next(node.get());
 
-        if (!node->isHTMLElement())
+        if (!is<HTMLElement>(*node))
             continue;
 
-        if (isProhibitedParagraphChild(toHTMLElement(node.get())->localName())) {
+        if (isProhibitedParagraphChild(downcast<HTMLElement>(*node).localName())) {
             if (auto* paragraphElement = enclosingElementWithTag(positionInParentBeforeNode(node.get()), pTag)) {
                 auto* parent = paragraphElement->parentNode();
                 if (parent && parent->hasEditableStyle())
@@ -643,7 +643,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
                 if (headerElement->parentNode() && headerElement->parentNode()->isContentRichlyEditable())
                     moveNodeOutOfAncestor(node, headerElement);
                 else {
-                    HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(toHTMLElement(node.get()));
+                    HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(downcast<HTMLElement>(node.get()));
                     insertedNodes.didReplaceNode(node.get(), newSpanElement);
                 }
             }
@@ -778,7 +778,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     // so search for the top level style span instead of assuming it's at the top.
     for (Node* node = insertedNodes.firstNodeInserted(); node; node = NodeTraversal::next(node)) {
         if (isLegacyAppleStyleSpan(node)) {
-            wrappingStyleSpan = toHTMLElement(node);
+            wrappingStyleSpan = downcast<HTMLElement>(node);
             break;
         }
     }
@@ -1099,7 +1099,7 @@ void ReplaceSelectionCommand::doApply()
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
     if ((isListElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
         && blockStart && blockStart->renderer()->isListItem())
-        refNode = insertAsListItems(toHTMLElement(refNode.get()), blockStart, insertionPos, insertedNodes);
+        refNode = insertAsListItems(downcast<HTMLElement>(refNode.get()), blockStart, insertionPos, insertedNodes);
     else {
         insertNodeAt(refNode, insertionPos);
         insertedNodes.respondToNodeInsertion(refNode.get());
@@ -1438,7 +1438,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     RefPtr<HTMLElement> listElement = prpListElement;
 
     while (listElement->hasOneChild() && isListElement(listElement->firstChild()))
-        listElement = toHTMLElement(listElement->firstChild());
+        listElement = downcast<HTMLElement>(listElement->firstChild());
 
     bool isStart = isStartOfParagraph(insertPos);
     bool isEnd = isEndOfParagraph(insertPos);

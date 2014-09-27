@@ -88,8 +88,8 @@ void RenderTableCell::willBeRemovedFromTree()
 unsigned RenderTableCell::parseColSpanFromDOM() const
 {
     ASSERT(element());
-    if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
-        return std::min<unsigned>(toHTMLTableCellElement(element())->colSpan(), maxColumnIndex);
+    if (is<HTMLTableCellElement>(element()))
+        return std::min<unsigned>(downcast<HTMLTableCellElement>(*element()).colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
         return std::min<unsigned>(downcast<MathMLElement>(*element()).colSpan(), maxColumnIndex);
@@ -100,8 +100,8 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
 unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
     ASSERT(element());
-    if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
-        return std::min<unsigned>(toHTMLTableCellElement(element())->rowSpan(), maxRowIndex);
+    if (is<HTMLTableCellElement>(element()))
+        return std::min<unsigned>(downcast<HTMLTableCellElement>(*element()).rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
         return std::min<unsigned>(downcast<MathMLElement>(*element()).rowSpan(), maxRowIndex);

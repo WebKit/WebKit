@@ -61,12 +61,10 @@ private:
     virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 };
 
-inline bool isHTMLTableSectionElement(const Node& node)
-{
-    return node.hasTagName(HTMLNames::theadTag) || node.hasTagName(HTMLNames::tfootTag) || node.hasTagName(HTMLNames::tbodyTag);
-}
-
-NODE_TYPE_CASTS(HTMLTableSectionElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTableSectionElement)
+    static bool isHTMLTableSectionElement(const HTMLElement& element) { return element.hasTagName(HTMLNames::theadTag) || element.hasTagName(HTMLNames::tfootTag) || element.hasTagName(HTMLNames::tbodyTag); }
+    static bool isHTMLTableSectionElement(const Node& node) { return is<HTMLElement>(node) && isHTMLTableSectionElement(downcast<HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } //namespace
 

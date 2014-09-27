@@ -58,7 +58,7 @@ static inline bool isInSection(HTMLTableRowElement& row, const HTMLQualifiedName
 {
     // Because we know that the parent is a table or a section, it's safe to cast it to an HTMLElement
     // giving us access to the faster hasTagName overload from that class.
-    return toHTMLElement(row.parentNode())->hasTagName(sectionTag);
+    return downcast<HTMLElement>(*row.parentNode()).hasTagName(sectionTag);
 }
 
 HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)

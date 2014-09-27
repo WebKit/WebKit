@@ -1686,8 +1686,8 @@ void FrameSelection::selectAll()
             selectStartTarget = root.get();
     } else {
         if (m_selection.isNone() && focusedElement) {
-            if (focusedElement->isTextFormControl()) {
-                toHTMLTextFormControlElement(*focusedElement).select();
+            if (is<HTMLTextFormControlElement>(focusedElement)) {
+                downcast<HTMLTextFormControlElement>(*focusedElement).select();
                 return;
             }
             root = focusedElement->nonBoundaryShadowTreeRootNode();
@@ -2025,8 +2025,8 @@ static HTMLFormElement* scanForForm(Element* start)
             return downcast<HTMLFormElement>(&element);
         if (is<HTMLFormControlElement>(element))
             return downcast<HTMLFormControlElement>(element).form();
-        if (isHTMLFrameElementBase(element)) {
-            Document* contentDocument = toHTMLFrameElementBase(element).contentDocument();
+        if (is<HTMLFrameElementBase>(element)) {
+            Document* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument();
             if (!contentDocument)
                 continue;
             if (HTMLFormElement* frameResult = scanForForm(contentDocument->documentElement()))

@@ -81,8 +81,8 @@ int HTMLTableRowElement::rowIndex() const
     
     for (Node *node = table->firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(tbodyTag)) {
-            HTMLTableSectionElement* section = toHTMLTableSectionElement(node);
-            for (Node* row = section->firstChild(); row; row = row->nextSibling()) {
+            HTMLTableSectionElement& section = downcast<HTMLTableSectionElement>(*node);
+            for (Node* row = section.firstChild(); row; row = row->nextSibling()) {
                 if (row == this)
                     return rIndex;
                 if (row->hasTagName(trTag))

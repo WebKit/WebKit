@@ -103,8 +103,8 @@ static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
     unsigned count = 0;
 
     if (node.isElementNode()) {
-        if (node.isFrameOwnerElement() && toHTMLFrameOwnerElement(node).contentFrame())
-            count++;
+        if (is<HTMLFrameOwnerElement>(node) && downcast<HTMLFrameOwnerElement>(node).contentFrame())
+            ++count;
 
         if (ShadowRoot* root = toElement(node).shadowRoot())
             count += assertConnectedSubrameCountIsConsistent(*root);
@@ -138,8 +138,8 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
             continue;
         }
 
-        if (element.isHTMLElement() && element.isFrameOwnerElement())
-            frameOwners.append(toHTMLFrameOwnerElement(element));
+        if (is<HTMLFrameOwnerElement>(element))
+            frameOwners.append(downcast<HTMLFrameOwnerElement>(element));
 
         if (ShadowRoot* shadowRoot = element.shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
@@ -157,8 +157,8 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
     Vector<Ref<HTMLFrameOwnerElement>> frameOwners;
 
     if (policy == RootAndDescendants) {
-        if (root.isHTMLElement() && root.isFrameOwnerElement())
-            frameOwners.append(toHTMLFrameOwnerElement(root));
+        if (is<HTMLFrameOwnerElement>(root))
+            frameOwners.append(downcast<HTMLFrameOwnerElement>(root));
     }
 
     collectFrameOwners(frameOwners, root);

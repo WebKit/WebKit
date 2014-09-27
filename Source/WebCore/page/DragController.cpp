@@ -552,8 +552,8 @@ bool DragController::canProcessDrag(DragData& dragData)
     if (dragData.containsFiles() && asFileInput(result.innerNonSharedNode()))
         return true;
 
-    if (result.innerNonSharedNode()->isPluginElement()) {
-        if (!toHTMLPlugInElement(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->hasEditableStyle())
+    if (is<HTMLPlugInElement>(result.innerNonSharedNode())) {
+        if (!downcast<HTMLPlugInElement>(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->hasEditableStyle())
             return false;
     } else if (!result.innerNonSharedNode()->hasEditableStyle())
         return false;

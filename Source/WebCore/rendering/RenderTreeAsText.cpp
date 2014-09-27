@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "InlineTextBox.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -124,17 +125,17 @@ static String getTagName(Node* n)
 
 static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
 {
-    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
+    if (!node || !is<HTMLSpanElement>(node))
         return false;
 
-    const HTMLElement* elem = toHTMLElement(node);
-    if (elem->getAttribute(classAttr) != "Apple-style-span")
+    const HTMLElement& element = downcast<HTMLSpanElement>(*node);
+    if (element.getAttribute(classAttr) != "Apple-style-span")
         return false;
 
     if (!node->hasChildNodes())
         return true;
 
-    const StyleProperties* inlineStyleDecl = elem->inlineStyle();
+    const StyleProperties* inlineStyleDecl = element.inlineStyle();
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 

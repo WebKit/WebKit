@@ -186,7 +186,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
         if (direction == NaturalWritingDirection)
             return;
-        toHTMLElement(*focusedElement).setAttribute(alignAttr, newValue);
+        downcast<HTMLElement>(*focusedElement).setAttribute(alignAttr, newValue);
         m_frame.document()->updateStyleIfNeeded();
         return;
     }

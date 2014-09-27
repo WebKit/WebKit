@@ -71,7 +71,7 @@ private:
 };
 
 inline bool isTextControlInnerTextElement(const HTMLElement& element) { return element.isTextControlInnerTextElement(); }
-inline bool isTextControlInnerTextElement(const Node& node) { return node.isHTMLElement() && isTextControlInnerTextElement(toHTMLElement(node)); }
+inline bool isTextControlInnerTextElement(const Node& node) { return is<HTMLElement>(node) && isTextControlInnerTextElement(downcast<HTMLElement>(node)); }
 NODE_TYPE_CASTS(TextControlInnerTextElement)
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {

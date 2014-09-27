@@ -1952,10 +1952,10 @@ void WebPage::stopInteraction()
 
 void WebPage::performActionOnElement(uint32_t action)
 {
-    if (!m_interactionNode || !m_interactionNode->isHTMLElement())
+    if (!m_interactionNode || !is<HTMLElement>(m_interactionNode))
         return;
 
-    HTMLElement* element = toHTMLElement(m_interactionNode.get());
+    HTMLElement* element = downcast<HTMLElement>(m_interactionNode.get());
     if (!element->renderer())
         return;
 

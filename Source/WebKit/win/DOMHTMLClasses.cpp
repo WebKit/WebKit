@@ -395,8 +395,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::idName(
     if (!result)
         return E_POINTER;
 
-    ASSERT(m_element && m_element->isHTMLElement());
-    String idString = toHTMLElement(m_element)->getAttribute(idAttr);
+    ASSERT(m_element && is<HTMLElement>(m_element));
+    String idString = downcast<HTMLElement>(m_element)->getAttribute(idAttr);
     *result = BString(idString).release();
     return S_OK;
 }
@@ -481,8 +481,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::setInnerHTML(
 HRESULT STDMETHODCALLTYPE DOMHTMLElement::innerText( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && m_element->isHTMLElement());
-    WTF::String innerTextString = toHTMLElement(m_element)->innerText();
+    ASSERT(m_element && is<HTMLElement>(m_element));
+    WTF::String innerTextString = downcast<HTMLElement>(m_element)->innerText();
     *result = BString(innerTextString).release();
     return S_OK;
 }
@@ -490,8 +490,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::innerText(
 HRESULT STDMETHODCALLTYPE DOMHTMLElement::setInnerText( 
         /* [in] */ BSTR text)
 {
-    ASSERT(m_element && m_element->isHTMLElement());
-    HTMLElement* htmlEle = toHTMLElement(m_element);
+    ASSERT(m_element && is<HTMLElement>(m_element));
+    HTMLElement* htmlEle = downcast<HTMLElement>(m_element);
     WTF::String textString(text, SysStringLen(text));
     WebCore::ExceptionCode ec = 0;
     htmlEle->setInnerText(textString, ec);

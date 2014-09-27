@@ -2141,14 +2141,10 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
 
 static bool targetIsFrame(Node* target, Frame*& frame)
 {
-    if (!target)
+    if (!target || !is<HTMLFrameElementBase>(target))
         return false;
 
-    if (!target->hasTagName(frameTag) && !target->hasTagName(iframeTag))
-        return false;
-
-    frame = toHTMLFrameElementBase(target)->contentFrame();
-
+    frame = downcast<HTMLFrameElementBase>(*target).contentFrame();
     return true;
 }
 

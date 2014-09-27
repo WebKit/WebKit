@@ -224,10 +224,10 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!frameOwnerElement().isPluginElement())
+    if (!is<HTMLPlugInElement>(frameOwnerElement()))
         return;
 
-    HTMLPlugInElement& plugInElement = toHTMLPlugInElement(frameOwnerElement());
+    HTMLPlugInElement& plugInElement = downcast<HTMLPlugInElement>(frameOwnerElement());
 
     if (plugInElement.displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderWidget::paintContents(paintInfo, paintOffset);
@@ -235,10 +235,10 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
             return;
     }
 
-    if (!plugInElement.isPlugInImageElement())
+    if (!is<HTMLPlugInImageElement>(plugInElement))
         return;
 
-    if (Image* snapshot = toHTMLPlugInImageElement(plugInElement).snapshotImage())
+    if (Image* snapshot = downcast<HTMLPlugInImageElement>(plugInElement).snapshotImage())
         paintSnapshotImage(paintInfo, paintOffset, snapshot);
 }
 
@@ -493,8 +493,8 @@ void RenderEmbeddedObject::layout()
 
     if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
         HTMLFrameOwnerElement& element = frameOwnerElement();
-        if (element.isPluginElement() && toHTMLPlugInElement(element).isPlugInImageElement()) {
-            HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(element);
+        if (is<HTMLPlugInImageElement>(element)) {
+            HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(element);
             if (plugInImageElement.displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement.snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
                 plugInImageElement.setNeedsCheckForSizeChange();
                 view().frameView().addEmbeddedObjectToUpdate(*this);
@@ -604,7 +604,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         return;
 
     MouseEvent* mouseEvent = toMouseEvent(event);
-    HTMLPlugInElement& element = toHTMLPlugInElement(frameOwnerElement());
+    HTMLPlugInElement& element = downcast<HTMLPlugInElement>(frameOwnerElement());
     if (event->type() == eventNames().mousedownEvent && toMouseEvent(event)->button() == LeftButton) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {

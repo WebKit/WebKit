@@ -39,7 +39,7 @@ public:
     RenderMedia(HTMLMediaElement&, PassRef<RenderStyle>, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
 
-    HTMLMediaElement& mediaElement() const { return toHTMLMediaElement(nodeForNonAnonymous()); }
+    HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }
 
 private:
     void element() const = delete;

@@ -69,9 +69,10 @@ private:
     SandboxFlags m_sandboxFlags;
 };
 
-void isHTMLFrameOwnerElement(const HTMLFrameOwnerElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLFrameOwnerElement(const Node& node) { return node.isFrameOwnerElement(); }
-NODE_TYPE_CASTS(HTMLFrameOwnerElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLFrameOwnerElement)
+    static bool isHTMLFrameOwnerElement(const Node& node) { return node.isFrameOwnerElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 
 class SubframeLoadingDisabler {
 public:

@@ -645,7 +645,7 @@ END
        if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
            print F <<END
     static bool checkTagName(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
-    static bool checkTagName(const Node& node) { return node.isHTMLElement() && checkTagName(toHTMLElement(node)); }
+    static bool checkTagName(const Node& node) { return is<HTMLElement>(node) && checkTagName(downcast<HTMLElement>(node)); }
 END
            ;
        } else {

@@ -388,23 +388,23 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // that are allowed a name attribute.
 
     if (name.isEmpty())
-        return 0;
+        return nullptr;
 
     ContainerNode& root = rootNode();
     if (!usesCustomForwardOnlyTraversal() && root.isInTreeScope()) {
         TreeScope& treeScope = root.treeScope();
-        Element* candidate = 0;
+        Element* candidate = nullptr;
         if (treeScope.hasElementWithId(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithId(name))
                 candidate = treeScope.getElementById(name);
         } else if (treeScope.hasElementWithName(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithName(name)) {
                 candidate = treeScope.getElementByName(name);
-                if (candidate && type() == DocAll && (!candidate->isHTMLElement() || !nameShouldBeVisibleInDocumentAll(toHTMLElement(*candidate))))
-                    candidate = 0;
+                if (candidate && type() == DocAll && (!is<HTMLElement>(candidate) || !nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*candidate))))
+                    candidate = nullptr;
             }
         } else
-            return 0;
+            return nullptr;
 
         if (candidate && isMatchingElement(*this, *candidate)
             && (m_shouldOnlyIncludeDirectChildren ? candidate->parentNode() == &root : candidate->isDescendantOf(&root)))
@@ -425,7 +425,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
             return nameResults->at(0);
     }
 
-    return 0;
+    return nullptr;
 }
 
 void HTMLCollection::updateNamedElementCache() const
@@ -443,10 +443,10 @@ void HTMLCollection::updateNamedElementCache() const
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
             cache->appendIdCache(idAttrVal, element);
-        if (!element->isHTMLElement())
+        if (!is<HTMLElement>(element))
             continue;
         const AtomicString& nameAttrVal = element->getNameAttribute();
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(toHTMLElement(*element))))
+        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*element))))
             cache->appendNameCache(nameAttrVal, element);
     }
 

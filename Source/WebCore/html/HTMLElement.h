@@ -146,19 +146,13 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
     ASSERT(tagName.localName().impl());
 }
 
-void isHTMLElement(const HTMLElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
-
-template <typename ArgType>
-struct NodeTypeCastTraits<const HTMLElement, ArgType> {
-    static bool isType(ArgType& node) { return isHTMLElement(node); }
-};
-
-NODE_TYPE_CASTS(HTMLElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLElement)
+    static bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const
 {
-    return isHTMLElement() && toHTMLElement(*this).hasTagName(name);
+    return is<HTMLElement>(*this) && downcast<HTMLElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore

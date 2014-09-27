@@ -449,7 +449,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
         setLength(index, ec);
         // Replace an existing entry?
     } else if (diff < 0) {
-        before = toHTMLElement(options()->item(index+1));
+        before = downcast<HTMLElement>(options()->item(index + 1));
         removeByIndex(index);
     }
     // Finally add the new element.
@@ -471,7 +471,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
         do {
             RefPtr<Element> option = document().createElement(optionTag, false);
             ASSERT(option);
-            add(toHTMLElement(option.get()), 0, ec);
+            add(downcast<HTMLElement>(option.get()), nullptr, ec);
             if (ec)
                 break;
         } while (++diff);
@@ -785,7 +785,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             currentElement = ElementTraversal::nextSkippingChildren(currentElement, this);
             continue;
         }
-        HTMLElement* current = toHTMLElement(currentElement);
+        HTMLElement* current = downcast<HTMLElement>(currentElement);
 
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.

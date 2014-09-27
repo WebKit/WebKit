@@ -623,8 +623,8 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
 
 String Internals::visiblePlaceholder(Element* element)
 {
-    if (element && isHTMLTextFormControlElement(*element)) {
-        const HTMLTextFormControlElement& textFormControlElement = toHTMLTextFormControlElement(*element);
+    if (element && is<HTMLTextFormControlElement>(*element)) {
+        const HTMLTextFormControlElement& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
         if (!textFormControlElement.isPlaceholderVisible())
             return String();
         if (HTMLElement* placeholderElement = textFormControlElement.placeholderElement())
@@ -2073,7 +2073,7 @@ String Internals::getImageSourceURL(Element* element, ExceptionCode& ec)
 void Internals::simulateAudioInterruption(Node* node)
 {
 #if USE(GSTREAMER)
-    HTMLMediaElement* element = toHTMLMediaElement(node);
+    HTMLMediaElement* element = downcast<HTMLMediaElement>(node);
     element->player()->simulateAudioInterruption();
 #else
     UNUSED_PARAM(node);
@@ -2232,7 +2232,7 @@ bool Internals::isPluginSnapshotted(Element* element, ExceptionCode& ec)
         ec = INVALID_ACCESS_ERR;
         return false;
     }
-    HTMLPlugInElement* pluginElement = toHTMLPlugInElement(element);
+    HTMLPlugInElement* pluginElement = downcast<HTMLPlugInElement>(element);
     return pluginElement->displayState() <= HTMLPlugInElement::DisplayingSnapshot;
 }
     

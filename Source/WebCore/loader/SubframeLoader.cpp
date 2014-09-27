@@ -297,8 +297,8 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     bool allowsScrolling = true;
     int marginWidth = -1;
     int marginHeight = -1;
-    if (ownerElement.hasTagName(frameTag) || ownerElement.hasTagName(iframeTag)) {
-        HTMLFrameElementBase& frameElementBase = toHTMLFrameElementBase(ownerElement);
+    if (is<HTMLFrameElementBase>(ownerElement)) {
+        HTMLFrameElementBase& frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
         allowsScrolling = frameElementBase.scrollingMode() != ScrollbarAlwaysOff;
         marginWidth = frameElementBase.marginWidth();
         marginHeight = frameElementBase.marginHeight();

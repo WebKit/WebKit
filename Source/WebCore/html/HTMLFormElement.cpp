@@ -800,7 +800,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<Ref<Elem
 
     HTMLElement* elementFromPast = elementFromPastNamesMap(name);
     if (namedItems.size() == 1 && &namedItems.first().get() != elementFromPast)
-        addToPastNamesMap(toHTMLElement(&namedItems.first().get())->asFormNamedItem(), name);
+        addToPastNamesMap(downcast<HTMLElement>(namedItems.first().get()).asFormNamedItem(), name);
     else if (elementFromPast && namedItems.isEmpty())
         namedItems.append(*elementFromPast);
 }

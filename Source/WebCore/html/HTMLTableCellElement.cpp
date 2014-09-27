@@ -174,7 +174,7 @@ HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
     if (!cellAboveRenderer)
         return nullptr;
 
-    return toHTMLTableCellElement(cellAboveRenderer->element());
+    return downcast<HTMLTableCellElement>(cellAboveRenderer->element());
 }
 
 } // namespace WebCore

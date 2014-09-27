@@ -218,10 +218,10 @@ bool AccessibilityTable::isDataTable() const
                 headersInFirstColumnCount++;
             
             // In this case, the developer explicitly assigned a "data" table attribute.
-            if (cellElement->hasTagName(tdTag) || cellElement->hasTagName(thTag)) {
-                HTMLTableCellElement* tableCellElement = toHTMLTableCellElement(cellElement);
-                if (!tableCellElement->headers().isEmpty() || !tableCellElement->abbr().isEmpty()
-                    || !tableCellElement->axis().isEmpty() || !tableCellElement->scope().isEmpty())
+            if (is<HTMLTableCellElement>(cellElement)) {
+                HTMLTableCellElement& tableCellElement = downcast<HTMLTableCellElement>(*cellElement);
+                if (!tableCellElement.headers().isEmpty() || !tableCellElement.abbr().isEmpty()
+                    || !tableCellElement.axis().isEmpty() || !tableCellElement.scope().isEmpty())
                     return true;
             }
             const RenderStyle& renderStyle = cell->style();

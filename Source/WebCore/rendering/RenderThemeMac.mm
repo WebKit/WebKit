@@ -1683,7 +1683,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     NSSearchFieldCell* search = this->search();
 
-    if (!input->isDisabledFormControl() && (input->isTextFormControl() && !toHTMLTextFormControlElement(*input).isReadOnly()))
+    if (!input->isDisabledFormControl() && (is<HTMLTextFormControlElement>(input) && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
         updatePressedState([search cancelButtonCell], o);
     else if ([[search cancelButtonCell] isHighlighted])
         [[search cancelButtonCell] setHighlighted:NO];
@@ -1851,22 +1851,22 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
     // from our node. Assuming this node is the plugin overlay element, we should get to the
     // plugin itself by asking for the shadow root parent, and then its parent.
 
-    if (!renderBlock.element()->isHTMLElement())
+    if (!is<HTMLElement>(renderBlock.element()))
         return true;
 
-    HTMLElement* plugInOverlay = toHTMLElement(renderBlock.element());
-    Element* parent = plugInOverlay->parentOrShadowHostElement();
-    while (parent && !parent->isPluginElement())
+    HTMLElement& plugInOverlay = downcast<HTMLElement>(*renderBlock.element());
+    Element* parent = plugInOverlay.parentOrShadowHostElement();
+    while (parent && !is<HTMLPlugInElement>(parent))
         parent = parent->parentOrShadowHostElement();
 
     if (!parent)
         return true;
 
-    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(parent);
-    if (!plugInElement->isPlugInImageElement())
+    HTMLPlugInElement& plugInElement = downcast<HTMLPlugInElement>(*parent);
+    if (!plugInElement.isPlugInImageElement())
         return true;
 
-    HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(*plugInElement);
+    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(plugInElement);
 
     Image* snapshot = plugInImageElement.snapshotImage();
     if (!snapshot)

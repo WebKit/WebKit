@@ -590,8 +590,8 @@ void PluginView::initializePlugin()
     }
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
-    m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
+    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
+    m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(plugInImageElement);
 #endif
     m_plugin->initialize(this, m_parameters);
     
@@ -1713,8 +1713,8 @@ void PluginView::pluginSnapshotTimerFired()
     ASSERT(m_plugin);
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
-    bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(*plugInImageElement);
+    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
+    bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(plugInImageElement);
     bool plugInCameOnScreen = isPlugInOnScreen && m_didPlugInStartOffScreen;
     bool snapshotFound = false;
 #endif
@@ -1747,7 +1747,7 @@ void PluginView::pluginSnapshotTimerFired()
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     unsigned candidateArea = 0;
     bool noSnapshotFoundAfterMaxRetries = m_countSnapshotRetries == frame()->settings().maximumPlugInSnapshotAttempts() && !isPlugInOnScreen && !snapshotFound;
-    if (m_webPage->plugInIsPrimarySize(*plugInImageElement, candidateArea)
+    if (m_webPage->plugInIsPrimarySize(plugInImageElement, candidateArea)
         && (noSnapshotFoundAfterMaxRetries || plugInCameOnScreen))
         m_pluginElement->setDisplayState(HTMLPlugInElement::Playing);
     else
@@ -1781,12 +1781,12 @@ void PluginView::pluginDidReceiveUserInteraction()
 
     m_didReceiveUserInteraction = true;
 
-    WebCore::HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
-    String pageOrigin = plugInImageElement->document().page()->mainFrame().document()->baseURL().host();
-    String pluginOrigin = plugInImageElement->loadedUrl().host();
-    String mimeType = plugInImageElement->loadedMimeType();
+    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
+    String pageOrigin = plugInImageElement.document().page()->mainFrame().document()->baseURL().host();
+    String pluginOrigin = plugInImageElement.loadedUrl().host();
+    String mimeType = plugInImageElement.loadedMimeType();
 
-    WebProcess::shared().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType, plugInImageElement->document().page()->sessionID());
+    WebProcess::shared().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType, plugInImageElement.document().page()->sessionID());
 }
 
 bool PluginView::shouldCreateTransientPaintingSnapshot() const

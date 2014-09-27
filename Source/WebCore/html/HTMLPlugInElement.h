@@ -134,9 +134,9 @@ private:
     DisplayState m_displayState;
 };
 
-void isHTMLPlugInElement(const HTMLPlugInElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLPlugInElement(const Node& node) { return node.isPluginElement(); }
-NODE_TYPE_CASTS(HTMLPlugInElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLPlugInElement)
+    static bool isHTMLPlugInElement(const Node& node) { return node.isPluginElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

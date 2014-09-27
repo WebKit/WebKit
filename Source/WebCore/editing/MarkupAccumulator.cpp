@@ -603,14 +603,14 @@ bool MarkupAccumulator::shouldSelfClose(const Element& element)
 
 bool MarkupAccumulator::elementCannotHaveEndTag(const Node& node)
 {
-    if (!node.isHTMLElement())
+    if (!is<HTMLElement>(node))
         return false;
 
     // FIXME: ieForbidsInsertHTML may not be the right function to call here
     // ieForbidsInsertHTML is used to disallow setting innerHTML/outerHTML
     // or createContextualFragment.  It does not necessarily align with
     // which elements should be serialized w/o end tags.
-    return toHTMLElement(node).ieForbidsInsertHTML();
+    return downcast<HTMLElement>(node).ieForbidsInsertHTML();
 }
 
 void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Element& element)

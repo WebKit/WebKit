@@ -62,9 +62,10 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };
 
-void isHTMLTableCellElement(const HTMLTableCellElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isHTMLTableCellElement(const Node& node) { return node.hasTagName(HTMLNames::tdTag) || node.hasTagName(HTMLNames::thTag); }
-NODE_TYPE_CASTS(HTMLTableCellElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTableCellElement)
+    static bool isHTMLTableCellElement(const HTMLElement& element) { return element.hasTagName(HTMLNames::tdTag) || element.hasTagName(HTMLNames::thTag); }
+    static bool isHTMLTableCellElement(const Node& node) { return is<HTMLElement>(node) && isHTMLTableCellElement(downcast<HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace
 

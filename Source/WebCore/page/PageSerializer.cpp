@@ -66,10 +66,10 @@ namespace WebCore {
 
 static bool isCharsetSpecifyingNode(const Node& node)
 {
-    if (!node.isHTMLElement())
+    if (!is<HTMLElement>(node))
         return false;
 
-    const HTMLElement& element = toHTMLElement(node);
+    const HTMLElement& element = downcast<HTMLElement>(node);
     if (!element.hasTagName(HTMLNames::metaTag))
         return false;
     HTMLMetaCharsetParser::AttributeList attributes;
@@ -146,10 +146,10 @@ void SerializerMarkupAccumulator::appendElement(StringBuilder& out, const Elemen
 
 void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
-    if (!element.isFrameOwnerElement())
+    if (!is<HTMLFrameOwnerElement>(element))
         return;
 
-    const HTMLFrameOwnerElement& frameOwner = toHTMLFrameOwnerElement(element);
+    const HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
     Frame* frame = frameOwner.contentFrame();
     if (!frame)
         return;

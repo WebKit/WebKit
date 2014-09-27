@@ -337,7 +337,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!is<HTMLEmbedElement>(*m_innerNonSharedNode) && !is<HTMLObjectElement>(*m_innerNonSharedNode))
         return URL();
 
-    HTMLPlugInImageElement& element = toHTMLPlugInImageElement(*m_innerNonSharedNode);
+    HTMLPlugInImageElement& element = downcast<HTMLPlugInImageElement>(*m_innerNonSharedNode);
     URL url = m_innerNonSharedNode->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.url()));
     if (!url.isValid())
         return URL();
@@ -372,14 +372,14 @@ bool HitTestResult::mediaSupportsFullscreen() const
 HTMLMediaElement* HitTestResult::mediaElement() const
 {
     if (!m_innerNonSharedNode)
-        return 0;
+        return nullptr;
 
     if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
-        return 0;
+        return nullptr;
 
-    if (is<HTMLVideoElement>(m_innerNonSharedNode.get()) || is<HTMLAudioElement>(m_innerNonSharedNode.get()))
-        return toHTMLMediaElement(m_innerNonSharedNode.get());
-    return 0;
+    if (is<HTMLMediaElement>(*m_innerNonSharedNode))
+        return downcast<HTMLMediaElement>(m_innerNonSharedNode.get());
+    return nullptr;
 }
 #endif
 

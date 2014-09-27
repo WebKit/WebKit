@@ -397,9 +397,9 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         // after all attributes, since their mapped style depends on the values of multiple attributes.
         addElementStyleProperties(styledElement.additionalPresentationAttributeStyle());
 
-        if (styledElement.isHTMLElement()) {
+        if (is<HTMLElement>(styledElement)) {
             bool isAuto;
-            TextDirection textDirection = toHTMLElement(styledElement).directionalityIfhasDirAutoAttribute(isAuto);
+            TextDirection textDirection = downcast<HTMLElement>(styledElement).directionalityIfhasDirAutoAttribute(isAuto);
             if (isAuto)
                 m_result.addMatchedProperties(textDirection == LTR ? leftToRightDeclaration() : rightToLeftDeclaration());
         }
@@ -421,7 +421,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         }
 
         // Now check SMIL animation override style.
-        if (includeSMILProperties && styledElement.isSVGElement())
+        if (includeSMILProperties && is<SVGElement>(styledElement))
             addElementStyleProperties(downcast<SVGElement>(styledElement).animatedSMILStyleProperties(), false /* isCacheable */);
     }
 }

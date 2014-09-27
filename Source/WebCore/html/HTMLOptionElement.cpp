@@ -312,11 +312,10 @@ bool HTMLOptionElement::isDisabledFormControl() const
     if (ownElementDisabled())
         return true;
 
-    if (!parentNode() || !parentNode()->isHTMLElement())
+    if (!parentNode() || !is<HTMLOptGroupElement>(parentNode()))
         return false;
 
-    HTMLElement& parentElement = toHTMLElement(*parentNode());
-    return is<HTMLOptGroupElement>(parentElement) && parentElement.isDisabledFormControl();
+    return downcast<HTMLOptGroupElement>(*parentNode()).isDisabledFormControl();
 }
 
 Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode& insertionPoint)
