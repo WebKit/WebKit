@@ -1,3 +1,18 @@
+2014-09-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Mark fast/selectors/nth-child-of-basics as Slow
+        https://bugs.webkit.org/show_bug.cgi?id=137149
+
+        Reviewed by Benjamin Poulain.
+
+        Since there are many tests in fast/selectors/nth-child-of-basics,
+        it takes long time and sometime LayoutTests timeout[1].
+
+        [1]: https://build.webkit.org/builders/GTK%20Linux%2064-bit%20Release%20(Tests)/builds/3042
+
+        * TestExpectations:
+        Mark fast/selectors/nth-child-of-basics as Slow.
+
 2014-09-26  Roger Fong  <roger_fong@apple.com>
 
         [Win] Unreviewed. More gardening on Windows tests.

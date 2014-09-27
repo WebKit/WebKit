@@ -196,3 +196,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-inline.html [ ImageOnly
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
+
+# nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
+webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
