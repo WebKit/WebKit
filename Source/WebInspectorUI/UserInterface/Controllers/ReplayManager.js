@@ -213,7 +213,7 @@ WebInspector.ReplayManager.prototype = {
 
         if (this.sessionState === WebInspector.ReplayManager.SessionState.Replaying) {
             result = result.then(function() {
-                return WebInspector.replayManager.stopPlayback();
+                return WebInspector.replayManager.cancelPlayback();
             });
         }
 
@@ -244,7 +244,7 @@ WebInspector.ReplayManager.prototype = {
 
         if (this.sessionState === WebInspector.ReplayManager.SessionState.Replaying) {
             result = result.then(function() {
-                return WebInspector.replayManager.stopPlayback();
+                return WebInspector.replayManager.cancelPlayback();
             });
         }
 
@@ -289,7 +289,7 @@ WebInspector.ReplayManager.prototype = {
         if (this.sessionState === WebInspector.ReplayManager.SessionState.Inactive)
             return result; // Already stopped.
 
-        if (this.sessionState !== WebInspector.ReplayManager.SegmentState.Dispatching)
+        if (this.segmentState !== WebInspector.ReplayManager.SegmentState.Dispatching)
             return result; // Already stopped.
 
         result = result.then(function() {
@@ -307,7 +307,7 @@ WebInspector.ReplayManager.prototype = {
 
     // Pause playback and unload the current session segment as soon as possible.
     // Returns a promise that resolves when the current segment is unloaded.
-    stopPlayback: function() // --> ()
+    cancelPlayback: function() // --> ()
     {
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing, "Cannot stop playback while capturing.");
 
@@ -321,7 +321,7 @@ WebInspector.ReplayManager.prototype = {
                 console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
                 console.assert(manager.segmentState !== WebInspector.ReplayManager.SegmentState.Appending);
 
-                return ReplayAgent.stopPlayback();
+                return ReplayAgent.cancelPlayback();
             }).catch(function(error) {
                 console.error("Failed to stop playback: ", error);
                 throw error;

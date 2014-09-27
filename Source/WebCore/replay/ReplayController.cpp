@@ -510,6 +510,9 @@ void ReplayController::willDispatchInput(const EventLoopInputBase&)
     ASSERT(m_segmentState == SegmentState::Dispatching);
 
     m_currentPosition.inputOffset++;
+
+    InspectorInstrumentation::playbackHitPosition(&m_page, m_currentPosition);
+
     if (m_currentPosition == m_targetPosition)
         pausePlayback();
 }
@@ -518,8 +521,6 @@ void ReplayController::didDispatchInput(const EventLoopInputBase&)
 {
     ASSERT(m_sessionState == SessionState::Replaying);
     ASSERT(m_segmentState == SegmentState::Dispatching);
-
-    InspectorInstrumentation::playbackHitPosition(&m_page, m_currentPosition);
 }
 
 void ReplayController::didDispatchFinalInput()

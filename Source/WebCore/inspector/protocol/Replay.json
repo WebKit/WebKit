@@ -171,7 +171,7 @@
         },
         {
             "name": "playbackHitPosition",
-            "description": "A position was reached during playback of the session.",
+            "description": "Playback within the session has progressed up to this position, and is about to replay the input at the specified offset.",
             "parameters": [
                 { "name": "position", "$ref": "ReplayPosition", "description": "The playback position that was hit." },
                 { "name": "timestamp", "type": "number", "description": "A timestamp for the event." }

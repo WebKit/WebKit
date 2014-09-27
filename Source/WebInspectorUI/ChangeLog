@@ -1,3 +1,16 @@
+2014-09-27  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: Playback position updates should be sent before the next event loop input is dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=137162
+
+        Reviewed by Timothy Hatcher.
+
+        Pausing playback from the UI was broken because of a typo. Fix this, and rename
+        stopPlayback to cancelPlayback.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.prototype.switchSession.if):
+
 2014-09-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Automatic Inspection should continue once all breakpoints are loaded
