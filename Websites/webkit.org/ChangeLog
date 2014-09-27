@@ -1,3 +1,17 @@
+2014-09-26  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=137053
+
+        Patch by David Gatwood. Reviewed, tweaked and landed by Alexey Proskuryakov.
+
+        Explain that to build from Xcode, one needs to build from command line once first.
+
+        Removed a Windows section that explained how to launch cygwin shell, which was
+        silly given that we then link to a long document explaining further steps.
+
+        * building/build.html:
+
 2014-09-24  Langó László  <llango.u-szeged@partner.samsung.com>
 
         Update the list of u-szeged contributors.
