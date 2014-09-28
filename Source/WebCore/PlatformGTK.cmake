@@ -25,6 +25,25 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    accessibility/atk/AXObjectCacheAtk.cpp
+    accessibility/atk/AccessibilityObjectAtk.cpp
+    accessibility/atk/WebKitAccessibleHyperlink.cpp
+    accessibility/atk/WebKitAccessibleInterfaceAction.cpp
+    accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+    accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+    accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+    accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+    accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+    accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+    accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+    accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+    accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
+    accessibility/atk/WebKitAccessibleInterfaceText.cpp
+    accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+    accessibility/atk/WebKitAccessibleUtil.cpp
+    accessibility/atk/WebKitAccessibleWrapperAtk.cpp
+
+    editing/atk/FrameSelectionAtk.cpp
     editing/SmartReplace.cpp
 
     loader/soup/CachedRawResourceSoup.cpp
@@ -162,25 +181,6 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES
-    accessibility/atk/AXObjectCacheAtk.cpp
-    accessibility/atk/AccessibilityObjectAtk.cpp
-    accessibility/atk/WebKitAccessibleHyperlink.cpp
-    accessibility/atk/WebKitAccessibleInterfaceAction.cpp
-    accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
-    accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
-    accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
-    accessibility/atk/WebKitAccessibleInterfaceImage.cpp
-    accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
-    accessibility/atk/WebKitAccessibleInterfaceTable.cpp
-    accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
-    accessibility/atk/WebKitAccessibleInterfaceText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceValue.cpp
-    accessibility/atk/WebKitAccessibleUtil.cpp
-    accessibility/atk/WebKitAccessibleWrapperAtk.cpp
-
-    editing/atk/FrameSelectionAtk.cpp
     editing/gtk/EditorGtk.cpp
 
     page/gtk/DragControllerGtk.cpp

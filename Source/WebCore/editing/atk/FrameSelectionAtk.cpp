@@ -26,13 +26,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "WebKitAccessibleWrapperAtk.h"
-
-#if PLATFORM(EFL)
 #include <glib.h>
-#else
-#include <gtk/gtk.h>
-#endif
-
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 

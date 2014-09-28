@@ -65,10 +65,6 @@
 #include <glib/gprintf.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#endif
-
 using namespace WebCore;
 
 struct _WebKitAccessiblePrivate {
@@ -294,18 +290,6 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
         Document* document = coreObject->document();
         if (!document)
             return 0;
-
-#if PLATFORM(GTK)
-        HostWindow* hostWindow = document->view()->hostWindow();
-        if (hostWindow) {
-            PlatformPageClient scrollView = hostWindow->platformPageClient();
-            if (scrollView) {
-                GtkWidget* scrollViewParent = gtk_widget_get_parent(scrollView);
-                if (scrollViewParent)
-                    return gtk_widget_get_accessible(scrollViewParent);
-            }
-        }
-#endif // PLATFORM(GTK)
     }
 
     if (!coreParent)
