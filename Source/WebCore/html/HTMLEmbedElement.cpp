@@ -68,7 +68,7 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
     return 0;
 }
 
-RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings() const
+RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
 {
     FrameView* view = document().view();
     if (!view || (!view->isInLayout() && !view->isPainting())) {

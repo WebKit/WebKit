@@ -81,7 +81,7 @@ PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tag
     return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
 }
 
-RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
+RenderWidget* HTMLObjectElement::renderWidgetLoadingPlugin() const
 {
     // Needs to load the plugin immediatedly because this function is called
     // when JavaScript code accesses the plugin.

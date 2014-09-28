@@ -83,10 +83,10 @@ RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(PassRef<Render
     return RenderEmbeddedObject::createForApplet(*this, WTF::move(style));
 }
 
-RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
+RenderWidget* HTMLAppletElement::renderWidgetLoadingPlugin() const
 {
     if (!canEmbedJava())
-        return 0;
+        return nullptr;
 
     // Needs to load the plugin immediatedly because this function is called
     // when JavaScript code accesses the plugin.
