@@ -54,6 +54,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContext3DCairo.cpp
+    platform/graphics/cairo/GraphicsContextCairo.cpp
     platform/graphics/cairo/ImageBufferCairo.cpp
     platform/graphics/cairo/ImageCairo.cpp
     platform/graphics/cairo/IntRectCairo.cpp
@@ -190,8 +191,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/cairo/WidgetBackingStoreCairo.cpp
 
     platform/graphics/GLContext.cpp
-
-    platform/graphics/cairo/GraphicsContextCairo.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
 

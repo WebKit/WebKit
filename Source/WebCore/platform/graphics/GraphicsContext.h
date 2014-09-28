@@ -535,12 +535,6 @@ namespace WebCore {
         GraphicsContext(cairo_t*);
 #endif
 
-#if PLATFORM(GTK)
-        void setGdkExposeEvent(GdkEventExpose*);
-        GdkWindow* gdkWindow() const;
-        GdkEventExpose* gdkExposeEvent() const;
-#endif
-
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     private:
