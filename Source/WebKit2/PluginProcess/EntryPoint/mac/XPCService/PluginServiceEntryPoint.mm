@@ -29,6 +29,7 @@
 #import "PluginProcess.h"
 #import "WKBase.h"
 #import "XPCServiceEntryPoint.h"
+#import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -37,7 +38,7 @@ namespace WebKit {
 
 class PluginServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
-    PluginServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    PluginServiceInitializerDelegate(RetainPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
         : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
     {
     }
@@ -76,6 +77,6 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
     // spawned by the PluginProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
-    XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+    XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(adoptOS(connection), initializerMessage);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
