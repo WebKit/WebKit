@@ -129,18 +129,18 @@ void HitTestResult::setToNonShadowAncestor()
     setInnerNonSharedNode(node);
 }
 
-void HitTestResult::setInnerNode(Node* n)
+void HitTestResult::setInnerNode(Node* node)
 {
-    if (n && n->isPseudoElement())
-        n = toPseudoElement(n)->hostElement();
-    m_innerNode = n;
+    if (node && is<PseudoElement>(node))
+        node = downcast<PseudoElement>(*node).hostElement();
+    m_innerNode = node;
 }
     
-void HitTestResult::setInnerNonSharedNode(Node* n)
+void HitTestResult::setInnerNonSharedNode(Node* node)
 {
-    if (n && n->isPseudoElement())
-        n = toPseudoElement(n)->hostElement();
-    m_innerNonSharedNode = n;
+    if (node && is<PseudoElement>(node))
+        node = downcast<PseudoElement>(*node).hostElement();
+    m_innerNonSharedNode = node;
 }
 
 void HitTestResult::setURLElement(Element* n) 

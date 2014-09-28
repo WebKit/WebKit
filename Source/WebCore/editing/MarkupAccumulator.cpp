@@ -556,7 +556,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         appendText(result, toText(node));
         break;
     case Node::COMMENT_NODE:
-        appendComment(result, toComment(node).data());
+        appendComment(result, downcast<Comment>(node).data());
         break;
     case Node::DOCUMENT_NODE:
         appendXMLDeclaration(result, toDocument(node));
@@ -564,16 +564,16 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
     case Node::DOCUMENT_FRAGMENT_NODE:
         break;
     case Node::DOCUMENT_TYPE_NODE:
-        appendDocumentType(result, toDocumentType(node));
+        appendDocumentType(result, downcast<DocumentType>(node));
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
-        appendProcessingInstruction(result, toProcessingInstruction(node).target(), toProcessingInstruction(node).data());
+        appendProcessingInstruction(result, downcast<ProcessingInstruction>(node).target(), downcast<ProcessingInstruction>(node).data());
         break;
     case Node::ELEMENT_NODE:
         appendElement(result, toElement(node), namespaces);
         break;
     case Node::CDATA_SECTION_NODE:
-        appendCDATASection(result, toCDATASection(node).data());
+        appendCDATASection(result, downcast<CDATASection>(node).data());
         break;
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_NODE:

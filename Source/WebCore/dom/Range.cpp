@@ -660,9 +660,8 @@ static inline unsigned lengthOfContentsInNode(Node* node)
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
-        return toCharacterData(node)->length();
     case Node::PROCESSING_INSTRUCTION_NODE:
-        return toProcessingInstruction(node)->data().length();
+        return downcast<CharacterData>(*node).length();
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_REFERENCE_NODE:
@@ -809,7 +808,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
                 result = c.release();
         }
         if (action == Extract || action == Delete)
-            toCharacterData(container)->deleteData(startOffset, endOffset - startOffset, ec);
+            downcast<CharacterData>(*container).deleteData(startOffset, endOffset - startOffset, ec);
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
         endOffset = std::min(endOffset, static_cast<ProcessingInstruction*>(container)->data().length());
@@ -824,10 +823,10 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
                 result = c.release();
         }
         if (action == Extract || action == Delete) {
-            ProcessingInstruction* pi = toProcessingInstruction(container);
-            String data(pi->data());
+            ProcessingInstruction& pi = downcast<ProcessingInstruction>(*container);
+            String data(pi.data());
             data.remove(startOffset, endOffset - startOffset);
-            pi->setData(data, ec);
+            pi.setData(data, ec);
         }
         break;
     case Node::ELEMENT_NODE:
@@ -1152,17 +1151,14 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::ENTITY_NODE:
         case Node::NOTATION_NODE:
             ec = RangeException::INVALID_NODE_TYPE_ERR;
-            return 0;
+            return nullptr;
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
         case Node::TEXT_NODE:
-            if (static_cast<unsigned>(offset) > toCharacterData(n)->length())
-                ec = INDEX_SIZE_ERR;
-            return 0;
         case Node::PROCESSING_INSTRUCTION_NODE:
-            if (static_cast<unsigned>(offset) > toProcessingInstruction(n)->data().length())
+            if (static_cast<unsigned>(offset) > downcast<CharacterData>(*n).length())
                 ec = INDEX_SIZE_ERR;
-            return 0;
+            return nullptr;
         case Node::ATTRIBUTE_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
@@ -1170,7 +1166,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::ENTITY_REFERENCE_NODE:
         case Node::XPATH_NAMESPACE_NODE: {
             if (!offset)
-                return 0;
+                return nullptr;
             Node* childBefore = n->traverseToChildAt(offset - 1);
             if (!childBefore)
                 ec = INDEX_SIZE_ERR;
@@ -1178,7 +1174,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         }
     }
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 void Range::checkNodeBA(Node* n, ExceptionCode& ec) const

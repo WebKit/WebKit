@@ -362,8 +362,8 @@ static inline String expandedNameLocalPart(Node* node)
 {
     // The local part of an XPath expanded-name matches DOM local name for most node types, except for namespace nodes and processing instruction nodes.
     ASSERT(node->nodeType() != Node::XPATH_NAMESPACE_NODE); // Not supported yet.
-    if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
-        return toProcessingInstruction(node)->target();
+    if (is<ProcessingInstruction>(node))
+        return downcast<ProcessingInstruction>(*node).target();
     return node->localName().string();
 }
 

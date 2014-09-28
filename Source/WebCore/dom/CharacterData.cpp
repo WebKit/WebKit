@@ -198,8 +198,8 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (isTextNode())
         Style::updateTextRendererAfterContentChange(*toText(this), offsetOfReplacedData, oldLength);
 
-    if (nodeType() == PROCESSING_INSTRUCTION_NODE)
-        toProcessingInstruction(this)->checkStyleSheet();
+    if (is<ProcessingInstruction>(this))
+        downcast<ProcessingInstruction>(*this).checkStyleSheet();
 
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);

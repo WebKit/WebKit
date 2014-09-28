@@ -266,17 +266,17 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
 
     for (auto& node : m_styleSheetCandidateNodes) {
         StyleSheet* sheet = nullptr;
-        if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
+        if (is<ProcessingInstruction>(node)) {
             // Processing instruction (XML documents only).
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
-            ProcessingInstruction* pi = toProcessingInstruction(node);
-            sheet = pi->sheet();
+            ProcessingInstruction& pi = downcast<ProcessingInstruction>(*node);
+            sheet = pi.sheet();
 #if ENABLE(XSLT)
             // Don't apply XSL transforms to already transformed documents -- <rdar://problem/4132806>
-            if (pi->isXSL() && !m_document.transformSourceDocument()) {
+            if (pi.isXSL() && !m_document.transformSourceDocument()) {
                 // Don't apply XSL transforms until loading is finished.
                 if (!m_document.parsing())
-                    m_document.applyXSLTransform(pi);
+                    m_document.applyXSLTransform(&pi);
                 return;
             }
 #endif

@@ -41,11 +41,9 @@ private:
     virtual PassRefPtr<Text> virtualCreate(const String&) override;
 };
 
-inline bool isCDATASection(const Node& node) { return node.nodeType() == Node::CDATA_SECTION_NODE; }
-void isCDATASection(const CDATASection&); // Catch unnecessary runtime check of type known at compile time.
-void isCDATASection(const ContainerNode&); // Catch unnecessary runtime check of type known at compile time.
-
-NODE_TYPE_CASTS(CDATASection)
+SPECIALIZE_TYPE_TRAITS_BEGIN(CDATASection)
+    static bool isCDATASection(const Node& node) { return node.nodeType() == Node::CDATA_SECTION_NODE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

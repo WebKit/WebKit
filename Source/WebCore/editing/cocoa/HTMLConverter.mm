@@ -2414,8 +2414,8 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                 _exitElement(element, depth, startIndex);
             }
         }
-    } else if (node.isCharacterDataNode())
-        _processText(toCharacterData(node));
+    } else if (is<CharacterData>(node))
+        _processText(downcast<CharacterData>(node));
 
     if (isEnd)
         _flags.reachedEnd = YES;

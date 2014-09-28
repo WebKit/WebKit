@@ -91,12 +91,9 @@ private:
 #endif
 };
 
-inline bool isProcessingInstruction(const Node& node)
-{
-    return node.nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
-}
-
-NODE_TYPE_CASTS(ProcessingInstruction)
+SPECIALIZE_TYPE_TRAITS_BEGIN(ProcessingInstruction)
+    static bool isProcessingInstruction(const Node& node) { return node.nodeType() == Node::PROCESSING_INSTRUCTION_NODE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } //namespace
 

@@ -205,8 +205,8 @@ private:
 
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
 {
-    if (referenceNode.isPseudoElement()) {
-        EventTarget* hostElement = toPseudoElement(referenceNode).hostElement();
+    if (is<PseudoElement>(referenceNode)) {
+        EventTarget* hostElement = downcast<PseudoElement>(referenceNode).hostElement();
         ASSERT(hostElement);
         return *hostElement;
     }
@@ -418,7 +418,7 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
 
 static Node* nodeOrHostIfPseudoElement(Node* node)
 {
-    return node->isPseudoElement() ? toPseudoElement(node)->hostElement() : node;
+    return is<PseudoElement>(node) ? downcast<PseudoElement>(*node).hostElement() : node;
 }
 
 EventPath::EventPath(Node& targetNode, Event& event)

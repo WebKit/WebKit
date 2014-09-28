@@ -672,7 +672,7 @@ void Node::derefEventTarget()
 
 static inline void markAncestorsWithChildNeedsStyleRecalc(Node& node)
 {
-    if (ContainerNode* ancestor = node.isPseudoElement() ? toPseudoElement(node).hostElement() : node.parentOrShadowHostNode()) {
+    if (ContainerNode* ancestor = is<PseudoElement>(node) ? downcast<PseudoElement>(node).hostElement() : node.parentOrShadowHostNode()) {
         ancestor->setDirectChildNeedsStyleRecalc();
 
         for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
@@ -872,7 +872,7 @@ bool Node::containsIncludingHostElements(const Node* node) const
 
 Node* Node::pseudoAwarePreviousSibling() const
 {
-    Element* parentOrHost = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentElement();
+    Element* parentOrHost = is<PseudoElement>(this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
     if (parentOrHost && !previousSibling()) {
         if (isAfterPseudoElement() && parentOrHost->lastChild())
             return parentOrHost->lastChild();
@@ -884,7 +884,7 @@ Node* Node::pseudoAwarePreviousSibling() const
 
 Node* Node::pseudoAwareNextSibling() const
 {
-    Element* parentOrHost = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentElement();
+    Element* parentOrHost = is<PseudoElement>(this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
     if (parentOrHost && !nextSibling()) {
         if (isBeforePseudoElement() && parentOrHost->firstChild())
             return parentOrHost->firstChild();

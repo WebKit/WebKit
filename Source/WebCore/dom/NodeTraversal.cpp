@@ -35,13 +35,13 @@ Node* previousIncludingPseudo(const Node* current, const Node* stayWithin)
 {
     Node* previous;
     if (current == stayWithin)
-        return 0;
+        return nullptr;
     if ((previous = current->pseudoAwarePreviousSibling())) {
         while (previous->pseudoAwareLastChild())
             previous = previous->pseudoAwareLastChild();
         return previous;
     }
-    return current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
+    return is<PseudoElement>(current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
 }
 
 Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
@@ -50,34 +50,34 @@ Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
     if ((next = current->pseudoAwareFirstChild()))
         return next;
     if (current == stayWithin)
-        return 0;
+        return nullptr;
     if ((next = current->pseudoAwareNextSibling()))
         return next;
-    current = current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
+    current = is<PseudoElement>(current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
     for (; current; current = current->parentNode()) {
         if (current == stayWithin)
-            return 0;
+            return nullptr;
         if ((next = current->pseudoAwareNextSibling()))
             return next;
     }
-    return 0;
+    return nullptr;
 }
 
 Node* nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayWithin)
 {
     Node* next;
     if (current == stayWithin)
-        return 0;
+        return nullptr;
     if ((next = current->pseudoAwareNextSibling()))
         return next;
-    current = current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
+    current = is<PseudoElement>(current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
     for (; current; current = current->parentNode()) {
         if (current == stayWithin)
-            return 0;
+            return nullptr;
         if ((next = current->pseudoAwareNextSibling()))
             return next;
     }
-    return 0;
+    return nullptr;
 }
 
 Node* nextAncestorSibling(const Node* current)

@@ -1306,11 +1306,11 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
         value->setDocumentURL(documentURLString(document));
         value->setBaseURL(documentBaseURLString(document));
         value->setXmlVersion(document->xmlVersion());
-    } else if (node->nodeType() == Node::DOCUMENT_TYPE_NODE) {
-        DocumentType* docType = toDocumentType(node);
-        value->setPublicId(docType->publicId());
-        value->setSystemId(docType->systemId());
-        value->setInternalSubset(docType->internalSubset());
+    } else if (is<DocumentType>(node)) {
+        DocumentType& docType = downcast<DocumentType>(*node);
+        value->setPublicId(docType.publicId());
+        value->setSystemId(docType.systemId());
+        value->setInternalSubset(docType.internalSubset());
     } else if (is<Attr>(node)) {
         Attr& attribute = downcast<Attr>(*node);
         value->setName(attribute.name());

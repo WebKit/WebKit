@@ -2549,7 +2549,7 @@ bool RenderObject::canHaveGeneratedChildren() const
 
 Node* RenderObject::generatingPseudoHostElement() const
 {
-    return toPseudoElement(node())->hostElement();
+    return downcast<PseudoElement>(*node()).hostElement();
 }
 
 void RenderObject::setNeedsBoundariesUpdate()

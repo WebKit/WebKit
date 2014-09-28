@@ -99,8 +99,8 @@ static bool isList(const Element* element)
 static Element* enclosingList(const RenderListItem* listItem)
 {
     Element& listItemElement = listItem->element();
-    Element* firstNode = 0;
-    Element* parent = listItemElement.isPseudoElement() ? toPseudoElement(listItemElement).hostElement() : listItemElement.parentElement();
+    Element* firstNode = nullptr;
+    Element* parent = is<PseudoElement>(listItemElement) ? downcast<PseudoElement>(listItemElement).hostElement() : listItemElement.parentElement();
     // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
     for (; parent; parent = parent->parentElement()) {
         if (isList(parent))

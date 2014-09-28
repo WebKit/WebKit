@@ -77,9 +77,9 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
     return style && style->display() != NONE && (style->contentData() || style->hasFlowFrom());
 }
 
-void isPseudoElement(const PseudoElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isPseudoElement(const Node& node) { return node.isPseudoElement(); }
-NODE_TYPE_CASTS(PseudoElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(PseudoElement)
+    static bool isPseudoElement(const Node& node) { return node.isPseudoElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace
 

@@ -183,7 +183,7 @@ PassRefPtr<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::build
         if (isReflection)
             renderer = renderer->parent();
         layerObject->setIsGeneratedContent(true);
-        layerObject->setPseudoElementId(bindPseudoElement(toPseudoElement(renderer->node())));
+        layerObject->setPseudoElementId(bindPseudoElement(downcast<PseudoElement>(renderer->node())));
         if (renderer->isBeforeContent())
             layerObject->setPseudoElement("before");
         else if (renderer->isAfterContent())
