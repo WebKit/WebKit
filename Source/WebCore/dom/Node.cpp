@@ -1397,15 +1397,15 @@ bool Node::offsetInCharacters() const
 
 unsigned short Node::compareDocumentPosition(Node* otherNode)
 {
-    // It is not clear what should be done if |otherNode| is 0.
+    // It is not clear what should be done if |otherNode| is nullptr.
     if (!otherNode)
         return DOCUMENT_POSITION_DISCONNECTED;
 
     if (otherNode == this)
         return DOCUMENT_POSITION_EQUIVALENT;
     
-    Attr* attr1 = isAttributeNode() ? toAttr(this) : nullptr;
-    Attr* attr2 = otherNode->isAttributeNode() ? toAttr(otherNode) : nullptr;
+    Attr* attr1 = is<Attr>(this) ? downcast<Attr>(this) : nullptr;
+    Attr* attr2 = is<Attr>(otherNode) ? downcast<Attr>(otherNode) : nullptr;
     
     Node* start1 = attr1 ? attr1->ownerElement() : this;
     Node* start2 = attr2 ? attr2->ownerElement() : otherNode;

@@ -82,16 +82,16 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
 {
     if (!node) {
         ec = NOT_FOUND_ERR;
-        return 0;
+        return nullptr;
     }
 
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
-    if (!node->isAttributeNode()) {
+    if (!is<Attr>(node)) {
         ec = HIERARCHY_REQUEST_ERR;
-        return 0;
+        return nullptr;
     }
 
-    return m_element.setAttributeNode(toAttr(node), ec);
+    return m_element.setAttributeNode(downcast<Attr>(node), ec);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)

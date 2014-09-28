@@ -1311,10 +1311,10 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
         value->setPublicId(docType->publicId());
         value->setSystemId(docType->systemId());
         value->setInternalSubset(docType->internalSubset());
-    } else if (node->isAttributeNode()) {
-        Attr* attribute = toAttr(node);
-        value->setName(attribute->name());
-        value->setValue(attribute->value());
+    } else if (is<Attr>(node)) {
+        Attr& attribute = downcast<Attr>(*node);
+        value->setName(attribute.name());
+        value->setValue(attribute.value());
     }
 
     // Need to enable AX to get the computed role.

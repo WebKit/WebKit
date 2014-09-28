@@ -966,7 +966,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         return newElement.release();
     }
     case ATTRIBUTE_NODE:
-        return Attr::create(*this, QualifiedName(nullAtom, toAttr(*importedNode).name(), nullAtom), toAttr(*importedNode).value());
+        return Attr::create(*this, QualifiedName(nullAtom, downcast<Attr>(*importedNode).name(), nullAtom), downcast<Attr>(*importedNode).value());
     case DOCUMENT_FRAGMENT_NODE: {
         if (importedNode->isShadowRoot()) {
             // ShadowRoot nodes should not be explicitly importable.
@@ -1025,7 +1025,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     case ATTRIBUTE_NODE: {                   
-        Attr& attr = toAttr(*source);
+        Attr& attr = downcast<Attr>(*source);
         if (attr.ownerElement())
             attr.ownerElement()->removeAttributeNode(&attr, ec);
         break;

@@ -94,8 +94,8 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         unsigned sortedEnd = from;
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
-            Node* n = parentMatrix[i][0];
-            if (n->isAttributeNode() && toAttr(n)->ownerElement() == commonAncestor)
+            Node* node = parentMatrix[i][0];
+            if (is<Attr>(node) && downcast<Attr>(*node).ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {
@@ -155,15 +155,15 @@ void NodeSet::sort() const
     Vector<Vector<Node*>> parentMatrix(nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i) {
         Vector<Node*>& parentsVector = parentMatrix[i];
-        Node* n = m_nodes[i].get();
-        parentsVector.append(n);
-        if (n->isAttributeNode()) {
-            n = toAttr(n)->ownerElement();
-            parentsVector.append(n);
+        Node* node = m_nodes[i].get();
+        parentsVector.append(node);
+        if (is<Attr>(node)) {
+            node = downcast<Attr>(*node).ownerElement();
+            parentsVector.append(node);
             containsAttributeNodes = true;
         }
-        while ((n = n->parentNode()))
-            parentsVector.append(n);
+        while ((node = node->parentNode()))
+            parentsVector.append(node);
     }
     sortBlock(0, nodeCount, parentMatrix, containsAttributeNodes);
     
@@ -179,8 +179,8 @@ void NodeSet::sort() const
 
 static Node* findRootNode(Node* node)
 {
-    if (node->isAttributeNode())
-        node = toAttr(node)->ownerElement();
+    if (is<Attr>(node))
+        node = downcast<Attr>(*node).ownerElement();
     if (node->inDocument())
         node = &node->document();
     else {
