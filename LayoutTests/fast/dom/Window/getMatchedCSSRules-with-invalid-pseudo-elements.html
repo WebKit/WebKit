@@ -7,7 +7,7 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=83298">https://bugs.webkit.org/show_bug.cgi?id=83298</a></p>
 <div>First letter of this sentence should be red.</div>
 <script>
-description("getMatchedCSSRules with invalid Psuedo Elements");
+description("getMatchedCSSRules with invalid Pseudo Elements");
 
 var expectedResult1 = "p { color: green; }";
 shouldBeEqualToString("getMatchedCSSRules(document.querySelector('p'), '')[0].cssText", expectedResult1)

@@ -1,3 +1,12 @@
+2014-09-28  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Fix some minor typos: psuedo -> pseudo
+        https://bugs.webkit.org/show_bug.cgi?id=137192
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/handlebars/handlebars.js:
+
 2014-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         Some MallocBench refinements

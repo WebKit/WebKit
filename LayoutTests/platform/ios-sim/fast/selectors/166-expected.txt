@@ -1146,14 +1146,14 @@ layer at (0,0) size 800x3669
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderInline {A} at (0,0) size 303x19 [color=#0000EE]
             RenderText {#text} at (0,0) size 303x19
-              text run at (0,0) width 303: "Syntax and parsing of unknown psuedo-classes"
+              text run at (0,0) width 303: "Syntax and parsing of unknown pseudo-classes"
           RenderText {#text} at (302,0) size 48x19
             text run at (302,0) width 48: " (#160)"
         RenderListItem {LI} at (40,2500) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderInline {A} at (0,0) size 442x19 [color=#0000EE]
             RenderText {#text} at (0,0) size 442x19
-              text run at (0,0) width 442: "Syntax and parsing of unknown psuedo-classes and pseudo-elements"
+              text run at (0,0) width 442: "Syntax and parsing of unknown pseudo-classes and pseudo-elements"
           RenderText {#text} at (441,0) size 47x19
             text run at (441,0) width 47: " (#161)"
         RenderListItem {LI} at (40,2520) size 744x20

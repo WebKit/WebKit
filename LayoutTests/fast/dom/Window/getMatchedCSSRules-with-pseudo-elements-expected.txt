@@ -1,4 +1,4 @@
-Test for getMatchedCSSRules for Psuedo Elements
+Test for getMatchedCSSRules for Pseudo Elements
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

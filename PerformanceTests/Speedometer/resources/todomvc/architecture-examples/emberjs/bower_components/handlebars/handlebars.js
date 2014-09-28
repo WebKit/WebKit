@@ -380,7 +380,7 @@ var __module6__ = (function(__dependency1__, __dependency2__, __dependency3__) {
     }
 
     // Note: Using env.VM references rather than local var references throughout this section to allow
-    // for external users to override these as psuedo-supported APIs.
+    // for external users to override these as pseudo-supported APIs.
     var invokePartialWrapper = function(partial, name, context, helpers, partials, data) {
       var result = env.VM.invokePartial.apply(this, arguments);
       if (result != null) { return result; }

@@ -99,7 +99,7 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case PagePseudoClass:
         break;
     case PseudoClass:
-        // FIXME: PsuedoAny should base the specificity on the sub-selectors.
+        // FIXME: PseudoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
         if (pseudoClassType() == PseudoClassNot && selectorList())
             return selectorList()->first()->specificityForOneSelector();
