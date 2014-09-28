@@ -221,7 +221,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/GtkClickCounter.cpp
     platform/gtk/GtkDragAndDropHelper.cpp
     platform/gtk/GtkInputMethodFilter.cpp
-    platform/gtk/GtkPluginWidget.cpp
     platform/gtk/GtkPopupMenu.cpp
     platform/gtk/GtkTouchContextHelper.cpp
     platform/gtk/GtkUtilities.cpp
