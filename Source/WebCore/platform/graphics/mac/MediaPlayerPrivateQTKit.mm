@@ -47,13 +47,6 @@
 #import <QTKit/QTKit.h>
 #import <objc/runtime.h>
 
-#if DRAW_FRAME_RATE
-#import "Font.h"
-#import "Document.h"
-#import "RenderStyle.h"
-#import "RenderView.h"
-#endif
-
 SOFT_LINK_FRAMEWORK(QTKit)
 
 SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale))
@@ -217,11 +210,6 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_videoFrameHasDrawn(false)
     , m_isAllowedToRender(false)
     , m_privateBrowsing(false)
-#if DRAW_FRAME_RATE
-    , m_frameCountWhilePlaying(0)
-    , m_timeStartedPlaying(0)
-    , m_timeStoppedPlaying(0)
-#endif
 {
 }
 
@@ -689,9 +677,6 @@ void MediaPlayerPrivateQTKit::play()
     if (!metaDataAvailable())
         return;
     m_startedPlaying = true;
-#if DRAW_FRAME_RATE
-    m_frameCountWhilePlaying = 0;
-#endif
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() setRate:m_player->rate()];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -703,9 +688,6 @@ void MediaPlayerPrivateQTKit::pause()
     if (!metaDataAvailable())
         return;
     m_startedPlaying = false;
-#if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
-#endif
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() stop];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -1217,9 +1199,6 @@ void MediaPlayerPrivateQTKit::didEnd()
         return;
 
     m_startedPlaying = false;
-#if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
-#endif
 
     // Hang onto the current time and use it as duration from now on since QuickTime is telling us we
     // are at the end. Do this because QuickTime sometimes reports one time for duration and stops
@@ -1279,15 +1258,6 @@ void MediaPlayerPrivateQTKit::repaint()
     if (m_hasUnsupportedTracks)
         return;
 
-#if DRAW_FRAME_RATE
-    if (m_startedPlaying) {
-        m_frameCountWhilePlaying++;
-        // to eliminate preroll costs from our calculation,
-        // our frame rate calculation excludes the first frame drawn after playback starts
-        if (1==m_frameCountWhilePlaying)
-            m_timeStartedPlaying = [NSDate timeIntervalSinceReferenceDate];
-    }
-#endif
     m_videoFrameHasDrawn = true;
     m_player->repaint();
 }
@@ -1359,28 +1329,6 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
             [view displayRectIgnoringOpacity:paintRect inContext:newContext];
     }
 
-#if DRAW_FRAME_RATE
-    // Draw the frame rate only after having played more than 10 frames.
-    if (m_frameCountWhilePlaying > 10) {
-        Frame* frame = m_player->frameView() ? &m_player->frameView()->frame() : nullptr;
-        Document* document = frame ? frame->document() : nullptr;
-        auto renderer = document ? document->renderView() : nullptr;
-        RenderStyle* styleToUse = renderer ? renderer->style() : nullptr;
-        if (styleToUse) {
-            double frameRate = (m_frameCountWhilePlaying - 1) / ( m_startedPlaying ? ([NSDate timeIntervalSinceReferenceDate] - m_timeStartedPlaying) :
-                (m_timeStoppedPlaying - m_timeStartedPlaying) );
-            String text = String::format("%1.2f", frameRate);
-            TextRun textRun(text.characters(), text.length());
-            const Color color(255, 0, 0);
-            context->scale(FloatSize(1.0f, -1.0f));    
-            context->setStrokeColor(color, styleToUse->colorSpace());
-            context->setStrokeStyle(SolidStroke);
-            context->setStrokeThickness(1.0f);
-            context->setFillColor(color, styleToUse->colorSpace());
-            context->drawText(styleToUse->font(), textRun, IntPoint(2, -3));
-        }
-    }
-#endif
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
 }

@@ -47,10 +47,6 @@ OBJC_CLASS QTMovieLayer;
 OBJC_CLASS QTVideoRendererWebKitOnly;
 OBJC_CLASS WebCoreMovieObserver;
 
-#ifndef DRAW_FRAME_RATE
-#define DRAW_FRAME_RATE 0
-#endif
-
 namespace WebCore {
     
 class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
@@ -209,11 +205,6 @@ private:
     bool m_isAllowedToRender;
     bool m_privateBrowsing;
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
-#if DRAW_FRAME_RATE
-    int  m_frameCountWhilePlaying;
-    MediaTime m_timeStartedPlaying;
-    MediaTime m_timeStoppedPlaying;
-#endif
     mutable FloatSize m_cachedNaturalSize;
 };
 
