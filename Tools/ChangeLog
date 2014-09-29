@@ -1,3 +1,24 @@
+2014-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve Bugzilla status bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=137232
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Will update again with an actual version when landing.
+
+        * QueueStatusServer/handlers/statusbubble.py: Eliminated yellow color, added
+        blue and orange. Significantly extended tooltips. Made bubbles show up even for queues
+        that are stuck, as it was only confusing that they disappeared after 99.
+
+        * QueueStatusServer/model/attachment.py: Removed functionality that was only used
+        by old bubbles. We need a lot more information to determine color, so the implementation
+        can not be here.
+
+        * QueueStatusServer/templates/statusbubble.html: Updated colors in CSS, made bubbles
+        always have a link for consistency. Added code to convert timestamps in tooltips
+        to local time zone.
+
 2014-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174045.

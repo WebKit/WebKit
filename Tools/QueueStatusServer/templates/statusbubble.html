@@ -19,7 +19,7 @@ body {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    border: 1px solid #AAA;
+    border: 1px solid rgba(1, 1, 1, 0.3);
     background-color: white;
     font-size: 11px;
     cursor: pointer;
@@ -27,29 +27,22 @@ body {
     color: black;
 }
 .status:hover {
-    border-color: #666;
-}
-.none {
-    cursor: auto;
-}
-.none:hover {
-    border-color: #AAA;
+    border-color: rgba(1, 1, 1, 0.7);
 }
 .pass {
     background-color: #8FDF5F;
-    border: 1px solid #4F8530;
 }
 .fail {
     background-color: #E98080;
-    border: 1px solid #A77272;
 }
-.pending {
-    background-color: #FFFC6C;
-    border: 1px solid #C5C56D;
+.started {
+    background-color: #D8FFFA;
+}
+.provisional-fail {
+    background-color: #FFAF05;
 }
 .error {
   background-color: #E0B0FF;
-  border: 1px solid #ACA0B3;
 }
 .queue_position {
     font-size: 9px;
@@ -72,9 +65,9 @@ window.addEventListener("message", function(e) {
 <div id="bubbleContainer">
   {% for bubble in bubbles %}
   <a class="status {{ bubble.state }}" target="_top"
-  {% if bubble.status %}
       href="/patch/{{ bubble.attachment_id }}"
-      title="{{ bubble.status.date|timesince }} ago"
+  {% if bubble.details_message %}
+      title="{{ bubble.details_message }}"
   {% endif %}
   >
     {{ bubble.name }}
@@ -91,6 +84,20 @@ window.addEventListener("message", function(e) {
     <input class="status" type="submit" value="Submit for EWS analysis">
   </form>
 {% endif %}
+
+<script>
+// Convert from UTC dates to local.
+var bubbles = document.getElementsByClassName("status")
+for (var i = 0; i < bubbles.length; ++i) {
+    var bubble = bubbles[i];
+    if (bubble.hasAttribute("title")) {
+        var newTitle = bubble.getAttribute("title").replace(/\[\[(.+)\]\]/, function(match, isoDateString) {
+            return new Date(isoDateString).toString();
+        });
+        bubble.setAttribute("title", newTitle);
+    }
+}
+</script>
 </div>
 </body>
 </html>

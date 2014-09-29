@@ -34,24 +34,6 @@ from model.workitems import WorkItems
 
 
 class Attachment(object):
-    @classmethod
-    def recent(cls, limit=1):
-        statuses = QueueStatus.all().order("-date")
-        # Notice that we use both a set and a list here to keep the -date ordering.
-        ids = []
-        visited_ids = set()
-        for status in statuses:
-            attachment_id = status.active_patch_id
-            if not attachment_id:
-                continue
-            if attachment_id in visited_ids:
-                continue
-            visited_ids.add(attachment_id)
-            ids.append(attachment_id)
-            if len(visited_ids) >= limit:
-                break
-        return map(cls, ids)
-
     def __init__(self, attachment_id):
         self.id = attachment_id
         self._summary = None
@@ -62,20 +44,6 @@ class Attachment(object):
             return self._summary
         self._summary = self._fetch_summary()
         return self._summary
-
-    def state_from_queue_status(self, status):
-        table = {
-            "Pass" : "pass",
-            "Fail" : "fail",
-        }
-        state = table.get(status.message)
-        if state:
-            return state
-        if status.message.startswith("Error:"):
-            return "error"
-        if status:
-            return "pending"
-        return None
 
     def position_in_queue(self, queue):
         return self._queue_positions().get(queue.name())
@@ -117,7 +85,6 @@ class Attachment(object):
             if status:
                 # summary() is a horrible API and should be killed.
                 summary[queue.name_with_underscores()] = {
-                    "state": self.state_from_queue_status(status),
                     "status": status,
                 }
         return summary
