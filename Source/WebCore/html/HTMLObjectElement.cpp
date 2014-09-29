@@ -231,10 +231,10 @@ bool HTMLObjectElement::hasFallbackContent() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
-        if (child->isTextNode()) {
-            if (!toText(child)->containsOnlyWhitespace())
+        if (is<Text>(child)) {
+            if (!downcast<Text>(*child).containsOnlyWhitespace())
                 return true;
-        } else if (!child->hasTagName(paramTag))
+        } else if (!is<HTMLParamElement>(child))
             return true;
     }
     return false;
@@ -428,8 +428,8 @@ void HTMLObjectElement::updateDocNamedItem()
             // FIXME: Use of isRecognizedTagName is almost certainly wrong here.
             if (isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
                 isNamedItem = false;
-        } else if (child->isTextNode()) {
-            if (!toText(child)->containsOnlyWhitespace())
+        } else if (is<Text>(child)) {
+            if (!downcast<Text>(*child).containsOnlyWhitespace())
                 isNamedItem = false;
         } else
             isNamedItem = false;

@@ -47,8 +47,8 @@ String contentsAsString(const ContainerNode* root)
 
 String contentsAsString(const Node* root)
 {
-    if (root->isTextNode())
-        return toText(root)->data();
+    if (is<Text>(root))
+        return downcast<Text>(*root).data();
     if (root->isContainerNode())
         return contentsAsString(toContainerNode(root));
     return String();

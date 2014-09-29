@@ -94,9 +94,9 @@ static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->previousSibling())) {
-        if (!node->isTextNode())
+        if (!is<Text>(node))
             break;
-        text = toText(node);
+        text = downcast<Text>(node);
     }
     return text;
 }
@@ -105,9 +105,9 @@ static const Text* latestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->nextSibling())) {
-        if (!node->isTextNode())
+        if (!is<Text>(node))
             break;
-        text = toText(node);
+        text = downcast<Text>(node);
     }
     return text;
 }

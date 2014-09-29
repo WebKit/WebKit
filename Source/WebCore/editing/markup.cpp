@@ -263,10 +263,10 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
     
 String StyledMarkupAccumulator::renderedText(const Node& node, const Range* range)
 {
-    if (!node.isTextNode())
+    if (!is<Text>(node))
         return String();
 
-    const Text& textNode = toText(node);
+    const Text& textNode = downcast<Text>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode.length();
 
@@ -1001,7 +1001,7 @@ void replaceChildrenWithFragment(ContainerNode& container, PassRefPtr<DocumentFr
     }
 
     if (hasOneTextChild(&containerNode.get()) && hasOneTextChild(fragment.get())) {
-        toText(containerNode->firstChild())->setData(toText(fragment->firstChild())->data(), ec);
+        downcast<Text>(*containerNode->firstChild()).setData(downcast<Text>(*fragment->firstChild()).data(), ec);
         return;
     }
 
@@ -1020,7 +1020,7 @@ void replaceChildrenWithText(ContainerNode& container, const String& text, Excep
     ChildListMutationScope mutation(containerNode.get());
 
     if (hasOneTextChild(&containerNode.get())) {
-        toText(containerNode->firstChild())->setData(text, ec);
+        downcast<Text>(*containerNode->firstChild()).setData(text, ec);
         return;
     }
 

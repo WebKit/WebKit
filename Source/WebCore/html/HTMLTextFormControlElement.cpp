@@ -561,10 +561,10 @@ String HTMLTextFormControlElement::innerTextValue() const
 
     StringBuilder result;
     for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
-        if (node->hasTagName(brTag))
+        if (is<HTMLBRElement>(node))
             result.append(newlineCharacter);
-        else if (node->isTextNode())
-            result.append(toText(node)->data());
+        else if (is<Text>(node))
+            result.append(downcast<Text>(*node).data());
     }
     return finishText(result);
 }
@@ -579,8 +579,8 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
                 return positionBeforeNode(node);
             remainingCharactersToMoveForward--;
             lastBrOrText = node;
-        } else if (node->isTextNode()) {
-            Text& text = toText(*node);
+        } else if (is<Text>(node)) {
+            Text& text = downcast<Text>(*node);
             if (remainingCharactersToMoveForward < text.length())
                 return Position(&text, remainingCharactersToMoveForward);
             remainingCharactersToMoveForward -= text.length();
@@ -607,14 +607,14 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     ASSERT(innerText->contains(startNode));
 
     for (Node* node = startNode; node; node = NodeTraversal::previous(node, innerText)) {
-        if (node->isTextNode()) {
-            unsigned length = toText(*node).length();
+        if (is<Text>(node)) {
+            unsigned length = downcast<Text>(*node).length();
             if (node == passedPosition.containerNode())
                 index += std::min<unsigned>(length, passedPosition.offsetInContainerNode());
             else
                 index += length;
-        } else if (node->hasTagName(brTag))
-            index++;
+        } else if (is<HTMLBRElement>(node))
+            ++index;
     }
 
     unsigned length = innerTextValue().length();
@@ -685,10 +685,10 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     StringBuilder result;
     for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
-        if (node->hasTagName(brTag))
+        if (is<HTMLBRElement>(node))
             result.append(newlineCharacter);
-        else if (node->isTextNode()) {
-            String data = toText(node)->data();
+        else if (is<Text>(node)) {
+            String data = downcast<Text>(*node).data();
             unsigned length = data.length();
             unsigned position = 0;
             while (breakNode == node && breakOffset <= length) {

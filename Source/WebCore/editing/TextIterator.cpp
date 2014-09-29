@@ -501,7 +501,7 @@ static bool hasVisibleTextNode(RenderText& renderer)
 
 bool TextIterator::handleTextNode()
 {
-    Text& textNode = toText(*m_node);
+    Text& textNode = downcast<Text>(*m_node);
 
     if (m_fullyClippedStack.top() && !(m_behavior & TextIteratorIgnoresStyleVisibility))
         return false;
@@ -603,7 +603,7 @@ bool TextIterator::handleTextNode()
 
 void TextIterator::handleTextBox()
 {    
-    Text& textNode = toText(*m_node);
+    Text& textNode = downcast<Text>(*m_node);
 
     auto& renderer = m_firstLetterText ? *m_firstLetterText : *textNode.renderer();
     if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility)) {
@@ -1263,7 +1263,7 @@ void SimplifiedBackwardsTextIterator::advance()
 
 bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
-    Text& textNode = toText(*m_node);
+    Text& textNode = downcast<Text>(*m_node);
 
     m_lastTextNode = &textNode;
 

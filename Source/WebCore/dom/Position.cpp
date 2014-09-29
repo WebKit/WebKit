@@ -151,7 +151,7 @@ void Position::moveToOffset(int offset)
 Node* Position::containerNode() const
 {
     if (!m_anchorNode)
-        return 0;
+        return nullptr;
 
     switch (anchorType()) {
     case PositionIsBeforeChildren:
@@ -163,24 +163,24 @@ Node* Position::containerNode() const
         return findParent(m_anchorNode.get());
     }
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 Text* Position::containerText() const
 {
     switch (anchorType()) {
     case PositionIsOffsetInAnchor:
-        return m_anchorNode && m_anchorNode->isTextNode() ? toText(m_anchorNode.get()) : 0;
+        return m_anchorNode && is<Text>(*m_anchorNode) ? downcast<Text>(m_anchorNode.get()) : nullptr;
     case PositionIsBeforeAnchor:
     case PositionIsAfterAnchor:
-        return 0;
+        return nullptr;
     case PositionIsBeforeChildren:
     case PositionIsAfterChildren:
-        ASSERT(!m_anchorNode || !m_anchorNode->isTextNode());
-        return 0;
+        ASSERT(!m_anchorNode || !is<Text>(*m_anchorNode));
+        return nullptr;
     }
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 int Position::computeOffsetInContainerNode() const
@@ -950,10 +950,10 @@ bool Position::isCandidate() const
 
 bool Position::isRenderedCharacter() const
 {
-    if (isNull() || !deprecatedNode()->isTextNode())
+    if (isNull() || !is<Text>(deprecatedNode()))
         return false;
         
-    RenderText* renderer = toText(deprecatedNode())->renderer();
+    RenderText* renderer = downcast<Text>(*deprecatedNode()).renderer();
     if (!renderer)
         return false;
     
@@ -1062,8 +1062,8 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
         return Position();
 
     Position prev = previousCharacterPosition(affinity);
-    if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && prev.deprecatedNode()->isTextNode()) {
-        String string = toText(prev.deprecatedNode())->data();
+    if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && is<Text>(prev.deprecatedNode())) {
+        String string = downcast<Text>(*prev.deprecatedNode()).data();
         UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))
             if (isEditablePosition(prev))

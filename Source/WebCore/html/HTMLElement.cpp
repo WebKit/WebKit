@@ -436,11 +436,11 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 static void mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 {
     Node* next = node.nextSibling();
-    if (!next || !next->isTextNode())
+    if (!next || !is<Text>(next))
         return;
 
     Ref<Text> textNode(node);
-    Ref<Text> textNext(toText(*next));
+    Ref<Text> textNext(downcast<Text>(*next));
     textNode->appendData(textNext->data(), ec);
     if (ec)
         return;
@@ -464,10 +464,10 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
       
     parent->replaceChild(fragment.release(), this, ec);
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && node && node->isTextNode())
-        mergeWithNextTextNode(toText(*node), ec);
-    if (!ec && prev && prev->isTextNode())
-        mergeWithNextTextNode(toText(*prev), ec);
+    if (!ec && node && is<Text>(*node))
+        mergeWithNextTextNode(downcast<Text>(*node), ec);
+    if (!ec && prev && is<Text>(*prev))
+        mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
 PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
@@ -597,10 +597,10 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
     parent->replaceChild(newChild.release(), this, ec);
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && node && node->isTextNode())
-        mergeWithNextTextNode(toText(*node), ec);
-    if (!ec && prev && prev->isTextNode())
-        mergeWithNextTextNode(toText(*prev), ec);
+    if (!ec && node && is<Text>(*node))
+        mergeWithNextTextNode(downcast<Text>(*node), ec);
+    if (!ec && prev && is<Text>(*prev))
+        mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
 Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, ExceptionCode& ec)

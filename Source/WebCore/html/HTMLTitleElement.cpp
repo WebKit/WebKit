@@ -97,8 +97,8 @@ void HTMLTitleElement::setText(const String &value)
 {
     Ref<HTMLTitleElement> protectFromMutationEvents(*this);
     
-    if (hasOneChild() && firstChild()->isTextNode())
-        toText(firstChild())->setData(value, IGNORE_EXCEPTION);
+    if (hasOneChild() && is<Text>(firstChild()))
+        downcast<Text>(*firstChild()).setData(value, IGNORE_EXCEPTION);
     else {
         // We make a copy here because entity of "value" argument can be Document::m_title,
         // which goes empty during removeChildren() invocation below,

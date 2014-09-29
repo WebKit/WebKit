@@ -553,7 +553,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
 
     switch (node.nodeType()) {
     case Node::TEXT_NODE:
-        appendText(result, toText(node));
+        appendText(result, downcast<Text>(node));
         break;
     case Node::COMMENT_NODE:
         appendComment(result, downcast<Comment>(node).data());

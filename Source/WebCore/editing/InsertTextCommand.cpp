@@ -241,7 +241,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
 
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
-        RefPtr<Text> textNode = toText(node);
+        RefPtr<Text> textNode = downcast<Text>(node);
         insertTextIntoNode(textNode, offset, "\t");
         return Position(textNode.release(), offset + 1);
     }
@@ -250,10 +250,10 @@ Position InsertTextCommand::insertTab(const Position& pos)
     RefPtr<Element> spanNode = createTabSpanElement(document());
     
     // place it
-    if (!node->isTextNode()) {
+    if (!is<Text>(node)) {
         insertNodeAt(spanNode.get(), insertPos);
     } else {
-        RefPtr<Text> textNode = toText(node);
+        RefPtr<Text> textNode = downcast<Text>(node);
         if (offset >= textNode->length())
             insertNodeAfter(spanNode, textNode.release());
         else {

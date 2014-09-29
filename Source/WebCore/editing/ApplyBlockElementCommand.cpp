@@ -164,11 +164,11 @@ static bool isNewLineAtPosition(const Position& position)
 {
     Node* textNode = position.containerNode();
     int offset = position.offsetInContainerNode();
-    if (!textNode || !textNode->isTextNode() || offset < 0 || offset >= textNode->maxCharacterOffset())
+    if (!textNode || !is<Text>(textNode) || offset < 0 || offset >= textNode->maxCharacterOffset())
         return false;
 
     ExceptionCode ec = 0;
-    String textAtPosition = toText(textNode)->substringData(offset, 1, ec);
+    String textAtPosition = downcast<Text>(*textNode).substringData(offset, 1, ec);
     if (ec)
         return false;
 
@@ -267,20 +267,20 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
     // Avoid this by splitting "\n"
     splitTextNode(text, 1);
 
-    if (text == start.containerNode() && text->previousSibling() && text->previousSibling()->isTextNode()) {
+    if (text == start.containerNode() && text->previousSibling() && is<Text>(text->previousSibling())) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
-        start = Position(toText(text->previousSibling()), start.offsetInContainerNode());
+        start = Position(downcast<Text>(text->previousSibling()), start.offsetInContainerNode());
     }
-    if (text == end.containerNode() && text->previousSibling() && text->previousSibling()->isTextNode()) {
+    if (text == end.containerNode() && text->previousSibling() && is<Text>(text->previousSibling())) {
         ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
-        end = Position(toText(text->previousSibling()), end.offsetInContainerNode());
+        end = Position(downcast<Text>(text->previousSibling()), end.offsetInContainerNode());
     }
     if (text == m_endOfLastParagraph.containerNode()) {
         if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode()) {
             // We can only fix endOfLastParagraph if the previous node was still text and hasn't been modified by script.
-            if (text->previousSibling()->isTextNode()
-                && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= toText(text->previousSibling())->length())
-                m_endOfLastParagraph = Position(toText(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
+            if (is<Text>(text->previousSibling())
+                && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= downcast<Text>(text->previousSibling())->length())
+                m_endOfLastParagraph = Position(downcast<Text>(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
         } else
             m_endOfLastParagraph = Position(text.get(), m_endOfLastParagraph.offsetInContainerNode() - 1);
     }

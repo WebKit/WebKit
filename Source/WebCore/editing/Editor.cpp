@@ -1865,8 +1865,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         Node* extentNode = extent.deprecatedNode();
         unsigned extentOffset = extent.deprecatedEditingOffset();
 
-        if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
-            m_compositionNode = toText(baseNode);
+        if (baseNode && baseNode == extentNode && is<Text>(baseNode) && baseOffset + text.length() == extentOffset) {
+            m_compositionNode = downcast<Text>(baseNode);
             m_compositionStart = baseOffset;
             m_compositionEnd = extentOffset;
             m_customCompositionUnderlines = underlines;

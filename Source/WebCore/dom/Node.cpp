@@ -489,7 +489,7 @@ void Node::normalize()
             continue;
         }
 
-        RefPtr<Text> text = toText(node.get());
+        RefPtr<Text> text = downcast<Text>(node.get());
 
         // Remove empty text nodes.
         if (!text->length()) {
@@ -503,7 +503,7 @@ void Node::normalize()
         while (Node* nextSibling = node->nextSibling()) {
             if (nextSibling->nodeType() != TEXT_NODE)
                 break;
-            RefPtr<Text> nextText = toText(nextSibling);
+            RefPtr<Text> nextText = downcast<Text>(nextSibling);
 
             // Remove empty text nodes.
             if (!nextText->length()) {

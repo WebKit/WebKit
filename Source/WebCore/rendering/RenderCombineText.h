@@ -32,7 +32,7 @@ class RenderCombineText final : public RenderText {
 public:
     RenderCombineText(Text&, PassRefPtr<StringImpl>);
 
-    Text& textNode() const { return toText(nodeForNonAnonymous()); }
+    Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     void combineText();
     void adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const;

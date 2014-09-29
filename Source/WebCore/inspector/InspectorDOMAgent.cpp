@@ -806,7 +806,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    m_domEditor->replaceWholeText(toText(node), value, errorString);
+    m_domEditor->replaceWholeText(downcast<Text>(node), value, errorString);
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray)

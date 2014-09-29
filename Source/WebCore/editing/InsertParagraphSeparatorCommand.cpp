@@ -331,16 +331,16 @@ void InsertParagraphSeparatorCommand::doApply()
     Position leadingWhitespace = insertionPosition.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
-    if (leadingWhitespace.isNotNull() && leadingWhitespace.deprecatedNode()->isTextNode()) {
-        Text* textNode = toText(leadingWhitespace.deprecatedNode());
-        ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+    if (leadingWhitespace.isNotNull() && is<Text>(leadingWhitespace.deprecatedNode())) {
+        Text& textNode = downcast<Text>(*leadingWhitespace.deprecatedNode());
+        ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
+        replaceTextInNodePreservingMarkers(&textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
     Position positionAfterSplit;
-    if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor && insertionPosition.containerNode()->isTextNode()) {
-        RefPtr<Text> textNode = toText(insertionPosition.containerNode());
+    if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor && is<Text>(insertionPosition.containerNode())) {
+        RefPtr<Text> textNode = downcast<Text>(insertionPosition.containerNode());
         bool atEnd = static_cast<unsigned>(insertionPosition.offsetInContainerNode()) >= textNode->length();
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
             splitTextNode(textNode, insertionPosition.offsetInContainerNode());
@@ -399,8 +399,8 @@ void InsertParagraphSeparatorCommand::doApply()
             // Clear out all whitespace and insert one non-breaking space
             ASSERT(!positionAfterSplit.containerNode()->renderer() || positionAfterSplit.containerNode()->renderer()->style().collapseWhiteSpace());
             deleteInsignificantTextDownstream(positionAfterSplit);
-            if (positionAfterSplit.deprecatedNode()->isTextNode())
-                insertTextIntoNode(toText(positionAfterSplit.containerNode()), 0, nonBreakingSpaceString());
+            if (is<Text>(positionAfterSplit.deprecatedNode()))
+                insertTextIntoNode(downcast<Text>(positionAfterSplit.containerNode()), 0, nonBreakingSpaceString());
         }
     }
 

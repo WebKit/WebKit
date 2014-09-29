@@ -35,7 +35,7 @@ class RenderSVGInlineText final : public RenderText {
 public:
     RenderSVGInlineText(Text&, const String&);
 
-    Text& textNode() const { return toText(nodeForNonAnonymous()); }
+    Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }

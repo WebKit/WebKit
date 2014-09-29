@@ -90,7 +90,7 @@ WebKitDOMNode* wrap(Node* node)
     case Node::ATTRIBUTE_NODE:
         return WEBKIT_DOM_NODE(wrapAttr(static_cast<Attr*>(node)));
     case Node::TEXT_NODE:
-        return WEBKIT_DOM_NODE(wrapText(toText(node)));
+        return WEBKIT_DOM_NODE(wrapText(downcast<Text>(node)));
     case Node::CDATA_SECTION_NODE:
         return WEBKIT_DOM_NODE(wrapCDATASection(static_cast<CDATASection*>(node)));
     case Node::ENTITY_REFERENCE_NODE:

@@ -66,9 +66,9 @@ template <class NodeType>
 inline Text* firstTextChildTemplate(NodeType* current)
 {
     Node* node = current->firstChild();
-    while (node && !node->isTextNode())
+    while (node && !is<Text>(node))
         node = node->nextSibling();
-    return toText(node);
+    return downcast<Text>(node);
 }
 inline Text* firstChild(const Node* current) { return firstTextChildTemplate(current); }
 inline Text* firstChild(const ContainerNode* current) { return firstTextChildTemplate(current); }
@@ -77,9 +77,9 @@ template <class NodeType>
 inline Text* firstTextWithinTemplate(NodeType* current)
 {
     Node* node = current->firstChild();
-    while (node && !node->isTextNode())
+    while (node && !is<Text>(node))
         node = NodeTraversal::next(node, current);
-    return toText(node);
+    return downcast<Text>(node);
 }
 inline Text* firstWithin(const Node* current) { return firstTextWithinTemplate(current); }
 inline Text* firstWithin(const ContainerNode* current) { return firstTextWithinTemplate(current); }
@@ -88,9 +88,9 @@ template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType* current)
 {
     Node* node = NodeTraversal::next(current);
-    while (node && !node->isTextNode())
+    while (node && !is<Text>(node))
         node = NodeTraversal::next(node);
-    return toText(node);
+    return downcast<Text>(node);
 }
 inline Text* next(const Node* current) { return traverseNextTextTemplate(current); }
 inline Text* next(const Text* current) { return traverseNextTextTemplate(current); }
@@ -99,9 +99,9 @@ template <class NodeType>
 inline Text* traverseNextTextTemplate(NodeType* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::next(current, stayWithin);
-    while (node && !node->isTextNode())
+    while (node && !is<Text>(node))
         node = NodeTraversal::next(node, stayWithin);
-    return toText(node);
+    return downcast<Text>(node);
 }
 inline Text* next(const Node* current, const Node* stayWithin) { return traverseNextTextTemplate(current, stayWithin); }
 inline Text* next(const Text* current, const Node* stayWithin) { return traverseNextTextTemplate(current, stayWithin); }
@@ -109,9 +109,9 @@ inline Text* next(const Text* current, const Node* stayWithin) { return traverse
 inline Text* nextSibling(const Node* current)
 {
     Node* node = current->nextSibling();
-    while (node && !node->isTextNode())
+    while (node && !is<Text>(node))
         node = node->nextSibling();
-    return toText(node);
+    return downcast<Text>(node);
 }
 
 }

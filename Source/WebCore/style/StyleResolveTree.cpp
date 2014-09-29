@@ -365,9 +365,9 @@ static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& curren
                 continue;
             return;
         }
-        if (!sibling->isTextNode())
+        if (!is<Text>(sibling))
             continue;
-        Text& textSibling = toText(*sibling);
+        Text& textSibling = downcast<Text>(*sibling);
         if (!textSibling.containsOnlyWhitespace())
             continue;
         textSibling.setNeedsStyleRecalc();
@@ -478,8 +478,8 @@ static void attachChildren(ContainerNode& current, RenderStyle& inheritedStyle, 
             renderTreePosition.invalidateNextSibling(*child->renderer());
             continue;
         }
-        if (child->isTextNode()) {
-            attachTextRenderer(*toText(child), renderTreePosition);
+        if (is<Text>(child)) {
+            attachTextRenderer(downcast<Text>(*child), renderTreePosition);
             continue;
         }
         if (child->isElementNode())
@@ -495,10 +495,10 @@ static void attachDistributedChildren(InsertionPoint& insertionPoint, RenderStyl
     for (Node* current = insertionPoint.firstDistributed(); current; current = insertionPoint.nextDistributedTo(current)) {
         if (current->renderer())
             renderTreePosition.invalidateNextSibling(*current->renderer());
-        if (current->isTextNode()) {
+        if (is<Text>(current)) {
             if (current->renderer())
                 continue;
-            attachTextRenderer(*toText(current), renderTreePosition);
+            attachTextRenderer(downcast<Text>(*current), renderTreePosition);
             continue;
         }
         if (current->isElementNode()) {
@@ -651,8 +651,8 @@ static void attachRenderTree(Element& current, RenderStyle& inheritedStyle, Rend
 static void detachDistributedChildren(InsertionPoint& insertionPoint)
 {
     for (Node* current = insertionPoint.firstDistributed(); current; current = insertionPoint.nextDistributedTo(current)) {
-        if (current->isTextNode()) {
-            detachTextRenderer(*toText(current));
+        if (is<Text>(current)) {
+            detachTextRenderer(downcast<Text>(*current));
             continue;
         }
         if (current->isElementNode())
@@ -666,8 +666,8 @@ static void detachChildren(ContainerNode& current, DetachType detachType)
         detachDistributedChildren(downcast<InsertionPoint>(current));
 
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            Style::detachTextRenderer(*toText(child));
+        if (is<Text>(child)) {
+            Style::detachTextRenderer(downcast<Text>(*child));
             continue;
         }
         if (child->isElementNode())
@@ -815,8 +815,8 @@ static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Chan
     for (Node* child = shadowRoot.firstChild(); child; child = child->nextSibling()) {
         if (child->renderer())
             renderTreePosition.invalidateNextSibling(*child->renderer());
-        if (child->isTextNode() && child->needsStyleRecalc()) {
-            resolveTextNode(*toText(child), renderTreePosition);
+        if (is<Text>(child) && child->needsStyleRecalc()) {
+            resolveTextNode(downcast<Text>(*child), renderTreePosition);
             continue;
         }
         if (child->isElementNode())
@@ -939,8 +939,8 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
         for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
             if (RenderObject* childRenderer = child->renderer())
                 childRenderTreePosition.invalidateNextSibling(*childRenderer);
-            if (child->isTextNode() && child->needsStyleRecalc()) {
-                resolveTextNode(*toText(child), childRenderTreePosition);
+            if (is<Text>(child) && child->needsStyleRecalc()) {
+                resolveTextNode(downcast<Text>(*child), childRenderTreePosition);
                 continue;
             }
             if (!child->isElementNode())

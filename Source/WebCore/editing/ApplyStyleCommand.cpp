@@ -1201,17 +1201,17 @@ void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& 
 
 void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& end)
 {
-    ASSERT(end.containerNode()->isTextNode());
+    ASSERT(is<Text>(end.containerNode()));
 
     bool shouldUpdateStart = start.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode();
-    Text* text = toText(end.deprecatedNode());
-    splitTextNode(text, end.offsetInContainerNode());
+    Text& text = downcast<Text>(*end.deprecatedNode());
+    splitTextNode(&text, end.offsetInContainerNode());
 
-    Node* prevNode = text->previousSibling();
-    if (!prevNode || !prevNode->isTextNode())
+    Node* prevNode = text.previousSibling();
+    if (!prevNode || !is<Text>(prevNode))
         return;
 
-    Position newStart = shouldUpdateStart ? Position(toText(prevNode), start.offsetInContainerNode()) : start;
+    Position newStart = shouldUpdateStart ? Position(downcast<Text>(prevNode), start.offsetInContainerNode()) : start;
     updateStartEnd(newStart, lastPositionInNode(prevNode));
 }
 
@@ -1240,10 +1240,10 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
     if (!parentElement || !parentElement->previousSibling())
         return;
     Node* firstTextNode = parentElement->previousSibling()->lastChild();
-    if (!firstTextNode || !firstTextNode->isTextNode())
+    if (!firstTextNode || !is<Text>(firstTextNode))
         return;
 
-    Position newStart = shouldUpdateStart ? Position(toText(firstTextNode), start.offsetInContainerNode()) : start;
+    Position newStart = shouldUpdateStart ? Position(downcast<Text>(firstTextNode), start.offsetInContainerNode()) : start;
     updateStartEnd(newStart, positionAfterNode(firstTextNode));
 }
 
@@ -1528,15 +1528,15 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     for (size_t i = 0; i < textNodes.size(); ++i) {
         Text* childText = textNodes[i].get();
         Node* next = childText->nextSibling();
-        if (!next || !next->isTextNode())
+        if (!next || !is<Text>(next))
             continue;
     
-        Text* nextText = toText(next);
+        Text& nextText = downcast<Text>(*next);
         if (start.anchorType() == Position::PositionIsOffsetInAnchor && next == start.containerNode())
             newStart = Position(childText, childText->length() + start.offsetInContainerNode());
         if (end.anchorType() == Position::PositionIsOffsetInAnchor && next == end.containerNode())
             newEnd = Position(childText, childText->length() + end.offsetInContainerNode());
-        String textToMove = nextText->data();
+        String textToMove = nextText.data();
         insertTextIntoNode(childText, childText->length(), textToMove);
         removeNode(next);
         // don't move child node pointer. it may want to merge with more text nodes.

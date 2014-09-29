@@ -102,8 +102,8 @@ static inline void destroyRenderTreeIfNeeded(Node& child)
         return;
     if (child.isElementNode())
         Style::detachRenderTree(toElement(child));
-    else if (child.isTextNode())
-        Style::detachTextRenderer(toText(child));
+    else if (is<Text>(child))
+        Style::detachTextRenderer(downcast<Text>(child));
 }
 
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)

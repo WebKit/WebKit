@@ -1055,12 +1055,12 @@ bool lineBreakExistsAtPosition(const Position& position)
     if (!position.anchorNode()->renderer())
         return false;
     
-    if (!position.anchorNode()->isTextNode() || !position.anchorNode()->renderer()->style().preserveNewline())
+    if (!is<Text>(position.anchorNode()) || !position.anchorNode()->renderer()->style().preserveNewline())
         return false;
     
-    Text* textNode = toText(position.anchorNode());
+    Text& textNode = downcast<Text>(*position.anchorNode());
     unsigned offset = position.offsetInContainerNode();
-    return offset < textNode->length() && textNode->data()[offset] == '\n';
+    return offset < textNode.length() && textNode.data()[offset] == '\n';
 }
 
 // Modifies selections that have an end point at the edge of a table

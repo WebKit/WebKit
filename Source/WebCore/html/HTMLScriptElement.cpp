@@ -81,8 +81,8 @@ void HTMLScriptElement::setText(const String &value)
 {
     Ref<HTMLScriptElement> protectFromMutationEvents(*this);
 
-    if (hasOneChild() && firstChild()->isTextNode()) {
-        toText(firstChild())->setData(value, IGNORE_EXCEPTION);
+    if (hasOneChild() && is<Text>(firstChild())) {
+        downcast<Text>(*firstChild()).setData(value, IGNORE_EXCEPTION);
         return;
     }
 

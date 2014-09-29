@@ -464,10 +464,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
             return;
     }
 
-    if (startOffset >= caretMaxOffset(startNode) && startNode->isTextNode()) {
-        Text* text = toText(startNode);
-        if (text->length() > (unsigned)caretMaxOffset(startNode))
-            deleteTextFromNode(text, caretMaxOffset(startNode), text->length() - caretMaxOffset(startNode));
+    if (startOffset >= caretMaxOffset(startNode) && is<Text>(startNode)) {
+        Text& text = downcast<Text>(*startNode);
+        if (text.length() > static_cast<unsigned>(caretMaxOffset(startNode)))
+            deleteTextFromNode(&text, caretMaxOffset(startNode), text.length() - caretMaxOffset(startNode));
     }
 
     if (startOffset >= lastOffsetForEditing(startNode)) {
@@ -481,10 +481,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
     if (startNode == m_downstreamEnd.deprecatedNode()) {
         if (m_downstreamEnd.deprecatedEditingOffset() - startOffset > 0) {
-            if (startNode->isTextNode()) {
+            if (is<Text>(startNode)) {
                 // in a text node that needs to be trimmed
-                Text* text = toText(startNode);
-                deleteTextFromNode(text, startOffset, m_downstreamEnd.deprecatedEditingOffset() - startOffset);
+                Text& text = downcast<Text>(*startNode);
+                deleteTextFromNode(&text, startOffset, m_downstreamEnd.deprecatedEditingOffset() - startOffset);
             } else {
                 removeChildrenInRange(startNode, startOffset, m_downstreamEnd.deprecatedEditingOffset());
                 m_endingPosition = m_upstreamStart;
@@ -501,17 +501,17 @@ void DeleteSelectionCommand::handleGeneralDelete()
         RefPtr<Node> node(startNode);
         
         if (startOffset > 0) {
-            if (startNode->isTextNode()) {
+            if (is<Text>(startNode)) {
                 // in a text node that needs to be trimmed
-                Text* text = toText(node.get());
-                deleteTextFromNode(text, startOffset, text->length() - startOffset);
+                Text& text = downcast<Text>(*node);
+                deleteTextFromNode(&text, startOffset, text.length() - startOffset);
                 node = NodeTraversal::next(node.get());
             } else {
                 node = startNode->traverseToChildAt(startOffset);
             }
-        } else if (startNode == m_upstreamEnd.deprecatedNode() && startNode->isTextNode()) {
-            Text* text = toText(m_upstreamEnd.deprecatedNode());
-            deleteTextFromNode(text, 0, m_upstreamEnd.deprecatedEditingOffset());
+        } else if (startNode == m_upstreamEnd.deprecatedNode() && is<Text>(startNode)) {
+            Text& text = downcast<Text>(*m_upstreamEnd.deprecatedNode());
+            deleteTextFromNode(&text, 0, m_upstreamEnd.deprecatedEditingOffset());
         }
         
         // handle deleting all nodes that are completely selected
@@ -541,11 +541,11 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.deprecatedNode());
             } else {
-                if (m_downstreamEnd.deprecatedNode()->isTextNode()) {
+                if (is<Text>(m_downstreamEnd.deprecatedNode())) {
                     // in a text node that needs to be trimmed
-                    Text* text = toText(m_downstreamEnd.deprecatedNode());
+                    Text& text = downcast<Text>(*m_downstreamEnd.deprecatedNode());
                     if (m_downstreamEnd.deprecatedEditingOffset() > 0) {
-                        deleteTextFromNode(text, 0, m_downstreamEnd.deprecatedEditingOffset());
+                        deleteTextFromNode(&text, 0, m_downstreamEnd.deprecatedEditingOffset());
                     }
                 // Remove children of m_downstreamEnd.deprecatedNode() that come after m_upstreamStart.
                 // Don't try to remove children if m_upstreamStart was inside m_downstreamEnd.deprecatedNode()
@@ -574,15 +574,15 @@ void DeleteSelectionCommand::fixupWhitespace()
 {
     document().updateLayoutIgnorePendingStylesheets();
     // FIXME: isRenderedCharacter should be removed, and we should use VisiblePosition::characterAfter and VisiblePosition::characterBefore
-    if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter() && m_leadingWhitespace.deprecatedNode()->isTextNode()) {
-        Text* textNode = toText(m_leadingWhitespace.deprecatedNode());
-        ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(textNode, m_leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+    if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter() && is<Text>(m_leadingWhitespace.deprecatedNode())) {
+        Text& textNode = downcast<Text>(*m_leadingWhitespace.deprecatedNode());
+        ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
+        replaceTextInNodePreservingMarkers(&textNode, m_leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
-    if (m_trailingWhitespace.isNotNull() && !m_trailingWhitespace.isRenderedCharacter() && m_trailingWhitespace.deprecatedNode()->isTextNode()) {
-        Text* textNode = toText(m_trailingWhitespace.deprecatedNode());
-        ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(textNode, m_trailingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+    if (m_trailingWhitespace.isNotNull() && !m_trailingWhitespace.isRenderedCharacter() && is<Text>(m_trailingWhitespace.deprecatedNode())) {
+        Text& textNode = downcast<Text>(*m_trailingWhitespace.deprecatedNode());
+        ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
+        replaceTextInNodePreservingMarkers(&textNode, m_trailingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
 }
 
@@ -864,10 +864,10 @@ void DeleteSelectionCommand::doApply()
     bool shouldRebalaceWhiteSpace = true;
     if (!frame().editor().behavior().shouldRebalanceWhiteSpacesInSecureField()) {
         Node* node = m_endingPosition.deprecatedNode();
-        if (node && node->isTextNode()) {
-            Text* textNode = toText(node);
-            if (textNode->length())
-                shouldRebalaceWhiteSpace = textNode->renderer()->style().textSecurity() == TSNONE;
+        if (node && is<Text>(node)) {
+            Text& textNode = downcast<Text>(*node);
+            if (textNode.length())
+                shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TSNONE;
         }        
     }
     if (shouldRebalaceWhiteSpace)

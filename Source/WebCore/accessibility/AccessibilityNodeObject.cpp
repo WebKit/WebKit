@@ -1640,8 +1640,8 @@ static bool shouldAddSpaceBeforeAppendingNextElement(StringBuilder& builder, Str
 String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     Node* node = this->node();
-    if (node && node->isTextNode())
-        return toText(node)->wholeText();
+    if (node && is<Text>(node))
+        return downcast<Text>(*node).wholeText();
 
     // The render tree should be stable before going ahead. Otherwise, further uses of the
     // TextIterator will force a layout update, potentially altering the accessibility tree

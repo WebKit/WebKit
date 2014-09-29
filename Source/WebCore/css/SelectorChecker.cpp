@@ -555,14 +555,14 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
         case CSSSelector::PseudoClassEmpty:
             {
                 bool result = true;
-                for (Node* n = element->firstChild(); n; n = n->nextSibling()) {
-                    if (n->isElementNode()) {
+                for (Node* node = element->firstChild(); node; node = node->nextSibling()) {
+                    if (node->isElementNode()) {
                         result = false;
                         break;
                     }
-                    if (n->isTextNode()) {
-                        Text* textNode = toText(n);
-                        if (!textNode->data().isEmpty()) {
+                    if (is<Text>(node)) {
+                        Text& textNode = downcast<Text>(*node);
+                        if (!textNode.data().isEmpty()) {
                             result = false;
                             break;
                         }

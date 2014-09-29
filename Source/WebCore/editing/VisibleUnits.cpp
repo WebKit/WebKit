@@ -767,7 +767,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    return startNode->isTextNode() ? Position(toText(startNode), toInlineTextBox(startBox)->start())
+    return is<Text>(startNode) ? Position(downcast<Text>(startNode), toInlineTextBox(startBox)->start())
         : positionBeforeNode(startNode);
 }
 
@@ -838,12 +838,12 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     Position pos;
     if (endNode->hasTagName(brTag))
         pos = positionBeforeNode(endNode);
-    else if (endBox->isInlineTextBox() && endNode->isTextNode()) {
+    else if (endBox->isInlineTextBox() && is<Text>(endNode)) {
         InlineTextBox* endTextBox = toInlineTextBox(endBox);
         int endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
             endOffset += endTextBox->len();
-        pos = Position(toText(endNode), endOffset);
+        pos = Position(downcast<Text>(endNode), endOffset);
     } else
         pos = positionAfterNode(endNode);
     
@@ -1138,7 +1138,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
 
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
-            ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
+            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
                 StringImpl& text = *toRenderText(r)->text();
@@ -1148,7 +1148,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                     i = std::max(0, o);
                 while (--i >= 0) {
                     if (text[i] == '\n')
-                        return VisiblePosition(Position(toText(n), i + 1), DOWNSTREAM);
+                        return VisiblePosition(Position(downcast<Text>(n), i + 1), DOWNSTREAM);
                 }
             }
             node = n;
@@ -1221,7 +1221,7 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
-            ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
+            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
                 StringImpl& text = *toRenderText(r)->text();
@@ -1229,7 +1229,7 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
                 int length = text.length();
                 for (int i = o; i < length; ++i) {
                     if (text[i] == '\n')
-                        return VisiblePosition(Position(toText(n), i), DOWNSTREAM);
+                        return VisiblePosition(Position(downcast<Text>(n), i), DOWNSTREAM);
                 }
             }
             node = n;

@@ -87,9 +87,9 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     else
         m_data.append(string.characters16() + offset, characterLengthLimit);
 
-    ASSERT(!renderer() || isTextNode());
-    if (isTextNode())
-        Style::updateTextRendererAfterContentChange(*toText(this), oldLength, 0);
+    ASSERT(!renderer() || is<Text>(this));
+    if (is<Text>(this))
+        Style::updateTextRendererAfterContentChange(downcast<Text>(*this), oldLength, 0);
 
     document().incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
@@ -194,9 +194,9 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     String oldData = m_data;
     m_data = newData;
 
-    ASSERT(!renderer() || isTextNode());
-    if (isTextNode())
-        Style::updateTextRendererAfterContentChange(*toText(this), offsetOfReplacedData, oldLength);
+    ASSERT(!renderer() || is<Text>(this));
+    if (is<Text>(this))
+        Style::updateTextRendererAfterContentChange(downcast<Text>(*this), offsetOfReplacedData, oldLength);
 
     if (is<ProcessingInstruction>(this))
         downcast<ProcessingInstruction>(*this).checkStyleSheet();

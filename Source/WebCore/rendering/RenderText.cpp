@@ -201,7 +201,7 @@ const char* RenderText::renderName() const
 
 Text* RenderText::textNode() const
 {
-    return toText(RenderObject::node());
+    return downcast<Text>(RenderObject::node());
 }
 
 bool RenderText::isTextFragment() const

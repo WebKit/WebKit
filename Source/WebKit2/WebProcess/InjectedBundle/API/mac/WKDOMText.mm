@@ -35,14 +35,14 @@
 
 - (NSString *)data
 {
-    return WebCore::toText(_impl.get())->data();
+    return WebCore::downcast<WebCore::Text>(*_impl).data();
 }
 
 - (void)setData:(NSString *)data
 {
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec;
-    WebCore::toText(_impl.get())->setData(data, ec);
+    WebCore::downcast<WebCore::Text>(*_impl).setData(data, ec);
 }
 
 @end
