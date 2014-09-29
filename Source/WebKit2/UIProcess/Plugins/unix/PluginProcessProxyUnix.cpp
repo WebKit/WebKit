@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2014 Igalia S.L.
  * Copyright (C) 2011 Apple Inc.
  * Copyright (C) 2012 Samsung Electronics
  *
@@ -33,14 +33,18 @@
 #include "PluginProcessCreationParameters.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
+#include <sys/wait.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include <glib.h>
 #include <wtf/gobject/GUniquePtr.h>
 #endif
 
-#include <sys/wait.h>
+#if PLATFORM(GTK)
+#include "Module.h"
+#endif
 
 using namespace WebCore;
 
@@ -65,20 +69,39 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 {
 }
 
+#if PLATFORM(GTK)
+static bool pluginRequiresGtk2(const String& pluginPath)
+{
+    std::unique_ptr<Module> module = std::make_unique<Module>(pluginPath);
+    if (!module->load())
+        return false;
+    return module->functionPointer<gpointer>("gtk_object_get_type");
+}
+#endif
+
 #if PLUGIN_ARCHITECTURE(X11)
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    CString binaryPath = fileSystemRepresentation(executablePathOfPluginProcess());
+    String pluginProcessPath = executablePathOfPluginProcess();
+
+#if PLATFORM(GTK)
+    bool requiresGtk2 = pluginRequiresGtk2(pluginPath);
+    if (requiresGtk2)
+#if ENABLE(PLUGIN_PROCESS_GTK2)
+        pluginProcessPath.append('2');
+#else
+        return false;
+#endif
+#endif
+
+    CString binaryPath = fileSystemRepresentation(pluginProcessPath);
     CString pluginPathCString = fileSystemRepresentation(pluginPath);
     char* argv[4];
     argv[0] = const_cast<char*>(binaryPath.data());
     argv[1] = const_cast<char*>("-scanPlugin");
     argv[2] = const_cast<char*>(pluginPathCString.data());
-    argv[3] = 0;
-
-    int status;
-    GUniqueOutPtr<char> stdOut;
+    argv[3] = nullptr;
 
     // If the disposition of SIGCLD signal is set to SIG_IGN (default)
     // then the signal will be ignored and g_spawn_sync() will not be
@@ -94,26 +117,37 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     }
 #endif
 
-    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut.outPtr(), 0, &status, 0))
+    int status;
+    GUniqueOutPtr<char> stdOut;
+    GUniqueOutPtr<GError> error;
+    if (!g_spawn_sync(nullptr, argv, nullptr, G_SPAWN_STDERR_TO_DEV_NULL, nullptr, nullptr, &stdOut.outPtr(), nullptr, &status, &error.outPtr())) {
+        WTFLogAlways("Failed to launch %s: %s", argv[0], error->message);
         return false;
+    }
 
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS || !stdOut)
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
+        WTFLogAlways("Error scanning plugin %s, %s returned %d exit status", argv[2], argv[0], status);
         return false;
+    }
 
-    String stdOutString = String::fromUTF8(stdOut.get());
+    if (!stdOut) {
+        WTFLogAlways("Error scanning plugin %s, %s didn't write any output to stdout", argv[2], argv[0]);
+        return false;
+    }
 
     Vector<String> lines;
-    stdOutString.split(UChar('\n'), true, lines);
+    String::fromUTF8(stdOut.get()).split(UChar('\n'), true, lines);
 
-    if (lines.size() < 3)
+    if (lines.size() < 3) {
+        WTFLogAlways("Error scanning plugin %s, too few lines of output provided", argv[2]);
         return false;
+    }
 
     result.name.swap(lines[0]);
     result.description.swap(lines[1]);
     result.mimeDescription.swap(lines[2]);
 #if PLATFORM(GTK)
-    if (lines.size() > 3)
-        result.requiresGtk2 = lines[3] == "requires-gtk2";
+    result.requiresGtk2 = requiresGtk2;
 #endif
     return !result.mimeDescription.isEmpty();
 #else // PLATFORM(GTK) || PLATFORM(EFL)
