@@ -218,9 +218,9 @@ bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
 
 bool DatabaseContext::allowDatabaseAccess() const
 {
-    if (m_scriptExecutionContext->isDocument()) {
-        Document* document = toDocument(m_scriptExecutionContext);
-        if (!document->page() || (document->page()->usesEphemeralSession() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol())))
+    if (is<Document>(*m_scriptExecutionContext)) {
+        Document& document = downcast<Document>(*m_scriptExecutionContext);
+        if (!document.page() || (document.page()->usesEphemeralSession() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin()->protocol())))
             return false;
         return true;
     }
@@ -231,10 +231,10 @@ bool DatabaseContext::allowDatabaseAccess() const
 
 void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails details)
 {
-    if (m_scriptExecutionContext->isDocument()) {
-        Document* document = toDocument(m_scriptExecutionContext);
-        if (Page* page = document->page())
-            page->chrome().client().exceededDatabaseQuota(document->frame(), name, details);
+    if (is<Document>(*m_scriptExecutionContext)) {
+        Document& document = downcast<Document>(*m_scriptExecutionContext);
+        if (Page* page = document.page())
+            page->chrome().client().exceededDatabaseQuota(document.frame(), name, details);
         return;
     }
     ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());

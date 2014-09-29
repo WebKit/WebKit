@@ -228,7 +228,7 @@ void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
     ASSERT(context);
     ASSERT(!isClosing());
     MutexLocker lock(m_workerDocumentsLock);
-    m_workerDocuments.add(toDocument(context));
+    m_workerDocuments.add(downcast<Document>(context));
 }
 
 void SharedWorkerProxy::documentDetached(Document* document)

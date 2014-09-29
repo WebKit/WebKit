@@ -100,9 +100,9 @@ WebKitDOMNode* wrap(Node* node)
     case Node::COMMENT_NODE:
         return WEBKIT_DOM_NODE(wrapComment(static_cast<Comment*>(node)));
     case Node::DOCUMENT_NODE:
-        if (toDocument(node)->isHTMLDocument())
-            return WEBKIT_DOM_NODE(wrapHTMLDocument(static_cast<HTMLDocument*>(node)));
-        return WEBKIT_DOM_NODE(wrapDocument(toDocument(node)));
+        if (is<HTMLDocument>(node))
+            return WEBKIT_DOM_NODE(wrapHTMLDocument(downcast<HTMLDocument>(node)));
+        return WEBKIT_DOM_NODE(wrapDocument(downcast<Document>(node)));
     case Node::DOCUMENT_TYPE_NODE:
         return WEBKIT_DOM_NODE(wrapDocumentType(static_cast<DocumentType*>(node)));
     case Node::DOCUMENT_FRAGMENT_NODE:

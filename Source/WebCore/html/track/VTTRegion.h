@@ -98,7 +98,7 @@ public:
 private:
     VTTRegion(ScriptExecutionContext&);
 
-    Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
+    Document* ownerDocument() { return downcast<Document>(m_scriptExecutionContext); }
 
     void prepareRegionDisplayTree();
 

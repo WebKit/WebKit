@@ -73,30 +73,30 @@ JSLazyEventListener::~JSLazyEventListener()
 JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* executionContext) const
 {
     ASSERT(executionContext);
-    ASSERT(executionContext->isDocument());
+    ASSERT(is<Document>(executionContext));
     if (!executionContext)
-        return 0;
+        return nullptr;
 
     ASSERT(!m_code.isNull());
     ASSERT(!m_eventParameterName.isNull());
     if (m_code.isNull() || m_eventParameterName.isNull())
-        return 0;
+        return nullptr;
 
-    Document* document = toDocument(executionContext);
+    Document& document = downcast<Document>(*executionContext);
 
-    if (!document->frame())
-        return 0;
+    if (!document.frame())
+        return nullptr;
 
-    if (!document->contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
-        return 0;
+    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
+        return nullptr;
 
-    ScriptController& script = document->frame()->script();
+    ScriptController& script = document.frame()->script();
     if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
-        return 0;
+        return nullptr;
 
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext, isolatedWorld());
     if (!globalObject)
-        return 0;
+        return nullptr;
 
     ExecState* exec = globalObject->globalExec();
 
@@ -108,7 +108,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     if (exec->hadException()) {
         reportCurrentException(exec);
         exec->clearException();
-        return 0;
+        return nullptr;
     }
 
     JSFunction* listenerAsFunction = jsCast<JSFunction*>(jsFunction);

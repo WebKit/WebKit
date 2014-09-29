@@ -59,7 +59,7 @@ Crypto::~Crypto()
 
 Document* Crypto::document() const
 {
-    return toDocument(scriptExecutionContext());
+    return downcast<Document>(scriptExecutionContext());
 }
 
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)

@@ -178,7 +178,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr
     , m_configuration(configuration)
     , m_stopped(false)
 {
-    Document& document = toDocument(context);
+    Document& document = downcast<Document>(context);
 
     if (!document.frame()) {
         ec = NOT_SUPPORTED_ERR;

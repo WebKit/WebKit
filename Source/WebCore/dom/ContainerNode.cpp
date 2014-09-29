@@ -202,8 +202,8 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 
-    if (oldChild && newParent->isDocumentNode()) {
-        if (!toDocument(newParent)->canReplaceChild(newChild, oldChild))
+    if (oldChild && is<Document>(newParent)) {
+        if (!downcast<Document>(*newParent).canReplaceChild(newChild, oldChild))
             return HIERARCHY_REQUEST_ERR;
     } else if (!isChildTypeAllowed(newParent, newChild))
         return HIERARCHY_REQUEST_ERR;

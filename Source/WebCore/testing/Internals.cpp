@@ -319,13 +319,13 @@ Internals::Internals(Document* document)
 
 Document* Internals::contextDocument() const
 {
-    return toDocument(scriptExecutionContext());
+    return downcast<Document>(scriptExecutionContext());
 }
 
 Frame* Internals::frame() const
 {
     if (!contextDocument())
-        return 0;
+        return nullptr;
     return contextDocument()->frame();
 }
 
@@ -1916,8 +1916,8 @@ void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* 
     Document* document;
     if (!node)
         document = contextDocument();
-    else if (node->isDocumentNode())
-        document = toDocument(node);
+    else if (is<Document>(node))
+        document = downcast<Document>(node);
     else if (is<HTMLIFrameElement>(node))
         document = downcast<HTMLIFrameElement>(*node).contentDocument();
     else {

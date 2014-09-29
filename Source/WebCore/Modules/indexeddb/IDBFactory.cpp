@@ -68,10 +68,10 @@ IDBFactory::~IDBFactory()
 namespace {
 static bool isContextValid(ScriptExecutionContext* context)
 {
-    ASSERT(context->isDocument() || context->isWorkerGlobalScope());
-    if (context->isDocument()) {
-        Document* document = toDocument(context);
-        return document->frame() && document->page() && (!document->page()->usesEphemeralSession() || SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol()));
+    ASSERT(is<Document>(context) || context->isWorkerGlobalScope());
+    if (is<Document>(context)) {
+        Document& document = downcast<Document>(*context);
+        return document.frame() && document.page() && (!document.page()->usesEphemeralSession() || SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin()->protocol()));
     }
     return true;
 }
@@ -79,9 +79,9 @@ static bool isContextValid(ScriptExecutionContext* context)
 static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
 {
     ASSERT(isContextValid(context));
-    if (context->isDocument()) {
-        Document* document = toDocument(context);
-        return document->page()->group().groupSettings().indexedDBDatabasePath();
+    if (is<Document>(context)) {
+        Document& document = downcast<Document>(*context);
+        return document.page()->group().groupSettings().indexedDBDatabasePath();
     }
     const GroupSettings* groupSettings = toWorkerGlobalScope(context)->groupSettings();
     if (groupSettings)

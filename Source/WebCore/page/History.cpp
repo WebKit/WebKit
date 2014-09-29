@@ -117,7 +117,7 @@ void History::go(ScriptExecutionContext* context, int distance)
         return;
 
     ASSERT(isMainThread());
-    Document* activeDocument = toDocument(context);
+    Document* activeDocument = downcast<Document>(context);
     if (!activeDocument)
         return;
 

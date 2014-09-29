@@ -77,25 +77,25 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, con
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     URL fullURL = context.completeURL(url);
     if (!fullURL.isValid()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
     bool shouldBypassMainWorldContentSecurityPolicy = false;
-    if (context.isDocument()) {
-        Document& document = toDocument(context);
+    if (is<Document>(context)) {
+        Document& document = downcast<Document>(context);
         shouldBypassMainWorldContentSecurityPolicy = document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
     }
     if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<EventSource> source = adoptRef(new EventSource(context, fullURL, eventSourceInit));

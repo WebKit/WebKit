@@ -32,7 +32,7 @@ class DOMConstructorWithDocument : public DOMConstructorObject {
 public:
     Document* document() const
     {
-        return toDocument(scriptExecutionContext());
+        return downcast<Document>(scriptExecutionContext());
     }
 
 protected:

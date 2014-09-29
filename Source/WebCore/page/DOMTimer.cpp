@@ -120,8 +120,8 @@ int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<Scheduled
     // is destroyed, or if explicitly cancelled by removeById. 
     DOMTimer* timer = new DOMTimer(context, WTF::move(action), timeout, singleShot);
 #if PLATFORM(IOS)
-    if (context->isDocument()) {
-        Document& document = toDocument(*context);
+    if (is<Document>(context)) {
+        Document& document = downcast<Document>(*context);
         bool didDeferTimeout = document.frame() && document.frame()->timersPaused();
         if (!didDeferTimeout && timeout <= 100 && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
@@ -173,8 +173,8 @@ void DOMTimer::fired()
 
 #if PLATFORM(IOS)
     Document* document = nullptr;
-    if (context->isDocument()) {
-        document = toDocument(context);
+    if (is<Document>(context)) {
+        document = downcast<Document>(context);
         ASSERT(!document->frame()->timersPaused());
     }
 #endif

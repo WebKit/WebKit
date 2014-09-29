@@ -366,8 +366,8 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
 bool scrollInDirection(Node* container, FocusDirection direction)
 {
     ASSERT(container);
-    if (container->isDocumentNode())
-        return scrollInDirection(toDocument(container)->frame(), direction);
+    if (is<Document>(container))
+        return scrollInDirection(downcast<Document>(*container).frame(), direction);
 
     if (!container->renderBox())
         return false;
@@ -435,11 +435,11 @@ Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direc
     ASSERT(node);
     Node* parent = node;
     do {
-        if (parent->isDocumentNode())
-            parent = toDocument(parent)->document().frame()->ownerElement();
+        if (is<Document>(parent))
+            parent = downcast<Document>(*parent).document().frame()->ownerElement();
         else
             parent = parent->parentNode();
-    } while (parent && !canScrollInDirection(parent, direction) && !parent->isDocumentNode());
+    } while (parent && !canScrollInDirection(parent, direction) && !is<Document>(parent));
 
     return parent;
 }
@@ -451,8 +451,8 @@ bool canScrollInDirection(const Node* container, FocusDirection direction)
     if (is<HTMLSelectElement>(container))
         return false;
 
-    if (container->isDocumentNode())
-        return canScrollInDirection(toDocument(container)->frame(), direction);
+    if (is<Document>(container))
+        return canScrollInDirection(downcast<Document>(*container).frame(), direction);
 
     if (!isScrollableNode(container))
         return false;
@@ -520,8 +520,8 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
 {
     ASSERT(node && node->renderer() && !node->document().view()->needsLayout());
 
-    if (node->isDocumentNode())
-        return frameRectInAbsoluteCoordinates(toDocument(node)->frame());
+    if (is<Document>(node))
+        return frameRectInAbsoluteCoordinates(downcast<Document>(*node).frame());
     LayoutRect rect = rectToAbsoluteCoordinates(node->document().frame(), node->boundingBox());
 
     // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating

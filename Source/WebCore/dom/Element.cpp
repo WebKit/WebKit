@@ -2200,9 +2200,9 @@ AtomicString Element::computeInheritedLanguage() const
                 if (const Attribute* attribute = elementData->findLanguageAttribute())
                     return attribute->value();
             }
-        } else if (currentNode->isDocumentNode()) {
+        } else if (is<Document>(currentNode)) {
             // checking the MIME content-language
-            return toDocument(currentNode)->contentLanguage();
+            return downcast<Document>(*currentNode).contentLanguage();
         }
     }
 

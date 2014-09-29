@@ -379,11 +379,11 @@ Document* InspectorDOMAgent::assertDocument(ErrorString* errorString, int nodeId
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (!node->isDocumentNode()) {
+    if (!is<Document>(node)) {
         *errorString = "Document is not available";
         return nullptr;
     }
-    return toDocument(node);
+    return downcast<Document>(node);
 }
 
 Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
@@ -1301,11 +1301,11 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
             value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(*element).content(), 0, nodesMap));
 #endif
 
-    } else if (node->isDocumentNode()) {
-        Document* document = toDocument(node);
-        value->setDocumentURL(documentURLString(document));
-        value->setBaseURL(documentBaseURLString(document));
-        value->setXmlVersion(document->xmlVersion());
+    } else if (is<Document>(node)) {
+        Document& document = downcast<Document>(*node);
+        value->setDocumentURL(documentURLString(&document));
+        value->setBaseURL(documentBaseURLString(&document));
+        value->setXmlVersion(document.xmlVersion());
     } else if (is<DocumentType>(node)) {
         DocumentType& docType = downcast<DocumentType>(*node);
         value->setPublicId(docType.publicId());
@@ -1728,10 +1728,8 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
-    if (node->isDocumentNode()) {
-        Document* document = toDocument(node);
-        return document->ownerElement();
-    }
+    if (is<Document>(node))
+        return downcast<Document>(*node).ownerElement();
     return node->parentNode();
 }
 

@@ -83,11 +83,11 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 {
     // FIXME: This need to be revisited when we support nested worker one day
     ASSERT(m_scriptExecutionContext);
-    Document* document = toDocument(m_scriptExecutionContext);
-    GroupSettings* settings = 0;
-    if (document->page())
-        settings = &document->page()->group().groupSettings();
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode, document->contentSecurityPolicy()->deprecatedHeader(), document->contentSecurityPolicy()->deprecatedHeaderType(), document->topOrigin());
+    Document& document = downcast<Document>(*m_scriptExecutionContext);
+    GroupSettings* settings = nullptr;
+    if (document.page())
+        settings = &document.page()->group().groupSettings();
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode, document.contentSecurityPolicy()->deprecatedHeader(), document.contentSecurityPolicy()->deprecatedHeaderType(), document.topOrigin());
     workerThreadCreated(thread);
     thread->start();
     InspectorInstrumentation::didStartWorkerGlobalScope(m_scriptExecutionContext.get(), this, scriptURL);

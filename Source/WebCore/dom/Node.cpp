@@ -1162,8 +1162,8 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
             return false;
         }
         case DOCUMENT_NODE:
-            if (Element* de = toDocument(this)->documentElement())
-                return de->isDefaultNamespace(namespaceURI);
+            if (Element* documentElement = downcast<Document>(*this).documentElement())
+                return documentElement->isDefaultNamespace(namespaceURI);
             return false;
         case ENTITY_NODE:
         case NOTATION_NODE:
@@ -1195,8 +1195,8 @@ String Node::lookupPrefix(const AtomicString &namespaceURI) const
         case ELEMENT_NODE:
             return lookupNamespacePrefix(namespaceURI, static_cast<const Element *>(this));
         case DOCUMENT_NODE:
-            if (Element* de = toDocument(this)->documentElement())
-                return de->lookupPrefix(namespaceURI);
+            if (Element* documentElement = downcast<Document>(*this).documentElement())
+                return documentElement->lookupPrefix(namespaceURI);
             return String();
         case ENTITY_NODE:
         case NOTATION_NODE:
@@ -1253,8 +1253,8 @@ String Node::lookupNamespaceURI(const String &prefix) const
             return String();
         }
         case DOCUMENT_NODE:
-            if (Element* de = toDocument(this)->documentElement())
-                return de->lookupNamespaceURI(prefix);
+            if (Element* documentElement = downcast<Document>(*this).documentElement())
+                return documentElement->lookupNamespaceURI(prefix);
             return String();
         case ENTITY_NODE:
         case NOTATION_NODE:
@@ -2198,8 +2198,8 @@ void Node::removedLastRef()
     // An explicit check for Document here is better than a virtual function since it is
     // faster for non-Document nodes, and because the call to removedLastRef that is inlined
     // at all deref call sites is smaller if it's a non-virtual function.
-    if (isDocumentNode()) {
-        toDocument(*this).removedLastRef();
+    if (is<Document>(*this)) {
+        downcast<Document>(*this).removedLastRef();
         return;
     }
 

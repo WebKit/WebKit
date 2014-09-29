@@ -64,7 +64,7 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
         return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode.toString());
     }
 
-    return WebSocketChannel::create(toDocument(context), client);
+    return WebSocketChannel::create(downcast<Document>(context), client);
 }
 
 } // namespace WebCore

@@ -63,7 +63,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(PluginDocument)
     static bool isPluginDocument(const Document& document) { return document.isPluginDocument(); }
-    static bool isPluginDocument(const Node& node) { return node.isDocumentNode() && isPluginDocument(toDocument(node)); }
+    static bool isPluginDocument(const Node& node) { return is<Document>(node) && isPluginDocument(downcast<Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 }

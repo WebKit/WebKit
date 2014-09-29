@@ -288,8 +288,8 @@ void VTTCue::initialize(ScriptExecutionContext& context)
     m_writingDirection = Horizontal;
     m_cueAlignment = Middle;
     m_webVTTNodeTree = nullptr;
-    m_cueBackdropBox = HTMLDivElement::create(toDocument(context));
-    m_cueHighlightBox = HTMLSpanElement::create(spanTag, toDocument(context));
+    m_cueBackdropBox = HTMLDivElement::create(downcast<Document>(context));
+    m_cueHighlightBox = HTMLSpanElement::create(spanTag, downcast<Document>(context));
     m_displayDirection = CSSValueLtr;
     m_displaySize = 0;
     m_snapToLines = true;

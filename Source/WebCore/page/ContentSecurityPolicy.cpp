@@ -1577,20 +1577,20 @@ void ContentSecurityPolicy::enforceSandboxFlags(SandboxFlags mask) const
     m_scriptExecutionContext->enforceSandboxFlags(mask);
 }
 
-static String stripURLForUseInReport(Document* document, const URL& url)
+static String stripURLForUseInReport(Document& document, const URL& url)
 {
     if (!url.isValid())
         return String();
     if (!url.isHierarchical() || url.protocolIs("file"))
         return url.protocol();
-    return document->securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
+    return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
 }
 
 #if ENABLE(CSP_NEXT)
-static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventInit& init, Document* document, const String& directiveText, const String& effectiveDirective, const URL& blockedURL, const String& header)
+static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventInit& init, Document& document, const String& directiveText, const String& effectiveDirective, const URL& blockedURL, const String& header)
 {
-    init.documentURI = document->url().string();
-    init.referrer = document->referrer();
+    init.documentURI = document.url().string();
+    init.referrer = document.referrer();
     init.blockedURI = stripURLForUseInReport(document, blockedURL);
     init.violatedDirective = directiveText;
     init.effectiveDirective = effectiveDirective;
@@ -1613,11 +1613,11 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     logToConsole(consoleMessage, contextURL, contextLine, state);
 
     // FIXME: Support sending reports from worker.
-    if (!m_scriptExecutionContext->isDocument())
+    if (!is<Document>(*m_scriptExecutionContext))
         return;
 
-    Document* document = toDocument(m_scriptExecutionContext);
-    Frame* frame = document->frame();
+    Document& document = downcast<Document>(*m_scriptExecutionContext);
+    Frame* frame = document.frame();
     if (!frame)
         return;
 
@@ -1626,7 +1626,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         // FIXME: This code means that we're gathering information like line numbers twice. Once we can bring this out from behind the flag, we should reuse the data gathered here when generating the JSON report below.
         SecurityPolicyViolationEventInit init;
         gatherSecurityPolicyViolationEventData(init, document, directiveText, effectiveDirective, blockedURL, header);
-        document->enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, init));
+        document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, init));
     }
 #endif
 
@@ -1644,8 +1644,8 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     // harmless information.
 
     RefPtr<InspectorObject> cspReport = InspectorObject::create();
-    cspReport->setString(ASCIILiteral("document-uri"), document->url().strippedForUseAsReferrer());
-    cspReport->setString(ASCIILiteral("referrer"), document->referrer());
+    cspReport->setString(ASCIILiteral("document-uri"), document.url().strippedForUseAsReferrer());
+    cspReport->setString(ASCIILiteral("referrer"), document.referrer());
     cspReport->setString(ASCIILiteral("violated-directive"), directiveText);
 #if ENABLE(CSP_NEXT)
     if (experimentalFeaturesEnabled())

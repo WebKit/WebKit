@@ -58,7 +58,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(MediaDocument)
     static bool isMediaDocument(const Document& document) { return document.isMediaDocument(); }
-    static bool isMediaDocument(const Node& node) { return node.isDocumentNode() && isMediaDocument(toDocument(node)); }
+    static bool isMediaDocument(const Node& node) { return is<Document>(node) && isMediaDocument(downcast<Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 }

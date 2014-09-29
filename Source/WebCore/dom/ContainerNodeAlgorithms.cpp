@@ -37,7 +37,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
         if (node.inDocument() && child->parentNode() == &node)
-            notifyNodeInsertedIntoDocument(*child.get());
+            notifyNodeInsertedIntoDocument(*child);
     }
 
     if (!node.isElementNode())
@@ -45,7 +45,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
 
     if (RefPtr<ShadowRoot> root = toElement(node).shadowRoot()) {
         if (node.inDocument() && root->hostElement() == &node)
-            notifyNodeInsertedIntoDocument(*root.get());
+            notifyNodeInsertedIntoDocument(*root);
     }
 }
 

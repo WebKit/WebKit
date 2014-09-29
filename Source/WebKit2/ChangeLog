@@ -1,3 +1,18 @@
+2014-09-29  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Document
+        https://bugs.webkit.org/show_bug.cgi?id=137221
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Document instead of isDocumentNode() /
+        toDocument().
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocument createElement:]):
+        (-[WKDOMDocument createTextNode:]):
+        (-[WKDOMDocument body]):
+
 2014-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174045.

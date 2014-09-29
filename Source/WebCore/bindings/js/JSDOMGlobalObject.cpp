@@ -105,14 +105,14 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, JSC::ExecState* exec)
 {
-    if (scriptExecutionContext->isDocument())
-        return toJSDOMGlobalObject(toDocument(scriptExecutionContext), exec);
+    if (is<Document>(scriptExecutionContext))
+        return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), exec);
 
     if (scriptExecutionContext->isWorkerGlobalScope())
         return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld& world)
@@ -122,14 +122,14 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld& worl
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld& world)
 {
-    if (scriptExecutionContext->isDocument())
-        return toJSDOMGlobalObject(toDocument(scriptExecutionContext), world);
+    if (is<Document>(scriptExecutionContext))
+        return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), world);
 
     if (scriptExecutionContext->isWorkerGlobalScope())
         return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

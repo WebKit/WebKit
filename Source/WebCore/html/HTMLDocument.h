@@ -99,7 +99,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLDocument)
     static bool isHTMLDocument(const Document& document) { return document.isHTMLDocument(); }
-    static bool isHTMLDocument(const Node& node) { return node.isDocumentNode() && isHTMLDocument(toDocument(node)); }
+    static bool isHTMLDocument(const Node& node) { return is<Document>(node) && isHTMLDocument(downcast<Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore

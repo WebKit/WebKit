@@ -54,7 +54,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(SVGDocument)
     static bool isSVGDocument(const Document& document) { return document.isSVGDocument(); }
-    static bool isSVGDocument(const Node& node) { return node.isDocumentNode() && isSVGDocument(toDocument(node)); }
+    static bool isSVGDocument(const Node& node) { return is<Document>(node) && isSVGDocument(downcast<Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore

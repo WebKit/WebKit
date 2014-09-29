@@ -250,17 +250,17 @@ Geolocation::~Geolocation()
 
 Document* Geolocation::document() const
 {
-    return toDocument(scriptExecutionContext());
+    return downcast<Document>(scriptExecutionContext());
 }
 
 Frame* Geolocation::frame() const
 {
-    return document() ? document()->frame() : 0;
+    return document() ? document()->frame() : nullptr;
 }
 
 Page* Geolocation::page() const
 {
-    return document() ? document()->page() : 0;
+    return document() ? document()->page() : nullptr;
 }
 
 #if PLATFORM(IOS)

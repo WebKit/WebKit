@@ -35,7 +35,7 @@ class HTMLNameCollection : public HTMLCollection {
 public:
     ~HTMLNameCollection();
 
-    Document& document() { return toDocument(ownerNode()); }
+    Document& document() { return downcast<Document>(ownerNode()); }
 
 protected:
     HTMLNameCollection(Document&, CollectionType, const AtomicString& name);

@@ -37,12 +37,12 @@ namespace WebCore {
 PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
 {
     // FIXME: add support for workers.
-    if (!context.isDocument()) {
+    if (!is<Document>(context)) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
-    Document& document = toDocument(context);
+    Document& document = downcast<Document>(context);
 
     if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate)) {
         ec = SYNTAX_ERR;

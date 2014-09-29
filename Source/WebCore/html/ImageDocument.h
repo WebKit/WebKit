@@ -84,7 +84,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(ImageDocument)
     static bool isImageDocument(const Document& document) { return document.isImageDocument(); }
-    static bool isImageDocument(const Node& node) { return node.isDocumentNode() && isImageDocument(toDocument(node)); }
+    static bool isImageDocument(const Node& node) { return is<Document>(node) && isImageDocument(downcast<Document>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 }

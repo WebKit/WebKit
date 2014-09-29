@@ -38,7 +38,7 @@ PassRefPtr<Comment> Comment::create(Document& document, const String& text)
 
 PassRefPtr<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(new Comment(toDocument(context), text));
+    return adoptRef(new Comment(downcast<Document>(context), text));
 }
 
 String Comment::nodeName() const

@@ -196,9 +196,9 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (m_context->isDocument()) {
-        Document* document = toDocument(m_context);
-        String cookie = cookieRequestHeaderFieldValue(document, url);
+    if (is<Document>(m_context)) {
+        Document& document = downcast<Document>(*m_context);
+        String cookie = cookieRequestHeaderFieldValue(&document, url);
         if (!cookie.isEmpty())
             fields.append("Cookie: " + cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
@@ -247,9 +247,9 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (m_context->isDocument()) {
-        Document* document = toDocument(m_context);
-        String cookie = cookieRequestHeaderFieldValue(document, url);
+    if (is<Document>(*m_context)) {
+        Document& document = downcast<Document>(*m_context);
+        String cookie = cookieRequestHeaderFieldValue(&document, url);
         if (!cookie.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?

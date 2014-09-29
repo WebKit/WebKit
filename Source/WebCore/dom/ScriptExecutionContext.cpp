@@ -378,8 +378,8 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
         return false;
 
 #if PLATFORM(IOS)
-    if (target == target->toDOMWindow() && isDocument()) {
-        Settings* settings = toDocument(this)->settings();
+    if (target == target->toDOMWindow() && is<Document>(*this)) {
+        Settings* settings = downcast<Document>(*this).settings();
         if (settings && !settings->shouldDispatchJavaScriptWindowOnErrorEvents())
             return false;
     }

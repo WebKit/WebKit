@@ -60,10 +60,10 @@ private:
 WindowEventContext::WindowEventContext(PassRefPtr<Node> node, const EventContext* topEventContext)
 {
     Node* topLevelContainer = topEventContext ? topEventContext->node() : node.get();
-    if (!topLevelContainer->isDocumentNode())
+    if (!is<Document>(topLevelContainer))
         return;
 
-    m_window = toDocument(topLevelContainer)->domWindow();
+    m_window = downcast<Document>(*topLevelContainer).domWindow();
     m_target = topEventContext ? topEventContext->target() : node.get();
 }
 

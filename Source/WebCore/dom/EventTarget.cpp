@@ -223,8 +223,8 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
     ScriptExecutionContext* context = scriptExecutionContext();
     Document* document = nullptr;
     InspectorInstrumentationCookie willDispatchEventCookie;
-    if (context && context->isDocument()) {
-        document = toDocument(context);
+    if (context && is<Document>(context)) {
+        document = downcast<Document>(context);
         willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(document, *event, size > 0);
     }
 

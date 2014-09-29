@@ -120,7 +120,7 @@ public:
 protected:
     TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end);
 
-    Document& ownerDocument() { return toDocument(m_scriptExecutionContext); }
+    Document& ownerDocument() { return downcast<Document>(m_scriptExecutionContext); }
 
 private:
 

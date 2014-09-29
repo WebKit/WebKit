@@ -1796,7 +1796,7 @@ Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomicString& track
 Document& SourceBuffer::document() const
 {
     ASSERT(scriptExecutionContext());
-    return *toDocument(scriptExecutionContext());
+    return downcast<Document>(*scriptExecutionContext());
 }
 
 } // namespace WebCore

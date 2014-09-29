@@ -147,7 +147,7 @@ void WorkerThreadableWebSocketChannel::resume()
 WorkerThreadableWebSocketChannel::Peer::Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode)
     : m_workerClientWrapper(clientWrapper)
     , m_loaderProxy(loaderProxy)
-    , m_mainWebSocketChannel(WebSocketChannel::create(toDocument(context), this))
+    , m_mainWebSocketChannel(WebSocketChannel::create(downcast<Document>(context), this))
     , m_taskMode(taskMode)
 {
     ASSERT(isMainThread());

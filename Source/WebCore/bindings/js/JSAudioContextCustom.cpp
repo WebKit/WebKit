@@ -53,10 +53,10 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
     if (!scriptExecutionContext)
         return throwVMError(exec, createReferenceError(exec, "AudioContext constructor script execution context is unavailable"));
         
-    if (!scriptExecutionContext->isDocument())
+    if (!is<Document>(scriptExecutionContext))
         return throwVMError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
 
-    Document& document = toDocument(*scriptExecutionContext);
+    Document& document = downcast<Document>(*scriptExecutionContext);
 
     RefPtr<AudioContext> audioContext;
     

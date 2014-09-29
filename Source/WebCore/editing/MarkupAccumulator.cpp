@@ -559,7 +559,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         appendComment(result, downcast<Comment>(node).data());
         break;
     case Node::DOCUMENT_NODE:
-        appendXMLDeclaration(result, toDocument(node));
+        appendXMLDeclaration(result, downcast<Document>(node));
         break;
     case Node::DOCUMENT_FRAGMENT_NODE:
         break;

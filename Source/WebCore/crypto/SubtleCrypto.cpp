@@ -39,7 +39,7 @@ SubtleCrypto::SubtleCrypto(Document& document)
 
 Document* SubtleCrypto::document() const
 {
-    return toDocument(scriptExecutionContext());
+    return downcast<Document>(scriptExecutionContext());
 }
 
 }

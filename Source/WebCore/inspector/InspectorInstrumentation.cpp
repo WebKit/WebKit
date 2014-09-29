@@ -100,8 +100,8 @@ int InspectorInstrumentation::s_frontendCounter = 0;
 static Frame* frameForScriptExecutionContext(ScriptExecutionContext* context)
 {
     Frame* frame = nullptr;
-    if (context->isDocument())
-        frame = toDocument(context)->frame();
+    if (is<Document>(context))
+        frame = downcast<Document>(context)->frame();
     return frame;
 }
 
