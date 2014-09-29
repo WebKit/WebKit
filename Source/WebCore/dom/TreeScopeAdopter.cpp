@@ -124,8 +124,8 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
     if (oldDocument)
         oldDocument->moveNodeIteratorsToNewDocument(node, newDocument);
 
-    if (node->isShadowRoot())
-        toShadowRoot(node)->setDocumentScope(newDocument);
+    if (is<ShadowRoot>(node))
+        downcast<ShadowRoot>(*node).setDocumentScope(newDocument);
 
 #ifndef NDEBUG
     didMoveToNewDocumentWasCalled = false;

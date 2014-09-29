@@ -178,7 +178,7 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
 static bool isSVGShadowText(Text* text)
 {
     Node* parentNode = text->parentNode();
-    return parentNode->isShadowRoot() && toShadowRoot(parentNode)->hostElement()->hasTagName(SVGNames::trefTag);
+    return is<ShadowRoot>(parentNode) && downcast<ShadowRoot>(*parentNode).hostElement()->hasTagName(SVGNames::trefTag);
 }
 
 static bool isSVGText(Text* text)

@@ -100,15 +100,15 @@ inline void StyledElement::invalidateStyleAttribute()
 inline const StyleProperties* StyledElement::presentationAttributeStyle()
 {
     if (!elementData())
-        return 0;
+        return nullptr;
     if (elementData()->presentationAttributeStyleIsDirty())
         rebuildPresentationAttributeStyle();
     return elementData()->presentationAttributeStyle();
 }
 
-inline bool isStyledElement(const Node& node) { return node.isStyledElement(); }
-
-NODE_TYPE_CASTS(StyledElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(StyledElement)
+    static bool isStyledElement(const Node& node) { return node.isStyledElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } //namespace
 

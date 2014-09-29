@@ -480,10 +480,10 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
 
         next = NodeTraversal::next(node.get());
-        if (!node->isStyledElement())
+        if (!is<StyledElement>(*node))
             continue;
 
-        StyledElement* element = toStyledElement(node.get());
+        StyledElement* element = downcast<StyledElement>(node.get());
 
         const StyleProperties* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
@@ -495,7 +495,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                 if (newInlineStyle->conflictsWithImplicitStyleOfElement(&htmlElement)) {
                     // e.g. <b style="font-weight: normal;"> is converted to <span style="font-weight: normal;">
                     node = replaceElementWithSpanPreservingChildrenAndAttributes(&htmlElement);
-                    element = toStyledElement(node.get());
+                    element = downcast<StyledElement>(node.get());
                     insertedNodes.didReplaceNode(&htmlElement, node.get());
                 } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(&htmlElement, EditingStyle::PreserveWritingDirection, 0, attributes,
                     EditingStyle::DoNotExtractMatchingStyle)) {

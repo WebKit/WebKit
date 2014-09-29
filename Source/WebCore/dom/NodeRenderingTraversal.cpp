@@ -121,7 +121,7 @@ enum ShadowRootCrossing { CrossShadowRoot, DontCrossShadowRoot };
 static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadowRootCrossing)
 {
     if (shadowRootCrossing == DontCrossShadowRoot  && node->isShadowRoot())
-        return 0;
+        return nullptr;
 
     if (nodeCanBeDistributed(node)) {
         if (InsertionPoint* insertionPoint = findInsertionPointOf(node))
@@ -132,8 +132,8 @@ static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadow
     if (!parent)
         return nullptr;
 
-    if (parent->isShadowRoot())
-        return shadowRootCrossing == CrossShadowRoot ? toShadowRoot(parent)->hostElement() : parent;
+    if (is<ShadowRoot>(parent))
+        return shadowRootCrossing == CrossShadowRoot ? downcast<ShadowRoot>(parent)->hostElement() : parent;
 
     if (is<InsertionPoint>(parent)) {
         const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*parent);

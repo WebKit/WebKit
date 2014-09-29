@@ -1825,8 +1825,8 @@ bool Element::removeAttribute(const AtomicString& name)
     AtomicString localName = shouldIgnoreAttributeCase(*this) ? name.lower() : name;
     unsigned index = elementData()->findAttributeIndexByName(localName, false);
     if (index == ElementData::attributeNotFound) {
-        if (UNLIKELY(localName == styleAttr) && elementData()->styleAttributeIsDirty() && isStyledElement())
-            toStyledElement(this)->removeAllInlineStyleProperties();
+        if (UNLIKELY(localName == styleAttr) && elementData()->styleAttributeIsDirty() && is<StyledElement>(*this))
+            downcast<StyledElement>(*this).removeAllInlineStyleProperties();
         return false;
     }
 

@@ -686,9 +686,9 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
     elementInfo->setString("idValue", element->getIdAttribute());
     HashSet<AtomicString> usedClassNames;
-    if (element->hasClass() && element->isStyledElement()) {
+    if (element->hasClass() && is<StyledElement>(element)) {
         StringBuilder classNames;
-        const SpaceSplitString& classNamesString = toStyledElement(element)->classNames();
+        const SpaceSplitString& classNamesString = downcast<StyledElement>(*element).classNames();
         size_t classNameCount = classNamesString.size();
         for (size_t i = 0; i < classNameCount; ++i) {
             const AtomicString& className = classNamesString[i];

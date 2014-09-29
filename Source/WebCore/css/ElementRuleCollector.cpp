@@ -388,8 +388,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         matchUserRules(false);
 
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
-    if (m_element.isStyledElement()) {
-        StyledElement& styledElement = toStyledElement(m_element);
+    if (is<StyledElement>(m_element)) {
+        StyledElement& styledElement = downcast<StyledElement>(m_element);
         addElementStyleProperties(styledElement.presentationAttributeStyle());
 
         // Now we check additional mapped declarations.
@@ -409,8 +409,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (matchAuthorAndUserStyles)
         matchAuthorRules(false);
 
-    if (matchAuthorAndUserStyles && m_element.isStyledElement()) {
-        StyledElement& styledElement = toStyledElement(m_element);
+    if (matchAuthorAndUserStyles && is<StyledElement>(m_element)) {
+        StyledElement& styledElement = downcast<StyledElement>(m_element);
         // Now check our inline style attribute.
         if (styledElement.inlineStyle()) {
             // Inline style is immutable as long as there is no CSSOM wrapper.

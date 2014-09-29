@@ -385,11 +385,11 @@ inline void StyleResolver::State::updateConversionData()
     m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle, m_element ? document().renderView() : nullptr);
 }
 
-inline void StyleResolver::State::initElement(Element* e)
+inline void StyleResolver::State::initElement(Element* element)
 {
-    m_element = e;
-    m_styledElement = e && e->isStyledElement() ? toStyledElement(e) : nullptr;
-    m_elementLinkState = e ? e->document().visitedLinkState().determineLinkState(*e) : NotInsideLink;
+    m_element = element;
+    m_styledElement = element && is<StyledElement>(element) ? downcast<StyledElement>(element) : nullptr;
+    m_elementLinkState = element ? element->document().visitedLinkState().determineLinkState(*element) : NotInsideLink;
     updateConversionData();
 }
 
@@ -409,7 +409,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     m_regionForStyling = regionForStyling;
 
     if (e) {
-        bool resetStyleInheritance = hasShadowRootParent(*e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
+        bool resetStyleInheritance = hasShadowRootParent(*e) && downcast<ShadowRoot>(*e->parentNode()).resetStyleInheritance();
         m_parentStyle = resetStyleInheritance ? nullptr : parentStyle;
     } else
         m_parentStyle = parentStyle;
@@ -445,9 +445,9 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
 {
     if (visitedNodeCount >= cStyleSearchThreshold * cStyleSearchLevelThreshold)
         return nullptr;
-    if (!parent || !parent->isStyledElement())
+    if (!parent || !is<StyledElement>(parent))
         return nullptr;
-    StyledElement* styledParent = toStyledElement(parent);
+    StyledElement* styledParent = downcast<StyledElement>(parent);
     if (styledParent->inlineStyle())
         return nullptr;
     if (is<SVGElement>(styledParent) && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
@@ -664,14 +664,14 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsigned& count) const
 {
     for (; node; node = node->previousSibling()) {
-        if (!node->isStyledElement())
+        if (!is<StyledElement>(node))
             continue;
-        if (canShareStyleWithElement(toStyledElement(node)))
+        if (canShareStyleWithElement(downcast<StyledElement>(node)))
             break;
         if (count++ == cStyleSearchThreshold)
-            return 0;
+            return nullptr;
     }
-    return toStyledElement(node);
+    return downcast<StyledElement>(node);
 }
 
 RenderStyle* StyleResolver::locateSharedStyle()

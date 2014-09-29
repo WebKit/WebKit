@@ -143,8 +143,8 @@ public:
             return m_relatedNodeInCurrentTreeScope;
 
         if (m_currentTreeScope) {
-            ASSERT(m_currentTreeScope->rootNode().isShadowRoot());
-            ASSERT(&newTarget == toShadowRoot(m_currentTreeScope->rootNode()).hostElement());
+            ASSERT(is<ShadowRoot>(m_currentTreeScope->rootNode()));
+            ASSERT(&newTarget == downcast<ShadowRoot>(m_currentTreeScope->rootNode()).hostElement());
             ASSERT(m_currentTreeScope->parentTreeScope() == &newTreeScope);
         }
 
@@ -184,8 +184,8 @@ public:
                 ASSERT_WITH_SECURITY_IMPLICATION(&previousHost->treeScope() == &targetScope);
                 return previousHost;
             }
-            if (scope->rootNode().isShadowRoot())
-                previousHost = toShadowRoot(scope->rootNode()).hostElement();
+            if (is<ShadowRoot>(scope->rootNode()))
+                previousHost = downcast<ShadowRoot>(scope->rootNode()).hostElement();
             else
                 ASSERT_WITH_SECURITY_IMPLICATION(!scope->parentTreeScope());
         }
@@ -217,7 +217,7 @@ inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
     auto& rootNode = referenceNode.treeScope().rootNode();
-    Element* shadowHostElement = rootNode.isShadowRoot() ? toShadowRoot(rootNode).hostElement() : nullptr;
+    Element* shadowHostElement = is<ShadowRoot>(rootNode) ? downcast<ShadowRoot>(rootNode).hostElement() : nullptr;
     // At this time, SVG nodes are not supported in non-<use> shadow trees.
     if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
         return referenceNode;
@@ -447,12 +447,12 @@ EventPath::EventPath(Node& targetNode, Event& event)
                 m_path.append(std::make_unique<EventContext>(node, &currentTarget, target));
             if (!inDocument)
                 return;
-            if (node->isShadowRoot())
+            if (is<ShadowRoot>(node))
                 break;
         }
-        if (!node || !shouldEventCrossShadowBoundary(event, *toShadowRoot(node), *target))
+        if (!node || !shouldEventCrossShadowBoundary(event, downcast<ShadowRoot>(*node), *target))
             return;
-        node = toShadowRoot(node)->hostElement();
+        node = downcast<ShadowRoot>(*node).hostElement();
     }
 }
 

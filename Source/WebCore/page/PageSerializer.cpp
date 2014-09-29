@@ -225,25 +225,25 @@ void PageSerializer::serializeFrame(Frame* frame)
         if (!node->isElementNode())
             continue;
 
-        Element* element = toElement(node);
+        Element& element = toElement(*node);
         // We have to process in-line style as it might contain some resources (typically background images).
-        if (element->isStyledElement())
-            retrieveResourcesForProperties(toStyledElement(element)->inlineStyle(), document);
+        if (is<StyledElement>(element))
+            retrieveResourcesForProperties(downcast<StyledElement>(element).inlineStyle(), document);
 
         if (is<HTMLImageElement>(element)) {
-            HTMLImageElement& imageElement = downcast<HTMLImageElement>(*element);
+            HTMLImageElement& imageElement = downcast<HTMLImageElement>(element);
             URL url = document->completeURL(imageElement.fastGetAttribute(HTMLNames::srcAttr));
             CachedImage* cachedImage = imageElement.cachedImage();
             addImageToResources(cachedImage, imageElement.renderer(), url);
         } else if (is<HTMLLinkElement>(element)) {
-            HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*element);
+            HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(element);
             if (CSSStyleSheet* sheet = linkElement.sheet()) {
                 URL url = document->completeURL(linkElement.getAttribute(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }
         } else if (is<HTMLStyleElement>(element)) {
-            if (CSSStyleSheet* sheet = downcast<HTMLStyleElement>(*element).sheet())
+            if (CSSStyleSheet* sheet = downcast<HTMLStyleElement>(element).sheet())
                 serializeCSSStyleSheet(sheet, URL());
         }
     }

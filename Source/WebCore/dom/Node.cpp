@@ -974,7 +974,7 @@ Node* Node::deprecatedShadowAncestorNode() const
 ShadowRoot* Node::containingShadowRoot() const
 {
     ContainerNode& root = treeScope().rootNode();
-    return root.isShadowRoot() ? toShadowRoot(&root) : nullptr;
+    return is<ShadowRoot>(root) ? downcast<ShadowRoot>(&root) : nullptr;
 }
 
 Node* Node::nonBoundaryShadowTreeRootNode()
@@ -1002,13 +1002,13 @@ Element* Node::parentOrShadowHostElement() const
 {
     ContainerNode* parent = parentOrShadowHostNode();
     if (!parent)
-        return 0;
+        return nullptr;
 
-    if (parent->isShadowRoot())
-        return toShadowRoot(parent)->hostElement();
+    if (is<ShadowRoot>(parent))
+        return downcast<ShadowRoot>(parent)->hostElement();
 
     if (!parent->isElementNode())
-        return 0;
+        return nullptr;
 
     return toElement(parent);
 }
@@ -1572,9 +1572,9 @@ void Node::showNodePathForThis() const
     }
     for (unsigned index = chain.size(); index > 0; --index) {
         const Node* node = chain[index - 1];
-        if (node->isShadowRoot()) {
+        if (is<ShadowRoot>(node)) {
             int count = 0;
-            for (const ShadowRoot* shadowRoot = toShadowRoot(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
+            for (const ShadowRoot* shadowRoot = downcast<ShadowRoot>(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
                 ++count;
             fprintf(stderr, "/#shadow-root[%d]", count);
             continue;

@@ -709,9 +709,9 @@ PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Elemen
 
 PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, CSSPropertyID propertyId)
 {
-    if (propertyId == CSSPropertyInvalid || !element.isStyledElement())
+    if (propertyId == CSSPropertyInvalid || !is<StyledElement>(element))
         return nullptr;
-    const StyleProperties* properties = toStyledElement(element).inlineStyle();
+    const StyleProperties* properties = downcast<StyledElement>(element).inlineStyle();
     if (!properties)
         return nullptr;
     return properties->getPropertyCSSValue(propertyId);

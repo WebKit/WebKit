@@ -82,11 +82,11 @@ ContainerNode* FocusNavigationScope::rootNode() const
 Element* FocusNavigationScope::owner() const
 {
     ContainerNode* root = rootNode();
-    if (root->isShadowRoot())
-        return toShadowRoot(root)->hostElement();
+    if (is<ShadowRoot>(root))
+        return downcast<ShadowRoot>(*root).hostElement();
     if (Frame* frame = root->document().frame())
         return frame->ownerElement();
-    return 0;
+    return nullptr;
 }
 
 FocusNavigationScope FocusNavigationScope::focusNavigationScopeOf(Node* node)

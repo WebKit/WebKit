@@ -1086,11 +1086,11 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Insp
 
 PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)
 {
-    if (!element->isStyledElement())
+    if (!is<StyledElement>(element))
         return nullptr;
 
     // FIXME: Ugliness below.
-    StyleProperties* attributeStyle = const_cast<StyleProperties*>(toStyledElement(element)->presentationAttributeStyle());
+    StyleProperties* attributeStyle = const_cast<StyleProperties*>(downcast<StyledElement>(element)->presentationAttributeStyle());
     if (!attributeStyle)
         return nullptr;
 

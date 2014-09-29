@@ -311,7 +311,7 @@ Element* TreeScope::focusedElement()
         return nullptr;
     TreeScope* treeScope = &element->treeScope();
     while (treeScope != this && treeScope != &document) {
-        element = toShadowRoot(treeScope->rootNode()).hostElement();
+        element = downcast<ShadowRoot>(treeScope->rootNode()).hostElement();
         treeScope = &element->treeScope();
     }
     if (this != treeScope)

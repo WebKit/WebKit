@@ -574,19 +574,19 @@ Node* Internals::shadowRoot(Element* host, ExceptionCode& ec)
 {
     if (!host) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
     return host->shadowRoot();
 }
 
 String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
 {
-    if (!root || !root->isShadowRoot()) {
+    if (!root || !is<ShadowRoot>(root)) {
         ec = INVALID_ACCESS_ERR;
         return String();
     }
 
-    switch (toShadowRoot(root)->type()) {
+    switch (downcast<ShadowRoot>(*root).type()) {
     case ShadowRoot::UserAgentShadowRoot:
         return String("UserAgentShadowRoot");
     default:
@@ -598,7 +598,7 @@ String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
 Element* Internals::includerFor(Node*, ExceptionCode& ec)
 {
     ec = INVALID_ACCESS_ERR;
-    return 0;
+    return nullptr;
 }
 
 String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)

@@ -188,10 +188,10 @@ bool Attr::isId() const
 CSSStyleDeclaration* Attr::style()
 {
     // This function only exists to support the Obj-C bindings.
-    if (!m_element || !m_element->isStyledElement())
+    if (!m_element || !is<StyledElement>(m_element))
         return nullptr;
     m_style = MutableStyleProperties::create();
-    toStyledElement(m_element)->collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
+    downcast<StyledElement>(*m_element).collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
     return m_style->ensureCSSStyleDeclaration();
 }
 

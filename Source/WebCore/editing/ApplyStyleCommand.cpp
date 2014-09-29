@@ -502,14 +502,14 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
     if (!block)
         return;
 
-    Node* parent = 0;
-    for (Node* n = node->parentNode(); n != block && n != unsplitAncestor; n = parent) {
-        parent = n->parentNode();
-        if (!n->isStyledElement())
+    Node* parent = nullptr;
+    for (Node* ancestor = node->parentNode(); ancestor != block && ancestor != unsplitAncestor; ancestor = parent) {
+        parent = ancestor->parentNode();
+        if (!is<StyledElement>(ancestor))
             continue;
 
-        StyledElement* element = toStyledElement(n);
-        int unicodeBidi = toIdentifier(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi));
+        StyledElement& element = downcast<StyledElement>(*ancestor);
+        int unicodeBidi = toIdentifier(ComputedStyleExtractor(&element).propertyValue(CSSPropertyUnicodeBidi));
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -517,17 +517,17 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         // and all matching style rules in order to determine how to best set the unicode-bidi property to 'normal'.
         // For now, it assumes that if the 'dir' attribute is present, then removing it will suffice, and
         // otherwise it sets the property in the inline style declaration.
-        if (element->fastHasAttribute(dirAttr)) {
+        if (element.fastHasAttribute(dirAttr)) {
             // FIXME: If this is a BDO element, we should probably just remove it if it has no
             // other attributes, like we (should) do with B and I elements.
-            removeNodeAttribute(element, dirAttr);
+            removeNodeAttribute(&element, dirAttr);
         } else {
-            RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+            RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element.inlineStyle());
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
-            setNodeAttribute(element, styleAttr, inlineStyle->asText());
-            if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
-                removeNodePreservingChildren(element);
+            setNodeAttribute(&element, styleAttr, inlineStyle->asText());
+            if (isSpanWithoutAttributesOrUnstyledStyleSpan(&element))
+                removeNodePreservingChildren(&element);
         }
     }
 }
@@ -1040,8 +1040,8 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
         getChildNodes(*current.get(), currentChildren);
 
         RefPtr<StyledElement> styledElement;
-        if (current->isStyledElement() && isStyledInlineElementToRemove(toElement(current.get()))) {
-            styledElement = toStyledElement(current.get());
+        if (is<StyledElement>(*current) && isStyledInlineElementToRemove(toElement(current.get()))) {
+            styledElement = downcast<StyledElement>(current.get());
             elementsToPushDown.append(*styledElement);
         }
 
