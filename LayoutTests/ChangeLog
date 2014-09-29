@@ -1,5 +1,12 @@
 2014-09-29  Roger Fong  <roger_fong@apple.com>
 
+        [Mac] Unreviewed. Missing test gardening from r174080.
+
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+
+2014-09-29  Roger Fong  <roger_fong@apple.com>
+
         [Mac] Unreviewed test gardening.
 
         These accessibility tests need to be changed following r174074.

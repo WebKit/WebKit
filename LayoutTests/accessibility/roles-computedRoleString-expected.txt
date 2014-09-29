@@ -11,7 +11,7 @@ PASS: button -> button.
 PASS: dfn -> definition. 
 PASS: dl -> . 
 PASS: footer -> . 
-PASS: form -> . 
+PASS: form -> form. 
 PASS: header -> banner. 
 PASS: h1 -> heading. 
 PASS: h2 -> heading. 
@@ -93,7 +93,7 @@ PASS: div[role="definition"] -> definition.
 PASS: div[role="dialog"] -> dialog. 
 PASS: div[role="directory"] -> list. 
 PASS: div[role="document"] -> document. 
-PASS: div[role="form"] -> . 
+PASS: div[role="form"] -> form. 
 PASS: div[role="grid"] -> grid. 
 PASS: div[role="row"] -> row. 
 PASS: div[role="rowheader"] -> gridcell. 
