@@ -1,5 +1,15 @@
 2014-09-29  Alexey Proskuryakov  <ap@apple.com>
 
+        A small change to EWS bubble text. Explain why there are messages for ineligible patches.
+
+        Rubber-stamped by Tim Horton.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble):
+
+2014-09-29  Alexey Proskuryakov  <ap@apple.com>
+
         Typo fix, suggested by Tim Horton.
 
         * QueueStatusServer/handlers/statusbubble.py:

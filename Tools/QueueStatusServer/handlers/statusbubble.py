@@ -139,7 +139,11 @@ class StatusBubble(webapp.RequestHandler):
                 bubble["state"] = "none"
                 bubble["details_message"] = "The patch is no longer eligible for processing."
                 if len(statuses) > 1:
-                    bubble["details_message"] += " Recent messages:\n\n" + "\n".join([status.message for status in statuses[1:]]) + "\n\n" + self._iso_time(statuses[0].date)
+                    if len(statuses) == 2:
+                        bubble["details_message"] += " One message was logged while the patch was still eligible:\n\n"
+                    else:
+                        bubble["details_message"] += " Some messages were logged while the patch was still eligible:\n\n"
+                    bubble["details_message"] += "\n".join([status.message for status in statuses[1:]]) + "\n\n" + self._iso_time(statuses[0].date)
             elif statuses[0].message == "Error: " + queue.name() + " unable to apply patch.":
                 bubble["state"] = "fail"
                 bubble["details_message"] = statuses[1].message + "\n\n" + self._iso_time(statuses[0].date)
