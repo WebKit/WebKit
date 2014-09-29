@@ -123,9 +123,6 @@ void InitWebCoreSystemInterface(void)
     INIT(QTClearMediaDownloadCache);
 #endif
 
-#if !PLATFORM(IOS)
-    INIT(GetGlyphsForCharacters);
-#endif
     INIT(GetVerticalGlyphsForCharacters);
 #if PLATFORM(IOS)
     INIT(ExecutableWasLinkedOnOrAfterIOSVersion);

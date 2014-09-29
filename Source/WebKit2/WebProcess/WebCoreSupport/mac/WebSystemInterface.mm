@@ -63,7 +63,6 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawMediaUIPart);
         INIT(GetFontInLanguageForCharacter);
         INIT(GetFontInLanguageForRange);
-        INIT(GetGlyphsForCharacters);
 #endif
         INIT(GetVerticalGlyphsForCharacters);
         INIT(GetHTTPRequestPriority);

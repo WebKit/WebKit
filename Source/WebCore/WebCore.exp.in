@@ -2384,7 +2384,6 @@ _wkGetAXTextMarkerTypeID
 _wkGetBytesFromAXTextMarker
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
-_wkGetGlyphsForCharacters
 _wkGetHyphenationLocationBeforeIndex
 _wkGetNSEventKeyChar
 _wkGetNSURLResponseCalculatedExpiration

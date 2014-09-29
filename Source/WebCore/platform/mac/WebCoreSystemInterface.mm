@@ -104,7 +104,6 @@ void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
 void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
 
-void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
 bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
 
 void* wkGetHyphenationLocationBeforeIndex;

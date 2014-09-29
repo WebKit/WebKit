@@ -29,6 +29,7 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
+#include "CGFontUnicodeSupportSPI.h"
 #include "Font.h"
 #include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
@@ -69,16 +70,11 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 
     Vector<CGGlyph, 512> glyphs(bufferLength);
     if (!shouldUseCoreText(buffer, bufferLength, fontData)) {
-#if !PLATFORM(IOS)
-        wkGetGlyphsForCharacters(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
-#else
         // We pass in either 256 or 512 UTF-16 characters: 256 for U+FFFF and less, 512 (double character surrogates)
         // for U+10000 and above. It is indeed possible to get back 512 glyphs back from the API, so the glyph buffer
         // we pass in must be 512. If we get back more than 256 glyphs though we'll ignore all the ones after 256,
         // this should not happen as the only time we pass in 512 characters is when they are surrogates.
-        // FIXME: Use wkGetGlyphsForCharacters() instead of CGFontGetGlyphsForUnichars() once we update WebKit System Interface on iOS.
         CGFontGetGlyphsForUnichars(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
-#endif
         for (unsigned i = 0; i < length; ++i) {
             if (!glyphs[i])
                 setGlyphDataForIndex(offset + i, 0, 0);
