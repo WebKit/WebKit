@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedPointList.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
 

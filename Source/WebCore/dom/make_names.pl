@@ -194,7 +194,6 @@ sub defaultTagPropertyHash
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'conditional' => 0,
         'runtimeConditional' => 0,
-        'generateTypeHelpers' => 0
     );
 }
 
@@ -627,12 +626,18 @@ sub printTypeHelpers
     my ($F, $namesRef) = @_;
     my %names = %$namesRef;
 
-    for my $name (sort keys %names) {
-        if (!$parsedTags{$name}{generateTypeHelpers}) {
-            next;
-        }
-
+    # Do a first pass to discard classes that map to several tags.
+    my %classToTags = ();
+    for my $name (keys %names) {
         my $class = $parsedTags{$name}{interfaceName};
+        push(@{$classToTags{$class}}, $name) if defined $class;
+    }
+
+    for my $class (sort keys %classToTags) {
+        # Skip classes that map to more than 1 tag.
+        my $tagCount = scalar @{$classToTags{$class}};
+        next if $tagCount > 1;
+        my $name = $classToTags{$class}[0];
         print F <<END
 class $class;
 template <typename ArgType>

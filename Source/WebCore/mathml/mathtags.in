@@ -6,7 +6,7 @@ fallbackInterfaceName="MathMLElement"
 annotation interfaceName=MathMLTextElement
 annotation-xml interfaceName=MathMLInlineContainerElement
 maction interfaceName=MathMLSelectElement
-math generateTypeHelpers
+math
 mfrac interfaceName=MathMLInlineContainerElement
 mfenced interfaceName=MathMLInlineContainerElement
 msubsup interfaceName=MathMLInlineContainerElement
@@ -31,7 +31,7 @@ mtr interfaceName=MathMLElement
 mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLInlineContainerElement
 mprescripts interfaceName=MathMLInlineContainerElement
-menclose interfaceName=MathMLMencloseElement, generateTypeHelpers
+menclose interfaceName=MathMLMencloseElement
 none interfaceName=MathMLInlineContainerElement
 semantics interfaceName=MathMLSelectElement
 

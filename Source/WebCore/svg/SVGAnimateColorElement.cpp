@@ -27,7 +27,7 @@
 namespace WebCore {
     
 inline SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimateElement(tagName, document)
+    : SVGAnimateElementBase(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::animateColorTag));
 }
@@ -45,7 +45,7 @@ static bool attributeValueIsCurrentColor(const String& value)
 
 void SVGAnimateColorElement::determinePropertyValueTypes(const String& from, const String& to)
 {
-    SVGAnimateElement::determinePropertyValueTypes(from, to);
+    SVGAnimateElementBase::determinePropertyValueTypes(from, to);
     if (attributeValueIsCurrentColor(from))
         m_fromPropertyValueType = CurrentColorValue;
     if (attributeValueIsCurrentColor(to))

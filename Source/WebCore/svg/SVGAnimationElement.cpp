@@ -507,8 +507,8 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     }
 
     CalcMode calcMode = this->calcMode();
-    if (hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::animateColorTag)) {
-        AnimatedPropertyType attributeType = downcast<SVGAnimateElement>(*this).determineAnimatedPropertyType(targetElement());
+    if (is<SVGAnimateElement>(*this) || is<SVGAnimateColorElement>(*this)) {
+        AnimatedPropertyType attributeType = downcast<SVGAnimateElementBase>(*this).determineAnimatedPropertyType(targetElement());
         // Fall back to discrete animations for Strings.
         if (attributeType == AnimatedBoolean
             || attributeType == AnimatedEnumeration

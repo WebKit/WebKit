@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedAngle.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGMarkerElement.h"
 
 namespace WebCore {

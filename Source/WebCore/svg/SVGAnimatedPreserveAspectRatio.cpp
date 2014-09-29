@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 
 namespace WebCore {
 

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedIntegerOptionalInteger.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGAnimatedInteger.h"
 #include "SVGParserUtilities.h"
 

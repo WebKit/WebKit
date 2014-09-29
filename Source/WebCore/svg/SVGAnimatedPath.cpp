@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedPath.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
 #include "SVGPathUtilities.h"
 

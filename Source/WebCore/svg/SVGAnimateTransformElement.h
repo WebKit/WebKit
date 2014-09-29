@@ -23,14 +23,14 @@
 #ifndef SVGAnimateTransformElement_h
 #define SVGAnimateTransformElement_h
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGTransform.h"
 
 namespace WebCore {
 
 class AffineTransform;
 
-class SVGAnimateTransformElement final : public SVGAnimateElement {
+class SVGAnimateTransformElement final : public SVGAnimateElementBase {
 public:
     static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
 

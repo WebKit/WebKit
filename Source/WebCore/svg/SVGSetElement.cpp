@@ -26,7 +26,7 @@
 namespace WebCore {
     
 inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimateElement(tagName, document)
+    : SVGAnimateElementBase(tagName, document)
 {
     setAnimationMode(ToAnimation);
     ASSERT(hasTagName(SVGNames::setTag));

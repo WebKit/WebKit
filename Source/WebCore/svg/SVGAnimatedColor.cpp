@@ -22,7 +22,7 @@
 
 #include "ColorDistance.h"
 #include "RenderElement.h"
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGColor.h"
 
 namespace WebCore {

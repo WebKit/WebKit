@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedLengthList.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGAnimatedNumber.h"
 
 namespace WebCore {

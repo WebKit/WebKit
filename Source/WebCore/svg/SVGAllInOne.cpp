@@ -33,6 +33,7 @@
 #include "SVGAngle.cpp"
 #include "SVGAnimateColorElement.cpp"
 #include "SVGAnimateElement.cpp"
+#include "SVGAnimateElementBase.cpp"
 #include "SVGAnimateMotionElement.cpp"
 #include "SVGAnimateTransformElement.cpp"
 #include "SVGAnimatedAngle.cpp"

@@ -3,26 +3,26 @@ namespaceURI="http://www.w3.org/2000/svg"
 fallbackInterfaceName="SVGUnknownElement"
 fallbackJSInterfaceName="SVGElement"
 
-a generateTypeHelpers
+a
 #if ENABLE_SVG_FONTS
-altGlyph generateTypeHelpers
-altGlyphDef generateTypeHelpers
-altGlyphItem generateTypeHelpers
+altGlyph
+altGlyphDef
+altGlyphItem
 #endif
 animate
 animateColor
-animateMotion generateTypeHelpers
-animateTransform generateTypeHelpers
+animateMotion
+animateTransform
 set
-circle generateTypeHelpers
-clipPath generateTypeHelpers
+circle
+clipPath
 #if 0
 color_profile
 #endif
-cursor generateTypeHelpers
+cursor
 defs
 desc
-ellipse generateTypeHelpers
+ellipse
 feBlend
 feColorMatrix
 feComponentTransfer
@@ -30,69 +30,69 @@ feComposite
 feConvolveMatrix
 feDiffuseLighting
 feDisplacementMap
-feDistantLight generateTypeHelpers
+feDistantLight
 feDropShadow
 feFlood
-feFuncA generateTypeHelpers
-feFuncB generateTypeHelpers
-feFuncG generateTypeHelpers
-feFuncR generateTypeHelpers
+feFuncA
+feFuncB
+feFuncG
+feFuncR
 feGaussianBlur
 feImage
 feMerge
-feMergeNode generateTypeHelpers
+feMergeNode
 feMorphology
 feOffset
-fePointLight generateTypeHelpers
+fePointLight
 feSpecularLighting
-feSpotLight generateTypeHelpers
+feSpotLight
 feTile
 feTurbulence
-filter generateTypeHelpers
+filter
 #if ENABLE_SVG_FONTS
-font generateTypeHelpers
-font_face generateTypeHelpers
+font
+font_face
 font_face_format
-font_face_name generateTypeHelpers
-font_face_src generateTypeHelpers
-font_face_uri generateTypeHelpers
+font_face_name
+font_face_src
+font_face_uri
 #endif
-foreignObject generateTypeHelpers
-g generateTypeHelpers
+foreignObject
+g
 #if ENABLE_SVG_FONTS
-glyph generateTypeHelpers
-glyphRef generateTypeHelpers
-hkern interfaceName=SVGHKernElement, generateTypeHelpers
+glyph
+glyphRef
+hkern interfaceName=SVGHKernElement
 #endif
-image generateTypeHelpers
-line generateTypeHelpers
-linearGradient generateTypeHelpers
-marker generateTypeHelpers
-mask generateTypeHelpers
+image
+line
+linearGradient
+marker
+mask
 metadata
 #if ENABLE_SVG_FONTS
-missing_glyph generateTypeHelpers
+missing_glyph
 #endif
-mpath interfaceName=SVGMPathElement, generateTypeHelpers
-path generateTypeHelpers
-pattern generateTypeHelpers
-polygon generateTypeHelpers
-polyline generateTypeHelpers
-radialGradient generateTypeHelpers
-rect generateTypeHelpers
-script constructorNeedsCreatedByParser, generateTypeHelpers
-stop generateTypeHelpers
-style constructorNeedsCreatedByParser, generateTypeHelpers
-svg interfaceName=SVGSVGElement, generateTypeHelpers
+mpath interfaceName=SVGMPathElement
+path
+pattern
+polygon
+polyline
+radialGradient
+rect
+script constructorNeedsCreatedByParser
+stop
+style constructorNeedsCreatedByParser
+svg interfaceName=SVGSVGElement
 switch
 symbol
-text generateTypeHelpers
-textPath generateTypeHelpers
-title generateTypeHelpers
+text
+textPath
+title
 tref interfaceName=SVGTRefElement
 tspan interfaceName=SVGTSpanElement
-use constructorNeedsCreatedByParser, generateTypeHelpers
-view generateTypeHelpers
+use constructorNeedsCreatedByParser
+view
 #if ENABLE_SVG_FONTS
-vkern interfaceName=SVGVKernElement, generateTypeHelpers
+vkern interfaceName=SVGVKernElement
 #endif

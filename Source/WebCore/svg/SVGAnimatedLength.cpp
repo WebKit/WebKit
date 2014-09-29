@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedLength.h"
 
-#include "SVGAnimateElement.h"
+#include "SVGAnimateElementBase.h"
 #include "SVGAnimatedNumber.h"
 #include <wtf/NeverDestroyed.h>
 
