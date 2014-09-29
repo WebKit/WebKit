@@ -38,17 +38,12 @@ public:
         return constructor;
     }
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    JSValue getValueProperty(ExecState*, int token) const;
-
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     { 
         return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
     }
-
-    enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
 protected:
     void finishCreation(VM&, NumberPrototype*);

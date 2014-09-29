@@ -118,7 +118,11 @@
     macro(input) \
     macro(instructionCount) \
     macro(isArray) \
+    macro(isFinite) \
+    macro(isInteger) \
+    macro(isNaN) \
     macro(isPrototypeOf) \
+    macro(isSafeInteger) \
     macro(isView) \
     macro(isWatchpoint) \
     macro(jettisonReason) \
@@ -140,6 +144,8 @@
     macro(osrExitSites) \
     macro(osrExits) \
     macro(parse) \
+    macro(parseFloat) \
+    macro(parseInt) \
     macro(postMessage) \
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
