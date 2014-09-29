@@ -2690,18 +2690,18 @@ private:
 //
 // These classes lock the result of a call to a C++ helper function.
 
-class GPRResult : public GPRTemporary {
+class GPRFlushedCallResult : public GPRTemporary {
 public:
-    GPRResult(SpeculativeJIT* jit)
+    GPRFlushedCallResult(SpeculativeJIT* jit)
         : GPRTemporary(jit, GPRInfo::returnValueGPR)
     {
     }
 };
 
 #if USE(JSVALUE32_64)
-class GPRResult2 : public GPRTemporary {
+class GPRFlushedCallResult2 : public GPRTemporary {
 public:
-    GPRResult2(SpeculativeJIT* jit)
+    GPRFlushedCallResult2(SpeculativeJIT* jit)
         : GPRTemporary(jit, GPRInfo::returnValueGPR2)
     {
     }

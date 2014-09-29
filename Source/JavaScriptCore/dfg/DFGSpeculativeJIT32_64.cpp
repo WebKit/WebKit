@@ -396,7 +396,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
     JITCompiler::JumpList slowPath;
     
     if (isKnownNotInteger(node->child1().node()) || isKnownNotInteger(node->child2().node())) {
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         arg1.use();
@@ -487,7 +487,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler
     JITCompiler::JumpList slowPath;
     
     if (isKnownNotInteger(node->child1().node()) || isKnownNotInteger(node->child2().node())) {
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultPayloadGPR = result.gpr();
     
         arg1.use();
@@ -677,8 +677,8 @@ void SpeculativeJIT::emitCall(Node* node)
 
     flushRegisters();
 
-    GPRResult resultPayload(this);
-    GPRResult2 resultTag(this);
+    GPRFlushedCallResult resultPayload(this);
+    GPRFlushedCallResult2 resultTag(this);
     GPRReg resultPayloadGPR = resultPayload.gpr();
     GPRReg resultTagGPR = resultTag.gpr();
 
@@ -1943,8 +1943,8 @@ void SpeculativeJIT::compile(Node* node)
         
         flushRegisters();
         
-        GPRResult2 resultTag(this);
-        GPRResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
+        GPRFlushedCallResult resultPayload(this);
         if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node()))
             callOperation(operationValueAddNotNumber, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
         else
@@ -2217,8 +2217,8 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg propertyPayloadGPR = property.payloadGPR();
             
             flushRegisters();
-            GPRResult2 resultTag(this);
-            GPRResult resultPayload(this);
+            GPRFlushedCallResult2 resultTag(this);
+            GPRFlushedCallResult resultPayload(this);
             callOperation(operationGetByValCell, resultTag.gpr(), resultPayload.gpr(), baseGPR, propertyTagGPR, propertyPayloadGPR);
             
             jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
@@ -2616,7 +2616,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg argumentGPR = argument.gpr();
             
             flushRegisters();
-            GPRResult result(this);
+            GPRFlushedCallResult result(this);
             callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
             
             // Must use jsValueResult because otherwise we screw up register
@@ -2631,8 +2631,8 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg argumentGPR = argument.gpr();
         
         flushRegisters();
-        GPRResult2 resultTag(this);
-        GPRResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
+        GPRFlushedCallResult resultPayload(this);
         callOperation(operationRegExpExec, resultTag.gpr(), resultPayload.gpr(), baseGPR, argumentGPR);
         
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
@@ -2646,7 +2646,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg argumentGPR = argument.gpr();
         
         flushRegisters();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
         
         // If we add a DataFormatBool, we should use it here.
@@ -3035,7 +3035,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg op1PayloadGPR = op1.payloadGPR();
             GPRReg op1TagGPR = op1.tagGPR();
             
-            GPRResult result(this);
+            GPRFlushedCallResult result(this);
             GPRReg resultGPR = result.gpr();
             
             flushRegisters();
@@ -3144,7 +3144,7 @@ void SpeculativeJIT::compile(Node* node)
         
         if (!node->numChildren()) {
             flushRegisters();
-            GPRResult result(this);
+            GPRFlushedCallResult result(this);
             callOperation(
                 operationNewEmptyArray, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
             cellResult(result.gpr(), node);
@@ -3219,7 +3219,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
         }
 
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         
         callOperation(
             operationNewArray, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()),
@@ -3294,7 +3294,7 @@ void SpeculativeJIT::compile(Node* node)
         SpeculateStrictInt32Operand size(this, node->child1());
         GPRReg sizeGPR = size.gpr();
         flushRegisters();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         GPRReg structureGPR = selectScratchGPR(sizeGPR);
         MacroAssembler::Jump bigLength = m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_SPARSE_ARRAY_INDEX));
@@ -3347,7 +3347,7 @@ void SpeculativeJIT::compile(Node* node)
         }
         
         flushRegisters();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         
         callOperation(operationNewArrayBuffer, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()), node->startConstant(), node->numConstants());
         
@@ -3367,7 +3367,7 @@ void SpeculativeJIT::compile(Node* node)
             
             flushRegisters();
             
-            GPRResult result(this);
+            GPRFlushedCallResult result(this);
             GPRReg resultGPR = result.gpr();
             
             JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
@@ -3388,8 +3388,8 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewRegexp: {
         flushRegisters();
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
+        GPRFlushedCallResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
         
         callOperation(operationNewRegexp, resultTag.gpr(), resultPayload.gpr(), m_jit.codeBlock()->regexp(node->regexpIndex()));
         
@@ -3631,8 +3631,8 @@ void SpeculativeJIT::compile(Node* node)
             
             GPRReg baseGPR = base.gpr();
 
-            GPRResult resultPayload(this);
-            GPRResult2 resultTag(this);
+            GPRFlushedCallResult resultPayload(this);
+            GPRFlushedCallResult2 resultTag(this);
             GPRReg resultPayloadGPR = resultPayload.gpr();
             GPRReg resultTagGPR = resultTag.gpr();
 
@@ -3651,8 +3651,8 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg baseTagGPR = base.tagGPR();
             GPRReg basePayloadGPR = base.payloadGPR();
 
-            GPRResult resultPayload(this);
-            GPRResult2 resultTag(this);
+            GPRFlushedCallResult resultPayload(this);
+            GPRFlushedCallResult2 resultTag(this);
             GPRReg resultPayloadGPR = resultPayload.gpr();
             GPRReg resultTagGPR = resultTag.gpr();
 
@@ -4075,7 +4075,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand value(this, node->child1());
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         flushRegisters();
         callOperation(operationIsObject, resultGPR, valueTagGPR, valuePayloadGPR);
@@ -4087,7 +4087,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand value(this, node->child1());
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         flushRegisters();
         callOperation(operationIsFunction, resultGPR, valueTagGPR, valuePayloadGPR);
@@ -4100,7 +4100,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg payloadGPR = value.payloadGPR();
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         JITCompiler::JumpList doneJumps;
 
@@ -4597,7 +4597,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetEnumerableLength: {
         SpeculateCellOperand base(this, node->child1());
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         flushRegisters();
@@ -4608,8 +4608,8 @@ void SpeculativeJIT::compile(Node* node)
     case HasGenericProperty: {
         JSValueOperand base(this, node->child1());
         SpeculateCellOperand property(this, node->child2());
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
+        GPRFlushedCallResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
         GPRReg basePayloadGPR = base.payloadGPR();
         GPRReg baseTagGPR = base.tagGPR();
         GPRReg resultPayloadGPR = resultPayload.gpr();
@@ -4625,8 +4625,8 @@ void SpeculativeJIT::compile(Node* node)
         SpeculateCellOperand property(this, node->child2());
         SpeculateCellOperand enumerator(this, node->child3());
         GPRTemporary scratch(this);
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
 
         GPRReg baseTagGPR = base.tagGPR();
         GPRReg basePayloadGPR = base.payloadGPR();
@@ -4652,8 +4652,8 @@ void SpeculativeJIT::compile(Node* node)
     case HasIndexedProperty: {
         SpeculateCellOperand base(this, node->child1());
         SpeculateInt32Operand index(this, node->child2());
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
 
         GPRReg baseGPR = base.gpr();
         GPRReg indexGPR = index.gpr();
@@ -4723,22 +4723,31 @@ void SpeculativeJIT::compile(Node* node)
 
         SpeculateCellOperand base(this, baseEdge);
         SpeculateCellOperand property(this, propertyEdge);
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
-        GPRTemporary scratch(this);
-
         GPRReg baseGPR = base.gpr();
         GPRReg propertyGPR = property.gpr();
+
+#if CPU(X86)
+        GPRFlushedCallResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
+        GPRTemporary scratch(this);
+
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg scratchGPR = scratch.gpr();
 
-#if CPU(X86)
         // Not enough registers on X86 for this code, so always use the slow path.
         flushRegisters();
         m_jit.move(MacroAssembler::TrustedImm32(JSValue::CellTag), scratchGPR);
         callOperation(operationGetByValCell, resultTagGPR, resultPayloadGPR, baseGPR, scratchGPR, propertyGPR);
 #else
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
+        GPRTemporary scratch(this);
+
+        GPRReg resultTagGPR = resultTag.gpr();
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
         Edge& indexEdge = m_jit.graph().varArgChild(node, 2);
         Edge& enumeratorEdge = m_jit.graph().varArgChild(node, 3);
 
@@ -4789,7 +4798,7 @@ void SpeculativeJIT::compile(Node* node)
     case GetStructurePropertyEnumerator: {
         SpeculateCellOperand base(this, node->child1());
         SpeculateInt32Operand length(this, node->child2());
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         flushRegisters();
@@ -4801,7 +4810,7 @@ void SpeculativeJIT::compile(Node* node)
         SpeculateCellOperand base(this, node->child1());
         SpeculateInt32Operand length(this, node->child2());
         SpeculateCellOperand enumerator(this, node->child3());
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         flushRegisters();
@@ -4813,8 +4822,8 @@ void SpeculativeJIT::compile(Node* node)
         SpeculateCellOperand enumerator(this, node->child1());
         SpeculateInt32Operand index(this, node->child2());
         GPRTemporary scratch(this);
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
 
         GPRReg enumeratorGPR = enumerator.gpr();
         GPRReg indexGPR = index.gpr();
@@ -4841,7 +4850,7 @@ void SpeculativeJIT::compile(Node* node)
     }
     case ToIndexString: {
         SpeculateInt32Operand index(this, node->child1());
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
 
         flushRegisters();
