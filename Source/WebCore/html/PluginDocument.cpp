@@ -104,7 +104,7 @@ void PluginDocumentParser::createDocumentStructure()
     if (loader)
         m_embedElement->setAttribute(typeAttr, loader->writer().mimeType());
 
-    toPluginDocument(document())->setPluginElement(m_embedElement);
+    downcast<PluginDocument>(*document()).setPluginElement(m_embedElement);
 
     body->appendChild(embedElement, IGNORE_EXCEPTION);
 }

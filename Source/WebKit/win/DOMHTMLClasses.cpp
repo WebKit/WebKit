@@ -250,18 +250,18 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::URL(
     if (!result)
         return E_POINTER;
 
-    *result = BString(toHTMLDocument(m_document)->url()).release();
+    *result = BString(downcast<HTMLDocument>(*m_document).url()).release();
     return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body( 
         /* [retval][out] */ IDOMHTMLElement** bodyElement)
 {
-    *bodyElement = 0;
-    if (!m_document || !m_document->isHTMLDocument())
+    *bodyElement = nullptr;
+    if (!m_document || !is<HTMLDocument>(m_document))
         return E_FAIL;
 
-    HTMLDocument& htmlDoc = toHTMLDocument(*m_document);
+    HTMLDocument& htmlDoc = downcast<HTMLDocument>(*m_document);
     COMPtr<IDOMElement> domElement;
     domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc.body()));
     if (domElement)
@@ -300,11 +300,11 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::links(
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::forms( 
         /* [retval][out] */ IDOMHTMLCollection** collection)
 {
-    *collection = 0;
-    if (!m_document || !m_document->isHTMLDocument())
+    *collection = nullptr;
+    if (!m_document || !is<HTMLDocument>(m_document))
         return E_FAIL;
 
-    HTMLDocument& htmlDoc = toHTMLDocument(*m_document);
+    HTMLDocument& htmlDoc = downcast<HTMLDocument>(*m_document);
     RefPtr<HTMLCollection> forms = htmlDoc.forms();
     *collection = DOMHTMLCollection::createInstance(forms.get());
     return S_OK;

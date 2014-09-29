@@ -61,10 +61,10 @@ private:
     RefPtr<HTMLPlugInElement> m_pluginElement;
 };
 
-inline bool isPluginDocument(const Document& document) { return document.isPluginDocument(); }
-void isPluginDocument(const PluginDocument&); // Catch unnecessary runtime check of type known at compile time.
-
-DOCUMENT_TYPE_CASTS(PluginDocument)
+SPECIALIZE_TYPE_TRAITS_BEGIN(PluginDocument)
+    static bool isPluginDocument(const Document& document) { return document.isPluginDocument(); }
+    static bool isPluginDocument(const Node& node) { return node.isDocumentNode() && isPluginDocument(toDocument(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 }
 

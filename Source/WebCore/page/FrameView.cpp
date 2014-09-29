@@ -2311,7 +2311,7 @@ static LayerFlushThrottleState::Flags determineLayerFlushThrottleState(Page& pag
         return 0;
     // Disable for image documents so large GIF animations don't get throttled during loading.
     auto* document = page.mainFrame().document();
-    if (!document || isImageDocument(*document))
+    if (!document || is<ImageDocument>(*document))
         return 0;
     return LayerFlushThrottleState::Enabled;
 }

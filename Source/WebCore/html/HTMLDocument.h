@@ -97,10 +97,10 @@ private:
     DocumentOrderedMap m_windowNamedItem;
 };
 
-inline bool isHTMLDocument(const Document& document) { return document.isHTMLDocument(); }
-void isHTMLDocument(const HTMLDocument&); // Catch unnecessary runtime check of type known at compile time.
-
-DOCUMENT_TYPE_CASTS(HTMLDocument)
+SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLDocument)
+    static bool isHTMLDocument(const Document& document) { return document.isHTMLDocument(); }
+    static bool isHTMLDocument(const Node& node) { return node.isDocumentNode() && isHTMLDocument(toDocument(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

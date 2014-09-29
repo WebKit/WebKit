@@ -1,3 +1,17 @@
+2014-09-29  Christophe Dumez  <cdumez@apple.com>
+
+        Make is<>() / downcast<>() work for HTMLDocument and its subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137169
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for HTMLDocument and its subclasses.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::URL):
+        (DOMHTMLDocument::body):
+        (DOMHTMLDocument::forms):
+
 2014-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr for ContextMenuController

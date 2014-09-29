@@ -3688,14 +3688,14 @@ RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 {
     Document* document = coreFrame->document();
     if (!document)
-        return 0;
+        return nullptr;
 
-    if (!document->isPluginDocument())
-        return 0;
+    if (!is<PluginDocument>(document))
+        return nullptr;
 
-    PluginView* pluginView = static_cast<PluginView*>(toPluginDocument(document)->pluginWidget());
+    PluginView* pluginView = static_cast<PluginView*>(downcast<PluginDocument>(*document).pluginWidget());
     if (!pluginView)
-        return 0;
+        return nullptr;
 
     return pluginView->pdfDocumentForPrinting();
 }

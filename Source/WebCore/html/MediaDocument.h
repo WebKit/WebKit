@@ -56,10 +56,10 @@ private:
     String m_outgoingReferrer;
 };
 
-inline bool isMediaDocument(const Document& document) { return document.isMediaDocument(); }
-void isMediaDocument(const MediaDocument&); // Catch unnecessary runtime check of type known at compile time.
-
-DOCUMENT_TYPE_CASTS(MediaDocument)
+SPECIALIZE_TYPE_TRAITS_BEGIN(MediaDocument)
+    static bool isMediaDocument(const Document& document) { return document.isMediaDocument(); }
+    static bool isMediaDocument(const Node& node) { return node.isDocumentNode() && isMediaDocument(toDocument(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 }
 

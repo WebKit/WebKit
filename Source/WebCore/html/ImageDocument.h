@@ -82,10 +82,10 @@ private:
     bool m_shouldShrinkImage;
 };
 
-inline bool isImageDocument(const Document& document) { return document.isImageDocument(); }
-void isImageDocument(const ImageDocument&); // Catch unnecessary runtime check of type known at compile time.
-
-DOCUMENT_TYPE_CASTS(ImageDocument)
+SPECIALIZE_TYPE_TRAITS_BEGIN(ImageDocument)
+    static bool isImageDocument(const Document& document) { return document.isImageDocument(); }
+    static bool isImageDocument(const Node& node) { return node.isDocumentNode() && isImageDocument(toDocument(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 }
 

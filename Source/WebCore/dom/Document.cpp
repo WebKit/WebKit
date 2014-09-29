@@ -2107,8 +2107,8 @@ void Document::prepareForDestruction()
     if (hasLivingRenderTree())
         destroyRenderTree();
 
-    if (isPluginDocument())
-        toPluginDocument(this)->detachFromPluginElement();
+    if (is<PluginDocument>(*this))
+        downcast<PluginDocument>(*this).detachFromPluginElement();
 
 #if ENABLE(POINTER_LOCK)
     if (page())
@@ -2879,9 +2879,9 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
 
     case HTTPHeaderName::SetCookie:
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
-        if (isHTMLDocument()) {
+        if (is<HTMLDocument>(*this)) {
             // Exception (for sandboxed documents) ignored.
-            toHTMLDocument(*this).setCookie(content, IGNORE_EXCEPTION);
+            downcast<HTMLDocument>(*this).setCookie(content, IGNORE_EXCEPTION);
         }
         break;
 
@@ -5900,19 +5900,17 @@ IntSize Document::initialViewportSize() const
 }
 #endif
 
-Element* eventTargetElementForDocument(Document* doc)
+Element* eventTargetElementForDocument(Document* document)
 {
-    if (!doc)
+    if (!document)
         return nullptr;
-    Element* element = doc->focusedElement();
-    if (!element && doc->isPluginDocument()) {
-        PluginDocument* pluginDocument = toPluginDocument(doc);
-        element = pluginDocument->pluginElement();
-    }
-    if (!element && doc->isHTMLDocument())
-        element = doc->body();
+    Element* element = document->focusedElement();
+    if (!element && is<PluginDocument>(document))
+        element = downcast<PluginDocument>(*document).pluginElement();
+    if (!element && is<HTMLDocument>(document))
+        element = document->body();
     if (!element)
-        element = doc->documentElement();
+        element = document->documentElement();
     return element;
 }
 

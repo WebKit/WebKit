@@ -80,19 +80,19 @@ static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, Encod
 
     ASSERT(BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObj->impl()));
     ASSERT(document);
-    ASSERT(document->isHTMLDocument());
+    ASSERT(is<HTMLDocument>(document));
 
     AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-    if (!atomicPropertyName || !toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName))
+    if (!atomicPropertyName || !downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName))
         return JSValue::encode(jsUndefined());
 
-    if (UNLIKELY(toHTMLDocument(*document).windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
+    if (UNLIKELY(downcast<HTMLDocument>(*document).windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
         return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
     }
 
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), toHTMLDocument(*document).windowNamedItem(*atomicPropertyName)));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), downcast<HTMLDocument>(*document).windowNamedItem(*atomicPropertyName)));
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -244,9 +244,9 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     Document* document = thisObject->impl().frame()->document();
-    if (document->isHTMLDocument()) {
+    if (is<HTMLDocument>(document)) {
         AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-        if (atomicPropertyName && toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName)) {
+        if (atomicPropertyName && downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName)) {
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }
@@ -321,9 +321,9 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     Document* document = thisObject->impl().frame()->document();
-    if (document->isHTMLDocument()) {
+    if (is<HTMLDocument>(document)) {
         AtomicStringImpl* atomicPropertyName = propertyName.publicName();
-        if (atomicPropertyName && toHTMLDocument(*document).hasWindowNamedItem(*atomicPropertyName)) {
+        if (atomicPropertyName && downcast<HTMLDocument>(*document).hasWindowNamedItem(*atomicPropertyName)) {
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }

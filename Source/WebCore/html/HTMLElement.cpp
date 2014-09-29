@@ -379,10 +379,8 @@ bool HTMLElement::matchesReadWritePseudoClass() const
     } while (currentElement);
 
     const Document& document = this->document();
-    if (document.isHTMLDocument()) {
-        const HTMLDocument& htmlDocument = toHTMLDocument(document);
-        return htmlDocument.inDesignMode();
-    }
+    if (is<HTMLDocument>(document))
+        return downcast<HTMLDocument>(document).inDesignMode();
     return false;
 }
 

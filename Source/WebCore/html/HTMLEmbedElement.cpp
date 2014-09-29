@@ -166,11 +166,11 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     Ref<HTMLEmbedElement> protect(*this); // Loading the plugin might remove us from the document.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(m_url);
     if (!beforeLoadAllowedLoad) {
-        if (document().isPluginDocument()) {
+        if (is<PluginDocument>(document())) {
             // Plugins inside plugin documents load differently than other plugins. By the time
             // we are here in a plugin document, the load of the plugin (which is the plugin document's
             // main resource) has already started. We need to explicitly cancel the main resource load here.
-            toPluginDocument(&document())->cancelManualPluginLoad();
+            downcast<PluginDocument>(document()).cancelManualPluginLoad();
         }
         return;
     }

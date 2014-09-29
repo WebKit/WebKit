@@ -176,7 +176,7 @@ inline ImageDocument& ImageDocumentParser::document() const
 {
     // Only used during parsing, so document is guaranteed to be non-null.
     ASSERT(RawDataDocumentParser::document());
-    return toImageDocument(*RawDataDocumentParser::document());
+    return downcast<ImageDocument>(*RawDataDocumentParser::document());
 }
 
 void ImageDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
