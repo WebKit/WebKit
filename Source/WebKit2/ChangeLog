@@ -1,3 +1,17 @@
+2014-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move ColorInputType class to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=137173
+
+        Reviewed by Darin Adler.
+
+        Replace uses of PassOwnPtr in code under ColorInputType class with std::unique_ptr.
+        Child classes follow this change as well.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createColorChooser):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2014-09-26  Sam Weinig  <sam@webkit.org>
 
         Replace OSObjectPtr with RetainPtr/adoptOS

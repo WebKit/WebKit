@@ -160,7 +160,7 @@ public:
     WEBCORE_EXPORT void disableSuddenTermination();
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
+    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)

@@ -474,7 +474,7 @@ void Chrome::disableSuddenTermination()
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassOwnPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, const Color& initialColor)
+std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
     notifyPopupOpeningObservers();
     return m_client.createColorChooser(client, initialColor);

@@ -101,7 +101,7 @@ PassRefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuCl
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassOwnPtr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
 {
     return nullptr;
 }

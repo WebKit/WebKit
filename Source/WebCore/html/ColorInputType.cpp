@@ -178,7 +178,7 @@ void ColorInputType::didChooseColor(const Color& color)
 
 void ColorInputType::didEndChooser()
 {
-    m_chooser.clear();
+    m_chooser = nullptr;
 }
 
 void ColorInputType::endColorChooser()

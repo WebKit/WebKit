@@ -156,7 +156,7 @@ private:
     virtual String generateReplacementFile(const String& path) override;
     
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) override;
+    virtual std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) override;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

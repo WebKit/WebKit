@@ -39,7 +39,6 @@
 #include "WebCoreKeyboardUIMode.h"
 #include <runtime/ConsoleTypes.h>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
@@ -274,7 +273,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
+    virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)

@@ -1,3 +1,17 @@
+2014-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move ColorInputType class to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=137173
+
+        Reviewed by Darin Adler.
+
+        Replace uses of PassOwnPtr in code under ColorInputType class with std::unique_ptr.
+        Child classes follow this change as well.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createColorChooser):
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Add initial is<>() / downcast<>() support for any type of Nodes

@@ -736,7 +736,7 @@ void WebChromeClient::annotatedRegionsChanged()
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
+std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();
