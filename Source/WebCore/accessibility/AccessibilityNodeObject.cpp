@@ -1609,6 +1609,11 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, Acces
     // quite long. As a heuristic, skip links, controls, and elements that are usually
     // containers with lots of children.
 
+    // ARIA states that certain elements are not allowed to expose their children content for name calculation.
+    if (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren
+        && !obj->accessibleNameDerivesFromContent())
+        return false;
+    
     if (equalIgnoringCase(obj->getAttribute(aria_hiddenAttr), "true"))
         return false;
     
@@ -1628,13 +1633,20 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, Acces
     return true;
 }
 
-static bool shouldAddSpaceBeforeAppendingNextElement(StringBuilder& builder, String& childText)
+static bool shouldAddSpaceBeforeAppendingNextElement(StringBuilder& builder, const String& childText)
 {
     if (!builder.length() || !childText.length())
         return false;
 
     // We don't need to add an additional space before or after a line break.
     return !(isHTMLLineBreak(childText[0]) || isHTMLLineBreak(builder[builder.length() - 1]));
+}
+    
+static void appendNameToStringBuilder(StringBuilder& builder, const String& text)
+{
+    if (shouldAddSpaceBeforeAppendingNextElement(builder, text))
+        builder.append(' ');
+    builder.append(text);
 }
 
 String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
@@ -1651,6 +1663,13 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
 
     StringBuilder builder;
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
+        
+        bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
+        if (shouldDeriveNameFromAuthor) {
+            appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
+            continue;
+        }
+        
         if (!shouldUseAccessiblityObjectInnerText(child, mode))
             continue;
 
@@ -1658,19 +1677,14 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             Vector<AccessibilityText> textOrder;
             toAccessibilityNodeObject(child)->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
-                if (shouldAddSpaceBeforeAppendingNextElement(builder, textOrder[0].text))
-                    builder.append(' ');
-                builder.append(textOrder[0].text);
+                appendNameToStringBuilder(builder, textOrder[0].text);
                 continue;
             }
         }
-
+        
         String childText = child->textUnderElement(mode);
-        if (childText.length()) {
-            if (shouldAddSpaceBeforeAppendingNextElement(builder, childText))
-                builder.append(' ');
-            builder.append(childText);
-        }
+        if (childText.length())
+            appendNameToStringBuilder(builder, childText);
     }
 
     return builder.toString().stripWhiteSpace().simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
@@ -1839,19 +1853,26 @@ static String accessibleNameForNode(Node* node)
     const AtomicString& alt = element->fastGetAttribute(altAttr);
     if (!alt.isEmpty())
         return alt;
+
+    // If the node can be turned into an AX object, we can use standard name computation rules.
+    // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
+    AccessibilityObject* axObject = node->document().axObjectCache()->getOrCreate(node);
+    if (axObject) {
+        String valueDescription = axObject->valueDescription();
+        if (!valueDescription.isEmpty())
+            return valueDescription;
+    }
     
     if (is<HTMLInputElement>(node))
         return downcast<HTMLInputElement>(*node).value();
     
-    // If the node can be turned into an AX object, we can use standard name computation rules.
-    // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    AccessibilityObject* axObject = node->document().axObjectCache()->getOrCreate(node);
     String text;
-    if (axObject)
-        text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeSkipIgnoredChildren, true));
-    else
+    if (axObject) {
+        if (axObject->accessibleNameDerivesFromContent())
+            text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true));
+    } else
         text = element->innerText();
-    
+
     if (!text.isEmpty())
         return text;
     
@@ -1866,12 +1887,8 @@ String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Eleme
 {
     StringBuilder builder;
     unsigned size = elements.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (i)
-            builder.append(' ');
-        
-        builder.append(accessibleNameForNode(elements[i]));
-    }
+    for (unsigned i = 0; i < size; ++i)
+        appendNameToStringBuilder(builder, accessibleNameForNode(elements[i]));
     return builder.toString();
 }
 

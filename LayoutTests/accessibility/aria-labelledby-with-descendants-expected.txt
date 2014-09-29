@@ -1,9 +1,31 @@
+
+
 This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-aria-labelledby description: AXDescription: hello link world test1 test2 test3
+test 1: aria-labelledby description: AXDescription: hello link use world test1 test2 test3
+test 1: expected description: hello link use world test1 test2 test3
+
+test 2: aria-labelledby description: AXDescription: foo bar
+test 2: expected description: foo bar
+
+test 3: aria-labelledby description: AXDescription: foo bar
+test 3: expected description: foo bar
+
+test 4: aria-labelledby description: AXDescription: foo
+test 4: expected description: foo
+
+test 5: aria-labelledby description: AXDescription: Delete 
+test 5: expected description: Delete
+
+test 6: aria-labelledby description: AXDescription: Delete product name
+test 6: expected description: Delete product name
+
+test 7: aria-labelledby description: AXDescription: foo bar baz bop bap boom
+test 7: expected description: foo bar baz bop bap boom
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

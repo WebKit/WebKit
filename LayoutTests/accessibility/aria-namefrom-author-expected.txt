@@ -1,0 +1,10 @@
+This tests all the cases where nameFrom: author is used instead of nameFrom: contents. This means that if these elements are used in aria-labelledby they should not return their inner text. The button should retain its aria-label as the description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Button description: AXDescription: text
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
