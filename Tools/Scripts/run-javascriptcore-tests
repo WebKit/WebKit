@@ -53,6 +53,8 @@ my @testsToSkipOnWindows = (
     "ecma/Date/15.9.2.2-6.js",
     "ecma/Date/15.9.5.31-1.js",
     "ecma_3/Date/15.9.5.7.js",
+    # function.arguments have been disabled
+    "js1_4/Functions/function-001.js",
 );
 
 my @testsToSkipOnNonWindows = (

@@ -1,5 +1,11 @@
 2014-09-29  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Skip a javascriptcore test following r174036.
+
+        * Scripts/run-javascriptcore-tests:
+
+2014-09-29  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Reduce number of processes used by NRWT on Windows to 1.
 
         * Scripts/webkitpy/port/win.py:
