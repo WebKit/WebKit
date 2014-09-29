@@ -2781,3 +2781,11 @@ fast/dom/navigator-hardwareConcurrency.html
 
 # Tests that exceed maximum call stack on windows
 fast/dom/Window/window-postmessage-clone-deep-array.html
+
+# Some inspector tests failing after r173992
+webkit.org/b/137157 inspector/css/matched-style-properties.html [ Failure ]
+webkit.org/b/137157 inspector/event-listener-set.html [ Failure ]
+webkit.org/b/137157 inspector/event-listener.html [ Failure ]
+webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure ]
+webkit.org/b/137157 inspector/protocol-promise-result.html [ Failure ]

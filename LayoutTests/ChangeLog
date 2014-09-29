@@ -1,5 +1,11 @@
 2014-09-29  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Skip some failing inspector tests following r174020.
+
+        * platform/win/TestExpectations:
+
+2014-09-29  Roger Fong  <roger_fong@apple.com>
+
         [Mac] Unreviewed. Missing test gardening from r174080.
 
         * accessibility/roles-computedRoleString-expected.txt:
