@@ -1952,7 +1952,7 @@ void WebPage::stopInteraction()
 
 void WebPage::performActionOnElement(uint32_t action)
 {
-    if (!m_interactionNode || !is<HTMLElement>(m_interactionNode))
+    if (!m_interactionNode || !is<HTMLElement>(m_interactionNode.get()))
         return;
 
     HTMLElement* element = downcast<HTMLElement>(m_interactionNode.get());
