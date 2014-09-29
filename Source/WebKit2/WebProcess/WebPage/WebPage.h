@@ -900,6 +900,7 @@ private:
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, IPC::MessageDecoder&);
     void loadPlainTextString(const String&, IPC::MessageDecoder&);
     void loadWebArchiveData(const IPC::DataReference&, IPC::MessageDecoder&);
+    void navigateToURLWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle&);
     void goForward(uint64_t navigationID, uint64_t);
     void goBack(uint64_t navigationID, uint64_t);

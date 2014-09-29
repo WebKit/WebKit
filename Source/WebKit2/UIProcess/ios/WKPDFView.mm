@@ -30,11 +30,14 @@
 
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <CorePDF/UIPDFDocument.h>
+#import <CorePDF/UIPDFLinkAnnotation.h>
 #import <CorePDF/UIPDFPage.h>
 #import <CorePDF/UIPDFPageView.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <WebCore/FloatRect.h>
+#import <chrono>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -110,6 +113,7 @@ typedef struct {
     for (auto& page : _pages) {
         [page.view removeFromSuperview];
         [page.view setDelegate:nil];
+        [[page.view annotationController] setDelegate:nil];
     }
     
     _pages.clear();
@@ -179,6 +183,7 @@ typedef struct {
         pageInfo.view = adoptNS([[UIPDFPageView alloc] initWithPage:pageInfo.page.get() tiledContent:YES]);
         [pageInfo.view setUseBackingLayer:YES];
         [pageInfo.view setDelegate:self];
+        [[pageInfo.view annotationController] setDelegate:self];
         [self addSubview:pageInfo.view.get()];
 
         [pageInfo.view setFrame:pageInfo.frame];
@@ -259,6 +264,7 @@ typedef struct {
     [_scrollView setContentSize:newFrame.size];
 }
 
+#pragma mark UIPDFPageViewDelegate
 
 - (void)zoom:(UIPDFPageView *)pageView to:(CGRect)targetRect atPoint:(CGPoint)origin kind:(UIPDFObjectKind)kind
 {
@@ -286,6 +292,33 @@ typedef struct {
     [_webView _zoomOutWithOrigin:centerOfPageInDocumentCoordinates];
 
     _isStartingZoom = NO;
+}
+
+#pragma mark UIPDFAnnotationControllerDelegate
+
+- (void)annotation:(UIPDFAnnotation *)annotation wasTouchedAtPoint:(CGPoint)point controller:(UIPDFAnnotationController *)controller
+{
+    ASSERT(isMainThread());
+
+    if (![annotation isKindOfClass:[UIPDFLinkAnnotation class]])
+        return;
+
+    UIPDFLinkAnnotation *linkAnnotation = (UIPDFLinkAnnotation *)annotation;
+    String urlString = linkAnnotation.url.absoluteString;
+    if (urlString.isEmpty())
+        return;
+
+    // FIXME: Support pageNumber navigations
+
+    CGPoint documentPoint = [controller.pageView convertPoint:point toView:self];
+    CGPoint screenPoint = [self.window convertPoint:[self convertPoint:documentPoint toView:nil] toWindow:nil];
+    static const int64_t dispatchOffset = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(200)).count();
+    RetainPtr<WKWebView> retainedWebView = _webView;
+
+    // Call navigateToURLWithSimulatedClick() on a delay so that a tap highlight can be shown.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, dispatchOffset), dispatch_get_main_queue(), ^ {
+        retainedWebView->_page->navigateToURLWithSimulatedClick(urlString, roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
+    });
 }
 
 @end

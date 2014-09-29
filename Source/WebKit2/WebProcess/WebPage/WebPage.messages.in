@@ -125,6 +125,7 @@ messages -> WebPage LegacyReceiver {
     LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadPlainTextString(String string, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
+    NavigateToURLWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
 
     Reload(uint64_t navigationID, bool reloadFromOrigin, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
