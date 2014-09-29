@@ -47,8 +47,6 @@ typedef struct _NSPoint NSPoint;
 #if PLATFORM(WIN)
 typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
-#elif PLATFORM(GTK)
-typedef struct _GdkPoint GdkPoint;
 #endif
 
 namespace WebCore {
@@ -120,9 +118,6 @@ public:
     operator POINT() const;
     IntPoint(const POINTS&);
     operator POINTS() const;
-#elif PLATFORM(GTK)
-    IntPoint(const GdkPoint&);
-    operator GdkPoint() const;
 #elif PLATFORM(EFL)
     explicit IntPoint(const Evas_Point&);
     operator Evas_Point() const;

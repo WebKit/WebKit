@@ -90,7 +90,7 @@ void GtkInputMethodFilter::setCursorRect(const IntRect& cursorRect)
     gtk_widget_get_allocation(m_widget, &allocation);
     translatedRect.move(allocation.x, allocation.y);
 
-    GdkRectangle gdkCursorRect = cursorRect;
+    GdkRectangle gdkCursorRect = { cursorRect.x(), cursorRect.y(), cursorRect.width(), cursorRect.height() };
     gtk_im_context_set_cursor_location(m_context.get(), &gdkCursorRect);
 }
 
