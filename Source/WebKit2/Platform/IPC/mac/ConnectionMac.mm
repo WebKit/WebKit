@@ -75,13 +75,13 @@ enum {
 //    to ensure it has a chance to terminate cleanly.
 class ConnectionTerminationWatchdog {
 public:
-    static void createConnectionTerminationWatchdog(RetainPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
+    static void createConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
     {
         new ConnectionTerminationWatchdog(xpcConnection, intervalInSeconds);
     }
     
 private:
-    ConnectionTerminationWatchdog(RetainPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
+    ConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
         : m_xpcConnection(xpcConnection)
         , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
 #if PLATFORM(IOS)
@@ -99,7 +99,7 @@ private:
         delete this;
     }
 
-    RetainPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
     RunLoop::Timer<ConnectionTerminationWatchdog> m_watchdogTimer;
 #if PLATFORM(IOS)
     std::unique_ptr<WebKit::ProcessAndUIAssertion> m_assertion;

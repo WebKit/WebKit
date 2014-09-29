@@ -28,7 +28,7 @@
 
 #import "ChildProcess.h"
 #import "WebKit2Initialize.h"
-#import <wtf/RetainPtr.h>
+#import <wtf/OSObjectPtr.h>
 
 #if HAVE(VOUCHERS)
 #if __has_include(<os/voucher_private.h>)
@@ -42,7 +42,7 @@ namespace WebKit {
 
 class XPCServiceInitializerDelegate {
 public:
-    XPCServiceInitializerDelegate(RetainPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
         : m_connection(WTF::move(connection))
         , m_initializerMessage(initializerMessage)
     {
@@ -61,12 +61,12 @@ protected:
     bool hasEntitlement(const char* entitlement);
     bool isClientSandboxed();
 
-    RetainPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_connection_t> m_connection;
     xpc_object_t m_initializerMessage;
 };
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
-void XPCServiceInitializer(RetainPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     XPCServiceInitializerDelegateType delegate(WTF::move(connection), initializerMessage);
 

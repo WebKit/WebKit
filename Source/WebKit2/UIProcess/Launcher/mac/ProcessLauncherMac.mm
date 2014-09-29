@@ -202,7 +202,7 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit XPC service.
-    auto connection = adoptOS(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
+    auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
     xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -211,7 +211,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
     if (_CFBundleSetupXPCBootstrapPtr()) {
-        auto initializationMessage = adoptOS(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         _CFBundleSetupXPCBootstrapPtr()(initializationMessage.get());
         xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
     }
@@ -222,7 +222,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_connection_resume(connection.get());
     
     if (shouldLeakBoost(launchOptions)) {
-        auto preBootstrapMessage = adoptOS(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto preBootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
         xpc_connection_send_message(connection.get(), preBootstrapMessage.get());
     }
@@ -238,7 +238,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
-    auto bootstrapMessage = adoptOS(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
     xpc_dictionary_set_string(bootstrapMessage.get(), "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
@@ -250,7 +250,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
 
-    auto extraInitializationData = adoptOS(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     for (const auto& keyValuePair : launchOptions.extraInitializationData)
         xpc_dictionary_set_string(extraInitializationData.get(), keyValuePair.key.utf8().data(), keyValuePair.value.utf8().data());
@@ -300,7 +300,7 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
-    // FIXME: It would be nice if we could use RetainPtr for this connection as well, but we'd have to be careful
+    // FIXME: It would be nice if we could use OSObjectPtr for this connection as well, but we'd have to be careful
     // not to introduce any retain cycles in the call to xpc_connection_set_event_handler below.
     xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
     xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);

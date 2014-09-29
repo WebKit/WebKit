@@ -25,18 +25,30 @@
 
 #include "config.h"
 
-#include <wtf/RetainPtr.h>
+#include <wtf/OSObjectPtr.h>
 
 #include <dispatch/dispatch.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace TestWebKitAPI {
 
-TEST(RetainPtrOSObject, AdoptOSObject)
+TEST(OSObjectPtr, AdoptOSObject)
 {
-    RetainPtr<dispatch_queue_t> foo = adoptOS(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
 
     EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+}
+
+TEST(OSObjectPtr, RetainRelease)
+{
+    dispatch_queue_t foo = dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL);
+    EXPECT_EQ(1, CFGetRetainCount(foo));
+
+    WTF::retainOSObject(foo);
+    EXPECT_EQ(2, CFGetRetainCount(foo));
+
+    WTF::releaseOSObject(foo);
+    EXPECT_EQ(1, CFGetRetainCount(foo));
 }
 
 } // namespace TestWebKitAPI

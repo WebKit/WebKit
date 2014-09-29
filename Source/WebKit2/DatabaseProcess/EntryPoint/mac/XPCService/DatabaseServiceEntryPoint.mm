@@ -36,5 +36,5 @@ extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection
 
 void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
-    XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOS(connection), initializerMessage);
+    XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
 }

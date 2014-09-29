@@ -50,7 +50,6 @@ namespace WTF {
 
     template<typename T> class RetainPtr;
 
-    template<typename T> RetainPtr<T> adoptOS(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
     template<typename T> RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
     template<typename T> RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
@@ -101,7 +100,6 @@ namespace WTF {
 
         void swap(RetainPtr&);
 
-        template<typename U> friend RetainPtr<U> adoptOS(U CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
         template<typename U> friend RetainPtr<U> adoptCF(U CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
         template<typename U> friend RetainPtr<U> adoptNS(U NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
@@ -251,11 +249,6 @@ namespace WTF {
         return a != b.get(); 
     }
 
-    template<typename T> inline RetainPtr<T> adoptOS(T CF_RELEASES_ARGUMENT ptr)
-    {
-        return RetainPtr<T>(ptr, RetainPtr<T>::Adopt);
-    }
-
     template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)
     {
 #ifdef __OBJC__
@@ -321,7 +314,6 @@ namespace WTF {
 } // namespace WTF
 
 using WTF::RetainPtr;
-using WTF::adoptOS;
 using WTF::adoptCF;
 using WTF::adoptNS;
 using WTF::retainPtr;

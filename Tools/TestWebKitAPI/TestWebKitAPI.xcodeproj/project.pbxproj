@@ -123,7 +123,7 @@
 		7C74D42F188228F300E5ED57 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
 		7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
-		7CBBA07819BB8A9100BBF025 /* RetainPtrOSObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBA07619BB8A9100BBF025 /* RetainPtrOSObject.cpp */; };
+		7CBBA07819BB8A9100BBF025 /* OSObjectPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */; };
 		7CC3E1FC197E234100BE6252 /* UserContentController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3E1FA197E234100BE6252 /* UserContentController.mm */; };
 		7CFBCADF1743234F00B2BFCF /* WillLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */; };
 		7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */; };
@@ -472,7 +472,7 @@
 		7C74D42D188228F300E5ED57 /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseThenTerminate.cpp; sourceTree = "<group>"; };
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
-		7CBBA07619BB8A9100BBF025 /* RetainPtrOSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RetainPtrOSObject.cpp; sourceTree = "<group>"; };
+		7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSObjectPtr.cpp; sourceTree = "<group>"; };
 		7CC3E1FA197E234100BE6252 /* UserContentController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentController.mm; sourceTree = "<group>"; };
 		7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad.cpp; sourceTree = "<group>"; };
 		7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad_Bundle.cpp; sourceTree = "<group>"; };
@@ -766,7 +766,7 @@
 		7CBBA07519BB8A0900BBF025 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
-				7CBBA07619BB8A9100BBF025 /* RetainPtrOSObject.cpp */,
+				7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */,
 			);
 			path = darwin;
 			sourceTree = "<group>";
@@ -1345,7 +1345,7 @@
 				1AEF994917A09F5400998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
 				BC029B181486AD6400817DA9 /* RetainPtr.cpp in Sources */,
 				BC029B1C1486B25900817DA9 /* RetainPtr.mm in Sources */,
-				7CBBA07819BB8A9100BBF025 /* RetainPtrOSObject.cpp in Sources */,
+				7CBBA07819BB8A9100BBF025 /* OSObjectPtr.cpp in Sources */,
 				C0991C51143C7D68007998F2 /* RetainPtrHashing.cpp in Sources */,
 				CD5393CA1757BAC400C07123 /* SHA1.cpp in Sources */,
 				14F3B11315E45EAB00210069 /* SaturatedArithmeticOperations.cpp in Sources */,
