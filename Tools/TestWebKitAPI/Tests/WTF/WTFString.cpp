@@ -160,4 +160,104 @@ TEST(WTF, StringIsolatedCopy)
     ASSERT_FALSE(original.impl() == copy.impl());
 }
 
+TEST(WTF, StringToInt)
+{
+    bool ok;
+
+    EXPECT_EQ(0, String().toInt());
+    EXPECT_EQ(0, String().toInt(&ok));
+    EXPECT_EQ(false, ok);
+
+    EXPECT_EQ(0, emptyString().toInt());
+    EXPECT_EQ(0, emptyString().toInt(&ok));
+    EXPECT_EQ(false, ok);
+
+    EXPECT_EQ(0, String("0").toInt());
+    EXPECT_EQ(0, String("0").toInt(&ok));
+    EXPECT_EQ(true, ok);
+
+    EXPECT_EQ(1, String("1").toInt());
+    EXPECT_EQ(1, String("1").toInt(&ok));
+    EXPECT_EQ(true, ok);
+
+    EXPECT_EQ(2147483647, String("2147483647").toInt());
+    EXPECT_EQ(2147483647, String("2147483647").toInt(&ok));
+    EXPECT_EQ(true, ok);
+
+    EXPECT_EQ(0, String("2147483648").toInt());
+    EXPECT_EQ(0, String("2147483648").toInt(&ok));
+    EXPECT_EQ(false, ok);
+
+    EXPECT_EQ(-2147483648, String("-2147483648").toInt());
+    EXPECT_EQ(-2147483648, String("-2147483648").toInt(&ok));
+    EXPECT_EQ(true, ok);
+
+    EXPECT_EQ(0, String("-2147483649").toInt());
+    EXPECT_EQ(0, String("-2147483649").toInt(&ok));
+    EXPECT_EQ(false, ok);
+
+    // fail if we see leading junk
+    EXPECT_EQ(0, String("x1").toInt());
+    EXPECT_EQ(0, String("x1").toInt(&ok));
+    EXPECT_EQ(false, ok);
+
+    // succeed if we see leading spaces
+    EXPECT_EQ(1, String(" 1").toInt());
+    EXPECT_EQ(1, String(" 1").toInt(&ok));
+    EXPECT_EQ(true, ok);
+
+    // silently ignore trailing junk
+    EXPECT_EQ(1, String("1x").toInt());
+    EXPECT_EQ(1, String("1x").toInt(&ok));
+    EXPECT_EQ(true, ok);
+}
+
+TEST(WTF, StringToDouble)
+{
+    bool ok;
+
+    EXPECT_EQ(0.0, String().toDouble());
+    EXPECT_EQ(0.0, String().toDouble(&ok));
+    EXPECT_EQ(false, ok);
+
+    EXPECT_EQ(0.0, emptyString().toDouble());
+    EXPECT_EQ(0.0, emptyString().toDouble(&ok));
+    EXPECT_EQ(false, ok);
+
+    EXPECT_EQ(0.0, String("0").toDouble());
+    EXPECT_EQ(0.0, String("0").toDouble(&ok));
+    EXPECT_EQ(true, ok);
+
+    EXPECT_EQ(1.0, String("1").toDouble());
+    EXPECT_EQ(1.0, String("1").toDouble(&ok));
+    EXPECT_EQ(true, ok);
+
+    // fail if we see leading junk
+    EXPECT_EQ(0.0, String("x1").toDouble());
+    EXPECT_EQ(0.0, String("x1").toDouble(&ok));
+    EXPECT_EQ(false, ok);
+
+    // succeed if we see leading spaces
+    EXPECT_EQ(1.0, String(" 1").toDouble());
+    EXPECT_EQ(1.0, String(" 1").toDouble(&ok));
+    EXPECT_EQ(true, ok);
+
+    // ignore trailing junk, but return false for "ok"
+    // FIXME: This is an inconsistency with toInt, which always guarantees
+    // it will return 0 if it's also going to return false for ok.
+    EXPECT_EQ(1.0, String("1x").toDouble());
+    EXPECT_EQ(1.0, String("1x").toDouble(&ok));
+    EXPECT_EQ(false, ok);
+
+    // parse only numbers, not special values such as "infinity"
+    EXPECT_EQ(0.0, String("infinity").toDouble());
+    EXPECT_EQ(0.0, String("infinity").toDouble(&ok));
+    EXPECT_EQ(false, ok);
+
+    // parse only numbers, not special values such as "nan"
+    EXPECT_EQ(0.0, String("nan").toDouble());
+    EXPECT_EQ(0.0, String("nan").toDouble(&ok));
+    EXPECT_EQ(false, ok);
+}
+
 } // namespace TestWebKitAPI

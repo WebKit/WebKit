@@ -1,3 +1,18 @@
+2014-09-29  Darin Adler  <darin@apple.com>
+
+        Tweak and tighten SVG font converter
+        https://bugs.webkit.org/show_bug.cgi?id=136956
+
+        Reviewed by Myles Maxfield.
+
+        I was investigating behavior of String::toInt, String::toDouble, and
+        String::toFloat for various failure cases, and decided to start some
+        unit tests for those functions here.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST): Addded a first small bit of StringToInt and
+        StringToDouble testing.
+
 2014-09-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][CMake] TestWebCore target build sometimes fail
