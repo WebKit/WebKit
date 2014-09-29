@@ -1,3 +1,13 @@
+2014-09-29  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Fix !ENABLE(INSPECTOR) build after r173929
+        https://bugs.webkit.org/show_bug.cgi?id=137210
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+
 2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r172919): WebKitPluginProcess fails to scan GTK+2 plugins after r172919.
