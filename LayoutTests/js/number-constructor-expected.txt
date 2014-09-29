@@ -113,6 +113,7 @@ PASS Number.parseFloat([]) is NaN
 PASS Number.parseFloat(true) is NaN
 PASS Number.parseFloat(false) is NaN
 PASS Number.parseFloat(null) is NaN
+PASS Number.parseFloat(undefined) is NaN
 PASS Number.parseFloat(Number.NaN) is NaN
 PASS Number.parseFloat("1.7976931348623157E308") is 1.7976931348623157e+308
 PASS Number.parseFloat("1.80E308") is Infinity
@@ -142,6 +143,7 @@ PASS Number.parseInt([]) is NaN
 PASS Number.parseInt(true) is NaN
 PASS Number.parseInt(false) is NaN
 PASS Number.parseInt(null) is NaN
+PASS Number.parseInt(undefined) is NaN
 PASS Number.parseInt(Number.NaN) is NaN
 PASS Number.parseInt("1.7976931348623157E308") is 1
 PASS Number.parseInt("1.80E308") is 1

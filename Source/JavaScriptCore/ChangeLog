@@ -1,3 +1,12 @@
+2014-09-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        Missing changes from r174049
+        https://bugs.webkit.org/show_bug.cgi?id=137206
+
+        Reviewed by Darin Adler.
+
+        * runtime/CommonIdentifiers.h:
+
 2014-09-28  Diego Pino Garcia  <dpino@igalia.com>
 
         Simple ES6 feature: Number constructor extras
