@@ -58,9 +58,15 @@ class Git(SCM, SVNRepository):
 
     executable_name = 'git'
 
-    def __init__(self, cwd, **kwargs):
+    def __init__(self, cwd, patch_directories, **kwargs):
         SCM.__init__(self, cwd, **kwargs)
         self._check_git_architecture()
+        if patch_directories == []:
+            raise Exception(message='Empty list of patch directories passed to SCM.__init__')
+        elif patch_directories == None:
+            self._patch_directories = [self._filesystem.relpath(cwd, self.checkout_root)]
+        else:
+            self._patch_directories = patch_directories
 
     def _machine_is_64bit(self):
         import platform
@@ -204,6 +210,7 @@ class Git(SCM, SVNRepository):
     def changed_files(self, git_commit=None):
         # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
         status_command = [self.executable_name, 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit)]
+        status_command.extend(self._patch_directories)
         # FIXME: I'm not sure we're returning the same set of files that SVN.changed_files is.
         # Added (A), Copied (C), Deleted (D), Modified (M), Renamed (R)
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))

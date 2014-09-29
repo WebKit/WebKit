@@ -1,3 +1,18 @@
+2014-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow webkit-patch upload to respect the --directory argument with git checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=137166
+
+        Reviewed by Darin Adler.
+
+        We simply hadn't plumbed it through.
+
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        (SCMDetector.detect_scm_system):
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.__init__):
+        (Git.changed_files):
+
 2014-09-26  Sam Weinig  <sam@webkit.org>
 
         Replace OSObjectPtr with RetainPtr/adoptOS
