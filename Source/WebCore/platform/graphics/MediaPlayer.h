@@ -221,7 +221,6 @@ public:
     
 #if ENABLE(IOS_AIRPLAY)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) { };
-    virtual void mediaPlayerPlaybackTargetAvailabilityChanged(MediaPlayer*) { };
 #endif
 
     virtual String mediaPlayerReferrer() const { return String(); }

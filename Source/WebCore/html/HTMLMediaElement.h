@@ -546,7 +546,6 @@ private:
 
 #if ENABLE(IOS_AIRPLAY)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) override;
-    virtual void mediaPlayerPlaybackTargetAvailabilityChanged(MediaPlayer*) override;
     void enqueuePlaybackTargetAvailabilityChangedEvent();
 #endif
 
