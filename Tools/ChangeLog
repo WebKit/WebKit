@@ -1,3 +1,12 @@
+2014-09-29  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Reduce number of processes used by NRWT on Windows to 1.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes):
+        Reduce number of processes to 1 so we can get a good baseline for what failures
+        we should be expecting to see from the Windows bots.
+
 2014-09-29  Darin Adler  <darin@apple.com>
 
         Tweak and tighten SVG font converter
