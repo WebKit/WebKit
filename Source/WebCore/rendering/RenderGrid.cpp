@@ -466,20 +466,19 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
     return availableLogicalSpaceIgnoringFractionTracks / accumulatedFractions;
 }
 
-const GridTrackSize& RenderGrid::gridTrackSize(GridTrackSizingDirection direction, size_t i) const
+GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, size_t i) const
 {
-    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style().gridColumns() : style().gridRows();
-    if (i >= trackStyles.size())
-        return (direction == ForColumns) ? style().gridAutoColumns() : style().gridAutoRows();
+    bool isForColumns = (direction == ForColumns);
+    auto& trackStyles =  isForColumns ? style().gridColumns() : style().gridRows();
+    auto& trackSize = (i >= trackStyles.size()) ? (isForColumns ? style().gridAutoColumns() : style().gridAutoRows()) : trackStyles[i];
 
-    const GridTrackSize& trackSize = trackStyles[i];
-    // If the logical width/height of the grid container is indefinite, percentage values are treated as <auto>.
-    if (trackSize.isPercentage()) {
-        Length logicalSize = direction == ForColumns ? style().logicalWidth() : style().logicalHeight();
-        if (logicalSize.isIntrinsicOrAuto()) {
-            static NeverDestroyed<GridTrackSize> autoTrackSize(Auto);
-            return autoTrackSize.get();
-        }
+    // If the logical width/height of the grid container is indefinite, percentage values are treated as <auto> (or in
+    // the case of minmax() as min-content for the first position and max-content for the second).
+    Length logicalSize = isForColumns ? style().logicalWidth() : style().logicalHeight();
+    if (logicalSize.isIntrinsicOrAuto()) {
+        const GridLength& oldMinTrackBreadth = trackSize.minTrackBreadth();
+        const GridLength& oldMaxTrackBreadth = trackSize.maxTrackBreadth();
+        return GridTrackSize(oldMinTrackBreadth.isPercentage() ? Length(MinContent) : oldMinTrackBreadth, oldMaxTrackBreadth.isPercentage() ? Length(MaxContent) : oldMaxTrackBreadth);
     }
 
     return trackSize;

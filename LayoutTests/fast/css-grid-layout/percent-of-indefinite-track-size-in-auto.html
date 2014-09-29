@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.indefiniteSizeGrid {
+    font: 10px/1 Ahem;
+}
+.gridWithPercent {
+    -webkit-grid-auto-columns: 25%;
+    -webkit-grid-auto-rows: 30%;
+}
+.gridWithPercentInMinOfMinMax {
+    -webkit-grid-auto-columns: minmax(20%, max-content);
+    -webkit-grid-auto-rows: minmax(100%, 15px);
+}
+.gridWithPercentInMinOfMinMax2 {
+    -webkit-grid-auto-columns: minmax(20%, 50px);
+    -webkit-grid-auto-rows: minmax(100%, max-content);
+}
+.gridWithPercentInMaxOfMinMax {
+    -webkit-grid-auto-columns: minmax(min-content, 25%);
+    -webkit-grid-auto-rows: minmax(0px, 1%);
+}
+.gridWithPercentInMaxOfMinMax2 {
+    -webkit-grid-auto-columns: minmax(20px, 25%);
+    -webkit-grid-auto-rows: minmax(min-content, 1%);
+}
+.gridWithPercentsInMinMax {
+    -webkit-grid-auto-columns: minmax(25%, 50%);
+    -webkit-grid-auto-rows: minmax(10%, 90%);
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.indefiniteSizeGrid');">
+<p>This test checks that percentages of indefinite sizes are treated as min-content (for the min track sizing function) or max-content (for the max track sizing function).</p>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercent" data-expected-width="30" data-expected-height="20">
+	<div class="firstRowFirstColumn">XXX<br>XXX</div>
+    </div>
+</div>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercentInMinOfMinMax" data-expected-width="30" data-expected-height="15">
+	<div class="firstRowFirstColumn">XXX</div>
+	<div class="firstRowFirstColumn">XX XX</div>
+    </div>
+</div>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercentInMinOfMinMax2" data-expected-width="30" data-expected-height="20">
+	<div class="firstRowFirstColumn">XXX</div>
+	<div class="firstRowFirstColumn">XX XX</div>
+    </div>
+</div>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercentInMaxOfMinMax" data-expected-width="40" data-expected-height="20">
+	<div class="firstRowFirstColumn">XXXX<br>X</div>
+    </div>
+</div>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercentInMaxOfMinMax2" data-expected-width="20" data-expected-height="20">
+	<div class="firstRowFirstColumn">XXXX<br>X</div>
+    </div>
+</div>
+<div style="position: relative;">
+    <div class="indefiniteSizeGrid gridWithPercentsInMinMax" data-expected-width="40" data-expected-height="40">
+	<div class="firstRowFirstColumn">XXX<br>XX XX<br>XXXX</div>
+    </div>
+</div>
+</body>

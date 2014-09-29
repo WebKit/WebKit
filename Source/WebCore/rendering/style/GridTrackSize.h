@@ -52,6 +52,11 @@ public:
     {
     }
 
+    GridTrackSize(const GridLength& minTrackBreadth, const GridLength& maxTrackBreadth)
+    {
+        setMinMax(minTrackBreadth, maxTrackBreadth);
+    }
+
     const GridLength& length() const
     {
         ASSERT(m_type == LengthTrackSizing);

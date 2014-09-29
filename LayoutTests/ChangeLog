@@ -1,3 +1,31 @@
+2014-09-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Handle percentages of indefinite sizes in minmax() and grid-auto-*
+        https://bugs.webkit.org/show_bug.cgi?id=136453
+
+        Reviewed by Darin Adler.
+
+        Added three new tests, one to verify that we do not assert with
+        percentages inside minmax() and another two to verify that we
+        properly compute the percentage of indefinite size in various
+        situations both in grid-template-* properties and in
+        grid-auto-{column|row} properties.
+
+        Three other tests required minimum adjustments as they were using
+        percentages of indefinite sizes inside minmax functions. In order
+        to keep the original expected behavior some definite sizes were
+        added.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-resolution.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-update.html:
+        * fast/css-grid-layout/percent-of-indefinite-track-size-expected.txt: Added.
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-auto-expected.txt: Added.
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-auto.html: Added.
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-minmax-crash-expected.txt: Added.
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-minmax-crash.html: Added.
+        * fast/css-grid-layout/percent-of-indefinite-track-size.html: Added.
+
 2014-09-28  Diego Pino Garcia  <dpino@igalia.com>
 
         Simple ES6 feature: Number constructor extras

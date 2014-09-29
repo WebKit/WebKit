@@ -67,7 +67,7 @@ window.addEventListener("load", updateGridAutoRowsColumns, false);
 <div>This test checks that grid-auto-{row|column} updates properly recomputes the grid items' sizes.</div>
 
 <div class="constrainedContainer" style="position: relative">
-    <div class="grid" id="constrainedGrid" style="height: 100%">
+    <div class="grid" id="constrainedGrid" style="height: 100%; width: 100%;">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
     </div>
 </div>
@@ -79,7 +79,7 @@ window.addEventListener("load", updateGridAutoRowsColumns, false);
 </div>
 
 <div class="constrainedContainer" style="position: relative;">
-    <div class="grid" id="constrainedGridUndefinedHeight">
+    <div class="grid" id="constrainedGridUndefinedHeight" style="width: 100%;">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
     </div>
 </div>
