@@ -45,7 +45,7 @@ private:
     virtual void contextMenuDestroyed();
     
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>) override;
+    virtual std::unique_ptr<WebCore::ContextMenu> customizeMenu(std::unique_ptr<WebCore::ContextMenu>) override;
 #else
     virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*) override;
 #endif

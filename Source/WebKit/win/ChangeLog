@@ -1,3 +1,17 @@
+2014-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr for ContextMenuController
+        https://bugs.webkit.org/show_bug.cgi?id=137178
+
+        Reviewed by Darin Adler.
+
+        Switch to using std::unique_ptr instead of OwnPtr and PassOwnPtr
+        for ContextMenuController class. Inherited class is changed by this use as well.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::customizeMenu):
+        * WebCoreSupport/WebContextMenuClient.h:
+
 2014-09-26  Christophe Dumez  <cdumez@apple.com>
 
         Stop using legacy NODE_TYPE_CASTS() macro for HTML Elements

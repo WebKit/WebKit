@@ -90,7 +90,7 @@ ContextMenuController::~ContextMenuController()
 
 void ContextMenuController::clearContextMenu()
 {
-    m_contextMenu.clear();
+    m_contextMenu = nullptr;
     if (m_menuProvider)
         m_menuProvider->contextMenuCleared();
     m_menuProvider = 0;
@@ -107,9 +107,9 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     showContextMenu(event);
 }
 
-static PassOwnPtr<ContextMenuItem> separatorItem()
+static std::unique_ptr<ContextMenuItem> separatorItem()
 {
-    return adoptPtr(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
+    return std::unique_ptr<ContextMenuItem>(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
 }
 
 void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenuProvider> menuProvider)
@@ -146,7 +146,7 @@ static Image* imageFromImageElementNode(Node& node)
 }
 #endif
 
-PassOwnPtr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event* event)
+std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event* event)
 {
     ASSERT(event);
     
@@ -175,7 +175,7 @@ PassOwnPtr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event* eve
     }
 #endif
 
-    return adoptPtr(new ContextMenu);
+    return std::unique_ptr<ContextMenu>(new ContextMenu);
 }
 
 void ContextMenuController::showContextMenu(Event* event)
@@ -186,7 +186,7 @@ void ContextMenuController::showContextMenu(Event* event)
 #endif
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    m_contextMenu = m_client.customizeMenu(m_contextMenu.release());
+    m_contextMenu = m_client.customizeMenu(WTF::move(m_contextMenu));
 #else
     PlatformMenuDescription customMenu = m_client.getCustomMenuFromDefaultItems(m_contextMenu.get());
     m_contextMenu->setPlatformDescription(customMenu);

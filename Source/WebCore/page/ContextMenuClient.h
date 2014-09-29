@@ -31,7 +31,6 @@
 #include "ContextMenu.h"
 #include "PlatformMenuDescription.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
     class ContextMenuItem;
@@ -45,7 +44,7 @@ namespace WebCore {
         virtual void contextMenuDestroyed() = 0;
         
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-        virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>) = 0;
+        virtual std::unique_ptr<ContextMenu> customizeMenu(std::unique_ptr<ContextMenu>) = 0;
 #else
         virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) = 0;
 #endif

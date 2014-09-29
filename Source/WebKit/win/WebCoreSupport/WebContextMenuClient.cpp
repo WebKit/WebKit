@@ -53,13 +53,13 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-PassOwnPtr<ContextMenu> WebContextMenuClient::customizeMenu(PassOwnPtr<ContextMenu> popMenu)
+std::unique_ptr<ContextMenu> WebContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu> popMenu)
 {
-    OwnPtr<ContextMenu> menu = popMenu;
+    std::unique_ptr<ContextMenu> menu = WTF::move(popMenu);
 
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return menu.release();
+        return menu;
 
     ASSERT(uiDelegate);
 
@@ -69,13 +69,13 @@ PassOwnPtr<ContextMenu> WebContextMenuClient::customizeMenu(PassOwnPtr<ContextMe
     // FIXME: We need to decide whether to do the default before calling this delegate method
     if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), nativeMenu, &nativeMenu))) {
         ::DestroyMenu(nativeMenu);
-        return menu.release();
+        return menu;
     }
     
-    OwnPtr<ContextMenu> customizedMenu = adoptPtr(new ContextMenu(nativeMenu));
+    std::unique_ptr<ContextMenu> customizedMenu = std::unique_ptr<ContextMenu>(new ContextMenu(nativeMenu));
     ::DestroyMenu(nativeMenu);
 
-    return customizedMenu.release();
+    return customizedMenu;
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)

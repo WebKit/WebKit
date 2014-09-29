@@ -26,7 +26,6 @@
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuClient.h>
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 
 class WebView;
 
@@ -36,7 +35,7 @@ public:
 
     virtual void contextMenuDestroyed();
 
-    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
+    virtual std::unique_ptr<WebCore::ContextMenu> customizeMenu(std::unique_ptr<WebCore::ContextMenu>);
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
     virtual void downloadURL(const WebCore::URL&);
