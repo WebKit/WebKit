@@ -17,7 +17,7 @@ test 3: expected description: foo bar
 test 4: aria-labelledby description: AXDescription: foo
 test 4: expected description: foo
 
-test 5: aria-labelledby description: AXDescription: Delete 
+test 5: aria-labelledby description: AXDescription: Delete
 test 5: expected description: Delete
 
 test 6: aria-labelledby description: AXDescription: Delete product name
