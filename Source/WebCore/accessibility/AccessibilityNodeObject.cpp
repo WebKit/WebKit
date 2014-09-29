@@ -63,6 +63,7 @@
 #include "HitTestResult.h"
 #include "LabelableElement.h"
 #include "LocalizedStrings.h"
+#include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -1502,7 +1503,7 @@ String AccessibilityNodeObject::accessibilityDescription() const
         return downcast<SVGElement>(*m_node).title();
     
 #if ENABLE(MATHML)
-    if (m_node && m_node->isMathMLElement())
+    if (m_node && is<MathMLElement>(*m_node))
         return getAttribute(MathMLNames::alttextAttr);
 #endif
 

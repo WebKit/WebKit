@@ -34,6 +34,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLAudioElement.h"
 #include "HTMLBRElement.h"
+#include "MathMLElement.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "RenderTheme.h"
@@ -166,7 +167,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
     }
 
 #if ENABLE(MATHML)
-    if (element.isMathMLElement() && !mathMLStyleSheet) {
+    if (is<MathMLElement>(element) && !mathMLStyleSheet) {
         // MathML rules.
         mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());

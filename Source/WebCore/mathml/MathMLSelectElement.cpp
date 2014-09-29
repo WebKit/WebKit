@@ -157,7 +157,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
     if (!child)
         return nullptr;
 
-    if (!child->isMathMLElement() || !downcast<MathMLElement>(*child).isPresentationMathML()) {
+    if (!is<MathMLElement>(child) || !downcast<MathMLElement>(*child).isPresentationMathML()) {
         // The first child is not a presentation MathML element. Hence we move to the second child and start searching an annotation child that could be displayed.
         child = child->nextElementSibling();
     } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {
@@ -167,7 +167,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
     // Otherwise, the first child is an <annotation> or <annotation-xml> element. This is invalid, but some people use this syntax so we take care of this case too and start the search from this first child.
 
     for ( ; child; child = child->nextElementSibling()) {
-        if (!child->isMathMLElement())
+        if (!is<MathMLElement>(child))
             continue;
 
         if (child->hasTagName(MathMLNames::annotationTag)) {

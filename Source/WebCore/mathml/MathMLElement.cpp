@@ -294,7 +294,7 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicStri
 {
     if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
         Element* parent = parentElement();
-        if (parent && parent->isMathMLElement() && parent->hasTagName(semanticsTag))
+        if (parent && is<MathMLElement>(parent) && parent->hasTagName(semanticsTag))
             downcast<MathMLElement>(*parent).updateSelectedChild();
     }
     StyledElement::attributeChanged(name, oldValue, newValue, reason);

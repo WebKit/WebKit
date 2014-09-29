@@ -3491,7 +3491,7 @@ bool AccessibilityRenderObject::isMathElement() const
     if (!m_renderer || !node)
         return false;
     
-    return node->isMathMLElement();
+    return is<MathMLElement>(node);
 }
 
 bool AccessibilityRenderObject::isMathFraction() const
