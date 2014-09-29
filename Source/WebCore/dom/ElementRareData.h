@@ -86,7 +86,7 @@ public:
     void setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot) { m_shadowRoot = shadowRoot; }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
+    void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTF::move(attributeMap); }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = WTF::move(computedStyle); }
@@ -140,7 +140,7 @@ private:
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
     std::unique_ptr<ClassList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
-    OwnPtr<NamedNodeMap> m_attributeMap;
+    std::unique_ptr<NamedNodeMap> m_attributeMap;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;

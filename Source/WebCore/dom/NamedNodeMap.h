@@ -26,7 +26,6 @@
 #define NamedNodeMap_h
 
 #include "ScriptWrappable.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
 
@@ -41,9 +40,9 @@ class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:
-    static PassOwnPtr<NamedNodeMap> create(Element& element)
+    static std::unique_ptr<NamedNodeMap> create(Element& element)
     {
-        return adoptPtr(new NamedNodeMap(element));
+        return std::unique_ptr<NamedNodeMap>(new NamedNodeMap(element));
     }
 
     void ref();
