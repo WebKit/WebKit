@@ -1,3 +1,9 @@
+2014-09-29  Tim Horton  <timothy_horton@apple.com>
+
+        Add Jake as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-29  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip a javascriptcore test following r174036.
