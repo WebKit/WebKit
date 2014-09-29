@@ -279,6 +279,87 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
     return false;
 }
 
+RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject* descendant)
+{
+    RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
+    RenderObject* nextRendererInFlowThread = descendant->nextInPreOrderAfterChildren(this);
+    RenderObject* insertBeforeMulticolChild = nullptr;
+    RenderObject* nextDescendant = descendant;
+
+    if (isValidColumnSpanner(this, descendant)) {
+        // This is a spanner (column-span:all). Such renderers are moved from where they would
+        // otherwise occur in the render tree to becoming a direct child of the multicol container,
+        // so that they live among the column sets. This simplifies the layout implementation, and
+        // basically just relies on regular block layout done by the RenderBlockFlow that
+        // establishes the multicol container.
+        RenderBlockFlow* container = toRenderBlockFlow(descendant->parent());
+        RenderMultiColumnSet* setToSplit = nullptr;
+        if (nextRendererInFlowThread) {
+            setToSplit = findSetRendering(descendant);
+            if (setToSplit) {
+                setToSplit->setNeedsLayout();
+                insertBeforeMulticolChild = setToSplit->nextSibling();
+            }
+        }
+        // Moving a spanner's renderer so that it becomes a sibling of the column sets requires us
+        // to insert an anonymous placeholder in the tree where the spanner's renderer otherwise
+        // would have been. This is needed for a two reasons: We need a way of separating inline
+        // content before and after the spanner, so that it becomes separate line boxes. Secondly,
+        // this placeholder serves as a break point for column sets, so that, when encountered, we
+        // end flowing one column set and move to the next one.
+        RenderMultiColumnSpannerPlaceholder* placeholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(this, toRenderBox(descendant), &container->style());
+        container->addChild(placeholder, descendant->nextSibling());
+        container->removeChild(*descendant);
+        
+        // This is a guard to stop an ancestor flow thread from processing the spanner.
+        gShiftingSpanner = true;
+        multicolContainer->RenderBlock::addChild(descendant, insertBeforeMulticolChild);
+        gShiftingSpanner = false;
+        
+        // The spanner has now been moved out from the flow thread, but we don't want to
+        // examine its children anyway. They are all part of the spanner and shouldn't trigger
+        // creation of column sets or anything like that. Continue at its original position in
+        // the tree, i.e. where the placeholder was just put.
+        if (subtreeRoot == descendant)
+            subtreeRoot = placeholder;
+        nextDescendant = placeholder;
+    } else {
+        // This is regular multicol content, i.e. not part of a spanner.
+        if (nextRendererInFlowThread && nextRendererInFlowThread->isRenderMultiColumnSpannerPlaceholder()) {
+            // Inserted right before a spanner. Is there a set for us there?
+            RenderMultiColumnSpannerPlaceholder* placeholder = toRenderMultiColumnSpannerPlaceholder(nextRendererInFlowThread);
+            if (RenderObject* previous = placeholder->spanner()->previousSibling()) {
+                if (previous->isRenderMultiColumnSet())
+                    return nextDescendant; // There's already a set there. Nothing to do.
+            }
+            insertBeforeMulticolChild = placeholder->spanner();
+        } else if (RenderMultiColumnSet* lastSet = lastMultiColumnSet()) {
+            // This child is not an immediate predecessor of a spanner, which means that if this
+            // child precedes a spanner at all, there has to be a column set created for us there
+            // already. If it doesn't precede any spanner at all, on the other hand, we need a
+            // column set at the end of the multicol container. We don't really check here if the
+            // child inserted precedes any spanner or not (as that's an expensive operation). Just
+            // make sure we have a column set at the end. It's no big deal if it remains unused.
+            if (!lastSet->nextSibling())
+                return nextDescendant;
+        }
+    }
+    // Need to create a new column set when there's no set already created. We also always insert
+    // another column set after a spanner. Even if it turns out that there are no renderers
+    // following the spanner, there may be bottom margins there, which take up space.
+    RenderMultiColumnSet* newSet = new RenderMultiColumnSet(*this, RenderStyle::createAnonymousStyleWithDisplay(&multicolContainer->style(), BLOCK));
+    newSet->initializeStyle();
+    multicolContainer->RenderBlock::addChild(newSet, insertBeforeMulticolChild);
+    invalidateRegions();
+
+    // We cannot handle immediate column set siblings at the moment (and there's no need for
+    // it, either). There has to be at least one spanner separating them.
+    ASSERT(!previousColumnSetOrSpannerSiblingOf(newSet) || !previousColumnSetOrSpannerSiblingOf(newSet)->isRenderMultiColumnSet());
+    ASSERT(!nextColumnSetOrSpannerSiblingOf(newSet) || !nextColumnSetOrSpannerSiblingOf(newSet)->isRenderMultiColumnSet());
+    
+    return nextDescendant;
+}
+
 void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* descendant)
 {
     if (gShiftingSpanner || m_beingEvacuated || descendant->isInFlowRenderFlowThread())
@@ -296,33 +377,19 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 // and get the spanner content back into this flow thread.
                 RenderBox* spanner = placeholder->spanner();
                 
-                // Get info for the move of the original content back into our flow thread.
-                RenderBoxModelObject* placeholderParent = toRenderBoxModelObject(placeholder->parent());
-            
+                // Insert after the placeholder, but don't let a notification happen.
+                gShiftingSpanner = true;
+                RenderBlockFlow* ancestorBlock = toRenderBlockFlow(spanner->parent());
+                ancestorBlock->moveChildTo(placeholder->parentBox(), spanner, placeholder->nextSibling(), true);
+                gShiftingSpanner = false;
+                
                 // We have to nuke the placeholder, since the ancestor already lost the mapping to it when
                 // we shifted the placeholder down into this flow thread.
-                RenderObject* placeholderNextSibling = placeholderParent->removeChild(*placeholder);
-
-                // Get the ancestor multicolumn flow thread to clean up its mess.
-                RenderBlockFlow* ancestorBlock = toRenderBlockFlow(spanner->parent());
-                ancestorBlock->multiColumnFlowThread()->flowThreadRelativeWillBeRemoved(spanner);
+                ancestorBlock->multiColumnFlowThread()->handleSpannerRemoval(spanner);
+                placeholder->destroy();
                 
-                // Now move the original content into our flow thread. It will end up calling flowThreadDescendantInserted
-                // on the new content only, and everything will get set up properly.
-                ancestorBlock->moveChildTo(placeholderParent, spanner, placeholderNextSibling, true);
-                
-                // Advance descendant.
-                descendant = placeholderNextSibling;
-                
-                // If the spanner was the subtree root, then we're done, since there is nothing else left to insert.
-                if (!descendant)
-                    return;
-
-                // Now that we have done this, we can continue past the spanning content, since we advanced
-                // descendant already.
-                if (descendant)
-                    descendant = descendant->previousInPreOrder(subtreeRoot);
-
+                // Now we process the spanner.
+                descendant = processPossibleSpannerDescendant(subtreeRoot, spanner);
                 continue;
             }
             
@@ -331,79 +398,27 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
             ASSERT(!placeholder->firstChild()); // There should be no children here, but if there are, we ought to skip them.
             continue;
         }
-        RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
-        RenderObject* nextRendererInFlowThread = descendant->nextInPreOrderAfterChildren(this);
-        RenderObject* insertBeforeMulticolChild = nullptr;
-        if (isValidColumnSpanner(this, descendant)) {
-            // This is a spanner (column-span:all). Such renderers are moved from where they would
-            // otherwise occur in the render tree to becoming a direct child of the multicol container,
-            // so that they live among the column sets. This simplifies the layout implementation, and
-            // basically just relies on regular block layout done by the RenderBlockFlow that
-            // establishes the multicol container.
-            RenderBlockFlow* container = toRenderBlockFlow(descendant->parent());
-            RenderMultiColumnSet* setToSplit = nullptr;
-            if (nextRendererInFlowThread) {
-                setToSplit = findSetRendering(descendant);
-                if (setToSplit) {
-                    setToSplit->setNeedsLayout();
-                    insertBeforeMulticolChild = setToSplit->nextSibling();
-                }
-            }
-            // Moving a spanner's renderer so that it becomes a sibling of the column sets requires us
-            // to insert an anonymous placeholder in the tree where the spanner's renderer otherwise
-            // would have been. This is needed for a two reasons: We need a way of separating inline
-            // content before and after the spanner, so that it becomes separate line boxes. Secondly,
-            // this placeholder serves as a break point for column sets, so that, when encountered, we
-            // end flowing one column set and move to the next one.
-            RenderMultiColumnSpannerPlaceholder* placeholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(this, toRenderBox(descendant), &container->style());
-            container->addChild(placeholder, descendant->nextSibling());
-            container->removeChild(*descendant);
-            
-            // This is a guard to stop an ancestor flow thread from processing the spanner.
-            gShiftingSpanner = true;
-            multicolContainer->RenderBlock::addChild(descendant, insertBeforeMulticolChild);
-            gShiftingSpanner = false;
-            
-            // The spanner has now been moved out from the flow thread, but we don't want to
-            // examine its children anyway. They are all part of the spanner and shouldn't trigger
-            // creation of column sets or anything like that. Continue at its original position in
-            // the tree, i.e. where the placeholder was just put.
-            if (subtreeRoot == descendant)
-                subtreeRoot = placeholder;
-            descendant = placeholder;
-        } else {
-            // This is regular multicol content, i.e. not part of a spanner.
-            if (nextRendererInFlowThread && nextRendererInFlowThread->isRenderMultiColumnSpannerPlaceholder()) {
-                // Inserted right before a spanner. Is there a set for us there?
-                RenderMultiColumnSpannerPlaceholder* placeholder = toRenderMultiColumnSpannerPlaceholder(nextRendererInFlowThread);
-                if (RenderObject* previous = placeholder->spanner()->previousSibling()) {
-                    if (previous->isRenderMultiColumnSet())
-                        continue; // There's already a set there. Nothing to do.
-                }
-                insertBeforeMulticolChild = placeholder->spanner();
-            } else if (RenderMultiColumnSet* lastSet = lastMultiColumnSet()) {
-                // This child is not an immediate predecessor of a spanner, which means that if this
-                // child precedes a spanner at all, there has to be a column set created for us there
-                // already. If it doesn't precede any spanner at all, on the other hand, we need a
-                // column set at the end of the multicol container. We don't really check here if the
-                // child inserted precedes any spanner or not (as that's an expensive operation). Just
-                // make sure we have a column set at the end. It's no big deal if it remains unused.
-                if (!lastSet->nextSibling())
-                    continue;
+        
+        descendant = processPossibleSpannerDescendant(subtreeRoot, descendant);
+    }
+}
+
+void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject* spanner)
+{
+     // The placeholder may already have been removed, but if it hasn't, do so now.
+    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(toRenderBox(spanner))) {
+        placeholder->parent()->removeChild(*placeholder);
+        m_spannerMap.remove(toRenderBox(spanner));
+    }
+
+    if (RenderObject* next = spanner->nextSibling()) {
+        if (RenderObject* previous = spanner->previousSibling()) {
+            if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
+                // Merge two sets that no longer will be separated by a spanner.
+                next->destroy();
+                previous->setNeedsLayout();
             }
         }
-        // Need to create a new column set when there's no set already created. We also always insert
-        // another column set after a spanner. Even if it turns out that there are no renderers
-        // following the spanner, there may be bottom margins there, which take up space.
-        RenderMultiColumnSet* newSet = new RenderMultiColumnSet(*this, RenderStyle::createAnonymousStyleWithDisplay(&multicolContainer->style(), BLOCK));
-        newSet->initializeStyle();
-        multicolContainer->RenderBlock::addChild(newSet, insertBeforeMulticolChild);
-        invalidateRegions();
-
-        // We cannot handle immediate column set siblings at the moment (and there's no need for
-        // it, either). There has to be at least one spanner separating them.
-        ASSERT(!previousColumnSetOrSpannerSiblingOf(newSet) || !previousColumnSetOrSpannerSiblingOf(newSet)->isRenderMultiColumnSet());
-        ASSERT(!nextColumnSetOrSpannerSiblingOf(newSet) || !nextColumnSetOrSpannerSiblingOf(newSet)->isRenderMultiColumnSet());
     }
 }
 
@@ -423,22 +438,8 @@ void RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved(RenderObject* 
     if (relative->style().columnSpan() == ColumnSpanAll) {
         if (relative->parent() != parent())
             return; // not a valid spanner.
-
-        // The placeholder may already have been removed, but if it hasn't, do so now.
-        if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(toRenderBox(relative))) {
-            placeholder->parent()->removeChild(*placeholder);
-            m_spannerMap.remove(toRenderBox(relative));
-        }
-
-        if (RenderObject* next = relative->nextSibling()) {
-            if (RenderObject* previous = relative->previousSibling()) {
-                if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
-                    // Merge two sets that no longer will be separated by a spanner.
-                    next->destroy();
-                    previous->setNeedsLayout();
-                }
-            }
-        }
+        
+        handleSpannerRemoval(relative);
     }
     // Note that we might end up with empty column sets if all column content is removed. That's no
     // big deal though (and locating them would be expensive), and they will be found and re-used if
