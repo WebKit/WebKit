@@ -90,9 +90,9 @@ class StatusBubble(webapp.RequestHandler):
             else:
                 message += "\n\nThis result is not final, as the issue could be a pre-existing one. Trying to determine that now."
                 if try_count == 1:
-                    message += "\n\nPreviously completed a round of testing, but couldn't arrive to a definitive conclusion."
+                    message += "\n\nPreviously completed a round of testing, but couldn't arrive at a definitive conclusion."
                 elif try_count > 1:
-                    message += "\n\nPreviously completed " + str(try_count) + " rounds of testing, but couldn't arrive to a definitive conclusion."
+                    message += "\n\nPreviously completed " + str(try_count) + " rounds of testing, but couldn't arrive at a definitive conclusion."
         else:
             real_queue_position = self._real_queue_position(queue, queue_position)
             if tree_is_red:
@@ -103,7 +103,7 @@ class StatusBubble(webapp.RequestHandler):
                     message += "Completed one round "
                 else:
                     message += "Completed " + str(try_count) + " rounds "
-                message += "of testing trying to determine that, but couldn't arrive to a definitive conclusion yet.\n\nWill try again, currently #" + str(real_queue_position) + " in queue."
+                message += "of testing trying to determine that, but couldn't arrive at a definitive conclusion yet.\n\nWill try again, currently #" + str(real_queue_position) + " in queue."
         message += "\n\nPlease click the bubble for detailed results.\n\n" + self._iso_time(statuses[0].date)
         return message
 

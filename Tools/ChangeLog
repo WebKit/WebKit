@@ -1,5 +1,12 @@
 2014-09-29  Alexey Proskuryakov  <ap@apple.com>
 
+        Typo fix, suggested by Tim Horton.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_message_for_provisional_failure):
+
+2014-09-29  Alexey Proskuryakov  <ap@apple.com>
+
         Improve Bugzilla status bubbles
         https://bugs.webkit.org/show_bug.cgi?id=137232
 
