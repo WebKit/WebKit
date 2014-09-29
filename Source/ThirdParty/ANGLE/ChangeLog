@@ -1,3 +1,14 @@
+2014-09-29  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] D3D11 is not used by default.
+        https://bugs.webkit.org/show_bug.cgi?id=137215
+
+        Reviewed by Alex Christensen.
+
+        ANGLE_DEFAULT_D3D11 needs to be defined for D3D11 to be used as default.
+
+        * ANGLE.vcxproj/libGLESv2Common.props:
+
 2014-09-19  Daniel Bates  <dabates@apple.com>
 
         Always assume internal SDK when building configuration Production
