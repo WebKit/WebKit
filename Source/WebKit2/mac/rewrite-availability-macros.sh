@@ -35,16 +35,17 @@ if [[ -e $TIMESTAMP_PATH && $0 -nt $TIMESTAMP_PATH ]]; then
 fi
 
 function rewrite_headers () {
-    if [[ -z "$IPHONEOS_DEPLOYMENT_TARGET" ]]; then
+    if [[ $PLATFORM_NAME == "iphonesimulator" || $PLATFORM_NAME == "iphoneos" ]]; then
+        IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
+        OSX_VERSION="NA"
+
+        # FIXME: Remove this once <rdar://problem/18343823> has been fixed.
+        IOS_VERSION="NA"
+    elif [[ $PLATFORM_NAME == "macosx" ]]; then
+        OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
         IOS_VERSION="NA"
     else
-        IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
-    fi
-
-    if [[ -z "$MACOSX_DEPLOYMENT_TARGET" ]]; then
-        OSX_VERSION="NA"
-    else
-        OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
+        exit 1;
     fi
 
     for HEADER_PATH in $1/*.h; do

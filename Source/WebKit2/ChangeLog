@@ -1,3 +1,15 @@
+2014-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Set the TBA versions based on the PLATFORM_NAME
+        https://bugs.webkit.org/show_bug.cgi?id=137226
+        Follow-up fix for <rdar://problem/17761459>.
+
+        Reviewed by Dan Bernstein.
+
+        * mac/rewrite-availability-macros.sh:
+        Turns out that MACOSX_DEPLOYMENT_TARGET is set even for iOS builds,
+        so set the versions based on the PLATFORM_NAME environment variable.
+
 2014-09-29  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
