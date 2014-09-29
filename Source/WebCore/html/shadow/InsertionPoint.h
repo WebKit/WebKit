@@ -75,13 +75,13 @@ private:
     bool m_hasDistribution;
 };
 
-inline bool isInsertionPoint(const Node& node) { return node.isInsertionPoint(); }
-
-NODE_TYPE_CASTS(InsertionPoint);
+SPECIALIZE_TYPE_TRAITS_BEGIN(InsertionPoint)
+    static bool isInsertionPoint(const Node& node) { return node.isInsertionPoint(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 inline bool isActiveInsertionPoint(const Node* node)
 {
-    return node && node->isInsertionPoint() && toInsertionPoint(node)->isActive();
+    return node && is<InsertionPoint>(node) && downcast<InsertionPoint>(*node).isActive();
 }
 
 inline Node* parentNodeForDistribution(const Node* node)
@@ -89,12 +89,12 @@ inline Node* parentNodeForDistribution(const Node* node)
     ASSERT(node);
 
     if (Node* parent = node->parentNode()) {
-        if (parent->isInsertionPoint() && toInsertionPoint(parent)->shouldUseFallbackElements())
+        if (is<InsertionPoint>(parent) && downcast<InsertionPoint>(*parent).shouldUseFallbackElements())
             return parent->parentNode();
         return parent;
     }
 
-    return 0;
+    return nullptr;
 }
 
 inline Element* parentElementForDistribution(const Node* node)

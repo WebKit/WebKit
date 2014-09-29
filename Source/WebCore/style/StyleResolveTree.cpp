@@ -352,7 +352,7 @@ static RenderObject* previousSiblingRenderer(const Text& textNode)
 
 static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& current)
 {
-    if (isInsertionPoint(current))
+    if (is<InsertionPoint>(current))
         return;
     // This function finds sibling text renderers where the results of textRendererIsNeeded may have changed as a result of
     // the current node gaining or losing the renderer. This can only affect white space text nodes.
@@ -606,8 +606,8 @@ static void attachRenderTree(Element& current, RenderStyle& inheritedStyle, Rend
     PostResolutionCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    if (isInsertionPoint(current)) {
-        attachDistributedChildren(toInsertionPoint(current), inheritedStyle, renderTreePosition);
+    if (is<InsertionPoint>(current)) {
+        attachDistributedChildren(downcast<InsertionPoint>(current), inheritedStyle, renderTreePosition);
         current.clearNeedsStyleRecalc();
         current.clearChildNeedsStyleRecalc();
         return;
@@ -662,8 +662,8 @@ static void detachDistributedChildren(InsertionPoint& insertionPoint)
 
 static void detachChildren(ContainerNode& current, DetachType detachType)
 {
-    if (isInsertionPoint(current))
-        detachDistributedChildren(toInsertionPoint(current));
+    if (is<InsertionPoint>(current))
+        detachDistributedChildren(downcast<InsertionPoint>(current));
 
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
@@ -899,7 +899,7 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
 {
     ASSERT(change != Detach);
 
-    if (isInsertionPoint(current)) {
+    if (is<InsertionPoint>(current)) {
         current.clearNeedsStyleRecalc();
         current.clearChildNeedsStyleRecalc();
         return;

@@ -326,8 +326,7 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
 
 TextControlInnerTextElement* HTMLTextAreaElement::innerTextElement() const
 {
-    Node* node = userAgentShadowRoot()->firstChild();
-    return toTextControlInnerTextElement(node);
+    return downcast<TextControlInnerTextElement>(userAgentShadowRoot()->firstChild());
 }
 
 void HTMLTextAreaElement::rendererWillBeDestroyed()

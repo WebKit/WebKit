@@ -80,9 +80,9 @@ private:
     AtomicString m_language;
 };
 
-void isWebVTTElement(const WebVTTElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isWebVTTElement(const Node& node) { return node.isWebVTTElement(); }
-NODE_TYPE_CASTS(WebVTTElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebVTTElement)
+    static bool isWebVTTElement(const Node& node) { return node.isWebVTTElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 } // namespace WebCore
 

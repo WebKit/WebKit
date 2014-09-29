@@ -650,10 +650,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
 #if ENABLE(VIDEO_TRACK)
     // Deny sharing styles between WebVTT and non-WebVTT nodes.
-    if (element->isWebVTTElement() != state.element()->isWebVTTElement())
-        return false;
-
-    if (element->isWebVTTElement() && state.element()->isWebVTTElement() && toWebVTTElement(element)->isPastNode() != toWebVTTElement(state.element())->isPastNode())
+    if (is<WebVTTElement>(state.element()))
         return false;
 #endif
 

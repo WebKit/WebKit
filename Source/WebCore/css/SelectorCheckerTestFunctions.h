@@ -127,8 +127,8 @@ inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* fil
 {
     AtomicString value;
 #if ENABLE(VIDEO_TRACK)
-    if (element->isWebVTTElement())
-        value = toWebVTTElement(element)->language();
+    if (is<WebVTTElement>(element))
+        value = downcast<WebVTTElement>(*element).language();
     else
 #endif
         value = element->computeInheritedLanguage();
@@ -304,12 +304,12 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element* element)
 #if ENABLE(VIDEO_TRACK)
 ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element* element)
 {
-    return (element->isWebVTTElement() && !toWebVTTElement(element)->isPastNode());
+    return is<WebVTTElement>(element) && !downcast<WebVTTElement>(*element).isPastNode();
 }
 
 ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element* element)
 {
-    return (element->isWebVTTElement() && toWebVTTElement(element)->isPastNode());
+    return is<WebVTTElement>(element) && downcast<WebVTTElement>(*element).isPastNode();
 }
 #endif
 

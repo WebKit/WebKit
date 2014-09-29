@@ -561,7 +561,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         if (nodeType == WebVTTNodeTypeNone)
             break;
 
-        WebVTTNodeType currentType = m_currentNode->isWebVTTElement() ? toWebVTTElement(m_currentNode.get())->webVTTNodeType() : WebVTTNodeTypeNone;
+        WebVTTNodeType currentType = is<WebVTTElement>(*m_currentNode) ? downcast<WebVTTElement>(*m_currentNode).webVTTNodeType() : WebVTTNodeTypeNone;
         // <rt> is only allowed if the current node is <ruby>.
         if (nodeType == WebVTTNodeTypeRubyText && currentType != WebVTTNodeTypeRuby)
             break;
@@ -589,10 +589,10 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         
         // The only non-VTTElement would be the DocumentFragment root. (Text
         // nodes and PIs will never appear as m_currentNode.)
-        if (!m_currentNode->isWebVTTElement())
+        if (!is<WebVTTElement>(*m_currentNode))
             break;
 
-        WebVTTNodeType currentType = toWebVTTElement(m_currentNode.get())->webVTTNodeType();
+        WebVTTNodeType currentType = downcast<WebVTTElement>(*m_currentNode).webVTTNodeType();
         bool matchesCurrent = nodeType == currentType;
         if (!matchesCurrent) {
             // </ruby> auto-closes <rt>

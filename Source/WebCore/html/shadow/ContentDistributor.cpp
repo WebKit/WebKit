@@ -56,10 +56,8 @@ const Vector<RefPtr<InsertionPoint>>& ContentDistributor::ensureInsertionPointLi
     m_insertionPointListIsValid = true;
     ASSERT(m_insertionPointList.isEmpty());
 
-    for (auto& element : descendantsOfType<Element>(*shadowRoot)) {
-        if (element.isInsertionPoint())
-            m_insertionPointList.append(toInsertionPoint(&element));
-    }
+    for (auto& element : descendantsOfType<InsertionPoint>(*shadowRoot))
+        m_insertionPointList.append(&element);
 
     return m_insertionPointList;
 }

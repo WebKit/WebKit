@@ -70,9 +70,10 @@ private:
     virtual bool isTextControlInnerTextElement() const override { return true; }
 };
 
-inline bool isTextControlInnerTextElement(const HTMLElement& element) { return element.isTextControlInnerTextElement(); }
-inline bool isTextControlInnerTextElement(const Node& node) { return is<HTMLElement>(node) && isTextControlInnerTextElement(downcast<HTMLElement>(node)); }
-NODE_TYPE_CASTS(TextControlInnerTextElement)
+SPECIALIZE_TYPE_TRAITS_BEGIN(TextControlInnerTextElement)
+    static bool isTextControlInnerTextElement(const HTMLElement& element) { return element.isTextControlInnerTextElement(); }
+    static bool isTextControlInnerTextElement(const Node& node) { return is<HTMLElement>(node) && isTextControlInnerTextElement(downcast<HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
 public:

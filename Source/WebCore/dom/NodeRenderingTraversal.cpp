@@ -72,8 +72,8 @@ static Node* findFirstEnteringInsertionPoints(const Node* node)
     ASSERT(node);
     if (!isActiveInsertionPoint(node))
         return const_cast<Node*>(node);
-    const InsertionPoint* insertionPoint = toInsertionPoint(node);
-    if (Node* found = findFirstFromDistributedNode(insertionPoint->firstDistributed(), insertionPoint))
+    const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*node);
+    if (Node* found = findFirstFromDistributedNode(insertionPoint.firstDistributed(), &insertionPoint))
         return found;
     return findFirstSiblingEnteringInsertionPoints(node->firstChild());
 }
@@ -101,8 +101,8 @@ static Node* findLastEnteringInsertionPoints(const Node* node)
     ASSERT(node);
     if (!isActiveInsertionPoint(node))
         return const_cast<Node*>(node);
-    const InsertionPoint* insertionPoint = toInsertionPoint(node);
-    if (Node* found = findLastFromDistributedNode(insertionPoint->lastDistributed(), insertionPoint))
+    const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*node);
+    if (Node* found = findLastFromDistributedNode(insertionPoint.lastDistributed(), &insertionPoint))
         return found;
     return findLastSiblingEnteringInsertionPoints(node->lastChild());
 }
@@ -135,11 +135,11 @@ static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadow
     if (parent->isShadowRoot())
         return shadowRootCrossing == CrossShadowRoot ? toShadowRoot(parent)->hostElement() : parent;
 
-    if (parent->isInsertionPoint()) {
-        const InsertionPoint* insertionPoint = toInsertionPoint(parent);
-        if (insertionPoint->hasDistribution())
+    if (is<InsertionPoint>(parent)) {
+        const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*parent);
+        if (insertionPoint.hasDistribution())
             return nullptr;
-        if (insertionPoint->isActive())
+        if (insertionPoint.isActive())
             return traverseParent(parent, shadowRootCrossing);
     }
     return parent;
