@@ -1,3 +1,13 @@
+2014-09-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][CMake] TestWebCore target build sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=137207
+
+        Reviewed by Csaba Osztrogon.
+
+        * TestWebKitAPI/PlatformGTK.cmake: Make sure the forwarding
+        headers are generated before the TestWebCore target is built.
+
 2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove IntPointGtk.cpp and IntRectGtk.cpp
