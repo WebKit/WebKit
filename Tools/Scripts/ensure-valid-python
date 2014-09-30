@@ -36,8 +36,8 @@ use VCSUtils;
 
 sub checkPythonVersion()
 {
-    # Will exit 0 if Python is 2.5 or greater, non-zero otherwise.
-    `python -c "import sys;sys.exit(sys.version_info[:2] < (2,5))"`;
+    # Will exit 0 if Python is 2.7, non-zero otherwise.
+    `python -c "import sys;sys.exit(sys.version_info[:2] != (2,7))"`;
     return exitStatus($?) == 0;
 }
 

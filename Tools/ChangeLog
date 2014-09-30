@@ -1,3 +1,14 @@
+2014-09-30  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Require Python 2.7 version
+        https://bugs.webkit.org/show_bug.cgi?id=137112
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/ensure-valid-python:
+        (checkPythonVersion):
+        * Scripts/webkitpy/common/version_check.py:
+
 2014-09-30  Martin Hock  <mhock@apple.com>
 
         Skip a JSC test after r174036.
