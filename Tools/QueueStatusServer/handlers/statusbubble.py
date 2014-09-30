@@ -161,7 +161,6 @@ class StatusBubble(webapp.RequestHandler):
                 bubble["state"] = "error"
                 bubble["details_message"] = ("Internal error. Latest status implies that the patch should be in queue, but it is not. Recent messages:\n\n"
                     + "\n".join([status.message for status in statuses]) + "\n\n" + self._iso_time(statuses[0].date))
-            bubble["may_fail_to_apply"] = True
 
         if "details_message" in bubble:
             bubble["details_message"] = queue.display_name() + "\n\n" + bubble["details_message"]

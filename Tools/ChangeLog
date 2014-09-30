@@ -1,5 +1,12 @@
 2014-09-30  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove an accidentally committed line..
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble):
+
+2014-09-30  Alexey Proskuryakov  <ap@apple.com>
+
         build.webkit.org/dashboard: Switch EWS view to using actual retry count
         https://bugs.webkit.org/show_bug.cgi?id=137240
 
