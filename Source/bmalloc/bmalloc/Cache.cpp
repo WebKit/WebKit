@@ -54,25 +54,9 @@ void Cache::scavenge()
     m_deallocator.scavenge();
 }
 
-NO_INLINE void* Cache::allocateSlowCase(size_t size)
-{
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return allocateSlowCaseNullCache(size);
-    return cache->allocator().allocateSlowCase(size);
-}
-
 NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t size)
 {
     return PerThread<Cache>::getSlowCase()->allocator().allocate(size);
-}
-
-NO_INLINE void Cache::deallocateSlowCase(void* object)
-{
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return deallocateSlowCaseNullCache(object);
-    cache->deallocator().deallocateSlowCase(object);
 }
 
 NO_INLINE void Cache::deallocateSlowCaseNullCache(void* object)

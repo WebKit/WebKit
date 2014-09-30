@@ -37,8 +37,7 @@ struct BumpRange {
     unsigned short objectCount;
 };
 
-typedef FixedVector<BumpRange, smallRangeCacheCapacity> SmallBumpRangeCache;
-typedef FixedVector<BumpRange, mediumRangeCacheCapacity> MediumBumpRangeCache;
+typedef FixedVector<BumpRange, bumpRangeCacheCapacity> BumpRangeCache;
 
 } // namespace bmalloc
 

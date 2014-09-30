@@ -1,3 +1,64 @@
+2014-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: cleaned up fast path vs slow path
+        https://bugs.webkit.org/show_bug.cgi?id=137081
+
+        Reviewed by Sam Weinig.
+
+        Might be a 1% speedup on MallocBench. Also cleans up the code a bit.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator): Merged the small and medium range
+        caches, just like the small and medium allocators. Ranges are abstract
+        objects that don't really care whether they hold small or medium objects,
+        so they don't need to be segregated.
+
+        (bmalloc::Allocator::scavenge): Ditto.
+
+        (bmalloc::Allocator::allocateBumpRangeSlowCase):
+        (bmalloc::Allocator::allocateBumpRange): Same thing here, except that
+        we do care a tiny bit, because we need to specify small vs medium when
+        allocating new ranges from the heap, to ensure that the heap allocates
+        from the right segment of VM.
+
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateXLarge): NO_INLINE because this was clouding
+        up the fast path. Large allocation performance is dominated by allocation
+        logic and initialization, so inlining it doesn't help.
+
+        (bmalloc::Allocator::allocateSlowCase): Slow path got a bit cleaner since
+        it doesn't need to distinguish small vs medium objects.
+
+        (bmalloc::Allocator::allocateSmallBumpRange): Deleted.
+        (bmalloc::Allocator::allocateMediumBumpRange): Deleted.
+
+        * bmalloc/Allocator.h:
+        * bmalloc/BumpRange.h:
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::allocateSlowCase): Deleted.
+        (bmalloc::Cache::deallocateSlowCase): Deleted.
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::allocate):
+        (bmalloc::Cache::deallocate):
+        (bmalloc::Cache::allocateFastCase): Deleted.
+        (bmalloc::Cache::deallocateFastCase): Deleted. Removed the Cache slow
+        paths. The downside to this change is that the fast path branches to two
+        distinct failure cases instead of one. The upside is that the slow path
+        doesn't need to re-read the segment register, which is not as cheap as a
+        normal register, and it doesn't need to do an extra level of function 
+        call. Seems to be worth it.
+
+        * bmalloc/Deallocator.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::refillSmallBumpRangeCache):
+        (bmalloc::Heap::refillMediumBumpRangeCache):
+        * bmalloc/Heap.h: Updated for interface changes.
+
+        * bmalloc/Sizes.h: The most ranges a cache will hold is the number of
+        small lines in a page / 2, since any other free lines will coalesce
+        with their neighbors.
+
 2014-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out r173346.

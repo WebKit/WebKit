@@ -38,10 +38,7 @@ namespace bmalloc {
 Allocator::Allocator(Deallocator& deallocator)
     : m_deallocator(deallocator)
 {
-    for (unsigned short size = alignment; size <= smallMax; size += alignment)
-        m_bumpAllocators[sizeClass(size)].init(size);
-
-    for (unsigned short size = smallMax + alignment; size <= mediumMax; size += alignment)
+    for (unsigned short size = alignment; size <= mediumMax; size += alignment)
         m_bumpAllocators[sizeClass(size)].init(size);
 }
 
@@ -52,25 +49,9 @@ Allocator::~Allocator()
 
 void Allocator::scavenge()
 {
-    for (unsigned short i = alignment; i <= smallMax; i += alignment) {
+    for (unsigned short i = alignment; i <= mediumMax; i += alignment) {
         BumpAllocator& allocator = m_bumpAllocators[sizeClass(i)];
-        SmallBumpRangeCache& bumpRangeCache = m_smallBumpRangeCaches[sizeClass(i)];
-
-        while (allocator.canAllocate())
-            m_deallocator.deallocate(allocator.allocate());
-
-        while (bumpRangeCache.size()) {
-            allocator.refill(bumpRangeCache.pop());
-            while (allocator.canAllocate())
-                m_deallocator.deallocate(allocator.allocate());
-        }
-
-        allocator.clear();
-    }
-
-    for (unsigned short i = smallMax + alignment; i <= mediumMax; i += alignment) {
-        BumpAllocator& allocator = m_bumpAllocators[sizeClass(i)];
-        MediumBumpRangeCache& bumpRangeCache = m_mediumBumpRangeCaches[sizeClass(i)];
+        BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass(i)];
 
         while (allocator.canAllocate())
             m_deallocator.deallocate(allocator.allocate());
@@ -85,36 +66,35 @@ void Allocator::scavenge()
     }
 }
 
-BumpRange Allocator::allocateSmallBumpRange(size_t sizeClass)
+NO_INLINE BumpRange Allocator::allocateBumpRangeSlowCase(size_t sizeClass)
 {
-    SmallBumpRangeCache& bumpRangeCache = m_smallBumpRangeCaches[sizeClass];
-    if (!bumpRangeCache.size()) {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
+
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    if (sizeClass <= bmalloc::sizeClass(smallMax))
         PerProcess<Heap>::getFastCase()->refillSmallBumpRangeCache(lock, sizeClass, bumpRangeCache);
-    }
-
-    return bumpRangeCache.pop();
-}
-
-BumpRange Allocator::allocateMediumBumpRange(size_t sizeClass)
-{
-    MediumBumpRangeCache& bumpRangeCache = m_mediumBumpRangeCaches[sizeClass];
-    if (!bumpRangeCache.size()) {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    else
         PerProcess<Heap>::getFastCase()->refillMediumBumpRangeCache(lock, sizeClass, bumpRangeCache);
-    }
 
     return bumpRangeCache.pop();
 }
 
-void* Allocator::allocateLarge(size_t size)
+INLINE BumpRange Allocator::allocateBumpRange(size_t sizeClass)
+{
+    BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
+    if (!bumpRangeCache.size())
+        return allocateBumpRangeSlowCase(sizeClass);
+    return bumpRangeCache.pop();
+}
+
+NO_INLINE void* Allocator::allocateLarge(size_t size)
 {
     size = roundUpToMultipleOf<largeAlignment>(size);
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     return PerProcess<Heap>::getFastCase()->allocateLarge(lock, size);
 }
 
-void* Allocator::allocateXLarge(size_t size)
+NO_INLINE void* Allocator::allocateXLarge(size_t size)
 {
     size = roundUpToMultipleOf<largeAlignment>(size);
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
@@ -123,26 +103,13 @@ void* Allocator::allocateXLarge(size_t size)
 
 void* Allocator::allocateSlowCase(size_t size)
 {
-IF_DEBUG(
-    void* dummy;
-    BASSERT(!allocateFastCase(size, dummy));
-)
-
     if (size <= mediumMax) {
         size_t sizeClass = bmalloc::sizeClass(size);
         BumpAllocator& allocator = m_bumpAllocators[sizeClass];
-
-        if (allocator.size() <= smallMax) {
-            allocator.refill(allocateSmallBumpRange(sizeClass));
-            return allocator.allocate();
-        }
-
-        if (allocator.size() <= mediumMax) {
-            allocator.refill(allocateMediumBumpRange(sizeClass));
-            return allocator.allocate();
-        }
+        allocator.refill(allocateBumpRange(sizeClass));
+        return allocator.allocate();
     }
-    
+
     if (size <= largeMax)
         return allocateLarge(size);
 

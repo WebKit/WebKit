@@ -41,12 +41,12 @@ public:
     ~Deallocator();
 
     void deallocate(void*);
-    bool deallocateFastCase(void*);
-    void deallocateSlowCase(void*);
-
     void scavenge();
     
 private:
+    bool deallocateFastCase(void*);
+    void deallocateSlowCase(void*);
+
     void deallocateLarge(void*);
     void deallocateXLarge(void*);
     void processObjectLog();

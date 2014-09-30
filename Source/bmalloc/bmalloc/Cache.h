@@ -50,46 +50,27 @@ public:
     void scavenge();
 
 private:
-    static bool allocateFastCase(size_t, void*&);
-    static void* allocateSlowCase(size_t);
     static void* allocateSlowCaseNullCache(size_t);
-
-    static bool deallocateFastCase(void*);
-    static void deallocateSlowCase(void*);
     static void deallocateSlowCaseNullCache(void*);
 
     Deallocator m_deallocator;
     Allocator m_allocator;
 };
 
-inline bool Cache::allocateFastCase(size_t size, void*& object)
-{
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return false;
-    return cache->allocator().allocateFastCase(size, object);
-}
-
-inline bool Cache::deallocateFastCase(void* object)
-{
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return false;
-    return cache->deallocator().deallocateFastCase(object);
-}
-
 inline void* Cache::allocate(size_t size)
 {
-    void* object;
-    if (!allocateFastCase(size, object))
-        return allocateSlowCase(size);
-    return object;
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return allocateSlowCaseNullCache(size);
+    return cache->allocator().allocate(size);
 }
 
 inline void Cache::deallocate(void* object)
 {
-    if (!deallocateFastCase(object))
-        deallocateSlowCase(object);
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return deallocateSlowCaseNullCache(object);
+    return cache->deallocator().deallocate(object);
 }
 
 } // namespace bmalloc

@@ -50,10 +50,10 @@ class Heap {
 public:
     Heap(std::lock_guard<StaticMutex>&);
 
-    void refillSmallBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, SmallBumpRangeCache&);
+    void refillSmallBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpRangeCache&);
     void derefSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
 
-    void refillMediumBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, MediumBumpRangeCache&);
+    void refillMediumBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpRangeCache&);
     void derefMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t);

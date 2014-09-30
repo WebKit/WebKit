@@ -45,27 +45,23 @@ public:
     ~Allocator();
 
     void* allocate(size_t);
-    bool allocateFastCase(size_t, void*&);
-    void* allocateSlowCase(size_t);
-    
     void scavenge();
 
 private:
-    void* allocateFastCase(BumpAllocator&);
-
+    bool allocateFastCase(size_t, void*&);
+    void* allocateSlowCase(size_t);
+    
     void* allocateMedium(size_t);
     void* allocateLarge(size_t);
     void* allocateXLarge(size_t);
     
-    BumpRange allocateSmallBumpRange(size_t sizeClass);
-    BumpRange allocateMediumBumpRange(size_t sizeClass);
+    BumpRange allocateBumpRange(size_t sizeClass);
+    BumpRange allocateBumpRangeSlowCase(size_t sizeClass);
     
     Deallocator& m_deallocator;
 
     std::array<BumpAllocator, mediumMax / alignment> m_bumpAllocators;
-
-    std::array<SmallBumpRangeCache, smallMax / alignment> m_smallBumpRangeCaches;
-    std::array<MediumBumpRangeCache, mediumMax / alignment> m_mediumBumpRangeCaches;
+    std::array<BumpRangeCache, mediumMax / alignment> m_bumpRangeCaches;
 };
 
 inline bool Allocator::allocateFastCase(size_t size, void*& object)

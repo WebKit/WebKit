@@ -152,7 +152,7 @@ void Heap::scavengeLargeRanges(std::unique_lock<StaticMutex>& lock, std::chrono:
     }
 }
 
-void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, SmallBumpRangeCache& rangeCache)
+void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpRangeCache& rangeCache)
 {
     BASSERT(!rangeCache.size());
     SmallPage* page = allocateSmallPage(lock, sizeClass);
@@ -189,7 +189,7 @@ void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t 
     }
 }
 
-void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, MediumBumpRangeCache& rangeCache)
+void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpRangeCache& rangeCache)
 {
     MediumPage* page = allocateMediumPage(lock, sizeClass);
     BASSERT(!rangeCache.size());
