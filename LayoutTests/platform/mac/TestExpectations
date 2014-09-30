@@ -555,6 +555,9 @@ webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Fail
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=124935
+webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
+
 # Some WebGL tests don't work properly on MountainLion
 [ MountainLion ] webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
 [ MountainLion ] webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Failure ]

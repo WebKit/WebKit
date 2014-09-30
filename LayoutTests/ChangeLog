@@ -1,3 +1,9 @@
+2014-09-30  Beth Dakin  <bdakin@apple.com>
+
+        According to the history, this test has been very flaky. Marking as such.
+
+        * platform/mac/TestExpectations:
+
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
         [ Windows ] More Windows test gardening to get bots green.
