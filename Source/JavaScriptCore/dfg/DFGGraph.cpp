@@ -1228,7 +1228,7 @@ void Graph::handleAssertionFailure(
     dataLog("\n");
     dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
     dataLog(file, "(", line, ") : ", function, "\n");
-    CRASH();
+    CRASH_WITH_SECURITY_IMPLICATION();
 }
 
 } } // namespace JSC::DFG
