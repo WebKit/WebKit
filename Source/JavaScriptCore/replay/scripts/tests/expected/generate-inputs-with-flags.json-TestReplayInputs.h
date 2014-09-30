@@ -44,7 +44,7 @@ class ScalarInput2;
 namespace JSC {
 template<> struct InputTraits<Test::ScalarInput1> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::ScalarInput1&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ScalarInput1>&);
@@ -52,7 +52,7 @@ template<> struct InputTraits<Test::ScalarInput1> {
 
 template<> struct InputTraits<Test::ScalarInput2> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::ScalarInput2&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ScalarInput2>&);

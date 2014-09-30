@@ -93,7 +93,7 @@ NondeterministicInputBase* SegmentedInputStorage::load(InputQueue inputQueue, si
     NondeterministicInputBase* input = queue(inputQueue).at(offset).get();
     ASSERT(input);
 
-    LOG(WebReplay, "%-20s %s: %s %s\n", "ReplayEvents", queueTypeToLogPrefix(inputQueue, true), input->type().string().utf8().data(), jsonStringForInput(*input).utf8().data());
+    LOG(WebReplay, "%-20s %s: %s %s\n", "ReplayEvents", queueTypeToLogPrefix(inputQueue, true), input->type().utf8().data(), jsonStringForInput(*input).utf8().data());
 
     return input;
 }
@@ -103,7 +103,7 @@ void SegmentedInputStorage::store(std::unique_ptr<NondeterministicInputBase> inp
     ASSERT(input);
     ASSERT(input->queue() < InputQueue::Count);
 
-    LOG(WebReplay, "%-14s#%-5u %s: %s %s\n", "ReplayEvents", m_inputCount++, queueTypeToLogPrefix(input->queue(), false), input->type().string().utf8().data(), jsonStringForInput(*input).utf8().data());
+    LOG(WebReplay, "%-14s#%-5u %s: %s %s\n", "ReplayEvents", m_inputCount++, queueTypeToLogPrefix(input->queue(), false), input->type().utf8().data(), jsonStringForInput(*input).utf8().data());
 
     m_queues.at(offsetForInputQueue(input->queue()))->append(WTF::move(input));
 }

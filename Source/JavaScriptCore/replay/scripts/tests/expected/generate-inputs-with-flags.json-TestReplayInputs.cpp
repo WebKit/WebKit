@@ -57,9 +57,9 @@ ScalarInput2::~ScalarInput2()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::ScalarInput1>::type()
+const String& InputTraits<Test::ScalarInput1>::type()
 {
-    static NeverDestroyed<const AtomicString> type("ScalarInput1", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput1"));
     return type;
 }
 
@@ -78,9 +78,9 @@ bool InputTraits<Test::ScalarInput1>::decode(EncodedValue& encodedValue, std::un
     return true;
 }
 
-const AtomicString& InputTraits<Test::ScalarInput2>::type()
+const String& InputTraits<Test::ScalarInput2>::type()
 {
-    static NeverDestroyed<const AtomicString> type("ScalarInput2", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput2"));
     return type;
 }
 

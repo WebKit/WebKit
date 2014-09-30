@@ -76,7 +76,7 @@ public:
 
     virtual EncodedValue encodedResult() const = 0;
     virtual InputQueue queue() const final override { return InputQueue::ScriptMemoizedData; }
-    virtual const AtomicString& type() const final override;
+    virtual const String& type() const final override;
 
     const String& attribute() const { return m_attribute; }
     EncodedCType ctype() const { return m_ctype; }
@@ -146,7 +146,7 @@ namespace JSC {
 template<>
 struct InputTraits<MemoizedDOMResultBase> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(EncodedValue&, const MemoizedDOMResultBase& input);
     static bool decode(EncodedValue&, std::unique_ptr<MemoizedDOMResultBase>& input);

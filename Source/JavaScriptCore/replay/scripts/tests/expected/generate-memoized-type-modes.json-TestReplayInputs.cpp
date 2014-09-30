@@ -57,9 +57,9 @@ MapInput::~MapInput()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::ScalarInput>::type()
+const String& InputTraits<Test::ScalarInput>::type()
 {
-    static NeverDestroyed<const AtomicString> type("ScalarInput", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("ScalarInput"));
     return type;
 }
 
@@ -78,9 +78,9 @@ bool InputTraits<Test::ScalarInput>::decode(EncodedValue& encodedValue, std::uni
     return true;
 }
 
-const AtomicString& InputTraits<Test::MapInput>::type()
+const String& InputTraits<Test::MapInput>::type()
 {
-    static NeverDestroyed<const AtomicString> type("MapInput", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("MapInput"));
     return type;
 }
 

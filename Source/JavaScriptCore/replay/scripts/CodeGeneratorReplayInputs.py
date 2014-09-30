@@ -72,19 +72,13 @@ GLOBAL_CONFIG = {
 
     "implIncludes": [
         (["WebCore"],
-            ("WebCore", "replay/ReplayInputTypes.h")
-        ),
-        (["WebCore"],
             ("WebCore", "replay/SerializationMethods.h")
         ),
         (["WebCore", "JavaScriptCore"],
             ("JavaScriptCore", "inspector/InspectorValues.h")
         ),
-        (["JavaScriptCore"],
+        (["WebCore", "JavaScriptCore"],
             ("WTF", "wtf/NeverDestroyed.h")
-        ),
-        (["JavaScriptCore"],
-            ("WTF", "wtf/text/AtomicString.h")
         ),
 
         # Testing fixtures.
@@ -111,18 +105,15 @@ FRAMEWORK_CONFIG_MAP = {
         "prefix": "JS",
         "namespace": "JSC",
         "exportMacro": "JS_EXPORT_PRIVATE",
-        "inputTypeTemplate": Templates.InputTypeFromStaticLocal,
     },
     "WebCore": {
         "prefix": "Web",
         "namespace": "WebCore",
-        "inputTypeTemplate": Templates.InputTypeFromThreadLocal,
     },
     # Used for bindings tests.
     "Test": {
         "prefix": "Test",
         "namespace": "Test",
-        "inputTypeTemplate": Templates.InputTypeFromStaticLocal,
     }
 }
 
@@ -874,7 +865,7 @@ class Generator:
     def generate_input_trait_implementation(self, _input):
         template_arguments = {
             'inputsNamespace': self.target_framework.setting('namespace'),
-            'inputTypeImplementation': Template(self.setting('inputTypeTemplate')).substitute(None, inputName=_input.name),
+            'inputNameStringLiteral': '"%s"' % _input.name,
             'qualifiedInputName': self.qualified_input_name(_input),
             'constructorArguments': self.generate_constructor_arguments_list(_input),
             'constructorFormalsList': self.generate_constructor_formals_list(_input),

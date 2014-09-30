@@ -47,7 +47,7 @@ enum class InputQueue {
 template<typename InputType>
 struct JS_EXPORT_PRIVATE InputTraits {
     static InputQueue queue();
-    static AtomicString& type();
+    static String& type();
 
     static void encode(EncodedValue& encodedInput, InputType& decodedInput);
     static bool decode(EncodedValue& encodedInput, std::unique_ptr<InputType>& decodedInput);
@@ -59,13 +59,13 @@ public:
     NondeterministicInputBase() { }
     virtual ~NondeterministicInputBase() { }
 
-    virtual const AtomicString& type() const = 0;
+    virtual const String& type() const = 0;
     virtual InputQueue queue() const = 0;
 };
 
 template<typename InputType>
 class NondeterministicInput : public NondeterministicInputBase {
-    virtual const AtomicString& type() const override
+    virtual const String& type() const override
     {
         return InputTraits<InputType>::type();
     }

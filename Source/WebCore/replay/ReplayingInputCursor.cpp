@@ -67,7 +67,7 @@ NondeterministicInputBase* ReplayingInputCursor::loadInput(InputQueue queue, con
     NondeterministicInputBase* input = uncheckedLoadInput(queue);
 
     if (input->type() != type) {
-        LOG_ERROR("%-25s ERROR: Expected replay input of type %s, but got type %s\n", "[ReplayingInputCursor]", type.string().ascii().data(), input->type().string().ascii().data());
+        LOG_ERROR("%-25s ERROR: Expected replay input of type %s, but got type %s\n", "[ReplayingInputCursor]", type.string().ascii().data(), input->type().ascii().data());
         return nullptr;
     }
 

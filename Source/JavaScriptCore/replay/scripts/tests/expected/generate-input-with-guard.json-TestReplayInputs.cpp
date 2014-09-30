@@ -60,9 +60,9 @@ SetRandomSeed::~SetRandomSeed()
 
 namespace JSC {
 #if ENABLE(DUMMY_FEATURE)
-const AtomicString& InputTraits<Test::GetCurrentTime>::type()
+const String& InputTraits<Test::GetCurrentTime>::type()
 {
-    static NeverDestroyed<const AtomicString> type("GetCurrentTime", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("GetCurrentTime"));
     return type;
 }
 
@@ -82,9 +82,9 @@ bool InputTraits<Test::GetCurrentTime>::decode(EncodedValue& encodedValue, std::
 }
 #endif // ENABLE(DUMMY_FEATURE)
 
-const AtomicString& InputTraits<Test::SetRandomSeed>::type()
+const String& InputTraits<Test::SetRandomSeed>::type()
 {
-    static NeverDestroyed<const AtomicString> type("SetRandomSeed", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("SetRandomSeed"));
     return type;
 }
 

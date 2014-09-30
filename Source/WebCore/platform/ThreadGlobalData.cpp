@@ -41,10 +41,6 @@
 #include "TextCodeCMac.h"
 #endif
 
-#if ENABLE(WEB_REPLAY)
-#include "ReplayInputTypes.h"
-#endif
-
 namespace WebCore {
 
 ThreadSpecific<ThreadGlobalData>* ThreadGlobalData::staticData;
@@ -56,9 +52,6 @@ ThreadGlobalData::ThreadGlobalData()
     : m_cachedResourceRequestInitiators(adoptPtr(new CachedResourceRequestInitiators))
     , m_eventNames(adoptPtr(new EventNames))
     , m_threadTimers(adoptPtr(new ThreadTimers))
-#if ENABLE(WEB_REPLAY)
-    , m_inputTypes(std::make_unique<ReplayInputTypes>())
-#endif
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
@@ -86,10 +79,6 @@ void ThreadGlobalData::destroy()
 #endif
 
     m_cachedConverterICU.clear();
-
-#if ENABLE(WEB_REPLAY)
-    m_inputTypes = nullptr;
-#endif
 
     m_eventNames.clear();
     m_threadTimers.clear();

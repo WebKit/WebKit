@@ -40,7 +40,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginData.h"
-#include "ReplayInputTypes.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
 #include <wtf/text/Base64.h>
@@ -57,7 +56,6 @@ using WebCore::PluginData;
 using WebCore::PluginInfo;
 using WebCore::SecurityOrigin;
 using WebCore::URL;
-using WebCore::inputTypes;
 
 #if PLATFORM(COCOA)
 using WebCore::KeypressCommand;
@@ -167,12 +165,10 @@ bool EncodingTraits<MimeClassInfo>::decodeValue(EncodedValue& encodedData, MimeC
 EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const NondeterministicInputBase& input)
 {
     EncodedValue encodedValue = EncodedValue::createObject();
-    const AtomicString& type = input.type();
-
-    ENCODE_TYPE_WITH_KEY(encodedValue, String, type, type.string());
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, type, input.type());
 
 #define ENCODE_IF_TYPE_TAG_MATCHES(name) \
-    if (type == inputTypes().name) { \
+    if (input.type() == InputTraits<name>::type()) { \
         InputTraits<name>::encode(encodedValue, static_cast<const name&>(input)); \
         return encodedValue; \
     } \
@@ -182,7 +178,7 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
 #undef ENCODE_IF_TYPE_TAG_MATCHES
 
     // The macro won't work here because of the class template argument.
-    if (type == inputTypes().MemoizedDOMResult) {
+    if (input.type() == InputTraits<MemoizedDOMResultBase>::type()) {
         InputTraits<MemoizedDOMResultBase>::encode(encodedValue, static_cast<const MemoizedDOMResultBase&>(input));
         return encodedValue;
     }
@@ -196,7 +192,7 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
     DECODE_TYPE_WITH_KEY(encodedValue, String, type);
 
 #define DECODE_IF_TYPE_TAG_MATCHES(name) \
-    if (type == inputTypes().name) { \
+    if (type == InputTraits<name>::type()) { \
         std::unique_ptr<name> decodedInput; \
         if (!InputTraits<name>::decode(encodedValue, decodedInput)) \
             return false; \
@@ -209,7 +205,7 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
     WEB_REPLAY_INPUT_NAMES_FOR_EACH(DECODE_IF_TYPE_TAG_MATCHES)
 #undef DECODE_IF_TYPE_TAG_MATCHES
 
-    if (type == inputTypes().MemoizedDOMResult) {
+    if (type == InputTraits<MemoizedDOMResultBase>::type()) {
         std::unique_ptr<MemoizedDOMResultBase> decodedInput;
         if (!InputTraits<MemoizedDOMResultBase>::decode(encodedValue, decodedInput))
             return false;

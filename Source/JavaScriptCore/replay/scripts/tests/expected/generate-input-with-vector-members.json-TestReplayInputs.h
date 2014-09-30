@@ -48,7 +48,7 @@ class SavedHistory;
 namespace JSC {
 template<> struct InputTraits<Test::ArrayOfThings> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::ArrayOfThings&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ArrayOfThings>&);
@@ -56,7 +56,7 @@ template<> struct InputTraits<Test::ArrayOfThings> {
 
 template<> struct InputTraits<Test::SavedHistory> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::SavedHistory&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SavedHistory>&);

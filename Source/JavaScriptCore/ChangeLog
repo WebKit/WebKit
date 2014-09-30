@@ -1,3 +1,51 @@
+2014-09-30  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: use static Strings instead of AtomicStrings for replay input type tags
+        https://bugs.webkit.org/show_bug.cgi?id=137086
+
+        Reviewed by Joseph Pecoraro.
+
+        This pattern doesn't work when we want to define some inputs in WebKit2.
+        The ReplayInputTypes class was generated from WebCore inputs only. This
+        patch moves all input traits to use static local Strings as type tags.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py: Remove configuration of how
+        type tags are generated, since all framework targets now generate the same code.
+
+        * replay/NondeterministicInput.h:
+        * replay/scripts/CodeGeneratorReplayInputs.py: Simplify and rebase test results.
+        (Generator.generate_input_trait_implementation):
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py: Simplify templates.
+
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::SavedMouseButton>::type):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::SavedMouseButton>::type):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::HandleWheelEvent>::type):
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::FormCombo>::type):
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::GetCurrentTime>::type):
+        (JSC::InputTraits<Test::SetRandomSeed>::type):
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ArrayOfThings>::type):
+        (JSC::InputTraits<Test::SavedHistory>::type):
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ScalarInput1>::type):
+        (JSC::InputTraits<Test::ScalarInput2>::type):
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.cpp:
+        (JSC::InputTraits<Test::ScalarInput>::type):
+        (JSC::InputTraits<Test::MapInput>::type):
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h:
+
 2014-09-30  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r172532): JSBase.h declares NSMapTable functions that are SPI

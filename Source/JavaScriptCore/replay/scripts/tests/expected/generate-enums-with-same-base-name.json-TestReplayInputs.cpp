@@ -50,9 +50,9 @@ FormCombo::~FormCombo()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::FormCombo>::type()
+const String& InputTraits<Test::FormCombo>::type()
 {
-    static NeverDestroyed<const AtomicString> type("FormCombo", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("FormCombo"));
     return type;
 }
 

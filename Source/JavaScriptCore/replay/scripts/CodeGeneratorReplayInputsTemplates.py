@@ -98,7 +98,7 @@ ${forEachMacro}
     InputTraitsDeclaration = (
     """template<> ${structOrClass} InputTraits<${qualifiedInputName}> {
     static InputQueue queue() { return InputQueue::${queueType}; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const ${qualifiedInputName}&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<${qualifiedInputName}>&);
@@ -152,9 +152,10 @@ ${enumTraitImplementations}
 """)
 
     InputTraitsImplementation = (
-    """const AtomicString& InputTraits<${qualifiedInputName}>::type()
+    """const String& InputTraits<${qualifiedInputName}>::type()
 {
-$inputTypeImplementation
+    static NeverDestroyed<const String> type(ASCIILiteral(${inputNameStringLiteral}));
+    return type;
 }
 
 void InputTraits<${qualifiedInputName}>::encode(EncodedValue& encodedValue, const ${qualifiedInputName}& input)
@@ -225,12 +226,6 @@ ${decodeCases}
     EnumDecodeCase = (
     """        if (enumString == "${enumStringValue}")
             enumValue = static_cast<${qualifiedEnumName}>(enumValue | ${qualifiedEnumValue});""")
-
-    InputTypeFromStaticLocal = (
-    """    static NeverDestroyed<const AtomicString> type("${inputName}", AtomicString::ConstructFromLiteral);
-    return type;""")
-
-    InputTypeFromThreadLocal = "    return WebCore::inputTypes().${inputName};"
 
     InputClassImplementation = (
     """${inputName}::${inputName}(${constructorFormalsList})

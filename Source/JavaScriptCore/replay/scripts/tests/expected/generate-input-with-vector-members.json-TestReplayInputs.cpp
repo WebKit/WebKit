@@ -61,9 +61,9 @@ SavedHistory::~SavedHistory()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::ArrayOfThings>::type()
+const String& InputTraits<Test::ArrayOfThings>::type()
 {
-    static NeverDestroyed<const AtomicString> type("ArrayOfThings", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("ArrayOfThings"));
     return type;
 }
 
@@ -92,9 +92,9 @@ bool InputTraits<Test::ArrayOfThings>::decode(EncodedValue& encodedValue, std::u
     return true;
 }
 
-const AtomicString& InputTraits<Test::SavedHistory>::type()
+const String& InputTraits<Test::SavedHistory>::type()
 {
-    static NeverDestroyed<const AtomicString> type("SavedHistory", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("SavedHistory"));
     return type;
 }
 

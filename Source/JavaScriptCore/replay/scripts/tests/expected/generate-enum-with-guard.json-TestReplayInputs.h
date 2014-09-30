@@ -47,7 +47,7 @@ class HandleWheelEvent;
 namespace JSC {
 template<> struct InputTraits<Test::HandleWheelEvent> {
     static InputQueue queue() { return InputQueue::EventLoopInput; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::HandleWheelEvent&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::HandleWheelEvent>&);

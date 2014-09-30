@@ -31,8 +31,8 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "Page.h"
-#include "ReplayInputTypes.h"
 #include "ReplayingInputCursor.h"
+#include "WebReplayInputs.h"
 #include <wtf/TemporaryChange.h>
 
 #if !LOG_DISABLED
@@ -140,7 +140,7 @@ void EventLoopInputDispatcher::dispatchInput()
     String jsonString = encodedInput.asObject()->toJSONString();
 
     LOG(WebReplay, "%-20s ----------------------------------------------", "ReplayEvents");
-    LOG(WebReplay, "%-20s >DISPATCH: %s %s\n", "ReplayEvents", m_currentWork.input->type().string().utf8().data(), jsonString.utf8().data());
+    LOG(WebReplay, "%-20s >DISPATCH: %s %s\n", "ReplayEvents", m_currentWork.input->type().utf8().data(), jsonString.utf8().data());
 #endif
 
     m_client->willDispatchInput(*m_currentWork.input);
@@ -158,7 +158,7 @@ void EventLoopInputDispatcher::dispatchInput()
 
     // Notify clients that the event was dispatched.
     m_client->didDispatchInput(*dispatchedInput);
-    if (dispatchedInput->type() == inputTypes().EndSegmentSentinel) {
+    if (dispatchedInput->type() == InputTraits<EndSegmentSentinel>::type()) {
         m_running = false;
         m_dispatching = false;
         m_client->didDispatchFinalInput();

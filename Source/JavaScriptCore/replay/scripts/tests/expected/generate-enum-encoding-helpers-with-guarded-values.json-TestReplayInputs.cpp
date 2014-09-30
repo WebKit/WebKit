@@ -48,9 +48,9 @@ SavedMouseButton::~SavedMouseButton()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::SavedMouseButton>::type()
+const String& InputTraits<Test::SavedMouseButton>::type()
 {
-    static NeverDestroyed<const AtomicString> type("SavedMouseButton", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("SavedMouseButton"));
     return type;
 }
 

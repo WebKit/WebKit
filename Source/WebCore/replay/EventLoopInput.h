@@ -64,7 +64,7 @@ public:
 
 template <typename InputType>
 class EventLoopInput : public EventLoopInputBase {
-    virtual const AtomicString& type() const override final
+    virtual const String& type() const override final
     {
         return InputTraits<InputType>::type();
     }

@@ -44,7 +44,7 @@ class MapInput;
 namespace JSC {
 template<> struct InputTraits<Test::ScalarInput> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::ScalarInput&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ScalarInput>&);
@@ -52,7 +52,7 @@ template<> struct InputTraits<Test::ScalarInput> {
 
 template<> struct InputTraits<Test::MapInput> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::MapInput&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::MapInput>&);

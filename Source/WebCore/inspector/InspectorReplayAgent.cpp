@@ -119,7 +119,7 @@ public:
 
     void operator()(size_t index, const NondeterministicInputBase* input)
     {
-        LOG(WebReplay, "%-25s Writing %5zu: %s\n", "[SerializeInput]", index, input->type().string().ascii().data());
+        LOG(WebReplay, "%-25s Writing %5zu: %s\n", "[SerializeInput]", index, input->type().ascii().data());
 
         if (RefPtr<Inspector::Protocol::Replay::ReplayInput> serializedInput = buildInspectorObjectForInput(*input, index))
             m_inputs->addItem(serializedInput.release());

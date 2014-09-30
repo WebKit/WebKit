@@ -29,8 +29,6 @@
 // Note that there is not an exact correspondence between the two, since
 // Some input types reside in the same file.
 
-// Make sure that this stays in sync with ReplayInputTypes.h for custom inputs.
-
 #ifndef AllReplayInputs_h
 #define AllReplayInputs_h
 

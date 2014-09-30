@@ -48,9 +48,9 @@ HandleWheelEvent::~HandleWheelEvent()
 } // namespace Test
 
 namespace JSC {
-const AtomicString& InputTraits<Test::HandleWheelEvent>::type()
+const String& InputTraits<Test::HandleWheelEvent>::type()
 {
-    static NeverDestroyed<const AtomicString> type("HandleWheelEvent", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const String> type(ASCIILiteral("HandleWheelEvent"));
     return type;
 }
 

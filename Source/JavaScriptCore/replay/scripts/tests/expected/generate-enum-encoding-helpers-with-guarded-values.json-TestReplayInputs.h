@@ -46,7 +46,7 @@ class SavedMouseButton;
 namespace JSC {
 template<> struct InputTraits<Test::SavedMouseButton> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::SavedMouseButton&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SavedMouseButton>&);

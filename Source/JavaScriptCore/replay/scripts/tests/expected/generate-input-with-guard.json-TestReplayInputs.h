@@ -47,7 +47,7 @@ namespace JSC {
 #if ENABLE(DUMMY_FEATURE)
 template<> struct InputTraits<Test::GetCurrentTime> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::GetCurrentTime&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::GetCurrentTime>&);
@@ -56,7 +56,7 @@ template<> struct InputTraits<Test::GetCurrentTime> {
 
 template<> struct InputTraits<Test::SetRandomSeed> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::SetRandomSeed&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SetRandomSeed>&);

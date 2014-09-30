@@ -46,7 +46,7 @@ class FormCombo;
 namespace JSC {
 template<> struct InputTraits<Test::FormCombo> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
-    static const AtomicString& type();
+    static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::FormCombo&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::FormCombo>&);

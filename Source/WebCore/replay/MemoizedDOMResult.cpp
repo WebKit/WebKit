@@ -29,15 +29,15 @@
 
 #if ENABLE(WEB_REPLAY)
 
-#include "ReplayInputTypes.h"
 #include "SerializationMethods.h"
 #include "WebReplayInputs.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-const AtomicString& MemoizedDOMResultBase::type() const
+const String& MemoizedDOMResultBase::type() const
 {
-    return inputTypes().MemoizedDOMResult;
+    return InputTraits<MemoizedDOMResultBase>::type();
 }
 
 std::unique_ptr<MemoizedDOMResultBase> MemoizedDOMResultBase::createFromEncodedResult(const String& attribute, EncodedCType ctype, EncodedValue encodedValue, ExceptionCode exceptionCode)
@@ -69,9 +69,10 @@ using WebCore::ExceptionCode;
 using WebCore::MemoizedDOMResult;
 using WebCore::SerializedScriptValue;
 
-const AtomicString& InputTraits<MemoizedDOMResultBase>::type()
+const String& InputTraits<MemoizedDOMResultBase>::type()
 {
-    return WebCore::inputTypes().MemoizedDOMResult;
+    static NeverDestroyed<const String> type(ASCIILiteral("MemoizedDOMResult"));
+    return type;
 }
 
 void InputTraits<MemoizedDOMResultBase>::encode(EncodedValue& encodedValue, const MemoizedDOMResultBase& input)

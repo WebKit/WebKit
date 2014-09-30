@@ -3129,7 +3129,6 @@ if (ENABLE_WEB_REPLAY)
         replay/ReplayingInputCursor.cpp
         replay/ReplayInputCreationMethods.cpp
         replay/ReplayInputDispatchMethods.cpp
-        replay/ReplayInputTypes.cpp
         replay/ReplaySession.cpp
         replay/ReplaySessionSegment.cpp
         replay/SegmentedInputStorage.cpp
