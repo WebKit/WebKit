@@ -1,5 +1,23 @@
 2014-09-30  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard: Switch EWS view to using actual retry count
+        https://bugs.webkit.org/show_bug.cgi?id=137240
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js:
+        (EWSQueue.prototype.loadDetailedStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js:
+        (EWSQueueView.prototype._popoverContentForEWSQueue):
+        Use the new retry_count data member from JSON.
+
+        * QueueStatusServer/app.yaml: Updating the version.
+
+        * QueueStatusServer/handlers/queuestatusjson.py: (QueueStatusJSON._rows_for_work_items):
+        Instead of message_count, produce retry_count.
+
+2014-09-30  Alexey Proskuryakov  <ap@apple.com>
+
         EWS doesn't need to show all the bubbles when a patch fails to apply
         https://bugs.webkit.org/show_bug.cgi?id=137256
 

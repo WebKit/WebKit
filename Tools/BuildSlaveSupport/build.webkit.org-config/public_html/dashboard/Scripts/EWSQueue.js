@@ -105,7 +105,7 @@ EWSQueue.prototype = {
                     latestMessage: patch.latest_message,
                     latestMessageTime: patch.latest_message_time ? new Date(patch.latest_message_time) : null,
                     detailedResultsURLForLatestMessage: patch.latest_results,
-                    messageCount: patch.message_count,
+                    retryCount: patch.retry_count,
                     active: patch.active,
                     activeSince: new Date(activeSinceTime),
                 });

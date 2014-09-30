@@ -154,8 +154,8 @@ EWSQueueView.prototype = {
 
             this.addLinkToRow(rowElement, "patch-details-link", patch.attachmentID, patch.statusPageURL);
 
-            if (patch.messageCount)
-                this.addTextToRow(rowElement, "failure-count", patch.messageCount + "\xa0" + (patch.messageCount === 1 ? "attempt" : "attempts"));
+            if (patch.retryCount)
+                this.addTextToRow(rowElement, "failure-count", patch.retryCount + "\xa0" + (patch.retryCount === 1 ? "attempt" : "attempts"));
 
             if (patch.detailedResultsURLForLatestMessage)
                 this.addLinkToRow(rowElement, "latest-status-with-link", patch.latestMessage, patch.detailedResultsURLForLatestMessage);
