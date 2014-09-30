@@ -1,5 +1,11 @@
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
+        [Mac] Flaky test marked as failing in r174111 also needs to be marked as passing.
+
+        * platform/mac/TestExpectations:
+
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
         [Mac] Mark a flaky webgl conformance test as failing.
 
         * platform/mac/TestExpectations:
