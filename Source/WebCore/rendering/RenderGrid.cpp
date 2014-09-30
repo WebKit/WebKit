@@ -247,9 +247,9 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     LayoutUnit availableLogicalSpace = 0;
     const_cast<RenderGrid*>(this)->computeUsedBreadthOfGridTracks(ForColumns, sizingData, availableLogicalSpace);
 
-    for (size_t i = 0; i < sizingData.columnTracks.size(); ++i) {
-        LayoutUnit minTrackBreadth = sizingData.columnTracks[i].m_usedBreadth;
-        LayoutUnit maxTrackBreadth = sizingData.columnTracks[i].m_maxBreadth;
+    for (auto& column : sizingData.columnTracks) {
+        LayoutUnit minTrackBreadth = column.m_usedBreadth;
+        LayoutUnit maxTrackBreadth = column.m_maxBreadth;
         maxTrackBreadth = std::max(maxTrackBreadth, minTrackBreadth);
 
         minLogicalWidth += minTrackBreadth;
@@ -320,9 +320,9 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     if (!sizingData.contentSizedTracksIndex.isEmpty())
         resolveContentBasedTrackSizingFunctions(direction, sizingData);
 
-    for (size_t i = 0; i < tracks.size(); ++i) {
-        ASSERT(tracks[i].m_maxBreadth != infinity);
-        availableLogicalSpace -= tracks[i].m_usedBreadth;
+    for (auto& track : tracks) {
+        ASSERT(track.m_maxBreadth != infinity);
+        availableLogicalSpace -= track.m_usedBreadth;
     }
 
     const bool hasUndefinedRemainingSpace = (direction == ForRows) ? style().logicalHeight().isAuto() : gridElementIsShrinkToFit();
@@ -332,16 +332,16 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
 
     // 3. Grow all Grid tracks in GridTracks from their UsedBreadth up to their MaxBreadth value until
     // availableLogicalSpace (RemainingSpace in the specs) is exhausted.
-    const size_t tracksSize = tracks.size();
     if (!hasUndefinedRemainingSpace) {
+        const size_t tracksSize = tracks.size();
         Vector<GridTrack*> tracksForDistribution(tracksSize);
         for (size_t i = 0; i < tracksSize; ++i)
             tracksForDistribution[i] = tracks.data() + i;
 
         distributeSpaceToTracks(tracksForDistribution, 0, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth, sizingData, availableLogicalSpace);
     } else {
-        for (size_t i = 0; i < tracksSize; ++i)
-            tracks[i].m_usedBreadth = tracks[i].m_maxBreadth;
+        for (auto& track : tracks)
+            track.m_usedBreadth = track.m_maxBreadth;
     }
 
     if (flexibleSizedTracksIndex.isEmpty())
@@ -352,8 +352,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     if (!hasUndefinedRemainingSpace)
         normalizedFractionBreadth = computeNormalizedFractionBreadth(tracks, GridSpan(0, tracks.size() - 1), direction, availableLogicalSpace);
     else {
-        for (size_t i = 0; i < flexibleSizedTracksIndex.size(); ++i) {
-            const size_t trackIndex = flexibleSizedTracksIndex[i];
+        for (auto trackIndex : flexibleSizedTracksIndex) {
             const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
             normalizedFractionBreadth = std::max(normalizedFractionBreadth, tracks[trackIndex].m_usedBreadth / trackSize.maxTrackBreadth().flex());
         }
@@ -374,11 +373,10 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
         }
     }
 
-    for (size_t i = 0; i < flexibleSizedTracksIndex.size(); ++i) {
-        const size_t trackIndex = flexibleSizedTracksIndex[i];
+    for (auto trackIndex : flexibleSizedTracksIndex) {
         const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
-
-        tracks[trackIndex].m_usedBreadth = std::max<LayoutUnit>(tracks[trackIndex].m_usedBreadth, normalizedFractionBreadth * trackSize.maxTrackBreadth().flex());
+        GridTrack& track = tracks[trackIndex];
+        track.m_usedBreadth = std::max<LayoutUnit>(track.m_usedBreadth, normalizedFractionBreadth * trackSize.maxTrackBreadth().flex());
     }
 }
 
@@ -447,8 +445,7 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
     LayoutUnit fractionValueBasedOnGridItemsRatio = 0;
     LayoutUnit availableLogicalSpaceIgnoringFractionTracks = availableLogicalSpace;
 
-    for (size_t i = 0; i < tracksForNormalization.size(); ++i) {
-        const GridTrackForNormalization& track = tracksForNormalization[i];
+    for (auto& track : tracksForNormalization) {
         if (track.m_normalizedFlexValue > fractionValueBasedOnGridItemsRatio) {
             // If the normalized flex value (we ordered |tracksForNormalization| by increasing normalized flex value)
             // will make us overflow our container, then stop. We have the previous step's ratio is the best fit.
@@ -780,8 +777,8 @@ void RenderGrid::populateExplicitGridAndOrderIterator()
     }
 
     m_grid.grow(maximumRowIndex);
-    for (size_t i = 0; i < m_grid.size(); ++i)
-        m_grid[i].grow(maximumColumnIndex);
+    for (auto& column : m_grid)
+        column.grow(maximumColumnIndex);
 }
 
 std::unique_ptr<GridCoordinate> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox& gridItem, GridTrackSizingDirection specifiedDirection, const GridSpan& specifiedPositions) const
@@ -934,8 +931,8 @@ void RenderGrid::layoutGridItems()
             child->repaintDuringLayoutIfMoved(oldChildRect);
     }
 
-    for (size_t i = 0; i < sizingData.rowTracks.size(); ++i)
-        setLogicalHeight(logicalHeight() + sizingData.rowTracks[i].m_usedBreadth);
+    for (auto& row : sizingData.rowTracks)
+        setLogicalHeight(logicalHeight() + row.m_usedBreadth);
 
     // min / max logical height is handled in updateLogicalHeight().
     setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
