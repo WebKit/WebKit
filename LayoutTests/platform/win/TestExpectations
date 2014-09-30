@@ -1325,13 +1325,35 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 loader/navigation-while-deferring-loads.html
 
 # crashing webgl tests
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
-webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
-webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html
-webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+fast/canvas/webgl/draw-arrays-out-of-bounds.html [ Crash ]
+fast/canvas/webgl/draw-elements-out-of-bounds.html [ Crash ]
+fast/canvas/webgl/gl-vertexattribpointer.html [ Crash ]
+fast/canvas/webgl/index-validation.html [ Crash Pass ]
+webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Crash ]
+webgl/1.0.1/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
+webgl/1.0.1/conformance/more/functions/bufferData.html [ Crash ]
+webgl/1.0.1/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
+webgl/1.0.1/conformance/more/functions/drawArraysOutOfBounds.html [ Crash ]
+webgl/1.0.1/conformance/rendering/draw-arrays-out-of-bounds.html [ Crash ]
+webgl/1.0.1/conformance/rendering/draw-elements-out-of-bounds.html [ Crash ]
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Crash ]
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Crash ]
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Crash ]
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Crash ]
+webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Crash ]
+webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html [ Crash ]
+webgl/1.0.2/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
+webgl/1.0.2/conformance/more/functions/bufferData.html [ Crash ]
+webgl/1.0.2/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
+webgl/1.0.2/conformance/more/functions/drawArraysOutOfBounds.html [ Crash ]
+webgl/1.0.2/conformance/rendering/draw-arrays-out-of-bounds.html [ Crash ]
+webgl/1.0.2/conformance/rendering/draw-elements-out-of-bounds.html [ Crash ]
+webgl/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
+webgl/conformance/more/functions/bufferData.html [ Crash ]
+webgl/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
+webgl/conformance/more/functions/drawArraysOutOfBounds.html
+webgl/conformance/rendering/draw-arrays-out-of-bounds.html
+webgl/conformance/rendering/draw-elements-out-of-bounds.html
 
 # failing webgl tests
 webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html
@@ -1521,10 +1543,10 @@ webkit.org/b/87919 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnl
 webkit.org/b/87919 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ ImageOnlyFailure ]
-webkit.org/b/87919 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [Failure]
-webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [Failure]
-webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [Failure]
-webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [Failure]
+webkit.org/b/87919 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
+webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
+webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
+webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
@@ -1644,6 +1666,36 @@ webkit.org/b/88150 [ Debug ] compositing/geometry/clipping-foreground.html [ Cra
 
 # Need rebaselining / checking - skipped en masse to get the bots green again
 css2.1/20110323/c543-txt-decor-000.html
+css2.1/t0805-c5519-brdr-r-00-a.html
+css2.1/t0805-c5520-brdr-b-01-e.html
+css2.1/t0805-c5521-brdr-l-00-a.html
+css2.1/t0805-c5521-ibrdr-l-00-a.html
+css2.1/t09-c5526c-display-00-e.html
+css2.1/t0905-c414-flt-02-c.html
+css2.1/t0905-c414-flt-03-c.html
+css2.1/t0905-c414-flt-04-c.html
+css2.1/t0905-c414-flt-fit-01-d-g.html
+css2.1/t0905-c414-flt-wrap-00-e.html
+css2.1/t0905-c5525-fltblck-00-d-ag.html
+css2.1/t0905-c5525-fltblck-01-d.html
+css2.1/t0905-c5525-fltcont-00-d-g.html
+css2.1/t0905-c5525-flthw-00-c-g.html
+css2.1/t0905-c5525-fltwidth-00-c-g.html
+css2.1/t0905-c5525-fltwidth-02-c-g.html
+css2.1/t0905-c5525-fltwidth-03-c-g.html
+css2.1/t0905-c5525-fltwrap-00-b.html
+css2.1/t0905-c5526-flthw-00-c-g.html
+css2.1/t090501-c414-flt-01-b.html
+css2.1/t090501-c414-flt-03-b-g.html
+css2.1/t090501-c414-flt-ln-01-d-g.html
+css2.1/t090501-c5525-flt-l-00-b-g.html
+css2.1/t090501-c5525-flt-r-00-b-g.html
+css2.1/t100304-c43-rpl-bbx-01-d-g.html
+css2.1/t1202-counter-03-b.html
+css2.1/t1202-counter-04-b.html
+css2.1/t1202-counters-03-b.html
+css2.1/t1202-counters-04-b.html
+css2.1/t1205-c566-list-stl-01-c-g.html
 fast/block/float/float-in-float-hit-testing.html
 fast/block/float/overhanging-tall-block.html
 fast/css/text-transform-select.html

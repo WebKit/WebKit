@@ -1,5 +1,12 @@
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
+        [ Windows ] More Windows test gardening to get bots green.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
         [Mac] Flaky test marked as failing in r174111 also needs to be marked as passing.
 
         * platform/mac/TestExpectations:
