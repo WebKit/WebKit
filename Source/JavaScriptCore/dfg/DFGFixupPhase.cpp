@@ -854,7 +854,7 @@ private:
 
         case PutClosureVar: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child3());
             break;
         }
 

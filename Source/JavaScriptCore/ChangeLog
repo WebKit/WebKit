@@ -1,3 +1,19 @@
+2014-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r174025): Invalid cast in JSC::asString
+        https://bugs.webkit.org/show_bug.cgi?id=137224
+
+        Reviewed by Geoffrey Garen.
+        
+        Store barrier elision in fixup depends on checking the type of the value being stored. It's very important that
+        when we speak of "the value being stored" we are really referring to the right value.
+        
+        The bug here was that the PutClosureVar case was assuming that child2 is the value being stored. It's actually
+        child3. So we were incorrectly removing all barriers from PutClosureVar.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2014-09-30  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: use static Strings instead of AtomicStrings for replay input type tags
