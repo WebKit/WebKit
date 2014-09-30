@@ -83,6 +83,9 @@ webkit_web_inspector_close               (WebKitWebInspector *inspector);
 WEBKIT_API guint
 webkit_web_inspector_get_attached_height (WebKitWebInspector *inspector);
 
+WEBKIT_API gboolean
+webkit_web_inspector_get_can_attach      (WebKitWebInspector* inspector);
+
 G_END_DECLS
 
 #endif

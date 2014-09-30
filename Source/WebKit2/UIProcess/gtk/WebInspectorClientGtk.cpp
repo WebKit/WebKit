@@ -88,4 +88,11 @@ void WebInspectorClientGtk::didChangeAttachedWidth(WebInspectorProxy* inspector,
     m_client.didChangeAttachedWidth(toAPI(inspector), width, m_client.base.clientInfo);
 }
 
+void WebInspectorClientGtk::didChangeAttachAvailability(WebInspectorProxy* inspector, bool available)
+{
+    if (!m_client.didChangeAttachAvailability)
+        return;
+    m_client.didChangeAttachAvailability(toAPI(inspector), available, m_client.base.clientInfo);
+}
+
 } // namespace WebKit

@@ -253,9 +253,9 @@ void WebInspectorProxy::platformAppend(const String&, const String&)
     notImplemented();
 }
 
-void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 {
-    notImplemented();
+    m_client.didChangeAttachAvailability(this, available);
 }
 
 } // namespace WebKit

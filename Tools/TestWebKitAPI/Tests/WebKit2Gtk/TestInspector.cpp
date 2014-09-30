@@ -125,10 +125,22 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    static void canAttachChanged(InspectorTest* test)
+    {
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
     void resizeViewAndAttach()
     {
         // Resize the view to make room for the inspector.
-        resizeView(gMinimumAttachedInspectorWidth, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
+        if (!webkit_web_inspector_get_can_attach(m_inspector)) {
+            unsigned long handler = g_signal_connect_swapped(m_inspector, "notify::can-attach", G_CALLBACK(canAttachChanged), this);
+            resizeView(gMinimumAttachedInspectorWidth, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
+            g_main_loop_run(m_mainLoop);
+            g_signal_handler_disconnect(m_inspector, handler);
+        }
+
+        g_assert(webkit_web_inspector_get_can_attach(m_inspector));
         webkit_web_inspector_attach(m_inspector);
     }
 
@@ -167,6 +179,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inspectorView.get()));
     g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
     g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), ==, 0);
+    g_assert(!webkit_web_inspector_get_can_attach(test->m_inspector));
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);

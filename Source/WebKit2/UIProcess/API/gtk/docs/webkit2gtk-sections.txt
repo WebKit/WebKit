@@ -904,6 +904,7 @@ WebKitPluginPrivate
 WebKitWebInspector
 webkit_web_inspector_get_web_view
 webkit_web_inspector_get_inspected_uri
+webkit_web_inspector_get_can_attach
 webkit_web_inspector_is_attached
 webkit_web_inspector_attach
 webkit_web_inspector_detach

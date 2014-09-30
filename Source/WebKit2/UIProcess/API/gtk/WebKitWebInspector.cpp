@@ -72,7 +72,8 @@ enum {
     PROP_0,
 
     PROP_INSPECTED_URI,
-    PROP_ATTACHED_HEIGHT
+    PROP_ATTACHED_HEIGHT,
+    PROP_CAN_ATTACH
 };
 
 struct _WebKitWebInspectorPrivate {
@@ -84,6 +85,7 @@ struct _WebKitWebInspectorPrivate {
     RefPtr<WebInspectorProxy> webInspector;
     CString inspectedURI;
     unsigned attachedHeight;
+    bool canAttach;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
@@ -100,6 +102,9 @@ static void webkitWebInspectorGetProperty(GObject* object, guint propId, GValue*
         break;
     case PROP_ATTACHED_HEIGHT:
         g_value_set_uint(value, webkit_web_inspector_get_attached_height(inspector));
+        break;
+    case PROP_CAN_ATTACH:
+        g_value_set_boolean(value, webkit_web_inspector_get_can_attach(inspector));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -135,6 +140,24 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
                                                       _("The height that the inspector view should have when it is attached"),
                                                       0, G_MAXUINT, 0,
                                                       WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebInspector:can-attach:
+     *
+     * Whether the @inspector can be attached to the same window that contains
+     * the inspected view.
+     *
+     * Since: 2.8
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_CAN_ATTACH,
+        g_param_spec_boolean(
+            "can-attach",
+            _("Can Attach"),
+            _("Whether the inspector can be attached to the same window that contains the inspected view"),
+            FALSE,
+            WEBKIT_PARAM_READABLE));
 
     /**
      * WebKitWebInspector::open-window:
@@ -311,6 +334,15 @@ static void didChangeAttachedHeight(WKInspectorRef, unsigned height, const void*
     g_object_notify(G_OBJECT(inspector), "attached-height");
 }
 
+static void didChangeAttachAvailability(WKInspectorRef, bool available, const void* clientInfo)
+{
+    WebKitWebInspector* inspector = WEBKIT_WEB_INSPECTOR(clientInfo);
+    if (inspector->priv->canAttach == available)
+        return;
+    inspector->priv->canAttach = available;
+    g_object_notify(G_OBJECT(clientInfo), "can-attach");
+}
+
 WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
 {
     WebKitWebInspector* inspector = WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL));
@@ -328,7 +360,8 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
         attach,
         detach,
         didChangeAttachedHeight,
-        nullptr // didChangeAttachedWidth
+        nullptr, // didChangeAttachedWidth
+        didChangeAttachAvailability
     };
     WKInspectorSetInspectorClientGtk(toAPI(webInspector), &wkInspectorClientGtk.base);
 
@@ -368,6 +401,25 @@ const char* webkit_web_inspector_get_inspected_uri(WebKitWebInspector* inspector
     g_return_val_if_fail(WEBKIT_IS_WEB_INSPECTOR(inspector), 0);
 
     return inspector->priv->inspectedURI.data();
+}
+
+/**
+ * webkit_web_inspector_get_can_attach:
+ * @inspector: a #WebKitWebInspector
+ *
+ * Whether the @inspector can be attached to the same window that contains
+ * the inspected view.
+ *
+ * Returns: %TRUE if there is enough room for the inspector view inside the
+ *     window that contains the inspected view, or %FALSE otherwise.
+ *
+ * Since: 2.8
+ */
+gboolean webkit_web_inspector_get_can_attach(WebKitWebInspector* inspector)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_INSPECTOR(inspector), FALSE);
+
+    return inspector->priv->canAttach;
 }
 
 /**

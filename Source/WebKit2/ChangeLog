@@ -1,5 +1,30 @@
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r173929): [GTK] TestInspector fails after r173929
+        https://bugs.webkit.org/show_bug.cgi?id=137247
+
+        Reviewed by Philippe Normand.
+
+        Add WebKitWebInspector:can-attach property to notify when the
+        inspector attach availability changes.
+
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.h:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkit_web_inspector_class_init): Add WebKitWebInspector:can-attach property.
+        (didChangeAttachAvailability): Emit notify::can-attach.
+        (webkitWebInspectorCreate): Add implementation for didChangeAttachAvailability.
+        (webkit_web_inspector_get_can_attach): Return whether the inspector can be attached.
+        * UIProcess/API/gtk/WebKitWebInspector.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add index of new symbols in 2.8.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/gtk/WebInspectorClientGtk.cpp:
+        (WebKit::WebInspectorClientGtk::didChangeAttachAvailability):
+        * UIProcess/gtk/WebInspectorClientGtk.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Notify the client.
+
+2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] The remote web inspector shows the HTML content as plain text
         https://bugs.webkit.org/show_bug.cgi?id=137250
 
