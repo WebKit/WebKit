@@ -111,23 +111,19 @@ using namespace HTMLNames;
 static const size_t maxTextSize = 10000;
 static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
-static Color parseColor(const RefPtr<InspectorObject>* colorObject)
+static Color parseColor(const PassRefPtr<InspectorObject> colorObject)
 {
-    if (!colorObject || !(*colorObject))
+    if (!colorObject)
         return Color::transparent;
 
     int r;
     int g;
     int b;
-    bool success = (*colorObject)->getInteger("r", &r);
-    success |= (*colorObject)->getInteger("g", &g);
-    success |= (*colorObject)->getInteger("b", &b);
-    if (!success)
+    if (!colorObject->getInteger("r", r) || !colorObject->getInteger("g", g) || !colorObject->getInteger("b", b))
         return Color::transparent;
 
     double a;
-    success = (*colorObject)->getDouble("a", &a);
-    if (!success)
+    if (!colorObject->getDouble("a", a))
         return Color(r, g, b);
 
     // Clamp alpha to the [0..1] range.
@@ -142,7 +138,7 @@ static Color parseColor(const RefPtr<InspectorObject>* colorObject)
 static Color parseConfigColor(const String& fieldName, InspectorObject* configObject)
 {
     const RefPtr<InspectorObject> colorObject = configObject->getObject(fieldName);
-    return parseColor(&colorObject);
+    return parseColor(colorObject);
 }
 
 static bool parseQuad(const RefPtr<InspectorArray>& quadArray, FloatQuad* quad)
@@ -154,7 +150,7 @@ static bool parseQuad(const RefPtr<InspectorArray>& quadArray, FloatQuad* quad)
     if (quadArray->length() != coordinatesInQuad)
         return false;
     for (size_t i = 0; i < coordinatesInQuad; ++i) {
-        if (!quadArray->get(i)->asDouble(coordinates + i))
+        if (!quadArray->get(i)->asDouble(*(coordinates + i)))
             return false;
     }
     quad->setP1(FloatPoint(coordinates[0], coordinates[1]));
@@ -899,7 +895,7 @@ void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& wh
                 return;
             }
             int nodeId = 0;
-            if (!nodeValue->asInteger(&nodeId)) {
+            if (!nodeValue->asInteger(nodeId)) {
                 *errorString = "Invalid nodeIds item type. Expecting integer types.";
                 return;
             }
@@ -1045,7 +1041,7 @@ std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspector
 
     auto highlightConfig = std::make_unique<HighlightConfig>();
     bool showInfo = false; // Default: false (do not show a tooltip).
-    highlightInspectorObject->getBoolean("showInfo", &showInfo);
+    highlightInspectorObject->getBoolean("showInfo", showInfo);
     highlightConfig->showInfo = showInfo;
     highlightConfig->content = parseConfigColor("contentColor", highlightInspectorObject);
     highlightConfig->contentOutline = parseConfigColor("contentOutlineColor", highlightInspectorObject);
@@ -1079,8 +1075,8 @@ void InspectorDOMAgent::highlightQuad(ErrorString* errorString, const RefPtr<Ins
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
 {
     auto highlightConfig = std::make_unique<HighlightConfig>();
-    highlightConfig->content = parseColor(color);
-    highlightConfig->contentOutline = parseColor(outlineColor);
+    highlightConfig->content = parseColor(*color);
+    highlightConfig->contentOutline = parseColor(*outlineColor);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
 }
@@ -1107,18 +1103,14 @@ void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<Ins
     m_overlay->highlightNode(node, *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightFrame(
-    ErrorString*,
-    const String& frameId,
-    const RefPtr<InspectorObject>* color,
-    const RefPtr<InspectorObject>* outlineColor)
+void InspectorDOMAgent::highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
 {
     Frame* frame = m_pageAgent->frameForId(frameId);
     if (frame && frame->ownerElement()) {
         auto highlightConfig = std::make_unique<HighlightConfig>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(color);
-        highlightConfig->contentOutline = parseColor(outlineColor);
+        highlightConfig->content = parseColor(*color);
+        highlightConfig->contentOutline = parseColor(*outlineColor);
         m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 }

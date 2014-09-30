@@ -82,14 +82,16 @@ public:
 
 private:
     // WorkerGlobalScopeProxy::PageInspector implementation
-    virtual void dispatchMessageFromWorker(const String& message) override
+    virtual void dispatchMessageFromWorker(const String& messageString) override
     {
-        RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
-        if (!value)
+        RefPtr<InspectorValue> parsedMessage;
+        if (!InspectorValue::parseJSON(messageString, parsedMessage))
             return;
-        RefPtr<InspectorObject> messageObject = value->asObject();
-        if (!messageObject)
+
+        RefPtr<InspectorObject> messageObject;
+        if (!parsedMessage->asObject(messageObject))
             return;
+
         m_frontendDispatcher->dispatchMessageFromWorker(m_id, messageObject);
     }
 

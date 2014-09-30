@@ -184,7 +184,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     if (!title.isEmpty()) {
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
             String recordTitle;
-            record.data->getString(ASCIILiteral("title"), &recordTitle);
+            record.data->getString(ASCIILiteral("title"), recordTitle);
             if (recordTitle == title)
                 return;
         }
@@ -206,7 +206,7 @@ PassRefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState*
         const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
 
         String recordTitle;
-        record.data->getString(ASCIILiteral("title"), &recordTitle);
+        record.data->getString(ASCIILiteral("title"), recordTitle);
 
         if (title.isEmpty() || recordTitle == title) {
             RefPtr<JSC::Profile> profile = stopProfiling(exec, title);

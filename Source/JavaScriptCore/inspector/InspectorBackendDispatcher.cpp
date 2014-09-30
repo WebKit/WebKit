@@ -78,14 +78,14 @@ void InspectorBackendDispatcher::dispatch(const String& message)
 {
     Ref<InspectorBackendDispatcher> protect(*this);
 
-    RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
-    if (!parsedMessage) {
+    RefPtr<InspectorValue> parsedMessage;
+    if (!InspectorValue::parseJSON(message, parsedMessage)) {
         reportProtocolError(nullptr, ParseError, ASCIILiteral("Message must be in JSON format"));
         return;
     }
 
-    RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
-    if (!messageObject) {
+    RefPtr<InspectorObject> messageObject;
+    if (!parsedMessage->asObject(messageObject)) {
         reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("Message must be a JSONified object"));
         return;
     }
@@ -97,7 +97,7 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     }
 
     long callId = 0;
-    if (!callIdValue->asInteger(&callId)) {
+    if (!callIdValue->asInteger(callId)) {
         reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("The type of 'id' property must be integer"));
         return;
     }
@@ -109,7 +109,7 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     }
 
     String method;
-    if (!methodValue->asString(&method)) {
+    if (!methodValue->asString(method)) {
         reportProtocolError(&callId, InvalidRequest, ASCIILiteral("The type of 'method' property must be string"));
         return;
     }
@@ -187,7 +187,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
 }
 
 template<typename ReturnValueType, typename ValueType, typename DefaultValueType>
-static ReturnValueType getPropertyValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, DefaultValueType defaultValue, bool (*asMethod)(InspectorValue*, ValueType*), const char* typeName)
+static ReturnValueType getPropertyValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, DefaultValueType defaultValue, bool (*asMethod)(InspectorValue&, ValueType&), const char* typeName)
 {
     ASSERT(protocolErrors);
 
@@ -209,7 +209,7 @@ static ReturnValueType getPropertyValue(InspectorObject* object, const String& n
         return value;
     }
 
-    if (!asMethod(valueIterator->value.get(), &value)) {
+    if (!asMethod(*valueIterator->value, value)) {
         protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), typeName));
         return value;
     }
@@ -221,12 +221,12 @@ static ReturnValueType getPropertyValue(InspectorObject* object, const String& n
 }
 
 struct AsMethodBridges {
-    static bool asInteger(InspectorValue* value, int* output) { return value->asInteger(output); }
-    static bool asDouble(InspectorValue* value, double* output) { return value->asDouble(output); }
-    static bool asString(InspectorValue* value, String* output) { return value->asString(output); }
-    static bool asBoolean(InspectorValue* value, bool* output) { return value->asBoolean(output); }
-    static bool asObject(InspectorValue* value, RefPtr<InspectorObject>* output) { return value->asObject(output); }
-    static bool asArray(InspectorValue* value, RefPtr<InspectorArray>* output) { return value->asArray(output); }
+    static bool asInteger(InspectorValue& value, int& output) { return value.asInteger(output); }
+    static bool asDouble(InspectorValue& value, double& output) { return value.asDouble(output); }
+    static bool asString(InspectorValue& value, String& output) { return value.asString(output); }
+    static bool asBoolean(InspectorValue& value, bool& output) { return value.asBoolean(output); }
+    static bool asObject(InspectorValue& value, RefPtr<InspectorObject>& output) { return value.asObject(output); }
+    static bool asArray(InspectorValue& value, RefPtr<InspectorArray>& output) { return value.asArray(output); }
 };
 
 int InspectorBackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)

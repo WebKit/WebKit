@@ -572,8 +572,8 @@ PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperti
                 HashMap<String, RefPtr<Inspector::Protocol::CSS::CSSProperty>>::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
                     if (propertyEntry.parsedOk) {
-                        bool successPriority = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::Priority, &previousPriority);
-                        bool successStatus = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::Status, &previousStatus);
+                        bool successPriority = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::Priority, previousPriority);
+                        bool successStatus = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::Status, previousStatus);
                         if (successStatus && previousStatus != "inactive") {
                             if (propertyEntry.important || !successPriority) // Priority not set == "not important".
                                 shouldInactivate = true;
@@ -584,7 +584,7 @@ PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperti
                         }
                     } else {
                         bool previousParsedOk;
-                        bool success = activeIt->value->getBoolean(Inspector::Protocol::CSS::CSSProperty::ParsedOk, &previousParsedOk);
+                        bool success = activeIt->value->getBoolean(Inspector::Protocol::CSS::CSSProperty::ParsedOk, previousParsedOk);
                         if (success && !previousParsedOk)
                             shouldInactivate = true;
                     }

@@ -303,7 +303,7 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
         InspectorObject::const_iterator end = m_extraRequestHeaders->end();
         for (InspectorObject::const_iterator it = m_extraRequestHeaders->begin(); it != end; ++it) {
             String value;
-            if (it->value->asString(&value))
+            if (it->value->asString(value))
                 request.setHTTPHeaderField(it->key, value);
         }
     }

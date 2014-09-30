@@ -208,13 +208,13 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorStr
     for (unsigned i = 0; i < actionsLength; ++i) {
         RefPtr<InspectorValue> value = actions->get(i);
         RefPtr<InspectorObject> object;
-        if (!value->asObject(&object)) {
+        if (!value->asObject(object)) {
             *errorString = ASCIILiteral("BreakpointAction of incorrect type, expected object");
             return false;
         }
 
         String typeString;
-        if (!object->getString(ASCIILiteral("type"), &typeString)) {
+        if (!object->getString(ASCIILiteral("type"), typeString)) {
             *errorString = ASCIILiteral("BreakpointAction had type missing");
             return false;
         }
@@ -228,10 +228,10 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorStr
         // Specifying an identifier is optional. They are used to correlate probe samples
         // in the frontend across multiple backend probe actions and segregate object groups.
         int identifier = 0;
-        object->getInteger(ASCIILiteral("id"), &identifier);
+        object->getInteger(ASCIILiteral("id"), identifier);
 
         String data;
-        object->getString(ASCIILiteral("data"), &data);
+        object->getString(ASCIILiteral("data"), data);
 
         result->append(ScriptBreakpointAction(type, identifier, data));
     }
@@ -261,8 +261,8 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
     bool autoContinue = false;
     RefPtr<InspectorArray> actions;
     if (options) {
-        (*options)->getString(ASCIILiteral("condition"), &condition);
-        (*options)->getBoolean(ASCIILiteral("autoContinue"), &autoContinue);
+        (*options)->getString(ASCIILiteral("condition"), condition);
+        (*options)->getBoolean(ASCIILiteral("autoContinue"), autoContinue);
         actions = (*options)->getArray(ASCIILiteral("actions"));
     }
 
@@ -285,18 +285,18 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
     *outBreakpointIdentifier = breakpointIdentifier;
 }
 
-static bool parseLocation(ErrorString* errorString, InspectorObject* location, JSC::SourceID* sourceID, unsigned* lineNumber, unsigned* columnNumber)
+static bool parseLocation(ErrorString* errorString, InspectorObject& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
     String scriptIDStr;
-    if (!location->getString(ASCIILiteral("scriptId"), &scriptIDStr) || !location->getInteger(ASCIILiteral("lineNumber"), lineNumber)) {
-        *sourceID = JSC::noSourceID;
+    if (!location.getString(ASCIILiteral("scriptId"), scriptIDStr) || !location.getInteger(ASCIILiteral("lineNumber"), lineNumber)) {
+        sourceID = JSC::noSourceID;
         *errorString = ASCIILiteral("scriptId and lineNumber are required.");
         return false;
     }
 
-    *sourceID = scriptIDStr.toIntPtr();
-    *columnNumber = 0;
-    location->getInteger(ASCIILiteral("columnNumber"), columnNumber);
+    sourceID = scriptIDStr.toIntPtr();
+    columnNumber = 0;
+    location.getInteger(ASCIILiteral("columnNumber"), columnNumber);
     return true;
 }
 
@@ -305,15 +305,15 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const RefPt
     JSC::SourceID sourceID;
     unsigned lineNumber;
     unsigned columnNumber;
-    if (!parseLocation(errorString, location.get(), &sourceID, &lineNumber, &columnNumber))
+    if (!parseLocation(errorString, *location, sourceID, lineNumber, columnNumber))
         return;
 
     String condition = emptyString();
     bool autoContinue = false;
     RefPtr<InspectorArray> actions;
     if (options) {
-        (*options)->getString(ASCIILiteral("condition"), &condition);
-        (*options)->getBoolean(ASCIILiteral("autoContinue"), &autoContinue);
+        (*options)->getString(ASCIILiteral("condition"), condition);
+        (*options)->getBoolean(ASCIILiteral("autoContinue"), autoContinue);
         actions = (*options)->getArray(ASCIILiteral("actions"));
     }
 
@@ -360,7 +360,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString* errorString, const 
     JSC::SourceID sourceID;
     unsigned lineNumber;
     unsigned columnNumber;
-    if (!parseLocation(errorString, location.get(), &sourceID, &lineNumber, &columnNumber))
+    if (!parseLocation(errorString, *location, sourceID, lineNumber, columnNumber))
         return;
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, "", false);
@@ -593,18 +593,22 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
         return;
 
     for (auto it = m_javaScriptBreakpoints.begin(), end = m_javaScriptBreakpoints.end(); it != end; ++it) {
-        RefPtr<InspectorObject> breakpointObject = it->value->asObject();
+        RefPtr<InspectorObject> breakpointObject;
+        if (!it->value->asObject(breakpointObject))
+            return;
+
         bool isRegex;
-        breakpointObject->getBoolean(ASCIILiteral("isRegex"), &isRegex);
+        breakpointObject->getBoolean(ASCIILiteral("isRegex"), isRegex);
         String url;
-        breakpointObject->getString(ASCIILiteral("url"), &url);
+        breakpointObject->getString(ASCIILiteral("url"), url);
         if (!matches(scriptURL, url, isRegex))
             continue;
+
         ScriptBreakpoint breakpoint;
-        breakpointObject->getInteger(ASCIILiteral("lineNumber"), &breakpoint.lineNumber);
-        breakpointObject->getInteger(ASCIILiteral("columnNumber"), &breakpoint.columnNumber);
-        breakpointObject->getString(ASCIILiteral("condition"), &breakpoint.condition);
-        breakpointObject->getBoolean(ASCIILiteral("autoContinue"), &breakpoint.autoContinue);
+        breakpointObject->getInteger(ASCIILiteral("lineNumber"), breakpoint.lineNumber);
+        breakpointObject->getInteger(ASCIILiteral("columnNumber"), breakpoint.columnNumber);
+        breakpointObject->getString(ASCIILiteral("condition"), breakpoint.condition);
+        breakpointObject->getBoolean(ASCIILiteral("autoContinue"), breakpoint.autoContinue);
         ErrorString errorString;
         RefPtr<InspectorArray> actions = breakpointObject->getArray(ASCIILiteral("actions"));
         if (!breakpointActionsFromProtocol(&errorString, actions, &breakpoint.actions)) {

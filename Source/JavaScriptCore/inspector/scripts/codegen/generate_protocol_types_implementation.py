@@ -126,8 +126,8 @@ class ProtocolTypesImplementationGenerator(Generator):
         lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (Generator.protocol_type_string_for_type(object_declaration.type)))
         lines.append("""{
     RefPtr<InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);""")
+    bool castSucceeded = value->asObject(object);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);""")
         for type_member in required_members:
             args = {
                 'memberName': type_member.member_name,
@@ -172,11 +172,11 @@ class ProtocolTypesImplementationGenerator(Generator):
         lines.append('#if !ASSERT_DISABLED')
         lines.append('void %s(Inspector::InspectorValue* value)' % Generator.assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
-        lines.append('    String s;')
-        lines.append('    bool cast_res = value->asString(&s);')
-        lines.append('    ASSERT(cast_res);')
+        lines.append('    String result;')
+        lines.append('    bool castSucceeded = value->asString(result);')
+        lines.append('    ASSERT(castSucceeded);')
 
-        assert_condition = ' || '.join(['s == "%s"' % enum_value for enum_value in enum_member.type.enum_values()])
+        assert_condition = ' || '.join(['result == "%s"' % enum_value for enum_value in enum_member.type.enum_values()])
         lines.append('    ASSERT(%s);' % assert_condition)
         lines.append('}')
         lines.append('#endif // !ASSERT_DISABLED')

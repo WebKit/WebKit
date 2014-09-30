@@ -186,9 +186,9 @@ PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString* e
 {
     String securityOrigin;
     bool isLocalStorage = false;
-    bool success = storageId->getString("securityOrigin", &securityOrigin);
+    bool success = storageId->getString("securityOrigin", securityOrigin);
     if (success)
-        success = storageId->getBoolean("isLocalStorage", &isLocalStorage);
+        success = storageId->getBoolean("isLocalStorage", isLocalStorage);
     if (!success) {
         if (errorString)
             *errorString = "Invalid storageId format";

@@ -739,7 +739,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (m_scriptsToEvaluateOnLoad) {
         for (auto& keyValuePair : *m_scriptsToEvaluateOnLoad) {
             String scriptText;
-            if (keyValuePair.value->asString(&scriptText))
+            if (keyValuePair.value->asString(scriptText))
                 frame->script().executeScript(scriptText);
         }
     }
