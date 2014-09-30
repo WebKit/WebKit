@@ -666,29 +666,24 @@ private:
     RefPtr<ElementData> m_elementData;
 };
 
-inline bool isElement(const Node& node) { return node.isElementNode(); }
-
-NODE_TYPE_CASTS(Element)
-
-template <>
-struct NodeTypeCastTraits<const Element, const Node> {
-    static bool isType(const Node& node) { return node.isElementNode(); }
-};
+SPECIALIZE_TYPE_TRAITS_BEGIN(Element)
+    static bool isElement(const Node& node) { return node.isElementNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 inline bool Node::hasAttributes() const
 {
-    return isElementNode() && toElement(this)->hasAttributes();
+    return is<Element>(*this) && downcast<Element>(*this).hasAttributes();
 }
 
 inline NamedNodeMap* Node::attributes() const
 {
-    return isElementNode() ? &toElement(this)->attributes() : nullptr;
+    return is<Element>(*this) ? &downcast<Element>(*this).attributes() : nullptr;
 }
 
 inline Element* Node::parentElement() const
 {
     ContainerNode* parent = parentNode();
-    return parent && parent->isElementNode() ? toElement(parent) : nullptr;
+    return parent && is<Element>(parent) ? downcast<Element>(parent) : nullptr;
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const

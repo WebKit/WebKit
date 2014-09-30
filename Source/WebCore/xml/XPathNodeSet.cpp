@@ -207,19 +207,19 @@ void NodeSet::traversalSort() const
     Vector<RefPtr<Node>> sortedNodes;
     sortedNodes.reserveInitialCapacity(nodeCount);
 
-    for (Node* n = findRootNode(m_nodes.first().get()); n; n = NodeTraversal::next(n)) {
-        if (nodes.contains(n))
-            sortedNodes.append(n);
+    for (Node* node = findRootNode(m_nodes.first().get()); node; node = NodeTraversal::next(node)) {
+        if (nodes.contains(node))
+            sortedNodes.append(node);
 
-        if (!containsAttributeNodes || !n->isElementNode())
+        if (!containsAttributeNodes || !is<Element>(node))
             continue;
 
-        Element* element = toElement(n);
-        if (!element->hasAttributes())
+        Element& element = downcast<Element>(*node);
+        if (!element.hasAttributes())
             continue;
 
-        for (const Attribute& attribute : element->attributesIterator()) {
-            RefPtr<Attr> attr = element->attrIfExists(attribute.name());
+        for (const Attribute& attribute : element.attributesIterator()) {
+            RefPtr<Attr> attr = element.attrIfExists(attribute.name());
             if (attr && nodes.contains(attr.get()))
                 sortedNodes.append(attr);
         }

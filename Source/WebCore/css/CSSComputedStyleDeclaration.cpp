@@ -1629,15 +1629,15 @@ Node* ComputedStyleExtractor::styledNode() const
 {
     if (!m_node)
         return nullptr;
-    if (!m_node->isElementNode())
+    if (!is<Element>(*m_node))
         return m_node.get();
-    Element* element = toElement(m_node.get());
+    Element& element = downcast<Element>(*m_node);
     PseudoElement* pseudoElement;
-    if (m_pseudoElementSpecifier == BEFORE && (pseudoElement = element->beforePseudoElement()))
+    if (m_pseudoElementSpecifier == BEFORE && (pseudoElement = element.beforePseudoElement()))
         return pseudoElement;
-    if (m_pseudoElementSpecifier == AFTER && (pseudoElement = element->afterPseudoElement()))
+    if (m_pseudoElementSpecifier == AFTER && (pseudoElement = element.afterPseudoElement()))
         return pseudoElement;
-    return element;
+    return &element;
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const

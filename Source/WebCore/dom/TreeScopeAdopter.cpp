@@ -60,11 +60,11 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
                 rareData->nodeLists()->adoptTreeScope();
         }
 
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
 
         if (node->hasSyntheticAttrChildNodes()) {
-            const Vector<RefPtr<Attr>>& attrs = toElement(node)->attrNodeList();
+            const Vector<RefPtr<Attr>>& attrs = downcast<Element>(*node).attrNodeList();
             for (unsigned i = 0; i < attrs.size(); ++i)
                 moveTreeToNewScope(attrs[i].get());
         }

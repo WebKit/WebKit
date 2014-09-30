@@ -39,7 +39,9 @@
 #include "ElementTraversal.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
+#include "HTMLDivElement.h"
 #include "HTMLElement.h"
+#include "HTMLLIElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "InsertIntoTextNodeCommand.h"
@@ -322,14 +324,14 @@ void CompositeEditCommand::insertLineBreak()
 
 bool CompositeEditCommand::isRemovableBlock(const Node* node)
 {
-    if (!node->hasTagName(divTag))
+    if (!is<HTMLDivElement>(node))
         return false;
 
     Node* parentNode = node->parentNode();
     if (parentNode && parentNode->firstChild() != parentNode->lastChild())
         return false;
 
-    if (!toElement(node)->hasAttributes())
+    if (!downcast<HTMLDivElement>(*node).hasAttributes())
         return true;
 
     return false;
@@ -1069,7 +1071,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         for (size_t i = ancestors.size(); i != 0; --i) {
             Node* item = ancestors[i - 1].get();
             RefPtr<Node> child = item->cloneNode(isRenderedTable(item));
-            appendNode(child, toElement(lastNode.get()));
+            appendNode(child, downcast<Element>(lastNode.get()));
             lastNode = child.release();
         }
     }
@@ -1347,13 +1349,13 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
 
     RefPtr<Element> newBlock = 0;
     if (ContainerNode* blockEnclosingList = listNode->parentNode()) {
-        if (blockEnclosingList->hasTagName(liTag)) { // listNode is inside another list item
+        if (is<HTMLLIElement>(blockEnclosingList)) { // listNode is inside another list item
             if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode.get())) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
-                splitElement(toElement(blockEnclosingList), listNode);
+                splitElement(downcast<HTMLLIElement>(blockEnclosingList), listNode);
                 removeNodePreservingChildren(listNode->parentNode());
                 newBlock = createListItemElement(document());
             }
@@ -1369,7 +1371,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (isListItem(nextListNode.get()) || isListElement(nextListNode.get())) {
         // If emptyListItem follows another list item or nested list, split the list node.
         if (isListItem(previousListNode.get()) || isListElement(previousListNode.get()))
-            splitElement(toElement(listNode.get()), emptyListItem);
+            splitElement(downcast<Element>(listNode.get()), emptyListItem);
 
         // If emptyListItem is followed by other list item or nested list, then insert newBlock before the list node.
         // Because we have splitted the element, emptyListItem is the first element in the list node.
@@ -1522,13 +1524,13 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
 
     RefPtr<Node> endNode = end;
     for (node = start; node && node->parentNode() != endNode; node = node->parentNode()) {
-        if (!node->parentNode()->isElementNode())
+        if (!is<Element>(node->parentNode()))
             break;
         // Do not split a node when doing so introduces an empty node.
         VisiblePosition positionInParent = firstPositionInNode(node->parentNode());
         VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
-            splitElement(toElement(node->parentNode()), node);
+            splitElement(downcast<Element>(node->parentNode()), node);
     }
 
     return node.release();

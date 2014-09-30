@@ -851,8 +851,8 @@ bool AccessibilityObject::press()
         document->renderView()->hitTest(request, hitTestResult);
         if (hitTestResult.innerNode()) {
             Node* innerNode = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
-            if (innerNode->isElementNode())
-                hitTestElement = toElement(innerNode);
+            if (is<Element>(innerNode))
+                hitTestElement = downcast<Element>(innerNode);
         }
     }
     
@@ -1759,20 +1759,19 @@ String AccessibilityObject::invalidStatus() const
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
     Node* node = this->node();
-    return node && node->isElementNode() && toElement(*node).hasTagName(tagName);
+    return node && is<Element>(node) && downcast<Element>(*node).hasTagName(tagName);
 }
     
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 {
-    Node* elementNode = node();
-    if (!elementNode)
+    Node* node = this->node();
+    if (!node)
         return false;
     
-    if (!elementNode->isElementNode())
+    if (!is<Element>(node))
         return false;
     
-    Element* element = toElement(elementNode);
-    return element->fastHasAttribute(attribute);
+    return downcast<Element>(*node).fastHasAttribute(attribute);
 }
     
 const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
@@ -1967,8 +1966,8 @@ bool AccessibilityObject::hasHighlighting() const
 Element* AccessibilityObject::element() const
 {
     Node* node = this->node();
-    if (node && node->isElementNode())
-        return toElement(node);
+    if (node && is<Element>(node))
+        return downcast<Element>(node);
     return nullptr;
 }
 
@@ -2115,10 +2114,10 @@ String AccessibilityObject::identifierAttribute() const
 void AccessibilityObject::classList(Vector<String>& classList) const
 {
     Node* node = this->node();
-    if (!node || !node->isElementNode())
+    if (!node || !is<Element>(node))
         return;
     
-    Element* element = toElement(node);
+    Element* element = downcast<Element>(node);
     DOMTokenList& list = element->classList();
     unsigned length = list.length();
     for (unsigned k = 0; k < length; k++)

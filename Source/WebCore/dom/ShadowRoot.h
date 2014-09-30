@@ -101,9 +101,9 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 inline ShadowRoot* Node::shadowRoot() const
 {
-    if (!isElementNode())
+    if (!is<Element>(*this))
         return nullptr;
-    return toElement(this)->shadowRoot();
+    return downcast<Element>(*this).shadowRoot();
 }
 
 inline ContainerNode* Node::parentOrShadowHostNode() const

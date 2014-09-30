@@ -34,7 +34,7 @@ public:
     RenderDeprecatedFlexibleBox(Element&, PassRef<RenderStyle>);
     virtual ~RenderDeprecatedFlexibleBox();
 
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual const char* renderName() const;
 

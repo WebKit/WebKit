@@ -398,10 +398,10 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
     if (position.anchorNode() == node)
         return true;
 
-    if (!node->isElementNode())
+    if (!is<Element>(node))
         return false;
 
-    Element* element = toElement(node);
+    Element* element = downcast<Element>(node);
     return element->containsIncludingShadowDOM(position.anchorNode());
 }
 
@@ -1491,7 +1491,7 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 
     Color caretColor = Color::black;
     ColorSpace colorSpace = ColorSpaceDeviceRGB;
-    Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
+    Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
     Element* rootEditableElement = node->rootEditableElement();
 
     if (element && element->renderer()) {
@@ -1520,13 +1520,13 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 #endif
 }
 
-void FrameSelection::debugRenderer(RenderObject* r, bool selected) const
+void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
 {
-    if (r->node()->isElementNode()) {
-        Element* element = toElement(r->node());
+    if (is<Element>(renderer->node())) {
+        Element* element = downcast<Element>(renderer->node());
         fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().string().utf8().data());
-    } else if (r->isText()) {
-        RenderText* textRenderer = toRenderText(r);
+    } else if (renderer->isText()) {
+        RenderText* textRenderer = toRenderText(renderer);
         if (!textRenderer->textLength() || !textRenderer->firstTextBox()) {
             fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
             return;
@@ -1537,9 +1537,9 @@ void FrameSelection::debugRenderer(RenderObject* r, bool selected) const
         int textLength = text.length();
         if (selected) {
             int offset = 0;
-            if (r->node() == m_selection.start().containerNode())
+            if (renderer->node() == m_selection.start().containerNode())
                 offset = m_selection.start().computeOffsetInContainerNode();
-            else if (r->node() == m_selection.end().containerNode())
+            else if (renderer->node() == m_selection.end().containerNode())
                 offset = m_selection.end().computeOffsetInContainerNode();
 
             int pos;

@@ -222,10 +222,10 @@ void PageSerializer::serializeFrame(Frame* frame)
 
     for (Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); ++iter) {
         Node* node = *iter;
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
 
-        Element& element = toElement(*node);
+        Element& element = downcast<Element>(*node);
         // We have to process in-line style as it might contain some resources (typically background images).
         if (is<StyledElement>(element))
             retrieveResourcesForProperties(downcast<StyledElement>(element).inlineStyle(), document);

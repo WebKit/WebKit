@@ -139,9 +139,9 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Node* nod
     if (&targetNode == nodeToSkip)
         return;
 
-    if (tagNamesToSkip && targetNode.isElementNode()) {
+    if (tagNamesToSkip && is<Element>(targetNode)) {
         for (auto& name : *tagNamesToSkip) {
-            if (toElement(targetNode).hasTagName(name))
+            if (downcast<Element>(targetNode).hasTagName(name))
                 return;
         }
     }
@@ -570,7 +570,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         appendProcessingInstruction(result, downcast<ProcessingInstruction>(node).target(), downcast<ProcessingInstruction>(node).data());
         break;
     case Node::ELEMENT_NODE:
-        appendElement(result, toElement(node), namespaces);
+        appendElement(result, downcast<Element>(node), namespaces);
         break;
     case Node::CDATA_SECTION_NODE:
         appendCDATASection(result, downcast<CDATASection>(node).data());

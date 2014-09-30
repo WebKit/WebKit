@@ -103,8 +103,8 @@ FocusNavigationScope FocusNavigationScope::focusNavigationScopeOf(Node* node)
 FocusNavigationScope FocusNavigationScope::focusNavigationScopeOwnedByShadowHost(Node* node)
 {
     ASSERT(node);
-    ASSERT(toElement(node)->shadowRoot());
-    return FocusNavigationScope(toElement(node)->shadowRoot());
+    ASSERT(downcast<Element>(*node).shadowRoot());
+    return FocusNavigationScope(downcast<Element>(*node).shadowRoot());
 }
 
 FocusNavigationScope FocusNavigationScope::focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement* frame)
@@ -145,14 +145,14 @@ static inline bool isNonFocusableShadowHost(Element& element, KeyboardEvent& eve
 
 static inline bool isFocusableShadowHost(Node& node, KeyboardEvent& event)
 {
-    return node.isElementNode() && toElement(node).isKeyboardFocusable(&event) && toElement(node).shadowRoot() && !hasCustomFocusLogic(toElement(node));
+    return is<Element>(node) && downcast<Element>(node).isKeyboardFocusable(&event) && downcast<Element>(node).shadowRoot() && !hasCustomFocusLogic(downcast<Element>(node));
 }
 
 static inline int adjustedTabIndex(Node& node, KeyboardEvent& event)
 {
-    if (!node.isElementNode())
+    if (!is<Element>(node))
         return 0;
-    return isNonFocusableShadowHost(toElement(node), event) ? 0 : toElement(node).tabIndex();
+    return isNonFocusableShadowHost(downcast<Element>(node), event) ? 0 : downcast<Element>(node).tabIndex();
 }
 
 static inline bool shouldVisit(Element& element, KeyboardEvent& event)
@@ -350,7 +350,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
 Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, FocusNavigationScope scope, Node* currentNode, KeyboardEvent* event)
 {
-    ASSERT(!currentNode || !currentNode->isElementNode() || !isNonFocusableShadowHost(*toElement(currentNode), *event));
+    ASSERT(!currentNode || !is<Element>(currentNode) || !isNonFocusableShadowHost(*downcast<Element>(currentNode), *event));
     Element* found;
     if (currentNode && direction == FocusDirectionForward && isFocusableShadowHost(*currentNode, *event)) {
         Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::focusNavigationScopeOwnedByShadowHost(currentNode), 0, event);
@@ -410,9 +410,9 @@ Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex
     // Search is inclusive of start
     using namespace NodeRenderingTraversal;
     for (Node* node = start; node; node = direction == FocusDirectionForward ? nextInScope(node) : previousInScope(node)) {
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
-        Element& element = toElement(*node);
+        Element& element = downcast<Element>(*node);
         if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) == tabIndex)
             return &element;
     }
@@ -425,9 +425,9 @@ static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, Keyboa
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Element* winner = nullptr;
     for (Node* node = start; node; node = NodeRenderingTraversal::nextInScope(node)) {
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
-        Element& element = toElement(*node);
+        Element& element = downcast<Element>(*node);
         if (shouldVisit(element, event) && element.tabIndex() > tabIndex && element.tabIndex() < winningTabIndex) {
             winner = &element;
             winningTabIndex = element.tabIndex();
@@ -443,9 +443,9 @@ static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, Keyb
     int winningTabIndex = 0;
     Element* winner = nullptr;
     for (Node* node = start; node; node = NodeRenderingTraversal::previousInScope(node)) {
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
-        Element& element = toElement(*node);
+        Element& element = downcast<Element>(*node);
         int currentTabIndex = adjustedTabIndex(element, event);
         if ((shouldVisit(element, event) || isNonFocusableShadowHost(element, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
             winner = &element;
@@ -464,9 +464,9 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
         if (tabIndex < 0) {
             for (Node* node = nextInScope(start); node; node = nextInScope(node)) {
-                if (!node->isElementNode())
+                if (!is<Element>(node))
                     continue;
-                Element& element = toElement(*node);
+                Element& element = downcast<Element>(*node);
                 if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) >= 0)
                     return &element;
             }
@@ -516,9 +516,9 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
         for (Node* node = startingNode; node; node = previousInScope(node)) {
-            if (!node->isElementNode())
+            if (!is<Element>(node))
                 continue;
-            Element& element = toElement(*node);
+            Element& element = downcast<Element>(*node);
             if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) >= 0)
                 return &element;
         }
@@ -860,7 +860,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
     }
 
     // We found a new focus node, navigate to it.
-    Element* element = toElement(focusCandidate.focusableNode);
+    Element* element = downcast<Element>(focusCandidate.focusableNode);
     ASSERT(element);
 
     element->focus(false, direction);

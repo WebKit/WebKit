@@ -580,13 +580,13 @@ Value FunLang::evaluate() const
 {
     String lang = argument(0).evaluate().toString();
 
-    const Attribute* languageAttribute = 0;
+    const Attribute* languageAttribute = nullptr;
     Node* node = evaluationContext().node.get();
     while (node) {
-        if (node->isElementNode()) {
-            Element* element = toElement(node);
-            if (element->hasAttributes())
-                languageAttribute = element->findAttributeByName(XMLNames::langAttr);
+        if (is<Element>(node)) {
+            Element& element = downcast<Element>(*node);
+            if (element.hasAttributes())
+                languageAttribute = element.findAttributeByName(XMLNames::langAttr);
         }
         if (languageAttribute)
             break;

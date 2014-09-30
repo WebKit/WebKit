@@ -192,7 +192,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLFormControlElement)
     static bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
-    static bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
+    static bool isHTMLFormControlElement(const Node& node) { return is<Element>(node) && downcast<Element>(node).isFormControlElement(); }
     static bool isHTMLFormControlElement(const FormAssociatedElement& element) { return element.isFormControlElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

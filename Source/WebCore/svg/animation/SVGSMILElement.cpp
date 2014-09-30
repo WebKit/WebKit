@@ -157,7 +157,7 @@ void SVGSMILElement::buildPendingResource()
 
     if (!inDocument()) {
         // Reset the target element if we are no longer in the document.
-        setTargetElement(0);
+        setTargetElement(nullptr);
         return;
     }
 
@@ -165,7 +165,7 @@ void SVGSMILElement::buildPendingResource()
     String href = getAttribute(XLinkNames::hrefAttr);
     Element* target;
     if (href.isEmpty())
-        target = parentNode() && parentNode()->isElementNode() ? toElement(parentNode()) : nullptr;
+        target = parentNode() && is<Element>(parentNode()) ? downcast<Element>(parentNode()) : nullptr;
     else
         target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
     SVGElement* svgTarget = target && is<SVGElement>(target) ? downcast<SVGElement>(target) : nullptr;

@@ -40,10 +40,10 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
             notifyNodeInsertedIntoDocument(*child);
     }
 
-    if (!node.isElementNode())
+    if (!is<Element>(node))
         return;
 
-    if (RefPtr<ShadowRoot> root = toElement(node).shadowRoot()) {
+    if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (node.inDocument() && root->hostElement() == &node)
             notifyNodeInsertedIntoDocument(*root);
     }
@@ -71,13 +71,13 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
             notifyNodeRemovedFromDocument(*child.get());
     }
 
-    if (!node.isElementNode())
+    if (!is<Element>(node))
         return;
 
     if (node.document().cssTarget() == &node)
         node.document().setCSSTarget(0);
 
-    if (RefPtr<ShadowRoot> root = toElement(node).shadowRoot()) {
+    if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (!node.inDocument() && root->hostElement() == &node)
             notifyNodeRemovedFromDocument(*root.get());
     }
@@ -90,10 +90,10 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode& no
             notifyNodeRemovedFromTree(*toContainerNode(child));
     }
 
-    if (!node.isElementNode())
+    if (!is<Element>(node))
         return;
 
-    if (RefPtr<ShadowRoot> root = toElement(node).shadowRoot())
+    if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot())
         notifyNodeRemovedFromTree(*root.get());
 }
 
@@ -102,11 +102,11 @@ static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
 {
     unsigned count = 0;
 
-    if (node.isElementNode()) {
+    if (is<Element>(node)) {
         if (is<HTMLFrameOwnerElement>(node) && downcast<HTMLFrameOwnerElement>(node).contentFrame())
             ++count;
 
-        if (ShadowRoot* root = toElement(node).shadowRoot())
+        if (ShadowRoot* root = downcast<Element>(node).shadowRoot())
             count += assertConnectedSubrameCountIsConsistent(*root);
     }
 

@@ -2224,8 +2224,8 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
         selectedElementsSet.remove(parent);
 
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
-        if (node->isElementNode() && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
-            if (RenderBoxModelObject* renderBoxModelObject = toElement(node)->renderBoxModelObject()) {
+        if (is<Element>(node) && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
+            if (RenderBoxModelObject* renderBoxModelObject = downcast<Element>(*node).renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderBoxModelObject->absoluteQuads(elementQuads);
                 ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject->style());

@@ -423,10 +423,10 @@ void HTMLObjectElement::updateDocNamedItem()
     bool isNamedItem = true;
     Node* child = firstChild();
     while (child && isNamedItem) {
-        if (child->isElementNode()) {
-            Element* element = toElement(child);
+        if (is<Element>(child)) {
+            Element& element = downcast<Element>(*child);
             // FIXME: Use of isRecognizedTagName is almost certainly wrong here.
-            if (isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
+            if (isRecognizedTagName(element.tagQName()) && !element.hasTagName(paramTag))
                 isNamedItem = false;
         } else if (is<Text>(child)) {
             if (!downcast<Text>(*child).containsOnlyWhitespace())

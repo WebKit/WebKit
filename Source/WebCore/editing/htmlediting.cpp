@@ -194,7 +194,7 @@ Element* unsplittableElementForPosition(const Position& p)
 {
     // Since enclosingNodeOfType won't search beyond the highest root editable node,
     // this code works even if the closest table cell was outside of the root editable node.
-    Element* enclosingCell = toElement(enclosingNodeOfType(p, &isTableCell));
+    Element* enclosingCell = downcast<Element>(enclosingNodeOfType(p, &isTableCell));
     if (enclosingCell)
         return enclosingCell;
 
@@ -316,7 +316,7 @@ bool isInline(const Node* node)
 Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
     Node* enclosingNode = enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule);
-    return enclosingNode && enclosingNode->isElementNode() ? toElement(enclosingNode) : 0;
+    return enclosingNode && is<Element>(enclosingNode) ? downcast<Element>(enclosingNode) : nullptr;
 }
 
 TextDirection directionOfEnclosingBlock(const Position& position)
@@ -550,10 +550,10 @@ Element* enclosingElementWithTag(const Position& position, const QualifiedName& 
     for (Node* node = position.deprecatedNode(); node; node = node->parentNode()) {
         if (root && !node->hasEditableStyle())
             continue;
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
-        if (toElement(*node).hasTagName(tagName))
-            return toElement(node);
+        if (downcast<Element>(*node).hasTagName(tagName))
+            return downcast<Element>(node);
         if (node == root)
             return nullptr;
     }
@@ -629,7 +629,7 @@ Node* highestNodeToRemoveInPruning(Node* node)
 
 Node* enclosingTableCell(const Position& p)
 {
-    return toElement(enclosingNodeOfType(p, isTableCell));
+    return downcast<Element>(enclosingNodeOfType(p, isTableCell));
 }
 
 Element* enclosingAnchorElement(const Position& p)
@@ -638,8 +638,8 @@ Element* enclosingAnchorElement(const Position& p)
         return nullptr;
 
     for (Node* node = p.deprecatedNode(); node; node = node->parentNode()) {
-        if (node->isElementNode() && node->isLink())
-            return toElement(node);
+        if (is<Element>(node) && node->isLink())
+            return downcast<Element>(node);
     }
     return nullptr;
 }
@@ -1184,11 +1184,11 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
 
 bool areIdenticalElements(const Node* first, const Node* second)
 {
-    if (!first->isElementNode() || !second->isElementNode())
+    if (!is<Element>(first) || !is<Element>(second))
         return false;
 
-    const Element* firstElement = toElement(first);
-    const Element* secondElement = toElement(second);
+    const Element* firstElement = downcast<Element>(first);
+    const Element* secondElement = downcast<Element>(second);
     if (!firstElement->hasTagName(secondElement->tagQName()))
         return false;
 
@@ -1197,21 +1197,17 @@ bool areIdenticalElements(const Node* first, const Node* second)
 
 bool isNonTableCellHTMLBlockElement(const Node* node)
 {
-    if (!node->isElementNode())
-        return false;
-
-    const Element* element = toElement(node);
-    return element->hasTagName(listingTag)
-        || element->hasTagName(olTag)
-        || element->hasTagName(preTag)
-        || is<HTMLTableElement>(element)
-        || element->hasTagName(ulTag)
-        || element->hasTagName(xmpTag)
-        || element->hasTagName(h1Tag)
-        || element->hasTagName(h2Tag)
-        || element->hasTagName(h3Tag)
-        || element->hasTagName(h4Tag)
-        || element->hasTagName(h5Tag);
+    return node->hasTagName(listingTag)
+        || node->hasTagName(olTag)
+        || node->hasTagName(preTag)
+        || is<HTMLTableElement>(node)
+        || node->hasTagName(ulTag)
+        || node->hasTagName(xmpTag)
+        || node->hasTagName(h1Tag)
+        || node->hasTagName(h2Tag)
+        || node->hasTagName(h3Tag)
+        || node->hasTagName(h4Tag)
+        || node->hasTagName(h5Tag);
 }
 
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selection)
@@ -1251,14 +1247,14 @@ bool isBlockFlowElement(const Node* node)
 Element* deprecatedEnclosingBlockFlowElement(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
     if (isBlockFlowElement(node))
-        return toElement(node);
+        return downcast<Element>(node);
     while ((node = node->parentNode())) {
-        if (isBlockFlowElement(node) || node->hasTagName(bodyTag))
-            return toElement(node);
+        if (isBlockFlowElement(node) || is<HTMLBodyElement>(node))
+            return downcast<Element>(node);
     }
-    return 0;
+    return nullptr;
 }
 
 static inline bool caretRendersInsideNode(Node* node)
@@ -1269,11 +1265,11 @@ static inline bool caretRendersInsideNode(Node* node)
 RenderObject* rendererForCaretPainting(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
 
     RenderObject* renderer = node->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
 
     // If caretNode is a block and caret is inside it, then caret should be painted by that block.
     bool paintedByBlock = renderer->isRenderBlockFlow() && caretRendersInsideNode(node);

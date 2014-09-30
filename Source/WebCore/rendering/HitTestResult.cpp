@@ -223,10 +223,11 @@ String HitTestResult::title(TextDirection& dir) const
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (Node* titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentNode()) {
-        if (titleNode->isElementNode()) {
-            String title = toElement(titleNode)->title();
+        if (is<Element>(titleNode)) {
+            Element& titleElement = downcast<Element>(*titleNode);
+            String title = titleElement.title();
             if (!title.isEmpty()) {
-                if (auto renderer = titleNode->renderer())
+                if (auto renderer = titleElement.renderer())
                     dir = renderer->style().direction();
                 return title;
             }
@@ -238,17 +239,17 @@ String HitTestResult::title(TextDirection& dir) const
 String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
     for (Node* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentNode()) {
-        if (!truncatedNode->isElementNode())
+        if (!is<Element>(truncatedNode))
             continue;
 
-        if (auto renderer = toElement(truncatedNode)->renderer()) {
+        if (auto renderer = downcast<Element>(*truncatedNode).renderer()) {
             if (renderer->isRenderBlockFlow()) {
                 RenderBlockFlow* block = toRenderBlockFlow(renderer);
                 if (block->style().textOverflow()) {
                     for (RootInlineBox* line = block->firstRootBox(); line; line = line->nextRootBox()) {
                         if (line->hasEllipsisBox()) {
                             dir = block->style().direction();
-                            return toElement(truncatedNode)->innerText();
+                            return downcast<Element>(*truncatedNode).innerText();
                         }
                     }
                 }
@@ -322,7 +323,7 @@ URL HitTestResult::absoluteImageURL() const
         || is<HTMLInputElement>(*m_innerNonSharedNode)
         || is<HTMLObjectElement>(*m_innerNonSharedNode)
         || is<SVGImageElement>(*m_innerNonSharedNode)) {
-        urlString = toElement(*m_innerNonSharedNode).imageSourceURL();
+        urlString = downcast<Element>(*m_innerNonSharedNode).imageSourceURL();
     } else
         return URL();
 
@@ -674,9 +675,9 @@ Element* HitTestResult::innerElement() const
 {
     Node* node = m_innerNode.get();
     if (!node)
-        return 0;
-    if (node->isElementNode())
-        return toElement(node);
+        return nullptr;
+    if (is<Element>(node))
+        return downcast<Element>(node);
     return node->parentElement();
 }
 
@@ -684,9 +685,9 @@ Element* HitTestResult::innerNonSharedElement() const
 {
     Node* node = m_innerNonSharedNode.get();
     if (!node)
-        return 0;
-    if (node->isElementNode())
-        return toElement(node);
+        return nullptr;
+    if (is<Element>(node))
+        return downcast<Element>(node);
     return node->parentElement();
 }
 

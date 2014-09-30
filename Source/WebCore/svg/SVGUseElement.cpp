@@ -760,9 +760,9 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
         expandUseElementsInShadowTree(child.get());
 }
 
-void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
+void SVGUseElement::expandSymbolElementsInShadowTree(Node* node)
 {
-    if (element->hasTagName(SVGNames::symbolTag)) {
+    if (is<SVGSymbolElement>(node)) {
         // Spec: The referenced 'symbol' and its contents are deep-cloned into the generated tree,
         // with the exception that the 'symbol' is replaced by an 'svg'. This generated 'svg' will
         // always have explicit values for attributes width and height. If attributes width and/or
@@ -772,10 +772,10 @@ void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
         RefPtr<SVGSVGElement> svgElement = SVGSVGElement::create(SVGNames::svgTag, *referencedDocument());
 
         // Transfer all data (attributes, etc.) from <symbol> to the new <svg> element.
-        svgElement->cloneDataFromElement(*toElement(element));
+        svgElement->cloneDataFromElement(downcast<SVGSymbolElement>(*node));
 
         // Only clone symbol children, and add them to the new <svg> element
-        for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
+        for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
             RefPtr<Node> newChild = child->cloneNode(true);
             svgElement->appendChild(newChild.release());
         }
@@ -788,19 +788,19 @@ void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
         if (subtreeContainsDisallowedElement(*svgElement))
             removeDisallowedElementsFromSubtree(*svgElement);
 
-        RefPtr<Node> replacingElement(svgElement.get());
+        RefPtr<SVGSVGElement> replacingElement(svgElement.get());
 
         // Replace <symbol> with <svg>.
-        element->parentNode()->replaceChild(svgElement.release(), element);
+        node->parentNode()->replaceChild(svgElement.release(), node);
 
         // Expand the siblings because the *element* is replaced and we will
         // lose the sibling chain when we are back from recursion.
-        element = replacingElement.get();
-        for (RefPtr<Node> sibling = element->nextSibling(); sibling; sibling = sibling->nextSibling())
+        node = replacingElement.get();
+        for (RefPtr<Node> sibling = node->nextSibling(); sibling; sibling = sibling->nextSibling())
             expandSymbolElementsInShadowTree(sibling.get());
     }
 
-    for (RefPtr<Node> child = element->firstChild(); child; child = child->nextSibling())
+    for (RefPtr<Node> child = node->firstChild(); child; child = child->nextSibling())
         expandSymbolElementsInShadowTree(child.get());
 }
 

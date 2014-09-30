@@ -545,13 +545,13 @@ bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const Rend
     if (!child.node())
         return true;
 
-    ASSERT(child.node()->isElementNode());
+    ASSERT(is<Element>(child.node()));
 
     Node* originalParent = NodeRenderingTraversal::parent(child.node());
-    if (!originalParent || !originalParent->isElementNode() || !originalParent->renderer())
+    if (!originalParent || !is<Element>(originalParent) || !originalParent->renderer())
         return true;
 
-    return toElement(originalParent)->renderer()->isChildAllowed(child, style);
+    return downcast<Element>(*originalParent).renderer()->isChildAllowed(child, style);
 }
 
 void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()

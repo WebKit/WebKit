@@ -31,7 +31,7 @@ public:
     RenderTableCaption(Element&, PassRef<RenderStyle>);
     virtual ~RenderTableCaption();
 
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const override;
     

@@ -48,8 +48,8 @@ public:
     void setAnimatableStyle(PassRef<RenderStyle>);
 
     // This is null for anonymous renderers.
-    Element* element() const { return toElement(RenderObject::node()); }
-    Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
+    Element* element() const { return downcast<Element>(RenderObject::node()); }
+    Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const;
 
     RenderObject* firstChild() const { return m_firstChild; }
@@ -316,7 +316,7 @@ inline Element* RenderElement::generatingElement() const
 {
     if (parent() && isRenderNamedFlowFragment())
         return parent()->generatingElement();
-    return toElement(RenderObject::generatingNode());
+    return downcast<Element>(RenderObject::generatingNode());
 }
 
 inline bool RenderObject::isRenderLayerModelObject() const

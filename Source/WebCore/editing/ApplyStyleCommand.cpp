@@ -420,10 +420,10 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
 static ContainerNode* dummySpanAncestorForNode(const Node* node)
 {
-    while (node && (!node->isElementNode() || !isStyleSpanOrSpanWithOnlyStyleAttribute(toElement(node))))
+    while (node && (!is<Element>(node) || !isStyleSpanOrSpanWithOnlyStyleAttribute(downcast<Element>(node))))
         node = node->parentNode();
     
-    return node ? node->parentNode() : 0;
+    return node ? node->parentNode() : nullptr;
 }
 
 void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(ContainerNode* dummySpanAncestor)
@@ -486,7 +486,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     // Split every ancestor through highest ancestor with embedding.
     RefPtr<Node> currentNode = node;
     while (currentNode) {
-        RefPtr<Element> parent = toElement(currentNode->parentNode());
+        RefPtr<Element> parent = downcast<Element>(currentNode->parentNode());
         if (before ? currentNode->previousSibling() : currentNode->nextSibling())
             splitElement(parent, before ? currentNode : currentNode->nextSibling());
         if (parent == highestAncestorWithUnicodeBidi)
@@ -1040,7 +1040,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
         getChildNodes(*current.get(), currentChildren);
 
         RefPtr<StyledElement> styledElement;
-        if (is<StyledElement>(*current) && isStyledInlineElementToRemove(toElement(current.get()))) {
+        if (is<StyledElement>(*current) && isStyledInlineElementToRemove(downcast<Element>(current.get()))) {
             styledElement = downcast<StyledElement>(current.get());
             elementsToPushDown.append(*styledElement);
         }
@@ -1286,8 +1286,8 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
     Node* previousSibling = startNode->previousSibling();
 
     if (previousSibling && areIdenticalElements(startNode, previousSibling)) {
-        Element* previousElement = toElement(previousSibling);
-        Element* element = toElement(startNode);
+        Element* previousElement = downcast<Element>(previousSibling);
+        Element* element = downcast<Element>(startNode);
         Node* startChild = element->firstChild();
         ASSERT(startChild);
         mergeIdenticalElements(previousElement, element);
@@ -1319,8 +1319,8 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
 
     Node* nextSibling = endNode->nextSibling();
     if (nextSibling && areIdenticalElements(endNode, nextSibling)) {
-        Element* nextElement = toElement(nextSibling);
-        Element* element = toElement(endNode);
+        Element* nextElement = downcast<Element>(nextSibling);
+        Element* element = downcast<Element>(endNode);
         Node* nextChild = nextElement->firstChild();
 
         mergeIdenticalElements(element, nextElement);
@@ -1359,15 +1359,15 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
 
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
-    if (nextSibling && nextSibling->isElementNode() && nextSibling->hasEditableStyle()
-        && areIdenticalElements(element.get(), toElement(nextSibling.get())))
-        mergeIdenticalElements(element.get(), toElement(nextSibling.get()));
+    if (nextSibling && is<Element>(*nextSibling) && nextSibling->hasEditableStyle()
+        && areIdenticalElements(element.get(), downcast<Element>(nextSibling.get())))
+        mergeIdenticalElements(element.get(), downcast<Element>(nextSibling.get()));
 
-    if (previousSibling && previousSibling->isElementNode() && previousSibling->hasEditableStyle()) {
+    if (previousSibling && is<Element>(*previousSibling) && previousSibling->hasEditableStyle()) {
         Node* mergedElement = previousSibling->nextSibling();
-        if (mergedElement->isElementNode() && mergedElement->hasEditableStyle()
-            && areIdenticalElements(toElement(previousSibling.get()), toElement(mergedElement)))
-            mergeIdenticalElements(toElement(previousSibling.get()), toElement(mergedElement));
+        if (is<Element>(mergedElement) && mergedElement->hasEditableStyle()
+            && areIdenticalElements(downcast<Element>(previousSibling.get()), downcast<Element>(mergedElement)))
+            mergeIdenticalElements(downcast<Element>(previousSibling.get()), downcast<Element>(mergedElement));
     }
 
     // FIXME: We should probably call updateStartEnd if the start or end was in the node

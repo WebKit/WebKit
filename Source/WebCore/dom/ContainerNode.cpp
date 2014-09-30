@@ -100,8 +100,8 @@ static inline void destroyRenderTreeIfNeeded(Node& child)
     // FIXME: Get rid of the named flow test.
     if (!child.renderer() && !child.isNamedFlowContentNode())
         return;
-    if (child.isElementNode())
-        Style::detachRenderTree(toElement(child));
+    if (is<Element>(child))
+        Style::detachRenderTree(downcast<Element>(child));
     else if (is<Text>(child))
         Style::detachTextRenderer(downcast<Text>(child));
 }
@@ -347,9 +347,9 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)
 {
     ChildChange change;
-    change.type = child.isElementNode() ? ElementRemoved : child.isTextNode() ? TextRemoved : NonContentsChildChanged;
-    change.previousSiblingElement = (!previousSibling || previousSibling->isElementNode()) ? toElement(previousSibling) : ElementTraversal::previousSibling(previousSibling);
-    change.nextSiblingElement = (!nextSibling || nextSibling->isElementNode()) ? toElement(nextSibling) : ElementTraversal::nextSibling(nextSibling);
+    change.type = is<Element>(child) ? ElementRemoved : is<Text>(child) ? TextRemoved : NonContentsChildChanged;
+    change.previousSiblingElement = (!previousSibling || is<Element>(previousSibling)) ? downcast<Element>(previousSibling) : ElementTraversal::previousSibling(previousSibling);
+    change.nextSiblingElement = (!nextSibling || is<Element>(nextSibling)) ? downcast<Element>(nextSibling) : ElementTraversal::nextSibling(nextSibling);
     change.source = source;
 
     childrenChanged(change);

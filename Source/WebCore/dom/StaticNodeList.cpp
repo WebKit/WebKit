@@ -47,7 +47,7 @@ Node* StaticNodeList::namedItem(const AtomicString& elementId) const
 {
     for (unsigned i = 0, length = m_nodes.size(); i < length; ++i) {
         Node& node = const_cast<Node&>(m_nodes[i].get());
-        if (node.isElementNode() && toElement(node).getIdAttribute() == elementId)
+        if (is<Element>(node) && downcast<Element>(node).getIdAttribute() == elementId)
             return &node;
     }
     return nullptr;

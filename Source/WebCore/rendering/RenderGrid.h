@@ -45,7 +45,7 @@ public:
     RenderGrid(Element&, PassRef<RenderStyle>);
     virtual ~RenderGrid();
 
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 

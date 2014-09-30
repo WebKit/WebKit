@@ -97,8 +97,8 @@ static inline bool isObservable(JSNode* jsNode, Node* node)
 static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
-        if (node->isElementNode()) {
-            auto& element = toElement(*node);
+        if (is<Element>(node)) {
+            auto& element = downcast<Element>(*node);
 
             // If a wrapper is the last reference to an image element
             // that is loading but not in the document, the wrapper is observable

@@ -1,3 +1,16 @@
+2014-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Element
+        https://bugs.webkit.org/show_bug.cgi?id=137241
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Element instead of isElementNode() /
+        toElement().
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+
 2014-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move ColorInputType class to std::unique_ptr

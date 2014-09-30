@@ -393,7 +393,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     }
     
     if (behavior & RenderAsTextShowIDAndClass) {
-        if (Element* element = o.node() && o.node()->isElementNode() ? toElement(o.node()) : 0) {
+        if (Element* element = o.node() && is<Element>(o.node()) ? downcast<Element>(o.node()) : nullptr) {
             if (element->hasID())
                 ts << " id=\"" + element->getIdAttribute() + "\"";
 

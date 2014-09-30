@@ -253,10 +253,10 @@ AccessibilityObject* AXObjectCache::get(Node* node)
 // FIXME: This should take a const char*, but one caller passes nullAtom.
 bool nodeHasRole(Node* node, const String& role)
 {
-    if (!node || !node->isElementNode())
+    if (!node || !is<Element>(node))
         return false;
 
-    auto& roleValue = toElement(node)->fastGetAttribute(roleAttr);
+    auto& roleValue = downcast<Element>(*node).fastGetAttribute(roleAttr);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())
@@ -294,7 +294,7 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
         return AccessibilitySVGRoot::create(renderer);
     
     // Search field buttons
-    if (node && node->isElementNode() && toElement(node)->isSearchFieldCancelButtonElement())
+    if (node && is<Element>(node) && downcast<Element>(*node).isSearchFieldCancelButtonElement())
         return AccessibilitySearchFieldCancelButton::create(renderer);
     
     if (renderer->isBoxModelObject()) {
@@ -653,10 +653,10 @@ void AXObjectCache::handleMenuOpened(Node* node)
     
 void AXObjectCache::handleLiveRegionCreated(Node* node)
 {
-    if (!node || !node->renderer() || !node->isElementNode())
+    if (!node || !node->renderer() || !is<Element>(node))
         return;
     
-    Element* element = toElement(node);
+    Element* element = downcast<Element>(node);
     String liveRegionStatus = element->fastGetAttribute(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
         const AtomicString& ariaRole = element->fastGetAttribute(roleAttr);
@@ -820,7 +820,7 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     if (!nodeHasRole(node, "menuitem") && !nodeHasRole(node, "menuitemradio") && !nodeHasRole(node, "menuitemcheckbox"))
         return;
     
-    if (!toElement(node)->focused() && !equalIgnoringCase(toElement(node)->fastGetAttribute(aria_selectedAttr), "true"))
+    if (!downcast<Element>(*node).focused() && !equalIgnoringCase(downcast<Element>(*node).fastGetAttribute(aria_selectedAttr), "true"))
         return;
     
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
@@ -1030,7 +1030,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)
 {
     const Element* result = node->rootEditableElement();
-    const Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
+    const Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
 
     for (; element; element = element->parentElement()) {
         if (nodeIsTextControl(element))
@@ -1073,8 +1073,8 @@ bool isNodeAriaVisible(Node* node)
     // To determine if a node is ARIA visible, we need to check the parent hierarchy to see if anyone specifies
     // aria-hidden explicitly.
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
-        if (testNode->isElementNode()) {
-            const AtomicString& ariaHiddenValue = toElement(testNode)->fastGetAttribute(aria_hiddenAttr);
+        if (is<Element>(testNode)) {
+            const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).fastGetAttribute(aria_hiddenAttr);
             if (equalIgnoringCase(ariaHiddenValue, "false"))
                 return true;
             if (equalIgnoringCase(ariaHiddenValue, "true"))

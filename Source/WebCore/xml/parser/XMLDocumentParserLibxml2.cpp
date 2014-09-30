@@ -621,10 +621,10 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
     while (parentElement) {
         elemStack.append(parentElement);
 
-        ContainerNode* n = parentElement->parentNode();
-        if (!n || !n->isElementNode())
+        ContainerNode* node = parentElement->parentNode();
+        if (!node || !is<Element>(node))
             break;
-        parentElement = toElement(n);
+        parentElement = downcast<Element>(node);
     }
 
     if (elemStack.isEmpty())
@@ -881,34 +881,34 @@ void XMLDocumentParser::endElementNs()
 
     exitText();
 
-    RefPtr<ContainerNode> n = m_currentNode;
-    n->finishParsingChildren();
+    RefPtr<ContainerNode> node = m_currentNode;
+    node->finishParsingChildren();
 
     // Once we reach the depth again where entity expansion started, stop executing the work-around.
     if (hackAroundLibXMLEntityParsingBug() && context()->depth <= depthTriggeringEntityExpansion())
         setDepthTriggeringEntityExpansion(-1);
 
-    if (!scriptingContentIsAllowed(parserContentPolicy()) && n->isElementNode() && toScriptElementIfPossible(toElement(n.get()))) {
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && toScriptElementIfPossible(downcast<Element>(node.get()))) {
         popCurrentNode();
-        n->remove(IGNORE_EXCEPTION);
+        node->remove(IGNORE_EXCEPTION);
         return;
     }
 
-    if (!n->isElementNode() || !m_view) {
+    if (!node->isElementNode() || !m_view) {
         popCurrentNode();
         return;
     }
 
-    Element* element = toElement(n.get());
+    Element& element = downcast<Element>(*node);
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.
-    if (!element->inDocument()) {
+    if (!element.inDocument()) {
         popCurrentNode();
         return;
     }
 
-    ScriptElement* scriptElement = toScriptElementIfPossible(element);
+    ScriptElement* scriptElement = toScriptElementIfPossible(&element);
     if (!scriptElement) {
         popCurrentNode();
         return;
@@ -926,14 +926,14 @@ void XMLDocumentParser::endElementNs()
             scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
         else if (scriptElement->willBeParserExecuted()) {
             m_pendingScript = scriptElement->cachedScript();
-            m_scriptElement = element;
+            m_scriptElement = &element;
             m_pendingScript->addClient(this);
 
             // m_pendingScript will be 0 if script was already loaded and addClient() executed it.
             if (m_pendingScript)
                 pauseParsing();
         } else
-            m_scriptElement = 0;
+            m_scriptElement = nullptr;
 
         // JavaScript may have detached the parser
         if (isDetached())

@@ -100,11 +100,11 @@ inline Node* parentNodeForDistribution(const Node* node)
 inline Element* parentElementForDistribution(const Node* node)
 {
     if (Node* parent = parentNodeForDistribution(node)) {
-        if (parent->isElementNode())
-            return toElement(parent);
+        if (is<Element>(parent))
+            return downcast<Element>(parent);
     }
 
-    return 0;
+    return nullptr;
 }
 
 inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
@@ -113,7 +113,7 @@ inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
     if (Element* parent = parentElementForDistribution(node))
         return parent->shadowRoot();
 
-    return 0;
+    return nullptr;
 }
 
 InsertionPoint* findInsertionPointOf(const Node*);

@@ -515,8 +515,8 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
     if (!node)
         return;
 
-    if (isElement(*node))
-        prefetchDNS(toElement(*node).absoluteLinkURL().host());
+    if (is<Element>(*node))
+        prefetchDNS(downcast<Element>(*node).absoluteLinkURL().host());
 
     Vector<FloatQuad> quads;
     if (RenderObject *renderer = node->renderer()) {
@@ -604,8 +604,8 @@ void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
 
 void WebPage::blurAssistedNode()
 {
-    if (m_assistedNode && m_assistedNode->isElementNode())
-        toElement(m_assistedNode.get())->blur();
+    if (m_assistedNode && is<Element>(*m_assistedNode))
+        downcast<Element>(*m_assistedNode).blur();
 }
 
 void WebPage::setAssistedNodeValue(const String& value)
@@ -1888,7 +1888,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     if (hitNode) {
         info.clickableElementName = hitNode->nodeName();
 
-        Element* element = hitNode->isElementNode() ? toElement(hitNode) : 0;
+        Element* element = is<Element>(hitNode) ? downcast<Element>(hitNode) : nullptr;
         if (element) {
             Element* linkElement = nullptr;
             if (element->renderer() && element->renderer()->isRenderImage()) {
@@ -2006,7 +2006,7 @@ static inline Element* nextFocusableElement(Node* startNode, Page* page, bool is
 {
     RefPtr<KeyboardEvent> key = KeyboardEvent::create();
 
-    Element* nextElement = toElement(startNode);
+    Element* nextElement = downcast<Element>(startNode);
     do {
         nextElement = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get())
             : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get());
@@ -2163,7 +2163,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         // a programmatic focus happening while the keyboard is already shown. Once we have a way to
         // know the keyboard state in the Web Process, we should refine the condition.
         if (m_userIsInteracting)
-            m_formClient->willBeginInputSession(this, toElement(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
+            m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
 
         send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, InjectedBundleUserMessageEncoder(userData.get())));
         m_hasPendingBlurNotification = false;

@@ -1388,13 +1388,13 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
         return false;
 
     Node* ownerNode = m_pageStyleSheet->ownerNode();
-    if (!ownerNode || !ownerNode->isElementNode())
+    if (!ownerNode || !is<Element>(ownerNode))
         return false;
-    Element* ownerElement = toElement(ownerNode);
+    Element& ownerElement = downcast<Element>(*ownerNode);
 
     if (!is<HTMLStyleElement>(ownerElement) && !is<SVGStyleElement>(ownerElement))
         return false;
-    *result = ownerElement->textContent();
+    *result = ownerElement.textContent();
     return true;
 }
 

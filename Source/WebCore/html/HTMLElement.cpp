@@ -642,8 +642,8 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
     }
 
     Node* returnValue = insertAdjacent(where, newChild, ec);
-    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || returnValue->isElementNode());
-    return toElement(returnValue); 
+    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || is<Element>(returnValue));
+    return downcast<Element>(returnValue); 
 }
 
 // Step 3 of http://www.whatwg.org/specs/web-apps/current-work/multipage/apis-in-html-documents.html#insertadjacenthtml()
@@ -651,12 +651,12 @@ static Element* contextElementForInsertion(const String& where, Element* element
 {
     if (equalIgnoringCase(where, "beforeBegin") || equalIgnoringCase(where, "afterEnd")) {
         ContainerNode* parent = element->parentNode();
-        if (parent && !parent->isElementNode()) {
+        if (parent && !is<Element>(parent)) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return nullptr;
         }
-        ASSERT_WITH_SECURITY_IMPLICATION(!parent || parent->isElementNode());
-        return toElement(parent);
+        ASSERT_WITH_SECURITY_IMPLICATION(!parent || is<Element>(parent));
+        return downcast<Element>(parent);
     }
     if (equalIgnoringCase(where, "afterBegin") || equalIgnoringCase(where, "beforeEnd"))
         return element;
@@ -934,14 +934,14 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     while (node) {
         // Skip bdi, script, style and text form controls.
         if (equalIgnoringCase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag) 
-            || (node->isElementNode() && toElement(node)->isTextFormControl())) {
+            || (is<Element>(node) && downcast<Element>(*node).isTextFormControl())) {
             node = NodeTraversal::nextSkippingChildren(node, this);
             continue;
         }
 
         // Skip elements with valid dir attribute
-        if (node->isElementNode()) {
-            AtomicString dirAttributeValue = toElement(node)->fastGetAttribute(dirAttr);
+        if (is<Element>(node)) {
+            AtomicString dirAttributeValue = downcast<Element>(*node).fastGetAttribute(dirAttr);
             if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalIgnoringCase(dirAttributeValue, "auto")) {
                 node = NodeTraversal::nextSkippingChildren(node, this);
                 continue;

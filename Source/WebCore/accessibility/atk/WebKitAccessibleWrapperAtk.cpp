@@ -506,8 +506,8 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     // cannot be done from the UIProcess. Assistive technologies have no need
     // for this information.
     Node* node = coreObject->node();
-    if (node && node->isElementNode()) {
-        String id = toElement(node)->getIdAttribute().string();
+    if (node && is<Element>(node)) {
+        String id = downcast<Element>(*node).getIdAttribute().string();
         if (!id.isEmpty())
             attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());
     }

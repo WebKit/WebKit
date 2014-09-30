@@ -74,7 +74,7 @@ public:
     RenderRubyAsBlock(Element&, PassRef<RenderStyle>);
     virtual ~RenderRubyAsBlock();
 
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
     virtual RenderObject* removeChild(RenderObject& child) override;

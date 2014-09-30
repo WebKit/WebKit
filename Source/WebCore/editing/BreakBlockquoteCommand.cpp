@@ -131,7 +131,7 @@ void BreakBlockquoteCommand::doApply()
         ancestors.append(node);
     
     // Insert a clone of the top blockquote after the break.
-    RefPtr<Element> clonedBlockquote = toElement(topBlockquote)->cloneElementWithoutChildren();
+    RefPtr<Element> clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren();
     insertNodeAfter(clonedBlockquote.get(), breakNode.get());
     
     // Clone startNode's ancestors into the cloned blockquote.

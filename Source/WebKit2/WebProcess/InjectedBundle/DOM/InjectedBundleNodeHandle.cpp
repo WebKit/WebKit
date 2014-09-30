@@ -118,10 +118,10 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
 
 IntRect InjectedBundleNodeHandle::elementBounds() const
 {
-    if (!m_node->isElementNode())
+    if (!is<Element>(*m_node))
         return IntRect();
 
-    return toElement(m_node.get())->boundsInRootViewSpace();
+    return downcast<Element>(*m_node).boundsInRootViewSpace();
 }
     
 IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const

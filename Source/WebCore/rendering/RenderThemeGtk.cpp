@@ -316,15 +316,15 @@ static bool nodeHasPseudo(Node* node, const char* pseudo)
 
 static bool nodeHasClass(Node* node, const char* className)
 {
-    if (!node->isElementNode())
+    if (!is<Element>(node))
         return false;
 
-    Element* element = toElement(node);
+    Element& element = downcast<Element>(*node);
 
-    if (!element->hasClass())
+    if (!element.hasClass())
         return false;
 
-    return element->classNames().contains(className);
+    return element.classNames().contains(className);
 }
 
 RenderThemeGtk::RenderThemeGtk()

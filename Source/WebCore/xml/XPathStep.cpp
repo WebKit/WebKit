@@ -30,6 +30,7 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "NodeTraversal.h"
 #include "XMLNSNames.h"
@@ -201,21 +202,21 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
 
             // For other axes, the principal node type is element.
             ASSERT(primaryNodeType(axis) == Node::ELEMENT_NODE);
-            if (!node.isElementNode())
+            if (!is<Element>(node))
                 return false;
 
             if (name == starAtom)
                 return namespaceURI.isEmpty() || namespaceURI == node.namespaceURI();
 
-            if (node.document().isHTMLDocument()) {
+            if (is<HTMLDocument>(node.document())) {
                 if (is<HTMLElement>(node)) {
                     // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
                     return equalIgnoringCase(downcast<HTMLElement>(node).localName(), name) && (namespaceURI.isNull() || namespaceURI == node.namespaceURI());
                 }
                 // An expression without any prefix shouldn't match no-namespace nodes (because HTML5 says so).
-                return toElement(node).hasLocalName(name) && namespaceURI == node.namespaceURI() && !namespaceURI.isNull();
+                return downcast<Element>(node).hasLocalName(name) && namespaceURI == node.namespaceURI() && !namespaceURI.isNull();
             }
-            return toElement(node).hasLocalName(name) && namespaceURI == node.namespaceURI();
+            return downcast<Element>(node).hasLocalName(name) && namespaceURI == node.namespaceURI();
         }
     }
     ASSERT_NOT_REACHED();
@@ -343,10 +344,10 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             return;
         }
         case AttributeAxis: {
-            if (!context.isElementNode())
+            if (!is<Element>(context))
                 return;
 
-            Element& contextElement = toElement(context);
+            Element& contextElement = downcast<Element>(context);
 
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
             if (m_nodeTest.m_kind == NodeTest::NameTest && m_nodeTest.m_data != starAtom) {

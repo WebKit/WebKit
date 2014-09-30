@@ -676,19 +676,19 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
 
 static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
 {
-    if (!node->isElementNode() || !node->document().frame())
+    if (!is<Element>(node) || !node->document().frame())
         return nullptr;
 
     RefPtr<InspectorObject> elementInfo = InspectorObject::create();
 
-    Element* element = toElement(node);
-    bool isXHTML = element->document().isXHTMLDocument();
-    elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
-    elementInfo->setString("idValue", element->getIdAttribute());
+    Element& element = downcast<Element>(*node);
+    bool isXHTML = element.document().isXHTMLDocument();
+    elementInfo->setString("tagName", isXHTML ? element.nodeName() : element.nodeName().lower());
+    elementInfo->setString("idValue", element.getIdAttribute());
     HashSet<AtomicString> usedClassNames;
-    if (element->hasClass() && is<StyledElement>(element)) {
+    if (element.hasClass() && is<StyledElement>(element)) {
         StringBuilder classNames;
-        const SpaceSplitString& classNamesString = downcast<StyledElement>(*element).classNames();
+        const SpaceSplitString& classNamesString = downcast<StyledElement>(element).classNames();
         size_t classNameCount = classNamesString.size();
         for (size_t i = 0; i < classNameCount; ++i) {
             const AtomicString& className = classNamesString[i];
@@ -701,7 +701,7 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
         elementInfo->setString("className", classNames.toString());
     }
 
-    RenderElement* renderer = element->renderer();
+    RenderElement* renderer = element.renderer();
     Frame* containingFrame = node->document().frame();
     FrameView* containingView = containingFrame->view();
     IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));

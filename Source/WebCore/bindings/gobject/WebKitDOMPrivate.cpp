@@ -86,7 +86,7 @@ WebKitDOMNode* wrap(Node* node)
     case Node::ELEMENT_NODE:
         if (is<HTMLElement>(node))
             return WEBKIT_DOM_NODE(wrap(downcast<HTMLElement>(node)));
-        return WEBKIT_DOM_NODE(wrapElement(toElement(node)));
+        return WEBKIT_DOM_NODE(wrapElement(downcast<Element>(node)));
     case Node::ATTRIBUTE_NODE:
         return WEBKIT_DOM_NODE(wrapAttr(static_cast<Attr*>(node)));
     case Node::TEXT_NODE:

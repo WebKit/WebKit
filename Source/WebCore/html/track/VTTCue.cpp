@@ -770,7 +770,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
             downcast<WebVTTElement>(*child).setIsPastNode(isPastNode);
             // Make an elemenet id match a cue id for style matching purposes.
             if (!id().isEmpty())
-                toElement(child)->setIdAttribute(id());
+                downcast<WebVTTElement>(*child).setIdAttribute(id());
         }
     }
 }

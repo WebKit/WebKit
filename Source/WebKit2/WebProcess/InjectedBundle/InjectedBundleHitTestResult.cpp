@@ -114,10 +114,10 @@ BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
     return BundleHitTestResultMediaTypeNone;
 #else
     WebCore::Node* node = m_hitTestResult.innerNonSharedNode();
-    if (!node->isElementNode())
+    if (!is<Element>(node))
         return BundleHitTestResultMediaTypeNone;
     
-    if (!toElement(node)->isMediaElement())
+    if (!downcast<Element>(*node).isMediaElement())
         return BundleHitTestResultMediaTypeNone;
     
     return m_hitTestResult.mediaIsVideo() ? BundleHitTestResultMediaTypeVideo : BundleHitTestResultMediaTypeAudio;    

@@ -40,7 +40,7 @@ public:
     RenderRubyText(Element&, PassRef<RenderStyle>);
     virtual ~RenderRubyText();
 
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 

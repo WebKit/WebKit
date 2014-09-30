@@ -85,7 +85,7 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
             break;
         }
         case Node::ELEMENT_NODE: {
-            if (matchesElement(*toElement(node)))
+            if (matchesElement(downcast<Element>(*node)))
                 m_results.add(node);
 
             // Search inside frame elements.

@@ -59,7 +59,7 @@ public:
         return adoptRef(new HTMLStackItem(node, token, namespaceURI));
     }
 
-    Element* element() const { return toElement(m_node.get()); }
+    Element* element() const { return downcast<Element>(m_node.get()); }
     ContainerNode* node() const { return m_node.get(); }
 
     bool isDocumentFragmentNode() const { return m_isDocumentFragmentNode; }

@@ -941,7 +941,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case COMMENT_NODE:
         return createComment(importedNode->nodeValue());
     case ELEMENT_NODE: {
-        Element& oldElement = toElement(*importedNode);
+        Element& oldElement = downcast<Element>(*importedNode);
         // FIXME: The following check might be unnecessary. Is it possible that
         // oldElement has mismatched prefix/namespace?
         if (!hasValidNamespaceForElements(oldElement.tagQName())) {
@@ -1414,13 +1414,13 @@ Element* Document::elementFromPoint(const LayoutPoint& clientPoint)
         return nullptr;
 
     Node* node = nodeFromPoint(clientPoint);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = node->parentNode();
 
     if (node)
         node = ancestorInThisScope(node);
 
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)

@@ -729,7 +729,7 @@ void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject& o)
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = o.node() && o.node()->isElementNode() && toElement(o.node())->active();
+    bool pressed = o.node() && is<Element>(o.node()) && downcast<Element>(*o.node()).active();
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }
@@ -1531,7 +1531,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     // Update the various states we respond to.
     updateEnabledState(sliderThumbCell, o);
-        Element* focusDelegate = (o.node() && o.node()->isElementNode()) ? toElement(o.node())->focusDelegate() : 0;
+        Element* focusDelegate = (o.node() && is<Element>(o.node())) ? downcast<Element>(o.node())->focusDelegate() : nullptr;
     if (focusDelegate)
         updateFocusedState(sliderThumbCell, *focusDelegate->renderer());
 
@@ -1673,7 +1673,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 {
     Element* input = o.node()->shadowHost();
     if (!input)
-        input = toElement(o.node());
+        input = downcast<Element>(o.node());
 
     if (!input->renderer()->isBox())
         return false;

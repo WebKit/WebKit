@@ -289,13 +289,13 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     HitTestResult result(point);
     documentUnderMouse->renderView()->hitTest(HitTestRequest(), result);
 
-    Node* n = result.innerNode();
-    while (n && !n->isElementNode())
-        n = n->parentNode();
-    if (n)
-        n = n->deprecatedShadowAncestorNode();
+    Node* node = result.innerNode();
+    while (node && !is<Element>(node))
+        node = node->parentNode();
+    if (node)
+        node = node->deprecatedShadowAncestorNode();
 
-    return toElement(n);
+    return downcast<Element>(node);
 }
 
 bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)

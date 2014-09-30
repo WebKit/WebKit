@@ -2195,8 +2195,8 @@ AtomicString Element::computeInheritedLanguage() const
     // The language property is inherited, so we iterate over the parents to find the first language.
     const Node* currentNode = this;
     while ((currentNode = currentNode->parentNode())) {
-        if (currentNode->isElementNode()) {
-            if (const ElementData* elementData = toElement(*currentNode).elementData()) {
+        if (is<Element>(currentNode)) {
+            if (const ElementData* elementData = downcast<Element>(*currentNode).elementData()) {
                 if (const Attribute* attribute = elementData->findLanguageAttribute())
                     return attribute->value();
             }

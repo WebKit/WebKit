@@ -100,7 +100,7 @@ bool AccessibilityMenuList::canSetFocusAttribute() const
     if (!node())
         return false;
 
-    return !toElement(node())->isDisabledFormControl();
+    return !downcast<Element>(*node()).isDisabledFormControl();
 }
 
 void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)

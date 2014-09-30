@@ -1680,7 +1680,7 @@ static bool isRestartedPlugin(RenderObject* renderer)
     if (!renderer->isEmbeddedObject())
         return false;
 
-    Element* element = toElement(renderer->node());
+    Element* element = downcast<Element>(renderer->node());
     if (!element || !is<HTMLPlugInElement>(element))
         return false;
 

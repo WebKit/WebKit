@@ -153,7 +153,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTextFormControlElement)
     static bool isHTMLTextFormControlElement(const Element& element) { return element.isTextFormControl(); }
-    static bool isHTMLTextFormControlElement(const Node& node) { return node.isElementNode() && isHTMLTextFormControlElement(toElement(node)); }
+    static bool isHTMLTextFormControlElement(const Node& node) { return is<Element>(node) && isHTMLTextFormControlElement(downcast<Element>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position&);

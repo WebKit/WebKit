@@ -42,6 +42,7 @@
 #import "FrameLoader.h"
 #import "HTMLElement.h"
 #import "HTMLFrameElementBase.h"
+#import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMetaElement.h"
 #import "HTMLNames.h"
@@ -738,14 +739,14 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
 
 String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
-    if (!node.isElementNode()) {
+    if (!is<Element>(node)) {
         if (Node* parent = node.parentNode())
             return propertyValueForNode(*parent, propertyId);
         return String();
     }
 
     bool inherit = false;
-    Element& element = toElement(node);
+    Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         String result;
         if (stringFromCSSValue(*value, result))
@@ -883,13 +884,13 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
 
 bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID propertyId, float& result)
 {
-    if (!node.isElementNode()) {
+    if (!is<Element>(node)) {
         if (ContainerNode* parent = node.parentNode())
             return floatPropertyValueForNode(*parent, propertyId, result);
         return false;
     }
 
-    Element& element = toElement(node);
+    Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
             return true;
@@ -1052,13 +1053,13 @@ static Color normalizedColor(Color color, bool ignoreBlack)
 
 Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
-    if (!node.isElementNode()) {
+    if (!is<Element>(node)) {
         if (Node* parent = node.parentNode())
             return colorPropertyValueForNode(*parent, propertyId);
         return Color();
     }
 
-    Element& element = toElement(node);
+    Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
             return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
@@ -1356,11 +1357,11 @@ NSDictionary* HTMLConverter::attributesForElement(Element& element)
 NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& node)
 {
     Node* ancestor = node.parentNode();
-    while (ancestor && !ancestor->isElementNode())
+    while (ancestor && !is<Element>(ancestor))
         ancestor = ancestor->parentNode();
     if (!ancestor)
         return nullptr;
-    return aggregatedAttributesForElementAndItsAncestors(*toElement(ancestor));
+    return aggregatedAttributesForElementAndItsAncestors(downcast<Element>(*ancestor));
 }
 
 NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Element& element)
@@ -1373,7 +1374,7 @@ NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Eleme
     ASSERT(attributesForCurrentElement);
 
     Node* ancestor = element.parentNode();
-    while (ancestor && !ancestor->isElementNode())
+    while (ancestor && !is<Element>(ancestor))
         ancestor = ancestor->parentNode();
 
     if (!ancestor) {
@@ -1381,7 +1382,7 @@ NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Eleme
         return attributesForCurrentElement;
     }
 
-    RetainPtr<NSMutableDictionary> attributesForAncestors = adoptNS([aggregatedAttributesForElementAndItsAncestors(*toElement(ancestor)) mutableCopy]);
+    RetainPtr<NSMutableDictionary> attributesForAncestors = adoptNS([aggregatedAttributesForElementAndItsAncestors(downcast<Element>(*ancestor)) mutableCopy]);
     [attributesForAncestors addEntriesFromDictionary:attributesForCurrentElement];
     m_aggregatedAttributesForElements.set(&element, attributesForAncestors);
 
@@ -2394,8 +2395,8 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                 break;
             child = child->nextSibling();
         }
-    } else if (node.isElementNode()) {
-        Element& element = toElement(node);
+    } else if (is<Element>(node)) {
+        Element& element = downcast<Element>(node);
         if (_enterElement(element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
             if (_processElement(element, depth)) {
@@ -2570,8 +2571,8 @@ NSAttributedString *editingAttributedStringFromRange(Range& range)
         
         if (startContainer == endContainer && (startOffset == endOffset - 1)) {
             Node* node = startContainer->traverseToChildAt(startOffset);
-            if (node && node->hasTagName(imgTag)) {
-                NSFileWrapper* fileWrapper = fileWrapperForElement(toElement(node));
+            if (node && is<HTMLImageElement>(node)) {
+                NSFileWrapper* fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(node));
                 NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                 [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
                 [attachment release];

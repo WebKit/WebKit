@@ -281,7 +281,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             }
 #endif
         } else if (is<HTMLLinkElement>(*node) || is<HTMLStyleElement>(*node) || is<SVGStyleElement>(*node)) {
-            Element& element = toElement(*node);
+            Element& element = downcast<Element>(*node);
             AtomicString title = element.fastGetAttribute(titleAttr);
             bool enabledViaScript = false;
             if (is<HTMLLinkElement>(element)) {

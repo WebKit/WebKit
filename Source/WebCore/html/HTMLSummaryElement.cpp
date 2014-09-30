@@ -102,12 +102,12 @@ bool HTMLSummaryElement::isMainSummary() const
 
 static bool isClickableControl(Node* node)
 {
-    if (!node->isElementNode())
+    if (!is<Element>(node))
         return false;
-    Element* element = toElement(node);
+    Element& element = downcast<Element>(*node);
     if (is<HTMLFormControlElement>(element))
         return true;
-    Element* host = element->shadowHost();
+    Element* host = element.shadowHost();
     return host && is<HTMLFormControlElement>(host);
 }
 

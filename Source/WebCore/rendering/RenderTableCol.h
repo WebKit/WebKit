@@ -36,7 +36,7 @@ class RenderTableCell;
 class RenderTableCol final : public RenderBox {
 public:
     RenderTableCol(Element&, PassRef<RenderStyle>);
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     void clearPreferredLogicalWidthsDirtyBits();
 

@@ -66,17 +66,17 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     m_name = renderer->renderName();
 
     if (Node* node = renderer->node()) {
-        if (node->isElementNode()) {
-            Element* element = toElement(node);
-            m_elementTagName = element->tagName();
-            m_elementID = element->getIdAttribute();
+        if (is<Element>(node)) {
+            Element& element = downcast<Element>(*node);
+            m_elementTagName = element.tagName();
+            m_elementID = element.getIdAttribute();
             
-            if (element->isStyledElement() && element->hasClass()) {
+            if (element.isStyledElement() && element.hasClass()) {
                 Vector<RefPtr<API::Object>> classNames;
-                classNames.reserveInitialCapacity(element->classNames().size());
+                classNames.reserveInitialCapacity(element.classNames().size());
 
-                for (size_t i = 0, size = element->classNames().size(); i < size; ++i)
-                    classNames.append(API::String::create(element->classNames()[i]));
+                for (size_t i = 0, size = element.classNames().size(); i < size; ++i)
+                    classNames.append(API::String::create(element.classNames()[i]));
 
                 m_elementClassNames = API::Array::create(WTF::move(classNames));
             }

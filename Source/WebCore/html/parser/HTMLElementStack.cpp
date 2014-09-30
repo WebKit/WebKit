@@ -541,7 +541,7 @@ bool HTMLElementStack::hasTemplateInHTMLScope() const
 Element* HTMLElementStack::htmlElement() const
 {
     ASSERT(m_rootNode);
-    return toElement(m_rootNode);
+    return downcast<Element>(m_rootNode);
 }
 
 Element* HTMLElementStack::headElement() const

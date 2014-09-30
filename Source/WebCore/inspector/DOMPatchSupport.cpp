@@ -181,8 +181,8 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
         return true;
 
     // Patch attributes
-    Element* oldElement = toElement(oldNode);
-    Element* newElement = toElement(newNode);
+    Element* oldElement = downcast<Element>(oldNode);
+    Element* newElement = downcast<Element>(newNode);
     if (oldDigest->m_attrsSHA1 != newDigest->m_attrsSHA1) {
         // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
         if (oldElement->hasAttributesWithoutUpdate()) {
@@ -426,7 +426,7 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* nod
             child = child->nextSibling();
             digest->m_children.append(WTF::move(childInfo));
         }
-        Element* element = toElement(node);
+        Element* element = downcast<Element>(node);
 
         if (element->hasAttributesWithoutUpdate()) {
             SHA1 attrsSHA1;

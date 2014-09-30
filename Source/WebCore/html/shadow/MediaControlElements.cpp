@@ -689,7 +689,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
 #if ENABLE(VIDEO_TRACK)
     if (event->type() == eventNames().clickEvent) {
         Node* target = event->target()->toNode();
-        if (!target || !target->isElementNode())
+        if (!target || !is<Element>(target))
             return;
 
         // When we created the elements in the track list, we gave them a custom
@@ -698,7 +698,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
         // tell the HTMLMediaElement to enable that track.
 
         RefPtr<TextTrack> textTrack;
-        MenuItemToTrackMap::iterator iter = m_menuToTrackMap.find(toElement(target));
+        MenuItemToTrackMap::iterator iter = m_menuToTrackMap.find(downcast<Element>(target));
         if (iter != m_menuToTrackMap.end())
             textTrack = iter->value;
         m_menuToTrackMap.clear();

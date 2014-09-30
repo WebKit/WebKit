@@ -52,7 +52,7 @@ static inline bool nodeCanBeDistributed(const Node* node)
     if (parent->isShadowRoot())
         return false;
 
-    if (parent->isElementNode() && toElement(parent)->shadowRoot())
+    if (is<Element>(parent) && downcast<Element>(*parent).shadowRoot())
         return true;
     
     return false;

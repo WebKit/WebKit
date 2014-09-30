@@ -896,11 +896,11 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
         *errorString = "No node with given id found";
         return nullptr;
     }
-    if (!node->isElementNode()) {
+    if (!is<Element>(node)) {
         *errorString = "Not an element node";
         return nullptr;
     }
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 int InspectorCSSAgent::documentNodeWithRequestedFlowsId(Document* document)
@@ -1108,7 +1108,7 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::Region>> Inspect
     for (unsigned i = 0; i < regionList->length(); ++i) {
         Inspector::Protocol::CSS::Region::RegionOverset regionOverset;
 
-        switch (toElement(regionList->item(i))->regionOversetState()) {
+        switch (downcast<Element>(regionList->item(i))->regionOversetState()) {
         case RegionFit:
             regionOverset = Inspector::Protocol::CSS::Region::RegionOverset::Fit;
             break;
@@ -1201,7 +1201,7 @@ void InspectorCSSAgent::resetPseudoStates()
 {
     HashSet<Document*> documentsToChange;
     for (NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.begin(), end = m_nodeIdToForcedPseudoState.end(); it != end; ++it) {
-        if (Element* element = toElement(m_domAgent->nodeForId(it->key)))
+        if (Element* element = downcast<Element>(m_domAgent->nodeForId(it->key)))
             documentsToChange.add(&element->document());
     }
 

@@ -95,9 +95,9 @@ template <typename CurrentType>
 inline Element* Traversal<Element>::nextTemplate(CurrentType* current)
 {
     Node* node = NodeTraversal::next(current);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = NodeTraversal::nextSkippingChildren(node);
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 template <>
@@ -105,9 +105,9 @@ template <typename CurrentType>
 inline Element* Traversal<Element>::nextTemplate(CurrentType* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::next(current, stayWithin);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = NodeTraversal::nextSkippingChildren(node, stayWithin);
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 // Generic versions.
@@ -258,33 +258,33 @@ inline ElementType* Traversal<ElementType>::next(const Node* current, const Node
 inline Element* ElementTraversal::previousIncludingPseudo(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::previousIncludingPseudo(current, stayWithin);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = NodeTraversal::previousIncludingPseudo(node, stayWithin);
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 inline Element* ElementTraversal::nextIncludingPseudo(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::nextIncludingPseudo(current, stayWithin);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = NodeTraversal::nextIncludingPseudo(node, stayWithin);
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 inline Element* ElementTraversal::nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::nextIncludingPseudoSkippingChildren(current, stayWithin);
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = NodeTraversal::nextIncludingPseudoSkippingChildren(node, stayWithin);
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 inline Element* ElementTraversal::pseudoAwarePreviousSibling(const Node* current)
 {
     Node* node = current->pseudoAwarePreviousSibling();
-    while (node && !node->isElementNode())
+    while (node && !is<Element>(node))
         node = node->pseudoAwarePreviousSibling();
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 }

@@ -43,7 +43,7 @@ static Node* enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 static inline bool isElementForFormatBlock(Node* node)
 {
-    return node->isElementNode() && isElementForFormatBlock(toElement(node)->tagQName());
+    return is<Element>(node) && isElementForFormatBlock(downcast<Element>(*node).tagQName());
 }
 
 FormatBlockCommand::FormatBlockCommand(Document& document, const QualifiedName& tagName)
@@ -100,20 +100,20 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
 Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
 {
     if (!range)
-        return 0;
+        return nullptr;
 
     Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
     while (commonAncestor && !isElementForFormatBlock(commonAncestor))
         commonAncestor = commonAncestor->parentNode();
 
     if (!commonAncestor)
-        return 0;
+        return nullptr;
 
     Element* rootEditableElement = range->startContainer()->rootEditableElement();
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
-        return 0;
+        return nullptr;
 
-    return commonAncestor->isElementNode() ? toElement(commonAncestor) : 0;
+    return commonAncestor->isElementNode() ? downcast<Element>(commonAncestor) : nullptr;
 }
 
 bool isElementForFormatBlock(const QualifiedName& tagName)

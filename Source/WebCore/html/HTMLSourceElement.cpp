@@ -63,8 +63,8 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
 void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)
 {
     Element* parent = parentElement();
-    if (!parent && removalRoot.isElementNode())
-        parent = &toElement(removalRoot);
+    if (!parent && is<Element>(removalRoot))
+        parent = &downcast<Element>(removalRoot);
     if (parent && is<HTMLMediaElement>(parent))
         downcast<HTMLMediaElement>(*parent).sourceWasRemoved(this);
     HTMLElement::removedFrom(removalRoot);

@@ -35,24 +35,24 @@
 
 - (BOOL)hasAttribute:(NSString *)attribute
 {
-    return WebCore::toElement(_impl.get())->hasAttribute(attribute);
+    return WebCore::downcast<WebCore::Element>(*_impl).hasAttribute(attribute);
 }
 
 - (NSString *)getAttribute:(NSString *)attribute
 {
-    return WebCore::toElement(_impl.get())->getAttribute(attribute);
+    return WebCore::downcast<WebCore::Element>(*_impl).getAttribute(attribute);
 }
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec;
-    WebCore::toElement(_impl.get())->setAttribute(name, value, ec);
+    WebCore::downcast<WebCore::Element>(*_impl).setAttribute(name, value, ec);
 }
 
 - (NSString *)tagName
 {
-    return WebCore::toElement(_impl.get())->tagName();
+    return WebCore::downcast<WebCore::Element>(*_impl).tagName();
 }
 
 @end

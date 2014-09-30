@@ -802,67 +802,67 @@ bool RenderTheme::isIndeterminate(const RenderObject& o) const
     return inputElement->shouldAppearIndeterminate();
 }
 
-bool RenderTheme::isEnabled(const RenderObject& o) const
+bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
-    Node* node = o.node();
-    if (!node || !node->isElementNode())
+    Node* node = renderer.node();
+    if (!node || !is<Element>(node))
         return true;
-    return !toElement(node)->isDisabledFormControl();
+    return !downcast<Element>(*node).isDisabledFormControl();
 }
 
-bool RenderTheme::isFocused(const RenderObject& o) const
+bool RenderTheme::isFocused(const RenderObject& renderer) const
 {
-    Node* node = o.node();
-    if (!node || !node->isElementNode())
+    Node* node = renderer.node();
+    if (!node || !is<Element>(node))
         return false;
 
-    Element* focusDelegate = toElement(node)->focusDelegate();
+    Element* focusDelegate = downcast<Element>(*node).focusDelegate();
     Document& document = focusDelegate->document();
     Frame* frame = document.frame();
     return focusDelegate == document.focusedElement() && frame && frame->selection().isFocusedAndActive();
 }
 
-bool RenderTheme::isPressed(const RenderObject& o) const
+bool RenderTheme::isPressed(const RenderObject& renderer) const
 {
-    if (!o.node() || !o.node()->isElementNode())
+    if (!renderer.node() || !is<Element>(renderer.node()))
         return false;
-    return toElement(o.node())->active();
+    return downcast<Element>(*renderer.node()).active();
 }
 
-bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& o) const
+bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const
 {
-    Node* node = o.node();
-    if (!node || !node->isElementNode())
+    Node* node = renderer.node();
+    if (!node || !is<Element>(node))
         return false;
-    Element* element = toElement(node);
-    if (!element->active() || !element->isSpinButtonElement())
+    Element& element = downcast<Element>(*node);
+    if (!element.active() || !element.isSpinButtonElement())
         return false;
-    return static_cast<SpinButtonElement*>(element)->upDownState() == SpinButtonElement::Up;
+    return static_cast<SpinButtonElement&>(element).upDownState() == SpinButtonElement::Up;
 }
 
-bool RenderTheme::isReadOnlyControl(const RenderObject& o) const
+bool RenderTheme::isReadOnlyControl(const RenderObject& renderer) const
 {
-    Node* node = o.node();
+    Node* node = renderer.node();
     if (!node || !is<HTMLFormControlElement>(node))
         return false;
-    return !toElement(*node).matchesReadWritePseudoClass();
+    return !downcast<Element>(*node).matchesReadWritePseudoClass();
 }
 
-bool RenderTheme::isHovered(const RenderObject& o) const
+bool RenderTheme::isHovered(const RenderObject& renderer) const
 {
-    Node* node = o.node();
-    if (!node || !node->isElementNode())
+    Node* node = renderer.node();
+    if (!node || !is<Element>(node))
         return false;
-    if (!toElement(node)->isSpinButtonElement())
-        return toElement(node)->hovered();
+    if (!downcast<Element>(*node).isSpinButtonElement())
+        return downcast<Element>(*node).hovered();
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->hovered() && element->upDownState() != SpinButtonElement::Indeterminate;
 }
 
-bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& o) const
+bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
 {
-    Node* node = o.node();
-    if (!node || !node->isElementNode() || !toElement(node)->isSpinButtonElement())
+    Node* node = renderer.node();
+    if (!node || !is<Element>(node) || !downcast<Element>(*node).isSpinButtonElement())
         return false;
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->upDownState() == SpinButtonElement::Up;

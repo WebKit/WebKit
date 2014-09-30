@@ -58,13 +58,13 @@ void AccessibilitySearchFieldCancelButton::accessibilityText(Vector<Accessibilit
 bool AccessibilitySearchFieldCancelButton::press()
 {
     Node* node = this->node();
-    if (!node || !node->isElementNode())
+    if (!node || !is<Element>(node))
         return false;
     
-    Element* element = toElement(node);
+    Element& element = downcast<Element>(*node);
     // The default event handler on SearchFieldCancelButtonElement requires hover.
-    element->setHovered(true);
-    element->accessKeyAction(true);
+    element.setHovered(true);
+    element.accessKeyAction(true);
     return true;
 }
 

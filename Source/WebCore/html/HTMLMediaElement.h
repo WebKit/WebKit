@@ -911,7 +911,7 @@ struct ValueToString<TextTrackCue*> {
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLMediaElement)
     static bool isHTMLMediaElement(const Element& element) { return element.isMediaElement(); }
-    static bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && isHTMLMediaElement(toElement(node)); }
+    static bool isHTMLMediaElement(const Node& node) { return is<Element>(node) && isHTMLMediaElement(downcast<Element>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #ifndef NDEBUG

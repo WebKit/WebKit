@@ -339,8 +339,8 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
             unbind(contentDocument, nodesMap);
     }
 
-    if (node->isElementNode()) {
-        if (ShadowRoot* root = toElement(node)->shadowRoot())
+    if (is<Element>(node)) {
+        if (ShadowRoot* root = downcast<Element>(*node).shadowRoot())
             unbind(root, nodesMap);
     }
 
@@ -387,11 +387,11 @@ Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (!node->isElementNode()) {
+    if (!is<Element>(node)) {
         *errorString = "Node is not an Element";
         return nullptr;
     }
-    return toElement(node);
+    return downcast<Element>(node);
 }
 
 Node* InspectorDOMAgent::assertEditableNode(ErrorString* errorString, int nodeId)
@@ -671,7 +671,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         return;
     }
 
-    Element* childElement = toElement(child);
+    Element* childElement = downcast<Element>(child);
     if (!childElement->hasAttributes() && name) {
         m_domEditor->removeAttribute(element, *name, errorString);
         return;
@@ -718,7 +718,7 @@ void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const 
     *newId = 0;
 
     Node* oldNode = nodeForId(nodeId);
-    if (!oldNode || !oldNode->isElementNode())
+    if (!oldNode || !is<Element>(oldNode))
         return;
 
     ExceptionCode ec = 0;
@@ -727,7 +727,7 @@ void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const 
         return;
 
     // Copy over the original node's attributes.
-    newElem->cloneAttributesFromElement(*toElement(oldNode));
+    newElem->cloneAttributesFromElement(*downcast<Element>(oldNode));
 
     // Copy over the original node's children.
     Node* child;
@@ -1269,11 +1269,11 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
             value->setChildren(children.release());
     }
 
-    if (node->isElementNode()) {
-        Element* element = toElement(node);
-        value->setAttributes(buildArrayForElementAttributes(element));
-        if (is<HTMLFrameOwnerElement>(node)) {
-            HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(*node);
+    if (is<Element>(node)) {
+        Element& element = downcast<Element>(*node);
+        value->setAttributes(buildArrayForElementAttributes(&element));
+        if (is<HTMLFrameOwnerElement>(element)) {
+            HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
             Frame* frame = frameOwner.contentFrame();
             if (frame)
                 value->setFrameId(m_pageAgent->frameId(frame));
@@ -1282,7 +1282,7 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
                 value->setContentDocument(buildObjectForNode(document, 0, nodesMap));
         }
 
-        if (ShadowRoot* root = element->shadowRoot()) {
+        if (ShadowRoot* root = element.shadowRoot()) {
             RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> shadowRoots = Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>::create();
             shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
@@ -1290,7 +1290,7 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
 
 #if ENABLE(TEMPLATE_ELEMENT)
         if (is<HTMLTemplateElement>(element))
-            value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(*element).content(), 0, nodesMap));
+            value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(element).content(), 0, nodesMap));
 #endif
 
     } else if (is<Document>(node)) {
@@ -1522,8 +1522,8 @@ PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent:
                 }
             }
             
-            if (node->isElementNode()) {
-                supportsFocused = toElement(node)->isFocusable();
+            if (is<Element>(node)) {
+                supportsFocused = downcast<Element>(*node).isFocusable();
                 if (supportsFocused)
                     focused = axObject->isFocused();
             }
@@ -1884,7 +1884,7 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
 
     if (!m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask = std::make_unique<RevalidateStyleAttributeTask>(this);
-    m_revalidateStyleAttrTask->scheduleFor(toElement(node));
+    m_revalidateStyleAttrTask->scheduleFor(downcast<Element>(node));
 }
 
 void InspectorDOMAgent::didPushShadowRoot(Element* host, ShadowRoot* root)

@@ -34,7 +34,7 @@ class RenderListMarker;
 class RenderListItem final : public RenderBlockFlow {
 public:
     RenderListItem(Element&, PassRef<RenderStyle>);
-    Element& element() const { return toElement(nodeForNonAnonymous()); }
+    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
     void updateValue();

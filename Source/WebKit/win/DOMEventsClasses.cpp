@@ -550,7 +550,7 @@ HRESULT STDMETHODCALLTYPE DOMMouseEvent::fromElement(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMMouseEvent::toElement( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::toElement(
     /* [retval][out] */ IDOMNode** /*result*/)
 {
     return E_NOTIMPL;

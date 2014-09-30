@@ -613,7 +613,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE fromElement( 
         /* [retval][out] */ IDOMNode** result);
     
-    virtual HRESULT STDMETHODCALLTYPE toElement( 
+    virtual HRESULT STDMETHODCALLTYPE toElement(
         /* [retval][out] */ IDOMNode** result);
 };
 

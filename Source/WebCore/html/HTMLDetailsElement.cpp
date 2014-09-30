@@ -70,7 +70,7 @@ public:
     Element* fallbackSummary()
     {
         ASSERT(firstChild() && firstChild()->hasTagName(summaryTag));
-        return toElement(firstChild());
+        return downcast<Element>(firstChild());
     }
 
 private:

@@ -57,9 +57,9 @@ void SplitTextNodeContainingElementCommand::doApply()
     if (!parentRenderer || !parentRenderer->isInline()) {
         wrapContentsInDummySpan(parent);
         Node* firstChild = parent->firstChild();
-        if (!firstChild || !firstChild->isElementNode())
+        if (!firstChild || !is<Element>(firstChild))
             return;
-        parent = toElement(firstChild);
+        parent = downcast<Element>(firstChild);
     }
 
     splitElement(parent, m_text);

@@ -76,8 +76,8 @@ protected:
     void appendString(const String&);
     void appendEndTag(const Node& node)
     {
-        if (node.isElementNode())
-            appendEndTag(toElement(node));
+        if (is<Element>(node))
+            appendEndTag(downcast<Element>(node));
     }
 
     virtual void appendEndTag(const Element&);

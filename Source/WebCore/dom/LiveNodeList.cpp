@@ -68,11 +68,11 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
     unsigned length = this->length();
     for (unsigned i = 0; i < length; i++) {
         Node* node = item(i);
-        if (!node->isElementNode())
+        if (!is<Element>(node))
             continue;
-        Element* element = toElement(node);
+        Element& element = downcast<Element>(*node);
         // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-        if (element->hasID() && element->idForStyleResolution() == elementId)
+        if (element.hasID() && element.idForStyleResolution() == elementId)
             return node;
     }
 

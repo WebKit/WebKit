@@ -290,10 +290,10 @@ Position::AnchorType Position::anchorTypeForLegacyEditingPosition(Node* anchorNo
 // FIXME: This method is confusing (does it return anchorNode() or containerNode()?) and should be renamed or removed
 Element* Position::element() const
 {
-    Node* n = anchorNode();
-    while (n && !n->isElementNode())
-        n = n->parentNode();
-    return toElement(n);
+    Node* node = anchorNode();
+    while (node && !is<Element>(node))
+        node = node->parentNode();
+    return downcast<Element>(node);
 }
 
 Position Position::previous(PositionMoveType moveType) const

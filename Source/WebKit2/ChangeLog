@@ -1,3 +1,31 @@
+2014-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Element
+        https://bugs.webkit.org/show_bug.cgi?id=137241
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Element instead of isElementNode() /
+        toElement().
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm:
+        (-[WKDOMElement hasAttribute:]):
+        (-[WKDOMElement getAttribute:]):
+        (-[WKDOMElement setAttribute:value:]):
+        (-[WKDOMElement tagName]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::elementBounds):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::mediaType):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+        (WebKit::WebPage::blurAssistedNode):
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::nextFocusableElement):
+        (WebKit::WebPage::elementDidFocus):
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r173929): [GTK] TestInspector fails after r173929
