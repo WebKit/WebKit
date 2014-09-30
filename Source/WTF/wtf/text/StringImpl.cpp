@@ -36,7 +36,7 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
 
-#ifdef STRING_STATS
+#if STRING_STATS
 #include <unistd.h>
 #include <wtf/DataLog.h>
 #endif
@@ -45,27 +45,21 @@ namespace WTF {
 
 using namespace Unicode;
 
-COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 2 * sizeof(void*), StringImpl_should_stay_small);
+static_assert(sizeof(StringImpl) == 2 * sizeof(int) + 2 * sizeof(void*), "StringImpl should stay small");
 
-#ifdef STRING_STATS
+#if STRING_STATS
 StringStats StringImpl::m_stringStats;
 
-unsigned StringStats::s_stringRemovesTillPrintStats = StringStats::s_printStringStatsFrequency;
+std::atomic<unsigned> StringStats::s_stringRemovesTillPrintStats(s_printStringStatsFrequency);
 
-void StringStats::removeString(StringImpl* string)
+void StringStats::removeString(StringImpl& string)
 {
-    unsigned length = string->length();
-    bool isSubString = string->isSubString();
+    unsigned length = string.length();
+    bool isSubString = string.isSubString();
 
     --m_totalNumberStrings;
 
-    if (string->has16BitShadow()) {
-        --m_numberUpconvertedStrings;
-        if (!isSubString)
-            m_totalUpconvertedData -= length;
-    }
-
-    if (string->is8Bit()) {
+    if (string.is8Bit()) {
         --m_number8BitStrings;
         if (!isSubString)
             m_total8BitData -= length;
@@ -88,22 +82,21 @@ void StringStats::printStats()
     unsigned long long totalNumberCharacters = m_total8BitData + m_total16BitData;
     double percent8Bit = m_totalNumberStrings ? ((double)m_number8BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
     double average8bitLength = m_number8BitStrings ? (double)m_total8BitData / (double)m_number8BitStrings : 0.0;
-    dataLogF("%8u (%5.2f%%) 8 bit        %12llu chars  %12llu bytes  avg length %6.1f\n", m_number8BitStrings, percent8Bit, m_total8BitData, m_total8BitData, average8bitLength);
+    dataLogF("%8u (%5.2f%%) 8 bit        %12llu chars  %12llu bytes  avg length %6.1f\n", m_number8BitStrings.load(), percent8Bit, m_total8BitData.load(), m_total8BitData.load(), average8bitLength);
 
     double percent16Bit = m_totalNumberStrings ? ((double)m_number16BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
     double average16bitLength = m_number16BitStrings ? (double)m_total16BitData / (double)m_number16BitStrings : 0.0;
-    dataLogF("%8u (%5.2f%%) 16 bit       %12llu chars  %12llu bytes  avg length %6.1f\n", m_number16BitStrings, percent16Bit, m_total16BitData, m_total16BitData * 2, average16bitLength);
-
-    double percentUpconverted = m_totalNumberStrings ? ((double)m_numberUpconvertedStrings * 100) / (double)m_number8BitStrings : 0.0;
-    double averageUpconvertedLength = m_numberUpconvertedStrings ? (double)m_totalUpconvertedData / (double)m_numberUpconvertedStrings : 0.0;
-    dataLogF("%8u (%5.2f%%) upconverted  %12llu chars  %12llu bytes  avg length %6.1f\n", m_numberUpconvertedStrings, percentUpconverted, m_totalUpconvertedData, m_totalUpconvertedData * 2, averageUpconvertedLength);
+    dataLogF("%8u (%5.2f%%) 16 bit       %12llu chars  %12llu bytes  avg length %6.1f\n", m_number16BitStrings.load(), percent16Bit, m_total16BitData.load(), m_total16BitData * 2, average16bitLength);
 
     double averageLength = m_totalNumberStrings ? (double)totalNumberCharacters / (double)m_totalNumberStrings : 0.0;
-    unsigned long long totalDataBytes = m_total8BitData + (m_total16BitData + m_totalUpconvertedData) * 2;
-    dataLogF("%8u Total                 %12llu chars  %12llu bytes  avg length %6.1f\n", m_totalNumberStrings, totalNumberCharacters, totalDataBytes, averageLength);
-    unsigned long long totalSavedBytes = m_total8BitData - m_totalUpconvertedData;
+    unsigned long long totalDataBytes = m_total8BitData + m_total16BitData * 2;
+    dataLogF("%8u Total                 %12llu chars  %12llu bytes  avg length %6.1f\n", m_totalNumberStrings.load(), totalNumberCharacters, totalDataBytes, averageLength);
+    unsigned long long totalSavedBytes = m_total8BitData;
     double percentSavings = totalSavedBytes ? ((double)totalSavedBytes * 100) / (double)(totalDataBytes + totalSavedBytes) : 0.0;
     dataLogF("         Total savings %12llu bytes (%5.2f%%)\n", totalSavedBytes, percentSavings);
+
+    dataLogF("%8u StringImpl::ref calls\n", m_refCalls.load());
+    dataLogF("%8u StringImpl::deref calls\n", m_derefCalls.load());
 }
 #endif
 
@@ -112,7 +105,7 @@ StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
 
-    STRING_STATS_REMOVE_STRING(this);
+    STRING_STATS_REMOVE_STRING(*this);
 
     if (isAtomic() && m_length)
         AtomicString::remove(this);

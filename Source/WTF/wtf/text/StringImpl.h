@@ -66,10 +66,10 @@ enum TextCaseSensitivity {
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
-// Define STRING_STATS to turn on run time statistics of string sizes and memory usage
-#undef STRING_STATS
+// Define STRING_STATS to 1 turn on run time statistics of string sizes and memory usage
+#define STRING_STATS 0
 
-#ifdef STRING_STATS
+#if STRING_STATS
 struct StringStats {
     inline void add8BitString(unsigned length, bool isSubString = false)
     {
@@ -87,33 +87,29 @@ struct StringStats {
             m_total16BitData += length;
     }
 
-    inline void addUpconvertedString(unsigned length)
-    {
-        ++m_numberUpconvertedStrings;
-        m_totalUpconvertedData += length;
-    }
-
-    void removeString(StringImpl*);
+    void removeString(StringImpl&);
     void printStats();
 
     static const unsigned s_printStringStatsFrequency = 5000;
-    static unsigned s_stringRemovesTillPrintStats;
+    static std::atomic<unsigned> s_stringRemovesTillPrintStats;
 
-    unsigned m_totalNumberStrings;
-    unsigned m_number8BitStrings;
-    unsigned m_number16BitStrings;
-    unsigned m_numberUpconvertedStrings;
-    unsigned long long m_total8BitData;
-    unsigned long long m_total16BitData;
-    unsigned long long m_totalUpconvertedData;
+    std::atomic<unsigned> m_refCalls;
+    std::atomic<unsigned> m_derefCalls;
+
+    std::atomic<unsigned> m_totalNumberStrings;
+    std::atomic<unsigned> m_number8BitStrings;
+    std::atomic<unsigned> m_number16BitStrings;
+    std::atomic<unsigned long long> m_total8BitData;
+    std::atomic<unsigned long long> m_total16BitData;
 };
 
 #define STRING_STATS_ADD_8BIT_STRING(length) StringImpl::stringStats().add8BitString(length)
 #define STRING_STATS_ADD_8BIT_STRING2(length, isSubString) StringImpl::stringStats().add8BitString(length, isSubString)
 #define STRING_STATS_ADD_16BIT_STRING(length) StringImpl::stringStats().add16BitString(length)
 #define STRING_STATS_ADD_16BIT_STRING2(length, isSubString) StringImpl::stringStats().add16BitString(length, isSubString)
-#define STRING_STATS_ADD_UPCONVERTED_STRING(length) StringImpl::stringStats().addUpconvertedString(length)
 #define STRING_STATS_REMOVE_STRING(string) StringImpl::stringStats().removeString(string)
+#define STRING_STATS_REF_STRING(string) ++StringImpl::stringStats().m_refCalls;
+#define STRING_STATS_DEREF_STRING(string) ++StringImpl::stringStats().m_derefCalls;
 #else
 #define STRING_STATS_ADD_8BIT_STRING(length) ((void)0)
 #define STRING_STATS_ADD_8BIT_STRING2(length, isSubString) ((void)0)
@@ -121,6 +117,8 @@ struct StringStats {
 #define STRING_STATS_ADD_16BIT_STRING2(length, isSubString) ((void)0)
 #define STRING_STATS_ADD_UPCONVERTED_STRING(length) ((void)0)
 #define STRING_STATS_REMOVE_STRING(string) ((void)0)
+#define STRING_STATS_REF_STRING(string) ((void)0)
+#define STRING_STATS_DEREF_STRING(string) ((void)0)
 #endif
 
 class StringImpl {
@@ -213,7 +211,7 @@ private:
         ASSERT(m_data16);
         ASSERT(m_length);
 
-        STRING_STATS_ADD_16BIT_STRING(0);
+        STRING_STATS_ADD_16BIT_STRING(m_length);
     }
 
     StringImpl(const LChar* characters, unsigned length, ConstructWithoutCopyingTag)
@@ -225,7 +223,7 @@ private:
         ASSERT(m_data8);
         ASSERT(m_length);
 
-        STRING_STATS_ADD_8BIT_STRING(0);
+        STRING_STATS_ADD_8BIT_STRING(m_length);
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
@@ -469,8 +467,8 @@ public:
             m_hashAndFlags &= ~s_hashFlagIsAtomic;
     }
 
-#ifdef STRING_STATS
-    bool isSubString() const { return  bufferOwnership() == BufferSubstring; }
+#if STRING_STATS
+    bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 #endif
 
     static WTF_EXPORT_STRING_API CString utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
@@ -542,12 +540,18 @@ public:
     inline void ref()
     {
         ASSERT(!isCompilationThread());
+
+        STRING_STATS_REF_STRING(*this);
+
         m_refCount += s_refCountIncrement;
     }
 
     inline void deref()
     {
-        ASSERT(!isCompilationThread());        
+        ASSERT(!isCompilationThread());
+
+        STRING_STATS_DEREF_STRING(*this);
+
         unsigned tempRefCount = m_refCount - s_refCountIncrement;
         if (!tempRefCount) {
             StringImpl::destroy(this);
@@ -699,7 +703,7 @@ public:
     WTF_EXPORT_STRING_API operator NSString*();
 #endif
 
-#ifdef STRING_STATS
+#if STRING_STATS
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
@@ -787,7 +791,7 @@ private:
     static const unsigned s_hashFlagDidReportCost = 1u << 3;
     static const unsigned s_hashMaskBufferOwnership = 1u | (1u << 1);
 
-#ifdef STRING_STATS
+#if STRING_STATS
     WTF_EXPORTDATA static StringStats m_stringStats;
 #endif
 
