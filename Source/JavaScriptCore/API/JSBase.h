@@ -37,11 +37,17 @@
 #if __has_include(<Foundation/NSMapTablePriv.h>)
 #import <Foundation/NSMapTablePriv.h>
 #else
+
+#ifndef __cplusplus
 extern "C" {
+#endif
     void *NSMapGet(NSMapTable *, const void *key);
     void NSMapInsert(NSMapTable *, const void *key, const void *value);
     void NSMapRemove(NSMapTable *, const void *key);
+
+#ifndef __cplusplus
 }
+#endif
 #endif
 #endif // defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 #endif // __OBJC__
