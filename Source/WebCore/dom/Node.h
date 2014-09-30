@@ -740,10 +740,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-// FIXME: This should be removed and all uses should be replaced with SPECIALIZE_TYPE_TRAITS_*().
-#define NODE_TYPE_CASTS(ToClassName) \
-    TYPE_CASTS_BASE(ToClassName, Node, node, WebCore::is##ToClassName(*node), WebCore::is##ToClassName(node))
-
 } // namespace WebCore
 
 #ifndef NDEBUG

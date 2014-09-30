@@ -199,8 +199,8 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node& nod
     ASSERT(m_insertionPoint.inDocument());
     if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
         m_postInsertionNotificationTargets.append(node);
-    if (node.isContainerNode())
-        notifyDescendantInsertedIntoDocument(toContainerNode(node));
+    if (is<ContainerNode>(node))
+        notifyDescendantInsertedIntoDocument(downcast<ContainerNode>(node));
 }
 
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode& node)
@@ -226,8 +226,8 @@ inline void ChildNodeInsertionNotifier::notify(Node& node)
 
     if (m_insertionPoint.inDocument())
         notifyNodeInsertedIntoDocument(node);
-    else if (node.isContainerNode())
-        notifyNodeInsertedIntoTree(toContainerNode(node));
+    else if (is<ContainerNode>(node))
+        notifyNodeInsertedIntoTree(downcast<ContainerNode>(node));
 
     for (size_t i = 0; i < m_postInsertionNotificationTargets.size(); ++i)
         m_postInsertionNotificationTargets[i]->didNotifySubtreeInsertions(&m_insertionPoint);
@@ -239,8 +239,8 @@ inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromDocument(Node& node)
     ASSERT(m_insertionPoint.inDocument());
     node.removedFrom(m_insertionPoint);
 
-    if (node.isContainerNode())
-        notifyDescendantRemovedFromDocument(toContainerNode(node));
+    if (is<ContainerNode>(node))
+        notifyDescendantRemovedFromDocument(downcast<ContainerNode>(node));
 }
 
 inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromTree(ContainerNode& node)
@@ -257,8 +257,8 @@ inline void ChildNodeRemovalNotifier::notify(Node& node)
     if (node.inDocument()) {
         notifyNodeRemovedFromDocument(node);
         node.document().notifyRemovePendingSheetIfNeeded();
-    } else if (node.isContainerNode())
-        notifyNodeRemovedFromTree(toContainerNode(node));
+    } else if (is<ContainerNode>(node))
+        notifyNodeRemovedFromTree(downcast<ContainerNode>(node));
 }
 
 enum SubframeDisconnectPolicy {

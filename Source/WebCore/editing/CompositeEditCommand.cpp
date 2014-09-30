@@ -375,7 +375,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         if (child)
             insertNodeBefore(insertChild, child);
         else
-            appendNode(insertChild, toContainerNode(refChild));
+            appendNode(insertChild, downcast<ContainerNode>(refChild));
     } else if (caretMinOffset(refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
     else if (is<Text>(refChild) && caretMaxOffset(refChild) > offset) {

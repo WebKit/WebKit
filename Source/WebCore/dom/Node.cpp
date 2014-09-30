@@ -405,8 +405,8 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    if (isContainerNode())
-        return ensureRareData().ensureNodeLists().ensureChildNodeList(toContainerNode(*this));
+    if (is<ContainerNode>(*this))
+        return ensureRareData().ensureNodeLists().ensureChildNodeList(downcast<ContainerNode>(*this));
     return ensureRareData().ensureNodeLists().ensureEmptyChildNodeList(*this);
 }
 
@@ -428,38 +428,38 @@ Node* Node::firstDescendant() const
 
 bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
 {
-    if (!isContainerNode()) {
+    if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->insertBefore(newChild, refChild, ec);
+    return downcast<ContainerNode>(*this).insertBefore(newChild, refChild, ec);
 }
 
 bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec)
 {
-    if (!isContainerNode()) {
+    if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->replaceChild(newChild, oldChild, ec);
+    return downcast<ContainerNode>(*this).replaceChild(newChild, oldChild, ec);
 }
 
 bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
 {
-    if (!isContainerNode()) {
+    if (!is<ContainerNode>(*this)) {
         ec = NOT_FOUND_ERR;
         return false;
     }
-    return toContainerNode(this)->removeChild(oldChild, ec);
+    return downcast<ContainerNode>(*this).removeChild(oldChild, ec);
 }
 
 bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 {
-    if (!isContainerNode()) {
+    if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->appendChild(newChild, ec);
+    return downcast<ContainerNode>(*this).appendChild(newChild, ec);
 }
 
 void Node::remove(ExceptionCode& ec)
@@ -1363,7 +1363,7 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
         case DOCUMENT_FRAGMENT_NODE: {
-            Ref<ContainerNode> container(*toContainerNode(this));
+            Ref<ContainerNode> container(downcast<ContainerNode>(*this));
             ChildListMutationScope mutation(container.get());
             container->removeChildren();
             if (!text.isEmpty())

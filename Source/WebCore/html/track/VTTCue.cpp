@@ -502,8 +502,8 @@ void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* p
         else
             clonedNode = node->cloneNode(false);
         parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);
-        if (node->isContainerNode())
-            copyWebVTTNodeToDOMTree(toContainerNode(node), toContainerNode(clonedNode.get()));
+        if (is<ContainerNode>(node))
+            copyWebVTTNodeToDOMTree(downcast<ContainerNode>(node), downcast<ContainerNode>(clonedNode.get()));
     }
 }
 

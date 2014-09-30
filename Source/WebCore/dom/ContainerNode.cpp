@@ -71,7 +71,7 @@ unsigned NoEventDispatchAssertion::s_count = 0;
 
 static void collectChildrenAndRemoveFromOldParent(Node& node, NodeVector& nodes, ExceptionCode& ec)
 {
-    if (!node.isDocumentFragment()) {
+    if (!is<DocumentFragment>(node)) {
         nodes.append(node);
         if (ContainerNode* oldParent = node.parentNode())
             oldParent->removeChild(&node, ec);
@@ -79,7 +79,7 @@ static void collectChildrenAndRemoveFromOldParent(Node& node, NodeVector& nodes,
     }
 
     getChildNodes(node, nodes);
-    toContainerNode(node).removeChildren();
+    downcast<DocumentFragment>(node).removeChildren();
 }
 
 // FIXME: This function must get a new name.
@@ -483,8 +483,8 @@ void ContainerNode::willRemoveChild(Node& child)
         return;
 
     child.document().nodeWillBeRemoved(&child); // e.g. mutation event listener can create a new range.
-    if (child.isContainerNode())
-        disconnectSubframesIfNeeded(toContainerNode(child), RootAndDescendants);
+    if (is<ContainerNode>(child))
+        disconnectSubframesIfNeeded(downcast<ContainerNode>(child), RootAndDescendants);
 }
 
 static void willRemoveChildren(ContainerNode& container)
@@ -786,8 +786,8 @@ inline static void cloneChildNodesAvoidingDeleteButton(ContainerNode* parent, Co
         RefPtr<Node> clonedChild = child->cloneNode(false);
         clonedParent->appendChild(clonedChild, ec);
 
-        if (!ec && child->isContainerNode())
-            cloneChildNodesAvoidingDeleteButton(toContainerNode(child), toContainerNode(clonedChild.get()), deleteButtonContainerElement);
+        if (!ec && is<ContainerNode>(child))
+            cloneChildNodesAvoidingDeleteButton(downcast<ContainerNode>(child), downcast<ContainerNode>(clonedChild.get()), deleteButtonContainerElement);
     }
 }
 

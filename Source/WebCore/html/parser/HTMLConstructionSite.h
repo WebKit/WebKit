@@ -56,7 +56,7 @@ struct HTMLConstructionSiteTask {
         // It's sort of ugly, but we store the |oldParent| in the |child| field
         // of the task so that we don't bloat the HTMLConstructionSiteTask
         // object in the common case of the Insert operation.
-        return toContainerNode(child.get());
+        return downcast<ContainerNode>(child.get());
     }
 
     Operation operation;

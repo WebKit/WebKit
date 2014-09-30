@@ -201,9 +201,9 @@ void MediaDocument::defaultEventHandler(Event* event)
         }
     }
 
-    if (!targetNode->isContainerNode())
+    if (!is<ContainerNode>(targetNode))
         return;
-    ContainerNode& targetContainer = toContainerNode(*targetNode);
+    ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
     if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
         HTMLVideoElement* video = descendentVideoElement(targetContainer);
         if (!video)

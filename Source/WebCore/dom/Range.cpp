@@ -1480,7 +1480,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 
     ec = 0;
     while (Node* n = newParent->firstChild()) {
-        toContainerNode(newParent.get())->removeChild(n, ec);
+        downcast<ContainerNode>(*newParent).removeChild(n, ec);
         if (ec)
             return;
     }

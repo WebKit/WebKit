@@ -520,13 +520,13 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
-    if (!node->isContainerNode()) {
+    if (!is<ContainerNode>(node)) {
         assertElement(errorString, nodeId);
         return;
     }
 
     ExceptionCode ec = 0;
-    RefPtr<Element> element = toContainerNode(node)->querySelector(selectors, ec);
+    RefPtr<Element> element = downcast<ContainerNode>(*node).querySelector(selectors, ec);
     if (ec) {
         *errorString = "DOM Error while querying";
         return;
@@ -541,13 +541,13 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, c
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
-    if (!node->isContainerNode()) {
+    if (!is<ContainerNode>(node)) {
         assertElement(errorString, nodeId);
         return;
     }
 
     ExceptionCode ec = 0;
-    RefPtr<NodeList> nodes = toContainerNode(node)->querySelectorAll(selectors, ec);
+    RefPtr<NodeList> nodes = downcast<ContainerNode>(*node).querySelectorAll(selectors, ec);
     if (ec) {
         *errorString = "DOM Error while querying";
         return;

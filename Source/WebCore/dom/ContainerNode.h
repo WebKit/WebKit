@@ -173,11 +173,6 @@ private:
     Node* m_lastChild;
 };
 
-inline bool isContainerNode(const Node& node) { return node.isContainerNode(); }
-void isContainerNode(const ContainerNode&); // Catch unnecessary runtime check of type known at compile time.
-
-NODE_TYPE_CASTS(ContainerNode)
-
 inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
     : Node(document, type)
     , m_firstChild(0)
@@ -187,30 +182,30 @@ inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
 
 inline unsigned Node::countChildNodes() const
 {
-    if (!isContainerNode())
+    if (!is<ContainerNode>(*this))
         return 0;
-    return toContainerNode(this)->countChildNodes();
+    return downcast<ContainerNode>(*this).countChildNodes();
 }
 
 inline Node* Node::traverseToChildAt(unsigned index) const
 {
-    if (!isContainerNode())
-        return 0;
-    return toContainerNode(this)->traverseToChildAt(index);
+    if (!is<ContainerNode>(*this))
+        return nullptr;
+    return downcast<ContainerNode>(*this).traverseToChildAt(index);
 }
 
 inline Node* Node::firstChild() const
 {
-    if (!isContainerNode())
-        return 0;
-    return toContainerNode(this)->firstChild();
+    if (!is<ContainerNode>(*this))
+        return nullptr;
+    return downcast<ContainerNode>(*this).firstChild();
 }
 
 inline Node* Node::lastChild() const
 {
-    if (!isContainerNode())
-        return 0;
-    return toContainerNode(this)->lastChild();
+    if (!is<ContainerNode>(*this))
+        return nullptr;
+    return downcast<ContainerNode>(*this).lastChild();
 }
 
 inline Node* Node::highestAncestor() const
@@ -315,5 +310,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ContainerNode)
+    static bool isType(const WebCore::Node& node) { return node.isContainerNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ContainerNode_h
