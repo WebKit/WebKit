@@ -1,3 +1,20 @@
+2014-09-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Rename TEST_THEME_DIR macro
+        https://bugs.webkit.org/show_bug.cgi?id=137244
+
+        Reviewed by Csaba Osztrogonác.
+
+        TEST_THEME_DIR is to get a path for default theme though, it has used TEST_ prefix.
+        DEFAULT_THEME_DIR is better than it.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2014-09-30  Alexey Proskuryakov  <ap@apple.com>
 
         Windows EWS went purple when it failed to build

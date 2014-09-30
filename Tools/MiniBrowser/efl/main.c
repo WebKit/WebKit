@@ -2158,7 +2158,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
 
     ewk_favicon_database_icon_change_callback_add(ewk_context_favicon_database_get(context), on_icon_changed_cb, window);
 
-    ewk_view_theme_set(window->ewk_view, TEST_THEME_DIR "/default.edj");
+    ewk_view_theme_set(window->ewk_view, DEFAULT_THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
     ewk_view_user_agent_set(window->ewk_view, user_agent_string);

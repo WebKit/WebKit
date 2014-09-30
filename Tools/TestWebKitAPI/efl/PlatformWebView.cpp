@@ -70,7 +70,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 
     m_view = EWKViewCreate(contextRef, pageGroupRef, ecore_evas_get(m_window), /* smart */ 0);
 
-    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(TEST_THEME_DIR "/default.edj"));
+    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(DEFAULT_THEME_DIR "/default.edj"));
     WKViewSetThemePath(EWKViewGetWKView(m_view), wkTheme.get());
 
     evas_object_smart_callback_add(m_view, "webprocess,crashed", onWebProcessCrashed, 0);

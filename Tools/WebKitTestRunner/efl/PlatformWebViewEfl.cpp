@@ -69,7 +69,7 @@ PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup,
     if (m_usingFixedLayout)
         resizeTo(800, 600);
 
-    ewk_view_theme_set(m_view, TEST_THEME_DIR "/default.edj");
+    ewk_view_theme_set(m_view, DEFAULT_THEME_DIR "/default.edj");
     m_windowIsKey = false;
     evas_object_show(m_view);
 }

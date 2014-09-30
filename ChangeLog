@@ -1,3 +1,12 @@
+2014-09-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Rename TEST_THEME_DIR macro
+        https://bugs.webkit.org/show_bug.cgi?id=137244
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsEfl.cmake: Rename TEST_THEME_DIR to DEFAULT_THEME_DIR.
+
 2014-09-27  Dan Bernstein  <mitz@apple.com>
 
         WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1

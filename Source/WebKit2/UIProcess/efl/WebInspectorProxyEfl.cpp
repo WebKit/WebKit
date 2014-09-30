@@ -110,7 +110,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = EWKViewCreate(wkContext, wkPageGroup, ecore_evas_get(m_inspectorWindow), /* smart */ 0);
     WKViewRef wkView = EWKViewGetWKView(m_inspectorView);
 
-    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(TEST_THEME_DIR "/default.edj"));
+    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(DEFAULT_THEME_DIR "/default.edj"));
     WKViewSetThemePath(wkView, wkTheme.get());
 
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
