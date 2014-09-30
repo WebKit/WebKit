@@ -49,36 +49,34 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
     }
 
     // Point the default path to a formatted page that queries the page list and display them.
-    CString resourceURI = makeString("resource:///org/webkitgtk/inspector/UserInterface", ((path == "/") ? "/inspectorPageIndex.html" : path)).utf8();
-    if (resourceURI.isNull())
+    CString resourcePath = makeString("/org/webkitgtk/inspector/UserInterface", (path == "/" ? "/inspectorPageIndex.html" : path)).utf8();
+    if (resourcePath.isNull())
         return false;
 
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(resourceURI.data()));
     GUniqueOutPtr<GError> error;
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, 0, &error.outPtr()));
-    if (!fileInfo) {
+    GRefPtr<GBytes> resourceBytes = adoptGRef(g_resources_lookup_data(resourcePath.data(), G_RESOURCE_LOOKUP_FLAGS_NONE, &error.outPtr()));
+    if (!resourceBytes) {
         StringBuilder builder;
         builder.appendLiteral("<!DOCTYPE html><html><head></head><body>Error: ");
         builder.appendNumber(error->code);
         builder.appendLiteral(", ");
         builder.append(error->message);
         builder.appendLiteral(" occurred during fetching inspector resource files.</body></html>");
-        CString cstr = builder.toString().utf8();
-        data.append(cstr.data(), cstr.length());
+
+        CString errorHTML = builder.toString().utf8();
+        data.append(errorHTML.data(), errorHTML.length());
         contentType = "text/html; charset=utf-8";
-        g_warning("Error fetching webinspector resource files: %d, %s", error->code, error->message);
-        return true;
+
+        WTFLogAlways("Error fetching webinspector resource files: %d, %s", error->code, error->message);
+        return false;
     }
 
-    GRefPtr<GFileInputStream> inputStream = adoptGRef(g_file_read(file.get(), 0, 0));
-    if (!inputStream)
-        return false;
+    gsize resourceDataSize;
+    gconstpointer resourceData = g_bytes_get_data(resourceBytes.get(), &resourceDataSize);
+    data.append(static_cast<const char*>(resourceData), resourceDataSize);
 
-    data.grow(g_file_info_get_size(fileInfo.get()));
-    if (!g_input_stream_read_all(G_INPUT_STREAM(inputStream.get()), data.data(), data.size(), 0, 0, 0))
-        return false;
-
-    contentType = GUniquePtr<gchar>(g_file_info_get_attribute_as_string(fileInfo.get(), G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE)).get();
+    GUniquePtr<gchar> mimeType(g_content_type_guess(resourcePath.data(), static_cast<const guchar*>(resourceData), resourceDataSize, nullptr));
+    contentType = mimeType.get();
     return true;
 }
 
