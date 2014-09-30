@@ -137,9 +137,8 @@ class JSONTestResult(object):
         return test_results.TestResult(self._test_name, self._failures())
 
 
-class ResultsJSONParser(object):
-    @classmethod
-    def parse_results_json(cls, json_string):
+class ParsedJSONResults(object):
+    def __init__(self, json_string):
         if not json_results_generator.has_json_wrapper(json_string):
             return None
 
@@ -149,7 +148,19 @@ class ResultsJSONParser(object):
         json_results = []
         for_each_test(json_dict['tests'], lambda test, result: json_results.append(JSONTestResult(test, result)))
 
-        # FIXME: What's the short sexy python way to filter None?
-        # I would use [foo.bar() for foo in foos if foo.bar()] but bar() is expensive.
-        unexpected_failures = [result.test_result() for result in json_results if not result.did_pass_or_run_as_expected()]
-        return filter(lambda a: a, unexpected_failures)
+        unexpected_failures = []
+        for json_result in json_results:
+            if json_result.did_pass_or_run_as_expected():
+                continue
+            test_result = json_result.test_result()
+            if test_result:
+                unexpected_failures.append(test_result)
+
+        self._test_results = unexpected_failures
+        self._did_exceed_test_failure_limit = json_dict["interrupted"]
+
+    def did_exceed_test_failure_limit(self):
+        return self._did_exceed_test_failure_limit
+
+    def test_results(self):
+        return self._test_results

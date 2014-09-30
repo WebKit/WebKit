@@ -36,11 +36,6 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
 class LayoutTestResultsTest(unittest.TestCase):
-    def test_set_failure_limit_count(self):
-        results = LayoutTestResults([])
-        self.assertIsNone(results.failure_limit_count())
-        results.set_failure_limit_count(10)
-        self.assertEqual(results.failure_limit_count(), 10)
 
     def test_results_from_string(self):
         self.assertIsNone(LayoutTestResults.results_from_string(None))

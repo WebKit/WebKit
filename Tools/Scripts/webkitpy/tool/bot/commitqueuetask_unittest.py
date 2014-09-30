@@ -73,7 +73,7 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         return ExpectedFailures()
 
     def test_results(self):
-        return None
+        return LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
 
     def report_flaky_tests(self, patch, flaky_results, results_archive):
         flaky_tests = [result.filename for result in flaky_results]
@@ -110,9 +110,7 @@ class FailingTestCommitQueue(MockCommitQueue):
         # Doesn't make sense to ask for the test_results until the tests have run at least once.
         assert(self._test_run_counter >= 0)
         failures_for_run = self._test_failure_plan[self._test_run_counter]
-        results = LayoutTestResults(map(self._mock_test_result, failures_for_run))
-        # This makes the results trustable by ExpectedFailures.
-        results.set_failure_limit_count(10)
+        results = LayoutTestResults(test_results=map(self._mock_test_result, failures_for_run), did_exceed_test_failure_limit=(len(self._test_failure_plan[self._test_run_counter]) >= 10))
         return results
 
 
@@ -282,7 +280,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
         ])
         # CommitQueueTask will only report flaky tests if we successfully parsed
         # results.json and returned a LayoutTestResults object, so we fake one.
-        commit_queue.test_results = lambda: LayoutTestResults([])
+        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
         expected_logs = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='10000'
 run_webkit_patch: ['update']
@@ -313,7 +311,7 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             ScriptError("MOCK tests failure"),
         ])
-        commit_queue.test_results = lambda: LayoutTestResults([])
+        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
         # It's possible delegate to fail to archive layout tests, don't try to report
         # flaky tests when that happens.
         commit_queue.archive_last_test_results = lambda patch: None

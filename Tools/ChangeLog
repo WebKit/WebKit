@@ -1,3 +1,90 @@
+2014-09-30  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        LayoutTestResults and ExpectedFailures should know about the
+        interrupted flag from the json results file
+        https://bugs.webkit.org/show_bug.cgi?id=137229
+
+        Reviewed by Daniel Bates.
+
+        Changes LayoutTestResults to use the interrupted flag instead of
+        counting failures.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuilderTest._install_fetch_build._mock_fetch_build):
+        (BuilderTest.test_latest_layout_test_results):
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        Removes notion of failure_limit_count, and adds
+        did_exceed_test_failure_limit.
+
+        (LayoutTestResults.results_from_string):
+        (LayoutTestResults.__init__):
+        (LayoutTestResults.did_exceed_test_failure_limit):
+        (LayoutTestResults): Deleted.
+        (LayoutTestResults.set_failure_limit_count): Deleted.
+        (LayoutTestResults.failure_limit_count): Deleted.
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        Removes unit test for failure_limit_count logic.
+
+        (LayoutTestResultsTest.test_set_failure_limit_count): Deleted.
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        Instead of providing a class method that returns a list of
+        TestResults objects, resultsjsonparser now provides a class
+        ParsedJSONResults that serves as an interface between the results.json
+        file and the rest of webkitpy.
+
+        (ParsedJSONResults):
+        (ParsedJSONResults.__init__):
+        (ParsedJSONResults.did_exceed_test_failure_limit):
+        (ParsedJSONResults.test_results):
+        (ResultsJSONParser): Deleted.
+        (ResultsJSONParser.parse_results_json): Deleted.
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        Updates the unit test so that it can test the new ResultsJSONParser
+        class.
+
+        (ParsedJSONResultsTest):
+        (test_basic):
+        (ResultsJSONParserTest): Deleted.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        Updates the unit test to instantiate ResultsJSONParser objects rather
+        than simple lists of TestResult objects.
+
+        (MockCommitQueue.test_results):
+        (FailingTestCommitQueue.test_results):
+        (test_flaky_test_failure):
+        (test_failed_archive):
+        * Scripts/webkitpy/tool/bot/expectedfailures.py:
+        Updates ExpectedFailures to use the did_exceed_test_failure_limit
+        method rather than counting the number of failed tests.
+
+        (ExpectedFailures._should_trust):
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py:
+        Updates MockResults to more closely resemble the updated
+        LayoutTestResults class.
+
+        (MockResults.__init__):
+        (MockResults.did_exceed_test_failure_limit):
+        (ExpectedFailuresTest.test_can_trust_results):
+        (ExpectedFailuresTest.test_unexpected_failures_observed):
+        (ExpectedFailuresTest.test_unexpected_failures_observed_when_tree_is_hosed):
+        (MockResults.failure_limit_count): Deleted.
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        Removes a FIXME regarding the use of the
+        NON_INTERACTIVE_FAILURE_LIMIT_COUNT value.
+
+        (LayoutTestResultsReader.results):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        Updates test to not check the now-nonexistant failure_count_limit
+        method.
+
+        (test_missing_unit_test_results_path):
+        (test_layout_test_results):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        Accounts for name change: ResultsJSONParserTest ->
+        ParsedJSONParserTest.
+
+        (RebaselineTestTest.test_gather_baselines):
+
 2014-09-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Rename TEST_THEME_DIR macro

@@ -32,12 +32,12 @@ from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 
 
 class MockResults(object):
-    def __init__(self, failing_tests=[], failure_limit=10):
+    def __init__(self, failing_tests=[], did_exceed_test_failure_limit=False):
         self._failing_tests = failing_tests
-        self._failure_limit_count = failure_limit
+        self._did_exceed_test_failure_limit = did_exceed_test_failure_limit
 
-    def failure_limit_count(self):
-        return self._failure_limit_count
+    def did_exceed_test_failure_limit(self):
+        return self._did_exceed_test_failure_limit
 
     def failing_tests(self):
         return self._failing_tests
@@ -49,12 +49,12 @@ class ExpectedFailuresTest(unittest.TestCase):
 
     def test_can_trust_results(self):
         self._assert_can_trust(None, False)
-        self._assert_can_trust(MockResults(failing_tests=[], failure_limit=None), False)
-        self._assert_can_trust(MockResults(failing_tests=[], failure_limit=10), False)
-        self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=None), False)
-        self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=2), True)
-        self._assert_can_trust(MockResults(failing_tests=[1], failure_limit=1), False)
-        self._assert_can_trust(MockResults(failing_tests=[1, 2], failure_limit=1), False)
+        self._assert_can_trust(MockResults(failing_tests=[], did_exceed_test_failure_limit=False), True)
+        self._assert_can_trust(MockResults(failing_tests=[], did_exceed_test_failure_limit=True), False)
+        self._assert_can_trust(MockResults(failing_tests=[1], did_exceed_test_failure_limit=False), True)
+        self._assert_can_trust(MockResults(failing_tests=[1], did_exceed_test_failure_limit=True), False)
+        self._assert_can_trust(MockResults(failing_tests=[1, 2], did_exceed_test_failure_limit=False), True)
+        self._assert_can_trust(MockResults(failing_tests=[1, 2], did_exceed_test_failure_limit=True), False)
 
     def _assert_expected(self, expected_failures, failures, expected):
         self.assertEqual(expected_failures.failures_were_expected(MockResults(failures)), expected)
@@ -79,17 +79,17 @@ class ExpectedFailuresTest(unittest.TestCase):
         failures.update(MockResults(['foo.html']))
         self.assertEqual(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
         self.assertEqual(failures.unexpected_failures_observed(MockResults(['baz.html'])), set(['baz.html']))
-        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
+        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], did_exceed_test_failure_limit=True)
         self.assertEqual(failures.unexpected_failures_observed(unbounded_results), set(['baz.html', 'qux.html', 'taco.html']))
-        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
+        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], did_exceed_test_failure_limit=True)
         self.assertEqual(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), set(['baz.html', 'qux.html', 'taco.html']))
 
     def test_unexpected_failures_observed_when_tree_is_hosed(self):
         failures = ExpectedFailures()
-        failures.update(MockResults(['foo.html', 'banana.html'], failure_limit=2))
+        failures.update(MockResults(['foo.html', 'banana.html'], did_exceed_test_failure_limit=True))
         self.assertEqual(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), None)
         self.assertEqual(failures.unexpected_failures_observed(MockResults(['baz.html'])), None)
-        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
+        unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], did_exceed_test_failure_limit=True)
         self.assertEqual(failures.unexpected_failures_observed(unbounded_results), None)
-        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
+        unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], did_exceed_test_failure_limit=True)
         self.assertEqual(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), None)

@@ -205,7 +205,7 @@ class RebaselineTestTest(unittest.TestCase):
             ])
 
     def test_gather_baselines(self):
-        example_json = resultsjsonparser_unittest.ResultsJSONParserTest._example_full_results_json
+        example_json = resultsjsonparser_unittest.ParsedJSONResultsTest._example_full_results_json
         results_json = json.loads(strip_json_wrapper(example_json))
         server = RebaselineServer()
         server._test_config = get_test_config()

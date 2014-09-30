@@ -68,7 +68,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
     def test_missing_unit_test_results_path(self):
         host = MockHost()
         reader = LayoutTestResultsReader(host, "/mock-results", "/var/logs")
-        reader._create_layout_test_results = lambda: LayoutTestResults([])
+        reader._create_layout_test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         reader._create_unit_test_results = lambda: None
         # layout_test_results shouldn't raise even if the unit tests xml file is missing.
         self.assertIsNotNone(reader.results(), None)
@@ -81,10 +81,9 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         self.assertIsNone(reader.results())
         reader._read_file_contents = lambda path: ""
         self.assertIsNone(reader.results())
-        reader._create_layout_test_results = lambda: LayoutTestResults([])
+        reader._create_layout_test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         results = reader.results()
         self.assertIsNotNone(results)
-        self.assertEqual(results.failure_limit_count(), 30)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
 
     def test_archive_last_layout_test_results(self):
         host = MockHost()

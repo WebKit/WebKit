@@ -28,7 +28,7 @@
 
 import logging
 
-from webkitpy.common.net.resultsjsonparser import ResultsJSONParser
+from webkitpy.common.net.resultsjsonparser import ParsedJSONResults
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
@@ -50,27 +50,16 @@ class LayoutTestResults(object):
     def results_from_string(cls, string):
         if not string:
             return None
-        test_results = ResultsJSONParser.parse_results_json(string)
-        if not test_results:
-            return None
-        return cls(test_results)
+        parsed_results = ParsedJSONResults(string)
+        return cls(parsed_results.test_results(), parsed_results.did_exceed_test_failure_limit())
 
-    def __init__(self, test_results):
-        self._test_results = test_results
-        self._failure_limit_count = None
+    def __init__(self, test_results, did_exceed_test_failure_limit):
         self._unit_test_failures = []
+        self._test_results = test_results
+        self._did_exceed_test_failure_limit = did_exceed_test_failure_limit
 
-    # FIXME: run-webkit-tests should store the --exit-after-N-failures value
-    # (or some indication of early exit) somewhere in the results.json
-    # file.  Until it does, callers should set the limit to
-    # --exit-after-N-failures value used in that run.  Consumers of LayoutTestResults
-    # may use that value to know if absence from the failure list means PASS.
-    # https://bugs.webkit.org/show_bug.cgi?id=58481
-    def set_failure_limit_count(self, limit):
-        self._failure_limit_count = limit
-
-    def failure_limit_count(self):
-        return self._failure_limit_count
+    def did_exceed_test_failure_limit(self):
+        return self._did_exceed_test_failure_limit
 
     def test_results(self):
         return self._test_results

@@ -38,7 +38,7 @@ class ExpectedFailures(object):
 
     @classmethod
     def _should_trust(cls, results):
-        return bool(cls._has_failures(results) and results.failure_limit_count() and len(results.failing_tests()) < results.failure_limit_count())
+        return bool(results and not results.did_exceed_test_failure_limit())
 
     def failures_were_expected(self, results):
         if not self._is_trustworthy:

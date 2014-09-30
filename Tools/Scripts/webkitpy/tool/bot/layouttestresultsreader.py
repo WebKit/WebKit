@@ -70,10 +70,6 @@ class LayoutTestResultsReader(object):
         layout_test_results = self._create_layout_test_results()
         unit_test_results = self._create_unit_test_results()
         if layout_test_results:
-            # FIXME: This is used to detect if we had N failures due to
-            # N tests failing, or if we hit the "exit-after-n-failures" limit.
-            # These days we could just check for the "interrupted" key in results.json instead!
-            layout_test_results.set_failure_limit_count(RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
             if unit_test_results:
                 layout_test_results.add_unit_test_failures(unit_test_results)
         return layout_test_results
