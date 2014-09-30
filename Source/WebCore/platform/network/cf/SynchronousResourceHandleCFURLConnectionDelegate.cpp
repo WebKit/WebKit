@@ -169,7 +169,6 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveData(CFDataRef 
 
 void SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading()
 {
-    WTFLogAlways("CFNet - SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
 #if USE(QUICK_LOOK)
