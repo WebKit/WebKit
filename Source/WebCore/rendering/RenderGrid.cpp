@@ -422,7 +422,7 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
     // |availableLogicalSpace| already accounts for the used breadths so no need to remove it here.
 
     Vector<GridTrackForNormalization> tracksForNormalization;
-    for (auto position : tracksSpan) {
+    for (auto& position : tracksSpan) {
         const GridTrackSize& trackSize = gridTrackSize(direction, position.toInt());
         if (!trackSize.maxTrackBreadth().isFlex())
             continue;
@@ -698,8 +698,8 @@ void RenderGrid::insertItemIntoGrid(RenderBox& child, const GridCoordinate& coor
 {
     ensureGridSize(coordinate.rows.resolvedFinalPosition.toInt(), coordinate.columns.resolvedFinalPosition.toInt());
 
-    for (auto row : coordinate.rows) {
-        for (auto column : coordinate.columns)
+    for (auto& row : coordinate.rows) {
+        for (auto& column : coordinate.columns)
             m_grid[row.toInt()][column.toInt()].append(&child);
     }
     m_gridItemCoordinate.set(&child, coordinate);
@@ -950,7 +950,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForChild(const RenderBox& child, GridTrack
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
     const GridSpan& span = (direction == ForColumns) ? coordinate.columns : coordinate.rows;
     LayoutUnit gridAreaBreadth = 0;
-    for (auto trackPosition : span)
+    for (auto& trackPosition : span)
         gridAreaBreadth += tracks[trackPosition.toInt()].m_usedBreadth;
     return gridAreaBreadth;
 }
