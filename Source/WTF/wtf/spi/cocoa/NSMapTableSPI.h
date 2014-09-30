@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSVirtualMachineInternal_h
-#define JSVirtualMachineInternal_h
+#import <Foundation/NSMapTable.h>
 
-#if JSC_OBJC_API_ENABLED
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+#import <Foundation/NSMapTablePriv.h>
+#endif
 
-#import <JavaScriptCore/JavaScriptCore.h>
-
-namespace JSC {
-class VM;
-class SlotVisitor;
-}
-
-#if defined(__OBJC__)
-@class NSMapTable;
-
-@interface JSVirtualMachine(Internal)
-
-JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
-
-+ (JSVirtualMachine *)virtualMachineWithContextGroupRef:(JSContextGroupRef)group;
-
-- (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext;
-- (void)addContext:(JSContext *)wrapper forGlobalContextRef:(JSGlobalContextRef)globalContext;
-
-- (NSMapTable *)externalObjectGraph;
-
-@end
-#endif // defined(__OBJC__)
-
-void scanExternalObjectGraph(JSC::VM&, JSC::SlotVisitor&, void* root);
-void scanExternalRememberedSet(JSC::VM&, JSC::SlotVisitor&);
-
-#endif // JSC_OBJC_API_ENABLED
-
-#endif // JSVirtualMachineInternal_h
+EXTERN_C void *NSMapGet(NSMapTable *, const void *key);
+EXTERN_C void NSMapInsert(NSMapTable *, const void *key, const void *value);
+EXTERN_C void NSMapRemove(NSMapTable *, const void *key);

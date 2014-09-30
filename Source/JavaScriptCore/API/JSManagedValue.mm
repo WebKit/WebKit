@@ -37,6 +37,7 @@
 #import "WeakHandleOwner.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
 public:

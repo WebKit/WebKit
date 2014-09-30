@@ -37,6 +37,7 @@
 #import "SlotVisitorInlines.h"
 #import <mutex>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 static NSMapTable *globalWrapperCache = 0;
 

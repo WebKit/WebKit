@@ -1,3 +1,29 @@
+2014-09-30  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r172532): JSBase.h declares NSMapTable functions that are SPI
+        https://bugs.webkit.org/show_bug.cgi?id=137170
+        <rdar://problem/18477384>
+
+        Reviewed by Geoffrey Garen.
+
+        Add SPI wrapper header, NSMapTableSPI.h.
+
+        Additionally, define convenience macro EXTERN_C that can be used to specify the C linkage
+        convention for a declaration. For example, the declaration "EXTERN_C const int x;" will
+        expand to:
+
+        extern const int x;
+
+        and
+
+        extern "C" const int x;
+
+        when used in a C and C++ file, respectively.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Compiler.h:
+        * wtf/spi/cocoa/NSMapTableSPI.h: Added.
+
 2014-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174045.

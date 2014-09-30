@@ -30,16 +30,17 @@
 
 #import "APICast.h"
 #import "JSAPIWrapperObject.h"
+#import "JSCInlines.h"
 #import "JSCallbackObject.h"
 #import "JSContextInternal.h"
 #import "JSWrapperMap.h"
 #import "ObjCCallbackFunction.h"
 #import "ObjcRuntimeExtras.h"
-#import "JSCInlines.h"
 #import "WeakGCMap.h"
+#import <wtf/HashSet.h>
 #import <wtf/TCSpinLock.h>
 #import <wtf/Vector.h>
-#import <wtf/HashSet.h>
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 #include <mach-o/dyld.h>
 

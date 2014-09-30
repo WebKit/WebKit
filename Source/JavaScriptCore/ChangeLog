@@ -1,3 +1,21 @@
+2014-09-30  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r172532): JSBase.h declares NSMapTable functions that are SPI
+        https://bugs.webkit.org/show_bug.cgi?id=137170
+        <rdar://problem/18477384>
+
+        Reviewed by Geoffrey Garen.
+
+        Move conditional include of header Foundation/NSMapTablePriv.h and forward declarations
+        of NSMapTable SPI from file JavaScriptCore/API/JSBase.h to WTF/wtf/spi/cocoa/NSMapTableSPI.h.
+
+        * API/JSBase.h:
+        * API/JSManagedValue.mm: Include header WTF/wtf/spi/cocoa/NSMapTableSPI.h.
+        * API/JSVirtualMachine.mm: Ditto.
+        * API/JSVirtualMachineInternal.h: Forward declare class NSMapTable.
+        * API/JSWrapperMap.mm: Include header WTF/wtf/spi/cocoa/NSMapTableSPI.h. Also, order
+        #include directives such that they are sorted in alphabetical order.
+
 2014-09-30  Oliver Hunt  <oliver@apple.com>
 
         Fix C API header
