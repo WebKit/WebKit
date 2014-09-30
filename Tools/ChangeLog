@@ -1,3 +1,12 @@
+2014-09-30  Martin Hock  <mhock@apple.com>
+
+        Skip a JSC test after r174036.
+        https://bugs.webkit.org/show_bug.cgi?id=137236
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-javascriptcore-tests:
+
 2014-09-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [EFL] Install TestNetscapePlugin apart from the other libs.

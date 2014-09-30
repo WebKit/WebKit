@@ -53,17 +53,20 @@ my @testsToSkipOnWindows = (
     "ecma/Date/15.9.2.2-6.js",
     "ecma/Date/15.9.5.31-1.js",
     "ecma_3/Date/15.9.5.7.js",
-    # function.arguments have been disabled
-    "js1_4/Functions/function-001.js",
 );
 
 my @testsToSkipOnNonWindows = (
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
     "ecma_3/Date/15.9.5.7.js",
+
 );
 
-my @testsToSkip;
-@testsToSkip = @testsToSkipOnWindows if isAppleWinWebKit();
+my @testsToSkip = (
+    # function.arguments have been disabled
+    "js1_4/Functions/function-001.js",
+);
+
+@testsToSkip = (@testsToSkip, @testsToSkipOnWindows) if isAppleWinWebKit();
 @testsToSkip = (@testsToSkip, @testsToSkipOnNonWindows) if !isAppleWinWebKit();
 my $jsDriverArgs = "-L " . join(" ", @testsToSkip) if @testsToSkip;
 
