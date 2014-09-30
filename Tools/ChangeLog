@@ -1,3 +1,13 @@
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Back to 2 child processes for NRWT on Windows.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes):
+        Changing the number of processes to 1 did not have an effect on the layout test results. 
+        It does introduce an issue with one of the workers hanging indefinitely and causing the 
+        layout tests to timeout as a whole occasionally, but we should just fix that.
+
 2014-09-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an accidentally committed line..
