@@ -1,3 +1,15 @@
+2014-09-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Windows EWS went purple when it failed to build
+        https://bugs.webkit.org/show_bug.cgi?id=137267
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Update the version.
+
+        * QueueStatusServer/model/attachment.py: (Attachment._calculate_queue_positions):
+        Make it work for style and win-ews queues.
+
 2014-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         It should be fun and easy to run every possible JavaScript benchmark from the command line

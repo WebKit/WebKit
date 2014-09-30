@@ -66,7 +66,9 @@ class Attachment(object):
         return self._cached_queue_positions
 
     def _calculate_queue_positions(self):
-        all_work_items = WorkItems.all().fetch(limit=len(Queue.all()))
+        # We don't know how many rows there are in the table (as there can be stale rows
+        # from queues that we no longer have), but it's certainly fewer that 1000.
+        all_work_items = WorkItems.all().fetch(limit=1000)
         return dict([(items.queue.name(), items.display_position_for_attachment(self.id)) for items in all_work_items if items.queue])
 
     # FIXME: This is controller/view code and does not belong in a model.
