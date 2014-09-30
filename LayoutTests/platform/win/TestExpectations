@@ -41,6 +41,9 @@ css3/filters/effect-invert-hw.html
 css3/filters/effect-opacity-hw.html
 css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
+css3/filters/animation-from-initial-values-with-color-matrix.html
+css3/filters/filter-is-on-subpixel-position.html
+css3/masking/clip-path-filter.html
 
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-path-constructors.html
@@ -990,6 +993,7 @@ fast/text/international/plane2.html
 fast/media/print-restores-previous-mediatype.html
 
 webkit.org/b/35973 fast/multicol/hit-test-above-or-below.html [ Failure ]
+webkit.org/b/35973 fast/multicol/newmulticol/compare-with-old-impl/hit-test-above-or-below.html [ Failure ]
 
 # Needs progress element support
 webkit.org/b/49769 fast/dom/HTMLProgressElement [ Pass Failure ]
@@ -1356,6 +1360,7 @@ webgl/conformance/rendering/draw-arrays-out-of-bounds.html
 webgl/conformance/rendering/draw-elements-out-of-bounds.html
 
 # failing webgl tests
+webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
 webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html
 webgl/1.0.1/conformance/canvas/buffer-preserve-test.html
 webgl/1.0.1/conformance/context/context-lost-restored.html
@@ -1387,6 +1392,12 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html
 webgl/1.0.2/conformance/textures/texture-npot-video.html
 webgl/1.0.2/conformance/uniforms/uniform-location.html
 webgl/1.0.2/conformance/rendering/more-than-65536-indices.html
+webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
+webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
 webgl/conformance/canvas/buffer-offscreen-test.html
 webgl/conformance/canvas/buffer-preserve-test.html
 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
@@ -1665,6 +1676,7 @@ webkit.org/b/88149 [ Debug ] compositing/backing/no-backing-foreground-layer.htm
 webkit.org/b/88150 [ Debug ] compositing/geometry/clipping-foreground.html [ Crash ]
 
 # Need rebaselining / checking - skipped en masse to get the bots green again
+css2.1/t0805-c5518-brdr-t-01-e.html
 css2.1/20110323/c543-txt-decor-000.html
 css2.1/t0805-c5519-brdr-r-00-a.html
 css2.1/t0805-c5520-brdr-b-01-e.html
@@ -1906,12 +1918,20 @@ webkit.org/b/97026 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/97026 media/audio-repaint.html [ Failure ]
 webkit.org/b/97026 media/controls-styling-strict.html [ Failure ]
 webkit.org/b/97026 media/video-controls-fullscreen-volume.html [ Failure ]
+webkit.org/b/97026 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
+webkit.org/b/97026 scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure ]
 webkit.org/b/97026 svg/custom/glyph-selection-bidi-mirror.svg [ Failure ]
 webkit.org/b/97206 svg/custom/relative-sized-use-on-symbol.xhtml [ Failure ]
 webkit.org/b/97026 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml [ Failure ]
 webkit.org/b/97026 svg/text/bidi-text-query.svg [ Failure ]
 webkit.org/b/97026 svg/text/bidi-tspans.svg [ Failure ]
 webkit.org/b/97026 svg/text/non-bmp-positioning-lists.svg [ Failure ]
+webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg	[ Failure ]
+webkit.org/b/97026 svg/as-image/svg-intrinsic-size-rectangular-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/97026 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
+webkit.org/b/97026 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/97026 svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html [ Failure ]
+webkit.org/b/97026 svg/text/tspan-dynamic-positioning.svg [ Crash ]
 http/tests/fullscreen/fullscreenelement-different-origin.html [ Skip ]
 http/tests/fullscreen/fullscreenelement-same-origin.html [ Skip ]
 http/tests/history/back-with-fragment-change.php [ Skip ]
@@ -2827,6 +2847,11 @@ svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-64-t.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-65-t.svg [ ImageOnlyFailure ]
+fast/multicol/vertical-rl/float-multicol.html [ ImageOnlyFailure ]
+fast/multicol/vertical-rl/nested-columns.html [ ImageOnlyFailure ]
+fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ]
+fast/text/empty-shadow.html [ ImageOnlyFailure ]
 
 # Navigator Hardware Concurrency not enabled on Windows
 fast/dom/navigator-hardwareConcurrency.html

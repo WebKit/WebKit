@@ -4,6 +4,9 @@ layer at (429,0) size 356x600
   RenderBlock {HTML} at (0,0) size 356x600
 layer at (437,8) size 340x1500
   RenderBody {BODY} at (8,8) size 340x1500
+    RenderMultiColumnSet at (0,0) size 340x1500
+layer at (-243,8) size 1020x479 backgroundClip at (0,0) size 785x1508 clip at (0,0) size 785x1508 outlineClip at (0,0) size 785x1508
+  RenderMultiColumnFlowThread at (0,0) size 1020x479
     RenderBlock {DIV} at (19,0) size 57x479 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 521x241 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70
@@ -86,9 +89,9 @@ layer at (437,8) size 340x1500
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 9"
       RenderBlock {H2} at (0,0) size 56x479
-        RenderText {#text} at (0,249) size 56x132
-          text run at (0,249) width 124: "What Needs"
-          text run at (28,249) width 132: "To Be Done?"
+        RenderText {#text} at (0,248) size 56x133
+          text run at (0,248) width 124: "What Needs"
+          text run at (28,248) width 132: "To Be Done?"
     RenderBlock (floating) {DIV} at (95,248) size 381x83 [bgcolor=#808080]
       RenderBlock {P} at (16,0) size 18x82
         RenderText {#text} at (0,0) size 18x74
@@ -125,38 +128,38 @@ layer at (437,8) size 340x1500
           text run at (0,0) width 82: "Hola hola 11"
     RenderBlock {DL} at (95,0) size 675x479
       RenderBlock {DT} at (0,0) size 36x479
-        RenderText {#text} at (0,331) size 36x43
-          text run at (0,331) width 43: "Report"
-          text run at (18,331) width 33: "Bugs"
+        RenderText {#text} at (0,330) size 36x44
+          text run at (0,330) width 43: "Report"
+          text run at (18,330) width 33: "Bugs"
       RenderBlock {DD} at (52,40) size 465x439
         RenderBlock {P} at (0,0) size 465x439
-          RenderText {#text} at (0,291) size 320x146
-            text run at (0,291) width 46: "You've"
-            text run at (18,291) width 46: "already"
-            text run at (194,291) width 129: "downloaded a build."
-            text run at (212,291) width 132: "All you have to do is"
-            text run at (230,291) width 37: "use it "
-            text run at (230,328) width 17: "as "
-            text run at (230,345) width 91: "your everyday"
-            text run at (248,291) width 146: "browser and mail/news"
-            text run at (266,291) width 85: "reader. If you"
-            text run at (284,291) width 125: "downloaded a build"
-            text run at (302,291) width 32: "with "
-            text run at (302,323) width 67: "Talkback, "
-          RenderInline {EM} at (0,0) size 36x139
-            RenderText {#text} at (302,390) size 36x139
-              text run at (302,390) width 40: "please"
-              text run at (320,291) width 58: "turn it on"
-          RenderText {#text} at (320,349) size 126x436
-            text run at (320,349) width 86: " when it asks."
-            text run at (338,209) width 141: "Talkback reports give "
-            text run at (338,350) width 53: "us really"
-            text run at (356,209) width 87: "valuable data "
-            text run at (356,296) width 132: "on which crashes are"
-            text run at (374,209) width 168: "the most serious, and how "
-            text run at (374,377) width 32: "often"
-            text run at (392,209) width 155: "people are encountering "
-            text run at (392,364) width 67: "them. And"
+          RenderText {#text} at (0,290) size 320x147
+            text run at (0,290) width 46: "You've"
+            text run at (18,290) width 46: "already"
+            text run at (194,290) width 129: "downloaded a build."
+            text run at (212,290) width 132: "All you have to do is"
+            text run at (230,290) width 37: "use it "
+            text run at (230,327) width 17: "as "
+            text run at (230,344) width 91: "your everyday"
+            text run at (248,290) width 146: "browser and mail/news"
+            text run at (266,290) width 85: "reader. If you"
+            text run at (284,290) width 125: "downloaded a build"
+            text run at (302,290) width 32: "with "
+            text run at (302,322) width 67: "Talkback, "
+          RenderInline {EM} at (0,0) size 36x140
+            RenderText {#text} at (302,389) size 36x140
+              text run at (302,389) width 40: "please"
+              text run at (320,290) width 58: "turn it on"
+          RenderText {#text} at (320,348) size 126x436
+            text run at (320,348) width 86: " when it asks."
+            text run at (338,208) width 141: "Talkback reports give "
+            text run at (338,349) width 53: "us really"
+            text run at (356,208) width 87: "valuable data "
+            text run at (356,295) width 132: "on which crashes are"
+            text run at (374,208) width 168: "the most serious, and how "
+            text run at (374,376) width 32: "often"
+            text run at (392,208) width 155: "people are encountering "
+            text run at (392,363) width 67: "them. And"
             text run at (410,0) width 211: "all you have to do is click \"OK\". "
             text run at (410,211) width 225: "If you find something you think is a"
             text run at (428,0) width 221: "bug, check to see if it's not already "
