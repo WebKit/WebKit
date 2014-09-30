@@ -1,3 +1,9 @@
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
+        [Mac] Mark a flaky webgl conformance test as failing.
+
+        * platform/mac/TestExpectations:
+
 2014-08-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Caret not shown at the end of line in overtype mode
