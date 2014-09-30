@@ -61,11 +61,11 @@ private:
     RefPtr<HTMLPlugInElement> m_pluginElement;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(PluginDocument)
-    static bool isPluginDocument(const Document& document) { return document.isPluginDocument(); }
-    static bool isPluginDocument(const Node& node) { return is<Document>(node) && isPluginDocument(downcast<Document>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PluginDocument)
+    static bool isType(const WebCore::Document& document) { return document.isPluginDocument(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PluginDocument_h

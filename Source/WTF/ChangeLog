@@ -1,3 +1,17 @@
+2014-09-30  Christophe Dumez  <cdumez@apple.com>
+
+        Generalize is<>() / downcast<>() support to all types
+        https://bugs.webkit.org/show_bug.cgi?id=137243
+
+        Reviewed by Benjamin Poulain.
+
+        Generalize is<>() / downcast<>() support to all types, not just Nodes.
+
+        * wtf/Assertions.h:
+        * wtf/TypeCasts.h: Added.
+        (WTF::is):
+        (WTF::downcast):
+
 2014-09-30  Anders Carlsson  <andersca@apple.com>
 
         Get the STRING_STATS codepath compiling again, and add calls to ref/deref

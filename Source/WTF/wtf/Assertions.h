@@ -384,6 +384,8 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 
 /* TYPE CAST */
 
+// FIXME: This macro should be removed once the code base is ported to using
+// the new SPECIALIZE_TYPE_TRAITS_*() macro.
 #define TYPE_CASTS_BASE(ToClassName, argumentType, argumentName, pointerPredicate, referencePredicate) \
 inline ToClassName* to##ToClassName(argumentType* argumentName) \
 { \

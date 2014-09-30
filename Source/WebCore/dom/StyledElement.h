@@ -106,10 +106,10 @@ inline const StyleProperties* StyledElement::presentationAttributeStyle()
     return elementData()->presentationAttributeStyle();
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(StyledElement)
-    static bool isStyledElement(const Node& node) { return node.isStyledElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} //namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyledElement)
+    static bool isType(const WebCore::Node& node) { return node.isStyledElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

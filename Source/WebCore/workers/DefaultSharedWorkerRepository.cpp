@@ -257,12 +257,12 @@ public:
         : ScriptExecutionContext::Task([=] (ScriptExecutionContext& context) {
             RefPtr<MessagePort> port = MessagePort::create(context);
             port->entangle(std::unique_ptr<MessagePortChannel>(channel));
-            ASSERT_WITH_SECURITY_IMPLICATION(context.isWorkerGlobalScope());
-            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
+            ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(context));
+            WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
             // Since close() stops the thread event loop, this should not ever get called while closing.
-            ASSERT(!workerGlobalScope->isClosing());
-            ASSERT_WITH_SECURITY_IMPLICATION(workerGlobalScope->isSharedWorkerGlobalScope());
-            workerGlobalScope->dispatchEvent(createConnectEvent(port));
+            ASSERT(!workerGlobalScope.isClosing());
+            ASSERT_WITH_SECURITY_IMPLICATION(workerGlobalScope.isSharedWorkerGlobalScope());
+            workerGlobalScope.dispatchEvent(createConnectEvent(port));
         })
     {
     }

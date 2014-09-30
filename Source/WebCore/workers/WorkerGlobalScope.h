@@ -40,6 +40,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -181,8 +182,10 @@ namespace WebCore {
         RefPtr<SecurityOrigin> m_topOrigin;
     };
 
-SCRIPT_EXECUTION_CONTEXT_TYPE_CASTS(WorkerGlobalScope)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerGlobalScope)
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isWorkerGlobalScope(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // WorkerGlobalScope_h

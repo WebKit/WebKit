@@ -108,8 +108,8 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
     if (is<Document>(scriptExecutionContext))
         return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), exec);
 
-    if (scriptExecutionContext->isWorkerGlobalScope())
-        return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
+    if (is<WorkerGlobalScope>(scriptExecutionContext))
+        return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -125,8 +125,8 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
     if (is<Document>(scriptExecutionContext))
         return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), world);
 
-    if (scriptExecutionContext->isWorkerGlobalScope())
-        return toWorkerGlobalScope(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
+    if (is<WorkerGlobalScope>(scriptExecutionContext))
+        return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return nullptr;

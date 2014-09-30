@@ -68,15 +68,15 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
 #endif
 {
     ASSERT(m_workerObject);
-    ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(*m_scriptExecutionContext).thread().threadID()));
+    ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
 }
 
 WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
-    ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-           || (m_scriptExecutionContext->isWorkerGlobalScope() && currentThread() == toWorkerGlobalScope(*m_scriptExecutionContext).thread().threadID()));
+    ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
 }
 
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
@@ -212,7 +212,7 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
         return;
 
     m_workerThread->runLoop().postTask([=] (ScriptExecutionContext& context) {
-        toWorkerGlobalScope(&context)->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
+        downcast<WorkerGlobalScope>(context).dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
     });
 }
 
@@ -224,17 +224,17 @@ void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspec
     ASSERT(!m_pageInspector);
     m_pageInspector = pageInspector;
     m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
-        toWorkerGlobalScope(&context)->workerInspectorController().connectFrontend();
+        downcast<WorkerGlobalScope>(context).workerInspectorController().connectFrontend();
     }, WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 void WorkerMessagingProxy::disconnectFromInspector()
 {
-    m_pageInspector = 0;
+    m_pageInspector = nullptr;
     if (m_askedToTerminate)
         return;
     m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
-        toWorkerGlobalScope(&context)->workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+        downcast<WorkerGlobalScope>(context).workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
     }, WorkerDebuggerAgent::debuggerTaskMode);
 }
 
@@ -244,7 +244,7 @@ void WorkerMessagingProxy::sendMessageToInspector(const String& message)
         return;
     String messageCopy = message.isolatedCopy();
     m_workerThread->runLoop().postTaskForMode([messageCopy] (ScriptExecutionContext& context) {
-        toWorkerGlobalScope(&context)->workerInspectorController().dispatchMessageFromFrontend(messageCopy);
+        downcast<WorkerGlobalScope>(context).workerInspectorController().dispatchMessageFromFrontend(messageCopy);
     }, WorkerDebuggerAgent::debuggerTaskMode);
     WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
 }

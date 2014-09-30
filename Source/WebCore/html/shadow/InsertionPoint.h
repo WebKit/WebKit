@@ -75,10 +75,6 @@ private:
     bool m_hasDistribution;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(InsertionPoint)
-    static bool isInsertionPoint(const Node& node) { return node.isInsertionPoint(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline bool isActiveInsertionPoint(const Node* node)
 {
     return node && is<InsertionPoint>(node) && downcast<InsertionPoint>(*node).isActive();
@@ -126,5 +122,9 @@ inline bool hasShadowRootOrActiveInsertionPointParent(const Node& node)
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InsertionPoint)
+    static bool isType(const WebCore::Node& node) { return node.isInsertionPoint(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // InsertionPoint_h

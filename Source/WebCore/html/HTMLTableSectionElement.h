@@ -61,11 +61,11 @@ private:
     virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTableSectionElement)
-    static bool isHTMLTableSectionElement(const HTMLElement& element) { return element.hasTagName(HTMLNames::theadTag) || element.hasTagName(HTMLNames::tfootTag) || element.hasTagName(HTMLNames::tbodyTag); }
-    static bool isHTMLTableSectionElement(const Node& node) { return is<HTMLElement>(node) && isHTMLTableSectionElement(downcast<HTMLElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} //namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTableSectionElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::theadTag) || element.hasTagName(WebCore::HTMLNames::tfootTag) || element.hasTagName(WebCore::HTMLNames::tbodyTag); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -62,11 +62,11 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTableCellElement)
-    static bool isHTMLTableCellElement(const HTMLElement& element) { return element.hasTagName(HTMLNames::tdTag) || element.hasTagName(HTMLNames::thTag); }
-    static bool isHTMLTableCellElement(const Node& node) { return is<HTMLElement>(node) && isHTMLTableCellElement(downcast<HTMLElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTableCellElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::tdTag) || element.hasTagName(WebCore::HTMLNames::thTag); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -99,10 +99,10 @@ private:
     unsigned m_ignoreChildrenChanged;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(Attr)
-    static bool isAttr(const Node& node) { return node.isAttributeNode(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Attr)
+    static bool isType(const WebCore::Node& node) { return node.isAttributeNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // Attr_h

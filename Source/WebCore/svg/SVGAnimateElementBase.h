@@ -72,15 +72,15 @@ private:
     std::unique_ptr<SVGAnimatedTypeAnimator> m_animator;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGAnimateElementBase)
-    static bool isSVGAnimateElementBase(const SVGElement& element)
-    {
-        return element.hasTagName(SVGNames::animateTag) || element.hasTagName(SVGNames::animateColorTag)
-            || element.hasTagName(SVGNames::animateTransformTag) || element.hasTagName(SVGNames::setTag);
-    }
-    static bool isSVGAnimateElementBase(const Node& node) { return is<SVGElement>(node) && isSVGAnimateElementBase(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimateElementBase)
+    static bool isType(const WebCore::SVGElement& element)
+    {
+        return element.hasTagName(WebCore::SVGNames::animateTag) || element.hasTagName(WebCore::SVGNames::animateColorTag)
+            || element.hasTagName(WebCore::SVGNames::animateTransformTag) || element.hasTagName(WebCore::SVGNames::setTag);
+    }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SVGAnimateElementBase_h

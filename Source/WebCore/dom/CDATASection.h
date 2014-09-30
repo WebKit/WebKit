@@ -41,10 +41,10 @@ private:
     virtual PassRefPtr<Text> virtualCreate(const String&) override;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(CDATASection)
-    static bool isCDATASection(const Node& node) { return node.nodeType() == Node::CDATA_SECTION_NODE; }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CDATASection)
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::CDATA_SECTION_NODE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // CDATASection_h

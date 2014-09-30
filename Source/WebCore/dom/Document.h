@@ -1740,12 +1740,12 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 
 Element* eventTargetElementForDocument(Document*);
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(Document)
-    static bool isDocument(const ScriptExecutionContext& context) { return context.isDocument(); }
-    static bool isDocument(const Node& node) { return node.isDocumentNode(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isDocument(); }
+    static bool isType(const WebCore::Node& node) { return node.isDocumentNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WTF {
 inline WebCore::Document* getPtr(WebCore::Document& p) { return &p; }

@@ -52,10 +52,10 @@ private:
     virtual bool childTypeAllowed(NodeType) const override;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(DocumentFragment)
-    static bool isDocumentFragment(const Node& node) { return node.isDocumentFragment(); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} //namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DocumentFragment)
+    static bool isType(const WebCore::Node& node) { return node.isDocumentFragment(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

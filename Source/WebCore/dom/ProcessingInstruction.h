@@ -91,10 +91,10 @@ private:
 #endif
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(ProcessingInstruction)
-    static bool isProcessingInstruction(const Node& node) { return node.nodeType() == Node::PROCESSING_INSTRUCTION_NODE; }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} //namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ProcessingInstruction)
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::PROCESSING_INSTRUCTION_NODE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

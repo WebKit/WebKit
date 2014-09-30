@@ -214,21 +214,21 @@ void WorkerThread::stop()
         DatabaseManager::manager().interruptAllDatabasesForContext(m_workerGlobalScope.get());
 #endif
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
-            WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
+            WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
 #if ENABLE(SQL_DATABASE)
             // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
             DatabaseTaskSynchronizer cleanupSync;
-            DatabaseManager::manager().stopDatabases(workerGlobalScope, &cleanupSync);
+            DatabaseManager::manager().stopDatabases(&workerGlobalScope, &cleanupSync);
 #endif
 
-            workerGlobalScope->stopActiveDOMObjects();
+            workerGlobalScope.stopActiveDOMObjects();
 
-            workerGlobalScope->notifyObserversOfStop();
+            workerGlobalScope.notifyObserversOfStop();
 
             // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
             // which become dangling once Heap is destroyed.
-            workerGlobalScope->removeAllEventListeners();
+            workerGlobalScope.removeAllEventListeners();
 
 #if ENABLE(SQL_DATABASE)
             // We wait for the database thread to clean up all its stuff so that we
@@ -238,10 +238,10 @@ void WorkerThread::stop()
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.
-            workerGlobalScope->postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
-                WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
+            workerGlobalScope.postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
+                WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
                 // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
-                workerGlobalScope->clearScript();
+                workerGlobalScope.clearScript();
             } });
 
         } });

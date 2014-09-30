@@ -77,7 +77,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
     if (is<Document>(context))
         execute(downcast<Document>(context));
     else
-        execute(toWorkerGlobalScope(context));
+        execute(downcast<WorkerGlobalScope>(context));
 }
 
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)

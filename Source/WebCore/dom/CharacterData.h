@@ -76,10 +76,10 @@ private:
     String m_data;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(CharacterData)
-    static bool isCharacterData(const Node& node) { return node.isCharacterDataNode(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CharacterData)
+    static bool isType(const WebCore::Node& node) { return node.isCharacterDataNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // CharacterData_h

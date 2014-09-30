@@ -50,11 +50,11 @@ private:
     virtual bool isLabelable() const override final { return true; }
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(LabelableElement)
-    static bool isLabelableElement(const HTMLElement& element) { return element.isLabelable(); }
-    static bool isLabelableElement(const Node& node) { return is<HTMLElement>(node) && isLabelableElement(downcast<HTMLElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LabelableElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.isLabelable(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

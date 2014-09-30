@@ -107,17 +107,17 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGGradientElement)
-static bool isSVGGradientElement(const SVGElement& element)
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGGradientElement)
+static bool isType(const WebCore::SVGElement& element)
 {
-    return element.hasTagName(SVGNames::radialGradientTag) || element.hasTagName(SVGNames::linearGradientTag);
+    return element.hasTagName(WebCore::SVGNames::radialGradientTag) || element.hasTagName(WebCore::SVGNames::linearGradientTag);
 }
-static bool isSVGGradientElement(const Node& node)
+static bool isType(const WebCore::Node& node)
 {
-    return is<SVGElement>(node) && isSVGGradientElement(downcast<SVGElement>(node));
+    return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node));
 }
 SPECIALIZE_TYPE_TRAITS_END()
-
-} // namespace WebCore
 
 #endif

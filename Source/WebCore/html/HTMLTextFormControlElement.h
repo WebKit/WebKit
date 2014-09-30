@@ -151,13 +151,13 @@ private:
     unsigned char m_isPlaceholderVisible : 1;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLTextFormControlElement)
-    static bool isHTMLTextFormControlElement(const Element& element) { return element.isTextFormControl(); }
-    static bool isHTMLTextFormControlElement(const Node& node) { return is<Element>(node) && isHTMLTextFormControlElement(downcast<Element>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
-} // namespace
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTextFormControlElement)
+    static bool isType(const WebCore::Element& element) { return element.isTextFormControl(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

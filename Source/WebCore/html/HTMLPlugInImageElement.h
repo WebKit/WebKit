@@ -157,11 +157,11 @@ private:
     bool m_plugInDimensionsSpecified;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLPlugInImageElement)
-    static bool isHTMLPlugInImageElement(const HTMLPlugInElement& element) { return element.isPlugInImageElement(); }
-    static bool isHTMLPlugInImageElement(const Node& node) { return is<HTMLPlugInElement>(node) && isHTMLPlugInImageElement(downcast<HTMLPlugInElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLPlugInImageElement)
+    static bool isType(const WebCore::HTMLPlugInElement& element) { return element.isPlugInImageElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLPlugInElement>(node) && isType(downcast<WebCore::HTMLPlugInElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HTMLPlugInImageElement_h

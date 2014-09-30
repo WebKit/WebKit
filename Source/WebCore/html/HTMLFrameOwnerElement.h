@@ -69,11 +69,6 @@ private:
     SandboxFlags m_sandboxFlags;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLFrameOwnerElement)
-    static bool isHTMLFrameOwnerElement(const Node& node) { return node.isFrameOwnerElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-
 class SubframeLoadingDisabler {
 public:
     explicit SubframeLoadingDisabler(ContainerNode& root)
@@ -100,5 +95,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFrameOwnerElement)
+    static bool isType(const WebCore::Node& node) { return node.isFrameOwnerElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HTMLFrameOwnerElement_h

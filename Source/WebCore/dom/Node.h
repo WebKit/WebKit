@@ -36,6 +36,7 @@
 #include "TreeShared.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TypeCasts.h>
 
 namespace JSC {
 class VM;
@@ -738,58 +739,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     ASSERT(!isShadowRoot());
     return parentNode();
 }
-
-template <typename ExpectedType, typename ArgType>
-struct NodeTypeCastTraits {
-    static bool isType(ArgType&);
-};
-
-template <typename ExpectedType>
-struct NodeTypeCastTraits<ExpectedType, ExpectedType> {
-    static bool isType(ExpectedType&) { return true; }
-};
-
-// Type checking function for Nodes, to use before casting with downcast<>().
-template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType& node)
-{
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return NodeTypeCastTraits<const ExpectedType, const ArgType>::isType(node);
-}
-
-template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType* node)
-{
-    ASSERT(node);
-    static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return NodeTypeCastTraits<const ExpectedType, const ArgType>::isType(*node);
-}
-
-// Downcasting functions for Node types.
-template<typename Target, typename Source>
-inline typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type downcast(Source& source)
-{
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
-    ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target&, Target&>::type>(source);
-}
-template<typename Target, typename Source> inline typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type downcast(Source* source)
-{
-    static_assert(!std::is_base_of<Target, Source>::value, "Unnecessary cast");
-    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return static_cast<typename std::conditional<std::is_const<Source>::value, const Target*, Target*>::type>(source);
-}
-
-// Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.
-#define SPECIALIZE_TYPE_TRAITS_BEGIN(ClassName) \
-    template <typename ArgType> \
-    class NodeTypeCastTraits<const ClassName, ArgType> { \
-    public: \
-        static bool isType(ArgType& node) { return is##ClassName(node); } \
-    private:
-
-#define SPECIALIZE_TYPE_TRAITS_END() \
-    };
 
 // FIXME: This should be removed and all uses should be replaced with SPECIALIZE_TYPE_TRAITS_*().
 #define NODE_TYPE_CASTS(ToClassName) \

@@ -136,10 +136,10 @@ private:
     DisplayState m_displayState;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLPlugInElement)
-    static bool isHTMLPlugInElement(const Node& node) { return node.isPluginElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLPlugInElement)
+    static bool isType(const WebCore::Node& node) { return node.isPluginElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HTMLPlugInElement_h

@@ -234,10 +234,6 @@ private:
 #endif
 };
 
-#define SCRIPT_EXECUTION_CONTEXT_TYPE_CASTS(ToValueTypeName) \
-    template<typename T> inline ToValueTypeName* to##ToValueTypeName(const RefPtr<T>& context) { return to##ToValueTypeName(context.get()); } \
-    TYPE_CASTS_BASE(ToValueTypeName, ScriptExecutionContext, context, context->is##ToValueTypeName(), context.is##ToValueTypeName())
-
 } // namespace WebCore
 
 #endif // ScriptExecutionContext_h

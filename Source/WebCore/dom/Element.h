@@ -666,10 +666,6 @@ private:
     RefPtr<ElementData> m_elementData;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(Element)
-    static bool isElement(const Node& node) { return node.isElementNode(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline bool Node::hasAttributes() const
 {
     return is<Element>(*this) && downcast<Element>(*this).hasAttributes();
@@ -780,5 +776,9 @@ inline UniqueElementData& Element::ensureUniqueElementData()
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Element)
+    static bool isType(const WebCore::Node& node) { return node.isElementNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

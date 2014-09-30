@@ -80,10 +80,10 @@ private:
     AtomicString m_language;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebVTTElement)
-    static bool isWebVTTElement(const Node& node) { return node.isWebVTTElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTElement)
+    static bool isType(const WebCore::Node& node) { return node.isWebVTTElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

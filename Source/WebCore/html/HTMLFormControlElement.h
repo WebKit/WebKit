@@ -190,12 +190,12 @@ private:
     bool m_hasAutofocused : 1;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLFormControlElement)
-    static bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
-    static bool isHTMLFormControlElement(const Node& node) { return is<Element>(node) && downcast<Element>(node).isFormControlElement(); }
-    static bool isHTMLFormControlElement(const FormAssociatedElement& element) { return element.isFormControlElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFormControlElement)
+    static bool isType(const WebCore::Element& element) { return element.isFormControlElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+    static bool isType(const WebCore::FormAssociatedElement& element) { return element.isFormControlElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -119,11 +119,11 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGTextContentElement)
-    static bool isSVGTextContentElement(const SVGElement& element) { return element.isTextContent(); }
-    static bool isSVGTextContentElement(const Node& node) { return is<SVGElement>(node) && isSVGTextContentElement(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGTextContentElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.isTextContent(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

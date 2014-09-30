@@ -97,11 +97,11 @@ private:
     DocumentOrderedMap m_windowNamedItem;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLDocument)
-    static bool isHTMLDocument(const Document& document) { return document.isHTMLDocument(); }
-    static bool isHTMLDocument(const Node& node) { return is<Document>(node) && isHTMLDocument(downcast<Document>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLDocument)
+    static bool isType(const WebCore::Document& document) { return document.isHTMLDocument(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HTMLDocument_h

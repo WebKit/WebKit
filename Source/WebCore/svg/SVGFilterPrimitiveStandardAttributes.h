@@ -82,11 +82,11 @@ private:
 
 void invalidateFilterPrimitiveParent(SVGElement*);
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGFilterPrimitiveStandardAttributes)
-    static bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { return element.isFilterEffect(); }
-    static bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return is<SVGElement>(node) && isSVGFilterPrimitiveStandardAttributes(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGFilterPrimitiveStandardAttributes)
+    static bool isType(const WebCore::SVGElement& element) { return element.isFilterEffect(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -95,10 +95,6 @@ inline Element* ShadowRoot::activeElement() const
     return treeScope().focusedElement();
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(ShadowRoot)
-    static bool isShadowRoot(const Node& node) { return node.isShadowRoot(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline ShadowRoot* Node::shadowRoot() const
 {
     if (!is<Element>(*this))
@@ -119,6 +115,10 @@ inline bool hasShadowRootParent(const Node& node)
     return node.parentNode() && node.parentNode()->isShadowRoot();
 }
 
-} // namespace
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShadowRoot)
+    static bool isType(const WebCore::Node& node) { return node.isShadowRoot(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

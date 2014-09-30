@@ -55,13 +55,13 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
     ASSERT(context);
     ASSERT(client);
 
-    if (context->isWorkerGlobalScope()) {
-        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(context);
-        WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
+    if (is<WorkerGlobalScope>(context)) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*context);
+        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
         StringBuilder mode;
         mode.appendLiteral(webSocketChannelMode);
         mode.appendNumber(runLoop.createUniqueId());
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode.toString());
+        return WorkerThreadableWebSocketChannel::create(&workerGlobalScope, client, mode.toString());
     }
 
     return WebSocketChannel::create(downcast<Document>(context), client);

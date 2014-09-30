@@ -60,10 +60,10 @@ private:
     String m_subset;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(DocumentType)
-    static bool isDocumentType(const Node& node) { return node.nodeType() == Node::DOCUMENT_TYPE_NODE; }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DocumentType)
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::DOCUMENT_TYPE_NODE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -146,16 +146,16 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
     ASSERT(tagName.localName().impl());
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(HTMLElement)
-    static bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const
 {
     return is<HTMLElement>(*this) && downcast<HTMLElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLElement)
+    static bool isType(const WebCore::Node& node) { return node.isHTMLElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #include "HTMLElementTypeHelpers.h"
 

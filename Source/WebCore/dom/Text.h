@@ -74,10 +74,10 @@ private:
 #endif
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(Text)
-    static bool isText(const Node& node) { return node.isTextNode(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Text)
+    static bool isType(const WebCore::Node& node) { return node.isTextNode(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // Text_h

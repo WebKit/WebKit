@@ -52,11 +52,11 @@ private:
     FloatPoint m_translate;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGDocument)
-    static bool isSVGDocument(const Document& document) { return document.isSVGDocument(); }
-    static bool isSVGDocument(const Node& node) { return is<Document>(node) && isSVGDocument(downcast<Document>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGDocument)
+    static bool isType(const WebCore::Document& document) { return document.isSVGDocument(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SVGDocument_h

@@ -83,7 +83,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
         Document& document = downcast<Document>(*context);
         return document.page()->group().groupSettings().indexedDBDatabasePath();
     }
-    const GroupSettings* groupSettings = toWorkerGlobalScope(context)->groupSettings();
+    const GroupSettings* groupSettings = downcast<WorkerGlobalScope>(*context).groupSettings();
     if (groupSettings)
         return groupSettings->indexedDBDatabasePath();
     return String();

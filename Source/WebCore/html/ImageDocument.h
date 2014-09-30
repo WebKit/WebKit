@@ -82,11 +82,11 @@ private:
     bool m_shouldShrinkImage;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(ImageDocument)
-    static bool isImageDocument(const Document& document) { return document.isImageDocument(); }
-    static bool isImageDocument(const Node& node) { return is<Document>(node) && isImageDocument(downcast<Document>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImageDocument)
+    static bool isType(const WebCore::Document& document) { return document.isImageDocument(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ImageDocument_h

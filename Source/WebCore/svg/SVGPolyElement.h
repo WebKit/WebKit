@@ -62,11 +62,11 @@ protected:
     mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGPolyElement)
-    static bool isSVGPolyElement(const SVGElement& element) { return element.hasTagName(SVGNames::polygonTag) || element.hasTagName(SVGNames::polylineTag); }
-    static bool isSVGPolyElement(const Node& node) { return is<SVGElement>(node) && isSVGPolyElement(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGPolyElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.hasTagName(WebCore::SVGNames::polygonTag) || element.hasTagName(WebCore::SVGNames::polylineTag); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -82,11 +82,11 @@ private:
     bool m_shouldIsolateBlending;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGGraphicsElement)
-    static bool isSVGGraphicsElement(const SVGElement& element) { return element.isSVGGraphicsElement(); }
-    static bool isSVGGraphicsElement(const Node& node) { return is<SVGElement>(node) && isSVGGraphicsElement(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGGraphicsElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.isSVGGraphicsElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SVGGraphicsElement_h

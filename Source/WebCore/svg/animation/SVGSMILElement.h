@@ -237,11 +237,11 @@ private:
     friend class ConditionEventListener;
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGSMILElement)
-    static bool isSVGSMILElement(const SVGElement& element) { return element.isSMILElement(); }
-    static bool isSVGSMILElement(const Node& node) { return is<SVGElement>(node) && isSVGSMILElement(downcast<SVGElement>(node)); }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGSMILElement)
+    static bool isType(const WebCore::SVGElement& element) { return element.isSMILElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SVGSMILElement_h

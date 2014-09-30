@@ -133,10 +133,10 @@ void WorkerGlobalScope::close()
     // tasks with isCleanupTask()==true will be executed.
     m_closing = true;
     postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
-        ASSERT_WITH_SECURITY_IMPLICATION(context.isWorkerGlobalScope());
-        WorkerGlobalScope* workerGlobalScope = toWorkerGlobalScope(&context);
+        ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(context));
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        workerGlobalScope->thread().workerReportingProxy().workerGlobalScopeClosed();
+        workerGlobalScope.thread().workerReportingProxy().workerGlobalScopeClosed();
     } });
 }
 

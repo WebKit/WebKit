@@ -221,16 +221,16 @@ struct SVGAttributeHashTranslator {
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(SVGElement)
-    static bool isSVGElement(const Node& node) { return node.isSVGElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline bool Node::hasTagName(const SVGQualifiedName& name) const
 {
     return isSVGElement() && downcast<SVGElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGElement)
+    static bool isType(const WebCore::Node& node) { return node.isSVGElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #include "SVGElementTypeHelpers.h"
 

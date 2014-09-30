@@ -73,16 +73,16 @@ private:
     virtual void updateSelectedChild() { }
 };
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(MathMLElement)
-    static bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
 inline bool Node::hasTagName(const MathMLQualifiedName& name) const
 {
     return isMathMLElement() && downcast<MathMLElement>(*this).hasTagName(name);
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MathMLElement)
+    static bool isType(const WebCore::Node& node) { return node.isMathMLElement(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #include "MathMLElementTypeHelpers.h"
 

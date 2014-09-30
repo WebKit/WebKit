@@ -639,29 +639,33 @@ sub printTypeHelpers
         next if $tagCount > 1;
         my $name = $classToTags{$class}[0];
         print F <<END
+namespace WebCore {
 class $class;
+}
+namespace WTF {
 template <typename ArgType>
-class NodeTypeCastTraits<const $class, ArgType> {
+class TypeCastTraits<const WebCore::$class, ArgType> {
 public:
-    static bool isType(ArgType& node) { return checkTagName(node); }
+    static bool isOfType(ArgType& node) { return checkTagName(node); }
 private:
 END
        ;
        if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
            print F <<END
-    static bool checkTagName(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
-    static bool checkTagName(const Node& node) { return is<HTMLElement>(node) && checkTagName(downcast<HTMLElement>(node)); }
+    static bool checkTagName(const WebCore::HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName(WebCore::$parameters{namespace}Names::${name}Tag); }
+    static bool checkTagName(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && checkTagName(downcast<WebCore::HTMLElement>(node)); }
 END
            ;
        } else {
            print F <<END
-    static bool checkTagName(const $parameters{namespace}Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
-    static bool checkTagName(const Node& node) { return node.hasTagName($parameters{namespace}Names::${name}Tag); }
+    static bool checkTagName(const WebCore::$parameters{namespace}Element& element) { return element.hasTagName(WebCore::$parameters{namespace}Names::${name}Tag); }
+    static bool checkTagName(const WebCore::Node& node) { return node.hasTagName(WebCore::$parameters{namespace}Names::${name}Tag); }
 END
            ;
        }
        print F <<END
 };
+}
 END
        ;
        print F "\n";
@@ -678,11 +682,9 @@ sub printTypeHelpersHeaderFile
     print F "#ifndef ".$parameters{namespace}."ElementTypeHelpers_h\n";
     print F "#define ".$parameters{namespace}."ElementTypeHelpers_h\n\n";
     print F "#include \"".$parameters{namespace}."Names.h\"\n\n";
-    print F "namespace WebCore {\n\n";
 
     printTypeHelpers($F, \%allTags);
 
-    print F "}\n\n";
     print F "#endif\n";
 
     close F;
