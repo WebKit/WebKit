@@ -65,7 +65,7 @@ class EflPort(Port):
             del env['DISPLAY']
 
         env['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
-        env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib')
+        env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
 
         # Silence GIO warnings about using the "memory" GSettings backend.
         env['GSETTINGS_BACKEND'] = 'memory'
