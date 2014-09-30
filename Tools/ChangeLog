@@ -1,3 +1,54 @@
+2014-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be fun and easy to run every possible JavaScript benchmark from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=137245
+
+        Reviewed by Oliver Hunt.
+        
+        We previously had Tools/Scripts/bencher.  Then we stopped adding things to it because we
+        weren't sure about the licensing of things like Kraken and Octane.  Various people ended up
+        having their own private scripts for doing benchmark runs, and didn't share them in the open
+        source community, because of fears about the shady licensing of the benchmarks suites that
+        they were running. The dominant version of this was "run-jsc-benchmarks", which has a lot of
+        excellent power - it can run benchmarks through either jsc, DumpRenferTree, or
+        WebKitTestRunner; it can run tests on any number of remote machines; and it has inside
+        knowledge about how to run *a lot* of test suites. Many of those test suites are not public,
+        but some of them are. The non-public tests are exclusively those that were not made by any
+        WebKit contributor, but which JSC/WebKit devs found useful for testing.
+
+        This fixes this weirdness by releasing run-jsc-benchmarks. The paths to the test suites
+        whose licenses are incompatible with WebKit's (to the extent that they cannot be safely
+        checked into WebKit svn at all) can be run by passing the path to them via a configuration
+        file. The default configuration file is ~/.run-jsc-benchmarks. The most important benchmark
+        suites are Octane version 2 and Kraken version 1.1. We should probably check Octane 2 into
+        WebKit eventually because it seems that the license is fine. Kraken, on the other hand, will
+        probably never be checked in because there is no license text anywhere in that benchmark.
+        A valid ~/.run-jsc-benchmarks file will just be something like:
+        
+            {
+                "OctanePath": "/path/to/Octane2",
+                "KrakenPath": "/path/to/Kraken-1.1/tests/kraken-1.1"
+            }
+        
+        If your ~/.run-jsc-benchmarks file omits the directory for any particular test suite, then
+        run-jsc-benchmarks will just gracefully avoid running that test suite.
+        
+        Finally, a word about policy: it is understood that different organizations that do
+        development on JSC may find themselves having internal benchmarks that they cannot share
+        because of weird licensing. It happens - usually because the organization doing JSC
+        development found some test in the wild that is owned by someone else and therefore cannot
+        be shared. So, we should consider it acceptable to write patches against run-jsc-benchmarks
+        that add support for some new kind of benchmark suite even if the suite is not made public
+        as part of the same patch - so long as the patch isn't too invasive. An example of
+        non-invasiveness is the DSPJS suite, which is implemented using some new classes (like
+        DSPJSAmmoJSRegularBenchmark) and some calls to otherwise reusable functions (like
+        emitSelfContainedBenchRunCode). It is obviously super helpful if a benchmark suite can be
+        completely open-sourced and committed to the WebKit repo - but the reality is that this
+        can't always be done safely.
+
+        * Scripts/bencher: Removed.
+        * Scripts/run-jsc-benchmarks: Added.
+
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Back to 2 child processes for NRWT on Windows.
