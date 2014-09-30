@@ -50,6 +50,7 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
     , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
     , m_debuggerPausedTimestamp(NAN)
     , m_foundConsoleStartParent(false)
+    , m_suspended(false)
 {
     if (Debugger* debugger = exec->lexicalGlobalObject()->debugger())
         m_debuggerPausedTimestamp = debugger->isPaused() ? currentTime() : NAN;
@@ -162,6 +163,9 @@ void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentif
     if (!m_origin)
         return;
 
+    if (m_suspended)
+        return;
+
     RefPtr<ProfileNode> calleeNode = nullptr;
 
     // Find or create a node for the callee call frame.
@@ -188,6 +192,9 @@ void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifi
     }
 
     if (!m_origin)
+        return;
+
+    if (m_suspended)
         return;
 
     // Make a new node if the caller node has never seen this callee call frame before.

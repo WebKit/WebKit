@@ -123,6 +123,22 @@ static inline void callFunctionForProfilesWithGroup(std::function<void(ProfileGe
     }
 }
 
+void LegacyProfiler::suspendProfiling(JSC::ExecState* exec)
+{
+    if (!exec)
+        return;
+
+    callFunctionForProfilesWithGroup(std::bind(&ProfileGenerator::setIsSuspended, std::placeholders::_1, true), m_currentProfiles, exec->lexicalGlobalObject()->profileGroup());
+}
+
+void LegacyProfiler::unsuspendProfiling(JSC::ExecState* exec)
+{
+    if (!exec)
+        return;
+
+    callFunctionForProfilesWithGroup(std::bind(&ProfileGenerator::setIsSuspended, std::placeholders::_1, false), m_currentProfiles, exec->lexicalGlobalObject()->profileGroup());
+}
+
 void LegacyProfiler::willExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());

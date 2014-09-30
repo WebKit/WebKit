@@ -55,6 +55,10 @@ public:
     JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
     void stopProfiling(JSGlobalObject*);
 
+    // Used to ignore profile node subtrees rooted at InjectedScript calls.
+    JS_EXPORT_PRIVATE void suspendProfiling(ExecState*);
+    JS_EXPORT_PRIVATE void unsuspendProfiling(ExecState*);
+
     void willExecute(ExecState* callerCallFrame, JSValue function);
     void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber);
     void didExecute(ExecState* callerCallFrame, JSValue function);

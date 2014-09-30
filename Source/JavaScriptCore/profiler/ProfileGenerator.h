@@ -57,9 +57,9 @@ namespace JSC {
         void didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
         void didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
 
-        void stopProfiling();
+        void setIsSuspended(bool suspended) { ASSERT(m_suspended != suspended); m_suspended = suspended; }
 
-        typedef void (ProfileGenerator::*ProfileFunction)(ExecState* callerOrHandlerCallFrame, const CallIdentifier& callIdentifier);
+        void stopProfiling();
 
     private:
         ProfileGenerator(ExecState*, const WTF::String& title, unsigned uid);
@@ -79,6 +79,7 @@ namespace JSC {
         RefPtr<ProfileNode> m_rootNode;
         RefPtr<ProfileNode> m_currentNode;
         bool m_foundConsoleStartParent;
+        bool m_suspended;
     };
 
 } // namespace JSC
