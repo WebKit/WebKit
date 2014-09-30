@@ -1,3 +1,21 @@
+2014-09-30  Alexey Proskuryakov  <ap@apple.com>
+
+        EWS doesn't need to show all the bubbles when a patch fails to apply
+        https://bugs.webkit.org/show_bug.cgi?id=137256
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Updated app version.
+
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble):
+        (StatusBubble._build_bubbles_for_attachment):
+        (StatusBubble.get):
+        * QueueStatusServer/templates/statusbubble.html:
+        When some queues fail to apply, and no queues had meaningful output (meaning that
+        they will almost certainly fail to apply later), we can show a single bubble
+        telling the user just that.
+
 2014-09-30  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [EFL] Bump EFL version to 1.11.2

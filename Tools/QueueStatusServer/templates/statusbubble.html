@@ -63,6 +63,14 @@ window.addEventListener("message", function(e) {
 </head>
 <body>
 <div id="bubbleContainer">
+  {% if show_failure_to_apply %}
+  <a class="status fail" target="_top"
+      href="/patch/{{ attachment_id }}"
+      title="None of the queues could apply the patch"
+  >
+    patch does not apply to trunk of repository
+  </a>
+  {% else %}
   {% for bubble in bubbles %}
   <a class="status {{ bubble.state }}" target="_top"
       href="/patch/{{ bubble.attachment_id }}"
@@ -76,6 +84,7 @@ window.addEventListener("message", function(e) {
     {% endif %}
   </a>
   {% endfor %}
+  {% endif %}
 
 {% if show_submit_to_ews %}
   <form name="submit_to_ews" method="POST" action="/submit-to-ews">

@@ -118,11 +118,13 @@ class StatusBubble(webapp.RequestHandler):
             if attachment.id in queue.active_work_items().item_ids:
                 bubble["state"] = "started"
                 bubble["details_message"] = "Started processing, no output yet.\n\n" + self._iso_time(queue.active_work_items().time_for_item(attachment.id))
+                bubble["may_fail_to_apply"] = True
             else:
                 real_queue_position = self._real_queue_position(queue, queue_position)
                 bubble["state"] = "none"
                 bubble["details_message"] = "Waiting in queue, processing has not started yet.\n\nPosition in queue: " + str(real_queue_position)
                 bubble["queue_position"] = real_queue_position
+                bubble["may_fail_to_apply"] = True
         else:
             latest_resultative_status = self._latest_resultative_status(statuses)
             if not latest_resultative_status:
@@ -144,9 +146,11 @@ class StatusBubble(webapp.RequestHandler):
                     else:
                         bubble["details_message"] += " Some messages were logged while the patch was still eligible:\n\n"
                     bubble["details_message"] += "\n".join([status.message for status in statuses[1:]]) + "\n\n" + self._iso_time(statuses[0].date)
+                bubble["may_fail_to_apply"] = True
             elif statuses[0].message == "Error: " + queue.name() + " unable to apply patch.":
                 bubble["state"] = "fail"
                 bubble["details_message"] = statuses[1].message + "\n\n" + self._iso_time(statuses[0].date)
+                bubble["failed_to_apply"] = True
             elif statuses[0].message.startswith("Error: "):
                 bubble["state"] = "error"
                 bubble["details_message"] = "\n".join([status.message for status in statuses]) + "\n\n" + self._iso_time(statuses[0].date)
@@ -157,6 +161,7 @@ class StatusBubble(webapp.RequestHandler):
                 bubble["state"] = "error"
                 bubble["details_message"] = ("Internal error. Latest status implies that the patch should be in queue, but it is not. Recent messages:\n\n"
                     + "\n".join([status.message for status in statuses]) + "\n\n" + self._iso_time(statuses[0].date))
+            bubble["may_fail_to_apply"] = True
 
         if "details_message" in bubble:
             bubble["details_message"] = queue.display_name() + "\n\n" + bubble["details_message"]
@@ -184,16 +189,20 @@ class StatusBubble(webapp.RequestHandler):
             if queue.is_ews():
                 show_submit_to_ews = False
 
-        return (bubbles, show_submit_to_ews)
+        failed_to_apply = any(map(lambda bubble: "failed_to_apply" in bubble, bubbles))
+        had_output = all(map(lambda bubble: not "may_fail_to_apply" in bubble and not "failed_to_apply" in bubble, bubbles))
+
+        return (bubbles, show_submit_to_ews, failed_to_apply and (not had_output) and (not show_submit_to_ews))
 
     def get(self, attachment_id_string):
         attachment_id = int(attachment_id_string)
         attachment = Attachment(attachment_id)
-        bubbles, show_submit_to_ews = self._build_bubbles_for_attachment(attachment)
+        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_attachment(attachment)
 
         template_values = {
             "bubbles": bubbles,
             "attachment_id": attachment_id,
             "show_submit_to_ews": show_submit_to_ews,
+            "show_failure_to_apply": show_failure_to_apply,
         }
         self.response.out.write(template.render("templates/statusbubble.html", template_values))
