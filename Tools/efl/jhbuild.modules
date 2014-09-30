@@ -161,17 +161,16 @@
  </autotools>
 
   <autotools id="efl" autogen-sh="configure"
-             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa">
+             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --disable-neon --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.9.2.tar.bz2" version="1.9.2"
+    <branch module="rel/libs/efl/efl-1.11.2.tar.gz" version="1.11.2"
             repo="download.enlightenment.org"
-            hash="sha256:5dbeb99e1d26ccc74c9d054de5607a7e1020052b313c4b60c9a9794b45307501"
-            md5sum="51222f49d8faa7e72f097075fec223f5">
-      <patch file="ecore.patch" strip="1"/>
+            hash="sha256:f3cc1cd2a77df114a7b76a7e77bc77e88c367ec49462047fca209ee622cb7288"
+            md5sum="f1b23b9a4e2ae04a4c0f6d2f924093e9">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
   </autotools>
@@ -190,10 +189,10 @@
   <autotools id="elementary"
              autogen-sh="configure"
              autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.9.2.tar.bz2" version="1.9.2"
+    <branch module="rel/libs/elementary/elementary-1.11.2.tar.gz" version="1.11.2"
             repo="download.enlightenment.org"
-            hash="e1a8a77e5ff7ac934b5622131301787bc6cfc068b7117ffdbd5e1d855448f3cf"
-            md5sum="0709699bd3b92660b946137f45c57add">
+            hash="sha256:18f7e8fb63fcfd0d5abd213943c0c356b1270a94e20d44b8e6047b1cd0e53010"
+            md5sum="f6939a24ffc50c2e4eac7ed38663f0f3">
     </branch>
     <dependencies>
         <dep package="efl"/>

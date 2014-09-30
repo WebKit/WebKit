@@ -1,3 +1,16 @@
+2014-09-30  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [EFL] Bump EFL version to 1.11.2
+        https://bugs.webkit.org/show_bug.cgi?id=137118
+
+        Reviewed by Gyuyoung Kim.
+
+        Disable NEON for EFL build because the build system doesn't pass the necessary -mfpu=neon flag to the compiler.
+        Tools/efl/patches/ecore.patch: Removed, because this fix is already in EFL.
+
+        * efl/jhbuild.modules:
+        * efl/patches/ecore.patch: Removed.
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r173929): [GTK] TestInspector fails after r173929
