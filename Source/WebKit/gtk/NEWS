@@ -1,4 +1,20 @@
 =================
+WebKitGTK+  2.2.8
+=================
+
+What's new in WebKitGTK+ 2.2.8?
+
+  - Use free icons for the web inspector.
+  - Fix selection rendering when unfocused with recent GTK+ versions.
+  - Fix toggle buttons rendering with recent GTK+ versions.
+  - Fix race condition when downloading a file due to the intermediate
+    temporary file.
+  - Do not freeze the UI process while scanning plugins if there's a
+    GTK+ 3 plugin installed.
+  - Make sure the plugins cache is always used even if the cache
+    directory doesn't exist.
+
+=================
 WebKitGTK+  2.2.7
 =================
 
