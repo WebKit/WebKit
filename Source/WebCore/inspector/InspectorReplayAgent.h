@@ -92,26 +92,26 @@ public:
     void playbackFinished();
 
     // Calls from the Inspector frontend.
-    virtual void startCapturing(ErrorString*) override;
-    virtual void stopCapturing(ErrorString*) override;
+    virtual void startCapturing(ErrorString&) override;
+    virtual void stopCapturing(ErrorString&) override;
 
-    virtual void replayToPosition(ErrorString*, const RefPtr<Inspector::InspectorObject>&, bool shouldFastForward) override;
-    virtual void replayToCompletion(ErrorString*, bool shouldFastForward) override;
-    virtual void pausePlayback(ErrorString*) override;
-    virtual void cancelPlayback(ErrorString*) override;
+    virtual void replayToPosition(ErrorString&, const RefPtr<Inspector::InspectorObject>&, bool shouldFastForward) override;
+    virtual void replayToCompletion(ErrorString&, bool shouldFastForward) override;
+    virtual void pausePlayback(ErrorString&) override;
+    virtual void cancelPlayback(ErrorString&) override;
 
-    virtual void switchSession(ErrorString*, SessionIdentifier) override;
-    virtual void insertSessionSegment(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, Inspector::Protocol::Replay::SegmentIdentifier, int segmentIndex) override;
-    virtual void removeSessionSegment(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, int segmentIndex) override;
+    virtual void switchSession(ErrorString&, SessionIdentifier) override;
+    virtual void insertSessionSegment(ErrorString&, Inspector::Protocol::Replay::SessionIdentifier, Inspector::Protocol::Replay::SegmentIdentifier, int segmentIndex) override;
+    virtual void removeSessionSegment(ErrorString&, Inspector::Protocol::Replay::SessionIdentifier, int segmentIndex) override;
 
-    virtual void currentReplayState(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier*, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>*, Inspector::Protocol::Replay::SessionState*, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>&) override;
-    virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::SessionIdentifier>>&) override;
-    virtual void getSessionData(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>&) override;
-    virtual void getSegmentData(ErrorString*, Inspector::Protocol::Replay::SegmentIdentifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>&) override;
+    virtual void currentReplayState(ErrorString&, Inspector::Protocol::Replay::SessionIdentifier*, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>*, Inspector::Protocol::Replay::SessionState*, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>&) override;
+    virtual void getAvailableSessions(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::SessionIdentifier>>&) override;
+    virtual void getSessionData(ErrorString&, Inspector::Protocol::Replay::SessionIdentifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>&) override;
+    virtual void getSegmentData(ErrorString&, Inspector::Protocol::Replay::SegmentIdentifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>&) override;
 
 private:
-    PassRefPtr<ReplaySession> findSession(ErrorString*, SessionIdentifier);
-    PassRefPtr<ReplaySessionSegment> findSegment(ErrorString*, SegmentIdentifier);
+    PassRefPtr<ReplaySession> findSession(ErrorString&, SessionIdentifier);
+    PassRefPtr<ReplaySessionSegment> findSegment(ErrorString&, SegmentIdentifier);
     WebCore::SessionState sessionState() const;
 
     std::unique_ptr<Inspector::InspectorReplayFrontendDispatcher> m_frontendDispatcher;

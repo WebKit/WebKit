@@ -126,13 +126,14 @@ void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::InspectorFront
 void InspectorWorkerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_shouldPauseDedicatedWorkerOnStart = false;
-    disable(nullptr);
+    ErrorString unused;
+    disable(unused);
 
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 }
 
-void InspectorWorkerAgent::enable(ErrorString*)
+void InspectorWorkerAgent::enable(ErrorString&)
 {
     m_enabled = true;
     if (!m_frontendDispatcher)
@@ -141,7 +142,7 @@ void InspectorWorkerAgent::enable(ErrorString*)
     createWorkerFrontendChannelsForExistingWorkers();
 }
 
-void InspectorWorkerAgent::disable(ErrorString*)
+void InspectorWorkerAgent::disable(ErrorString&)
 {
     m_enabled = false;
     if (!m_frontendDispatcher)
@@ -150,39 +151,39 @@ void InspectorWorkerAgent::disable(ErrorString*)
     destroyWorkerFrontendChannels();
 }
 
-void InspectorWorkerAgent::canInspectWorkers(ErrorString*, bool* result)
+void InspectorWorkerAgent::canInspectWorkers(ErrorString&, bool* result)
 {
     *result = true;
 }
 
-void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)
+void InspectorWorkerAgent::connectToWorker(ErrorString& error, int workerId)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
         channel->connectToWorkerGlobalScope();
     else
-        *error = "Worker is gone";
+        error = ASCIILiteral("Worker is gone");
 }
 
-void InspectorWorkerAgent::disconnectFromWorker(ErrorString* error, int workerId)
+void InspectorWorkerAgent::disconnectFromWorker(ErrorString& error, int workerId)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
         channel->disconnectFromWorkerGlobalScope();
     else
-        *error = "Worker is gone";
+        error = ASCIILiteral("Worker is gone");
 }
 
-void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId, const RefPtr<InspectorObject>& message)
+void InspectorWorkerAgent::sendMessageToWorker(ErrorString& error, int workerId, const RefPtr<InspectorObject>& message)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
         channel->proxy()->sendMessageToInspector(message->toJSONString());
     else
-        *error = "Worker is gone";
+        error = ASCIILiteral("Worker is gone");
 }
 
-void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString*, bool value)
+void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString&, bool value)
 {
     m_shouldPauseDedicatedWorkerOnStart = value;
 }

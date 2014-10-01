@@ -48,13 +48,13 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    virtual void run(ErrorString*) override;
+    virtual void run(ErrorString&) override;
 
     void pauseWorkerGlobalScope(WorkerGlobalScope*);
 
 private:
     virtual JSC::VM& globalVM() override;
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
     WorkerGlobalScope* m_workerGlobalScope;

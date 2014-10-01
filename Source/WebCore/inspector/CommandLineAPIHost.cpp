@@ -114,8 +114,8 @@ void CommandLineAPIHost::getEventListenersImpl(Node* node, Vector<EventListenerI
 void CommandLineAPIHost::clearConsoleMessages()
 {
     if (m_consoleAgent) {
-        ErrorString error;
-        m_consoleAgent->clearMessages(&error);
+        ErrorString unused;
+        m_consoleAgent->clearMessages(unused);
     }
 }
 

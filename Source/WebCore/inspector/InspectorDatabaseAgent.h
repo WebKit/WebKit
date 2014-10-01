@@ -61,10 +61,10 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names) override;
-    virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback>) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names) override;
+    virtual void executeSQL(ErrorString&, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback>) override;
 
     // Called from the injected script.
     String databaseId(Database*);

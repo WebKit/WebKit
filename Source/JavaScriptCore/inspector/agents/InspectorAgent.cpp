@@ -63,11 +63,11 @@ void InspectorAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 
     m_pendingEvaluateTestCommands.clear();
 
-    ErrorString error;
-    disable(&error);
+    ErrorString unused;
+    disable(unused);
 }
 
-void InspectorAgent::enable(ErrorString*)
+void InspectorAgent::enable(ErrorString&)
 {
     m_enabled = true;
 
@@ -84,12 +84,12 @@ void InspectorAgent::enable(ErrorString*)
     m_pendingEvaluateTestCommands.clear();
 }
 
-void InspectorAgent::disable(ErrorString*)
+void InspectorAgent::disable(ErrorString&)
 {
     m_enabled = false;
 }
 
-void InspectorAgent::initialized(ErrorString*)
+void InspectorAgent::initialized(ErrorString&)
 {
     m_environment.frontendInitialized();
 }

@@ -61,17 +61,17 @@ public:
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();
 
-    virtual void enable(ErrorString*) override;
-    virtual void getFramesWithManifests(ErrorString*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result) override;
-    virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL) override;
-    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>&) override;
+    virtual void enable(ErrorString&) override;
+    virtual void getFramesWithManifests(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result) override;
+    virtual void getManifestForFrame(ErrorString&, const String& frameId, String* manifestURL) override;
+    virtual void getApplicationCacheForFrame(ErrorString&, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>&) override;
 
 private:
     PassRefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
-    DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
+    DocumentLoader* assertFrameWithDocumentLoader(ErrorString&, String frameId);
 
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;

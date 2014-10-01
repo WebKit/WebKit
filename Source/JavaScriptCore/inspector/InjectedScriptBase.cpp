@@ -114,31 +114,31 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown)
+void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
     if (!result) {
-        *errorString = ASCIILiteral("Internal error: result value is empty");
+        errorString = ASCIILiteral("Internal error: result value is empty");
         return;
     }
 
     if (result->type() == InspectorValue::Type::String) {
-        result->asString(*errorString);
-        ASSERT(errorString->length());
+        result->asString(errorString);
+        ASSERT(errorString.length());
         return;
     }
 
     RefPtr<InspectorObject> resultPair;
     if (!result->asObject(resultPair)) {
-        *errorString = ASCIILiteral("Internal error: result is not an Object");
+        errorString = ASCIILiteral("Internal error: result is not an Object");
         return;
     }
 
     RefPtr<InspectorObject> resultObject = resultPair->getObject(ASCIILiteral("result"));
     bool wasThrownVal = false;
     if (!resultObject || !resultPair->getBoolean(ASCIILiteral("wasThrown"), wasThrownVal)) {
-        *errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
+        errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
 

@@ -63,13 +63,13 @@ public:
     void workerGlobalScopeTerminated(WorkerGlobalScopeProxy*);
 
     // Called from InspectorBackendDispatcher
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void canInspectWorkers(ErrorString*, bool*) override;
-    virtual void connectToWorker(ErrorString*, int workerId) override;
-    virtual void disconnectFromWorker(ErrorString*, int workerId) override;
-    virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<Inspector::InspectorObject>& message) override;
-    virtual void setAutoconnectToWorkers(ErrorString*, bool value) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void canInspectWorkers(ErrorString&, bool*) override;
+    virtual void connectToWorker(ErrorString&, int workerId) override;
+    virtual void disconnectFromWorker(ErrorString&, int workerId) override;
+    virtual void sendMessageToWorker(ErrorString&, int workerId, const RefPtr<Inspector::InspectorObject>& message) override;
+    virtual void setAutoconnectToWorkers(ErrorString&, bool value) override;
 
 private:
     void createWorkerFrontendChannelsForExistingWorkers();

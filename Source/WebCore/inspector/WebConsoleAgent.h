@@ -45,7 +45,7 @@ public:
     WebConsoleAgent(WebInjectedScriptManager*);
     virtual ~WebConsoleAgent() { }
 
-    virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) override final;
+    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override final;
 
     void frameWindowDiscarded(DOMWindow*);
 

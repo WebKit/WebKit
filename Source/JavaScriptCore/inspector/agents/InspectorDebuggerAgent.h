@@ -68,24 +68,24 @@ public:
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
 
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void setBreakpointsActive(ErrorString*, bool active) override;
-    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) override;
-    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) override;
-    virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier) override;
-    virtual void continueToLocation(ErrorString*, const RefPtr<InspectorObject>& location) override;
-    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
-    virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource) override;
-    virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>&) override;
-    virtual void pause(ErrorString*) override;
-    virtual void resume(ErrorString*) override;
-    virtual void stepOver(ErrorString*) override;
-    virtual void stepInto(ErrorString*) override;
-    virtual void stepOut(ErrorString*) override;
-    virtual void setPauseOnExceptions(ErrorString*, const String& pauseState) override;
-    virtual void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override;
-    virtual void setOverlayMessage(ErrorString*, const String*) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void setBreakpointsActive(ErrorString&, bool active) override;
+    virtual void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) override;
+    virtual void setBreakpoint(ErrorString&, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) override;
+    virtual void removeBreakpoint(ErrorString&, const String& breakpointIdentifier) override;
+    virtual void continueToLocation(ErrorString&, const RefPtr<InspectorObject>& location) override;
+    virtual void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
+    virtual void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) override;
+    virtual void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>&) override;
+    virtual void pause(ErrorString&) override;
+    virtual void resume(ErrorString&) override;
+    virtual void stepOver(ErrorString&) override;
+    virtual void stepInto(ErrorString&) override;
+    virtual void stepOut(ErrorString&) override;
+    virtual void setPauseOnExceptions(ErrorString&, const String& pauseState) override;
+    virtual void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override;
+    virtual void setOverlayMessage(ErrorString&, const String*) override;
 
     bool isPaused();
     
@@ -112,7 +112,7 @@ protected:
     InspectorDebuggerAgent(InjectedScriptManager*);
 
     InjectedScriptManager* injectedScriptManager() const { return m_injectedScriptManager; }
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
+    virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
     virtual void startListeningScriptDebugServer() = 0;
     virtual void stopListeningScriptDebugServer(bool skipRecompile) = 0;
@@ -138,12 +138,12 @@ private:
     virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& sample) override final;
 
     PassRefPtr<Inspector::Protocol::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
-    bool assertPaused(ErrorString*);
+    bool assertPaused(ErrorString&);
     void clearDebuggerBreakpointState();
     void clearInspectorBreakpointState();
     void clearBreakDetails();
 
-    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<InspectorArray>& actions, BreakpointActions* result);
+    bool breakpointActionsFromProtocol(ErrorString&, RefPtr<InspectorArray>& actions, BreakpointActions* result);
 
     typedef HashMap<JSC::SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;

@@ -143,7 +143,7 @@ void WorkerInspectorController::dispatchMessageFromFrontend(const String& messag
 void WorkerInspectorController::resume()
 {
     ErrorString unused;
-    m_runtimeAgent->run(&unused);
+    m_runtimeAgent->run(unused);
 }
 
 InspectorFunctionCallHandler WorkerInspectorController::functionCallHandler() const

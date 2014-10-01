@@ -59,18 +59,18 @@ public:
 
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
 
-    virtual void enable(ErrorString*) override { m_enabled = true; }
-    virtual void disable(ErrorString*) override { m_enabled = false; }
-    virtual void parse(ErrorString*, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) override final;
-    virtual void evaluate(ErrorString*, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
-    virtual void callFunctionOn(ErrorString*, const String& objectId, const String& expression, const RefPtr<Inspector::InspectorArray>* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
-    virtual void releaseObject(ErrorString*, const ErrorString& objectId) override final;
-    virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
-    virtual void releaseObjectGroup(ErrorString*, const String& objectGroup) override final;
-    virtual void run(ErrorString*) override;
-    virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString*, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
-    virtual void enableTypeProfiler(ErrorString*) override;
-    virtual void disableTypeProfiler(ErrorString*) override;
+    virtual void enable(ErrorString&) override { m_enabled = true; }
+    virtual void disable(ErrorString&) override { m_enabled = false; }
+    virtual void parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) override final;
+    virtual void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
+    virtual void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const RefPtr<Inspector::InspectorArray>* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) override final;
+    virtual void releaseObject(ErrorString&, const ErrorString& objectId) override final;
+    virtual void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
+    virtual void releaseObjectGroup(ErrorString&, const String& objectGroup) override final;
+    virtual void run(ErrorString&) override;
+    virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
+    virtual void enableTypeProfiler(ErrorString&) override;
+    virtual void disableTypeProfiler(ErrorString&) override;
     
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 
@@ -82,7 +82,7 @@ protected:
     InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
 
     virtual JSC::VM& globalVM() = 0;
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
+    virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;

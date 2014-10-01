@@ -48,7 +48,7 @@ PageConsoleAgent::PageConsoleAgent(WebInjectedScriptManager* injectedScriptManag
 {
 }
 
-void PageConsoleAgent::clearMessages(ErrorString* errorString)
+void PageConsoleAgent::clearMessages(ErrorString& errorString)
 {
     m_inspectorDOMAgent->releaseDanglingNodes();
 
@@ -66,11 +66,11 @@ private:
     RefPtr<Node> m_node;
 };
 
-void PageConsoleAgent::addInspectedNode(ErrorString* errorString, int nodeId)
+void PageConsoleAgent::addInspectedNode(ErrorString& errorString, int nodeId)
 {
     Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
     if (!node || node->isInShadowTree()) {
-        *errorString = ASCIILiteral("nodeId is not valid");
+        errorString = ASCIILiteral("nodeId is not valid");
         return;
     }
 

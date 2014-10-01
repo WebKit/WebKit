@@ -188,8 +188,8 @@ void InspectorResourceAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    ErrorString error;
-    disable(&error);
+    ErrorString unused;
+    disable(unused);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
@@ -270,8 +270,8 @@ static PassRefPtr<Inspector::Protocol::Network::CachedResource> buildObjectForCa
 InspectorResourceAgent::~InspectorResourceAgent()
 {
     if (m_enabled) {
-        ErrorString error;
-        disable(&error);
+        ErrorString unused;
+        disable(unused);
     }
     ASSERT(!m_instrumentingAgents->inspectorResourceAgent());
 }
@@ -630,7 +630,7 @@ void InspectorResourceAgent::didReceiveWebSocketFrameError(unsigned long identif
 
 #endif // ENABLE(WEB_SOCKETS)
 
-void InspectorResourceAgent::enable(ErrorString*)
+void InspectorResourceAgent::enable(ErrorString&)
 {
     enable();
 }
@@ -643,7 +643,7 @@ void InspectorResourceAgent::enable()
     m_instrumentingAgents->setInspectorResourceAgent(this);
 }
 
-void InspectorResourceAgent::disable(ErrorString*)
+void InspectorResourceAgent::disable(ErrorString&)
 {
     m_enabled = false;
     m_instrumentingAgents->setInspectorResourceAgent(nullptr);
@@ -651,16 +651,16 @@ void InspectorResourceAgent::disable(ErrorString*)
     m_extraRequestHeaders.clear();
 }
 
-void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>& headers)
+void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString&, const RefPtr<InspectorObject>& headers)
 {
     m_extraRequestHeaders = headers;
 }
 
-void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const String& requestId, String* content, bool* base64Encoded)
+void InspectorResourceAgent::getResponseBody(ErrorString& errorString, const String& requestId, String* content, bool* base64Encoded)
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        *errorString = "No resource with given identifier found";
+        errorString = ASCIILiteral("No resource with given identifier found");
         return;
     }
 
@@ -671,7 +671,7 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
     }
 
     if (resourceData->isContentEvicted()) {
-        *errorString = "Request content was evicted from inspector cache";
+        errorString = ASCIILiteral("Request content was evicted from inspector cache");
         return;
     }
 
@@ -686,10 +686,10 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
             return;
     }
 
-    *errorString = "No data found for resource with given identifier";
+    errorString = ASCIILiteral("No data found for resource with given identifier");
 }
 
-void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
+void InspectorResourceAgent::replayXHR(ErrorString&, const String& requestId)
 {
     RefPtr<XMLHttpRequest> xhr = XMLHttpRequest::create(*m_pageAgent->mainFrame()->document());
     String actualRequestId = requestId;
@@ -713,34 +713,34 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
     xhr->sendForInspectorXHRReplay(xhrReplayData->formData(), IGNORE_EXCEPTION);
 }
 
-void InspectorResourceAgent::canClearBrowserCache(ErrorString*, bool* result)
+void InspectorResourceAgent::canClearBrowserCache(ErrorString&, bool* result)
 {
     *result = m_client->canClearBrowserCache();
 }
 
-void InspectorResourceAgent::clearBrowserCache(ErrorString*)
+void InspectorResourceAgent::clearBrowserCache(ErrorString&)
 {
     m_client->clearBrowserCache();
 }
 
-void InspectorResourceAgent::canClearBrowserCookies(ErrorString*, bool* result)
+void InspectorResourceAgent::canClearBrowserCookies(ErrorString&, bool* result)
 {
     *result = m_client->canClearBrowserCookies();
 }
 
-void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
+void InspectorResourceAgent::clearBrowserCookies(ErrorString&)
 {
     m_client->clearBrowserCookies();
 }
 
-void InspectorResourceAgent::setCacheDisabled(ErrorString*, bool cacheDisabled)
+void InspectorResourceAgent::setCacheDisabled(ErrorString&, bool cacheDisabled)
 {
     m_cacheDisabled = cacheDisabled;
     if (cacheDisabled)
         memoryCache()->evictResources();
 }
 
-void InspectorResourceAgent::loadResource(ErrorString* errorString, const String& frameId, const String& urlString, PassRefPtr<LoadResourceCallback> prpCallback)
+void InspectorResourceAgent::loadResource(ErrorString& errorString, const String& frameId, const String& urlString, PassRefPtr<LoadResourceCallback> prpCallback)
 {
     Frame* frame = m_pageAgent->assertFrame(errorString, frameId);
     if (!frame)
@@ -748,7 +748,7 @@ void InspectorResourceAgent::loadResource(ErrorString* errorString, const String
 
     Document* document = frame->document();
     if (!document) {
-        *errorString = ASCIILiteral("No Document instance for the specified frame");
+        errorString = ASCIILiteral("No Document instance for the specified frame");
         return;
     }
 

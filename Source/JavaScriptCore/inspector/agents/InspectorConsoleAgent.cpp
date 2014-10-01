@@ -69,10 +69,10 @@ void InspectorConsoleAgent::willDestroyFrontendAndBackend(InspectorDisconnectRea
     m_backendDispatcher.clear();
 
     String errorString;
-    disable(&errorString);
+    disable(errorString);
 }
 
-void InspectorConsoleAgent::enable(ErrorString*)
+void InspectorConsoleAgent::enable(ErrorString&)
 {
     if (m_enabled)
         return;
@@ -89,7 +89,7 @@ void InspectorConsoleAgent::enable(ErrorString*)
         m_consoleMessages[i]->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
 }
 
-void InspectorConsoleAgent::disable(ErrorString*)
+void InspectorConsoleAgent::disable(ErrorString&)
 {
     if (!m_enabled)
         return;
@@ -97,7 +97,7 @@ void InspectorConsoleAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorConsoleAgent::clearMessages(ErrorString*)
+void InspectorConsoleAgent::clearMessages(ErrorString&)
 {
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
@@ -111,8 +111,8 @@ void InspectorConsoleAgent::clearMessages(ErrorString*)
 
 void InspectorConsoleAgent::reset()
 {
-    ErrorString error;
-    clearMessages(&error);
+    ErrorString unused;
+    clearMessages(unused);
 
     m_times.clear();
     m_counts.clear();
@@ -124,8 +124,8 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         return;
 
     if (type == MessageType::Clear) {
-        ErrorString error;
-        clearMessages(&error);
+        ErrorString unused;
+        clearMessages(unused);
     }
 
     addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, callStack, requestIdentifier));
@@ -137,8 +137,8 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         return;
 
     if (type == MessageType::Clear) {
-        ErrorString error;
-        clearMessages(&error);
+        ErrorString unused;
+        clearMessages(unused);
     }
 
     addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, arguments, state, requestIdentifier));
@@ -150,8 +150,8 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         return;
 
     if (type == MessageType::Clear) {
-        ErrorString error;
-        clearMessages(&error);
+        ErrorString unused;
+        clearMessages(unused);
     }
 
     addConsoleMessage(std::make_unique<ConsoleMessage>(source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier));

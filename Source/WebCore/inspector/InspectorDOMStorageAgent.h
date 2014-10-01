@@ -61,11 +61,11 @@ public:
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     // Called from the front-end.
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void getDOMStorageItems(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items) override;
-    virtual void setDOMStorageItem(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, const String& key, const String& value) override;
-    virtual void removeDOMStorageItem(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, const String& key) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void getDOMStorageItems(ErrorString&, const RefPtr<Inspector::InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items) override;
+    virtual void setDOMStorageItem(ErrorString&, const RefPtr<Inspector::InspectorObject>& storageId, const String& key, const String& value) override;
+    virtual void removeDOMStorageItem(ErrorString&, const RefPtr<Inspector::InspectorObject>& storageId, const String& key) override;
 
     // Called from the injected script.
     String storageId(Storage*);
@@ -75,7 +75,7 @@ public:
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
 private:
-    PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<Inspector::InspectorObject>&, Frame*&);
+    PassRefPtr<StorageArea> findStorageArea(ErrorString&, const RefPtr<Inspector::InspectorObject>&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;

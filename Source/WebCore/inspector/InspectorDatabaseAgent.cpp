@@ -233,10 +233,11 @@ void InspectorDatabaseAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    disable(nullptr);
+    ErrorString unused;
+    disable(unused);
 }
 
-void InspectorDatabaseAgent::enable(ErrorString*)
+void InspectorDatabaseAgent::enable(ErrorString&)
 {
     if (m_enabled)
         return;
@@ -247,17 +248,17 @@ void InspectorDatabaseAgent::enable(ErrorString*)
         it->value->bind(m_frontendDispatcher.get());
 }
 
-void InspectorDatabaseAgent::disable(ErrorString*)
+void InspectorDatabaseAgent::disable(ErrorString&)
 {
     if (!m_enabled)
         return;
     m_enabled = false;
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names)
 {
     if (!m_enabled) {
-        *error = "Database agent is not enabled";
+        error = ASCIILiteral("Database agent is not enabled");
         return;
     }
 
@@ -272,7 +273,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const Str
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString*, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback> prpRequestCallback)
+void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback> prpRequestCallback)
 {
     RefPtr<ExecuteSQLCallback> requestCallback = prpRequestCallback;
 

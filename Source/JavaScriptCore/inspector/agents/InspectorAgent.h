@@ -57,9 +57,9 @@ public:
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason reason) override;
 
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void initialized(ErrorString*) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void initialized(ErrorString&) override;
 
     void inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(const String& script);

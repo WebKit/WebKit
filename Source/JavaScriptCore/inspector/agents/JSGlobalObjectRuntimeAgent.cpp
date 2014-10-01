@@ -61,14 +61,14 @@ VM& JSGlobalObjectRuntimeAgent::globalVM()
     return m_globalObject.vm();
 }
 
-InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
+InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     ASSERT_UNUSED(executionContextId, !executionContextId);
 
     JSC::ExecState* scriptState = m_globalObject.globalExec();
     InjectedScript injectedScript = injectedScriptManager()->injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
-        *errorString = ASCIILiteral("Internal error: main world execution context not found.");
+        errorString = ASCIILiteral("Internal error: main world execution context not found.");
 
     return injectedScript;
 }

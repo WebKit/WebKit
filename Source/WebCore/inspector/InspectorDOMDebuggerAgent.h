@@ -61,14 +61,14 @@ public:
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
-    virtual void setXHRBreakpoint(ErrorString*, const String& url) override;
-    virtual void removeXHRBreakpoint(ErrorString*, const String& url) override;
-    virtual void setEventListenerBreakpoint(ErrorString*, const String& eventName) override;
-    virtual void removeEventListenerBreakpoint(ErrorString*, const String& eventName) override;
-    virtual void setInstrumentationBreakpoint(ErrorString*, const String& eventName) override;
-    virtual void removeInstrumentationBreakpoint(ErrorString*, const String& eventName) override;
-    virtual void setDOMBreakpoint(ErrorString*, int nodeId, const String& type) override;
-    virtual void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type) override;
+    virtual void setXHRBreakpoint(ErrorString&, const String& url) override;
+    virtual void removeXHRBreakpoint(ErrorString&, const String& url) override;
+    virtual void setEventListenerBreakpoint(ErrorString&, const String& eventName) override;
+    virtual void removeEventListenerBreakpoint(ErrorString&, const String& eventName) override;
+    virtual void setInstrumentationBreakpoint(ErrorString&, const String& eventName) override;
+    virtual void removeInstrumentationBreakpoint(ErrorString&, const String& eventName) override;
+    virtual void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    virtual void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node* parent);
@@ -96,8 +96,8 @@ private:
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
     void discardBindings();
-    void setBreakpoint(ErrorString*, const String& eventName);
-    void removeBreakpoint(ErrorString*, const String& eventName);
+    void setBreakpoint(ErrorString&, const String& eventName);
+    void removeBreakpoint(ErrorString&, const String& eventName);
 
     void clear();
 

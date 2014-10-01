@@ -363,8 +363,8 @@ void InspectorController::dispatchMessageFromFrontend(const String& message)
 
 void InspectorController::hideHighlight()
 {
-    ErrorString error;
-    m_domAgent->hideHighlight(&error);
+    ErrorString unused;
+    m_domAgent->hideHighlight(unused);
 }
 
 Node* InspectorController::highlightedNode() const
@@ -391,20 +391,22 @@ bool InspectorController::profilerEnabled() const
 
 void InspectorController::setProfilerEnabled(bool enable)
 {
+    ErrorString unused;
+
     if (enable) {
         m_instrumentingAgents->setPersistentInspectorTimelineAgent(m_timelineAgent);
-        m_timelineAgent->start();
+        m_timelineAgent->start(unused);
     } else {
         m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
-        m_timelineAgent->stop();
+        m_timelineAgent->stop(unused);
     }
 }
 
 void InspectorController::resume()
 {
     if (m_debuggerAgent) {
-        ErrorString error;
-        m_debuggerAgent->resume(&error);
+        ErrorString unused;
+        m_debuggerAgent->resume(unused);
     }
 }
 

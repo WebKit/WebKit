@@ -396,15 +396,15 @@ bool DOMEditor::setNodeValue(Node* node, const String& value, ExceptionCode& ec)
     return m_history->perform(std::make_unique<SetNodeValueAction>(node, value), ec);
 }
 
-static void populateErrorString(const ExceptionCode& ec, ErrorString* errorString)
+static void populateErrorString(const ExceptionCode& ec, ErrorString& errorString)
 {
     if (ec) {
         ExceptionCodeDescription description(ec);
-        *errorString = description.name;
+        errorString = description.name;
     }
 }
 
-bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode, ErrorString* errorString)
+bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = insertBefore(parentNode, node, anchorNode, ec);
@@ -412,7 +412,7 @@ bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anch
     return result;
 }
 
-bool DOMEditor::removeChild(Node* parentNode, Node* node, ErrorString* errorString)
+bool DOMEditor::removeChild(Node* parentNode, Node* node, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = removeChild(parentNode, node, ec);
@@ -420,7 +420,7 @@ bool DOMEditor::removeChild(Node* parentNode, Node* node, ErrorString* errorStri
     return result;
 }
 
-bool DOMEditor::setAttribute(Element* element, const String& name, const String& value, ErrorString* errorString)
+bool DOMEditor::setAttribute(Element* element, const String& name, const String& value, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = setAttribute(element, name, value, ec);
@@ -428,7 +428,7 @@ bool DOMEditor::setAttribute(Element* element, const String& name, const String&
     return result;
 }
 
-bool DOMEditor::removeAttribute(Element* element, const String& name, ErrorString* errorString)
+bool DOMEditor::removeAttribute(Element* element, const String& name, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = removeAttribute(element, name, ec);
@@ -436,7 +436,7 @@ bool DOMEditor::removeAttribute(Element* element, const String& name, ErrorStrin
     return result;
 }
 
-bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, ErrorString* errorString)
+bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = setOuterHTML(node, html, newNode, ec);
@@ -444,7 +444,7 @@ bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, Err
     return result;
 }
 
-bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ErrorString* errorString)
+bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = replaceWholeText(textNode, text, ec);

@@ -141,8 +141,8 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    virtual void start(ErrorString* = nullptr, const int* maxCallStackDepth = nullptr) override;
-    virtual void stop(ErrorString* = nullptr) override;
+    virtual void start(ErrorString&, const int* maxCallStackDepth = nullptr) override;
+    virtual void stop(ErrorString&) override;
 
     int id() const { return m_id; }
 

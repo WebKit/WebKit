@@ -317,83 +317,83 @@ void InspectorReplayAgent::playbackFinished()
     m_frontendDispatcher->playbackFinished();
 }
 
-void InspectorReplayAgent::startCapturing(ErrorString* errorString)
+void InspectorReplayAgent::startCapturing(ErrorString& errorString)
 {
     if (sessionState() != WebCore::SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't start capturing if the session is already capturing or replaying.");
+        errorString = ASCIILiteral("Can't start capturing if the session is already capturing or replaying.");
         return;
     }
 
     m_page.replayController().startCapturing();
 }
 
-void InspectorReplayAgent::stopCapturing(ErrorString* errorString)
+void InspectorReplayAgent::stopCapturing(ErrorString& errorString)
 {
     if (sessionState() != WebCore::SessionState::Capturing) {
-        *errorString = ASCIILiteral("Can't stop capturing if capture is not in progress.");
+        errorString = ASCIILiteral("Can't stop capturing if capture is not in progress.");
         return;
     }
 
     m_page.replayController().stopCapturing();
 }
 
-void InspectorReplayAgent::replayToPosition(ErrorString* errorString, const RefPtr<InspectorObject>& positionObject, bool fastReplay)
+void InspectorReplayAgent::replayToPosition(ErrorString& errorString, const RefPtr<InspectorObject>& positionObject, bool fastReplay)
 {
     ReplayPosition position;
     if (!positionObject->getInteger(ASCIILiteral("segmentOffset"), position.segmentOffset)) {
-        *errorString = ASCIILiteral("Couldn't decode ReplayPosition segment offset provided to ReplayAgent.replayToPosition.");
+        errorString = ASCIILiteral("Couldn't decode ReplayPosition segment offset provided to ReplayAgent.replayToPosition.");
         return;
     }
 
     if (!positionObject->getInteger(ASCIILiteral("inputOffset"), position.inputOffset)) {
-        *errorString = ASCIILiteral("Couldn't decode ReplayPosition input offset provided to ReplayAgent.replayToPosition.");
+        errorString = ASCIILiteral("Couldn't decode ReplayPosition input offset provided to ReplayAgent.replayToPosition.");
         return;
     }
 
     if (sessionState() == WebCore::SessionState::Capturing) {
-        *errorString = ASCIILiteral("Can't start replay while capture is in progress.");
+        errorString = ASCIILiteral("Can't start replay while capture is in progress.");
         return;
     }
 
     m_page.replayController().replayToPosition(position, (fastReplay) ? DispatchSpeed::FastForward : DispatchSpeed::RealTime);
 }
 
-void InspectorReplayAgent::replayToCompletion(ErrorString* errorString, bool fastReplay)
+void InspectorReplayAgent::replayToCompletion(ErrorString& errorString, bool fastReplay)
 {
     if (sessionState() == WebCore::SessionState::Capturing) {
-        *errorString = ASCIILiteral("Can't start replay while capture is in progress.");
+        errorString = ASCIILiteral("Can't start replay while capture is in progress.");
         return;
     }
 
     m_page.replayController().replayToCompletion((fastReplay) ? DispatchSpeed::FastForward : DispatchSpeed::RealTime);
 }
 
-void InspectorReplayAgent::pausePlayback(ErrorString* errorString)
+void InspectorReplayAgent::pausePlayback(ErrorString& errorString)
 {
     if (sessionState() != WebCore::SessionState::Replaying) {
-        *errorString = ASCIILiteral("Can't pause playback if playback is not in progress.");
+        errorString = ASCIILiteral("Can't pause playback if playback is not in progress.");
         return;
     }
 
     m_page.replayController().pausePlayback();
 }
 
-void InspectorReplayAgent::cancelPlayback(ErrorString* errorString)
+void InspectorReplayAgent::cancelPlayback(ErrorString& errorString)
 {
     if (sessionState() == WebCore::SessionState::Capturing) {
-        *errorString = ASCIILiteral("Can't cancel playback if capture is in progress.");
+        errorString = ASCIILiteral("Can't cancel playback if capture is in progress.");
         return;
     }
 
     m_page.replayController().cancelPlayback();
 }
 
-void InspectorReplayAgent::switchSession(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier)
+void InspectorReplayAgent::switchSession(ErrorString& errorString, Inspector::Protocol::Replay::SessionIdentifier identifier)
 {
     ASSERT(identifier > 0);
 
     if (sessionState() != WebCore::SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't switch sessions unless the session is neither capturing or replaying.");
+        errorString = ASCIILiteral("Can't switch sessions unless the session is neither capturing or replaying.");
         return;
     }
 
@@ -404,7 +404,7 @@ void InspectorReplayAgent::switchSession(ErrorString* errorString, Inspector::Pr
     m_page.replayController().switchSession(session);
 }
 
-void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier sessionIdentifier, SegmentIdentifier segmentIdentifier, int segmentIndex)
+void InspectorReplayAgent::insertSessionSegment(ErrorString& errorString, Inspector::Protocol::Replay::SessionIdentifier sessionIdentifier, SegmentIdentifier segmentIdentifier, int segmentIndex)
 {
     ASSERT(sessionIdentifier > 0);
     ASSERT(segmentIdentifier > 0);
@@ -417,12 +417,12 @@ void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, Inspec
         return;
 
     if (static_cast<size_t>(segmentIndex) > session->size()) {
-        *errorString = ASCIILiteral("Invalid segment index.");
+        errorString = ASCIILiteral("Invalid segment index.");
         return;
     }
 
     if (session == m_page.replayController().loadedSession() && sessionState() != WebCore::SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't modify a loaded session unless the session is inactive.");
+        errorString = ASCIILiteral("Can't modify a loaded session unless the session is inactive.");
         return;
     }
 
@@ -430,7 +430,7 @@ void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, Inspec
     sessionModified(session);
 }
 
-void InspectorReplayAgent::removeSessionSegment(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, int segmentIndex)
+void InspectorReplayAgent::removeSessionSegment(ErrorString& errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, int segmentIndex)
 {
     ASSERT(identifier > 0);
     ASSERT(segmentIndex >= 0);
@@ -441,12 +441,12 @@ void InspectorReplayAgent::removeSessionSegment(ErrorString* errorString, Inspec
         return;
 
     if (static_cast<size_t>(segmentIndex) >= session->size()) {
-        *errorString = ASCIILiteral("Invalid segment index.");
+        errorString = ASCIILiteral("Invalid segment index.");
         return;
     }
 
     if (session == m_page.replayController().loadedSession() && sessionState() != WebCore::SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't modify a loaded session unless the session is inactive.");
+        errorString = ASCIILiteral("Can't modify a loaded session unless the session is inactive.");
         return;
     }
 
@@ -454,33 +454,33 @@ void InspectorReplayAgent::removeSessionSegment(ErrorString* errorString, Inspec
     sessionModified(session);
 }
 
-PassRefPtr<ReplaySession> InspectorReplayAgent::findSession(ErrorString* errorString, SessionIdentifier identifier)
+PassRefPtr<ReplaySession> InspectorReplayAgent::findSession(ErrorString& errorString, SessionIdentifier identifier)
 {
     ASSERT(identifier > 0);
 
     auto it = m_sessionsMap.find(identifier);
     if (it == m_sessionsMap.end()) {
-        *errorString = ASCIILiteral("Couldn't find session with specified identifier");
+        errorString = ASCIILiteral("Couldn't find session with specified identifier");
         return nullptr;
     }
 
     return it->value;
 }
 
-PassRefPtr<ReplaySessionSegment> InspectorReplayAgent::findSegment(ErrorString* errorString, SegmentIdentifier identifier)
+PassRefPtr<ReplaySessionSegment> InspectorReplayAgent::findSegment(ErrorString& errorString, SegmentIdentifier identifier)
 {
     ASSERT(identifier > 0);
 
     auto it = m_segmentsMap.find(identifier);
     if (it == m_segmentsMap.end()) {
-        *errorString = ASCIILiteral("Couldn't find segment with specified identifier");
+        errorString = ASCIILiteral("Couldn't find segment with specified identifier");
         return nullptr;
     }
 
     return it->value;
 }
 
-void InspectorReplayAgent::currentReplayState(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier* sessionIdentifier, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>* segmentIdentifier, Inspector::Protocol::Replay::SessionState* sessionState, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>& replayPosition)
+void InspectorReplayAgent::currentReplayState(ErrorString&, Inspector::Protocol::Replay::SessionIdentifier* sessionIdentifier, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>* segmentIdentifier, Inspector::Protocol::Replay::SessionState* sessionState, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>& replayPosition)
 {
     *sessionState = buildInspectorObjectForSessionState(m_page.replayController().sessionState());
     *segmentState = buildInspectorObjectForSegmentState(m_page.replayController().segmentState());
@@ -492,29 +492,29 @@ void InspectorReplayAgent::currentReplayState(ErrorString*, Inspector::Protocol:
     replayPosition = buildInspectorObjectForPosition(m_page.replayController().currentPosition());
 }
 
-void InspectorReplayAgent::getAvailableSessions(ErrorString*, RefPtr<Inspector::Protocol::Array<SessionIdentifier>>& sessionsList)
+void InspectorReplayAgent::getAvailableSessions(ErrorString&, RefPtr<Inspector::Protocol::Array<SessionIdentifier>>& sessionsList)
 {
     sessionsList = Inspector::Protocol::Array<Inspector::Protocol::Replay::SessionIdentifier>::create();
     for (auto& pair : m_sessionsMap)
         sessionsList->addItem(pair.key);
 }
 
-void InspectorReplayAgent::getSessionData(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>& serializedObject)
+void InspectorReplayAgent::getSessionData(ErrorString& errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>& serializedObject)
 {
     RefPtr<ReplaySession> session = findSession(errorString, identifier);
     if (!session) {
-        *errorString = ASCIILiteral("Couldn't find the specified session.");
+        errorString = ASCIILiteral("Couldn't find the specified session.");
         return;
     }
 
     serializedObject = buildInspectorObjectForSession(session);
 }
 
-void InspectorReplayAgent::getSegmentData(ErrorString* errorString, Inspector::Protocol::Replay::SegmentIdentifier identifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>& serializedObject)
+void InspectorReplayAgent::getSegmentData(ErrorString& errorString, Inspector::Protocol::Replay::SegmentIdentifier identifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>& serializedObject)
 {
     RefPtr<ReplaySessionSegment> segment = findSegment(errorString, identifier);
     if (!segment) {
-        *errorString = ASCIILiteral("Couldn't find the specified segment.");
+        errorString = ASCIILiteral("Couldn't find the specified segment.");
         return;
     }
 

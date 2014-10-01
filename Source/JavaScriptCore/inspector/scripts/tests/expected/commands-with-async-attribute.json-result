@@ -98,20 +98,20 @@ public:
         Yellow = 5,
         Black = 6,
     }; // enum class PrintColor
-    virtual void executeSQLSyncOptionalReturnValues(ErrorString*, int in_databaseId, const String& in_query, RefPtr<Inspector::Protocol::Array<String>>& opt_out_columnNames, Inspector::Protocol::OptOutput<String>* opt_out_notes, Inspector::Protocol::OptOutput<double>* opt_out_timestamp, Inspector::Protocol::OptOutput<Inspector::InspectorObject>* opt_out_values, Inspector::Protocol::OptOutput<Inspector::InspectorValue>* opt_out_payload, Inspector::Protocol::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
+    virtual void executeSQLSyncOptionalReturnValues(ErrorString&, int in_databaseId, const String& in_query, RefPtr<Inspector::Protocol::Array<String>>& opt_out_columnNames, Inspector::Protocol::OptOutput<String>* opt_out_notes, Inspector::Protocol::OptOutput<double>* opt_out_timestamp, Inspector::Protocol::OptOutput<Inspector::InspectorObject>* opt_out_values, Inspector::Protocol::OptOutput<Inspector::InspectorValue>* opt_out_payload, Inspector::Protocol::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
     class ExecuteSQLAsyncOptionalReturnValuesCallback : public Inspector::InspectorBackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncOptionalReturnValuesCallback(PassRefPtr<Inspector::InspectorBackendDispatcher>, int id);
         void sendSuccess(PassRefPtr<Inspector::Protocol::Array<String>> columnNames, Inspector::Protocol::OptOutput<String>* notes, Inspector::Protocol::OptOutput<double>* timestamp, Inspector::Protocol::OptOutput<Inspector::InspectorObject>* values, Inspector::Protocol::OptOutput<Inspector::InspectorValue>* payload, Inspector::Protocol::OptOutput<int>* databaseId, PassRefPtr<Inspector::Protocol::Database::Error> sqlError, Inspector::Protocol::OptOutput<String>* screenColor, Inspector::Protocol::OptOutput<String>* printColor);
     };
-    virtual void executeSQLAsyncOptionalReturnValues(ErrorString*, int in_databaseId, const String& in_query, PassRefPtr<ExecuteSQLAsyncOptionalReturnValuesCallback> callback) = 0;
-    virtual void executeSQLSync(ErrorString*, int in_databaseId, const String& in_query, RefPtr<Inspector::Protocol::Array<String>>& out_columnNames, String* out_notes, double* out_timestamp, Inspector::InspectorObject* out_values, Inspector::InspectorValue* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, Inspector::Protocol::Database::PrimaryColors* out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
+    virtual void executeSQLAsyncOptionalReturnValues(ErrorString&, int in_databaseId, const String& in_query, PassRefPtr<ExecuteSQLAsyncOptionalReturnValuesCallback> callback) = 0;
+    virtual void executeSQLSync(ErrorString&, int in_databaseId, const String& in_query, RefPtr<Inspector::Protocol::Array<String>>& out_columnNames, String* out_notes, double* out_timestamp, Inspector::InspectorObject* out_values, Inspector::InspectorValue* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, Inspector::Protocol::Database::PrimaryColors* out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
     class ExecuteSQLAsyncCallback : public Inspector::InspectorBackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncCallback(PassRefPtr<Inspector::InspectorBackendDispatcher>, int id);
         void sendSuccess(PassRefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, Inspector::InspectorObject values, Inspector::InspectorValue payload, int databaseId, PassRefPtr<Inspector::Protocol::Database::Error> sqlError, const String& screenColor, const String& printColor);
     };
-    virtual void executeSQLAsync(ErrorString*, int in_databaseId, const String& in_query, PassRefPtr<ExecuteSQLAsyncCallback> callback) = 0;
+    virtual void executeSQLAsync(ErrorString&, int in_databaseId, const String& in_query, PassRefPtr<ExecuteSQLAsyncCallback> callback) = 0;
 protected:
     virtual ~InspectorDatabaseBackendDispatcherHandler();
 };
@@ -234,7 +234,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long
     RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
     Inspector::Protocol::Database::PrimaryColors out_screenColor;
     InspectorDatabaseBackendDispatcherHandler::PrintColor out_printColor;
-    m_agent->executeSQLSyncOptionalReturnValues(&error, in_databaseId, in_query, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
+    m_agent->executeSQLSyncOptionalReturnValues(error, in_databaseId, in_query, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
 
     if (!error.length()) {
         if (out_columnNames)
@@ -302,7 +302,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(lon
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
     RefPtr<InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback> callback = adoptRef(new InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback(m_backendDispatcher,callId));
-    m_agent->executeSQLAsyncOptionalReturnValues(&error, in_databaseId, in_query, callback);
+    m_agent->executeSQLAsyncOptionalReturnValues(error, in_databaseId, in_query, callback);
 
     if (error.length()) {
         callback->disable();
@@ -336,7 +336,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLSync(long callId, const Inspe
     RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
     Inspector::Protocol::Database::PrimaryColors out_screenColor;
     InspectorDatabaseBackendDispatcherHandler::PrintColor out_printColor;
-    m_agent->executeSQLSync(&error, in_databaseId, in_query, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
+    m_agent->executeSQLSync(error, in_databaseId, in_query, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
 
     if (!error.length()) {
         result->setArray(ASCIILiteral("columnNames"), out_columnNames);
@@ -386,7 +386,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, const Insp
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
     RefPtr<InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback> callback = adoptRef(new InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback(m_backendDispatcher,callId));
-    m_agent->executeSQLAsync(&error, in_databaseId, in_query, callback);
+    m_agent->executeSQLAsync(error, in_databaseId, in_query, callback);
 
     if (error.length()) {
         callback->disable();

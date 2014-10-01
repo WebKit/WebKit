@@ -45,7 +45,7 @@ public:
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
 
     virtual JSC::VM& globalVM() override;
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
+    virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages
     // are sent to the console outside of the API boundary or console object.

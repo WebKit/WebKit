@@ -61,12 +61,12 @@ public:
     bool replaceChild(Node* parentNode, PassRefPtr<Node> newNode, Node* oldNode, ExceptionCode&);
     bool setNodeValue(Node* parentNode, const String& value, ExceptionCode&);
 
-    bool insertBefore(Node* parentNode, PassRefPtr<Node>, Node* anchorNode, ErrorString*);
-    bool removeChild(Node* parentNode, Node*, ErrorString*);
-    bool setAttribute(Element*, const String& name, const String& value, ErrorString*);
-    bool removeAttribute(Element*, const String& name, ErrorString*);
-    bool setOuterHTML(Node&, const String& html, Node** newNode, ErrorString*);
-    bool replaceWholeText(Text*, const String& text, ErrorString*);
+    bool insertBefore(Node* parentNode, PassRefPtr<Node>, Node* anchorNode, ErrorString&);
+    bool removeChild(Node* parentNode, Node*, ErrorString&);
+    bool setAttribute(Element*, const String& name, const String& value, ErrorString&);
+    bool removeAttribute(Element*, const String& name, ErrorString&);
+    bool setOuterHTML(Node&, const String& html, Node** newNode, ErrorString&);
+    bool replaceWholeText(Text*, const String& text, ErrorString&);
 
 private:
     class DOMAction;

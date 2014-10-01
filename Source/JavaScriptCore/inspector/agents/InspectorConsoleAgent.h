@@ -60,11 +60,11 @@ public:
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason) override;
 
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void clearMessages(ErrorString*) override;
-    virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) = 0;
-    virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void clearMessages(ErrorString&) override;
+    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) = 0;
+    virtual void addInspectedNode(ErrorString&, int nodeId) = 0;
 
     virtual bool isWorkerAgent() const = 0;
 

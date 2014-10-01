@@ -93,18 +93,18 @@ void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
             m_scriptDebugServer->recompileAllJSFunctions();
     }
 
-    ErrorString error;
-    stop(&error);
+    ErrorString unused;
+    stop(unused);
 }
 
-void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
+void InspectorTimelineAgent::start(ErrorString&, const int* maxCallStackDepth)
 {
     m_enabledFromFrontend = true;
 
     internalStart(maxCallStackDepth);
 }
 
-void InspectorTimelineAgent::stop(ErrorString*)
+void InspectorTimelineAgent::stop(ErrorString&)
 {
     internalStop();
 

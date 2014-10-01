@@ -88,7 +88,7 @@ static PassRefPtr<Inspector::Protocol::Runtime::ErrorRange> buildErrorRangeObjec
     return result.release();
 }
 
-void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>& range)
+void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>& range)
 {
     VM& vm = globalVM();
     JSLockHolder lock(vm);
@@ -117,7 +117,7 @@ void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspec
     }
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
@@ -137,11 +137,11 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        *errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Inspected frame has gone");
         return;
     }
 
@@ -163,11 +163,11 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     }
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
+void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* const ownProperties, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        *errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Inspected frame has gone");
         return;
     }
 
@@ -181,29 +181,29 @@ void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
 }
 
-void InspectorRuntimeAgent::releaseObject(ErrorString*, const String& objectId)
+void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (!injectedScript.hasNoValue())
         injectedScript.releaseObject(objectId);
 }
 
-void InspectorRuntimeAgent::releaseObjectGroup(ErrorString*, const String& objectGroup)
+void InspectorRuntimeAgent::releaseObjectGroup(ErrorString&, const String& objectGroup)
 {
     m_injectedScriptManager->releaseObjectGroup(objectGroup);
 }
 
-void InspectorRuntimeAgent::run(ErrorString*)
+void InspectorRuntimeAgent::run(ErrorString&)
 {
 }
 
-void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* errorString, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
+void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& errorString, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
 {
     static const bool verbose = false;
     VM& vm = globalVM();
     typeDescriptions = Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>::create();
     if (!vm.typeProfiler()) {
-        *errorString = ASCIILiteral("The VM does not currently have Type Information.");
+        errorString = ASCIILiteral("The VM does not currently have Type Information.");
         return;
     }
 
@@ -214,7 +214,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
         RefPtr<Inspector::InspectorValue> value = locations->get(i);
         RefPtr<InspectorObject> location;
         if (!value->asObject(location)) {
-            *errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
+            errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
             return;
         }
 
@@ -287,12 +287,12 @@ void InspectorRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectRea
         setTypeProfilerEnabledState(false);
 }
 
-void InspectorRuntimeAgent::enableTypeProfiler(ErrorString*)
+void InspectorRuntimeAgent::enableTypeProfiler(ErrorString&)
 {
     setTypeProfilerEnabledState(true);
 }
 
-void InspectorRuntimeAgent::disableTypeProfiler(ErrorString*)
+void InspectorRuntimeAgent::disableTypeProfiler(ErrorString&)
 {
     setTypeProfilerEnabledState(false);
 }

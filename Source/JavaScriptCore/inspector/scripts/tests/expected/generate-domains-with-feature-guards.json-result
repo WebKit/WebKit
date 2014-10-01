@@ -85,7 +85,7 @@ typedef String ErrorString;
 #if PLATFORM(WEB_COMMANDS)
 class InspectorNetwork1BackendDispatcherHandler {
 public:
-    virtual void loadResource(ErrorString*) = 0;
+    virtual void loadResource(ErrorString&) = 0;
 protected:
     virtual ~InspectorNetwork1BackendDispatcherHandler();
 };
@@ -184,7 +184,7 @@ void InspectorNetwork1BackendDispatcher::loadResource(long callId, const Inspect
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource(&error);
+    m_agent->loadResource(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }

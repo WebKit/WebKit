@@ -570,41 +570,42 @@ void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(InspectorDisconnectR
 {
     m_backendDispatcher.clear();
 
-    disable(nullptr);
+    ErrorString unused;
+    disable(unused);
 }
 
-void InspectorIndexedDBAgent::enable(ErrorString*)
+void InspectorIndexedDBAgent::enable(ErrorString&)
 {
 }
 
-void InspectorIndexedDBAgent::disable(ErrorString*)
+void InspectorIndexedDBAgent::disable(ErrorString&)
 {
 }
 
-static Document* assertDocument(ErrorString* errorString, Frame* frame)
+static Document* assertDocument(ErrorString& errorString, Frame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
-        *errorString = "No document for given frame found";
+        errorString = ASCIILiteral("No document for given frame found");
     return document;
 }
 
-static IDBFactory* assertIDBFactory(ErrorString* errorString, Document* document)
+static IDBFactory* assertIDBFactory(ErrorString& errorString, Document* document)
 {
     DOMWindow* domWindow = document->domWindow();
     if (!domWindow) {
-        *errorString = "No IndexedDB factory for given frame found";
+        errorString = ASCIILiteral("No IndexedDB factory for given frame found");
         return nullptr;
     }
 
     IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(domWindow);
     if (!idbFactory)
-        *errorString = "No IndexedDB factory for given frame found";
+        errorString = ASCIILiteral("No IndexedDB factory for given frame found");
 
     return idbFactory;
 }
 
-void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString* errorString, const String& securityOrigin, PassRefPtr<RequestDatabaseNamesCallback> requestCallback)
+void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, const String& securityOrigin, PassRefPtr<RequestDatabaseNamesCallback> requestCallback)
 {
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);
@@ -625,7 +626,7 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString* errorString, con
     idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toRawString()), false);
 }
 
-void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const String& securityOrigin, const String& databaseName, PassRefPtr<RequestDatabaseCallback> requestCallback)
+void InspectorIndexedDBAgent::requestDatabase(ErrorString& errorString, const String& securityOrigin, const String& databaseName, PassRefPtr<RequestDatabaseCallback> requestCallback)
 {
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);
@@ -640,7 +641,7 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const St
     databaseLoader->start(idbFactory, document->securityOrigin(), databaseName);
 }
 
-void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange, PassRefPtr<RequestDataCallback> requestCallback)
+void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange, PassRefPtr<RequestDataCallback> requestCallback)
 {
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);
@@ -655,7 +656,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String
 
     RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange->get()) : nullptr;
     if (keyRange && !idbKeyRange) {
-        *errorString = "Can not parse key range.";
+        errorString = ASCIILiteral("Can not parse key range.");
         return;
     }
 
@@ -746,7 +747,7 @@ private:
     RefPtr<ClearObjectStoreCallback> m_requestCallback;
 };
 
-void InspectorIndexedDBAgent::clearObjectStore(ErrorString* errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, PassRefPtr<ClearObjectStoreCallback> requestCallback)
+void InspectorIndexedDBAgent::clearObjectStore(ErrorString& errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, PassRefPtr<ClearObjectStoreCallback> requestCallback)
 {
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);

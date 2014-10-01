@@ -56,10 +56,10 @@ void JSGlobalObjectDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDes
     scriptDebugServer().removeListener(this, isBeingDestroyed);
 }
 
-InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)
+InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& error, const int* executionContextId)
 {
     if (executionContextId) {
-        *error = ASCIILiteral("Execution context id is not supported for JSContext inspection as there is only one execution context.");
+        error = ASCIILiteral("Execution context id is not supported for JSContext inspection as there is only one execution context.");
         return InjectedScript();
     }
 

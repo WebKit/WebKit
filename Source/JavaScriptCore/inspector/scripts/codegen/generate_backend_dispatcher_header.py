@@ -112,7 +112,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             return self._generate_async_handler_declaration_for_command(command)
 
         lines = []
-        parameters = ['ErrorString*']
+        parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
             parameters.append("%s in_%s" % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
 
@@ -140,7 +140,7 @@ class BackendDispatcherHeaderGenerator(Generator):
     def _generate_async_handler_declaration_for_command(self, command):
         callbackName = "%sCallback" % ucfirst(command.command_name)
 
-        in_parameters = ['ErrorString*']
+        in_parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
             in_parameters.append("%s in_%s" % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
         in_parameters.append("PassRefPtr<%s> callback" % callbackName)

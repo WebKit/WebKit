@@ -66,10 +66,10 @@ void WorkerRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason
     InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
-InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)
+InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& error, const int* executionContextId)
 {
     if (executionContextId) {
-        *error = ASCIILiteral("Execution context id is not supported for workers as there is only one execution context.");
+        error = ASCIILiteral("Execution context id is not supported for workers as there is only one execution context.");
         return InjectedScript();
     }
 
@@ -87,7 +87,7 @@ void WorkerRuntimeAgent::unmuteConsole()
     // We don't need to mute console for workers.
 }
 
-void WorkerRuntimeAgent::run(ErrorString*)
+void WorkerRuntimeAgent::run(ErrorString&)
 {
     m_paused = false;
 }

@@ -123,17 +123,17 @@ public:
 #endif
 
     // Called from frontend.
-    virtual void enable(ErrorString*) override;
-    virtual void disable(ErrorString*) override;
-    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&) override;
-    virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded) override;
-    virtual void replayXHR(ErrorString*, const String& requestId) override;
-    virtual void canClearBrowserCache(ErrorString*, bool*) override;
-    virtual void clearBrowserCache(ErrorString*) override;
-    virtual void canClearBrowserCookies(ErrorString*, bool*) override;
-    virtual void clearBrowserCookies(ErrorString*) override;
-    virtual void setCacheDisabled(ErrorString*, bool cacheDisabled) override;
-    virtual void loadResource(ErrorString*, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
+    virtual void enable(ErrorString&) override;
+    virtual void disable(ErrorString&) override;
+    virtual void setExtraHTTPHeaders(ErrorString&, const RefPtr<Inspector::InspectorObject>&) override;
+    virtual void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
+    virtual void replayXHR(ErrorString&, const String& requestId) override;
+    virtual void canClearBrowserCache(ErrorString&, bool*) override;
+    virtual void clearBrowserCache(ErrorString&) override;
+    virtual void canClearBrowserCookies(ErrorString&, bool*) override;
+    virtual void clearBrowserCookies(ErrorString&) override;
+    virtual void setCacheDisabled(ErrorString&, bool cacheDisabled) override;
+    virtual void loadResource(ErrorString&, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
 
 private:
     void enable();

@@ -128,40 +128,40 @@ void InspectorDOMDebuggerAgent::discardBindings()
     m_domBreakpoints.clear();
 }
 
-void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
     setBreakpoint(error, String(listenerEventCategoryType) + eventName);
 }
 
-void InspectorDOMDebuggerAgent::setInstrumentationBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::setInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
     setBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
 }
 
-void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString& error, const String& eventName)
 {
     if (eventName.isEmpty()) {
-        *error = "Event name is empty";
+        error = ASCIILiteral("Event name is empty");
         return;
     }
 
     m_eventListenerBreakpoints.add(eventName);
 }
 
-void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
     removeBreakpoint(error, String(listenerEventCategoryType) + eventName);
 }
 
-void InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
     removeBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
 }
 
-void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString* error, const String& eventName)
+void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString& error, const String& eventName)
 {
     if (eventName.isEmpty()) {
-        *error = "Event name is empty";
+        error = ASCIILiteral("Event name is empty");
         return;
     }
 
@@ -205,7 +205,7 @@ void InspectorDOMDebuggerAgent::didRemoveDOMNode(Node* node)
     }
 }
 
-static int domTypeForName(ErrorString* errorString, const String& typeString)
+static int domTypeForName(ErrorString& errorString, const String& typeString)
 {
     if (typeString == "subtree-modified")
         return SubtreeModified;
@@ -213,7 +213,7 @@ static int domTypeForName(ErrorString* errorString, const String& typeString)
         return AttributeModified;
     if (typeString == "node-removed")
         return NodeRemoved;
-    *errorString = makeString("Unknown DOM breakpoint type: ", typeString);
+    errorString = makeString("Unknown DOM breakpoint type: ", typeString);
     return -1;
 }
 
@@ -228,7 +228,7 @@ static String domTypeName(int type)
     return "";
 }
 
-void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString* errorString, int nodeId, const String& typeString)
+void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
     Node* node = m_domAgent->assertNode(errorString, nodeId);
     if (!node)
@@ -246,7 +246,7 @@ void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString* errorString, int n
     }
 }
 
-void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString* errorString, int nodeId, const String& typeString)
+void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
     Node* node = m_domAgent->assertNode(errorString, nodeId);
     if (!node)
@@ -375,7 +375,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
         m_debuggerAgent->schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::EventListener, eventData.release());
 }
 
-void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url)
+void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url)
 {
     if (url.isEmpty()) {
         m_pauseOnAllXHRsEnabled = true;
@@ -385,7 +385,7 @@ void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url
     m_xhrBreakpoints.add(url);
 }
 
-void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& url)
+void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString&, const String& url)
 {
     if (url.isEmpty()) {
         m_pauseOnAllXHRsEnabled = false;
@@ -399,7 +399,7 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
 {
     String breakpointURL;
     if (m_pauseOnAllXHRsEnabled)
-        breakpointURL = "";
+        breakpointURL = emptyString();
     else {
         for (auto it = m_xhrBreakpoints.begin(), end = m_xhrBreakpoints.end(); it != end; ++it) {
             if (url.contains(*it)) {

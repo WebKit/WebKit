@@ -251,9 +251,9 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
     m_history.reset();
     m_domEditor.reset();
 
-    ErrorString error;
-    setSearchingForNode(&error, false, 0);
-    hideHighlight(&error);
+    ErrorString unused;
+    setSearchingForNode(unused, false, 0);
+    hideHighlight(unused);
 
     m_instrumentingAgents->setInspectorDOMAgent(0);
     m_documentRequested = false;
@@ -360,70 +360,70 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 }
 
-Node* InspectorDOMAgent::assertNode(ErrorString* errorString, int nodeId)
+Node* InspectorDOMAgent::assertNode(ErrorString& errorString, int nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
-        *errorString = "Could not find node with given id";
+        errorString = ASCIILiteral("Could not find node with given id");
         return nullptr;
     }
     return node;
 }
 
-Document* InspectorDOMAgent::assertDocument(ErrorString* errorString, int nodeId)
+Document* InspectorDOMAgent::assertDocument(ErrorString& errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
     if (!is<Document>(node)) {
-        *errorString = "Document is not available";
+        errorString = ASCIILiteral("Document is not available");
         return nullptr;
     }
     return downcast<Document>(node);
 }
 
-Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
+Element* InspectorDOMAgent::assertElement(ErrorString& errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
     if (!is<Element>(node)) {
-        *errorString = "Node is not an Element";
+        errorString = ASCIILiteral("Node is not an Element");
         return nullptr;
     }
     return downcast<Element>(node);
 }
 
-Node* InspectorDOMAgent::assertEditableNode(ErrorString* errorString, int nodeId)
+Node* InspectorDOMAgent::assertEditableNode(ErrorString& errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
     if (node->isInShadowTree()) {
-        *errorString = "Can not edit nodes from shadow trees";
+        errorString = ASCIILiteral("Can not edit nodes from shadow trees");
         return nullptr;
     }
     return node;
 }
 
-Element* InspectorDOMAgent::assertEditableElement(ErrorString* errorString, int nodeId)
+Element* InspectorDOMAgent::assertEditableElement(ErrorString& errorString, int nodeId)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
         return nullptr;
     if (element->isInShadowTree()) {
-        *errorString = "Can not edit elements from shadow trees";
+        errorString = ASCIILiteral("Can not edit elements from shadow trees");
         return nullptr;
     }
     return element;
 }
 
-void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<Inspector::Protocol::DOM::Node>& root)
+void InspectorDOMAgent::getDocument(ErrorString& errorString, RefPtr<Inspector::Protocol::DOM::Node>& root)
 {
     m_documentRequested = true;
 
     if (!m_document) {
-        *errorString = "Document is not available";
+        errorString = ASCIILiteral("Document is not available");
         return;
     }
 
@@ -472,13 +472,13 @@ void InspectorDOMAgent::discardBindings()
     m_nodeGroupToBackendIdMap.clear();
 }
 
-int InspectorDOMAgent::pushNodeToFrontend(ErrorString* errorString, int documentNodeId, Node* nodeToPush)
+int InspectorDOMAgent::pushNodeToFrontend(ErrorString& errorString, int documentNodeId, Node* nodeToPush)
 {
     Document* document = assertDocument(errorString, documentNodeId);
     if (!document)
         return 0;
     if (&nodeToPush->document() != document) {
-        *errorString = "Node is not part of the document with given id";
+        errorString = ASCIILiteral("Node is not part of the document with given id");
         return 0;
     }
 
@@ -496,7 +496,7 @@ Node* InspectorDOMAgent::nodeForId(int id)
     return 0;
 }
 
-void InspectorDOMAgent::requestChildNodes(ErrorString* errorString, int nodeId, const int* depth)
+void InspectorDOMAgent::requestChildNodes(ErrorString& errorString, int nodeId, const int* depth)
 {
     int sanitizedDepth;
 
@@ -507,14 +507,14 @@ void InspectorDOMAgent::requestChildNodes(ErrorString* errorString, int nodeId, 
     else if (*depth > 0)
         sanitizedDepth = *depth;
     else {
-        *errorString = "Please provide a positive integer as a depth or -1 for entire subtree";
+        errorString = ASCIILiteral("Please provide a positive integer as a depth or -1 for entire subtree");
         return;
     }
 
     pushChildNodesToFrontend(nodeId, sanitizedDepth);
 }
 
-void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, const String& selectors, int* elementId)
+void InspectorDOMAgent::querySelector(ErrorString& errorString, int nodeId, const String& selectors, int* elementId)
 {
     *elementId = 0;
     Node* node = assertNode(errorString, nodeId);
@@ -528,7 +528,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
     ExceptionCode ec = 0;
     RefPtr<Element> element = downcast<ContainerNode>(*node).querySelector(selectors, ec);
     if (ec) {
-        *errorString = "DOM Error while querying";
+        errorString = ASCIILiteral("DOM Error while querying");
         return;
     }
 
@@ -536,7 +536,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<Inspector::Protocol::Array<int>>& result)
+void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, const String& selectors, RefPtr<Inspector::Protocol::Array<int>>& result)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -549,7 +549,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, c
     ExceptionCode ec = 0;
     RefPtr<NodeList> nodes = downcast<ContainerNode>(*node).querySelectorAll(selectors, ec);
     if (ec) {
-        *errorString = "DOM Error while querying";
+        errorString = ASCIILiteral("DOM Error while querying");
         return;
     }
 
@@ -630,7 +630,7 @@ BackendNodeId InspectorDOMAgent::backendNodeIdForNode(Node* node, const String& 
     return id;
 }
 
-void InspectorDOMAgent::releaseBackendNodeIds(ErrorString* errorString, const String& nodeGroup)
+void InspectorDOMAgent::releaseBackendNodeIds(ErrorString& errorString, const String& nodeGroup)
 {
     if (m_nodeGroupToBackendIdMap.contains(nodeGroup)) {
         NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
@@ -639,10 +639,10 @@ void InspectorDOMAgent::releaseBackendNodeIds(ErrorString* errorString, const St
         m_nodeGroupToBackendIdMap.remove(nodeGroup);
         return;
     }
-    *errorString = "Group name not found";
+    errorString = ASCIILiteral("Group name not found");
 }
 
-void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementId, const String& name, const String& value)
+void InspectorDOMAgent::setAttributeValue(ErrorString& errorString, int elementId, const String& name, const String& value)
 {
     Element* element = assertEditableElement(errorString, elementId);
     if (!element)
@@ -651,7 +651,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementI
     m_domEditor->setAttribute(element, name, value, errorString);
 }
 
-void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elementId, const String& text, const String* const name)
+void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elementId, const String& text, const String* const name)
 {
     Element* element = assertEditableElement(errorString, elementId);
     if (!element)
@@ -661,13 +661,13 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     ExceptionCode ec = 0;
     parsedElement.get()->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
-        *errorString = InspectorDOMAgent::toErrorString(ec);
+        errorString = InspectorDOMAgent::toErrorString(ec);
         return;
     }
 
     Node* child = parsedElement->firstChild();
     if (!child) {
-        *errorString = "Could not parse value as attributes";
+        errorString = ASCIILiteral("Could not parse value as attributes");
         return;
     }
 
@@ -689,7 +689,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         m_domEditor->removeAttribute(element, *name, errorString);
 }
 
-void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId, const String& name)
+void InspectorDOMAgent::removeAttribute(ErrorString& errorString, int elementId, const String& name)
 {
     Element* element = assertEditableElement(errorString, elementId);
     if (!element)
@@ -698,7 +698,7 @@ void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId,
     m_domEditor->removeAttribute(element, name, errorString);
 }
 
-void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
+void InspectorDOMAgent::removeNode(ErrorString& errorString, int nodeId)
 {
     Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
@@ -706,14 +706,14 @@ void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
 
     ContainerNode* parentNode = node->parentNode();
     if (!parentNode) {
-        *errorString = "Can not remove detached node";
+        errorString = ASCIILiteral("Can not remove detached node");
         return;
     }
 
     m_domEditor->removeChild(parentNode, node, errorString);
 }
 
-void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const String& tagName, int* newId)
+void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const String& tagName, int* newId)
 {
     *newId = 0;
 
@@ -748,7 +748,7 @@ void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const 
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(ErrorString& errorString, int nodeId, WTF::String* outerHTML)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -757,7 +757,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
     *outerHTML = createMarkup(*node);
 }
 
-void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML)
+void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const String& outerHTML)
 {
     if (!nodeId) {
         DOMPatchSupport domPatchSupport(m_domEditor.get(), m_document.get());
@@ -771,7 +771,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
 
     Document& document = node->document();
     if (!document.isHTMLDocument() && !document.isXHTMLDocument() && !document.isSVGDocument()) {
-        *errorString = "Not an HTML/XML document";
+        errorString = ASCIILiteral("Not an HTML/XML document");
         return;
     }
 
@@ -791,21 +791,21 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         pushChildNodesToFrontend(newId);
 }
 
-void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const String& value)
+void InspectorDOMAgent::setNodeValue(ErrorString& errorString, int nodeId, const String& value)
 {
     Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
         return;
 
     if (node->nodeType() != Node::TEXT_NODE) {
-        *errorString = "Can only set value of text nodes";
+        errorString = ASCIILiteral("Can only set value of text nodes");
         return;
     }
 
     m_domEditor->replaceWholeText(downcast<Text>(node), value, errorString);
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray)
 {
     listenersArray = Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>::create();
     Node* node = assertNode(errorString, nodeId);
@@ -872,7 +872,7 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
     }
 }
 
-void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString* errorString, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties)
+void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -881,7 +881,7 @@ void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString* errorStri
     axProperties = buildObjectForAccessibilityProperties(node);
 }
 
-void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& whitespaceTrimmedQuery, const RefPtr<InspectorArray>* nodeIds, String* searchId, int* resultCount)
+void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& whitespaceTrimmedQuery, const RefPtr<InspectorArray>* nodeIds, String* searchId, int* resultCount)
 {
     // FIXME: Search works with node granularity - number of matches within node is not calculated.
     InspectorNodeFinder finder(whitespaceTrimmedQuery);
@@ -891,18 +891,18 @@ void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& wh
         for (unsigned i = 0; i < nodeIdsRef->length(); ++i) {
             RefPtr<InspectorValue> nodeValue = nodeIdsRef->get(i);
             if (!nodeValue) {
-                *errorString = "Invalid nodeIds item.";
+                errorString = ASCIILiteral("Invalid nodeIds item.");
                 return;
             }
             int nodeId = 0;
             if (!nodeValue->asInteger(nodeId)) {
-                *errorString = "Invalid nodeIds item type. Expecting integer types.";
+                errorString = ASCIILiteral("Invalid nodeIds item type. Expecting integer types.");
                 return;
             }
             Node* node = assertNode(errorString, nodeId);
             if (!node) {
                 // assertNode should have filled the errorString for us.
-                ASSERT(errorString->length());
+                ASSERT(errorString.length());
                 return;
             }
             finder.performSearch(node);
@@ -922,17 +922,17 @@ void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& wh
     *resultCount = resultsVector.size();
 }
 
-void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>& nodeIds)
+void InspectorDOMAgent::getSearchResults(ErrorString& errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>& nodeIds)
 {
     SearchResults::iterator it = m_searchResults.find(searchId);
     if (it == m_searchResults.end()) {
-        *errorString = "No search session with given id found";
+        errorString = ASCIILiteral("No search session with given id found");
         return;
     }
 
     int size = it->value.size();
     if (fromIndex < 0 || toIndex > size || fromIndex >= toIndex) {
-        *errorString = "Invalid search result range";
+        errorString = ASCIILiteral("Invalid search result range");
         return;
     }
 
@@ -941,7 +941,7 @@ void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String&
         nodeIds->addItem(pushNodePathToFrontend((it->value)[i].get()));
 }
 
-void InspectorDOMAgent::discardSearchResults(ErrorString*, const String& searchId)
+void InspectorDOMAgent::discardSearchResults(ErrorString&, const String& searchId)
 {
     m_searchResults.remove(searchId);
 }
@@ -972,9 +972,9 @@ bool InspectorDOMAgent::handleTouchEvent(Node* node)
 
 void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
-    ErrorString error;
+    ErrorString unused;
     RefPtr<Node> node = inspectedNode;
-    setSearchingForNode(&error, false, 0);
+    setSearchingForNode(unused, false, 0);
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
@@ -1017,7 +1017,7 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
         m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
 }
 
-void InspectorDOMAgent::setSearchingForNode(ErrorString* errorString, bool enabled, InspectorObject* highlightInspectorObject)
+void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabled, InspectorObject* highlightInspectorObject)
 {
     if (m_searchingForNode == enabled)
         return;
@@ -1032,10 +1032,10 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString* errorString, bool enabl
     m_overlay->didSetSearchingForNode(m_searchingForNode);
 }
 
-std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString* errorString, InspectorObject* highlightInspectorObject)
+std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString& errorString, InspectorObject* highlightInspectorObject)
 {
     if (!highlightInspectorObject) {
-        *errorString = "Internal error: highlight configuration parameter is missing";
+        errorString = ASCIILiteral("Internal error: highlight configuration parameter is missing");
         return nullptr;
     }
 
@@ -1051,22 +1051,22 @@ std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspector
     return highlightConfig;
 }
 
-void InspectorDOMAgent::setInspectModeEnabled(ErrorString* errorString, bool enabled, const RefPtr<InspectorObject>* highlightConfig)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const RefPtr<InspectorObject>* highlightConfig)
 {
     setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig->get() : 0);
 }
 
-void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
+void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>(FloatRect(x, y, width, height));
     innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
 }
 
-void InspectorDOMAgent::highlightQuad(ErrorString* errorString, const RefPtr<InspectorArray>& quadArray, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
+void InspectorDOMAgent::highlightQuad(ErrorString& errorString, const RefPtr<InspectorArray>& quadArray, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>();
     if (!parseQuad(quadArray, quad.get())) {
-        *errorString = "Invalid Quad format";
+        errorString = ASCIILiteral("Invalid Quad format");
         return;
     }
     innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
@@ -1081,7 +1081,7 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, cons
     m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<InspectorObject>& highlightInspectorObject, const int* nodeId, const String* objectId)
+void InspectorDOMAgent::highlightNode(ErrorString& errorString, const RefPtr<InspectorObject>& highlightInspectorObject, const int* nodeId, const String* objectId)
 {
     Node* node = 0;
     if (nodeId) {
@@ -1089,9 +1089,9 @@ void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<Ins
     } else if (objectId) {
         node = nodeForObjectId(*objectId);
         if (!node)
-            *errorString = "Node for given objectId not found";
+            errorString = ASCIILiteral("Node for given objectId not found");
     } else
-        *errorString = "Either nodeId or objectId must be specified";
+        errorString = ASCIILiteral("Either nodeId or objectId must be specified");
 
     if (!node)
         return;
@@ -1103,7 +1103,7 @@ void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<Ins
     m_overlay->highlightNode(node, *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
+void InspectorDOMAgent::highlightFrame(ErrorString&, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
 {
     Frame* frame = m_pageAgent->frameForId(frameId);
     if (frame && frame->ownerElement()) {
@@ -1115,12 +1115,12 @@ void InspectorDOMAgent::highlightFrame(ErrorString*, const String& frameId, cons
     }
 }
 
-void InspectorDOMAgent::hideHighlight(ErrorString*)
+void InspectorDOMAgent::hideHighlight(ErrorString&)
 {
     m_overlay->hideHighlight();
 }
 
-void InspectorDOMAgent::moveTo(ErrorString* errorString, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
+void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
 {
     Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
@@ -1136,7 +1136,7 @@ void InspectorDOMAgent::moveTo(ErrorString* errorString, int nodeId, int targetE
         if (!anchorNode)
             return;
         if (anchorNode->parentNode() != targetElement) {
-            *errorString = "Anchor node must be child of the target element";
+            errorString = ASCIILiteral("Anchor node must be child of the target element");
             return;
         }
     }
@@ -1147,54 +1147,54 @@ void InspectorDOMAgent::moveTo(ErrorString* errorString, int nodeId, int targetE
     *newNodeId = pushNodePathToFrontend(node);
 }
 
-void InspectorDOMAgent::undo(ErrorString* errorString)
+void InspectorDOMAgent::undo(ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     m_history->undo(ec);
-    *errorString = InspectorDOMAgent::toErrorString(ec);
+    errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
-void InspectorDOMAgent::redo(ErrorString* errorString)
+void InspectorDOMAgent::redo(ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     m_history->redo(ec);
-    *errorString = InspectorDOMAgent::toErrorString(ec);
+    errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
-void InspectorDOMAgent::markUndoableState(ErrorString*)
+void InspectorDOMAgent::markUndoableState(ErrorString&)
 {
     m_history->markUndoableState();
 }
 
-void InspectorDOMAgent::focus(ErrorString* errorString, int nodeId)
+void InspectorDOMAgent::focus(ErrorString& errorString, int nodeId)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
         return;
     if (!element->isFocusable()) {
-        *errorString = "Element is not focusable";
+        errorString = ASCIILiteral("Element is not focusable");
         return;
     }
     element->focus();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
+void InspectorDOMAgent::resolveNode(ErrorString& errorString, int nodeId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
 {
     String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
     if (!node) {
-        *errorString = "No node with given id found";
+        errorString = ASCIILiteral("No node with given id found");
         return;
     }
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> object = resolveNode(node, objectGroupName);
     if (!object) {
-        *errorString = "Node with given id does not belong to the document";
+        errorString = ASCIILiteral("Node with given id does not belong to the document");
         return;
     }
     result = object;
 }
 
-void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<Inspector::Protocol::Array<String>>& result)
+void InspectorDOMAgent::getAttributes(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::Array<String>>& result)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
@@ -1203,7 +1203,7 @@ void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefP
     result = buildArrayForElementAttributes(element);
 }
 
-void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* nodeId)
+void InspectorDOMAgent::requestNode(ErrorString&, const String& objectId, int* nodeId)
 {
     Node* node = nodeForObjectId(objectId);
     if (node)
@@ -1956,18 +1956,18 @@ Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
     return InspectorDOMAgent::scriptValueAsNode(value);
 }
 
-void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString* errorString, const String& path, int* nodeId)
+void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString& errorString, const String& path, int* nodeId)
 {
     if (Node* node = nodeForPath(path))
         *nodeId = pushNodePathToFrontend(node);
     else
-        *errorString = "No node with given path found";
+        errorString = ASCIILiteral("No node with given path found");
 }
 
-void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString* errorString, BackendNodeId backendNodeId, int* nodeId)
+void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString& errorString, BackendNodeId backendNodeId, int* nodeId)
 {
     if (!m_backendIdToNode.contains(backendNodeId)) {
-        *errorString = "No node with given backend id found";
+        errorString = ASCIILiteral("No node with given backend id found");
         return;
     }
 

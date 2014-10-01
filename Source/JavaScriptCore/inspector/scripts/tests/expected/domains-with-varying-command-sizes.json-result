@@ -89,20 +89,20 @@ typedef String ErrorString;
 
 class InspectorNetwork1BackendDispatcherHandler {
 public:
-    virtual void loadResource1(ErrorString*) = 0;
+    virtual void loadResource1(ErrorString&) = 0;
 protected:
     virtual ~InspectorNetwork1BackendDispatcherHandler();
 };
 
 class InspectorNetwork3BackendDispatcherHandler {
 public:
-    virtual void loadResource1(ErrorString*) = 0;
-    virtual void loadResource2(ErrorString*) = 0;
-    virtual void loadResource3(ErrorString*) = 0;
-    virtual void loadResource4(ErrorString*) = 0;
-    virtual void loadResource5(ErrorString*) = 0;
-    virtual void loadResource6(ErrorString*) = 0;
-    virtual void loadResource7(ErrorString*) = 0;
+    virtual void loadResource1(ErrorString&) = 0;
+    virtual void loadResource2(ErrorString&) = 0;
+    virtual void loadResource3(ErrorString&) = 0;
+    virtual void loadResource4(ErrorString&) = 0;
+    virtual void loadResource5(ErrorString&) = 0;
+    virtual void loadResource6(ErrorString&) = 0;
+    virtual void loadResource7(ErrorString&) = 0;
 protected:
     virtual ~InspectorNetwork3BackendDispatcherHandler();
 };
@@ -213,7 +213,7 @@ void InspectorNetwork1BackendDispatcher::loadResource1(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource1(&error);
+    m_agent->loadResource1(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -268,7 +268,7 @@ void InspectorNetwork3BackendDispatcher::loadResource1(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource1(&error);
+    m_agent->loadResource1(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -277,7 +277,7 @@ void InspectorNetwork3BackendDispatcher::loadResource2(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource2(&error);
+    m_agent->loadResource2(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -286,7 +286,7 @@ void InspectorNetwork3BackendDispatcher::loadResource3(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource3(&error);
+    m_agent->loadResource3(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -295,7 +295,7 @@ void InspectorNetwork3BackendDispatcher::loadResource4(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource4(&error);
+    m_agent->loadResource4(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -304,7 +304,7 @@ void InspectorNetwork3BackendDispatcher::loadResource5(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource5(&error);
+    m_agent->loadResource5(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -313,7 +313,7 @@ void InspectorNetwork3BackendDispatcher::loadResource6(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource6(&error);
+    m_agent->loadResource6(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -322,7 +322,7 @@ void InspectorNetwork3BackendDispatcher::loadResource7(long callId, const Inspec
 {
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    m_agent->loadResource7(&error);
+    m_agent->loadResource7(error);
 
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }

@@ -81,26 +81,26 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(InspectorDisconnect
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    disable(nullptr);
+    ErrorString unused;
+    disable(unused);
 }
 
-void InspectorDOMStorageAgent::enable(ErrorString*)
+void InspectorDOMStorageAgent::enable(ErrorString&)
 {
     m_enabled = true;
 }
 
-void InspectorDOMStorageAgent::disable(ErrorString*)
+void InspectorDOMStorageAgent::disable(ErrorString&)
 {
     m_enabled = false;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
 {
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        if (errorString)
-            *errorString = "No StorageArea for given storageId";
+        errorString = ASCIILiteral("No StorageArea for given storageId");
         return;
     }
 
@@ -119,27 +119,27 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
     items = storageItems.release();
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key, const String& value)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, const String& key, const String& value)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(nullptr, storageId, frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        *errorString = "Storage not found";
+        errorString = ASCIILiteral("Storage not found");
         return;
     }
 
     bool quotaException = false;
     storageArea->setItem(frame, key, value, quotaException);
     if (quotaException)
-        *errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
+        errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, const String& key)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(nullptr, storageId, frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        *errorString = "Storage not found";
+        errorString = ASCIILiteral("Storage not found");
         return;
     }
 
@@ -182,24 +182,22 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
         m_frontendDispatcher->domStorageItemUpdated(id, key, oldValue, newValue);
 }
 
-PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, Frame*& targetFrame)
+PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, Frame*& targetFrame)
 {
     String securityOrigin;
     bool isLocalStorage = false;
-    bool success = storageId->getString("securityOrigin", securityOrigin);
+    bool success = storageId->getString(ASCIILiteral("securityOrigin"), securityOrigin);
     if (success)
-        success = storageId->getBoolean("isLocalStorage", isLocalStorage);
+        success = storageId->getBoolean(ASCIILiteral("isLocalStorage"), isLocalStorage);
     if (!success) {
-        if (errorString)
-            *errorString = "Invalid storageId format";
+        errorString = ASCIILiteral("Invalid storageId format");
         targetFrame = nullptr;
         return nullptr;
     }
 
     targetFrame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     if (!targetFrame) {
-        if (errorString)
-            *errorString = "Frame not found for the given security origin";
+        errorString = ASCIILiteral("Frame not found for the given security origin");
         return nullptr;
     }
 

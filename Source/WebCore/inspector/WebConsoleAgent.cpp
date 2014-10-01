@@ -49,7 +49,7 @@ WebConsoleAgent::WebConsoleAgent(WebInjectedScriptManager* injectedScriptManager
 {
 }
 
-void WebConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
+void WebConsoleAgent::setMonitoringXHREnabled(ErrorString&, bool enabled)
 {
     m_monitoringXHREnabled = enabled;
 }

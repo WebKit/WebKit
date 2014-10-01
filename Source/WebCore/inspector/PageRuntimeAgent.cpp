@@ -72,13 +72,13 @@ void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason r
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    String errorString;
-    disable(&errorString);
+    String unused;
+    disable(unused);
 
     InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
-void PageRuntimeAgent::enable(ErrorString* errorString)
+void PageRuntimeAgent::enable(ErrorString& errorString)
 {
     if (enabled())
         return;
@@ -92,7 +92,7 @@ void PageRuntimeAgent::enable(ErrorString* errorString)
         reportExecutionContextCreation();
 }
 
-void PageRuntimeAgent::disable(ErrorString* errorString)
+void PageRuntimeAgent::disable(ErrorString& errorString)
 {
     if (!enabled())
         return;
@@ -128,19 +128,19 @@ JSC::VM& PageRuntimeAgent::globalVM()
     return JSDOMWindowBase::commonVM();
 }
 
-InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
+InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (!executionContextId) {
         JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage->mainFrame());
         InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
         if (result.hasNoValue())
-            *errorString = ASCIILiteral("Internal error: main world execution context not found.");
+            errorString = ASCIILiteral("Internal error: main world execution context not found.");
         return result;
     }
 
     InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        *errorString = ASCIILiteral("Execution context with given id not found.");
+        errorString = ASCIILiteral("Execution context with given id not found.");
     return injectedScript;
 }
 

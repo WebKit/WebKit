@@ -164,7 +164,7 @@ class BackendDispatcherImplementationGenerator(Generator):
         in_parameter_declarations = []
         out_parameter_declarations = []
         out_parameter_assignments = []
-        method_parameters = ['&error']
+        method_parameters = ['error']
 
         for parameter in command.call_parameters:
             out_success_argument = 'nullptr'
