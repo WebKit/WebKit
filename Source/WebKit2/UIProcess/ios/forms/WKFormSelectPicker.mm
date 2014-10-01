@@ -166,21 +166,20 @@ static const float DisabledOptionAlpha = 0.3;
     [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]]];
     [self reloadAllComponents];
 
-    const Vector<OptionItem>& selectOptions = [_view assistedNodeSelectOptions];
-    int currentIndex = 0;
-    for (size_t i = 0; i < selectOptions.size(); ++i) {
-        const OptionItem& item = selectOptions[i];
-        if (item.isGroup)
-            continue;
+    if (!_allowsMultipleSelection) {
+        const Vector<OptionItem>& selectOptions = [_view assistedNodeSelectOptions];
+        for (size_t i = 0; i < selectOptions.size(); ++i) {
+            const OptionItem& item = selectOptions[i];
+            if (item.isGroup)
+                continue;
 
-        if (!_allowsMultipleSelection && item.isSelected)
-            _singleSelectionIndex = currentIndex;
-
-        currentIndex++;
+            if (item.isSelected) {
+                _singleSelectionIndex = i;
+                [self selectRow:_singleSelectionIndex inComponent:0 animated:NO];
+                break;
+            }
+        }
     }
-
-    if (_singleSelectionIndex != NSNotFound)
-        [self selectRow:_singleSelectionIndex inComponent:0 animated:NO];
 
     return self;
 }
