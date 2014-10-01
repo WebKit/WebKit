@@ -135,17 +135,6 @@ static inline unsigned long rootWindowID()
 #endif
 }
 
-#if PLATFORM(GTK)
-static bool moduleMixesGtkSymbols(Module* module)
-{
-#ifdef GTK_API_VERSION_2
-    return module->functionPointer<gpointer>("gtk_application_get_type");
-#else
-    return module->functionPointer<gpointer>("gtk_object_get_type");
-#endif
-}
-#endif
-
 Display* NetscapePlugin::x11HostDisplay()
 {
 #if PLATFORM(QT)
@@ -255,11 +244,6 @@ void NetscapePlugin::platformPreInitialize()
 
 bool NetscapePlugin::platformPostInitialize()
 {
-#if PLATFORM(GTK)
-    if (moduleMixesGtkSymbols(m_pluginModule->module()))
-        return false;
-#endif
-
     uint64_t windowID = 0;
     bool needsXEmbed = false;
     if (m_isWindowed) {
