@@ -90,6 +90,13 @@ class WinPort(ApplePort):
         fallback_names.extend(['mac-mountainlion', 'mac'])
         return map(self._webkit_baseline_path, fallback_names)
 
+    def default_timeout_ms(self):
+        if self.get_option('webkit_test_runner'):
+            # Add some more time to WebKitTestRunner because it needs to syncronise the state
+            # with the web process and we want to detect if there is a problem with that in the driver.
+            return 100 * 1000
+        return 50 * 1000
+
     def operating_system(self):
         return 'win'
 

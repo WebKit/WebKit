@@ -1,3 +1,10 @@
+2014-10-01  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Increase layout test timeout for Windows following r174162.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_timeout_ms):
+
 2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
 
         commitqueuetasks_unittest references a non-existent member variable
