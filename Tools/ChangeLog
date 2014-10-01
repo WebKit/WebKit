@@ -1,3 +1,9 @@
+2014-10-01  Brian J. Burg  <burg@cs.washington.edu>
+
+        Unreviewed, add Katie Madonna as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
 
         commitqueuetasks_unittest does not construct FailingTestCommitQueue
