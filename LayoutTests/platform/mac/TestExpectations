@@ -1295,6 +1295,7 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pas
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
 webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
+webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Failure Crash Timeout ]
 ## --- End flaky media tests
 
 # Skipped while Eric Carlson works on a fix.
