@@ -1329,38 +1329,36 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 loader/navigation-while-deferring-loads.html
 
 # crashing webgl tests
-fast/canvas/webgl/draw-arrays-out-of-bounds.html [ Crash ]
-fast/canvas/webgl/draw-elements-out-of-bounds.html [ Crash ]
-fast/canvas/webgl/gl-vertexattribpointer.html [ Crash ]
-fast/canvas/webgl/index-validation.html [ Crash Pass ]
-webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Crash ]
-webgl/1.0.1/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
-webgl/1.0.1/conformance/more/functions/bufferData.html [ Crash ]
-webgl/1.0.1/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
-webgl/1.0.1/conformance/more/functions/drawArraysOutOfBounds.html [ Crash ]
-webgl/1.0.1/conformance/rendering/draw-arrays-out-of-bounds.html [ Crash ]
-webgl/1.0.1/conformance/rendering/draw-elements-out-of-bounds.html [ Crash ]
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Crash ]
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Crash ]
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Crash ]
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Crash ]
-webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Crash ]
-webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html [ Crash ]
-webgl/1.0.2/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
-webgl/1.0.2/conformance/more/functions/bufferData.html [ Crash ]
-webgl/1.0.2/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
-webgl/1.0.2/conformance/more/functions/drawArraysOutOfBounds.html [ Crash ]
-webgl/1.0.2/conformance/rendering/draw-arrays-out-of-bounds.html [ Crash ]
-webgl/1.0.2/conformance/rendering/draw-elements-out-of-bounds.html [ Crash ]
-webgl/conformance/attribs/gl-vertexattribpointer.html [ Crash ]
-webgl/conformance/more/functions/bufferData.html [ Crash ]
-webgl/conformance/more/functions/bufferDataBadArgs.html [ Crash ]
+fast/canvas/webgl/draw-arrays-out-of-bounds.html
+fast/canvas/webgl/draw-elements-out-of-bounds.html
+fast/canvas/webgl/gl-vertexattribpointer.html
+fast/canvas/webgl/index-validation.html
+webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+webgl/1.0.1/conformance/attribs/gl-vertexattribpointer.html
+webgl/1.0.1/conformance/more/functions/bufferData.html
+webgl/1.0.1/conformance/more/functions/bufferDataBadArgs.html
+webgl/1.0.1/conformance/more/functions/drawArraysOutOfBounds.html
+webgl/1.0.1/conformance/rendering/draw-arrays-out-of-bounds.html
+webgl/1.0.1/conformance/rendering/draw-elements-out-of-bounds.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
+webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
+webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html
+webgl/1.0.2/conformance/attribs/gl-vertexattribpointer.html
+webgl/1.0.2/conformance/more/functions/bufferData.html
+webgl/1.0.2/conformance/more/functions/bufferDataBadArgs.html
+webgl/1.0.2/conformance/more/functions/drawArraysOutOfBounds.html
+webgl/1.0.2/conformance/rendering/draw-arrays-out-of-bounds.html
+webgl/1.0.2/conformance/rendering/draw-elements-out-of-bounds.html
+webgl/conformance/attribs/gl-vertexattribpointer.html
+webgl/conformance/more/functions/bufferData.html
+webgl/conformance/more/functions/bufferDataBadArgs.html
 webgl/conformance/more/functions/drawArraysOutOfBounds.html
 webgl/conformance/rendering/draw-arrays-out-of-bounds.html
 webgl/conformance/rendering/draw-elements-out-of-bounds.html
 
 # failing webgl tests
-webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
 webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html
 webgl/1.0.1/conformance/canvas/buffer-preserve-test.html
 webgl/1.0.1/conformance/context/context-lost-restored.html
@@ -1392,12 +1390,9 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html
 webgl/1.0.2/conformance/textures/texture-npot-video.html
 webgl/1.0.2/conformance/uniforms/uniform-location.html
 webgl/1.0.2/conformance/rendering/more-than-65536-indices.html
-webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
 webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
+webgl/1.0.2/conformance/context/context-lost-restored.html
+webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
 webgl/conformance/canvas/buffer-offscreen-test.html
 webgl/conformance/canvas/buffer-preserve-test.html
 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
@@ -2928,6 +2923,19 @@ fast/dom/navigation-with-sideeffects.html [ Skip ]
 fast/dynamic/window-resize-scrollbars-test.html [ Skip ]
 fast/events/shadow-event-path.html [ Skip ]
 tables/mozilla/bugs/bug32841.html [ Skip ]
+editing/deleting/delete-start-block.html [ Skip ]
+fast/canvas/draw-focus-if-needed-with-path.html [ Skip ]
+fast/canvas/draw-focus-if-needed.html [ Skip ]
+fast/css/read-only-read-write-input-basics.html [ Skip ]
+fast/forms/checkbox-appearance-change-by-checked.html [ Skip ]
+fast/frames/lots-of-objects.html [ Skip ]
+fast/text/indic.html [ Skip ]
+fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Skip ]
+ietestcenter/Javascript/12.10-2-2.html [ Skip ]
+js/dfg-inline-arguments-use-from-all-the-places.html [ Skip ]
+js/dom/non-object-proto.html [ Skip ]
+storage/domstorage/sessionstorage/delete-removal.html [ Skip ]
+tables/mozilla/bugs/bug133756-1.html [ Skip ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
@@ -2935,3 +2943,13 @@ tables/mozilla/bugs/bug32841.html [ Skip ]
 [ Debug ] inspector-protocol [ Skip ]
 [ Debug ] fast/canvas/webgl [ Skip ]
 [ Debug ] webgl [ Skip ]
+[ Debug ] transforms/3d/hit-testing [ Skip ]
+[ Debug ] transforms/3d/point-mapping [ Skip ]
+[ Debug ] inspector/dom/content-node-region-info.html [ Crash ]
+[ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash ]
+[ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Crash ]
+[ Debug ] fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash ]
+[ Debug ] fast/regions/subtree-with-vert-lr.html [ Crash ]
+[ Debug ] fast/regions/writing-mode/changing-writing-mode.html [ Crash ]
+[ Debug ] mathml/opentype/opentype-stretchy-horizontal.html [ Crash ]
+[ Debug ] mathml/presentation/style-changed.html [ Crash ]

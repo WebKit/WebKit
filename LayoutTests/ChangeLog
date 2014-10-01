@@ -1,3 +1,9 @@
+2014-10-01  Roger Fong  <roger_fong@apple.com>
+
+        [ Windows ] More Windows test gardening to get bots green Part 2.
+
+        * platform/win/TestExpectations: More indiscriminate mass skipping.
+
 2014-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r172172): Multiple regression tests fail when primary system language is Russian
