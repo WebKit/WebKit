@@ -494,6 +494,7 @@ storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOper
 storage/indexeddb/metadata.html [ Skip ] # Crashes under IDBDatabaseBackend::createIndex
 storage/indexeddb/persistence.html [ Skip ] # Crash under IDBDatabaseBackend::createObjectStore
 storage/indexeddb/transaction-abort.html [ Skip ] # IDBTransactionBackend::start()
+webkit.org/b/137314 storage/indexeddb/database-basics.html [ Pass Crash Timeout ] # IDBDatabaseBackend::createObjectStore()
 
 # Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
 storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
