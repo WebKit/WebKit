@@ -63,9 +63,9 @@ void TextureMapperLayer::computeTransformsRecursive()
         m_state.maskLayer->computeTransformsRecursive();
     if (m_state.replicaLayer)
         m_state.replicaLayer->computeTransformsRecursive();
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        RELEASE_ASSERT(m_children[i]->m_parent == this);
-        m_children[i]->computeTransformsRecursive();
+    for (auto* child : m_children) {
+        RELEASE_ASSERT(child->m_parent == this);
+        child->computeTransformsRecursive();
     }
 
     // Reorder children if needed on the way back up.
@@ -178,8 +178,8 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         options.textureMapper->beginClip(clipTransform, layerRect());
     }
 
-    for (size_t i = 0; i < m_children.size(); ++i)
-        m_children[i]->paintRecursive(options);
+    for (auto* child : m_children)
+        child->paintRecursive(options);
 
     if (shouldClip)
         options.textureMapper->endClip();
@@ -291,10 +291,8 @@ void TextureMapperLayer::computeOverlapRegions(Region& overlapRegion, Region& no
     Region newNonOverlapRegion(enclosingIntRect(boundingRect));
 
     if (!m_state.masksToBounds) {
-        for (size_t i = 0; i < m_children.size(); ++i) {
-            TextureMapperLayer* child = m_children[i];
+        for (auto* child : m_children)
             child->computeOverlapRegions(newOverlapRegion, newNonOverlapRegion, ResolveSelfOverlapIfNeeded);
-        }
     }
 
     if (m_state.replicaLayer) {
@@ -332,12 +330,11 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     nonOverlapRegion.translate(options.offset);
     Vector<IntRect> rects = nonOverlapRegion.rects();
 
-    for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect rect = rects[i];
+    for (auto& rect : rects) {
         if (!rect.intersects(options.textureMapper->clipBounds()))
             continue;
 
-        options.textureMapper->beginClip(TransformationMatrix(), rects[i]);
+        options.textureMapper->beginClip(TransformationMatrix(), rect);
         paintSelfAndChildrenWithReplica(options);
         options.textureMapper->endClip();
     }
@@ -352,8 +349,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     IntSize maxTextureSize = options.textureMapper->maxTextureSize();
     IntRect adjustedClipBounds(options.textureMapper->clipBounds());
     adjustedClipBounds.move(-options.offset);
-    for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect rect = rects[i];
+    for (auto& rect : rects) {
         for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
@@ -446,8 +442,8 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
 
 TextureMapperLayer::~TextureMapperLayer()
 {
-    for (int i = m_children.size() - 1; i >= 0; --i)
-        m_children[i]->m_parent = nullptr;
+    for (auto* child : m_children)
+        child->m_parent = nullptr;
 
     removeFromParent();
 }
@@ -455,8 +451,8 @@ TextureMapperLayer::~TextureMapperLayer()
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
 {
     removeAllChildren();
-    for (size_t i = 0; i < newChildren.size(); ++i)
-        addChild(newChildren[i]);
+    for (auto* child : newChildren)
+        addChild(child);
 }
 
 void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
@@ -642,19 +638,17 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
     if (m_animations.hasRunningAnimations())
         return true;
 
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->descendantsOrSelfHaveRunningAnimations())
-            return true;
-    }
-
-    return false;
+    return std::any_of(m_children.begin(), m_children.end(),
+        [](TextureMapperLayer* child) {
+            return child->descendantsOrSelfHaveRunningAnimations();
+        });
 }
 
 void TextureMapperLayer::applyAnimationsRecursively()
 {
     syncAnimations();
-    for (size_t i = 0; i < m_children.size(); ++i)
-        m_children[i]->applyAnimationsRecursively();
+    for (auto* child : m_children)
+        child->applyAnimationsRecursively();
 }
 
 void TextureMapperLayer::syncAnimations()

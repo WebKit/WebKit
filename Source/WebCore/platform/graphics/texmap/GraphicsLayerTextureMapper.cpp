@@ -477,8 +477,8 @@ void GraphicsLayerTextureMapper::setDebugBorder(const Color& color, float width)
 static void toTextureMapperLayerVector(const Vector<GraphicsLayer*>& layers, Vector<TextureMapperLayer*>& texmapLayers)
 {
     texmapLayers.reserveCapacity(layers.size());
-    for (size_t i = 0; i < layers.size(); ++i)
-        texmapLayers.append(toTextureMapperLayer(layers[i]));
+    for (auto* layer : layers)
+        texmapLayers.append(toTextureMapperLayer(layer));
 }
 
 void GraphicsLayerTextureMapper::commitLayerChanges()
@@ -586,8 +586,8 @@ void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
         maskLayer()->flushCompositingState(rect);
     if (replicaLayer())
         replicaLayer()->flushCompositingState(rect);
-    for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->flushCompositingState(rect);
+    for (auto* child : children())
+        child->flushCompositingState(rect);
 }
 
 void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
