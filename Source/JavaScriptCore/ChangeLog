@@ -1,3 +1,10 @@
+2014-10-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix 32-bit.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2014-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SSA should use PutLocal/KillLocal instead of SetLocal to communicate what is flushed to the stack and when
