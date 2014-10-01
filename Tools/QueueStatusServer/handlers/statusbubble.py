@@ -115,18 +115,20 @@ class StatusBubble(webapp.RequestHandler):
         # 10 recent statuses is enough to always include a resultative one, if there were any at all.
         statuses = QueueStatus.all().filter('queue_name =', queue.name()).filter('active_patch_id =', attachment.id).order('-date').fetch(limit=10)
         if not statuses:
+            bubble["had_resultative_status_other_than_failure_to_apply"] = False
             if attachment.id in queue.active_work_items().item_ids:
                 bubble["state"] = "started"
                 bubble["details_message"] = "Started processing, no output yet.\n\n" + self._iso_time(queue.active_work_items().time_for_item(attachment.id))
-                bubble["may_fail_to_apply"] = True
             else:
                 real_queue_position = self._real_queue_position(queue, queue_position)
                 bubble["state"] = "none"
                 bubble["details_message"] = "Waiting in queue, processing has not started yet.\n\nPosition in queue: " + str(real_queue_position)
                 bubble["queue_position"] = real_queue_position
-                bubble["may_fail_to_apply"] = True
         else:
             latest_resultative_status = self._latest_resultative_status(statuses)
+            bubble["had_resultative_status_other_than_failure_to_apply"] = any(map(lambda status:
+                latest_resultative_status and latest_resultative_status.message != "Error: " + queue.name() + " unable to apply patch.",
+                statuses))
             if not latest_resultative_status:
                 bubble["state"] = "started"
                 bubble["details_message"] = ("Started processing.\n\nRecent messages:\n\n"
@@ -146,7 +148,6 @@ class StatusBubble(webapp.RequestHandler):
                     else:
                         bubble["details_message"] += " Some messages were logged while the patch was still eligible:\n\n"
                     bubble["details_message"] += "\n".join([status.message for status in statuses[1:]]) + "\n\n" + self._iso_time(statuses[0].date)
-                bubble["may_fail_to_apply"] = True
             elif statuses[0].message == "Error: " + queue.name() + " unable to apply patch.":
                 bubble["state"] = "fail"
                 bubble["details_message"] = statuses[1].message + "\n\n" + self._iso_time(statuses[0].date)
@@ -189,9 +190,9 @@ class StatusBubble(webapp.RequestHandler):
                 show_submit_to_ews = False
 
         failed_to_apply = any(map(lambda bubble: "failed_to_apply" in bubble, bubbles))
-        had_output = all(map(lambda bubble: not "may_fail_to_apply" in bubble and not "failed_to_apply" in bubble, bubbles))
+        had_resultative_status_other_than_failure_to_apply = any(map(lambda bubble: bubble["had_resultative_status_other_than_failure_to_apply"], bubbles))
 
-        return (bubbles, show_submit_to_ews, failed_to_apply and (not had_output) and (not show_submit_to_ews))
+        return (bubbles, show_submit_to_ews, failed_to_apply and not had_resultative_status_other_than_failure_to_apply)
 
     def get(self, attachment_id_string):
         attachment_id = int(attachment_id_string)
