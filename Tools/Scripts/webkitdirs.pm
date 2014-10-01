@@ -1845,8 +1845,8 @@ sub buildCMakeGeneratedProject($)
     my @args = ("--build", $buildPath, "--config", $config);
     push @args, ("--", $makeArgs) if $makeArgs;
 
-    # GTK uses a build script to preserve colors and pretty-printing.
-    if (isGtk()) {
+    # GTK can use a build script to preserve colors and pretty-printing.
+    if (isGtk() && -e "$buildPath/build.sh") {
         chdir "$buildPath" or die;
         $command = "$buildPath/build.sh";
         @args = ($makeArgs);
