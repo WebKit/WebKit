@@ -1,3 +1,10 @@
+2014-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Show files in the appropriate
+        folders in Visual Studio.
+
 2014-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         Object allocation sinking is broken for escaping sites in loops
