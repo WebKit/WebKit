@@ -1328,117 +1328,12 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
 
-# crashing webgl tests
-fast/canvas/webgl/draw-arrays-out-of-bounds.html
-fast/canvas/webgl/draw-elements-out-of-bounds.html
-fast/canvas/webgl/gl-vertexattribpointer.html
-fast/canvas/webgl/index-validation.html
-webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-video.html
-webgl/1.0.1/conformance/attribs/gl-vertexattribpointer.html
-webgl/1.0.1/conformance/more/functions/bufferData.html
-webgl/1.0.1/conformance/more/functions/bufferDataBadArgs.html
-webgl/1.0.1/conformance/more/functions/drawArraysOutOfBounds.html
-webgl/1.0.1/conformance/rendering/draw-arrays-out-of-bounds.html
-webgl/1.0.1/conformance/rendering/draw-elements-out-of-bounds.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
-webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
-webgl/1.0.2/conformance/more/functions/uniformiBadArgs.html
-webgl/1.0.2/conformance/attribs/gl-vertexattribpointer.html
-webgl/1.0.2/conformance/more/functions/bufferData.html
-webgl/1.0.2/conformance/more/functions/bufferDataBadArgs.html
-webgl/1.0.2/conformance/more/functions/drawArraysOutOfBounds.html
-webgl/1.0.2/conformance/rendering/draw-arrays-out-of-bounds.html
-webgl/1.0.2/conformance/rendering/draw-elements-out-of-bounds.html
-webgl/conformance/attribs/gl-vertexattribpointer.html
-webgl/conformance/more/functions/bufferData.html
-webgl/conformance/more/functions/bufferDataBadArgs.html
-webgl/conformance/more/functions/drawArraysOutOfBounds.html
-webgl/conformance/rendering/draw-arrays-out-of-bounds.html
-webgl/conformance/rendering/draw-elements-out-of-bounds.html
-
-# failing webgl tests
-webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html
-webgl/1.0.1/conformance/canvas/buffer-preserve-test.html
-webgl/1.0.1/conformance/context/context-lost-restored.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html
-webgl/1.0.1/conformance/more/functions/readPixelsBadArgs.html
-webgl/1.0.1/conformance/more/functions/texImage2DHTML.html
-webgl/1.0.1/conformance/more/functions/texSubImage2DHTML.html
-webgl/1.0.1/conformance/reading/read-pixels-pack-alignment.html
-webgl/1.0.1/conformance/reading/read-pixels-test.html
-webgl/1.0.1/conformance/textures/origin-clean-conformance.html
-webgl/1.0.1/conformance/textures/texture-npot-video.html
-webgl/1.0.1/conformance/uniforms/uniform-location.html
-webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html
-webgl/1.0.2/conformance/canvas/buffer-preserve-test.html
-webgl/1.0.2/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
-webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html
-webgl/1.0.2/conformance/glsl/misc/large-loop-compile.html
-webgl/1.0.2/conformance/more/functions/uniformfArrayLen1.html
-webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html
-webgl/1.0.2/conformance/reading/read-pixels-pack-alignment.html
-webgl/1.0.2/conformance/reading/read-pixels-test.html
-webgl/1.0.2/conformance/rendering/multisample-corruption.html
-webgl/1.0.2/conformance/textures/texture-npot-video.html
-webgl/1.0.2/conformance/uniforms/uniform-location.html
-webgl/1.0.2/conformance/rendering/more-than-65536-indices.html
-webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html
-webgl/1.0.2/conformance/context/context-lost-restored.html
-webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html
-webgl/conformance/canvas/buffer-offscreen-test.html
-webgl/conformance/canvas/buffer-preserve-test.html
-webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html
-webgl/conformance/context/context-attribute-preserve-drawing-buffer.html
-webgl/conformance/context/context-creation-and-destruction.html
-webgl/conformance/context/context-lost-restored.html
-webgl/conformance/extensions/oes-texture-float-with-video.html
-webgl/conformance/more/functions/readPixelsBadArgs.html
-webgl/conformance/more/functions/texImage2DHTML.html
-webgl/conformance/more/functions/texSubImage2DHTML.html
-webgl/conformance/more/functions/uniformfArrayLen1.html
-webgl/conformance/reading/read-pixels-pack-alignment.html
-webgl/conformance/reading/read-pixels-test.html
-webgl/conformance/rendering/more-than-65536-indices.html
-webgl/conformance/rendering/multisample-corruption.html
-webgl/conformance/rendering/point-size.html
-webgl/conformance/textures/origin-clean-conformance.html
-webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html
-webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html
-webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html
-webgl/conformance/textures/tex-image-and-sub-image-2d-with-video.html
-webgl/conformance/textures/texture-npot-video.html
-webgl/conformance/typedarrays/data-view-test.html
-webgl/conformance/uniforms/uniform-location.html
-fast/canvas/webgl/canvas-supports-context.html
-fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
-fast/canvas/webgl/drawingbuffer-test.html
-fast/canvas/webgl/framebuffer-object-attachment.html
-fast/canvas/webgl/gl-get-calls.html
-fast/canvas/webgl/glsl-conformance.html
-fast/canvas/webgl/oes-element-index-uint.html
-fast/canvas/webgl/oes-texture-half-float-with-video.html
-fast/canvas/webgl/oes-vertex-array-object.html
-fast/canvas/webgl/read-pixels-pack-alignment.html
-fast/canvas/webgl/read-pixels-test.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
-fast/canvas/webgl/uniform-location.html
-fast/canvas/webgl/webgl-compressed-texture-size-limit.html
-fast/canvas/webgl/webgl-depth-texture.html
-fast/canvas/webgl/webgl-draw-buffers.html
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+# Skip all webgl tests on Windows for now since they don't seem to work consistently
+webgl [ Skip ]
+fast/canvas/webgl [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
 # CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout
@@ -1646,29 +1541,8 @@ webkit.org/b/88107 plugins/crash-restoring-plugin-page-from-page-cache.html [ Sk
 webkit.org/b/88107 plugins/fullscreen-plugins-dont-reload.html [ Skip ]
 webkit.org/b/88107 plugins/netscape-plugin-page-cache-works.html [ Skip ]
 
-# Assert in RenderGeometryMap::absoluteRect
-# https://bugs.webkit.org/show_bug.cgi?id=88128
-webkit.org/b/88128 [ Debug ] compositing/geometry/fixed-position.html [ Crash ]
-webkit.org/b/88128 compositing/geometry/fixed-position-composited-switch.html
-webkit.org/b/88128 [ Debug ] compositing/geometry/limit-layer-bounds-fixed-positioned.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/geometry/video-fixed-scrolling.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/iframes/overlapped-nested-iframes.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/layer-creation/fixed-position-and-transform.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/layer-creation/fixed-position-scroll.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/layer-creation/fixed-position-under-transform.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/overflow/fixed-position-ancestor-clip.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/rtl/rtl-fixed-overflow-scrolled.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/rtl/rtl-fixed-overflow.html [ Crash ]
-webkit.org/b/88128 [ Debug ] compositing/rtl/rtl-fixed.html [ Crash ]
-
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect
-
-# Asserts in RenderLayerBacking::paintIntoLayer
-webkit.org/b/88149 [ Debug ] compositing/backing/no-backing-foreground-layer.html [ Crash ]
-
-# Asserts in GraphicsContext::platformContext
-webkit.org/b/88150 [ Debug ] compositing/geometry/clipping-foreground.html [ Crash ]
 
 # Need rebaselining / checking - skipped en masse to get the bots green again
 css2.1/t0805-c5518-brdr-t-01-e.html
@@ -1987,11 +1861,8 @@ compositing/tiling/tile-cache-zoomed.html [ Failure ]
 
 # Inspector Protocol
 webkit.org/b/100846 [ Release ] inspector-protocol/debugger/pause-dedicated-worker.html [ Failure ]
-webkit.org/b/100846 [ Debug ] inspector-protocol/debugger/pause-dedicated-worker.html [ Failure ]
 webkit.org/b/128979 inspector-protocol/debugger/pause-on-assert.html [ Pass Failure ]
 webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Failure ]
-webkit.org/b/128979 inspector/dom/content-node-region-info.html [ Pass Failure ]
-webkit.org/b/128979 [ Debug ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Crash ]
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
 
 # CSS3_TEXT is disabled on Windows
@@ -2736,6 +2607,8 @@ html5lib/generated/run-tests4-data.html [ Pass Timeout ]
 html5lib/generated/run-entities01-data.html [ Crash ]
 html5lib/generated/run-tests1-data.html [ Crash ]
 html5lib/generated/run-tests19-data.html [ Crash ]
+html5lib/generated/run-domjs-unsafe-data.html [ Crash ]
+html5lib/generated/run-tests16-data.html [ Crash ]
 ietestcenter/css3/bordersbackgrounds [ Pass Failure Timeout ]
 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
@@ -2750,12 +2623,12 @@ ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure
 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 [ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 ietestcenter/Javascript [ Pass Failure Timeout ]
-inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
-inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
-inspector-protocol/dom/focus.html [ Pass Timeout ]
-inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
+[ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
+[ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
+[ Release ] inspector-protocol/dom/focus.html [ Pass Timeout ]
+[ Release ] inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
 js/dfg-to-string-int.html [ Pass Timeout ]
-js/dfg-inline-arguments-use-from-all-the-places.html [ Pass Timeout ]
+js/dfg-inline-arguments-use-from-all-the-places.html [ Pass Timeout Failure ]
 js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.html [ Pass Timeout ]
 js/dom/const.html [ Pass Timeout ]
 js/dom/dfg-patchable-get-by-id-after-watchpoint.html [ Pass Timeout ]
@@ -2861,6 +2734,8 @@ fast/dom/navigator-hardwareConcurrency.html
 
 # Tests that exceed maximum call stack on windows
 fast/dom/Window/window-postmessage-clone-deep-array.html
+js/dom/deep-recursion-test.html
+js/dom/global-recursion-on-full-stack.html
 
 # Some inspector tests failing after r173992
 webkit.org/b/137157 inspector/css/matched-style-properties.html [ Failure ]
@@ -2893,7 +2768,7 @@ css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.
 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Failure ]
 fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
 fast/css/indirect-adjacent-style-update-optimization.html [ Failure ]
-fast/css/read-only-read-write-input-basics.html [ Failure ]
+fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
 # More random tests to skip on Windows to get the bots green
 fast/replaced/width100percent-button.html [ Skip ]
@@ -2905,7 +2780,6 @@ http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ]
 inspector/test-harness-trivially-works.html [ Skip ]
 js/date-constructor.html [ Skip ]
-js/dfg-inline-arguments-use-from-all-the-places.html [ Skip ]
 js/dom/dom-static-property-for-in-iteration.html [ Skip ]
 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]
 mathml/presentation/stretchy-depth-height.html [ Skip ]
@@ -2932,24 +2806,37 @@ fast/frames/lots-of-objects.html [ Skip ]
 fast/text/indic.html [ Skip ]
 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Skip ]
 ietestcenter/Javascript/12.10-2-2.html [ Skip ]
-js/dfg-inline-arguments-use-from-all-the-places.html [ Skip ]
 js/dom/non-object-proto.html [ Skip ]
 storage/domstorage/sessionstorage/delete-removal.html [ Skip ]
 tables/mozilla/bugs/bug133756-1.html [ Skip ]
+fast/forms/textarea-linewrap-dynamic.html [ Crash ]
+fast/forms/week/week-input-type.html [ Crash ]
+fast/events/no-blur-on-enter-button.html [ Crash ]
+fast/css/parsing-invalid-block-recovery.html [ Crash ]
+fast/dom/HTMLDocument/title-get.html [ Crash ]
+fast/regions/fullscreen/full-screen-video-from-region.html [ Crash ]
+fast/regions/writing-mode/invalid-first-region-with-writing-mode-2.html [ Crash ]
+fast/inline/inline-child-height-width-calc-crash.html [ Crash ]
+js/string-from-char-code.html [ Crash ]
+js/date-daysfrom1970-overflow.html [ Crash ]
+mathml/roots-addChild.html [ Crash ]
+fast/borders/bidi-002.html [ Failure ]
+fast/borders/bidi-009a.html [ Failure ]
+fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
+fast/text/khmer-lao-font.html [ Failure ]
+mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+inspector/dom/content-node-region-info.html [ Crash Pass Failure ]
+fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
+fast/overflow/overflow-height-float-not-removed-crash.html [ Crash Pass ]
+fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
+fast/regions/subtree-with-vert-lr.html [ Crash Pass ]
+fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
+mathml/presentation/style-changed.html [ Crash Pass ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
 [ Debug ] fast/canvas [ Skip ]
 [ Debug ] inspector-protocol [ Skip ]
 [ Debug ] fast/canvas/webgl [ Skip ]
-[ Debug ] webgl [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
-[ Debug ] inspector/dom/content-node-region-info.html [ Crash ]
-[ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash ]
-[ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Crash ]
-[ Debug ] fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash ]
-[ Debug ] fast/regions/subtree-with-vert-lr.html [ Crash ]
-[ Debug ] fast/regions/writing-mode/changing-writing-mode.html [ Crash ]
-[ Debug ] mathml/opentype/opentype-stretchy-horizontal.html [ Crash ]
-[ Debug ] mathml/presentation/style-changed.html [ Crash ]
