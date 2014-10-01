@@ -26,6 +26,7 @@
 #ifndef XPCSPI_h
 #define XPCSPI_h
 
+#include <Availability.h>
 #include <dispatch/dispatch.h>
 #include <os/object.h>
 
@@ -78,7 +79,7 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 #include <xpc/private.h>
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 #define CONST_ON_OR_AFTER_MAC_OS_X_VERSION_1090 const
 #else
 #define CONST_ON_OR_AFTER_MAC_OS_X_VERSION_1090
