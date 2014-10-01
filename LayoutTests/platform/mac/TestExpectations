@@ -1405,3 +1405,5 @@ webkit.org/b/137157 inspector/event-listener.html [ Failure Crash ]
 webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure Crash ]
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure Crash ]
 webkit.org/b/137157 inspector/protocol-promise-result.html [ Failure Crash ]
+
+webkit.org/b/137319 fast/css/test-setting-canvas-color.html [ Pass Crash Timeout ]
