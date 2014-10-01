@@ -26,7 +26,7 @@
 #ifndef XPCSPI_h
 #define XPCSPI_h
 
-#include <Availability.h>
+#include <AvailabilityMacros.h>
 #include <dispatch/dispatch.h>
 #include <os/object.h>
 

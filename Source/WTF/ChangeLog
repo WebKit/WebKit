@@ -1,5 +1,15 @@
 2014-10-01  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the Mac build after <https://trac.webkit.org/changeset/174180>
+        (https://bugs.webkit.org/show_bug.cgi?id=137277)
+
+        Include header AvailabilityMacros.h instead of Availability.h, which actually defines the
+        macro __MAC_OS_X_VERSION_MIN_REQUIRED.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
+2014-10-01  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the build after <https://trac.webkit.org/changeset/174180>
         (https://bugs.webkit.org/show_bug.cgi?id=137277)
 
