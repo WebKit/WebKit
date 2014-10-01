@@ -1,3 +1,65 @@
+2014-10-01  Saam Barati  <saambarati1@gmail.com>
+
+        Support the type profiler in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=136712
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements op_profile_type inside the DFG as the node: ProfileType.
+        The DFG will convert the ProfileType node into a Check node in the cases where
+        passing a type check is equivalent to writing to the TypeProfilerLog. This
+        gives the DFG the potential to optimize out multiple ProfileType nodes into
+        a single Check node.
+
+        When the DFG doesn't convert ProfileType into a Check node, it will generate
+        the same inline code as the baseline JIT does for writing an entry to the
+        TypeProfilerLog.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::typeLocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::logTypesForTypeLocation):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::dumpTypes):
+        (JSC::TypeSet::doesTypeConformTo):
+        Make this method public so others can reason about the types a TypeSet has seen.
+        (JSC::TypeSet::seenTypes): Deleted.
+        (JSC::TypeSet::dumpSeenTypes): Deleted.
+        Renamed to dumpTypes so the method seenTypes can be used as a public getter.
+        * runtime/TypeSet.h:
+        (JSC::TypeSet::seenTypes):
+        * tests/typeProfiler/dfg-jit-optimizations.js: Added.
+        (tierUpToDFG):
+        (funcs):
+        (.return):
+
 2014-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix 32-bit.

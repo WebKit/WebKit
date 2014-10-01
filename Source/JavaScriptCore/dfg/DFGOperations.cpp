@@ -53,6 +53,7 @@
 #include "JSCInlines.h"
 #include "Repatch.h"
 #include "StringConstructor.h"
+#include "TypeProfilerLog.h"
 #include "TypedArrayInlines.h"
 #include <wtf/InlineASM.h>
 
@@ -1060,6 +1061,11 @@ int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue encodedV
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double value)
 {
     return tryConvertToInt52(value);
+}
+
+void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
+{
+    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));
 }
 
 size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)

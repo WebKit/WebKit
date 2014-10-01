@@ -110,7 +110,7 @@ void TypeSet::invalidateCache()
     m_structureIDCache.clear();
 }
 
-String TypeSet::seenTypes() const
+String TypeSet::dumpTypes() const
 {
     if (m_seenTypes == TypeNothing)
         return ASCIILiteral("(Unreached Statement)");
@@ -174,7 +174,7 @@ bool TypeSet::doesTypeConformTo(uint32_t test) const
     // ------ (AND)
     // 0b0010 != seen
 
-    return (m_seenTypes & test) == m_seenTypes;
+    return m_seenTypes != TypeNothing && (m_seenTypes & test) == m_seenTypes;
 }
 
 String TypeSet::displayName() const
@@ -351,11 +351,6 @@ String TypeSet::toJSONString() const
 
     json.append("}");
     return json.toString();
-}
-
-void TypeSet::dumpSeenTypes()
-{
-    dataLog(seenTypes(), "\n");
 }
 
 StructureShape::StructureShape()

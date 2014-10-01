@@ -120,6 +120,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_debug:
     case op_profile_will_call:
     case op_profile_did_call:
+    case op_profile_type:
     case op_mov:
     case op_captured_mov:
     case op_check_has_instance:

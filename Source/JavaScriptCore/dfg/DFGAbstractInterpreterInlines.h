@@ -1992,6 +1992,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
+    case ProfileType:
     case Phantom:
     case HardPhantom:
     case CountExecution:

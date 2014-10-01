@@ -48,6 +48,7 @@
 #include "PutByIdVariant.h"
 #include "SpeculatedType.h"
 #include "StructureSet.h"
+#include "TypeLocation.h"
 #include "ValueProfile.h"
 #include <wtf/ListDump.h>
 
@@ -1775,6 +1776,11 @@ struct Node {
     bool canSpeculateInt52(PredictionPass pass)
     {
         return canSpeculateInt52(sourceFor(pass));
+    }
+
+    TypeLocation* typeLocation()
+    {
+        return reinterpret_cast<TypeLocation*>(m_opInfo);
     }
     
     void dumpChildren(PrintStream& out)

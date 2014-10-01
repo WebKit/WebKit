@@ -100,7 +100,7 @@ public:
     void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, StructureID);
     static RuntimeType getRuntimeTypeForValue(JSValue);
     void invalidateCache();
-    JS_EXPORT_PRIVATE String seenTypes() const;
+    String dumpTypes() const;
     String displayName() const;
     PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
@@ -109,10 +109,10 @@ public:
     String leastCommonAncestor() const;
     PassRefPtr<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
+    bool doesTypeConformTo(uint32_t test) const;
+    uint32_t seenTypes() const { return m_seenTypes; }
 
 private:
-    void dumpSeenTypes();
-    bool doesTypeConformTo(uint32_t test) const;
 
     uint32_t m_seenTypes;
     bool m_isOverflown;

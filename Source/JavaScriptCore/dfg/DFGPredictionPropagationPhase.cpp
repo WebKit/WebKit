@@ -647,6 +647,7 @@ private:
         case Breakpoint:
         case ProfileWillCall:
         case ProfileDidCall:
+        case ProfileType:
         case CheckHasInstance:
         case ThrowReferenceError:
         case ForceOSRExit:

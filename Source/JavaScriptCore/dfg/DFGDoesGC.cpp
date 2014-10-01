@@ -124,6 +124,7 @@ bool doesGC(Graph& graph, Node* node)
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
+    case ProfileType:
     case CheckHasInstance:
     case InstanceOf:
     case IsUndefined:

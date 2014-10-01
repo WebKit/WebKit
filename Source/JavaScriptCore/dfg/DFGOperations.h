@@ -130,6 +130,8 @@ void JIT_OPERATION operationNotifyWrite(ExecState*, VariableWatchpointSet*, Enco
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
+void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState*) WTF_INTERNAL;
+
 // These operations implement the implicitly called ToInt32 and ToBoolean conversions from ES5.
 // This conversion returns an int32_t within a size_t such that the value is zero extended to fill the register.
 size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue) WTF_INTERNAL;

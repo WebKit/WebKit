@@ -2893,6 +2893,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_init_global_const);
         }
 
+        case op_profile_type: {
+            Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
+            addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);
+            NEXT_OPCODE(op_profile_type);
+        }
+
         // === Block terminators. ===
 
         case op_jmp: {

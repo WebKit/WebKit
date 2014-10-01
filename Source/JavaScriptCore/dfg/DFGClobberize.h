@@ -273,6 +273,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
+    case ProfileType:
     case StoreBarrier:
     case StoreBarrierWithNullCheck:
     case PutByOffsetHint:

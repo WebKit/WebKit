@@ -38,6 +38,7 @@
 #include "JSCInlines.h"
 #include "Options.h"
 #include "SamplingTool.h"
+#include "TypeProfilerLog.h"
 #include <wtf/Atomics.h>
 
 #if ENABLE(FTL_JIT)
@@ -91,6 +92,9 @@ static CompilationResult compileImpl(
     
     if (CallEdgeLog::isEnabled())
         vm.ensureCallEdgeLog().processLog();
+
+    if (vm.typeProfiler())
+        vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for DFG compilation."));
     
     RefPtr<Plan> plan = adoptRef(
         new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
