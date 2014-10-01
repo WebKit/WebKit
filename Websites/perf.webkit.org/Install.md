@@ -1,15 +1,15 @@
 # Checking Out the Code and Installing Required Applications
 
 The instructions assume you're using Mac OS X (Mavericks for Server.app case and Mountain Lion without Server.app) as the
-host server, and assume that we're installing this application at `/Volumes/Data/WebKitPerfMonitor`.
+host server, and assume that we're installing this application at `/Volumes/Data/perf.webkit.org`.
 
 You can choose between using Server.app or install the required tools separately
 
 1. Install Server.app (if you don't want to use Server.app, install PostgreSQL: http://www.postgresql.org/download/macosx/)
 2. Install node.
 3. Install Xcode with command line tools (only needed for svn)
-4. `svn co https://svn.webkit.org/repository/webkit/trunk/Websites/perf.webkit.org /Volumes/Data/WebKitPerfMonitor`
-5. Inside `/Volumes/Data/WebKitPerfMonitor`, run `npm install pg`.
+4. `svn co https://svn.webkit.org/repository/webkit/trunk/Websites/perf.webkit.org /Volumes/Data/perf.webkit.org`
+5. Inside `/Volumes/Data/perf.webkit.org`, run `npm install pg`.
 
 
 # Configuring Apache
@@ -23,17 +23,21 @@ You can use apachectl to start/stop/restart apache server from the command line:
 ## Instructions if you're using Server.app
 
  - Enable PHP web applications
- - Go to Server Website / Store Site Files In, change it to /Volumes/Data/WebKitPerfMonitor/public/`
+ - Go to Server Website / Store Site Files In, change it to /Volumes/Data/perf.webkit.org/public/`
  - Go to Server Website / Edit advanced settings, enable Allow overrides using .htaccess files
 
 ## Instructions if you're not using Server.app
 
  - Edit /private/etc/apache2/httpd.conf
 
-     1. Change DocumentRoot to `/Volumes/Data/WebKitPerfMonitor/public/`
+     1. Change DocumentRoot to `/Volumes/Data/perf.webkit.org/public/`
      2. Uncomment `"LoadModule php5_module libexec/apache2/libphp5.so"`
      3. Modify the directives for the document root and / to allow overriding `"All"`
      4. Delete directives on CGI-Executables
+
+ - In Mavericks and later, copy php.ini to load pdo_pgsql.so pgsql.so.
+    `sudo cp /Applications/Server.app/Contents/ServerRoot/php.ini /etc/`
+
 
 ## Common directives for the related apache config file
 
@@ -49,7 +53,7 @@ You can use apachectl to start/stop/restart apache server from the command line:
             AddOutputFilterByType DEFLATE text/html text/xml text/plain application/json application/xml application/xhtml+xml
         </IfModule>
 
- 3. Add the following directives to enable zlib compression and MultiViews on WebKitPerfMonitor/public:
+ 3. Add the following directives to enable zlib compression and MultiViews on perf.webkit.org/public:
 
         Options Indexes MultiViews
         php_flag zlib.output_compression on
@@ -77,10 +81,10 @@ where <Realm> is replaced with the realm of your choice, which will be displayed
 
 # Configuring PostgreSQL
 
-1. Create database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/initdb /Volumes/Data/WebKitPerfMonitor/PostgresSQL`
+1. Create database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/initdb /Volumes/Data/perf.webkit.org/PostgresSQL`
 2. Start database:
-   `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/WebKitPerfMonitor/PostgresSQL
-   -l logfile -o "-k /Volumes/Data/WebKitPerfMonitor/PostgresSQL" start`
+   `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL
+   -l logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
 
 ## Creating a Database and a User
 
@@ -95,7 +99,7 @@ The binaries located in PostgreSQL's directory, or if you're using Server.app in
 ## Initializing the Database
 
 Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
-`psql webkit-perf-db -h localhost --username webkit-perf-db-user -f database/init-database.sql`
+`psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
 
 ## Making a Backup of the Database
 

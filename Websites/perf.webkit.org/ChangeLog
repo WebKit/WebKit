@@ -1,3 +1,18 @@
+2014-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Install.md for Mavericks and fix typos
+        https://bugs.webkit.org/show_bug.cgi?id=137276
+
+        Reviewed by Benjamin Poulain.
+
+        Add the instruction to copy php.ini to enable the Postgres extension in PHP.
+
+        Also use perf.webkit.org as the directory name instead of WebKitPerfMonitor.
+
+        Finally, init-database.sql is no longer located inside database directory.
+
+        * Install.md:
+
 2014-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Report run id's in api/runs.php for the new dashboard UI
