@@ -36,8 +36,15 @@
 #import <notify.h>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
+
+#if __has_include(<xpc/xpc.h>)
+#import <xpc/xpc.h>
+#endif
+extern "C" {
+    xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
+    void xpc_release(xpc_object_t);
+}
 
 #if __has_include(<sandbox/private.h>)
 #import <sandbox/private.h>

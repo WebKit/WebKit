@@ -32,7 +32,7 @@
 #import <stdio.h>
 #import <stdlib.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/spi/darwin/XPCSPI.h>
+#import <xpc/xpc.h>
 
 namespace WebKit {
 
