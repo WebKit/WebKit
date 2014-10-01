@@ -329,8 +329,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performPhantomCanonicalization(dfg); // Reduce the graph size a lot.
         changed = false;
         changed |= performStrengthReduction(dfg);
-        changed |= performCriticalEdgeBreaking(dfg);
-        changed |= performObjectAllocationSinking(dfg);
+        if (Options::enableObjectAllocationSinking()) {
+            changed |= performCriticalEdgeBreaking(dfg);
+            changed |= performObjectAllocationSinking(dfg);
+        }
         if (changed) {
             // State-at-tail and state-at-head will be invalid if we did strength reduction since
             // it might increase live ranges.
