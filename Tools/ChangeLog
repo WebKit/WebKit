@@ -1,3 +1,16 @@
+2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        EWS is inconclusively spinning forever on a patch that breaks 500+
+        tests
+        https://bugs.webkit.org/show_bug.cgi?id=137223
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Checks to see whether the tests have exceeded the failure limit, and
+        only spins off another test if they have not exceeded the limit.
+        (PatchAnalysisTask._test_patch):
+
 2014-10-01  Brian J. Burg  <burg@cs.washington.edu>
 
         Unreviewed, add Katie Madonna as a contributor.

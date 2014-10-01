@@ -198,7 +198,10 @@ class PatchAnalysisTask(object):
             return True
 
         second_results = self._delegate.test_results()
-        if self._results_failed_different_tests(first_results, second_results):
+
+        if (not first_results.did_exceed_test_failure_limit() and
+            not second_results.did_exceed_test_failure_limit() and
+            self._results_failed_different_tests(first_results, second_results)):
             # We could report flaky tests here, but we would need to be careful
             # to use similar checks to ExpectedFailures._can_trust_results
             # to make sure we don't report constant failures as flakes when
