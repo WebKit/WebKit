@@ -116,6 +116,7 @@ webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
+webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Crash Pass ]
 
 # These tests are incorrect in the CSS test suite and should be fixed there first.
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
