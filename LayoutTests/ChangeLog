@@ -1,5 +1,11 @@
 2014-10-01  Beth Dakin  <bdakin@apple.com>
 
+        This expectation should be MoutainLion-only until we find evidence otherwise.
+
+        * platform/mac/TestExpectations:
+
+2014-10-01  Beth Dakin  <bdakin@apple.com>
+
         Another flaky-trashy test.
 
         * platform/mac/TestExpectations:
