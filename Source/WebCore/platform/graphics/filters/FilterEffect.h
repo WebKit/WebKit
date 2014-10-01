@@ -28,6 +28,7 @@
 
 #include <runtime/Uint8ClampedArray.h>
 
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -78,6 +79,7 @@ public:
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
+    unsigned totalNumberOfEffectInputs() const;
     
     inline bool hasResult() const
     {
