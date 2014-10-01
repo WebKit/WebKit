@@ -1,3 +1,9 @@
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
+        [ Windows ] More Windows test gardening to get bots green.
+
+        * platform/win/TestExpectations: More indiscriminate mass skipping.
+
 2014-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Stack overflow with enormous SVG filter.
