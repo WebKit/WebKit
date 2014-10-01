@@ -1,3 +1,15 @@
+2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable CSS_IMAGE_SET in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=137142
+
+        Reviewed by Alejandro G. Castro.
+
+        This is required by the inspector to show some of the icons that
+        has a HiDPI variant.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.2.7 release.
