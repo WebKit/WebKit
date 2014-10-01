@@ -59,6 +59,11 @@ public:
     {
     }
 
+    StackReference stackTop()
+    {
+        return StackReference(m_offsetFromTop + stackUnitInBytes());
+    }
+
     ~StackAllocator()
     {
         RELEASE_ASSERT(!m_offsetFromTop);
@@ -67,10 +72,32 @@ public:
 
     StackReference allocateUninitialized()
     {
+        return allocateUninitialized(1)[0];
+    }
+
+    StackReferenceVector allocateUninitialized(unsigned count)
+    {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
-        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-stackUnitInBytes()), JSC::MacroAssembler::stackPointerRegister);
-        m_offsetFromTop += stackUnitInBytes();
-        return StackReference(m_offsetFromTop);
+        StackReferenceVector stackReferences;
+        unsigned oldOffsetFromTop = m_offsetFromTop;
+#if CPU(ARM64)
+        for (unsigned i = 0; i < count - 1; i += 2) {
+            m_offsetFromTop += stackUnitInBytes();
+            stackReferences.append(StackReference(m_offsetFromTop - stackUnitInBytes() / 2));
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+        if (count % 2) {
+            m_offsetFromTop += stackUnitInBytes();
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+#else
+        for (unsigned i = 0; i < count; ++i) {
+            m_offsetFromTop += stackUnitInBytes();
+            stackReferences.append(StackReference(m_offsetFromTop));
+        }
+#endif
+        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-(m_offsetFromTop - oldOffsetFromTop)), JSC::MacroAssembler::stackPointerRegister);
+        return stackReferences;
     }
 
     StackReferenceVector push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
