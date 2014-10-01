@@ -203,6 +203,8 @@ bool doesGC(Graph& graph, Node* node)
     case PutByOffsetHint:
     case CheckStructureImmediate:
     case PutStructureHint:
+    case PutLocal:
+    case KillLocal:
         return false;
 
     case CreateActivation:

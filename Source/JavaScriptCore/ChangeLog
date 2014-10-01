@@ -1,3 +1,82 @@
+2014-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG SSA should use PutLocal/KillLocal instead of SetLocal to communicate what is flushed to the stack and when
+        https://bugs.webkit.org/show_bug.cgi?id=137242
+
+        Reviewed by Geoffrey Garen.
+        
+        OSR availability has to do with telling you the various ways that you could go about getting
+        the value of a bytecode variable. It can give you two options: node availability means that
+        there is a node in the DFG IR that has the right value, and flush availability tells you
+        that the value was already stored to the stack. The clients of OSR availability would
+        typically prefer flush over node availability.
+        
+        Previously OSR availability was affected thusly by the various local-related nodes: SetLocal
+        set both the node and flush availability, MovHint set node availability and cleared flush
+        availability, GetArgument set both, and ZombieHint cleared both.
+        
+        A MovHint could be turned into a ZombieHint if its source value was DCEd.
+        
+        The fact that each node affected both node and flush availability caused weirdness. For
+        example it meant that we could not insert MovHints in areas of the CFG where a SetLocal's
+        variable was still live, because then those parts of the code would forget that they had an
+        availability flush. This meant that if a flush was available, we wouldn't insert MovHints,
+        and so we would forget that a node was in fact available. This kind of "either-or" picking
+        was not only hackish but it led to interesting problems for IR transformation: for example
+        if you tried to do any kind of code motion on SetLocals, you had to be super careful because
+        you might violate the rule that "MovHints must exist for a live local if a flush is
+        unavailable".
+        
+        The right thing to do is to have independent nodes for flushing and making nodes available.
+        They shouldn't interact with each other. This patch accomplishes this:
+        
+        - PutLocal means that that a value is to be stored to the stack. It makes a flush available.
+        - KillLocal means that the value stored to the stack is no longer available for the purposes
+          of OSR (i.e. it no longer accurately corresponds to what that actual bytecode variable
+          would have been, so you have to fall back on node availability).
+        - MovHint means that a node is available. It has no effect on flush availability.
+        - ZombieHint means that a node is not available. It has no effect on flush availability.
+        
+        This means that we will see a lot of KillLocals and MovHints right next to each other. It's
+        a bit verbose, but at least it's precise.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAvailability.h:
+        (JSC::DFG::Availability::setFlush):
+        (JSC::DFG::Availability::setNode):
+        (JSC::DFG::Availability::setNodeUnavailable):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUnlinkedLocal):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePutLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal): Deleted.
+
 2014-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] 32-bit JavaScriptCore should limit itself to the C loop

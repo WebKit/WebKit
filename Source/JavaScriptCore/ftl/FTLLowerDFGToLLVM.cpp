@@ -386,8 +386,8 @@ private:
         case GetLocal:
             compileGetLocal();
             break;
-        case SetLocal:
-            compileSetLocal();
+        case PutLocal:
+            compilePutLocal();
             break;
         case GetMyArgumentsLength:
             compileGetMyArgumentsLength();
@@ -746,6 +746,7 @@ private:
         case PutByOffsetHint:
         case PutStructureHint:
         case BottomValue:
+        case KillLocal:
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
@@ -1024,7 +1025,7 @@ private:
             setJSValue(m_out.load64(addressFor(variable->machineLocal())));
     }
     
-    void compileSetLocal()
+    void compilePutLocal()
     {
         VariableAccessData* variable = m_node->variableAccessData();
         switch (variable->flushFormat()) {

@@ -66,6 +66,7 @@ public:
                 switch (node->op()) {
                 case GetLocal:
                 case SetLocal:
+                case PutLocal:
                 case Flush:
                 case PhantomLocal: {
                     VariableAccessData* variable = node->variableAccessData();

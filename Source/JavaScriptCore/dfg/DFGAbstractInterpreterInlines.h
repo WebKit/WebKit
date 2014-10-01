@@ -183,7 +183,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case SetLocal: {
+    case SetLocal:
+    case PutLocal: {
         m_state.variables().operand(node->local().offset()) = forNode(node->child1());
         break;
     }
@@ -192,6 +193,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // Don't need to do anything. A MovHint only informs us about what would have happened
         // in bytecode, but this code is just concerned with what is actually happening during
         // DFG execution.
+        break;
+    }
+        
+    case KillLocal: {
+        // This is just a hint telling us that the OSR state of the local is no longer inside the
+        // flushed data.
         break;
     }
         

@@ -184,12 +184,14 @@ public:
         // - Convert all of the preexisting SSA nodes (other than the old CPS Phi nodes) into SSA
         //   form by replacing as follows:
         //
+        //   - MovHint has KillLocal prepended to it.
+        //
         //   - GetLocal over captured variables lose their phis.
         //
         //   - GetLocal over uncaptured variables die and get replaced with references to the node
         //     specified by valueForOperand.
         //
-        //   - SetLocal gets NodeMustGenerate if it's flushed, or turns into a Check otherwise.
+        //   - SetLocal turns into PutLocal if it's flushed, or turns into a Check otherwise.
         //
         //   - Flush loses its children and turns into a Phantom.
         //
@@ -249,41 +251,12 @@ public:
             for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(block)) {
                 VariableAccessData* variable = m_variableForSSAIndex[phiDef->variable()->index()];
                 
-                // Figure out if the local is meant to be flushed here.
-                bool isFlushed = !!(
-                    block->variablesAtHead.operand(variable->local())->flags() & NodeIsFlushed);
-                
                 m_insertionSet.insert(phiInsertionPoint, phiDef->value());
                 valueForOperand.operand(variable->local()) = phiDef->value();
                 
-                if (isFlushed) {
-                    // Do nothing. For multiple reasons.
-                    
-                    // Reason #1: If the local is flushed then we don't need to bother with a
-                    // MovHint since every path to this point in the code will have flushed the
-                    // bytecode variable using a SetLocal and hence the Availability::flushedAt()
-                    // will agree, and that will be sufficient for figuring out how to recover the
-                    // variable's value.
-                    
-                    // Reason #2: If we had inserted a MovHint and the Phi function had died
-                    // (because the only user of the value was the "flush" - i.e. some
-                    // asynchronous runtime thingy) then the MovHint would turn into a ZombieHint,
-                    // which would fool us into thinking that the variable is dead. Note that this
-                    // reason has a lot to do with the fact that Flushes do not turn into
-                    // Phantoms, because our handling of Flushes assume that we (1) always leave
-                    // the flushed SetLocals alone and (2) OSR availability analysis always sees
-                    // the available flush. The presence of a MovHint or ZombieHint would make the
-                    // flush seem unavailable.
-                    
-                    // Reason #3: If we had inserted a MovHint then even if the Phi stayed alive,
-                    // we would still end up generating inefficient code since we would be telling
-                    // the OSR exit compiler to use some SSA value for the bytecode variable
-                    // rather than just telling it that the value was already on the stack.
-                } else {
-                    m_insertionSet.insertNode(
-                        phiInsertionPoint, SpecNone, MovHint, NodeOrigin(),
-                        OpInfo(variable->local().offset()), phiDef->value()->defaultEdge());
-                }
+                m_insertionSet.insertNode(
+                    phiInsertionPoint, SpecNone, MovHint, NodeOrigin(),
+                    OpInfo(variable->local().offset()), phiDef->value()->defaultEdge());
             }
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -297,11 +270,18 @@ public:
                 m_graph.performSubstitution(node);
                 
                 switch (node->op()) {
+                case MovHint: {
+                    m_insertionSet.insertNode(
+                        nodeIndex, SpecNone, KillLocal, node->origin,
+                        OpInfo(node->unlinkedLocal().offset()));
+                    break;
+                }
+                    
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
                     
                     if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed))
-                        node->mergeFlags(NodeMustGenerate);
+                        node->setOpAndDefaultFlags(PutLocal);
                     else
                         node->setOpAndDefaultFlags(Check);
                     

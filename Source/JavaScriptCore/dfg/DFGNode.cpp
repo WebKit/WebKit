@@ -79,6 +79,7 @@ bool Node::hasVariableAccessData(Graph& graph)
     case SetArgument:
     case Flush:
     case PhantomLocal:
+    case PutLocal:
         return true;
     default:
         return false;

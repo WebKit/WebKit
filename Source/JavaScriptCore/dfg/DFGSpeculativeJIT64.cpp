@@ -4985,6 +4985,8 @@ void SpeculativeJIT::compile(Node* node)
     case CheckStructureImmediate:
     case PutStructureHint:
     case MaterializeNewObject:
+    case PutLocal:
+    case KillLocal:
         DFG_CRASH(m_jit.graph(), node, "Unexpected node");
         break;
     }

@@ -81,6 +81,21 @@ public:
         return withNode(unavailableMarker());
     }
     
+    void setFlush(FlushedAt flushedAt)
+    {
+        m_flushedAt = flushedAt;
+    }
+    
+    void setNode(Node* node)
+    {
+        m_node = node;
+    }
+    
+    void setNodeUnavailable()
+    {
+        m_node = unavailableMarker();
+    }
+    
     bool nodeIsUndecided() const { return !m_node; }
     bool nodeIsUnavailable() const { return m_node == unavailableMarker(); }
     

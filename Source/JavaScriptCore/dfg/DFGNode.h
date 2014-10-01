@@ -683,6 +683,7 @@ struct Node {
         case ExtractOSREntryLocal:
         case MovHint:
         case ZombieHint:
+        case KillLocal:
             return true;
         default:
             return false;
@@ -1390,6 +1391,8 @@ struct Node {
     {
         switch (op()) {
         case SetLocal:
+        case PutLocal:
+        case KillLocal:
         case MovHint:
         case ZombieHint:
         case PhantomArguments:

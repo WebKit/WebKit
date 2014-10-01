@@ -565,7 +565,9 @@ private:
         case PutByOffsetHint:
         case CheckStructureImmediate:
         case PutStructureHint:
-        case MaterializeNewObject: {
+        case MaterializeNewObject:
+        case PutLocal:
+        case KillLocal: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();

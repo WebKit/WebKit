@@ -47,6 +47,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMyArgumentsLength:
     case GetLocal:
     case SetLocal:
+    case PutLocal:
+    case KillLocal:
     case MovHint:
     case ZombieHint:
     case Phantom:

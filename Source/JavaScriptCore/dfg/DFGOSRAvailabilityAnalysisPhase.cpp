@@ -127,10 +127,14 @@ void LocalOSRAvailabilityCalculator::endBlock(BasicBlock* block)
 void LocalOSRAvailabilityCalculator::executeNode(Node* node)
 {
     switch (node->op()) {
-    case SetLocal: {
+    case PutLocal: {
         VariableAccessData* variable = node->variableAccessData();
-        m_availability.m_locals.operand(variable->local()) =
-            Availability(node->child1().node(), variable->flushedAt());
+        m_availability.m_locals.operand(variable->local()).setFlush(variable->flushedAt());
+        break;
+    }
+        
+    case KillLocal: {
+        m_availability.m_locals.operand(node->unlinkedLocal()).setFlush(FlushedAt(ConflictingFlush));
         break;
     }
 
@@ -142,14 +146,12 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
     }
 
     case MovHint: {
-        m_availability.m_locals.operand(node->unlinkedLocal()) =
-            Availability(node->child1().node());
+        m_availability.m_locals.operand(node->unlinkedLocal()).setNode(node->child1().node());
         break;
     }
 
     case ZombieHint: {
-        m_availability.m_locals.operand(node->unlinkedLocal()) =
-            Availability::unavailable();
+        m_availability.m_locals.operand(node->unlinkedLocal()).setNodeUnavailable();
         break;
     }
         
