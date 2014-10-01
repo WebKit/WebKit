@@ -42,8 +42,8 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#include <xpc/xpc.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(EFL)

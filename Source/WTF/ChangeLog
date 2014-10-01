@@ -1,3 +1,19 @@
+2014-10-01  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Move XPC forward declarations in JavaScriptCore to WTF SPI wrapper header
+        https://bugs.webkit.org/show_bug.cgi?id=137277
+
+        Reviewed by Alexey Proskuryakov.
+
+        Towards centralizing the declarations of XPC functions used in JavaScriptCore
+        and WebKit2, add a header that wraps these function declarations called XPCSPI.h
+        and use it instead of including the corresponding XPC API/SPI headers/forward
+        declaring XPC functions. This will also aid in the effort to make WebKit2 build
+        for iOS with the public iOS SDK.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/darwin/XPCSPI.h: Added.
+
 2014-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] 32-bit JavaScriptCore should limit itself to the C loop

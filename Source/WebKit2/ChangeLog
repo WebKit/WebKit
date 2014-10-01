@@ -1,3 +1,19 @@
+2014-10-01  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Move XPC forward declarations in JavaScriptCore to WTF SPI wrapper header
+        https://bugs.webkit.org/show_bug.cgi?id=137277
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use wtf/spi/darwin/XPCSPI.h instead of including the corresponding XPC headers/
+        forward declaring XPC functions.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+
 2014-10-01  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Event classes

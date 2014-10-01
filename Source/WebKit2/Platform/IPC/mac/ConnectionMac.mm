@@ -34,17 +34,10 @@
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
 #include <wtf/RunLoop.h>
-#include <xpc/xpc.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 
 #if PLATFORM(IOS)
 #include "ProcessAssertion.h"
-#endif
-
-#if __has_include(<xpc/private.h>)
-#include <xpc/private.h>
-#else
-extern "C" void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
-extern "C" void xpc_connection_kill(xpc_connection_t, int);
 #endif
 
 #if __has_include(<HIServices/AccessibilityPriv.h>)
