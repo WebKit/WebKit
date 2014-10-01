@@ -60,16 +60,20 @@ public:
             g_source_remove(m_handleResponseLaterID);
     }
 
-    void deleteIntermediateFileInNeeded()
+    void deleteFilesIfNeeded()
     {
-        if (!m_intermediateFile)
-            return;
-        g_file_delete(m_intermediateFile.get(), nullptr, nullptr);
+        if (m_destinationFile)
+            g_file_delete(m_destinationFile.get(), nullptr, nullptr);
+
+        if (m_intermediateFile) {
+            ASSERT(m_destinationFile);
+            g_file_delete(m_intermediateFile.get(), nullptr, nullptr);
+        }
     }
 
     void downloadFailed(const ResourceError& error)
     {
-        deleteIntermediateFileInNeeded();
+        deleteFilesIfNeeded();
         m_download->didFail(error, CoreIPC::DataReference());
     }
 
@@ -91,8 +95,8 @@ public:
             suggestedFilename = decodeURLEscapeSequences(url.lastPathComponent());
         }
 
-        m_destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, m_allowOverwrite);
-        if (m_destinationURI.isEmpty()) {
+        String destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, m_allowOverwrite);
+        if (destinationURI.isEmpty()) {
 #if PLATFORM(GTK)
             GOwnPtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
             String errorMessage = String::fromUTF8(buffer.get());
@@ -103,16 +107,28 @@ public:
             return;
         }
 
-        String intermediateURI = m_destinationURI + ".wkdownload";
-        m_intermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.utf8().data()));
+        m_destinationFile = adoptGRef(g_file_new_for_uri(destinationURI.utf8().data()));
+        GRefPtr<GFileOutputStream> outputStream;
         GOwnPtr<GError> error;
+        if (m_allowOverwrite)
+            outputStream = adoptGRef(g_file_replace(m_destinationFile.get(), nullptr, FALSE, G_FILE_CREATE_NONE, nullptr, &error.outPtr()));
+        else
+            outputStream = adoptGRef(g_file_create(m_destinationFile.get(), G_FILE_CREATE_NONE, nullptr, &error.outPtr()));
+        if (!outputStream) {
+            m_destinationFile.clear();
+            downloadFailed(platformDownloadDestinationError(response, error->message));
+            return;
+        }
+
+        String intermediateURI = destinationURI + ".wkdownload";
+        m_intermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.utf8().data()));
         m_outputStream = adoptGRef(g_file_replace(m_intermediateFile.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
         if (!m_outputStream) {
             downloadFailed(platformDownloadDestinationError(response, error->message));
             return;
         }
 
-        m_download->didCreateDestination(m_destinationURI);
+        m_download->didCreateDestination(destinationURI);
     }
 
     void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
@@ -136,10 +152,10 @@ public:
     {
         m_outputStream = 0;
 
+        ASSERT(m_destinationFile);
         ASSERT(m_intermediateFile);
-        GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_uri(m_destinationURI.utf8().data()));
         GOwnPtr<GError> error;
-        if (!g_file_move(m_intermediateFile.get(), destinationFile.get(), m_allowOverwrite ? G_FILE_COPY_OVERWRITE : G_FILE_COPY_NONE, nullptr, nullptr, nullptr, &error.outPtr())) {
+        if (!g_file_move(m_intermediateFile.get(), m_destinationFile.get(), G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, &error.outPtr())) {
             downloadFailed(platformDownloadDestinationError(m_response, error->message));
             return;
         }
@@ -148,7 +164,7 @@ public:
         CString uri = m_response.url().string().utf8();
         g_file_info_set_attribute_string(info.get(), "metadata::download-uri", uri.data());
         g_file_info_set_attribute_string(info.get(), "xattr::xdg.origin.url", uri.data());
-        g_file_set_attributes_async(destinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, G_PRIORITY_DEFAULT, nullptr, nullptr, nullptr);
+        g_file_set_attributes_async(m_destinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, G_PRIORITY_DEFAULT, nullptr, nullptr, nullptr);
 
         m_download->didFinish();
     }
@@ -171,7 +187,7 @@ public:
     void cancel(ResourceHandle* handle)
     {
         handle->cancel();
-        deleteIntermediateFileInNeeded();
+        deleteFilesIfNeeded();
         m_download->didCancel(CoreIPC::DataReference());
     }
 
@@ -202,7 +218,7 @@ public:
     Download* m_download;
     GRefPtr<GFileOutputStream> m_outputStream;
     ResourceResponse m_response;
-    String m_destinationURI;
+    GRefPtr<GFile> m_destinationFile;
     GRefPtr<GFile> m_intermediateFile;
     ResourceResponse m_delayedResponse;
     unsigned m_handleResponseLaterID;

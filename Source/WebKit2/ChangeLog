@@ -1,3 +1,25 @@
+2014-09-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Race condition when downloading a file due to the intermediate temporary file
+        https://bugs.webkit.org/show_bug.cgi?id=136423
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::DownloadClient): Replace m_destinationURI with
+        m_destinationFile and add m_createdDestination.
+        (WebKit::DownloadClient::deleteFilesIfNeeded): Added.
+        (WebKit::DownloadClient::downloadFailed): Call deleteFilesIfNeeded.
+        (WebKit::DownloadClient::didReceiveResponse): Attempt to create the
+        destination file before the intermediate file. Fail here if the file
+        exists and overwrite is not allowed, so we don't erroneously fire the
+        didCreateDestination event or waste time downloading the file when we
+        know the download will fail.
+        (WebKit::DownloadClient::didFinishLoading): Unconditionally overwrite
+        the empty destination file.
+        (WebKit::DownloadClient::cancel): Call deleteFilesIfNeeded.
+        (WebKit::DownloadClient::deleteIntermediateFileInNeeded): Deleted.
+
 2014-09-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] WebKitDownload cannot overwrite existing file
