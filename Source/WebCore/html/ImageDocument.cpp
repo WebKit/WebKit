@@ -398,8 +398,8 @@ void ImageEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
     if (event->type() == eventNames().resizeEvent)
         m_document.windowSizeChanged();
-    else if (event->type() == eventNames().clickEvent && event->isMouseEvent()) {
-        MouseEvent& mouseEvent = toMouseEvent(*event);
+    else if (event->type() == eventNames().clickEvent && is<MouseEvent>(event)) {
+        MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
         m_document.imageClicked(mouseEvent.x(), mouseEvent.y());
     }
 }

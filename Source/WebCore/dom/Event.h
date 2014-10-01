@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -205,10 +206,11 @@ private:
     RefPtr<Event> m_underlyingEvent;
 };
 
-#define EVENT_TYPE_CASTS(ToValueTypeName) \
-    TYPE_CASTS_BASE(ToValueTypeName, Event, event, event->is##ToValueTypeName(), event.is##ToValueTypeName())
-
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_EVENT(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::Event& event) { return event.is##ToValueTypeName(); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // Event_h

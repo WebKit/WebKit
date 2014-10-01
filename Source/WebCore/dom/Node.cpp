@@ -2032,8 +2032,8 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (event->isTouchEvent())
-        return dispatchTouchEvent(adoptRef(toTouchEvent(event.leakRef())));
+    if (is<TouchEvent>(event.get()))
+        return dispatchTouchEvent(adoptRef(downcast<TouchEvent>(event.leakRef())));
 #endif
     return EventDispatcher::dispatchEvent(this, event);
 }
@@ -2100,11 +2100,12 @@ void Node::defaultEventHandler(Event* event)
         return;
     const AtomicString& eventType = event->type();
     if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
-        if (event->isKeyboardEvent())
+        if (is<KeyboardEvent>(event)) {
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultKeyboardEventHandler(toKeyboardEvent(event));
+                frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
+        }
     } else if (eventType == eventNames().clickEvent) {
-        int detail = event->isUIEvent() ? toUIEvent(event)->detail() : 0;
+        int detail = is<UIEvent>(event) ? downcast<UIEvent>(*event).detail() : 0;
         if (dispatchDOMActivateEvent(detail, event))
             event->setDefaultHandled();
 #if ENABLE(CONTEXT_MENUS)
@@ -2114,12 +2115,13 @@ void Node::defaultEventHandler(Event* event)
                 page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
-        if (event->eventInterface() == TextEventInterfaceType)
+        if (is<TextEvent>(event)) {
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultTextInputEventHandler(toTextEvent(event));
+                frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
+        }
 #if ENABLE(PAN_SCROLLING)
-    } else if (eventType == eventNames().mousedownEvent && event->isMouseEvent()) {
-        if (toMouseEvent(event)->button() == MiddleButton) {
+    } else if (eventType == eventNames().mousedownEvent && is<MouseEvent>(event)) {
+        if (downcast<MouseEvent>(*event).button() == MiddleButton) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 
@@ -2133,7 +2135,7 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
-    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && event->eventInterface() == WheelEventInterfaceType) {
+    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && is<WheelEvent>(event)) {
 
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
@@ -2143,16 +2145,16 @@ void Node::defaultEventHandler(Event* event)
         
         if (startNode && startNode->renderer())
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultWheelEventHandler(startNode, toWheelEvent(event));
+                frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-    } else if (event->eventInterface() == TouchEventInterfaceType && eventNames().isTouchEventType(eventType)) {
+    } else if (is<TouchEvent>(event) && eventNames().isTouchEventType(eventType)) {
         RenderObject* renderer = this->renderer();
         while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
             renderer = renderer->parent();
 
         if (renderer && renderer->node()) {
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultTouchEventHandler(renderer->node(), toTouchEvent(event));
+                frame->eventHandler().defaultTouchEventHandler(renderer->node(), downcast<TouchEvent>(event));
         }
 #endif
     } else if (event->type() == eventNames().webkitEditableContentChangedEvent) {

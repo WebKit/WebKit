@@ -70,8 +70,8 @@ private:
     RefPtr<EventTarget> m_relatedTarget;
 };
 
-EVENT_TYPE_CASTS(FocusEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(FocusEvent)
 
 #endif // FocusEvent_h

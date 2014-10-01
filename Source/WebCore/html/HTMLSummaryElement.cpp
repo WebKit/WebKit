@@ -126,28 +126,29 @@ void HTMLSummaryElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (event->isKeyboardEvent()) {
-            if (event->type() == eventNames().keydownEvent && toKeyboardEvent(event)->keyIdentifier() == "U+0020") {
+        if (is<KeyboardEvent>(event)) {
+            KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+            if (keyboardEvent.type() == eventNames().keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
                 setActive(true, true);
                 // No setDefaultHandled() - IE dispatches a keypress in this case.
                 return;
             }
-            if (event->type() == eventNames().keypressEvent) {
-                switch (toKeyboardEvent(event)->charCode()) {
+            if (keyboardEvent.type() == eventNames().keypressEvent) {
+                switch (keyboardEvent.charCode()) {
                 case '\r':
                     dispatchSimulatedClick(event);
-                    event->setDefaultHandled();
+                    keyboardEvent.setDefaultHandled();
                     return;
                 case ' ':
                     // Prevent scrolling down the page.
-                    event->setDefaultHandled();
+                    keyboardEvent.setDefaultHandled();
                     return;
                 }
             }
-            if (event->type() == eventNames().keyupEvent && toKeyboardEvent(event)->keyIdentifier() == "U+0020") {
+            if (keyboardEvent.type() == eventNames().keyupEvent && keyboardEvent.keyIdentifier() == "U+0020") {
                 if (active())
                     dispatchSimulatedClick(event);
-                event->setDefaultHandled();
+                keyboardEvent.setDefaultHandled();
                 return;
             }
         }

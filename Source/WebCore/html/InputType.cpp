@@ -471,7 +471,7 @@ void InputType::forwardEvent(Event*)
 
 bool InputType::shouldSubmitImplicitly(Event* event)
 {
-    return event->isKeyboardEvent() && event->type() == eventNames().keypressEvent && toKeyboardEvent(event)->charCode() == '\r';
+    return is<KeyboardEvent>(event) && event->type() == eventNames().keypressEvent && downcast<KeyboardEvent>(*event).charCode() == '\r';
 }
 
 PassRefPtr<HTMLFormElement> InputType::formForSubmission() const

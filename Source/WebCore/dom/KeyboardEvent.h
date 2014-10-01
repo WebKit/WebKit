@@ -119,10 +119,10 @@ private:
 #endif
 };
 
-EVENT_TYPE_CASTS(KeyboardEvent)
-
 KeyboardEvent* findKeyboardEvent(Event*);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(KeyboardEvent)
 
 #endif // KeyboardEvent_h

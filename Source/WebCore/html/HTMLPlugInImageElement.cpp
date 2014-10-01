@@ -747,11 +747,11 @@ void HTMLPlugInImageElement::defaultEventHandler(Event* event)
 {
     RenderElement* r = renderer();
     if (r && r->isEmbeddedObject()) {
-        if (isPlugInImageElement() && displayState() == WaitingForSnapshot && event->isMouseEvent() && event->type() == eventNames().clickEvent) {
-            MouseEvent* mouseEvent = toMouseEvent(event);
-            if (mouseEvent->button() == LeftButton) {
-                userDidClickSnapshot(mouseEvent, true);
-                event->setDefaultHandled();
+        if (displayState() == WaitingForSnapshot && is<MouseEvent>(event) && event->type() == eventNames().clickEvent) {
+            MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+            if (mouseEvent.button() == LeftButton) {
+                userDidClickSnapshot(&mouseEvent, true);
+                mouseEvent.setDefaultHandled();
                 return;
             }
         }

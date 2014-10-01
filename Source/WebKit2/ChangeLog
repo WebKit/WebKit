@@ -1,3 +1,15 @@
+2014-10-01  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Event classes
+        https://bugs.webkit.org/show_bug.cgi?id=137284
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Event classes.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+
 2014-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] <select> with <optgroup> may change initial selected option when assisted

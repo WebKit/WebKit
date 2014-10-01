@@ -220,9 +220,9 @@ int KeyboardEvent::which() const
 KeyboardEvent* findKeyboardEvent(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent())
-        if (e->isKeyboardEvent())
-            return toKeyboardEvent(e);
-    return 0;
+        if (is<KeyboardEvent>(e))
+            return downcast<KeyboardEvent>(e);
+    return nullptr;
 }
 
 } // namespace WebCore

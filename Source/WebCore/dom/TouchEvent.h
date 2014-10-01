@@ -86,9 +86,9 @@ private:
     RefPtr<TouchList> m_changedTouches;
 };
 
-EVENT_TYPE_CASTS(TouchEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(TouchEvent)
 
 #endif // ENABLE(TOUCH_EVENTS)
 

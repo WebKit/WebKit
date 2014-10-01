@@ -59,14 +59,14 @@ JSErrorHandler::~JSErrorHandler()
 void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
 
-    if (event->eventInterface() != ErrorEventInterfaceType)
+    if (!is<ErrorEvent>(event))
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
     ASSERT(scriptExecutionContext);
     if (!scriptExecutionContext)
         return;
 
-    ErrorEvent* errorEvent = toErrorEvent(event);
+    ErrorEvent& errorEvent = downcast<ErrorEvent>(*event);
 
     JSLockHolder lock(scriptExecutionContext->vm());
 
@@ -90,10 +90,10 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         globalObject->setCurrentEvent(event);
 
         MarkedArgumentBuffer args;
-        args.append(jsStringWithCache(exec, errorEvent->message()));
-        args.append(jsStringWithCache(exec, errorEvent->filename()));
-        args.append(jsNumber(errorEvent->lineno()));
-        args.append(jsNumber(errorEvent->colno()));
+        args.append(jsStringWithCache(exec, errorEvent.message()));
+        args.append(jsStringWithCache(exec, errorEvent.filename()));
+        args.append(jsNumber(errorEvent.lineno()));
+        args.append(jsNumber(errorEvent.colno()));
 
         VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);

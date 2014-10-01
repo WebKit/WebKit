@@ -85,8 +85,8 @@ private:
     int m_detail;
 };
 
-EVENT_TYPE_CASTS(UIEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(UIEvent)
 
 #endif // UIEvent_h

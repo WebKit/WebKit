@@ -114,8 +114,8 @@ private:
     bool m_initializedWithPlatformWheelEvent;
 };
 
-EVENT_TYPE_CASTS(WheelEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(WheelEvent)
 
 #endif // WheelEvent_h

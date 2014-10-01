@@ -132,8 +132,8 @@ private:
     SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView>, PassRefPtr<Event> underlyingEvent, Element* target);
 };
 
-EVENT_TYPE_CASTS(MouseEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(MouseEvent)
 
 #endif // MouseEvent_h

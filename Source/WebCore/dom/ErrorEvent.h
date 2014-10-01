@@ -81,8 +81,8 @@ private:
     unsigned m_columnNumber;
 };
 
-EVENT_TYPE_CASTS(ErrorEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(ErrorEvent)
 
 #endif // ErrorEvent_h

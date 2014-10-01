@@ -366,9 +366,9 @@ void MediaControls::stopHideFullscreenControlsTimer()
 
 bool MediaControls::containsRelatedTarget(Event* event)
 {
-    if (!event->isMouseEvent())
+    if (!is<MouseEvent>(event))
         return false;
-    EventTarget* relatedTarget = toMouseEvent(event)->relatedTarget();
+    EventTarget* relatedTarget = downcast<MouseEvent>(*event).relatedTarget();
     if (!relatedTarget)
         return false;
     return contains(relatedTarget->toNode());

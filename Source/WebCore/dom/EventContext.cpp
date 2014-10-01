@@ -76,12 +76,12 @@ MouseOrFocusEventContext::~MouseOrFocusEventContext()
 
 void MouseOrFocusEventContext::handleLocalEvents(Event& event) const
 {
-    ASSERT(event.isMouseEvent() || event.isFocusEvent());
+    ASSERT(is<MouseEvent>(event) || is<FocusEvent>(event));
     if (m_relatedTarget) {
-        if (event.isMouseEvent())
-            toMouseEvent(event).setRelatedTarget(m_relatedTarget.get());
-        else if (event.isFocusEvent())
-            toFocusEvent(event).setRelatedTarget(m_relatedTarget.get());
+        if (is<MouseEvent>(event))
+            downcast<MouseEvent>(event).setRelatedTarget(m_relatedTarget.get());
+        else if (is<FocusEvent>(event))
+            downcast<FocusEvent>(event).setRelatedTarget(m_relatedTarget.get());
     }
     EventContext::handleLocalEvents(event);
 }
@@ -111,8 +111,8 @@ void TouchEventContext::handleLocalEvents(Event& event) const
     checkReachability(m_targetTouches.get());
     checkReachability(m_changedTouches.get());
 #endif
-    ASSERT(event.isTouchEvent());
-    TouchEvent& touchEvent = toTouchEvent(event);
+    ASSERT(is<TouchEvent>(event));
+    TouchEvent& touchEvent = downcast<TouchEvent>(event);
     touchEvent.setTouches(m_touches);
     touchEvent.setTargetTouches(m_targetTouches);
     touchEvent.setChangedTouches(m_changedTouches);

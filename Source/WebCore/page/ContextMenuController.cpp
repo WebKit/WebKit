@@ -150,10 +150,10 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
 {
     ASSERT(event);
     
-    if (!event->isMouseEvent())
+    if (!is<MouseEvent>(event))
         return nullptr;
 
-    MouseEvent& mouseEvent = toMouseEvent(*event);
+    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
     HitTestResult result(mouseEvent.absoluteLocation());
 
     Node* node = event->target()->toNode();

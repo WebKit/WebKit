@@ -333,7 +333,7 @@ void SliderThumbElement::stopDragging()
 #if !PLATFORM(IOS)
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
-    if (!event->isMouseEvent()) {
+    if (!is<MouseEvent>(event)) {
         HTMLDivElement::defaultEventHandler(event);
         return;
     }
@@ -347,9 +347,9 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         return;
     }
 
-    MouseEvent* mouseEvent = toMouseEvent(event);
-    bool isLeftButton = mouseEvent->button() == LeftButton;
-    const AtomicString& eventType = event->type();
+    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+    bool isLeftButton = mouseEvent.button() == LeftButton;
+    const AtomicString& eventType = mouseEvent.type();
 
     // We intentionally do not call event->setDefaultHandled() here because
     // MediaControlTimelineElement::defaultEventHandler() wants to handle these
@@ -362,11 +362,11 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         return;
     } else if (eventType == eventNames().mousemoveEvent) {
         if (m_inDragMode)
-            setPositionFromPoint(mouseEvent->absoluteLocation());
+            setPositionFromPoint(mouseEvent.absoluteLocation());
         return;
     }
 
-    HTMLDivElement::defaultEventHandler(event);
+    HTMLDivElement::defaultEventHandler(&mouseEvent);
 }
 #endif
 

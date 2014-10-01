@@ -1146,10 +1146,11 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
     RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
 
     if (event->type() == eventNames().keydownEvent) {
-        if (!event->isKeyboardEvent())
+        if (!is<KeyboardEvent>(event))
             return;
 
-        if (platformHandleKeydownEvent(toKeyboardEvent(event)))
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        if (platformHandleKeydownEvent(&keyboardEvent))
             return;
 
         // When using spatial navigation, we want to be able to navigate away
@@ -1160,7 +1161,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 return;
         }
 
-        const String& keyIdentifier = toKeyboardEvent(event)->keyIdentifier();
+        const String& keyIdentifier = keyboardEvent.keyIdentifier();
         bool handled = true;
         const Vector<HTMLElement*>& listItems = this->listItems();
         int listIndex = optionToListIndex(selectedIndex());
@@ -1192,22 +1193,23 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
             selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
 
         if (handled)
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
     }
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (event->type() == eventNames().keypressEvent) {
-        if (!event->isKeyboardEvent())
+        if (!is<KeyboardEvent>(event))
             return;
 
-        int keyCode = toKeyboardEvent(event)->keyCode();
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        int keyCode = keyboardEvent.keyCode();
         bool handled = false;
 
         if (keyCode == ' ' && isSpatialNavigationEnabled(document().frame())) {
             // Use space to toggle arrow key handling for selection change or spatial navigation.
             m_activeSelectionState = !m_activeSelectionState;
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
             return;
         }
 
@@ -1246,17 +1248,17 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 handled = true;
             } else if (keyCode == '\r') {
                 if (form())
-                    form()->submitImplicitly(event, false);
+                    form()->submitImplicitly(&keyboardEvent, false);
                 dispatchChangeEventForMenuList();
                 handled = true;
             }
         }
 
         if (handled)
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
     }
 
-    if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && toMouseEvent(event)->button() == LeftButton) {
+    if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         focus();
 #if !PLATFORM(IOS)
         if (renderer() && renderer()->isMenuList()) {
@@ -1336,35 +1338,35 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 {
     const Vector<HTMLElement*>& listItems = this->listItems();
 
-    if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && toMouseEvent(event)->button() == LeftButton) {
+    if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         focus();
         // Calling focus() may remove or change our renderer, in which case we don't want to handle the event further.
         if (!renderer() || !renderer()->isListBox())
             return;
 
         // Convert to coords relative to the list box if needed.
-        MouseEvent* mouseEvent = toMouseEvent(event);
-        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
+        MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent.absoluteLocation(), UseTransforms));
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
 #if PLATFORM(COCOA)
-                updateSelectedState(listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());
+                updateSelectedState(listIndex, mouseEvent.metaKey(), mouseEvent.shiftKey());
 #else
-                updateSelectedState(listIndex, mouseEvent->ctrlKey(), mouseEvent->shiftKey());
+                updateSelectedState(listIndex, mouseEvent.ctrlKey(), mouseEvent.shiftKey());
 #endif
             }
             if (Frame* frame = document().frame())
                 frame->eventHandler().setMouseDownMayStartAutoscroll();
 
-            event->setDefaultHandled();
+            mouseEvent.setDefaultHandled();
         }
-    } else if (event->type() == eventNames().mousemoveEvent && event->isMouseEvent() && !toRenderBox(renderer())->canBeScrolledAndHasScrollableArea()) {
-        MouseEvent* mouseEvent = toMouseEvent(event);
-        if (mouseEvent->button() != LeftButton || !mouseEvent->buttonDown())
+    } else if (event->type() == eventNames().mousemoveEvent && is<MouseEvent>(event) && !toRenderBox(renderer())->canBeScrolledAndHasScrollableArea()) {
+        MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+        if (mouseEvent.button() != LeftButton || !mouseEvent.buttonDown())
             return;
 
-        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
+        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent.absoluteLocation(), UseTransforms));
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
@@ -1381,9 +1383,9 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
                     updateListBoxSelection(true);
                 }
             }
-            event->setDefaultHandled();
+            mouseEvent.setDefaultHandled();
         }
-    } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && toMouseEvent(event)->button() == LeftButton && document().frame()->eventHandler().autoscrollRenderer() != renderer()) {
+    } else if (event->type() == eventNames().mouseupEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton && document().frame()->eventHandler().autoscrollRenderer() != renderer()) {
         // This click or drag event was not over any of the options.
         if (m_lastOnChangeSelection.isEmpty())
             return;
@@ -1392,9 +1394,11 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         // timer stops.
         listBoxOnChange();
     } else if (event->type() == eventNames().keydownEvent) {
-        if (!event->isKeyboardEvent())
+        if (!is<KeyboardEvent>(event))
             return;
-        const String& keyIdentifier = toKeyboardEvent(event)->keyIdentifier();
+
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        const String& keyIdentifier = keyboardEvent.keyIdentifier();
 
         bool handled = false;
         int endIndex = 0;
@@ -1456,15 +1460,15 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 #if PLATFORM(COCOA)
             m_allowsNonContiguousSelection = m_multiple && isSpatialNavigationEnabled(document().frame());
 #else
-            m_allowsNonContiguousSelection = m_multiple && (isSpatialNavigationEnabled(document().frame()) || toKeyboardEvent(event)->ctrlKey());
+            m_allowsNonContiguousSelection = m_multiple && (isSpatialNavigationEnabled(document().frame()) || keyboardEvent.ctrlKey());
 #endif
-            bool selectNewItem = toKeyboardEvent(event)->shiftKey() || !m_allowsNonContiguousSelection;
+            bool selectNewItem = keyboardEvent.shiftKey() || !m_allowsNonContiguousSelection;
 
             if (selectNewItem)
                 m_activeSelectionState = true;
             // If the anchor is unitialized, or if we're going to deselect all
             // other options, then set the anchor index equal to the end index.
-            bool deselectOthers = !m_multiple || (!toKeyboardEvent(event)->shiftKey() && selectNewItem);
+            bool deselectOthers = !m_multiple || (!keyboardEvent.shiftKey() && selectNewItem);
             if (m_activeSelectionAnchorIndex < 0 || deselectOthers) {
                 if (deselectOthers)
                     deselectItemsWithoutValidation();
@@ -1478,17 +1482,18 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             } else
                 scrollToSelection();
 
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
         }
     } else if (event->type() == eventNames().keypressEvent) {
-        if (!event->isKeyboardEvent())
+        if (!is<KeyboardEvent>(event))
             return;
-        int keyCode = toKeyboardEvent(event)->keyCode();
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        int keyCode = keyboardEvent.keyCode();
 
         if (keyCode == '\r') {
             if (form())
-                form()->submitImplicitly(event, false);
-            event->setDefaultHandled();
+                form()->submitImplicitly(&keyboardEvent, false);
+            keyboardEvent.setDefaultHandled();
         } else if (m_multiple && keyCode == ' ' && m_allowsNonContiguousSelection) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
@@ -1497,7 +1502,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             ASSERT(is<HTMLOptionElement>(*listItems[m_activeSelectionEndIndex]));
             updateSelectedState(m_activeSelectionEndIndex, true /*multi*/, false /*shift*/);
             listBoxOnChange();
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
         }
     }
 }
@@ -1523,9 +1528,9 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
     if (event->defaultHandled())
         return;
 
-    if (event->type() == eventNames().keypressEvent && event->isKeyboardEvent()) {
-        KeyboardEvent* keyboardEvent = toKeyboardEvent(event);
-        if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey() && u_isprint(keyboardEvent->charCode())) {
+    if (event->type() == eventNames().keypressEvent && is<KeyboardEvent>(event)) {
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        if (!keyboardEvent.ctrlKey() && !keyboardEvent.altKey() && !keyboardEvent.metaKey() && u_isprint(keyboardEvent.charCode())) {
             typeAheadFind(keyboardEvent);
             event->setDefaultHandled();
             return;
@@ -1565,9 +1570,9 @@ String HTMLSelectElement::optionAtIndex(int index) const
     return downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
 }
 
-void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
+void HTMLSelectElement::typeAheadFind(KeyboardEvent& event)
 {
-    int index = m_typeAhead.handleEvent(event, TypeAhead::MatchPrefix | TypeAhead::CycleFirstChar);
+    int index = m_typeAhead.handleEvent(&event, TypeAhead::MatchPrefix | TypeAhead::CycleFirstChar);
     if (index < 0)
         return;
     selectOption(listToOptionIndex(index), DeselectOtherOptions | DispatchChangeEvent | UserDriven);

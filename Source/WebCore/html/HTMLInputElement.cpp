@@ -1032,7 +1032,7 @@ void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& s
 {
     if (event.type() == eventNames().textInputEvent && m_inputType->shouldSubmitImplicitly(&event))
         event.stopPropagation();
-    if (event.type() == eventNames().clickEvent && event.isMouseEvent() && toMouseEvent(&event)->button() == LeftButton) {
+    if (event.type() == eventNames().clickEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         m_inputType->willDispatchClick(state);
         state.stateful = true;
     }
@@ -1045,22 +1045,22 @@ void HTMLInputElement::didDispatchClickEvent(Event& event, const InputElementCli
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
-    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent && toMouseEvent(evt)->button() == LeftButton) {
-        m_inputType->handleClickEvent(toMouseEvent(evt));
+    if (is<MouseEvent>(evt) && evt->type() == eventNames().clickEvent && downcast<MouseEvent>(*evt).button() == LeftButton) {
+        m_inputType->handleClickEvent(downcast<MouseEvent>(evt));
         if (evt->defaultHandled())
             return;
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (evt->isTouchEvent()) {
-        m_inputType->handleTouchEvent(toTouchEvent(evt));
+    if (is<TouchEvent>(evt)) {
+        m_inputType->handleTouchEvent(downcast<TouchEvent>(evt));
         if (evt->defaultHandled())
             return;
     }
 #endif
 
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keydownEvent) {
-        m_inputType->handleKeydownEvent(toKeyboardEvent(evt));
+    if (is<KeyboardEvent>(evt) && evt->type() == eventNames().keydownEvent) {
+        m_inputType->handleKeydownEvent(downcast<KeyboardEvent>(evt));
         if (evt->defaultHandled())
             return;
     }
@@ -1086,16 +1086,17 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keypressEvent) {
-        m_inputType->handleKeypressEvent(toKeyboardEvent(evt));
-        if (evt->defaultHandled())
-            return;
-    }
-
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keyupEvent) {
-        m_inputType->handleKeyupEvent(toKeyboardEvent(evt));
-        if (evt->defaultHandled())
-            return;
+    if (is<KeyboardEvent>(evt)) {
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*evt);
+        if (keyboardEvent.type() == eventNames().keypressEvent) {
+            m_inputType->handleKeypressEvent(&keyboardEvent);
+            if (keyboardEvent.defaultHandled())
+                return;
+        } else if (keyboardEvent.type() == eventNames().keyupEvent) {
+            m_inputType->handleKeyupEvent(&keyboardEvent);
+            if (keyboardEvent.defaultHandled())
+                return;
+        }
     }
 
     if (m_inputType->shouldSubmitImplicitly(evt)) {
@@ -1117,11 +1118,11 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         return;
     }
 
-    if (evt->isBeforeTextInsertedEvent())
-        m_inputType->handleBeforeTextInsertedEvent(toBeforeTextInsertedEvent(evt));
+    if (is<BeforeTextInsertedEvent>(evt))
+        m_inputType->handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(evt));
 
-    if (evt->isMouseEvent() && evt->type() == eventNames().mousedownEvent) {
-        m_inputType->handleMouseDownEvent(toMouseEvent(evt));
+    if (is<MouseEvent>(evt) && evt->type() == eventNames().mousedownEvent) {
+        m_inputType->handleMouseDownEvent(downcast<MouseEvent>(evt));
         if (evt->defaultHandled())
             return;
     }

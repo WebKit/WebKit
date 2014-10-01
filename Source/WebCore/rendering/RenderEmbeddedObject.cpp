@@ -590,9 +590,9 @@ bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& poin
         && indicatorRect.contains(point);
 }
 
-bool RenderEmbeddedObject::isInUnavailablePluginIndicator(MouseEvent* event) const
+bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const MouseEvent& event) const
 {
-    return isInUnavailablePluginIndicator(absoluteToLocal(event->absoluteLocation(), UseTransforms));
+    return isInUnavailablePluginIndicator(absoluteToLocal(event.absoluteLocation(), UseTransforms));
 }
 
 void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
@@ -600,21 +600,21 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
     if (!shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason))
         return;
 
-    if (!event->isMouseEvent())
+    if (!is<MouseEvent>(event))
         return;
 
-    MouseEvent* mouseEvent = toMouseEvent(event);
+    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
     HTMLPlugInElement& element = downcast<HTMLPlugInElement>(frameOwnerElement());
-    if (event->type() == eventNames().mousedownEvent && toMouseEvent(event)->button() == LeftButton) {
+    if (mouseEvent.type() == eventNames().mousedownEvent && mouseEvent.button() == LeftButton) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {
             frame().eventHandler().setCapturingMouseEventsElement(&element);
             element.setIsCapturingMouseEvents(true);
             setUnavailablePluginIndicatorIsPressed(true);
         }
-        event->setDefaultHandled();
+        mouseEvent.setDefaultHandled();
     }
-    if (event->type() == eventNames().mouseupEvent && toMouseEvent(event)->button() == LeftButton) {
+    if (mouseEvent.type() == eventNames().mouseupEvent && mouseEvent.button() == LeftButton) {
         if (m_unavailablePluginIndicatorIsPressed) {
             frame().eventHandler().setCapturingMouseEventsElement(nullptr);
             element.setIsCapturingMouseEvents(false);
@@ -627,9 +627,9 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         m_mouseDownWasInUnavailablePluginIndicator = false;
         event->setDefaultHandled();
     }
-    if (event->type() == eventNames().mousemoveEvent) {
+    if (mouseEvent.type() == eventNames().mousemoveEvent) {
         setUnavailablePluginIndicatorIsPressed(m_mouseDownWasInUnavailablePluginIndicator && isInUnavailablePluginIndicator(mouseEvent));
-        event->setDefaultHandled();
+        mouseEvent.setDefaultHandled();
     }
 }
 

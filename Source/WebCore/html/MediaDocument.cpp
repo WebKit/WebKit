@@ -204,19 +204,19 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (!is<ContainerNode>(targetNode))
         return;
     ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
-    if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
+    if (event->type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
         HTMLVideoElement* video = descendentVideoElement(targetContainer);
         if (!video)
             return;
 
-        KeyboardEvent* keyboardEvent = toKeyboardEvent(event);
-        if (keyboardEvent->keyIdentifier() == "U+0020") { // space
+        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
+        if (keyboardEvent.keyIdentifier() == "U+0020") { // space
             if (video->paused()) {
                 if (video->canPlay())
                     video->play();
             } else
                 video->pause();
-            event->setDefaultHandled();
+            keyboardEvent.setDefaultHandled();
         }
     }
 }

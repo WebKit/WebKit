@@ -284,12 +284,12 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
 void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
 {
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    if (!event || !event->isMouseEvent())
+    if (!event || !is<MouseEvent>(event))
         return;
 
     Frame* frame = event->target()->toNode()->document().frame();
-    MouseEvent* mouseEvent = toMouseEvent(event);
-    IntPoint mousePoint = IntPoint(mouseEvent->clientX(), mouseEvent->clientY());
+    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+    IntPoint mousePoint = IntPoint(mouseEvent.clientX(), mouseEvent.clientY());
 
     m_frontendPage->contextMenuController().showContextMenuAt(frame, mousePoint);
 #else

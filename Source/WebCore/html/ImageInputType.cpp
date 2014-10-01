@@ -89,8 +89,8 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     m_clickLocation = IntPoint();
     if (event->underlyingEvent()) {
         Event& underlyingEvent = *event->underlyingEvent();
-        if (underlyingEvent.isMouseEvent()) {
-            MouseEvent& mouseEvent = toMouseEvent(underlyingEvent);
+        if (is<MouseEvent>(underlyingEvent)) {
+            MouseEvent& mouseEvent = downcast<MouseEvent>(underlyingEvent);
             if (!mouseEvent.isSimulated())
                 m_clickLocation = IntPoint(mouseEvent.offsetX(), mouseEvent.offsetY());
         }

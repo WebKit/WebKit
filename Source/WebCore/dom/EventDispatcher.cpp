@@ -342,8 +342,8 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     if (EventTarget* relatedTarget = event->relatedTarget())
         eventPath.setRelatedTarget(*node, *relatedTarget);
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (event->isTouchEvent()) {
-        if (!eventPath.updateTouchLists(*toTouchEvent(event.get())))
+    if (is<TouchEvent>(*event)) {
+        if (!eventPath.updateTouchLists(downcast<TouchEvent>(*event)))
             return true;
     }
 #endif

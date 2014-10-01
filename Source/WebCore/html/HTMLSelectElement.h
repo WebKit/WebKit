@@ -151,7 +151,7 @@ private:
     void recalcListItems(bool updateSelectedStates = true) const;
 
     void deselectItems(HTMLOptionElement* excludeElement = 0);
-    void typeAheadFind(KeyboardEvent*);
+    void typeAheadFind(KeyboardEvent&);
     void saveLastSelection();
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;

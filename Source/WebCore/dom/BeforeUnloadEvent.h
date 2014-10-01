@@ -51,8 +51,8 @@ private:
     String m_returnValue;
 };
 
-EVENT_TYPE_CASTS(BeforeUnloadEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(BeforeUnloadEvent)
 
 #endif // BeforeUnloadEvent_h

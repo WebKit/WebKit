@@ -51,8 +51,8 @@ private:
     String m_text;
 };
 
-EVENT_TYPE_CASTS(BeforeTextInsertedEvent)
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_EVENT(BeforeTextInsertedEvent)
 
 #endif

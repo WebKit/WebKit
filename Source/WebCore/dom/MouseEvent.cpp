@@ -276,10 +276,10 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
     }
     setUnderlyingEvent(underlyingEvent);
 
-    if (this->underlyingEvent() && this->underlyingEvent()->isMouseEvent()) {
-        MouseEvent* mouseEvent = toMouseEvent(this->underlyingEvent());
-        m_screenLocation = mouseEvent->screenLocation();
-        initCoordinates(mouseEvent->clientLocation());
+    if (this->underlyingEvent() && is<MouseEvent>(this->underlyingEvent())) {
+        MouseEvent& mouseEvent = downcast<MouseEvent>(*this->underlyingEvent());
+        m_screenLocation = mouseEvent.screenLocation();
+        initCoordinates(mouseEvent.clientLocation());
     } else if (target) {
         m_screenLocation = target->screenRect().center();
         initCoordinates(LayoutPoint(target->clientRect().center()));

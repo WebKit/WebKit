@@ -87,8 +87,8 @@ namespace WebCore {
         Vector<DictationAlternative> m_dictationAlternatives;
     };
 
-EVENT_TYPE_CASTS(TextEvent)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(TextEvent)
 
 #endif // TextEvent_h

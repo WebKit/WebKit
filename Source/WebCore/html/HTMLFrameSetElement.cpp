@@ -187,15 +187,15 @@ void HTMLFrameSetElement::willAttachRenderers()
         m_noresize = containingFrameSet->noResize();
 }
 
-void HTMLFrameSetElement::defaultEventHandler(Event* evt)
+void HTMLFrameSetElement::defaultEventHandler(Event* event)
 {
-    if (evt->isMouseEvent() && !m_noresize && renderer() && renderer()->isFrameSet()) {
-        if (toRenderFrameSet(renderer())->userResize(toMouseEvent(evt))) {
-            evt->setDefaultHandled();
+    if (is<MouseEvent>(event) && !m_noresize && renderer() && renderer()->isFrameSet()) {
+        if (toRenderFrameSet(renderer())->userResize(downcast<MouseEvent>(event))) {
+            event->setDefaultHandled();
             return;
         }
     }
-    HTMLElement::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(event);
 }
 
 bool HTMLFrameSetElement::willRecalcStyle(Style::Change)
