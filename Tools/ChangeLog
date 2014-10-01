@@ -1,5 +1,15 @@
 2014-10-01  Alexey Proskuryakov  <ap@apple.com>
 
+        REGRESSION (r172172): Multiple regression tests fail when primary system language is Russian
+        https://bugs.webkit.org/show_bug.cgi?id=136987
+
+        Reviewed by Daniel Bates.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::resetPreferencesToConsistentValues):
+        Specify the default encoding for all WebKit developers to get consistent results.
+
+2014-10-01  Alexey Proskuryakov  <ap@apple.com>
+
         EWS is too eager to say that a patch does not apply to trunk of repository
         https://bugs.webkit.org/show_bug.cgi?id=137290
 

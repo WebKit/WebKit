@@ -563,6 +563,9 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetInteractiveFormValidationEnabled(preferences, true);
     WKPreferencesSetMockScrollbarsEnabled(preferences, true);
 
+    static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
+    WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
+
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");
     static WKStringRef fantasyFontFamily = WKStringCreateWithUTF8CString("Papyrus");

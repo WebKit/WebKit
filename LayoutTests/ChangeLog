@@ -1,3 +1,57 @@
+2014-10-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r172172): Multiple regression tests fail when primary system language is Russian
+        https://bugs.webkit.org/show_bug.cgi?id=136987
+
+        Reviewed by Daniel Bates.
+
+        These test changes are not strictly necessary to fix the issue, as I'm also adding
+        a default to WebKitTestRunner. But it's nice to have tests work identically in WKTR
+        and in a browser, for which it's necessary to have them specify charset.
+
+        * accessibility/table-scope-expected.txt:
+        * accessibility/table-scope.html:
+        * fast/borders/bidi-002.html:
+        * fast/borders/bidi-009a.html:
+        * fast/frames/sandboxed-iframe-attribute-parsing-03-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-03.html:
+        * platform/mac/accessibility/table-headers-attribute-expected.txt:
+        * platform/mac/accessibility/table-headers-attribute.html:
+        * platform/mac/accessibility/table-with-zebra-rows-expected.txt:
+        * platform/mac/accessibility/table-with-zebra-rows.html:
+        * platform/mac/fast/borders/bidi-002-expected.png:
+        * platform/mac/fast/borders/bidi-002-expected.txt:
+        * platform/mac/fast/borders/bidi-009a-expected.png:
+        * platform/mac/fast/borders/bidi-009a-expected.txt:
+        * plugins/plugin-remove-subframe-expected.txt:
+        * plugins/plugin-remove-subframe.html:
+        These tests were actually expected to use UTF-8, so we used to be running them in
+        an inconsequentially wrong way. 
+
+        * fast/css/text-transform-select.html:
+        * fast/encoding/high-bit-latin1.html:
+        * fast/encoding/parser-tests-10.html:
+        * fast/encoding/parser-tests-100.html:
+        * fast/encoding/parser-tests-110.html:
+        * fast/encoding/parser-tests-120.html:
+        * fast/encoding/parser-tests-20.html:
+        * fast/encoding/parser-tests-30.html:
+        * fast/encoding/parser-tests-50.html:
+        * fast/encoding/parser-tests-60.html:
+        * fast/encoding/parser-tests-70.html:
+        * fast/encoding/parser-tests-80.html:
+        * fast/encoding/parser-tests-90.html:
+        * fast/encoding/parser-tests.html:
+        * fast/url/anchor.html:
+        * fast/url/file-http-base.html:
+        * fast/url/file.html:
+        * fast/url/query.html:
+        * fast/url/standard-url.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-default.html:
+        * js/dom/regexp-overflow.html:
+        * tables/mozilla_expected_failures/bugs/bug47163.html:
+        Specified the encoding, windows-1252 is what we use for Latin1 and ISO-8859-1 alike.
+
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
         [ Windows ] More Windows test gardening to get bots green.

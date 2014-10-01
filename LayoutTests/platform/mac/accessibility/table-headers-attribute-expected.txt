@@ -1,5 +1,5 @@
 Course Name	Course Tutor	Summary	Code	Fee
-After the Civil War	Dr. John Wroughton	October	H27	Â£32	Â£32
+After the Civil War	Dr. John Wroughton	October	H27	£32	£32
 This tests that the headers attribute returns the correct headers for a table cell.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

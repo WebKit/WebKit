@@ -1,4 +1,4 @@
-Test for bug 14437: RTÃ‰ video crashes Safari.
+Test for bug 14437: RTÉ video crashes Safari.
 
 Only works with DumpRenderTree.
 
