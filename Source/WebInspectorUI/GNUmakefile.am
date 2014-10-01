@@ -2,9 +2,10 @@ ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
 	$(WebInspectorUI)/UserInterface/*.html \
 	$(WebInspectorUI)/UserInterface/*.js \
 	$(WebInspectorUI)/UserInterface/*.css \
-	$(WebInspectorUI)/UserInterface/Images/*.png \
-	$(WebInspectorUI)/UserInterface/Images/*.svg \
-	$(WebInspectorUI)/UserInterface/External/CodeMirror/* \
+	$(WebInspectorUI)/UserInterface/Images/gtk/*.png \
+	$(WebInspectorUI)/UserInterface/Images/gtk/*.svg \
+	$(WebInspectorUI)/UserInterface/External/CodeMirror/*.js \
+	$(WebInspectorUI)/UserInterface/External/CodeMirror/*.css \
 	$(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js
 	$(AM_V_GEN)
 	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
@@ -16,7 +17,12 @@ ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
 		for file in $^; do \
 			if [ "$$file" = "GNUmakefile" ]; then continue; fi; \
 			file=`echo $$file | sed "s,$$basepath,,g"`; \
-			echo "    <file>$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
+			alias=`echo $$file | sed "s,Images/gtk,Images,g"`; \
+			if [ "$$alias" = "$$file" ]; then \
+				echo "    <file>$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
+			else \
+				echo "    <file alias=\"$$alias\">$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
+			fi \
 		done
 	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
 	$(AM_V_at)echo '</gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
@@ -37,7 +43,8 @@ EXTRA_DIST += \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.html) \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.js) \
 	$(shell ls $(WebInspectorUI)/UserInterface/*.css) \
-	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.png) \
-	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.svg) \
-	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*)
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/gtk/*.png) \
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/gtk/*.svg) \
+	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*.js) \
+	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*.css)
 

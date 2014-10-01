@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="10"
+   height="10"
+   id="svg3103">
+  <defs
+     id="defs3105">
+    <radialGradient
+       cx="623.01666"
+       cy="516.14594"
+       r="28.5"
+       fx="623.01666"
+       fy="516.14594"
+       id="radialGradient10026"
+       xlink:href="#linearGradient9757"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.8652336,0,0,1.8648144,-1164.5305,-448.92116)" />
+    <linearGradient
+       id="linearGradient9757">
+      <stop
+         id="stop9759"
+         style="stop-color:#ef2929;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop9761"
+         style="stop-color:#cc0000;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="613.08984"
+       cy="497.24933"
+       r="30.281242"
+       fx="613.08984"
+       fy="497.24933"
+       id="radialGradient10036"
+       xlink:href="#linearGradient10030"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.6457762,0,0,1.3558483,-395.91882,-176.94534)" />
+    <linearGradient
+       id="linearGradient10030">
+      <stop
+         id="stop10032"
+         style="stop-color:#ef2929;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop10034"
+         style="stop-color:#cc0000;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="626"
+       cy="505.22311"
+       r="30.535728"
+       fx="626"
+       fy="505.22311"
+       id="radialGradient10061"
+       xlink:href="#linearGradient10048"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.4481919,1.4653496e-7,-2.6752458e-7,2.643915,-280.568,-832.47254)" />
+    <linearGradient
+       id="linearGradient10048">
+      <stop
+         id="stop10050"
+         style="stop-color:#f4e3d7;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop10052"
+         style="stop-color:#f4e3d7;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="626"
+       cy="505.22311"
+       r="30.535728"
+       fx="626"
+       fy="505.22311"
+       id="radialGradient3148"
+       xlink:href="#linearGradient10048"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.4481919,1.4653496e-7,-2.6752458e-7,2.643915,-280.568,-832.47254)" />
+  </defs>
+  <metadata
+     id="metadata3108">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-6)"
+     id="layer1">
+    <path
+       d="m 5,6 c -2.7646779,0 -5,2.2353143 -5,5 0,2.764679 2.2353221,5 5,5 2.7646779,0 5,-2.235321 5,-5 C 10,8.2353143 7.7646779,6 5,6 z m -2.8571429,4.285714 5.7142858,0 0,1.428572 -5.7142858,0 z"
+       id="path10839-3"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#bebebe;fill:#ef2929;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.78124988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new;font-family:Andale Mono;-inkscape-font-specification:Andale Mono" />
+  </g>
+</svg>
