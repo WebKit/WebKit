@@ -423,6 +423,15 @@
 
 2014-09-30  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Add some logging to webkitpy to debug timeout issues with running NRWT using multiple child processes.
+
+        * Scripts/webkitpy/port/drdiver.py:
+        (Driver.stop):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.stop):
+
+2014-09-30  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Back to 2 child processes for NRWT on Windows.
 
         * Scripts/webkitpy/port/win.py:
