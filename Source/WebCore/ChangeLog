@@ -1,3 +1,26 @@
+2014-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Selection background is rendered white when unfocused with recent GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=136251
+
+        Reviewed by Martin Robinson.
+
+        This is due to a change in the GTK+ theme, but because we are not
+        using the right flags to get the selections colors. We should use
+        GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED when focused and
+        GTK_STATE_FLAG_SELECTED when unfocused, instead of
+        GTK_STATE_FLAG_ACTIVE when unfocused.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor):
+
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] WebTiming information not shown in the inspector
