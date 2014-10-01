@@ -1747,8 +1747,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
     static bool isType(const WebCore::Node& node) { return node.isDocumentNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-namespace WTF {
-inline WebCore::Document* getPtr(WebCore::Document& p) { return &p; }
-}
-
 #endif // Document_h
