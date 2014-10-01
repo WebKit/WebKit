@@ -76,7 +76,7 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         return LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
 
     def report_flaky_tests(self, patch, flaky_results, results_archive):
-        flaky_tests = [result.filename for result in flaky_results]
+        flaky_tests = [result.test_name for result in flaky_results]
         _log.info("report_flaky_tests: patch='%s' flaky_tests='%s' archive='%s'" % (patch.id(), flaky_tests, results_archive.filename))
 
     def archive_last_test_results(self, patch):
@@ -334,6 +334,48 @@ run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--p
 command_passed: success_message='Landed patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs)
+
+    def test_simple_flaky_test_failure(self):
+        commit_queue = FailingTestCommitQueue([
+            None,
+            None,
+            None,
+            None,
+            None,
+            ScriptError("MOCK test failure"),
+            None,
+        ], [
+            ["foo.html"],
+            [],
+            [],
+        ])
+
+        self.maxDiff = None
+
+        expected_logs = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='10000'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='10000'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
+command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+command_passed: success_message='Built patch' patch='10000'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='10000'
+archive_last_test_results: patch='10000'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_passed: success_message='Passed tests' patch='10000'
+report_flaky_tests: patch='10000' flaky_tests='['foo.html']' archive='mock-archive-10000.zip'
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
+command_passed: success_message='Landed patch' patch='10000'
+"""
+        tool = MockTool(log_executive=True)
+        patch = tool.bugs.fetch_attachment(10000)
+        task = CommitQueueTask(commit_queue, patch)
+        success = OutputCapture().assert_outputs(self, task.run, expected_logs=expected_logs)
+        self.assertTrue(success)
 
     def test_double_flaky_test_failure(self):
         commit_queue = FailingTestCommitQueue([

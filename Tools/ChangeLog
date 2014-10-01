@@ -1,5 +1,19 @@
 2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
 
+        commitqueuetasks_unittest references a non-existent member variable
+        when mock-reporting flaky tests.
+        https://bugs.webkit.org/show_bug.cgi?id=137303
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.report_flaky_tests):
+        Makes the appropriate name change.
+        (test_simple_flaky_test_failure):
+        Adds a unit test to make sure that the code is excercised.
+
+2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
+
         EWS is inconclusively spinning forever on a patch that breaks 500+
         tests
         https://bugs.webkit.org/show_bug.cgi?id=137223
