@@ -1,3 +1,19 @@
+2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        commitqueuetasks_unittest does not construct FailingTestCommitQueue
+        objects properly in its test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=137281
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (FailingTestCommitQueue.test_results):
+        Adds an assert to make FailingTestCommitQueue harder to mis-use.
+        (test_double_flaky_test_failure):
+        Nests the intended test failure strings into one-length lists.
+        (test_red_test_failure):
+        Nests the intended test failure strings into one-length lists.
+
 2014-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r172172): Multiple regression tests fail when primary system language is Russian

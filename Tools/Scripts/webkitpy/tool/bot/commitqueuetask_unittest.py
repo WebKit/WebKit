@@ -110,6 +110,7 @@ class FailingTestCommitQueue(MockCommitQueue):
         # Doesn't make sense to ask for the test_results until the tests have run at least once.
         assert(self._test_run_counter >= 0)
         failures_for_run = self._test_failure_plan[self._test_run_counter]
+        assert(isinstance(failures_for_run, list))
         results = LayoutTestResults(test_results=map(self._mock_test_result, failures_for_run), did_exceed_test_failure_limit=(len(self._test_failure_plan[self._test_run_counter]) >= 10))
         return results
 
@@ -344,9 +345,9 @@ command_passed: success_message='Landed patch' patch='10000'
             ScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
         ], [
-            "foo.html",
-            "bar.html",
-            "foo.html",
+            ["foo.html"],
+            ["bar.html"],
+            ["foo.html"],
         ])
         # The (subtle) point of this test is that report_flaky_tests does not appear
         # in the expected_logs for this run.
@@ -415,9 +416,9 @@ command_passed: success_message='Able to pass tests without patch' patch='10000'
             ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
         ], [
-            "foo.html",
-            "foo.html",
-            "foo.html",
+            ["foo.html"],
+            ["foo.html"],
+            ["foo.html"],
         ])
 
         # Tests always fail, and always return the same results, but we
