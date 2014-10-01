@@ -1,3 +1,17 @@
+2014-08-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Toggle buttons visually broken with GTK+ 3.13.7
+        https://bugs.webkit.org/show_bug.cgi?id=136130
+
+        Reviewed by Martin Robinson.
+
+        No new tests. Hopefully covered by existing tests, and our tests only
+        run with GTK+ 3.6 anyway.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::paintToggle): use GTK_STATE_FLAG_CHECKED when compiling for
+        GTK+ 3.13.7 and above to ensure toggle buttons display as toggled.
+
 2014-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Selection background is rendered white when unfocused with recent GTK+
