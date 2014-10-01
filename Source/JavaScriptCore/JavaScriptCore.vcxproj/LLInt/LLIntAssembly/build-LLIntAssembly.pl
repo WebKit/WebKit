@@ -62,7 +62,13 @@ print OUTPUTFILENAME "END\n";
 close(OUTPUTFILENAME);
 
 # If you want to enable the LLINT C loop, set OUTPUTFILENAME to "LLIntAssembly.h"
-my $OUTPUTFILENAME = File::Spec->catfile($DERIVED_SOURCES_DIR, 'LowLevelInterpreterWin.asm');
+# We only want the C loop for 32-bit Windows so we can continue to support old CPUs.
+my $OUTPUTFILENAME;
+if ("$ARGV[3]" eq "32") {
+    $OUTPUTFILENAME = File::Spec->catfile($DERIVED_SOURCES_DIR, 'LLIntAssembly.h');
+} else {
+    $OUTPUTFILENAME = File::Spec->catfile($DERIVED_SOURCES_DIR, 'LowLevelInterpreterWin.asm');
+}
 
 my $offlineAsm = File::Spec->catfile($XSRCROOT, 'offlineasm', 'asm.rb');
 my $lowLevelInterpreter = File::Spec->catfile($XSRCROOT, 'llint', 'LowLevelInterpreter.asm');

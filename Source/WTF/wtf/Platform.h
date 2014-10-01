@@ -718,6 +718,12 @@
 #define ENABLE_CONCURRENT_JIT 1
 #endif
 
+/* We do not want to allow LLInt on 32-bit Windows so that we can support some ancient
+   CPUs that do not have SSE2 support */
+#if OS(WINDOWS) && !CPU(X86_64)
+#define ENABLE_LLINT_C_LOOP 1
+#endif
+
 /* Disable the JIT if we force the LLInt C Loop */
 #if defined(ENABLE_LLINT_C_LOOP) && ENABLE_LLINT_C_LOOP
 #undef ENABLE_JIT
