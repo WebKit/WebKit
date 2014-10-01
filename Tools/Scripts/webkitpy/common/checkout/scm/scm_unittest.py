@@ -40,9 +40,9 @@ import sys
 import subprocess
 import tempfile
 import time
-import unittest2 as unittest
 import urllib
 import shutil
+import unittest
 
 from datetime import date
 from webkitpy.common.checkout.checkout import Checkout

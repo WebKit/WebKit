@@ -21,9 +21,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import StringIO
+import logging
 
+from webkitpy.common.system import outputcapture
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.tool.grammar import pluralize
@@ -104,8 +105,6 @@ class Printer(object):
         handler.addFilter(testing_filter)
 
         if self.options.pass_through:
-            # FIXME: Can't import at top of file, as outputcapture needs unittest2
-            from webkitpy.common.system import outputcapture
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
 
     def write_update(self, msg):

@@ -28,7 +28,7 @@
 
 from datetime import datetime
 import logging
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.net import bugzilla
 from webkitpy.common.net.layouttestresults import LayoutTestResults

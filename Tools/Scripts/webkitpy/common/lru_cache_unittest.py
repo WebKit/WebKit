@@ -24,7 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common import lru_cache
 

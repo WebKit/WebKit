@@ -28,7 +28,7 @@
 
 import platform
 import sys
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool

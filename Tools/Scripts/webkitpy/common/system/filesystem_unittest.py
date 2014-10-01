@@ -35,7 +35,7 @@ import os
 import stat
 import sys
 import tempfile
-import unittest2 as unittest
+import unittest
 
 from filesystem import FileSystem
 

@@ -32,7 +32,7 @@ import StringIO
 import datetime
 import json
 import re
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture

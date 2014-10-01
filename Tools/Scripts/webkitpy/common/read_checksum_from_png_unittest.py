@@ -22,7 +22,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import unittest2 as unittest
+import unittest
 from webkitpy.common import read_checksum_from_png
 
 

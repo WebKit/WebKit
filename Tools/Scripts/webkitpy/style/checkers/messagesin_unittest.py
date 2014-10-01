@@ -24,7 +24,7 @@
 
 """Unit test for messagesin.py."""
 
-import unittest2 as unittest
+import unittest
 
 from messagesin import MessagesInChecker
 

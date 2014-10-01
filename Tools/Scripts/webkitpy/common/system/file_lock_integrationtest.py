@@ -25,7 +25,7 @@
 
 import os
 import tempfile
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.file_lock import FileLock
 

@@ -28,7 +28,7 @@
 
 """Unit test for text_style.py."""
 
-import unittest2 as unittest
+import unittest
 
 import text as text_style
 from text import TextChecker

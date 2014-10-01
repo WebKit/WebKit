@@ -35,7 +35,7 @@
 
 import logging
 import os
-import unittest2 as unittest
+import unittest
 
 import checker as style
 from webkitpy.common.system.logtesting import LogTesting, TestLogStream

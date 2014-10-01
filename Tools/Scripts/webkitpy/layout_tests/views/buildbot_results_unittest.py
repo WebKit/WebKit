@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.host_mock import MockHost
 

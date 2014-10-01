@@ -36,7 +36,7 @@ import socket
 import subprocess
 import sys
 import tempfile
-import unittest2 as unittest
+import unittest
 
 
 class BaseTest(unittest.TestCase):

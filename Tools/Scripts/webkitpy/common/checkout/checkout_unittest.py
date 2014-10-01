@@ -30,7 +30,7 @@ import codecs
 import os
 import shutil
 import tempfile
-import unittest2 as unittest
+import unittest
 
 from .checkout import Checkout
 from .changelog import ChangeLogEntry

@@ -28,7 +28,7 @@
 
 import platform
 import sys
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2

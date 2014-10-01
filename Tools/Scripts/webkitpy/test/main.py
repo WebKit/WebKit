@@ -23,11 +23,11 @@
 
 """unit testing code for webkitpy."""
 
+import StringIO
 import logging
 import multiprocessing
 import optparse
 import os
-import StringIO
 import sys
 import time
 import traceback

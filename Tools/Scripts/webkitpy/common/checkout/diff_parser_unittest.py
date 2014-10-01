@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import cStringIO as StringIO
-import unittest2 as unittest
 import diff_parser
 import re
+import unittest
 
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 

@@ -22,7 +22,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest2 as unittest
+import unittest
+
 from webkitpy.style.checkers.exportfile import ExportFileChecker
 from webkitpy.common.system.filesystem import FileSystem
 

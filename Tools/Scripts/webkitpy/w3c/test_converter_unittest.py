@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,7 +27,7 @@
 
 import os
 import re
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.outputcapture import OutputCapture

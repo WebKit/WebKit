@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import StringIO
 import logging
 import re
-import StringIO
-import unittest2 as unittest
+import unittest
 
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 

@@ -23,7 +23,7 @@
 """Unit tests for error_handlers.py."""
 
 
-import unittest2 as unittest
+import unittest
 
 from checker import StyleProcessorConfiguration
 from error_handlers import DefaultStyleErrorHandler

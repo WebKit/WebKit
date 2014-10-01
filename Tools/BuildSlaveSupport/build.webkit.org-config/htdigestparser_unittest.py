@@ -22,7 +22,7 @@
 
 import StringIO
 import os
-import unittest2 as unittest
+import unittest
 
 from htdigestparser import HTDigestParser
 

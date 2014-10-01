@@ -28,7 +28,7 @@
 
 import re
 import sys
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture

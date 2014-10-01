@@ -23,7 +23,7 @@
 """Unit tests for python.py."""
 
 import os
-import unittest2 as unittest
+import unittest
 
 from python import PythonChecker
 

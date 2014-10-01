@@ -1,3 +1,186 @@
+2014-09-30  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove thirdparty/unittest2 from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=137251
+
+        Reviewed by Brent Fulgham.
+
+        Additionally ordered imports in related webkitpy files and
+        removed unnecessary shebangs from unittest files.
+
+        * BuildSlaveSupport/build.webkit.org-config/htdigestparser_unittest.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/commitinfo_unittest.py:
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py:
+        * Scripts/webkitpy/common/config/contributionareas_unittest.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        * Scripts/webkitpy/common/config/urls_unittest.py:
+        * Scripts/webkitpy/common/editdistance_unittest.py:
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        * Scripts/webkitpy/common/lru_cache_unittest.py:
+        * Scripts/webkitpy/common/memoized_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        * Scripts/webkitpy/common/net/statusserver_unittest.py:
+        * Scripts/webkitpy/common/net/unittestresults_unittest.py:
+        * Scripts/webkitpy/common/newstringio_unittest.py:
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+        * Scripts/webkitpy/common/read_checksum_from_png_unittest.py:
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        * Scripts/webkitpy/common/system/environment_unittest.py:
+        * Scripts/webkitpy/common/system/executive.py: Ordered imports.
+        * Scripts/webkitpy/common/system/executive_mock.py: Ordered imports.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        * Scripts/webkitpy/common/system/file_lock_integrationtest.py:
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py:
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        * Scripts/webkitpy/common/system/logtesting.py:
+        * Scripts/webkitpy/common/system/logutils_unittest.py:
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py:
+        * Scripts/webkitpy/common/system/outputtee_unittest.py:
+        * Scripts/webkitpy/common/system/path_unittest.py:
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        * Scripts/webkitpy/common/system/profiler_unittest.py:
+        * Scripts/webkitpy/common/system/stack_utils_unittest.py:
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py:
+        * Scripts/webkitpy/common/thread/messagepump_unittest.py:
+        * Scripts/webkitpy/common/thread/threadedmessagequeue_unittest.py:
+        * Scripts/webkitpy/common/watchlist/amountchangedpattern_unittest.py:
+        * Scripts/webkitpy/common/watchlist/changedlinepattern_unittest.py:
+        * Scripts/webkitpy/common/watchlist/filenamepattern_unittest.py:
+        * Scripts/webkitpy/common/watchlist/watchlist_unittest.py:
+        * Scripts/webkitpy/common/watchlist/watchlistrule_unittest.py:
+        * Scripts/webkitpy/common/webkitunittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_base_unittest.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        * Scripts/webkitpy/port/base_unittest.py:
+        * Scripts/webkitpy/port/builders_unittest.py:
+        * Scripts/webkitpy/port/config_unittest.py:
+        * Scripts/webkitpy/port/driver_unittest.py:
+        * Scripts/webkitpy/port/efl_unittest.py:
+        * Scripts/webkitpy/port/factory_unittest.py:
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        * Scripts/webkitpy/port/http_lock_unittest.py:
+        * Scripts/webkitpy/port/image_diff_unittest.py:
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        * Scripts/webkitpy/port/leakdetector_valgrind_unittest.py:
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py:
+        * Scripts/webkitpy/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/port/port_testcase.py:
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        * Scripts/webkitpy/port/westondriver_unittest.py:
+        * Scripts/webkitpy/port/win_unittest.py:
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py:
+        * Scripts/webkitpy/style/checkers/common_unittest.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        * Scripts/webkitpy/style/checkers/exportfile_unittest.py:
+        * Scripts/webkitpy/style/checkers/js_unittest.py:
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py:
+        * Scripts/webkitpy/style/checkers/messagesin_unittest.py:
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        * Scripts/webkitpy/style/checkers/text_unittest.py:
+        * Scripts/webkitpy/style/checkers/watchlist_unittest.py:
+        * Scripts/webkitpy/style/checkers/xcodeproj_unittest.py:
+        * Scripts/webkitpy/style/checkers/xml_unittest.py:
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        * Scripts/webkitpy/style/filter_unittest.py:
+        * Scripts/webkitpy/style/main_unittest.py:
+        * Scripts/webkitpy/style/optparser_unittest.py:
+        * Scripts/webkitpy/style/patchreader_unittest.py:
+        * Scripts/webkitpy/test/finder_unittest.py:
+        * Scripts/webkitpy/test/main.py: Ordered imports.
+        * Scripts/webkitpy/test/main_unittest.py:
+        * Scripts/webkitpy/test/printer.py: Ordered imports.
+        (Printer.configure):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        * Scripts/webkitpy/test/skip_unittest.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_irc):
+        (AutoinstallImportHook._install_unittest2): Deleted.
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        * Scripts/webkitpy/thirdparty/ordered_dict.py: Removed.
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests_unittest.py:
+        * Scripts/webkitpy/tool/bot/botinfo_unittest.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py:
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/grammar_unittest.py:
+        * Scripts/webkitpy/tool/mocktool_unittest.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler_unittest.py:
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng_unittest.py:
+        * Scripts/webkitpy/tool/steps/applywatchlist_unittest.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory_unittest.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        * Scripts/webkitpy/tool/steps/discardlocalchanges_unittest.py:
+        * Scripts/webkitpy/tool/steps/haslanded_unittest.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/suggestreviewers_unittest.py:
+        * Scripts/webkitpy/tool/steps/update_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
 2014-09-30  Jake Nielsen  <jacob_nielsen@apple.com>
 
         LayoutTestResults and ExpectedFailures should know about the

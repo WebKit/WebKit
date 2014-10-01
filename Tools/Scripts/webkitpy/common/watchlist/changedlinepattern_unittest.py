@@ -29,7 +29,7 @@
 '''Unit tests for changedlinepattern.py.'''
 
 import re
-import unittest2 as unittest
+import unittest
 
 
 from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern

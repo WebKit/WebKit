@@ -29,8 +29,8 @@
 # Class for unittest support.  Used for capturing stderr/stdout.
 
 import logging
-import unittest  # Don't use unittest2 here as the autoinstaller may not have it yet.
 import sys
+import unittest
 from StringIO import StringIO
 
 

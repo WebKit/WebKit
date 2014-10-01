@@ -28,7 +28,8 @@
 
 import os
 import tempfile
-import unittest2 as unittest
+import unittest
+
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture

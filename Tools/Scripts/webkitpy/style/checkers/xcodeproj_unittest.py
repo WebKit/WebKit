@@ -23,8 +23,8 @@
 
 """Unit test for xcodeproj.py."""
 
+import unittest
 import xcodeproj
-import unittest2 as unittest
 
 
 class TestErrorHandler(object):

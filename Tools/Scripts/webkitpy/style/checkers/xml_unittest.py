@@ -22,8 +22,7 @@
 
 """Unit test for xml.py."""
 
-import unittest2 as unittest
-
+import unittest
 import xml
 
 

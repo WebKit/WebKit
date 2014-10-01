@@ -22,7 +22,7 @@
 
 """Unit tests for common.py."""
 
-import unittest2 as unittest
+import unittest
 
 from common import CarriageReturnChecker
 from common import TabChecker

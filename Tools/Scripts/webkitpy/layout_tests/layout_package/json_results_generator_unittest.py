@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest2 as unittest
 import json
 import optparse
 import random
+import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package import json_results_generator

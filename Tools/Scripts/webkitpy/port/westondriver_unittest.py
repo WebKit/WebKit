@@ -28,7 +28,7 @@
 
 import logging
 import re
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture

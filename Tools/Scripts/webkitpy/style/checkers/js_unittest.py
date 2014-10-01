@@ -29,7 +29,7 @@
 
 """Unit test for js.py."""
 
-import unittest2 as unittest
+import unittest
 
 from js import JSChecker
 

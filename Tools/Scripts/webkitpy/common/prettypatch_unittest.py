@@ -28,7 +28,7 @@
 
 import os.path
 import sys
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.prettypatch import PrettyPatch

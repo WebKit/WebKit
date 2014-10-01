@@ -28,11 +28,11 @@
 
 """Unit tests for printing.py."""
 
-import optparse
 import StringIO
+import optparse
 import sys
 import time
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.host_mock import MockHost
 

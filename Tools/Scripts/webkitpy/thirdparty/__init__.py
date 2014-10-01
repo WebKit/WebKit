@@ -155,10 +155,6 @@ class AutoinstallImportHook(object):
                           url_subpath="ircbot.py")
         return did_install_something
 
-    def _install_unittest2(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        return self._install(url="http://pypi.python.org/packages/source/u/unittest2/unittest2-0.5.1.tar.gz#md5=a0af5cac92bbbfa0c3b0e99571390e0f", url_subpath="unittest2-0.5.1/unittest2")
-
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
         return installer.install(url=url, url_subpath=url_subpath, target_name=target_name)

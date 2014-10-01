@@ -31,7 +31,7 @@ import os
 import shutil
 import tempfile
 import threading
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture

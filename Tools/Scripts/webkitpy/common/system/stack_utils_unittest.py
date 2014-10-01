@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import stack_utils

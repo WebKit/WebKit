@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import tempfile
-import unittest2 as unittest
+import unittest
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.logtesting import LoggingTestCase
