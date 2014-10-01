@@ -30,9 +30,12 @@
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "WebCoreSystemInterface.h"
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <wtf/RetainPtr.h>
+
+#if PLATFORM(COCOA)
+#include "WebCoreSystemInterface.h"
+#endif
 
 // We would like a better value for a maximum time_t,
 // but there is no way to do that in C with any certainty.
