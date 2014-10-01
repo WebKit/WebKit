@@ -1,3 +1,18 @@
+2014-09-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] WebKitDownload cannot overwrite existing file
+        https://bugs.webkit.org/show_bug.cgi?id=136322
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse): pass a member variable
+        to Download::decideDestinationWithSuggestedFilename instead of a
+        temporary bool, so we can use the result in didFinishLoading.
+        (WebKit::DownloadClient::didFinishLoading): overwrite the destination
+        if Download::decideDestinationWithSuggestedFilename determined we
+        should do so.
+
 2014-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Should check if a plugin mixes GTK+ symbols earlier
