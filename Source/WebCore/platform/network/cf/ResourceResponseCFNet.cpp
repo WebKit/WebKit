@@ -30,6 +30,7 @@
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
+#include "WebCoreSystemInterface.h"
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <wtf/RetainPtr.h>
 
@@ -115,6 +116,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
+#if PLATFORM(COCOA)
+    return CertificateInfo(adoptCF(wkCopyNSURLResponseCertificateChain(nsURLResponse())));
+#endif
     return CertificateInfo();
 }
 
