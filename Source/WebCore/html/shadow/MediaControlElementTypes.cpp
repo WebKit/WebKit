@@ -53,7 +53,7 @@ HTMLMediaElement* parentMediaElement(Node* node)
     Node* mediaNode = node->shadowHost();
     if (!mediaNode)
         mediaNode = node;
-    if (!is<HTMLMediaElement>(mediaNode))
+    if (!is<HTMLMediaElement>(*mediaNode))
         return nullptr;
     return downcast<HTMLMediaElement>(mediaNode);
 }
@@ -61,7 +61,7 @@ HTMLMediaElement* parentMediaElement(Node* node)
 MediaControlElementType mediaControlElementType(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(node->isMediaControlElement());
-    if (is<HTMLInputElement>(node))
+    if (is<HTMLInputElement>(*node))
         return static_cast<MediaControlInputElement*>(node)->displayType();
     return static_cast<MediaControlDivElement*>(node)->displayType();
 }
@@ -196,7 +196,7 @@ MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document& docum
 void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
 {
     // Left button is 0. Rejects mouse events not from left button.
-    if (is<MouseEvent>(event) && downcast<MouseEvent>(*event).button())
+    if (is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button())
         return;
 
     if (!renderer())

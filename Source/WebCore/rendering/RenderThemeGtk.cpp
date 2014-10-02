@@ -261,7 +261,7 @@ static HTMLMediaElement* getMediaElementFromRenderObject(const RenderObject& o)
     Node* mediaNode = node ? node->shadowHost() : nullptr;
     if (!mediaNode)
         mediaNode = node;
-    if (!mediaNode || !is<HTMLMediaElement>(mediaNode))
+    if (!is<HTMLMediaElement>(mediaNode))
         return nullptr;
 
     return downcast<HTMLMediaElement>(mediaNode);
@@ -316,7 +316,7 @@ static bool nodeHasPseudo(Node* node, const char* pseudo)
 
 static bool nodeHasClass(Node* node, const char* className)
 {
-    if (!is<Element>(node))
+    if (!is<Element>(*node))
         return false;
 
     Element& element = downcast<Element>(*node);

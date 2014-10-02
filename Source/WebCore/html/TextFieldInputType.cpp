@@ -206,7 +206,7 @@ void TextFieldInputType::handleBlurEvent()
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 {
-    return (event->type() == eventNames().textInputEvent && is<TextEvent>(event) && downcast<TextEvent>(*event).data() == "\n")
+    return (event->type() == eventNames().textInputEvent && is<TextEvent>(*event) && downcast<TextEvent>(*event).data() == "\n")
         || InputType::shouldSubmitImplicitly(event);
 }
 

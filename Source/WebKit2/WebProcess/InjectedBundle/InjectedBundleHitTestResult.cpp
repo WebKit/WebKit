@@ -114,7 +114,7 @@ BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
     return BundleHitTestResultMediaTypeNone;
 #else
     WebCore::Node* node = m_hitTestResult.innerNonSharedNode();
-    if (!is<Element>(node))
+    if (!is<Element>(*node))
         return BundleHitTestResultMediaTypeNone;
     
     if (!downcast<Element>(*node).isMediaElement())

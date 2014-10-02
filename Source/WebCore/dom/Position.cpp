@@ -291,7 +291,7 @@ Position::AnchorType Position::anchorTypeForLegacyEditingPosition(Node* anchorNo
 Element* Position::element() const
 {
     Node* node = anchorNode();
-    while (node && !is<Element>(node))
+    while (node && !is<Element>(*node))
         node = node->parentNode();
     return downcast<Element>(node);
 }
@@ -529,7 +529,7 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
         return true;
         
     // Don't include inline tables.
-    if (is<HTMLTableElement>(node))
+    if (is<HTMLTableElement>(*node))
         return false;
     
     // There is a VisiblePosition inside an empty inline-block container.
@@ -950,7 +950,7 @@ bool Position::isCandidate() const
 
 bool Position::isRenderedCharacter() const
 {
-    if (isNull() || !is<Text>(deprecatedNode()))
+    if (!is<Text>(deprecatedNode()))
         return false;
         
     RenderText* renderer = downcast<Text>(*deprecatedNode()).renderer();
@@ -1062,7 +1062,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
         return Position();
 
     Position prev = previousCharacterPosition(affinity);
-    if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && is<Text>(prev.deprecatedNode())) {
+    if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && is<Text>(*prev.deprecatedNode())) {
         String string = downcast<Text>(*prev.deprecatedNode()).data();
         UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))

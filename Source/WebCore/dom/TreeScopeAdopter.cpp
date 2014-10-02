@@ -60,7 +60,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
                 rareData->nodeLists()->adoptTreeScope();
         }
 
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
 
         if (node->hasSyntheticAttrChildNodes()) {
@@ -124,7 +124,7 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
     if (oldDocument)
         oldDocument->moveNodeIteratorsToNewDocument(node, newDocument);
 
-    if (is<ShadowRoot>(node))
+    if (is<ShadowRoot>(*node))
         downcast<ShadowRoot>(*node).setDocumentScope(newDocument);
 
 #ifndef NDEBUG

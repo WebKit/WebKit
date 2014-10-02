@@ -3700,9 +3700,6 @@ void WebPage::stopSpeaking()
 RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 {
     Document* document = coreFrame->document();
-    if (!document)
-        return nullptr;
-
     if (!is<PluginDocument>(document))
         return nullptr;
 
@@ -4622,7 +4619,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             inflatedPluginRect.inflateY(yOffset);
 
             if (element != &plugInImageElement) {
-                if (!(is<HTMLImageElement>(element)
+                if (!(is<HTMLImageElement>(*element)
                     && inflatedPluginRect.contains(elementRectRelativeToTopDocument)
                     && elementRectRelativeToTopDocument.width() > pluginRenderBox.width() * minimumOverlappingImageToPluginDimensionScale
                     && elementRectRelativeToTopDocument.height() > pluginRenderBox.height() * minimumOverlappingImageToPluginDimensionScale))

@@ -250,7 +250,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     RefPtr<Element> spanNode = createTabSpanElement(document());
     
     // place it
-    if (!is<Text>(node)) {
+    if (!is<Text>(*node)) {
         insertNodeAt(spanNode.get(), insertPos);
     } else {
         RefPtr<Text> textNode = downcast<Text>(node);

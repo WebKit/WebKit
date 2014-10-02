@@ -236,7 +236,7 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
 
         // Respect xlink:href, take attributes from referenced element
         Element* refElement = SVGURIReference::targetElementFromIRIString(current->href(), document());
-        if (refElement && is<SVGPatternElement>(refElement)) {
+        if (is<SVGPatternElement>(refElement)) {
             current = downcast<SVGPatternElement>(refElement);
 
             // Cycle detection

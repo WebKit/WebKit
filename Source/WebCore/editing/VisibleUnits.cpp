@@ -767,7 +767,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    return is<Text>(startNode) ? Position(downcast<Text>(startNode), toInlineTextBox(startBox)->start())
+    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), toInlineTextBox(startBox)->start())
         : positionBeforeNode(startNode);
 }
 
@@ -838,7 +838,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     Position pos;
     if (endNode->hasTagName(brTag))
         pos = positionBeforeNode(endNode);
-    else if (endBox->isInlineTextBox() && is<Text>(endNode)) {
+    else if (endBox->isInlineTextBox() && is<Text>(*endNode)) {
         InlineTextBox* endTextBox = toInlineTextBox(endBox);
         int endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
@@ -1143,7 +1143,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
 
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
-            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(n));
+            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
                 StringImpl& text = *toRenderText(r)->text();
@@ -1226,7 +1226,7 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
-            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(n));
+            ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
                 StringImpl& text = *toRenderText(r)->text();

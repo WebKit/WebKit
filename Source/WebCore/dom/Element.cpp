@@ -2195,12 +2195,12 @@ AtomicString Element::computeInheritedLanguage() const
     // The language property is inherited, so we iterate over the parents to find the first language.
     const Node* currentNode = this;
     while ((currentNode = currentNode->parentNode())) {
-        if (is<Element>(currentNode)) {
+        if (is<Element>(*currentNode)) {
             if (const ElementData* elementData = downcast<Element>(*currentNode).elementData()) {
                 if (const Attribute* attribute = elementData->findLanguageAttribute())
                     return attribute->value();
             }
-        } else if (is<Document>(currentNode)) {
+        } else if (is<Document>(*currentNode)) {
             // checking the MIME content-language
             return downcast<Document>(*currentNode).contentLanguage();
         }

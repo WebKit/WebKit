@@ -156,7 +156,7 @@ static HTMLElement* enclosingDeletableElement(const VisibleSelection& selection)
         return nullptr;
 
     Node* element = enclosingNodeOfType(firstPositionInNode(container), &isDeletableElement);
-    return element && is<HTMLElement>(element) ? downcast<HTMLElement>(element) : nullptr;
+    return is<HTMLElement>(element) ? downcast<HTMLElement>(element) : nullptr;
 }
 
 void DeleteButtonController::respondToChangedSelection(const VisibleSelection& oldSelection)

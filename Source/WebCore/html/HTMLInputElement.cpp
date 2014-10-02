@@ -1045,21 +1045,22 @@ void HTMLInputElement::didDispatchClickEvent(Event& event, const InputElementCli
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
-    if (is<MouseEvent>(evt) && evt->type() == eventNames().clickEvent && downcast<MouseEvent>(*evt).button() == LeftButton) {
+    ASSERT(evt);
+    if (is<MouseEvent>(*evt) && evt->type() == eventNames().clickEvent && downcast<MouseEvent>(*evt).button() == LeftButton) {
         m_inputType->handleClickEvent(downcast<MouseEvent>(evt));
         if (evt->defaultHandled())
             return;
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (is<TouchEvent>(evt)) {
+    if (is<TouchEvent>(*evt)) {
         m_inputType->handleTouchEvent(downcast<TouchEvent>(evt));
         if (evt->defaultHandled())
             return;
     }
 #endif
 
-    if (is<KeyboardEvent>(evt) && evt->type() == eventNames().keydownEvent) {
+    if (is<KeyboardEvent>(*evt) && evt->type() == eventNames().keydownEvent) {
         m_inputType->handleKeydownEvent(downcast<KeyboardEvent>(evt));
         if (evt->defaultHandled())
             return;
@@ -1086,7 +1087,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (is<KeyboardEvent>(evt)) {
+    if (is<KeyboardEvent>(*evt)) {
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*evt);
         if (keyboardEvent.type() == eventNames().keypressEvent) {
             m_inputType->handleKeypressEvent(&keyboardEvent);
@@ -1118,10 +1119,10 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         return;
     }
 
-    if (is<BeforeTextInsertedEvent>(evt))
+    if (is<BeforeTextInsertedEvent>(*evt))
         m_inputType->handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(evt));
 
-    if (is<MouseEvent>(evt) && evt->type() == eventNames().mousedownEvent) {
+    if (is<MouseEvent>(*evt) && evt->type() == eventNames().mousedownEvent) {
         m_inputType->handleMouseDownEvent(downcast<MouseEvent>(evt));
         if (evt->defaultHandled())
             return;
@@ -1522,7 +1523,7 @@ HTMLDataListElement* HTMLInputElement::dataList() const
         return nullptr;
 
     Element* element = treeScope().getElementById(fastGetAttribute(listAttr));
-    if (!element || !is<HTMLDataListElement>(element))
+    if (!is<HTMLDataListElement>(element))
         return nullptr;
 
     return downcast<HTMLDataListElement>(element);

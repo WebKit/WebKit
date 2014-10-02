@@ -298,7 +298,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 #endif
 
         resetInsertionModeAppropriately();
-        m_tree.setForm(!contextElement || is<HTMLFormElement>(contextElement) ? downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(*contextElement));
+        m_tree.setForm(!contextElement || is<HTMLFormElement>(*contextElement) ? downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(*contextElement));
     }
 }
 
@@ -869,7 +869,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         return;
     }
     if (token->name() == optgroupTag || token->name() == optionTag) {
-        if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
+        if (is<HTMLOptionElement>(*m_tree.currentStackItem()->node())) {
             AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
             processEndTag(&endOption);
         }
@@ -1360,7 +1360,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optionTag) {
-            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(*m_tree.currentStackItem()->node())) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(&endOption);
             }
@@ -1368,11 +1368,11 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optgroupTag) {
-            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(*m_tree.currentStackItem()->node())) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(&endOption);
             }
-            if (is<HTMLOptGroupElement>(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptGroupElement>(*m_tree.currentStackItem()->node())) {
                 AtomicHTMLToken endOptgroup(HTMLToken::EndTag, optgroupTag.localName());
                 processEndTag(&endOptgroup);
             }
@@ -1629,7 +1629,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
                 while (item->node() != m_tree.openElements()->rootNode() && !item->hasTagName(templateTag)) {
                     nodeRecord = nodeRecord->next();
                     item = nodeRecord->stackItem();
-                    if (is<HTMLTableElement>(item->node()))
+                    if (is<HTMLTableElement>(*item->node()))
                         return setInsertionMode(InsertionMode::InSelectInTable);
                 }
             }
@@ -1647,7 +1647,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
         if (item->hasTagName(colgroupTag)) {
             return setInsertionMode(InsertionMode::InColumnGroup);
         }
-        if (is<HTMLTableElement>(item->node()))
+        if (is<HTMLTableElement>(*item->node()))
             return setInsertionMode(InsertionMode::InTable);
         if (item->hasTagName(headTag)) {
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -2234,9 +2234,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
     case InsertionMode::InSelect:
         ASSERT(insertionMode() == InsertionMode::InSelect || insertionMode() == InsertionMode::InSelectInTable);
         if (token->name() == optgroupTag) {
-            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node()) && m_tree.oneBelowTop() && is<HTMLOptGroupElement>(m_tree.oneBelowTop()->node()))
+            if (is<HTMLOptionElement>(*m_tree.currentStackItem()->node()) && m_tree.oneBelowTop() && is<HTMLOptGroupElement>(*m_tree.oneBelowTop()->node()))
                 processFakeEndTag(optionTag);
-            if (is<HTMLOptGroupElement>(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptGroupElement>(*m_tree.currentStackItem()->node())) {
                 m_tree.openElements()->pop();
                 return;
             }
@@ -2244,7 +2244,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             return;
         }
         if (token->name() == optionTag) {
-            if (is<HTMLOptionElement>(m_tree.currentStackItem()->node())) {
+            if (is<HTMLOptionElement>(*m_tree.currentStackItem()->node())) {
                 m_tree.openElements()->pop();
                 return;
             }
@@ -2486,7 +2486,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InsertionMode::InTable || insertionMode() == InsertionMode::InTableBody || insertionMode() == InsertionMode::InRow);
         ASSERT(m_pendingTableCharacters.isEmpty());
         if (m_tree.currentStackItem()->isElementNode()
-            && (is<HTMLTableElement>(m_tree.currentStackItem()->node())
+            && (is<HTMLTableElement>(*m_tree.currentStackItem()->node())
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::tbodyTag)
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::tfootTag)
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::theadTag)

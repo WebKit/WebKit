@@ -301,7 +301,7 @@ Class kitClass(WebCore::Node* impl)
 {
     switch (impl->nodeType()) {
         case WebCore::Node::ELEMENT_NODE:
-            if (is<HTMLElement>(impl))
+            if (is<HTMLElement>(*impl))
                 return WebCore::elementClass(downcast<HTMLElement>(*impl).tagQName(), [DOMHTMLElement class]);
             return [DOMElement class];
         case WebCore::Node::ATTRIBUTE_NODE:

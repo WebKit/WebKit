@@ -284,7 +284,7 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
 void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
 {
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    if (!event || !is<MouseEvent>(event))
+    if (!is<MouseEvent>(event))
         return;
 
     Frame* frame = event->target()->toNode()->document().frame();

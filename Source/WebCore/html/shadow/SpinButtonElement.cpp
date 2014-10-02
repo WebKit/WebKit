@@ -67,7 +67,7 @@ void SpinButtonElement::willDetachRenderers()
 
 void SpinButtonElement::defaultEventHandler(Event* event)
 {
-    if (!is<MouseEvent>(event)) {
+    if (!is<MouseEvent>(*event)) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -146,7 +146,7 @@ void SpinButtonElement::forwardEvent(Event* event)
     if (!renderBox())
         return;
 
-    if (!is<WheelEvent>(event))
+    if (!is<WheelEvent>(*event))
         return;
 
     if (!m_spinButtonOwner)

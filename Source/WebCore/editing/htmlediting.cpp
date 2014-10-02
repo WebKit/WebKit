@@ -316,7 +316,7 @@ bool isInline(const Node* node)
 Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
     Node* enclosingNode = enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule);
-    return enclosingNode && is<Element>(enclosingNode) ? downcast<Element>(enclosingNode) : nullptr;
+    return is<Element>(enclosingNode) ? downcast<Element>(enclosingNode) : nullptr;
 }
 
 TextDirection directionOfEnclosingBlock(const Position& position)
@@ -550,7 +550,7 @@ Element* enclosingElementWithTag(const Position& position, const QualifiedName& 
     for (Node* node = position.deprecatedNode(); node; node = node->parentNode()) {
         if (root && !node->hasEditableStyle())
             continue;
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
         if (downcast<Element>(*node).hasTagName(tagName))
             return downcast<Element>(node);
@@ -638,7 +638,7 @@ Element* enclosingAnchorElement(const Position& p)
         return nullptr;
 
     for (Node* node = p.deprecatedNode(); node; node = node->parentNode()) {
-        if (is<Element>(node) && node->isLink())
+        if (is<Element>(*node) && node->isLink())
             return downcast<Element>(node);
     }
     return nullptr;
@@ -652,7 +652,7 @@ HTMLElement* enclosingList(Node* node)
     Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     for (ContainerNode* ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))
+        if (is<HTMLUListElement>(*ancestor) || is<HTMLOListElement>(*ancestor))
             return downcast<HTMLElement>(ancestor);
         if (ancestor == root)
             return nullptr;
@@ -1055,7 +1055,7 @@ bool lineBreakExistsAtPosition(const Position& position)
     if (!position.anchorNode()->renderer())
         return false;
     
-    if (!is<Text>(position.anchorNode()) || !position.anchorNode()->renderer()->style().preserveNewline())
+    if (!is<Text>(*position.anchorNode()) || !position.anchorNode()->renderer()->style().preserveNewline())
         return false;
     
     Text& textNode = downcast<Text>(*position.anchorNode());
@@ -1184,15 +1184,15 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
 
 bool areIdenticalElements(const Node* first, const Node* second)
 {
-    if (!is<Element>(first) || !is<Element>(second))
+    if (!is<Element>(*first) || !is<Element>(*second))
         return false;
 
-    const Element* firstElement = downcast<Element>(first);
-    const Element* secondElement = downcast<Element>(second);
-    if (!firstElement->hasTagName(secondElement->tagQName()))
+    const Element& firstElement = downcast<Element>(*first);
+    const Element& secondElement = downcast<Element>(*second);
+    if (!firstElement.hasTagName(secondElement.tagQName()))
         return false;
 
-    return firstElement->hasEquivalentAttributes(secondElement);
+    return firstElement.hasEquivalentAttributes(&secondElement);
 }
 
 bool isNonTableCellHTMLBlockElement(const Node* node)
@@ -1200,7 +1200,7 @@ bool isNonTableCellHTMLBlockElement(const Node* node)
     return node->hasTagName(listingTag)
         || node->hasTagName(olTag)
         || node->hasTagName(preTag)
-        || is<HTMLTableElement>(node)
+        || is<HTMLTableElement>(*node)
         || node->hasTagName(ulTag)
         || node->hasTagName(xmpTag)
         || node->hasTagName(h1Tag)
@@ -1251,7 +1251,7 @@ Element* deprecatedEnclosingBlockFlowElement(Node* node)
     if (isBlockFlowElement(node))
         return downcast<Element>(node);
     while ((node = node->parentNode())) {
-        if (isBlockFlowElement(node) || is<HTMLBodyElement>(node))
+        if (isBlockFlowElement(node) || is<HTMLBodyElement>(*node))
             return downcast<Element>(node);
     }
     return nullptr;

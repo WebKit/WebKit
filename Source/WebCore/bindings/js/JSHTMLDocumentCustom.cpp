@@ -73,7 +73,7 @@ EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, JSObject* slotBase, E
     }
 
     Element* element = document.documentNamedItem(*atomicPropertyName);
-    if (UNLIKELY(is<HTMLIFrameElement>(element))) {
+    if (UNLIKELY(is<HTMLIFrameElement>(*element))) {
         if (Frame* frame = downcast<HTMLIFrameElement>(*element).contentFrame())
             return JSValue::encode(toJS(exec, frame));
     }

@@ -400,7 +400,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
         } else if (treeScope.hasElementWithName(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithName(name)) {
                 candidate = treeScope.getElementByName(name);
-                if (candidate && type() == DocAll && (!is<HTMLElement>(candidate) || !nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*candidate))))
+                if (candidate && type() == DocAll && (!is<HTMLElement>(*candidate) || !nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*candidate))))
                     candidate = nullptr;
             }
         } else
@@ -443,7 +443,7 @@ void HTMLCollection::updateNamedElementCache() const
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
             cache->appendIdCache(idAttrVal, element);
-        if (!is<HTMLElement>(element))
+        if (!is<HTMLElement>(*element))
             continue;
         const AtomicString& nameAttrVal = element->getNameAttribute();
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*element))))

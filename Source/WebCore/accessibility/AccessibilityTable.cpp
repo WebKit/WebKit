@@ -96,7 +96,7 @@ HTMLTableElement* AccessibilityTable::tableElement() const
         return nullptr;
     
     RenderTable* table = toRenderTable(m_renderer);
-    if (table->element() && is<HTMLTableElement>(table->element()))
+    if (is<HTMLTableElement>(table->element()))
         return downcast<HTMLTableElement>(table->element());
     
     // If the table has a display:table-row-group, then the RenderTable does not have a pointer to it's HTMLTableElement.
@@ -106,7 +106,7 @@ HTMLTableElement* AccessibilityTable::tableElement() const
         return nullptr;
     
     Element* actualTable = firstBody->element()->parentElement();
-    if (!actualTable || !is<HTMLTableElement>(actualTable))
+    if (!is<HTMLTableElement>(actualTable))
         return nullptr;
     
     return downcast<HTMLTableElement>(actualTable);
@@ -218,7 +218,7 @@ bool AccessibilityTable::isDataTable() const
                 headersInFirstColumnCount++;
             
             // In this case, the developer explicitly assigned a "data" table attribute.
-            if (is<HTMLTableCellElement>(cellElement)) {
+            if (is<HTMLTableCellElement>(*cellElement)) {
                 HTMLTableCellElement& tableCellElement = downcast<HTMLTableCellElement>(*cellElement);
                 if (!tableCellElement.headers().isEmpty() || !tableCellElement.abbr().isEmpty()
                     || !tableCellElement.axis().isEmpty() || !tableCellElement.scope().isEmpty())
@@ -328,7 +328,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility() const
     // Gtk+ ATs expect all tables to be exposed as tables.
 #if PLATFORM(GTK) || PLATFORM(EFL)
     Element* tableNode = toRenderTable(m_renderer)->element();
-    return tableNode && is<HTMLTableElement>(tableNode);
+    return is<HTMLTableElement>(tableNode);
 #endif
 
     return isDataTable();
@@ -607,7 +607,7 @@ String AccessibilityTable::title() const
     
     // see if there is a caption
     Node* tableElement = m_renderer->node();
-    if (tableElement && is<HTMLTableElement>(tableElement)) {
+    if (is<HTMLTableElement>(tableElement)) {
         if (HTMLTableCaptionElement* caption = downcast<HTMLTableElement>(*tableElement).caption())
             title = caption->innerText();
     }

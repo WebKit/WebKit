@@ -545,10 +545,10 @@ bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const Rend
     if (!child.node())
         return true;
 
-    ASSERT(is<Element>(child.node()));
+    ASSERT(is<Element>(*child.node()));
 
     Node* originalParent = NodeRenderingTraversal::parent(child.node());
-    if (!originalParent || !is<Element>(originalParent) || !originalParent->renderer())
+    if (!is<Element>(originalParent) || !originalParent->renderer())
         return true;
 
     return downcast<Element>(*originalParent).renderer()->isChildAllowed(child, style);

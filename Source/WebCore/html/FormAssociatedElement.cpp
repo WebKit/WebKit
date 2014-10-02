@@ -98,7 +98,7 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
         // treeScope().getElementById() over the given element.
         HTMLFormElement* newForm = nullptr;
         Element* newFormCandidate = element->treeScope().getElementById(formId);
-        if (newFormCandidate && is<HTMLFormElement>(newFormCandidate))
+        if (is<HTMLFormElement>(newFormCandidate))
             newForm = downcast<HTMLFormElement>(newFormCandidate);
         return newForm;
     }

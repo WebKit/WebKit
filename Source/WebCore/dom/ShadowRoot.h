@@ -105,7 +105,7 @@ inline ShadowRoot* Node::shadowRoot() const
 inline ContainerNode* Node::parentOrShadowHostNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    if (is<ShadowRoot>(this))
+    if (is<ShadowRoot>(*this))
         return downcast<ShadowRoot>(*this).hostElement();
     return parentNode();
 }

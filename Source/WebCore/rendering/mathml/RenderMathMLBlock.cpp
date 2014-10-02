@@ -55,7 +55,7 @@ RenderMathMLBlock::RenderMathMLBlock(Document& document, PassRef<RenderStyle> st
 
 bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.node() && is<Element>(*child.node());
+    return is<Element>(child.node());
 }
 
 RenderPtr<RenderMathMLBlock> RenderMathMLBlock::createAnonymousMathMLBlock()

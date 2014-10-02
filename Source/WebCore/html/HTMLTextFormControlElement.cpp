@@ -561,9 +561,9 @@ String HTMLTextFormControlElement::innerTextValue() const
 
     StringBuilder result;
     for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
-        if (is<HTMLBRElement>(node))
+        if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
-        else if (is<Text>(node))
+        else if (is<Text>(*node))
             result.append(downcast<Text>(*node).data());
     }
     return finishText(result);
@@ -579,7 +579,7 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
                 return positionBeforeNode(node);
             remainingCharactersToMoveForward--;
             lastBrOrText = node;
-        } else if (is<Text>(node)) {
+        } else if (is<Text>(*node)) {
             Text& text = downcast<Text>(*node);
             if (remainingCharactersToMoveForward < text.length())
                 return Position(&text, remainingCharactersToMoveForward);
@@ -607,13 +607,13 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     ASSERT(innerText->contains(startNode));
 
     for (Node* node = startNode; node; node = NodeTraversal::previous(node, innerText)) {
-        if (is<Text>(node)) {
+        if (is<Text>(*node)) {
             unsigned length = downcast<Text>(*node).length();
             if (node == passedPosition.containerNode())
                 index += std::min<unsigned>(length, passedPosition.offsetInContainerNode());
             else
                 index += length;
-        } else if (is<HTMLBRElement>(node))
+        } else if (is<HTMLBRElement>(*node))
             ++index;
     }
 
@@ -685,9 +685,9 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     StringBuilder result;
     for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
-        if (is<HTMLBRElement>(node))
+        if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
-        else if (is<Text>(node)) {
+        else if (is<Text>(*node)) {
             String data = downcast<Text>(*node).data();
             unsigned length = data.length();
             unsigned position = 0;

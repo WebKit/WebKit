@@ -274,7 +274,7 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaTimeline::create(RenderObject*
 String AccessibilityMediaTimeline::valueDescription() const
 {
     Node* node = m_renderer->node();
-    if (!is<HTMLInputElement>(node))
+    if (!is<HTMLInputElement>(*node))
         return String();
 
     float time = downcast<HTMLInputElement>(*node).value().toFloat();

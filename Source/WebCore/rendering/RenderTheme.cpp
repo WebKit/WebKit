@@ -805,7 +805,7 @@ bool RenderTheme::isIndeterminate(const RenderObject& o) const
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return true;
     return !downcast<Element>(*node).isDisabledFormControl();
 }
@@ -813,7 +813,7 @@ bool RenderTheme::isEnabled(const RenderObject& renderer) const
 bool RenderTheme::isFocused(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return false;
 
     Element* focusDelegate = downcast<Element>(*node).focusDelegate();
@@ -824,7 +824,7 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
 
 bool RenderTheme::isPressed(const RenderObject& renderer) const
 {
-    if (!renderer.node() || !is<Element>(renderer.node()))
+    if (!is<Element>(renderer.node()))
         return false;
     return downcast<Element>(*renderer.node()).active();
 }
@@ -832,7 +832,7 @@ bool RenderTheme::isPressed(const RenderObject& renderer) const
 bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return false;
     Element& element = downcast<Element>(*node);
     if (!element.active() || !element.isSpinButtonElement())
@@ -843,7 +843,7 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const
 bool RenderTheme::isReadOnlyControl(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<HTMLFormControlElement>(node))
+    if (!is<HTMLFormControlElement>(node))
         return false;
     return !downcast<Element>(*node).matchesReadWritePseudoClass();
 }
@@ -851,7 +851,7 @@ bool RenderTheme::isReadOnlyControl(const RenderObject& renderer) const
 bool RenderTheme::isHovered(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return false;
     if (!downcast<Element>(*node).isSpinButtonElement())
         return downcast<Element>(*node).hovered();
@@ -862,7 +862,7 @@ bool RenderTheme::isHovered(const RenderObject& renderer) const
 bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!node || !is<Element>(node) || !downcast<Element>(*node).isSpinButtonElement())
+    if (!is<Element>(node) || !downcast<Element>(*node).isSpinButtonElement())
         return false;
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->upDownState() == SpinButtonElement::Up;
@@ -1035,7 +1035,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     paintInfo.context->setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
-        ASSERT(is<HTMLOptionElement>(node));
+        ASSERT(is<HTMLOptionElement>(*node));
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
         String value = optionElement.value();
         if (!input->isValidValue(value))

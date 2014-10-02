@@ -705,7 +705,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
@@ -715,7 +715,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element* element)
 
 void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
@@ -725,7 +725,7 @@ void WebEditorClient::textFieldDidEndEditing(Element* element)
 
 void WebEditorClient::textDidChangeInTextField(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
 #if !PLATFORM(IOS)
@@ -763,7 +763,7 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
 
 bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return NO;
 
     DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
@@ -775,7 +775,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
 
 void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
@@ -786,7 +786,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    if (!is<HTMLTextAreaElement>(element))
+    if (!is<HTMLTextAreaElement>(*element))
         return;
 
     DOMHTMLTextAreaElement* textAreaElement = kit(downcast<HTMLTextAreaElement>(element));

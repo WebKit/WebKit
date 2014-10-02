@@ -60,7 +60,7 @@ int HTMLTableRowElement::rowIndex() const
     if (!table)
         return -1;
     table = table->parentNode();
-    if (!table || !is<HTMLTableElement>(table))
+    if (!is<HTMLTableElement>(table))
         return -1;
 
     // To match Firefox, the row indices work like this:

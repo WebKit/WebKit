@@ -364,7 +364,7 @@ bool HTMLElement::matchesReadWritePseudoClass() const
 {
     const Element* currentElement = this;
     do {
-        if (is<HTMLElement>(currentElement)) {
+        if (is<HTMLElement>(*currentElement)) {
             switch (contentEditableType(downcast<HTMLElement>(*currentElement))) {
             case ContentEditableType::True:
             case ContentEditableType::PlaintextOnly:
@@ -436,7 +436,7 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 static void mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 {
     Node* next = node.nextSibling();
-    if (!next || !is<Text>(next))
+    if (!is<Text>(next))
         return;
 
     Ref<Text> textNode(node);
@@ -450,7 +450,7 @@ static void mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 {
     Element* p = parentElement();
-    if (!p || !is<HTMLElement>(p)) {
+    if (!is<HTMLElement>(p)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -464,9 +464,9 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
       
     parent->replaceChild(fragment.release(), this, ec);
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && node && is<Text>(*node))
+    if (!ec && is<Text>(node.get()))
         mergeWithNextTextNode(downcast<Text>(*node), ec);
-    if (!ec && prev && is<Text>(*prev))
+    if (!ec && is<Text>(prev.get()))
         mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
@@ -597,9 +597,9 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
     parent->replaceChild(newChild.release(), this, ec);
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && node && is<Text>(*node))
+    if (!ec && is<Text>(node.get()))
         mergeWithNextTextNode(downcast<Text>(*node), ec);
-    if (!ec && prev && is<Text>(*prev))
+    if (!ec && is<Text>(prev.get()))
         mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
@@ -642,7 +642,7 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
     }
 
     Node* returnValue = insertAdjacent(where, newChild, ec);
-    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || is<Element>(returnValue));
+    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || is<Element>(*returnValue));
     return downcast<Element>(returnValue); 
 }
 
@@ -651,11 +651,11 @@ static Element* contextElementForInsertion(const String& where, Element* element
 {
     if (equalIgnoringCase(where, "beforeBegin") || equalIgnoringCase(where, "afterEnd")) {
         ContainerNode* parent = element->parentNode();
-        if (parent && !is<Element>(parent)) {
+        if (parent && !is<Element>(*parent)) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return nullptr;
         }
-        ASSERT_WITH_SECURITY_IMPLICATION(!parent || is<Element>(parent));
+        ASSERT_WITH_SECURITY_IMPLICATION(!parent || is<Element>(*parent));
         return downcast<Element>(parent);
     }
     if (equalIgnoringCase(where, "afterBegin") || equalIgnoringCase(where, "beforeEnd"))
@@ -934,13 +934,13 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     while (node) {
         // Skip bdi, script, style and text form controls.
         if (equalIgnoringCase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag) 
-            || (is<Element>(node) && downcast<Element>(*node).isTextFormControl())) {
+            || (is<Element>(*node) && downcast<Element>(*node).isTextFormControl())) {
             node = NodeTraversal::nextSkippingChildren(node, this);
             continue;
         }
 
         // Skip elements with valid dir attribute
-        if (is<Element>(node)) {
+        if (is<Element>(*node)) {
             AtomicString dirAttributeValue = downcast<Element>(*node).fastGetAttribute(dirAttr);
             if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalIgnoringCase(dirAttributeValue, "auto")) {
                 node = NodeTraversal::nextSkippingChildren(node, this);
@@ -968,7 +968,7 @@ void HTMLElement::dirAttributeChanged(const AtomicString& value)
 {
     Element* parent = parentElement();
 
-    if (parent && is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
+    if (is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalIgnoringCase(value, "auto"))

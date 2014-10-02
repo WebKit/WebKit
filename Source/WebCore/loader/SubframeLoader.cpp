@@ -393,7 +393,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
     pluginElement.subframeLoaderWillCreatePlugIn(url);
 
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
-    bool loadManually = is<PluginDocument>(document()) && !m_containsPlugins && downcast<PluginDocument>(*document()).shouldLoadPluginManually();
+    bool loadManually = is<PluginDocument>(*document()) && !m_containsPlugins && downcast<PluginDocument>(*document()).shouldLoadPluginManually();
 
 #if PLATFORM(IOS)
     // On iOS, we only tell the plugin to be in full page mode if the containing plugin document is the top level document.

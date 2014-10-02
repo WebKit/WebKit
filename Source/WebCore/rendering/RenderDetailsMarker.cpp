@@ -144,9 +144,9 @@ bool RenderDetailsMarker::isOpen() const
     for (RenderObject* renderer = parent(); renderer; renderer = renderer->parent()) {
         if (!renderer->node())
             continue;
-        if (is<HTMLDetailsElement>(renderer->node()))
+        if (is<HTMLDetailsElement>(*renderer->node()))
             return !downcast<HTMLDetailsElement>(*renderer->node()).getAttribute(openAttr).isNull();
-        if (is<HTMLInputElement>(renderer->node()))
+        if (is<HTMLInputElement>(*renderer->node()))
             return true;
     }
 

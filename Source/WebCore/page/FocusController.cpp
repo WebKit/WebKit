@@ -82,7 +82,7 @@ ContainerNode* FocusNavigationScope::rootNode() const
 Element* FocusNavigationScope::owner() const
 {
     ContainerNode* root = rootNode();
-    if (is<ShadowRoot>(root))
+    if (is<ShadowRoot>(*root))
         return downcast<ShadowRoot>(*root).hostElement();
     if (Frame* frame = root->document().frame())
         return frame->ownerElement();
@@ -228,7 +228,7 @@ Element* FocusController::findFocusableElementDescendingDownIntoFrameDocument(Fo
     // The node we found might be a HTMLFrameOwnerElement, so descend down the tree until we find either:
     // 1) a focusable node, or
     // 2) the deepest-nested HTMLFrameOwnerElement.
-    while (element && is<HTMLFrameOwnerElement>(element)) {
+    while (is<HTMLFrameOwnerElement>(element)) {
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
         if (!owner.contentFrame())
             break;
@@ -350,7 +350,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
 Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, FocusNavigationScope scope, Node* currentNode, KeyboardEvent* event)
 {
-    ASSERT(!currentNode || !is<Element>(currentNode) || !isNonFocusableShadowHost(*downcast<Element>(currentNode), *event));
+    ASSERT(!is<Element>(currentNode) || !isNonFocusableShadowHost(*downcast<Element>(currentNode), *event));
     Element* found;
     if (currentNode && direction == FocusDirectionForward && isFocusableShadowHost(*currentNode, *event)) {
         Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::focusNavigationScopeOwnedByShadowHost(currentNode), 0, event);
@@ -410,7 +410,7 @@ Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex
     // Search is inclusive of start
     using namespace NodeRenderingTraversal;
     for (Node* node = start; node; node = direction == FocusDirectionForward ? nextInScope(node) : previousInScope(node)) {
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
         if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) == tabIndex)
@@ -425,7 +425,7 @@ static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, Keyboa
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Element* winner = nullptr;
     for (Node* node = start; node; node = NodeRenderingTraversal::nextInScope(node)) {
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
         if (shouldVisit(element, event) && element.tabIndex() > tabIndex && element.tabIndex() < winningTabIndex) {
@@ -443,7 +443,7 @@ static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, Keyb
     int winningTabIndex = 0;
     Element* winner = nullptr;
     for (Node* node = start; node; node = NodeRenderingTraversal::previousInScope(node)) {
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
         int currentTabIndex = adjustedTabIndex(element, event);
@@ -464,7 +464,7 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
         if (tabIndex < 0) {
             for (Node* node = nextInScope(start); node; node = nextInScope(node)) {
-                if (!is<Element>(node))
+                if (!is<Element>(*node))
                     continue;
                 Element& element = downcast<Element>(*node);
                 if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) >= 0)
@@ -516,7 +516,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
         for (Node* node = startingNode; node; node = previousInScope(node)) {
-            if (!is<Element>(node))
+            if (!is<Element>(*node))
                 continue;
             Element& element = downcast<Element>(*node);
             if (shouldVisit(element, *event) && adjustedTabIndex(element, *event) >= 0)
@@ -575,7 +575,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
                 return;
 
             if (Node* shadowAncestorNode = root->deprecatedShadowAncestorNode()) {
-                if (!is<HTMLInputElement>(shadowAncestorNode) && !is<HTMLTextAreaElement>(shadowAncestorNode))
+                if (!is<HTMLInputElement>(*shadowAncestorNode) && !is<HTMLTextAreaElement>(*shadowAncestorNode))
                     return;
             }
         }
@@ -876,7 +876,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     Element* focusedElement = focusedDocument->focusedElement();
     Node* container = focusedDocument;
 
-    if (is<Document>(container))
+    if (is<Document>(*container))
         downcast<Document>(*container).updateLayoutIgnorePendingStylesheets();
 
     // Figure out the starting rect.
@@ -885,7 +885,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         if (!hasOffscreenRect(focusedElement)) {
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, focusedElement);
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
-        } else if (is<HTMLAreaElement>(focusedElement)) {
+        } else if (is<HTMLAreaElement>(*focusedElement)) {
             HTMLAreaElement& area = downcast<HTMLAreaElement>(*focusedElement);
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement());
             startingRect = virtualRectForAreaElementAndDirection(&area, direction);
@@ -900,7 +900,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         consumed = advanceFocusDirectionallyInContainer(container, startingRect, direction, event);
         startingRect = nodeRectInAbsoluteCoordinates(container, true /* ignore border */);
         container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, container);
-        if (container && is<Document>(container))
+        if (is<Document>(container))
             downcast<Document>(*container).updateLayoutIgnorePendingStylesheets();
     } while (!consumed && container);
 

@@ -104,9 +104,9 @@ void BreakBlockquoteCommand::doApply()
     
     // startNode is the first node that we need to move to the new blockquote.
     Node* startNode = pos.deprecatedNode();
-        
+    ASSERT(startNode);
     // Split at pos if in the middle of a text node.
-    if (is<Text>(startNode)) {
+    if (is<Text>(*startNode)) {
         Text& textNode = downcast<Text>(*startNode);
         if ((unsigned)pos.deprecatedEditingOffset() >= textNode.length()) {
             startNode = NodeTraversal::next(startNode);

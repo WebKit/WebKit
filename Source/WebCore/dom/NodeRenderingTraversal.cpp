@@ -52,7 +52,7 @@ static inline bool nodeCanBeDistributed(const Node* node)
     if (parent->isShadowRoot())
         return false;
 
-    if (is<Element>(parent) && downcast<Element>(*parent).shadowRoot())
+    if (is<Element>(*parent) && downcast<Element>(*parent).shadowRoot())
         return true;
     
     return false;
@@ -132,10 +132,10 @@ static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadow
     if (!parent)
         return nullptr;
 
-    if (is<ShadowRoot>(parent))
+    if (is<ShadowRoot>(*parent))
         return shadowRootCrossing == CrossShadowRoot ? downcast<ShadowRoot>(parent)->hostElement() : parent;
 
-    if (is<InsertionPoint>(parent)) {
+    if (is<InsertionPoint>(*parent)) {
         const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*parent);
         if (insertionPoint.hasDistribution())
             return nullptr;

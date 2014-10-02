@@ -55,7 +55,7 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
     ASSERT(context);
     ASSERT(client);
 
-    if (is<WorkerGlobalScope>(context)) {
+    if (is<WorkerGlobalScope>(*context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*context);
         WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
         StringBuilder mode;

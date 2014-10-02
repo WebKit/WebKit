@@ -322,7 +322,7 @@ void FrameView::init()
 
     // Propagate the marginwidth/height and scrolling modes to the view.
     Element* ownerElement = frame().ownerElement();
-    if (ownerElement && is<HTMLFrameElementBase>(ownerElement)) {
+    if (is<HTMLFrameElementBase>(ownerElement)) {
         HTMLFrameElementBase& frameElement = downcast<HTMLFrameElementBase>(*ownerElement);
         if (frameElement.scrollingMode() == ScrollbarAlwaysOff)
             setCanHaveScrollbars(false);
@@ -1960,7 +1960,7 @@ bool FrameView::scrollToAnchor(const String& name)
     // Setting to null will clear the current target.
     frame().document()->setCSSTarget(anchorElement);
 
-    if (is<SVGDocument>(frame().document())) {
+    if (is<SVGDocument>(*frame().document())) {
         if (SVGSVGElement* svg = downcast<SVGDocument>(*frame().document()).rootElement()) {
             svg->setupInitialView(name, anchorElement);
             if (!anchorElement)

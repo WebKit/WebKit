@@ -1034,7 +1034,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (urlRect.isEmpty())
         return;
     Node* node = this->node();
-    if (!node || !node->isLink() || !is<Element>(node))
+    if (!is<Element>(node) || !node->isLink())
         return;
     const AtomicString& href = downcast<Element>(*node).getAttribute(hrefAttr);
     if (href.isNull())
@@ -1918,7 +1918,7 @@ RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
 #endif
     // Respect the image's orientation if it's being used as a full-page image or it's
     // an <img> and the setting to respect it everywhere is set.
-    return (frame().settings().shouldRespectImageOrientation() && node() && is<HTMLImageElement>(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
+    return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 bool RenderObject::hasOutlineAnnotation() const
@@ -2141,7 +2141,7 @@ void RenderObject::updateDragState(bool dragOn)
 {
     bool valueChanged = (dragOn != isDragging());
     setIsDragging(dragOn);
-    if (valueChanged && node() && (style().affectedByDrag() || (is<Element>(node()) && downcast<Element>(*node()).childrenAffectedByDrag())))
+    if (valueChanged && node() && (style().affectedByDrag() || (is<Element>(*node()) && downcast<Element>(*node()).childrenAffectedByDrag())))
         node()->setNeedsStyleRecalc();
     for (RenderObject* curr = firstChildSlow(); curr; curr = curr->nextSibling())
         curr->updateDragState(dragOn);
@@ -2234,7 +2234,7 @@ PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(const PseudoStyleRe
 
     // FIXME: This "find nearest element parent" should be a helper function.
     Node* node = this->node();
-    while (node && !is<Element>(node))
+    while (node && !is<Element>(*node))
         node = node->parentNode();
     if (!node)
         return nullptr;
@@ -2298,7 +2298,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         curr = curr->parent();
         if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
             curr = toRenderBlock(curr)->continuation();
-    } while (curr && decorations && (!quirksMode || !curr->node() || (!is<HTMLAnchorElement>(curr->node()) && !curr->node()->hasTagName(fontTag))));
+    } while (curr && decorations && (!quirksMode || !curr->node() || (!is<HTMLAnchorElement>(*curr->node()) && !curr->node()->hasTagName(fontTag))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {

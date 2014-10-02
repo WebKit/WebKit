@@ -151,7 +151,7 @@ bool SpellChecker::isCheckable(Range* range) const
     if (!range || !range->firstNode() || !range->firstNode()->renderer())
         return false;
     const Node* node = range->startContainer();
-    if (node && is<Element>(node) && !downcast<Element>(*node).isSpellCheckingEnabled())
+    if (is<Element>(node) && !downcast<Element>(*node).isSpellCheckingEnabled())
         return false;
     return true;
 }

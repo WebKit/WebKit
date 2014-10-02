@@ -110,7 +110,7 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
         return false;
 
     // FIXME: Shouldn't we also check for table caption (see |formIsTablePart| below).
-    bool parentIsTableElementPart = (parentRenderer->isTable() && is<HTMLTableElement>(parent))
+    bool parentIsTableElementPart = (parentRenderer->isTable() && is<HTMLTableElement>(*parent))
         || (parentRenderer->isTableRow() && parent->hasTagName(trTag))
         || (parentRenderer->isTableSection() && parent->hasTagName(tbodyTag))
         || (parentRenderer->isRenderTableCol() && parent->hasTagName(colTag))
@@ -182,7 +182,7 @@ void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmission
     unsigned submissionTriggerCount = 0;
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         FormAssociatedElement* formAssociatedElement = m_associatedElements[i];
-        if (!is<HTMLFormControlElement>(formAssociatedElement))
+        if (!is<HTMLFormControlElement>(*formAssociatedElement))
             continue;
         HTMLFormControlElement& formElement = downcast<HTMLFormControlElement>(*formAssociatedElement);
         if (formElement.isSuccessfulSubmitButton()) {
@@ -206,7 +206,7 @@ void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmission
 static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
 {
     for (Node* node = event->target()->toNode(); node; node = node->parentNode()) {
-        if (is<HTMLFormControlElement>(node))
+        if (is<HTMLFormControlElement>(*node))
             return downcast<HTMLFormControlElement>(node);
     }
     return nullptr;
@@ -223,7 +223,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
         return true;
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(m_associatedElements[i]))
+        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
             downcast<HTMLFormControlElement>(*m_associatedElements[i]).hideVisibleValidationMessage();
     }
 
@@ -345,7 +345,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         FormAssociatedElement* associatedElement = m_associatedElements[i];
-        if (!is<HTMLFormControlElement>(associatedElement))
+        if (!is<HTMLFormControlElement>(*associatedElement))
             continue;
         if (needButtonActivation) {
             HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
@@ -384,7 +384,7 @@ void HTMLFormElement::reset()
     }
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(m_associatedElements[i]))
+        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
             downcast<HTMLFormControlElement>(*m_associatedElements[i]).reset();
     }
 
@@ -696,7 +696,7 @@ bool HTMLFormElement::wasUserSubmitted() const
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
 {
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (!is<HTMLFormControlElement>(m_associatedElements[i]))
+        if (!is<HTMLFormControlElement>(*m_associatedElements[i]))
             continue;
         HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*m_associatedElements[i]);
         if (control.isSuccessfulSubmitButton())
@@ -810,7 +810,7 @@ void HTMLFormElement::documentDidResumeFromPageCache()
     ASSERT(!shouldAutocomplete());
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(m_associatedElements[i]))
+        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
             downcast<HTMLFormControlElement>(*m_associatedElements[i]).reset();
     }
 }

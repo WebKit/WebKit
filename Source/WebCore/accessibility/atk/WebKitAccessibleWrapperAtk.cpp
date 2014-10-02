@@ -137,7 +137,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
 
     if (coreObject->isImage() || coreObject->isInputImage()) {
         Node* node = coreObject->node();
-        if (node && is<HTMLElement>(node)) {
+        if (is<HTMLElement>(node)) {
             // Get the attribute rather than altText String so as not to fall back on title.
             const AtomicString& alt = downcast<HTMLElement>(*node).getAttribute(HTMLNames::altAttr);
             if (!alt.isEmpty())
@@ -170,7 +170,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     Node* node = nullptr;
     if (coreObject->isAccessibilityRenderObject())
         node = coreObject->node();
-    if (!node || !is<HTMLElement>(node) || coreObject->ariaRoleAttribute() != UnknownRole || coreObject->isImage())
+    if (!is<HTMLElement>(node) || coreObject->ariaRoleAttribute() != UnknownRole || coreObject->isImage())
         return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, accessibilityDescription(coreObject));
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
@@ -506,7 +506,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     // cannot be done from the UIProcess. Assistive technologies have no need
     // for this information.
     Node* node = coreObject->node();
-    if (node && is<Element>(node)) {
+    if (is<Element>(node)) {
         String id = downcast<Element>(*node).getIdAttribute().string();
         if (!id.isEmpty())
             attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());

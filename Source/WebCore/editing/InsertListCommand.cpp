@@ -74,7 +74,7 @@ PassRefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<
     if (!list)
         return nullptr;
     Element* sibling = ElementTraversal::nextSibling(list.get());
-    if (!sibling || !is<HTMLElement>(sibling))
+    if (!is<HTMLElement>(sibling))
         return list.release();
 
     RefPtr<HTMLElement> nextList = downcast<HTMLElement>(sibling);

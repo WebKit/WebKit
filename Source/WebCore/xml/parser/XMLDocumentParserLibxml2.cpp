@@ -622,7 +622,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
         elemStack.append(parentElement);
 
         ContainerNode* node = parentElement->parentNode();
-        if (!node || !is<Element>(node))
+        if (!is<Element>(node))
             break;
         parentElement = downcast<Element>(node);
     }

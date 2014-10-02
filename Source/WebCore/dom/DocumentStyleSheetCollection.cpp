@@ -266,7 +266,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
 
     for (auto& node : m_styleSheetCandidateNodes) {
         StyleSheet* sheet = nullptr;
-        if (is<ProcessingInstruction>(node)) {
+        if (is<ProcessingInstruction>(*node)) {
             // Processing instruction (XML documents only).
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
             ProcessingInstruction& pi = downcast<ProcessingInstruction>(*node);

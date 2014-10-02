@@ -173,7 +173,7 @@ static inline HTMLVideoElement* descendentVideoElement(ContainerNode& node)
 
 static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 {
-    while (node && !is<HTMLVideoElement>(node))
+    while (node && !is<HTMLVideoElement>(*node))
         node = node->parentOrShadowHostNode();
 
     return downcast<HTMLVideoElement>(node);
@@ -201,10 +201,10 @@ void MediaDocument::defaultEventHandler(Event* event)
         }
     }
 
-    if (!is<ContainerNode>(targetNode))
+    if (!is<ContainerNode>(*targetNode))
         return;
     ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
-    if (event->type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
+    if (event->type() == eventNames().keydownEvent && is<KeyboardEvent>(*event)) {
         HTMLVideoElement* video = descendentVideoElement(targetContainer);
         if (!video)
             return;

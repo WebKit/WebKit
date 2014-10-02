@@ -896,7 +896,7 @@ Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
         errorString = ASCIILiteral("No node with given id found");
         return nullptr;
     }
-    if (!is<Element>(node)) {
+    if (!is<Element>(*node)) {
         errorString = ASCIILiteral("Not an element node");
         return nullptr;
     }
@@ -1086,7 +1086,8 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Insp
 
 PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)
 {
-    if (!is<StyledElement>(element))
+    ASSERT(element);
+    if (!is<StyledElement>(*element))
         return nullptr;
 
     // FIXME: Ugliness below.

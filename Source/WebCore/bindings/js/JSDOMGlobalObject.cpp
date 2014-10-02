@@ -105,10 +105,10 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, JSC::ExecState* exec)
 {
-    if (is<Document>(scriptExecutionContext))
+    if (is<Document>(*scriptExecutionContext))
         return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), exec);
 
-    if (is<WorkerGlobalScope>(scriptExecutionContext))
+    if (is<WorkerGlobalScope>(*scriptExecutionContext))
         return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();
@@ -122,10 +122,10 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld& worl
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld& world)
 {
-    if (is<Document>(scriptExecutionContext))
+    if (is<Document>(*scriptExecutionContext))
         return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), world);
 
-    if (is<WorkerGlobalScope>(scriptExecutionContext))
+    if (is<WorkerGlobalScope>(*scriptExecutionContext))
         return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
 
     ASSERT_NOT_REACHED();

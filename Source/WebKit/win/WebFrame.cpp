@@ -202,7 +202,7 @@ static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && is<HTMLFormElement>(ele))
+        if (SUCCEEDED(hr) && is<HTMLFormElement>(ele))
             return downcast<HTMLFormElement>(ele);
     }
     return nullptr;
@@ -219,7 +219,7 @@ static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && is<HTMLInputElement>(ele))
+        if (SUCCEEDED(hr) && is<HTMLInputElement>(ele))
             return downcast<HTMLInputElement>(ele);
     }
     return nullptr;
@@ -1101,7 +1101,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
         const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
         AtomicString targetName((UChar*)name, SysStringLen(name));
         for (unsigned int i = 0; i < elements.size(); i++) {
-            if (!is<HTMLFormControlElement>(elements[i]))
+            if (!is<HTMLFormControlElement>(*elements[i]))
                 continue;
             HTMLFormControlElement& elt = downcast<HTMLFormControlElement>(*elements[i]);
             // Skip option elements, other duds

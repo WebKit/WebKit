@@ -131,14 +131,14 @@ void HitTestResult::setToNonShadowAncestor()
 
 void HitTestResult::setInnerNode(Node* node)
 {
-    if (node && is<PseudoElement>(node))
+    if (is<PseudoElement>(node))
         node = downcast<PseudoElement>(*node).hostElement();
     m_innerNode = node;
 }
     
 void HitTestResult::setInnerNonSharedNode(Node* node)
 {
-    if (node && is<PseudoElement>(node))
+    if (is<PseudoElement>(node))
         node = downcast<PseudoElement>(*node).hostElement();
     m_innerNonSharedNode = node;
 }
@@ -223,7 +223,7 @@ String HitTestResult::title(TextDirection& dir) const
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (Node* titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentNode()) {
-        if (is<Element>(titleNode)) {
+        if (is<Element>(*titleNode)) {
             Element& titleElement = downcast<Element>(*titleNode);
             String title = titleElement.title();
             if (!title.isEmpty()) {
@@ -239,7 +239,7 @@ String HitTestResult::title(TextDirection& dir) const
 String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
     for (Node* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentNode()) {
-        if (!is<Element>(truncatedNode))
+        if (!is<Element>(*truncatedNode))
             continue;
 
         if (auto renderer = downcast<Element>(*truncatedNode).renderer()) {
@@ -363,7 +363,7 @@ bool HitTestResult::mediaSupportsFullscreen() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElt(mediaElement());
-    return (mediaElt && is<HTMLVideoElement>(mediaElt) && mediaElt->supportsFullscreen());
+    return is<HTMLVideoElement>(mediaElt) && mediaElt->supportsFullscreen();
 #else
     return false;
 #endif
@@ -425,7 +425,7 @@ void HitTestResult::enterFullscreenForVideo() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement(this->mediaElement());
-    if (mediaElement && is<HTMLVideoElement>(mediaElement)) {
+    if (is<HTMLVideoElement>(mediaElement)) {
         HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen()) {
             UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
@@ -483,7 +483,7 @@ bool HitTestResult::mediaIsVideo() const
 {
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElt = mediaElement())
-        return is<HTMLVideoElement>(mediaElt);
+        return is<HTMLVideoElement>(*mediaElt);
 #endif
     return false;
 }
@@ -676,7 +676,7 @@ Element* HitTestResult::innerElement() const
     Node* node = m_innerNode.get();
     if (!node)
         return nullptr;
-    if (is<Element>(node))
+    if (is<Element>(*node))
         return downcast<Element>(node);
     return node->parentElement();
 }
@@ -686,7 +686,7 @@ Element* HitTestResult::innerNonSharedElement() const
     Node* node = m_innerNonSharedNode.get();
     if (!node)
         return nullptr;
-    if (is<Element>(node))
+    if (is<Element>(*node))
         return downcast<Element>(node);
     return node->parentElement();
 }

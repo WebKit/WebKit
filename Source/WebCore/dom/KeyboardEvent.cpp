@@ -220,7 +220,7 @@ int KeyboardEvent::which() const
 KeyboardEvent* findKeyboardEvent(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent())
-        if (is<KeyboardEvent>(e))
+        if (is<KeyboardEvent>(*e))
             return downcast<KeyboardEvent>(e);
     return nullptr;
 }

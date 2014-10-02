@@ -234,7 +234,7 @@ String StyledMarkupAccumulator::takeResults()
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
 {    
-    const bool parentIsTextarea = text.parentElement() && is<HTMLTextAreaElement>(text.parentElement());
+    const bool parentIsTextarea = is<HTMLTextAreaElement>(text.parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
         RefPtr<EditingStyle> wrappingStyle = m_wrappingStyle->copy();
@@ -452,7 +452,7 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
 
     if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
         ContainerNode* table = commonAncestorBlock->parentNode();
-        while (table && !is<HTMLTableElement>(table))
+        while (table && !is<HTMLTableElement>(*table))
             table = table->parentNode();
 
         return table;
@@ -743,7 +743,8 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
 
 bool isPlainTextMarkup(Node* node)
 {
-    if (!is<HTMLDivElement>(node))
+    ASSERT(node);
+    if (!is<HTMLDivElement>(*node))
         return false;
 
     HTMLDivElement& element = downcast<HTMLDivElement>(*node);

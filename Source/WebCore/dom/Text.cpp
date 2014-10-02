@@ -94,7 +94,7 @@ static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->previousSibling())) {
-        if (!is<Text>(node))
+        if (!is<Text>(*node))
             break;
         text = downcast<Text>(node);
     }
@@ -105,7 +105,7 @@ static const Text* latestLogicallyAdjacentTextNode(const Text* text)
 {
     const Node* node = text;
     while ((node = node->nextSibling())) {
-        if (!is<Text>(node))
+        if (!is<Text>(*node))
             break;
         text = downcast<Text>(node);
     }
@@ -178,7 +178,8 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
 static bool isSVGShadowText(Text* text)
 {
     Node* parentNode = text->parentNode();
-    return is<ShadowRoot>(parentNode) && downcast<ShadowRoot>(*parentNode).hostElement()->hasTagName(SVGNames::trefTag);
+    ASSERT(parentNode);
+    return is<ShadowRoot>(*parentNode) && downcast<ShadowRoot>(*parentNode).hostElement()->hasTagName(SVGNames::trefTag);
 }
 
 static bool isSVGText(Text* text)

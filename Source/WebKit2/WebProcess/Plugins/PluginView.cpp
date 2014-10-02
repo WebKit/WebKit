@@ -892,7 +892,7 @@ void PluginView::handleEvent(Event* event)
 
     const WebEvent* currentEvent = WebPage::currentEvent();
     std::unique_ptr<WebEvent> simulatedWebEvent;
-    if (is<MouseEvent>(event) && downcast<MouseEvent>(*event).isSimulated()) {
+    if (is<MouseEvent>(*event) && downcast<MouseEvent>(*event).isSimulated()) {
         simulatedWebEvent = createWebEvent(downcast<MouseEvent>(event));
         currentEvent = simulatedWebEvent.get();
     }

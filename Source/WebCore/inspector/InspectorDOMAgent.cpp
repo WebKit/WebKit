@@ -339,7 +339,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
             unbind(contentDocument, nodesMap);
     }
 
-    if (is<Element>(node)) {
+    if (is<Element>(*node)) {
         if (ShadowRoot* root = downcast<Element>(*node).shadowRoot())
             unbind(root, nodesMap);
     }
@@ -375,7 +375,7 @@ Document* InspectorDOMAgent::assertDocument(ErrorString& errorString, int nodeId
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (!is<Document>(node)) {
+    if (!is<Document>(*node)) {
         errorString = ASCIILiteral("Document is not available");
         return nullptr;
     }
@@ -387,7 +387,7 @@ Element* InspectorDOMAgent::assertElement(ErrorString& errorString, int nodeId)
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (!is<Element>(node)) {
+    if (!is<Element>(*node)) {
         errorString = ASCIILiteral("Node is not an Element");
         return nullptr;
     }
@@ -520,7 +520,7 @@ void InspectorDOMAgent::querySelector(ErrorString& errorString, int nodeId, cons
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
-    if (!is<ContainerNode>(node)) {
+    if (!is<ContainerNode>(*node)) {
         assertElement(errorString, nodeId);
         return;
     }
@@ -541,7 +541,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, c
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
-    if (!is<ContainerNode>(node)) {
+    if (!is<ContainerNode>(*node)) {
         assertElement(errorString, nodeId);
         return;
     }
@@ -718,7 +718,7 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     *newId = 0;
 
     Node* oldNode = nodeForId(nodeId);
-    if (!oldNode || !is<Element>(oldNode))
+    if (!is<Element>(oldNode))
         return;
 
     ExceptionCode ec = 0;
@@ -1269,7 +1269,7 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
             value->setChildren(children.release());
     }
 
-    if (is<Element>(node)) {
+    if (is<Element>(*node)) {
         Element& element = downcast<Element>(*node);
         value->setAttributes(buildArrayForElementAttributes(&element));
         if (is<HTMLFrameOwnerElement>(element)) {
@@ -1293,17 +1293,17 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
             value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(element).content(), 0, nodesMap));
 #endif
 
-    } else if (is<Document>(node)) {
+    } else if (is<Document>(*node)) {
         Document& document = downcast<Document>(*node);
         value->setDocumentURL(documentURLString(&document));
         value->setBaseURL(documentBaseURLString(&document));
         value->setXmlVersion(document.xmlVersion());
-    } else if (is<DocumentType>(node)) {
+    } else if (is<DocumentType>(*node)) {
         DocumentType& docType = downcast<DocumentType>(*node);
         value->setPublicId(docType.publicId());
         value->setSystemId(docType.systemId());
         value->setInternalSubset(docType.internalSubset());
-    } else if (is<Attr>(node)) {
+    } else if (is<Attr>(*node)) {
         Attr& attribute = downcast<Attr>(*node);
         value->setName(attribute.name());
         value->setValue(attribute.value());
@@ -1522,7 +1522,7 @@ PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent:
                 }
             }
             
-            if (is<Element>(node)) {
+            if (is<Element>(*node)) {
                 supportsFocused = downcast<Element>(*node).isFocusable();
                 if (supportsFocused)
                     focused = axObject->isFocused();
@@ -1720,7 +1720,8 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
-    if (is<Document>(node))
+    ASSERT(node);
+    if (is<Document>(*node))
         return downcast<Document>(*node).ownerElement();
     return node->parentNode();
 }

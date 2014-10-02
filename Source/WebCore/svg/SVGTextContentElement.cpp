@@ -296,7 +296,7 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     SVGElement* element = downcast<SVGElement>(renderer->node());
     ASSERT(element);
 
-    if (!is<SVGTextContentElement>(element))
+    if (!is<SVGTextContentElement>(*element))
         return nullptr;
 
     return downcast<SVGTextContentElement>(element);

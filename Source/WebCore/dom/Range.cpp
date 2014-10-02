@@ -978,7 +978,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
     // does not allow children of the type of newNode or if newNode is an ancestor of the container.
 
     // an extra one here - if a text node is going to split, it must have a parent to insert into
-    bool startIsText = is<Text>(m_start.container());
+    bool startIsText = is<Text>(*m_start.container());
     if (startIsText && !m_start.container()->parentNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
@@ -2224,7 +2224,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
         selectedElementsSet.remove(parent);
 
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
-        if (is<Element>(node) && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
+        if (is<Element>(*node) && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
             if (RenderBoxModelObject* renderBoxModelObject = downcast<Element>(*node).renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderBoxModelObject->absoluteQuads(elementQuads);
@@ -2232,7 +2232,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
 
                 quads.appendVector(elementQuads);
             }
-        } else if (is<Text>(node)) {
+        } else if (is<Text>(*node)) {
             if (RenderObject* renderer = downcast<Text>(*node).renderer()) {
                 const RenderText& renderText = toRenderText(*renderer);
                 int startOffset = (node == startContainer) ? m_start.offset() : 0;

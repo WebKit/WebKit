@@ -581,7 +581,7 @@ Node* Internals::shadowRoot(Element* host, ExceptionCode& ec)
 
 String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
 {
-    if (!root || !is<ShadowRoot>(root)) {
+    if (!is<ShadowRoot>(root)) {
         ec = INVALID_ACCESS_ERR;
         return String();
     }
@@ -623,7 +623,7 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
 
 String Internals::visiblePlaceholder(Element* element)
 {
-    if (element && is<HTMLTextFormControlElement>(*element)) {
+    if (is<HTMLTextFormControlElement>(element)) {
         const HTMLTextFormControlElement& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
         if (!textFormControlElement.isPlaceholderVisible())
             return String();
@@ -637,7 +637,7 @@ String Internals::visiblePlaceholder(Element* element)
 #if ENABLE(INPUT_TYPE_COLOR)
 void Internals::selectColorInColorChooser(Element* element, const String& colorValue)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
     HTMLInputElement* inputElement = element->toInputElement();
     if (!inputElement)
@@ -912,7 +912,7 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
     if (HTMLInputElement* inputElement = textField->toInputElement())
         return inputElement->lastChangeWasUserEdit();
 
-    if (is<HTMLTextAreaElement>(textField))
+    if (is<HTMLTextAreaElement>(*textField))
         return downcast<HTMLTextAreaElement>(*textField).lastChangeWasUserEdit();
 
     ec = INVALID_NODE_TYPE_ERR;
@@ -1916,9 +1916,9 @@ void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* 
     Document* document;
     if (!node)
         document = contextDocument();
-    else if (is<Document>(node))
+    else if (is<Document>(*node))
         document = downcast<Document>(node);
-    else if (is<HTMLIFrameElement>(node))
+    else if (is<HTMLIFrameElement>(*node))
         document = downcast<HTMLIFrameElement>(*node).contentDocument();
     else {
         ec = TypeError;
@@ -2083,7 +2083,7 @@ void Internals::simulateAudioInterruption(Node* node)
 
 bool Internals::isSelectPopupVisible(Node* node)
 {
-    if (!is<HTMLSelectElement>(node))
+    if (!is<HTMLSelectElement>(*node))
         return false;
 
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*node);

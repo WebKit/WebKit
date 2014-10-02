@@ -38,7 +38,7 @@ using namespace HTMLNames;
 
 static LabelableElement* nodeAsSupportedLabelableElement(Node* node)
 {
-    if (!node || !is<LabelableElement>(*node))
+    if (!is<LabelableElement>(node))
         return nullptr;
     LabelableElement& element = downcast<LabelableElement>(*node);
     return element.supportLabels() ? &element : nullptr;

@@ -180,7 +180,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             // If the current type is blob, then we also need to include the filename
             if (value.blob()) {
                 String name;
-                if (is<File>(value.blob())) {
+                if (is<File>(*value.blob())) {
                     File& file = downcast<File>(*value.blob());
                     name = file.name();
                     // Let the application specify a filename if it's going to generate a replacement file for the upload.
@@ -221,7 +221,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             // Append body
             appendData(header.data(), header.size());
             if (value.blob()) {
-                if (is<File>(value.blob())) {
+                if (is<File>(*value.blob())) {
                     File& file = downcast<File>(*value.blob());
                     // Do not add the file if the path is empty.
                     if (!file.path().isEmpty())

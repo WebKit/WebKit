@@ -73,7 +73,7 @@ int RenderMarquee::marqueeSpeed() const
 {
     int result = m_layer->renderer().style().marqueeSpeed();
     Element* element = m_layer->renderer().element();
-    if (element && is<HTMLMarqueeElement>(element))
+    if (is<HTMLMarqueeElement>(element))
         result = std::max(result, downcast<HTMLMarqueeElement>(*element).minimumDelay());
     return result;
 }

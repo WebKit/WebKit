@@ -328,8 +328,6 @@ static HTMLImageElement* imageElementFromImageDocument(Document& document)
         return nullptr;
     
     Node* node = body->firstChild();
-    if (!node)
-        return nullptr;
     if (!is<HTMLImageElement>(node))
         return nullptr;
     return downcast<HTMLImageElement>(node);
@@ -588,7 +586,7 @@ bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRef
     
     if (fragment) {
         Node* child = fragment->firstChild();
-        if (child && fragment->lastChild() == child && is<CharacterData>(child))
+        if (is<CharacterData>(child) && fragment->lastChild() == child)
             return client()->shouldInsertText(downcast<CharacterData>(*child).data(), replacingDOMRange.get(), givenAction);
     }
 
@@ -1660,7 +1658,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
 #endif
         
     Element* focusedElement = document().focusedElement();
-    if (focusedElement && is<HTMLTextFormControlElement>(*focusedElement)) {
+    if (is<HTMLTextFormControlElement>(focusedElement)) {
         if (direction == NaturalWritingDirection)
             return;
         downcast<HTMLTextFormControlElement>(*focusedElement).setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
@@ -1865,7 +1863,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         Node* extentNode = extent.deprecatedNode();
         unsigned extentOffset = extent.deprecatedEditingOffset();
 
-        if (baseNode && baseNode == extentNode && is<Text>(baseNode) && baseOffset + text.length() == extentOffset) {
+        if (is<Text>(baseNode) && baseNode == extentNode && baseOffset + text.length() == extentOffset) {
             m_compositionNode = downcast<Text>(baseNode);
             m_compositionStart = baseOffset;
             m_compositionEnd = extentOffset;
@@ -2378,7 +2376,7 @@ bool Editor::isSpellCheckingEnabledFor(Node* node) const
 {
     if (!node)
         return false;
-    const Element* focusedElement = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
+    const Element* focusedElement = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
     if (!focusedElement)
         return false;
     return focusedElement->isSpellCheckingEnabled();
@@ -3105,9 +3103,7 @@ void Editor::applyEditingStyleToBodyElement() const
 
 void Editor::applyEditingStyleToElement(Element* element) const
 {
-    if (!element)
-        return;
-    ASSERT(is<StyledElement>(element));
+    ASSERT(!element || is<StyledElement>(*element));
     if (!is<StyledElement>(element))
         return;
 

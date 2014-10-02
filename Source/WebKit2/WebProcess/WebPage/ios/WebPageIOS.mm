@@ -604,15 +604,13 @@ void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
 
 void WebPage::blurAssistedNode()
 {
-    if (m_assistedNode && is<Element>(*m_assistedNode))
+    if (is<Element>(m_assistedNode))
         downcast<Element>(*m_assistedNode).blur();
 }
 
 void WebPage::setAssistedNodeValue(const String& value)
 {
-    if (!m_assistedNode)
-        return;
-    if (is<HTMLInputElement>(*m_assistedNode)) {
+    if (is<HTMLInputElement>(m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValue(value, DispatchInputAndChangeEvent);
     }
@@ -621,9 +619,7 @@ void WebPage::setAssistedNodeValue(const String& value)
 
 void WebPage::setAssistedNodeValueAsNumber(double value)
 {
-    if (!m_assistedNode)
-        return;
-    if (is<HTMLInputElement>(*m_assistedNode)) {
+    if (is<HTMLInputElement>(m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
     }
@@ -631,7 +627,7 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!m_assistedNode || !is<HTMLSelectElement>(*m_assistedNode))
+    if (!is<HTMLSelectElement>(m_assistedNode))
         return;
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
     select.optionSelectedByUser(index, true, allowMultipleSelection);
@@ -1888,7 +1884,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     if (hitNode) {
         info.clickableElementName = hitNode->nodeName();
 
-        Element* element = is<Element>(hitNode) ? downcast<Element>(hitNode) : nullptr;
+        Element* element = is<Element>(*hitNode) ? downcast<Element>(hitNode) : nullptr;
         if (element) {
             Element* linkElement = nullptr;
             if (element->renderer() && element->renderer()->isRenderImage()) {
@@ -1952,7 +1948,7 @@ void WebPage::stopInteraction()
 
 void WebPage::performActionOnElement(uint32_t action)
 {
-    if (!m_interactionNode || !is<HTMLElement>(m_interactionNode.get()))
+    if (!is<HTMLElement>(m_interactionNode.get()))
         return;
 
     HTMLElement* element = downcast<HTMLElement>(m_interactionNode.get());
@@ -1990,11 +1986,11 @@ void WebPage::performActionOnElement(uint32_t action)
 
 static inline bool isAssistableNode(Node* node)
 {
-    if (is<HTMLSelectElement>(node))
+    if (is<HTMLSelectElement>(*node))
         return true;
-    if (is<HTMLTextAreaElement>(node))
+    if (is<HTMLTextAreaElement>(*node))
         return !downcast<HTMLTextAreaElement>(*node).isReadOnlyNode();
-    if (is<HTMLInputElement>(node)) {
+    if (is<HTMLInputElement>(*node)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*node);
         return !element.isReadOnlyNode() && (element.isTextField() || element.isDateField() || element.isDateTimeLocalField() || element.isMonthField() || element.isTimeField());
     }
@@ -2077,10 +2073,10 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         // If a select does not have groups, all the option elements have group ID 0.
         for (size_t i = 0; i < count; ++i) {
             HTMLElement* item = items[i];
-            if (is<HTMLOptionElement>(item)) {
+            if (is<HTMLOptionElement>(*item)) {
                 HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
                 information.selectOptions.append(OptionItem(option.text(), false, parentGroupID, option.selected(), option.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));
-            } else if (is<HTMLOptGroupElement>(item)) {
+            } else if (is<HTMLOptGroupElement>(*item)) {
                 HTMLOptGroupElement& group = downcast<HTMLOptGroupElement>(*item);
                 parentGroupID++;
                 information.selectOptions.append(OptionItem(group.groupLabelText(), true, 0, false, group.fastHasAttribute(WebCore::HTMLNames::disabledAttr)));

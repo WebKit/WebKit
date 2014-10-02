@@ -277,7 +277,7 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
         return renderer->isFloating() || renderer->isOutOfFlowPositioned();
     // Avoid creating containers for text within text controls, buttons, or <select> buttons.
     Node* parentNode = renderer->parent() ? renderer->parent()->generatingNode() : nullptr;
-    if (parentNode && is<Element>(parentNode) && formInputTags().contains(downcast<Element>(*parentNode).tagQName()))
+    if (is<Element>(parentNode) && formInputTags().contains(downcast<Element>(*parentNode).tagQName()))
         return false;
 
     return true;
@@ -388,7 +388,7 @@ bool TextAutosizer::containerContainsOneOfTags(const RenderBlock* container, con
     const RenderObject* renderer = container;
     while (renderer) {
         const Node* rendererNode = renderer->node();
-        if (rendererNode && is<Element>(rendererNode)) {
+        if (is<Element>(rendererNode)) {
             if (tags.contains(downcast<Element>(*rendererNode).tagQName()))
                 return true;
         }

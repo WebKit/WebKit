@@ -152,13 +152,14 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 static void appendServerMapMousePosition(StringBuilder& url, Event* event)
 {
-    if (!is<MouseEvent>(event))
+    ASSERT(event);
+    if (!is<MouseEvent>(*event))
         return;
 
     ASSERT(event->target());
     Node* target = event->target()->toNode();
     ASSERT(target);
-    if (!is<HTMLImageElement>(target))
+    if (!is<HTMLImageElement>(*target))
         return;
 
     HTMLImageElement& imageElement = downcast<HTMLImageElement>(*target);
@@ -196,7 +197,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
         if (hasEditableStyle()) {
             // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
             // for the LiveWhenNotFocused editable link behavior
-            if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() != RightButton && document().frame()) {
+            if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() != RightButton && document().frame()) {
                 setRootEditableElementForSelectionOnMouseDown(document().frame()->selection().selection().rootEditableElement());
                 m_wasShiftKeyDownOnMouseDown = downcast<MouseEvent>(*event).shiftKey();
             } else if (event->type() == eventNames().mouseoverEvent) {
@@ -555,7 +556,8 @@ void HTMLAnchorElement::handleClick(Event* event)
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event* event)
 {
-    if (!is<MouseEvent>(event))
+    ASSERT(event);
+    if (!is<MouseEvent>(*event))
         return NonMouseEvent;
     return downcast<MouseEvent>(*event).shiftKey() ? MouseEventWithShiftKey : MouseEventWithoutShiftKey;
 }
@@ -592,12 +594,12 @@ bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
 
 bool isEnterKeyKeydownEvent(Event* event)
 {
-    return event->type() == eventNames().keydownEvent && is<KeyboardEvent>(event) && downcast<KeyboardEvent>(*event).keyIdentifier() == "Enter";
+    return event->type() == eventNames().keydownEvent && is<KeyboardEvent>(*event) && downcast<KeyboardEvent>(*event).keyIdentifier() == "Enter";
 }
 
 bool isLinkClick(Event* event)
 {
-    return event->type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(*event).button() != RightButton);
+    return event->type() == eventNames().clickEvent && (!is<MouseEvent>(*event) || downcast<MouseEvent>(*event).button() != RightButton);
 }
 
 bool shouldProhibitLinks(Element* element)

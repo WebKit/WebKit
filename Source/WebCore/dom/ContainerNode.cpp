@@ -202,7 +202,7 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 
-    if (oldChild && is<Document>(newParent)) {
+    if (oldChild && is<Document>(*newParent)) {
         if (!downcast<Document>(*newParent).canReplaceChild(newChild, oldChild))
             return HIERARCHY_REQUEST_ERR;
     } else if (!isChildTypeAllowed(newParent, newChild))
@@ -348,8 +348,8 @@ void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node*
 {
     ChildChange change;
     change.type = is<Element>(child) ? ElementRemoved : is<Text>(child) ? TextRemoved : NonContentsChildChanged;
-    change.previousSiblingElement = (!previousSibling || is<Element>(previousSibling)) ? downcast<Element>(previousSibling) : ElementTraversal::previousSibling(previousSibling);
-    change.nextSiblingElement = (!nextSibling || is<Element>(nextSibling)) ? downcast<Element>(nextSibling) : ElementTraversal::nextSibling(nextSibling);
+    change.previousSiblingElement = (!previousSibling || is<Element>(*previousSibling)) ? downcast<Element>(previousSibling) : ElementTraversal::previousSibling(previousSibling);
+    change.nextSiblingElement = (!nextSibling || is<Element>(*nextSibling)) ? downcast<Element>(nextSibling) : ElementTraversal::nextSibling(nextSibling);
     change.source = source;
 
     childrenChanged(change);

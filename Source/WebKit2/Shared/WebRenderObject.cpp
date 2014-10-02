@@ -66,7 +66,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     m_name = renderer->renderName();
 
     if (Node* node = renderer->node()) {
-        if (is<Element>(node)) {
+        if (is<Element>(*node)) {
             Element& element = downcast<Element>(*node);
             m_elementTagName = element.tagName();
             m_elementID = element.getIdAttribute();

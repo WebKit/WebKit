@@ -58,7 +58,7 @@ DOMWindow* domWindowFromExecState(JSC::ExecState* scriptState)
 Frame* frameFromExecState(JSC::ExecState* scriptState)
 {
     ScriptExecutionContext* context = scriptExecutionContextFromExecState(scriptState);
-    Document* document = context && is<Document>(context) ? downcast<Document>(context) : nullptr;
+    Document* document = is<Document>(context) ? downcast<Document>(context) : nullptr;
     return document ? document->frame() : nullptr;
 }
 

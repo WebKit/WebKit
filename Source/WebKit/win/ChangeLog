@@ -1,3 +1,58 @@
+2014-10-01  Christophe Dumez  <cdumez@apple.com>
+
+        Have is<>(T*) function do a null check on the pointer argument
+        https://bugs.webkit.org/show_bug.cgi?id=137333
+
+        Reviewed by Gavin Barraclough.
+
+        Have is<>(T*) function do a null check on the argument instead of a
+        simple assertion. This makes sense for 2 reasons:
+        1. It is more consistent with downcast<>(T*), which will succeed even
+           if the argument is a nullptr.
+        2. It simplifies the code a bit as it gets rid of a lot of explicit
+           null checks.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::createInstance):
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::body):
+        (DOMHTMLDocument::forms):
+        (DOMHTMLElement::idName):
+        (DOMHTMLElement::innerText):
+        (DOMHTMLElement::setInnerText):
+        (DOMHTMLFormElement::action):
+        (DOMHTMLFormElement::method):
+        (DOMHTMLOptionElement::text):
+        (DOMHTMLOptionElement::label):
+        (DOMHTMLInputElement::form):
+        (DOMHTMLInputElement::disabled):
+        (DOMHTMLInputElement::readOnly):
+        (DOMHTMLInputElement::setType):
+        (DOMHTMLInputElement::value):
+        (DOMHTMLInputElement::setValue):
+        (DOMHTMLInputElement::setValueForUser):
+        (DOMHTMLInputElement::select):
+        (DOMHTMLInputElement::setSelectionStart):
+        (DOMHTMLInputElement::selectionStart):
+        (DOMHTMLInputElement::setSelectionEnd):
+        (DOMHTMLInputElement::selectionEnd):
+        (DOMHTMLInputElement::isTextField):
+        (DOMHTMLInputElement::rectOnScreen):
+        (DOMHTMLInputElement::replaceCharactersInRange):
+        (DOMHTMLInputElement::selectedRange):
+        (DOMHTMLInputElement::setAutofilled):
+        (DOMHTMLInputElement::isAutofilled):
+        (DOMHTMLInputElement::isUserEdited):
+        (DOMHTMLTextAreaElement::form):
+        (DOMHTMLTextAreaElement::value):
+        (DOMHTMLTextAreaElement::setValue):
+        (DOMHTMLTextAreaElement::select):
+        (DOMHTMLTextAreaElement::isUserEdited):
+        * WebFrame.cpp:
+        (formElementFromDOMElement):
+        (inputElementFromDOMElement):
+        (WebFrame::elementWithName):
+
 2014-09-30  Christophe Dumez  <cdumez@apple.com>
 
         Generalize is<>() / downcast<>() support to all types

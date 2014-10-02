@@ -388,7 +388,7 @@ inline void StyleResolver::State::updateConversionData()
 inline void StyleResolver::State::initElement(Element* element)
 {
     m_element = element;
-    m_styledElement = element && is<StyledElement>(element) ? downcast<StyledElement>(element) : nullptr;
+    m_styledElement = element && is<StyledElement>(*element) ? downcast<StyledElement>(element) : nullptr;
     m_elementLinkState = element ? element->document().visitedLinkState().determineLinkState(*element) : NotInsideLink;
     updateConversionData();
 }
@@ -445,12 +445,12 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
 {
     if (visitedNodeCount >= cStyleSearchThreshold * cStyleSearchLevelThreshold)
         return nullptr;
-    if (!parent || !is<StyledElement>(parent))
+    if (!is<StyledElement>(parent))
         return nullptr;
     StyledElement* styledParent = downcast<StyledElement>(parent);
     if (styledParent->inlineStyle())
         return nullptr;
-    if (is<SVGElement>(styledParent) && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
+    if (is<SVGElement>(*styledParent) && downcast<SVGElement>(*styledParent).animatedSMILStyleProperties())
         return nullptr;
     if (styledParent->hasID() && m_ruleSets.features().idsInRules.contains(styledParent->idForStyleResolution().impl()))
         return nullptr;
@@ -467,7 +467,7 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
         while (currentNode) {
             ++subcount;
             if (currentNode->renderStyle() == parentStyle && currentNode->lastChild()
-                && is<Element>(currentNode) && !parentElementPreventsSharing(downcast<Element>(currentNode))
+                && is<Element>(*currentNode) && !parentElementPreventsSharing(downcast<Element>(currentNode))
                 ) {
                 // Adjust for unused reserved tries.
                 visitedNodeCount -= cStyleSearchThreshold - subcount;
@@ -546,7 +546,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
 static inline bool elementHasDirectionAuto(Element* element)
 {
     // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
-    return is<HTMLElement>(element) && downcast<HTMLElement>(*element).hasDirectionAuto();
+    return is<HTMLElement>(*element) && downcast<HTMLElement>(*element).hasDirectionAuto();
 }
 
 bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement* sharingCandidate) const
@@ -626,9 +626,9 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
 
-    bool isControl = is<HTMLFormControlElement>(element);
+    bool isControl = is<HTMLFormControlElement>(*element);
 
-    if (isControl != is<HTMLFormControlElement>(state.element()))
+    if (isControl != is<HTMLFormControlElement>(*state.element()))
         return false;
 
     if (isControl && !canShareStyleWithControl(element))
@@ -650,7 +650,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
 #if ENABLE(VIDEO_TRACK)
     // Deny sharing styles between WebVTT and non-WebVTT nodes.
-    if (is<WebVTTElement>(state.element()))
+    if (is<WebVTTElement>(*state.element()))
         return false;
 #endif
 
@@ -664,7 +664,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsigned& count) const
 {
     for (; node; node = node->previousSibling()) {
-        if (!is<StyledElement>(node))
+        if (!is<StyledElement>(*node))
             continue;
         if (canShareStyleWithElement(downcast<StyledElement>(node)))
             break;
@@ -1167,7 +1167,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             if (e->hasTagName(tdTag)) {
                 style.setDisplay(TABLE_CELL);
                 style.setFloating(NoFloat);
-            } else if (is<HTMLTableElement>(e))
+            } else if (is<HTMLTableElement>(*e))
                 style.setDisplay(style.isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
@@ -1184,7 +1184,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         }
 
         // Tables never support the -webkit-* values for text-align and will reset back to the default.
-        if (e && is<HTMLTableElement>(e) && (style.textAlign() == WEBKIT_LEFT || style.textAlign() == WEBKIT_CENTER || style.textAlign() == WEBKIT_RIGHT))
+        if (is<HTMLTableElement>(e) && (style.textAlign() == WEBKIT_LEFT || style.textAlign() == WEBKIT_CENTER || style.textAlign() == WEBKIT_RIGHT))
             style.setTextAlign(TASTART);
 
         // Frames and framesets never honor position:relative or position:absolute. This is necessary to
@@ -1267,7 +1267,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setZIndex(0);
 
     // Textarea considers overflow visible as auto.
-    if (e && is<HTMLTextAreaElement>(e)) {
+    if (is<HTMLTextAreaElement>(e)) {
         style.setOverflowX(style.overflowX() == OVISIBLE ? OAUTO : style.overflowX());
         style.setOverflowY(style.overflowY() == OVISIBLE ? OAUTO : style.overflowY());
     }
@@ -1332,10 +1332,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
-    if (e && is<HTMLFormControlElement>(e) && style.fontSize() >= 11) {
+    if (is<HTMLFormControlElement>(e) && style.fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
-        if (!is<HTMLInputElement>(e) || !downcast<HTMLInputElement>(*e).isImageButton())
+        if (!is<HTMLInputElement>(*e) || !downcast<HTMLInputElement>(*e).isImageButton())
             addIntrinsicMargins(style);
     }
 
@@ -1880,7 +1880,7 @@ bool StyleResolver::useSVGZoomRules()
 // Scale with/height properties on inline SVG root.
 bool StyleResolver::useSVGZoomRulesForLength()
 {
-    return m_state.element() && m_state.element()->isSVGElement() && !(is<SVGSVGElement>(m_state.element()) && m_state.element()->parentNode());
+    return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)

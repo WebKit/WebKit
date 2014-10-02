@@ -79,7 +79,7 @@ HTMLFormElement* HTMLLegendElement::virtualForm() const
     // its parent, then the form attribute must return the same value as the
     // form attribute on that fieldset element. Otherwise, it must return null.
     ContainerNode* fieldset = parentNode();
-    if (!fieldset || !is<HTMLFieldSetElement>(fieldset))
+    if (!is<HTMLFieldSetElement>(fieldset))
         return nullptr;
 
     return downcast<HTMLFieldSetElement>(*fieldset).form();

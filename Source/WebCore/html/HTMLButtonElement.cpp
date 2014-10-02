@@ -123,7 +123,7 @@ void HTMLButtonElement::defaultEventHandler(Event* event)
         }
     }
 
-    if (is<KeyboardEvent>(event)) {
+    if (is<KeyboardEvent>(*event)) {
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
         if (keyboardEvent.type() == eventNames().keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
             setActive(true, true);

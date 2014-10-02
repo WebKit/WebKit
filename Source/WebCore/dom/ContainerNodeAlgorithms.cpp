@@ -52,7 +52,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
 void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode& node)
 {
     for (Node* child = node.firstChild(); child; child = child->nextSibling()) {
-        if (is<ContainerNode>(child))
+        if (is<ContainerNode>(*child))
             notifyNodeInsertedIntoTree(downcast<ContainerNode>(*child));
     }
 
@@ -86,7 +86,7 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
 void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode& node)
 {
     for (Node* child = node.firstChild(); child; child = child->nextSibling()) {
-        if (is<ContainerNode>(child))
+        if (is<ContainerNode>(*child))
             notifyNodeRemovedFromTree(downcast<ContainerNode>(*child));
     }
 

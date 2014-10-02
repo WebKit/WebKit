@@ -51,7 +51,7 @@ inline bool isScopeMarker(HTMLStackItem* item)
         || item->hasTagName(captionTag)
         || item->hasTagName(marqueeTag)
         || item->hasTagName(objectTag)
-        || is<HTMLTableElement>(item->node())
+        || is<HTMLTableElement>(*item->node())
         || item->hasTagName(tdTag)
         || item->hasTagName(thTag)
         || item->hasTagName(MathMLNames::miTag)
@@ -78,7 +78,7 @@ inline bool isListItemScopeMarker(HTMLStackItem* item)
 
 inline bool isTableScopeMarker(HTMLStackItem* item)
 {
-    return is<HTMLTableElement>(item->node())
+    return is<HTMLTableElement>(*item->node())
 #if ENABLE(TEMPLATE_ELEMENT)
         || item->hasTagName(templateTag)
 #endif
@@ -120,7 +120,7 @@ inline bool isButtonScopeMarker(HTMLStackItem* item)
 
 inline bool isSelectScopeMarker(HTMLStackItem* item)
 {
-    return !is<HTMLOptGroupElement>(item->node()) && !is<HTMLOptionElement>(item->node());
+    return !is<HTMLOptGroupElement>(*item->node()) && !is<HTMLOptionElement>(*item->node());
 }
 
 }

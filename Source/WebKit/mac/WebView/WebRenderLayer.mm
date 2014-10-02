@@ -52,7 +52,7 @@ using namespace WebCore;
     const RenderObject& renderer = layer->renderer();
     NSString *name = [NSString stringWithUTF8String:renderer.renderName()];
 
-    if (Element* element = renderer.node() && is<Element>(renderer.node()) ? downcast<Element>(renderer.node()) : nullptr) {
+    if (Element* element = is<Element>(renderer.node()) ? downcast<Element>(renderer.node()) : nullptr) {
         name = [name stringByAppendingFormat:@" %@", (NSString *)element->tagName()];
         if (element->hasID())
             name = [name stringByAppendingFormat:@" id=\"%@\"", (NSString *)element->getIdAttribute()];

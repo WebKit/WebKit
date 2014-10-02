@@ -1415,7 +1415,7 @@ Element* Document::elementFromPoint(const LayoutPoint& clientPoint)
         return nullptr;
 
     Node* node = nodeFromPoint(clientPoint);
-    while (node && !is<Element>(node))
+    while (node && !is<Element>(*node))
         node = node->parentNode();
 
     if (node)
@@ -1552,7 +1552,7 @@ void Document::setTitle(const String& title)
     // The DOM API has no method of specifying direction, so assume LTR.
     updateTitle(StringWithDirection(title, LTR));
 
-    if (m_titleElement && is<HTMLTitleElement>(*m_titleElement))
+    if (is<HTMLTitleElement>(m_titleElement.get()))
         downcast<HTMLTitleElement>(*m_titleElement).setText(title);
 }
 
@@ -4663,7 +4663,7 @@ const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
     unsigned int length = children->length();
     for (unsigned int i = 0; i < length; ++i) {
         Node* child = children->item(i);
-        if (!is<HTMLLinkElement>(child))
+        if (!is<HTMLLinkElement>(*child))
             continue;
         HTMLLinkElement& linkElement = downcast<HTMLLinkElement>(*child);
         if (!(linkElement.iconType() & iconTypesMask))
@@ -5918,9 +5918,9 @@ Element* eventTargetElementForDocument(Document* document)
     if (!document)
         return nullptr;
     Element* element = document->focusedElement();
-    if (!element && is<PluginDocument>(document))
+    if (!element && is<PluginDocument>(*document))
         element = downcast<PluginDocument>(*document).pluginElement();
-    if (!element && is<HTMLDocument>(document))
+    if (!element && is<HTMLDocument>(*document))
         element = document->body();
     if (!element)
         element = document->documentElement();
@@ -6084,7 +6084,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 elementsToRemoveFromChain.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
-        if (oldHoveredElement && is<HTMLFrameOwnerElement>(*oldHoveredElement)) {
+        if (is<HTMLFrameOwnerElement>(oldHoveredElement.get())) {
             if (Document* contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr);
         }

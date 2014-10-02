@@ -290,7 +290,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     documentUnderMouse->renderView()->hitTest(HitTestRequest(), result);
 
     Node* node = result.innerNode();
-    while (node && !is<Element>(node))
+    while (node && !is<Element>(*node))
         node = node->parentNode();
     if (node)
         node = node->deprecatedShadowAncestorNode();
@@ -397,7 +397,7 @@ DragOperation DragController::operationForLoad(DragData& dragData)
 
     bool pluginDocumentAcceptsDrags = false;
 
-    if (doc && is<PluginDocument>(doc)) {
+    if (is<PluginDocument>(doc)) {
         const Widget* widget = downcast<PluginDocument>(*doc).pluginWidget();
         const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? toPluginViewBase(widget) : nullptr;
 
@@ -552,7 +552,7 @@ bool DragController::canProcessDrag(DragData& dragData)
     if (dragData.containsFiles() && asFileInput(result.innerNonSharedNode()))
         return true;
 
-    if (is<HTMLPlugInElement>(result.innerNonSharedNode())) {
+    if (is<HTMLPlugInElement>(*result.innerNonSharedNode())) {
         if (!downcast<HTMLPlugInElement>(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->hasEditableStyle())
             return false;
     } else if (!result.innerNonSharedNode()->hasEditableStyle())
@@ -639,13 +639,13 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         }
         if (dragMode == DRAG_AUTO) {
             if ((m_dragSourceAction & DragSourceActionImage)
-                && is<HTMLImageElement>(element)
+                && is<HTMLImageElement>(*element)
                 && sourceFrame->settings().loadsImagesAutomatically()) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
                 return element;
             }
             if ((m_dragSourceAction & DragSourceActionLink)
-                && is<HTMLAnchorElement>(element)
+                && is<HTMLAnchorElement>(*element)
                 && downcast<HTMLAnchorElement>(*element).isLiveLink()) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
                 return element;

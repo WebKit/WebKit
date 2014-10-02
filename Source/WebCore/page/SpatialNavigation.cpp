@@ -63,10 +63,9 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     , isOffscreen(true)
     , isOffscreenAfterScrolling(true)
 {
-    ASSERT(node);
-    ASSERT(node->isElementNode());
+    ASSERT(is<Element>(node));
 
-    if (is<HTMLAreaElement>(node)) {
+    if (is<HTMLAreaElement>(*node)) {
         HTMLAreaElement& area = downcast<HTMLAreaElement>(*node);
         HTMLImageElement* image = area.imageElement();
         if (!image || !image->renderer())
@@ -366,7 +365,7 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
 bool scrollInDirection(Node* container, FocusDirection direction)
 {
     ASSERT(container);
-    if (is<Document>(container))
+    if (is<Document>(*container))
         return scrollInDirection(downcast<Document>(*container).frame(), direction);
 
     if (!container->renderBox())
@@ -435,11 +434,11 @@ Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direc
     ASSERT(node);
     Node* parent = node;
     do {
-        if (is<Document>(parent))
+        if (is<Document>(*parent))
             parent = downcast<Document>(*parent).document().frame()->ownerElement();
         else
             parent = parent->parentNode();
-    } while (parent && !canScrollInDirection(parent, direction) && !is<Document>(parent));
+    } while (parent && !canScrollInDirection(parent, direction) && !is<Document>(*parent));
 
     return parent;
 }
@@ -448,10 +447,10 @@ bool canScrollInDirection(const Node* container, FocusDirection direction)
 {
     ASSERT(container);
 
-    if (is<HTMLSelectElement>(container))
+    if (is<HTMLSelectElement>(*container))
         return false;
 
-    if (is<Document>(container))
+    if (is<Document>(*container))
         return canScrollInDirection(downcast<Document>(*container).frame(), direction);
 
     if (!isScrollableNode(container))
@@ -520,7 +519,7 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
 {
     ASSERT(node && node->renderer() && !node->document().view()->needsLayout());
 
-    if (is<Document>(node))
+    if (is<Document>(*node))
         return frameRectInAbsoluteCoordinates(downcast<Document>(*node).frame());
     LayoutRect rect = rectToAbsoluteCoordinates(node->document().frame(), node->boundingBox());
 
@@ -607,7 +606,7 @@ bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCand
     if (!firstCandidate.rect.intersects(secondCandidate.rect))
         return false;
 
-    if (is<HTMLAreaElement>(firstCandidate.focusableNode) || is<HTMLAreaElement>(secondCandidate.focusableNode))
+    if (is<HTMLAreaElement>(*firstCandidate.focusableNode) || is<HTMLAreaElement>(*secondCandidate.focusableNode))
         return false;
 
     if (!firstCandidate.visibleNode->renderer()->isRenderInline() || !secondCandidate.visibleNode->renderer()->isRenderInline())

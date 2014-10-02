@@ -165,10 +165,10 @@ void SVGSMILElement::buildPendingResource()
     String href = getAttribute(XLinkNames::hrefAttr);
     Element* target;
     if (href.isEmpty())
-        target = parentNode() && is<Element>(parentNode()) ? downcast<Element>(parentNode()) : nullptr;
+        target = is<Element>(parentNode()) ? downcast<Element>(parentNode()) : nullptr;
     else
         target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
-    SVGElement* svgTarget = target && is<SVGElement>(target) ? downcast<SVGElement>(target) : nullptr;
+    SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target) : nullptr;
 
     if (svgTarget && !svgTarget->inDocument())
         svgTarget = nullptr;

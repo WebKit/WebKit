@@ -221,7 +221,7 @@ void MediaControlPanelElement::defaultEventHandler(Event* event)
 {
     MediaControlDivElement::defaultEventHandler(event);
 
-    if (is<MouseEvent>(event)) {
+    if (is<MouseEvent>(*event)) {
         LayoutPoint location = downcast<MouseEvent>(*event).absoluteLocation();
         if (event->type() == eventNames().mousedownEvent && event->target() == this) {
             startDrag(location);
@@ -337,7 +337,7 @@ RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElement
 
 void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
 {
-    if (!is<MouseEvent>(event) || event->type() != eventNames().mouseoutEvent)
+    if (!is<MouseEvent>(*event) || event->type() != eventNames().mouseoutEvent)
         return;
 
     // Poor man's mouseleave event detection.
@@ -689,7 +689,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
 #if ENABLE(VIDEO_TRACK)
     if (event->type() == eventNames().clickEvent) {
         Node* target = event->target()->toNode();
-        if (!target || !is<Element>(target))
+        if (!is<Element>(target))
             return;
 
         // When we created the elements in the track list, we gave them a custom
@@ -851,7 +851,7 @@ PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(Docu
 void MediaControlTimelineElement::defaultEventHandler(Event* event)
 {
     // Left button is 0. Rejects mouse events not from left button.
-    if (is<MouseEvent>(event) && downcast<MouseEvent>(*event).button())
+    if (is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button())
         return;
 
     if (!renderer())

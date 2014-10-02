@@ -176,7 +176,7 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
     Element* focusedElement = focusedDocument->focusedElement();
-    if (focusedElement && is<HTMLAreaElement>(focusedElement))
+    if (is<HTMLAreaElement>(focusedElement))
         return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
 
     AccessibilityObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
@@ -294,7 +294,7 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
         return AccessibilitySVGRoot::create(renderer);
     
     // Search field buttons
-    if (node && is<Element>(node) && downcast<Element>(*node).isSearchFieldCancelButtonElement())
+    if (is<Element>(node) && downcast<Element>(*node).isSearchFieldCancelButtonElement())
         return AccessibilitySearchFieldCancelButton::create(renderer);
     
     if (renderer->isBoxModelObject()) {
@@ -386,7 +386,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 
     bool insideMeterElement = false;
 #if ENABLE(METER_ELEMENT)
-    insideMeterElement = is<HTMLMeterElement>(node->parentElement());
+    insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
 #endif
     
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
@@ -653,7 +653,7 @@ void AXObjectCache::handleMenuOpened(Node* node)
     
 void AXObjectCache::handleLiveRegionCreated(Node* node)
 {
-    if (!node || !node->renderer() || !is<Element>(node))
+    if (!is<Element>(node) || !node->renderer())
         return;
     
     Element* element = downcast<Element>(node);
@@ -917,7 +917,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
         textChanged(element);
-    else if (attrName == forAttr && is<HTMLLabelElement>(element))
+    else if (attrName == forAttr && is<HTMLLabelElement>(*element))
         labelChanged(element);
 
     if (!attrName.localName().string().startsWith("aria-"))
@@ -947,8 +947,8 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
 
 void AXObjectCache::labelChanged(Element* element)
 {
-    ASSERT(is<HTMLLabelElement>(element));
-    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(element)->control();
+    ASSERT(is<HTMLLabelElement>(*element));
+    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(*element).control();
     textChanged(correspondingControl);
 }
 
@@ -1030,7 +1030,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)
 {
     const Element* result = node->rootEditableElement();
-    const Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
+    const Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
 
     for (; element; element = element->parentElement()) {
         if (nodeIsTextControl(element))
@@ -1073,7 +1073,7 @@ bool isNodeAriaVisible(Node* node)
     // To determine if a node is ARIA visible, we need to check the parent hierarchy to see if anyone specifies
     // aria-hidden explicitly.
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
-        if (is<Element>(testNode)) {
+        if (is<Element>(*testNode)) {
             const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).fastGetAttribute(aria_hiddenAttr);
             if (equalIgnoringCase(ariaHiddenValue, "false"))
                 return true;

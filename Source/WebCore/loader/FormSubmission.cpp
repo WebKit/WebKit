@@ -144,7 +144,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     HTMLFormControlElement* submitButton = 0;
     if (event && event->target()) {
         for (Node* node = event->target()->toNode(); node; node = node->parentNode()) {
-            if (is<HTMLFormControlElement>(node)) {
+            if (is<HTMLFormControlElement>(*node)) {
                 submitButton = downcast<HTMLFormControlElement>(node);
                 break;
             }

@@ -94,12 +94,12 @@ bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
     if (!element)
         return false;
 
-    if (is<SVGGlyphElement>(element)) {
+    if (is<SVGGlyphElement>(*element)) {
         glyphNames.append(target);
         return true;
     }
 
-    if (is<SVGAltGlyphDefElement>(element)
+    if (is<SVGAltGlyphDefElement>(*element)
         && downcast<SVGAltGlyphDefElement>(*element).hasValidGlyphElements(glyphNames))
         return true;
 

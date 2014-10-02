@@ -1,3 +1,48 @@
+2014-10-01  Christophe Dumez  <cdumez@apple.com>
+
+        Have is<>(T*) function do a null check on the pointer argument
+        https://bugs.webkit.org/show_bug.cgi?id=137333
+
+        Reviewed by Gavin Barraclough.
+
+        Have is<>(T*) function do a null check on the argument instead of a
+        simple assertion. This makes sense for 2 reasons:
+        1. It is more consistent with downcast<>(T*), which will succeed even
+           if the argument is a nullptr.
+        2. It simplifies the code a bit as it gets rid of a lot of explicit
+           null checks.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::mediaType):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedElementChanged):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::containsAnyFormElements):
+        (WebKit::WebFrame::containsAnyFormControls):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pdfDocumentForPrintingFrame):
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::blurAssistedNode):
+        (WebKit::WebPage::setAssistedNodeValue):
+        (WebKit::WebPage::setAssistedNodeValueAsNumber):
+        (WebKit::WebPage::setAssistedNodeSelectedIndex):
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::performActionOnElement):
+        (WebKit::isAssistableNode):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2014-10-02  Daniel Bates  <dabates@apple.com>
 
         Clean up: Move XPC forward declarations in JavaScriptCore to WTF SPI wrapper header

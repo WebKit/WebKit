@@ -448,7 +448,7 @@ static bool isHeaderElement(const Node* a)
 
 static bool haveSameTagName(Node* a, Node* b)
 {
-    return a && b && is<Element>(a) && is<Element>(b) && downcast<Element>(*a).tagName() == downcast<Element>(*b).tagName();
+    return is<Element>(a) && is<Element>(b) && downcast<Element>(*a).tagName() == downcast<Element>(*b).tagName();
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
@@ -488,7 +488,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         const StyleProperties* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
-            if (is<HTMLElement>(element)) {
+            if (is<HTMLElement>(*element)) {
                 Vector<QualifiedName> attributes;
                 HTMLElement& htmlElement = downcast<HTMLElement>(*element);
 
@@ -683,7 +683,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     document().updateLayoutIgnorePendingStylesheets();
 
     Node* lastLeafInserted = insertedNodes.lastLeafInserted();
-    if (lastLeafInserted && is<Text>(lastLeafInserted) && !hasRenderedText(downcast<Text>(*lastLeafInserted))
+    if (is<Text>(lastLeafInserted) && !hasRenderedText(downcast<Text>(*lastLeafInserted))
         && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted), selectTag)
         && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted), scriptTag)) {
         insertedNodes.willRemoveNode(lastLeafInserted);
@@ -693,7 +693,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     // We don't have to make sure that firstNodeInserted isn't inside a select or script element
     // because it is a top level node in the fragment and the user can't insert into those elements.
     Node* firstNodeInserted = insertedNodes.firstNodeInserted();
-    if (firstNodeInserted && is<Text>(firstNodeInserted) && !hasRenderedText(downcast<Text>(*firstNodeInserted))) {
+    if (is<Text>(firstNodeInserted) && !hasRenderedText(downcast<Text>(*firstNodeInserted))) {
         insertedNodes.willRemoveNode(firstNodeInserted);
         removeNode(firstNodeInserted);
     }
@@ -1273,7 +1273,7 @@ bool ReplaceSelectionCommand::shouldPerformSmartReplace() const
         return false;
 
     Element* textControl = enclosingTextFormControl(positionAtStartOfInsertedContent().deepEquivalent());
-    if (textControl && is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField())
+    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField())
         return false; // Disable smart replace for password fields.
 
     return true;
@@ -1291,7 +1291,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
 
     Position endUpstream = endOfInsertedContent.deepEquivalent().upstream();
     Node* endNode = endUpstream.computeNodeBeforePosition();
-    int endOffset = endNode && is<Text>(endNode) ? downcast<Text>(*endNode).length() : 0;
+    int endOffset = is<Text>(endNode) ? downcast<Text>(*endNode).length() : 0;
     if (endUpstream.anchorType() == Position::PositionIsOffsetInAnchor) {
         endNode = endUpstream.containerNode();
         endOffset = endUpstream.offsetInContainerNode();
@@ -1300,7 +1300,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(endOfInsertedContent.characterAfter(), false);
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style().collapseWhiteSpace();
-        if (is<Text>(endNode)) {
+        if (is<Text>(*endNode)) {
             insertTextIntoNode(downcast<Text>(endNode), endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
@@ -1324,7 +1324,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(startOfInsertedContent.previous().characterAfter(), true);
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style().collapseWhiteSpace();
-        if (is<Text>(startNode)) {
+        if (is<Text>(*startNode)) {
             insertTextIntoNode(downcast<Text>(startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
@@ -1375,22 +1375,22 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
     bool positionIsOffsetInAnchor = position.anchorType() == Position::PositionIsOffsetInAnchor;
     bool positionOnlyToBeUpdatedIsOffsetInAnchor = positionOnlyToBeUpdated.anchorType() == Position::PositionIsOffsetInAnchor;
     RefPtr<Text> text;
-    if (positionIsOffsetInAnchor && position.containerNode() && is<Text>(position.containerNode()))
+    if (positionIsOffsetInAnchor && is<Text>(position.containerNode()))
         text = downcast<Text>(position.containerNode());
     else {
         Node* before = position.computeNodeBeforePosition();
-        if (before && is<Text>(before))
+        if (is<Text>(before))
             text = downcast<Text>(before);
         else {
             Node* after = position.computeNodeAfterPosition();
-            if (after && is<Text>(after))
+            if (is<Text>(after))
                 text = downcast<Text>(after);
         }
     }
     if (!text)
         return;
 
-    if (text->previousSibling() && is<Text>(text->previousSibling())) {
+    if (is<Text>(text->previousSibling())) {
         RefPtr<Text> previous = downcast<Text>(text->previousSibling());
         insertTextIntoNode(text, 0, previous->data());
 
@@ -1409,7 +1409,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
 
         removeNode(previous);
     }
-    if (text->nextSibling() && is<Text>(text->nextSibling())) {
+    if (is<Text>(text->nextSibling())) {
         RefPtr<Text> next = downcast<Text>(text->nextSibling());
         unsigned originalLength = text->length();
         insertTextIntoNode(text, originalLength, next->data());
@@ -1449,7 +1449,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     // list items and insert these nodes between them.
     if (isMiddle) {
         int textNodeOffset = insertPos.offsetInContainerNode();
-        if (is<Text>(insertPos.deprecatedNode()) && textNodeOffset > 0)
+        if (is<Text>(*insertPos.deprecatedNode()) && textNodeOffset > 0)
             splitTextNode(downcast<Text>(insertPos.deprecatedNode()), textNodeOffset);
         splitTreeToNode(insertPos.deprecatedNode(), lastNode, true);
     }
@@ -1488,7 +1488,7 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
 // split text nodes.
 bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& fragment)
 {
-    if (!fragment.firstChild() || fragment.firstChild() != fragment.lastChild() || !is<Text>(fragment.firstChild()))
+    if (!is<Text>(fragment.firstChild()) || fragment.firstChild() != fragment.lastChild())
         return false;
 
     // FIXME: Would be nice to handle smart replace in the fast path.

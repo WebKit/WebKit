@@ -2062,7 +2062,7 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
 {
     if (!context)
         return nullptr;
-    if (is<Document>(context))
+    if (is<Document>(*context))
         return instrumentingAgentsForPage(downcast<Document>(context)->page());
     return instrumentingAgentsForNonDocumentContext(context);
 }

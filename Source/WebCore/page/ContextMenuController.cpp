@@ -150,7 +150,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
 {
     ASSERT(event);
     
-    if (!is<MouseEvent>(event))
+    if (!is<MouseEvent>(*event))
         return nullptr;
 
     MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
@@ -837,7 +837,7 @@ void ContextMenuController::populate()
     if (!node)
         return;
 #if PLATFORM(GTK)
-    if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(node))
+    if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(*node))
         return;
 #endif
     Frame* frame = node->document().frame();

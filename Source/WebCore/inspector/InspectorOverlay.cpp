@@ -676,7 +676,8 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
 
 static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
 {
-    if (!is<Element>(node) || !node->document().frame())
+    ASSERT(node);
+    if (!is<Element>(*node) || !node->document().frame())
         return nullptr;
 
     RefPtr<InspectorObject> elementInfo = InspectorObject::create();

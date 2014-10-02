@@ -125,7 +125,7 @@ static String getTagName(Node* n)
 
 static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
 {
-    if (!node || !is<HTMLSpanElement>(node))
+    if (!is<HTMLSpanElement>(node))
         return false;
 
     const HTMLElement& element = downcast<HTMLSpanElement>(*node);
@@ -393,7 +393,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     }
     
     if (behavior & RenderAsTextShowIDAndClass) {
-        if (Element* element = o.node() && is<Element>(o.node()) ? downcast<Element>(o.node()) : nullptr) {
+        if (Element* element = is<Element>(o.node()) ? downcast<Element>(o.node()) : nullptr) {
             if (element->hasID())
                 ts << " id=\"" + element->getIdAttribute() + "\"";
 

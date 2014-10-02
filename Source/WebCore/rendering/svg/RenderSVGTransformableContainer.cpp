@@ -46,7 +46,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
         useElement = &downcast<SVGUseElement>(element);
     else if (element.isInShadowTree() && is<SVGGElement>(element)) {
         SVGElement* correspondingElement = element.correspondingElement();
-        if (correspondingElement && is<SVGUseElement>(correspondingElement))
+        if (is<SVGUseElement>(correspondingElement))
             useElement = downcast<SVGUseElement>(correspondingElement);
     }
 

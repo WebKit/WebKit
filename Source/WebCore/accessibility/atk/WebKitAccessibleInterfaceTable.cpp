@@ -244,7 +244,7 @@ static AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
         Node* node = accTable->node();
-        if (node && is<HTMLTableElement>(node)) {
+        if (is<HTMLTableElement>(node)) {
             HTMLTableCaptionElement* caption = downcast<HTMLTableElement>(*node).caption();
             if (caption)
                 return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->element())->wrapper();

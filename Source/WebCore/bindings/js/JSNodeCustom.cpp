@@ -97,7 +97,7 @@ static inline bool isObservable(JSNode* jsNode, Node* node)
 static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
-        if (is<Element>(node)) {
+        if (is<Element>(*node)) {
             auto& element = downcast<Element>(*node);
 
             // If a wrapper is the last reference to an image element
@@ -192,9 +192,9 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
     JSDOMWrapper* wrapper;    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
-            if (is<HTMLElement>(node))
+            if (is<HTMLElement>(*node))
                 wrapper = createJSHTMLWrapper(globalObject, downcast<HTMLElement>(node));
-            else if (is<SVGElement>(node))
+            else if (is<SVGElement>(*node))
                 wrapper = createJSSVGWrapper(globalObject, downcast<SVGElement>(node));
             else
                 wrapper = CREATE_DOM_WRAPPER(globalObject, Element, node);

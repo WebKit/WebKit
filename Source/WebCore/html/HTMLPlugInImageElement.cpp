@@ -414,7 +414,7 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
 {
     for (unsigned i = 0, length = collection->length(); i < length; i++) {
         Node* node = collection->item(i);
-        if (is<HTMLPlugInImageElement>(node)) {
+        if (is<HTMLPlugInImageElement>(*node)) {
             HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*node);
             const URL& loadedURL = plugInImageElement.loadedUrl();
             String otherMimeType = plugInImageElement.loadedMimeType();
@@ -747,7 +747,7 @@ void HTMLPlugInImageElement::defaultEventHandler(Event* event)
 {
     RenderElement* r = renderer();
     if (r && r->isEmbeddedObject()) {
-        if (displayState() == WaitingForSnapshot && is<MouseEvent>(event) && event->type() == eventNames().clickEvent) {
+        if (displayState() == WaitingForSnapshot && is<MouseEvent>(*event) && event->type() == eventNames().clickEvent) {
             MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
             if (mouseEvent.button() == LeftButton) {
                 userDidClickSnapshot(&mouseEvent, true);

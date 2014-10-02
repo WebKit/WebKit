@@ -137,7 +137,7 @@ void Node::dumpStatistics()
 
         if (node->hasRareData()) {
             ++nodesWithRareData;
-            if (is<Element>(node)) {
+            if (is<Element>(*node)) {
                 ++elementsWithRareData;
                 if (downcast<Element>(*node).hasNamedNodeMap())
                     ++elementsWithNamedNodeMap;
@@ -872,7 +872,7 @@ bool Node::containsIncludingHostElements(const Node* node) const
 
 Node* Node::pseudoAwarePreviousSibling() const
 {
-    Element* parentOrHost = is<PseudoElement>(this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
+    Element* parentOrHost = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
     if (parentOrHost && !previousSibling()) {
         if (isAfterPseudoElement() && parentOrHost->lastChild())
             return parentOrHost->lastChild();
@@ -884,7 +884,7 @@ Node* Node::pseudoAwarePreviousSibling() const
 
 Node* Node::pseudoAwareNextSibling() const
 {
-    Element* parentOrHost = is<PseudoElement>(this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
+    Element* parentOrHost = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();
     if (parentOrHost && !nextSibling()) {
         if (isBeforePseudoElement() && parentOrHost->firstChild())
             return parentOrHost->firstChild();
@@ -927,7 +927,7 @@ Node* Node::pseudoAwareLastChild() const
 RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
     for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
-        if (is<Element>(node))
+        if (is<Element>(*node))
             return downcast<Element>(*node).computedStyle(pseudoElementSpecifier);
     }
     return nullptr;
@@ -1004,10 +1004,10 @@ Element* Node::parentOrShadowHostElement() const
     if (!parent)
         return nullptr;
 
-    if (is<ShadowRoot>(parent))
-        return downcast<ShadowRoot>(parent)->hostElement();
+    if (is<ShadowRoot>(*parent))
+        return downcast<ShadowRoot>(*parent).hostElement();
 
-    if (!is<Element>(parent))
+    if (!is<Element>(*parent))
         return nullptr;
 
     return downcast<Element>(parent);
@@ -1057,9 +1057,9 @@ Element* Node::rootEditableElement() const
 {
     Element* result = nullptr;
     for (Node* node = const_cast<Node*>(this); node && node->hasEditableStyle(); node = node->parentNode()) {
-        if (is<Element>(node))
+        if (is<Element>(*node))
             result = downcast<Element>(node);
-        if (is<HTMLBodyElement>(node))
+        if (is<HTMLBodyElement>(*node))
             break;
     }
     return result;
@@ -1384,7 +1384,7 @@ Element* Node::ancestorElement() const
 {
     // In theory, there can be EntityReference nodes between elements, but this is currently not supported.
     for (ContainerNode* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (is<Element>(ancestor))
+        if (is<Element>(*ancestor))
             return downcast<Element>(ancestor);
     }
     return nullptr;
@@ -1404,8 +1404,8 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (otherNode == this)
         return DOCUMENT_POSITION_EQUIVALENT;
     
-    Attr* attr1 = is<Attr>(this) ? downcast<Attr>(this) : nullptr;
-    Attr* attr2 = is<Attr>(otherNode) ? downcast<Attr>(otherNode) : nullptr;
+    Attr* attr1 = is<Attr>(*this) ? downcast<Attr>(this) : nullptr;
+    Attr* attr2 = is<Attr>(*otherNode) ? downcast<Attr>(otherNode) : nullptr;
     
     Node* start1 = attr1 ? attr1->ownerElement() : this;
     Node* start2 = attr2 ? attr2->ownerElement() : otherNode;
@@ -1529,7 +1529,7 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 
 static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
 {
-    if (!is<Element>(node))
+    if (!is<Element>(*node))
         return;
 
     const AtomicString& attr = downcast<Element>(*node).getAttribute(name);
@@ -1572,7 +1572,7 @@ void Node::showNodePathForThis() const
     }
     for (unsigned index = chain.size(); index > 0; --index) {
         const Node* node = chain[index - 1];
-        if (is<ShadowRoot>(node)) {
+        if (is<ShadowRoot>(*node)) {
             int count = 0;
             for (const ShadowRoot* shadowRoot = downcast<ShadowRoot>(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
                 ++count;
@@ -1723,7 +1723,7 @@ Element* Node::enclosingLinkEventParentOrSelf()
         // For imagemaps, the enclosing link element is the associated area element not the image itself.
         // So we don't let images be the enclosing link element, even though isLink sometimes returns
         // true for them.
-        if (node->isLink() && !is<HTMLImageElement>(node))
+        if (node->isLink() && !is<HTMLImageElement>(*node))
             return downcast<Element>(node);
     }
 
@@ -2032,7 +2032,7 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (is<TouchEvent>(event.get()))
+    if (is<TouchEvent>(*event))
         return dispatchTouchEvent(adoptRef(downcast<TouchEvent>(event.leakRef())));
 #endif
     return EventDispatcher::dispatchEvent(this, event);
@@ -2100,12 +2100,12 @@ void Node::defaultEventHandler(Event* event)
         return;
     const AtomicString& eventType = event->type();
     if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
-        if (is<KeyboardEvent>(event)) {
+        if (is<KeyboardEvent>(*event)) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
         }
     } else if (eventType == eventNames().clickEvent) {
-        int detail = is<UIEvent>(event) ? downcast<UIEvent>(*event).detail() : 0;
+        int detail = is<UIEvent>(*event) ? downcast<UIEvent>(*event).detail() : 0;
         if (dispatchDOMActivateEvent(detail, event))
             event->setDefaultHandled();
 #if ENABLE(CONTEXT_MENUS)
@@ -2115,12 +2115,12 @@ void Node::defaultEventHandler(Event* event)
                 page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
-        if (is<TextEvent>(event)) {
+        if (is<TextEvent>(*event)) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
         }
 #if ENABLE(PAN_SCROLLING)
-    } else if (eventType == eventNames().mousedownEvent && is<MouseEvent>(event)) {
+    } else if (eventType == eventNames().mousedownEvent && is<MouseEvent>(*event)) {
         if (downcast<MouseEvent>(*event).button() == MiddleButton) {
             if (enclosingLinkEventParentOrSelf())
                 return;
@@ -2135,7 +2135,7 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
-    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && is<WheelEvent>(event)) {
+    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && is<WheelEvent>(*event)) {
 
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
@@ -2147,7 +2147,7 @@ void Node::defaultEventHandler(Event* event)
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-    } else if (is<TouchEvent>(event) && eventNames().isTouchEventType(eventType)) {
+    } else if (is<TouchEvent>(*event) && eventNames().isTouchEventType(eventType)) {
         RenderObject* renderer = this->renderer();
         while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
             renderer = renderer->parent();

@@ -324,7 +324,8 @@ void CompositeEditCommand::insertLineBreak()
 
 bool CompositeEditCommand::isRemovableBlock(const Node* node)
 {
-    if (!is<HTMLDivElement>(node))
+    ASSERT(node);
+    if (!is<HTMLDivElement>(*node))
         return false;
 
     Node* parentNode = node->parentNode();
@@ -378,7 +379,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
             appendNode(insertChild, downcast<ContainerNode>(refChild));
     } else if (caretMinOffset(refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
-    else if (is<Text>(refChild) && caretMaxOffset(refChild) > offset) {
+    else if (is<Text>(*refChild) && caretMaxOffset(refChild) > offset) {
         splitTextNode(downcast<Text>(refChild), offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
@@ -678,7 +679,7 @@ bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(const String& tex
 bool CompositeEditCommand::canRebalance(const Position& position) const
 {
     Node* node = position.containerNode();
-    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !is<Text>(node))
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !is<Text>(node))
         return false;
 
     Text& textNode = downcast<Text>(*node);
@@ -750,7 +751,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> p
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
 {
     Node* node = position.deprecatedNode();
-    if (!node || !is<Text>(node))
+    if (!is<Text>(node))
         return;
     Text& textNode = downcast<Text>(*node);
     
@@ -769,9 +770,9 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     VisiblePosition previousVisiblePos(visiblePos.previous());
     Position previous(previousVisiblePos.deepEquivalent());
     
-    if (deprecatedIsCollapsibleWhitespace(previousVisiblePos.characterAfter()) && is<Text>(previous.deprecatedNode()) && !is<HTMLBRElement>(previous.deprecatedNode()))
+    if (deprecatedIsCollapsibleWhitespace(previousVisiblePos.characterAfter()) && is<Text>(*previous.deprecatedNode()) && !is<HTMLBRElement>(*previous.deprecatedNode()))
         replaceTextInNodePreservingMarkers(downcast<Text>(previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
-    if (deprecatedIsCollapsibleWhitespace(visiblePos.characterAfter()) && is<Text>(position.deprecatedNode()) && !is<HTMLBRElement>(position.deprecatedNode()))
+    if (deprecatedIsCollapsibleWhitespace(visiblePos.characterAfter()) && is<Text>(*position.deprecatedNode()) && !is<HTMLBRElement>(*position.deprecatedNode()))
         replaceTextInNodePreservingMarkers(downcast<Text>(position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
 }
 
@@ -877,7 +878,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
 
     Vector<RefPtr<Text>> nodes;
     for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(node)) {
-        if (is<Text>(node))
+        if (is<Text>(*node))
             nodes.append(downcast<Text>(node));
         if (node == end.deprecatedNode())
             break;
@@ -951,7 +952,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
     ASSERT(lineBreakExistsAtPosition(p));
     
     // We are certain that the position is at a line break, but it may be a br or a preserved newline.
-    if (is<HTMLBRElement>(p.anchorNode())) {
+    if (is<HTMLBRElement>(*p.anchorNode())) {
         removeNode(p.anchorNode());
         return;
     }
@@ -1120,8 +1121,9 @@ void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
         Node* node = position.deprecatedNode();
+        ASSERT(node);
         // Normally deletion will leave a br as a placeholder.
-        if (is<HTMLBRElement>(node))
+        if (is<HTMLBRElement>(*node))
             removeNodeAndPruneAncestors(node);
         // If the selection to move was empty and in an empty block that 
         // doesn't require a placeholder to prop itself open (like a bordered
@@ -1347,9 +1349,9 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         || listNode == emptyListItem->rootEditableElement())
         return false;
 
-    RefPtr<Element> newBlock = 0;
+    RefPtr<Element> newBlock;
     if (ContainerNode* blockEnclosingList = listNode->parentNode()) {
-        if (is<HTMLLIElement>(blockEnclosingList)) { // listNode is inside another list item
+        if (is<HTMLLIElement>(*blockEnclosingList)) { // listNode is inside another list item
             if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode.get())) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
@@ -1436,7 +1438,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     
     if (caretPos.deprecatedNode()->hasTagName(brTag))
         removeNodeAndPruneAncestors(caretPos.deprecatedNode());
-    else if (is<Text>(caretPos.deprecatedNode())) {
+    else if (is<Text>(*caretPos.deprecatedNode())) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text& textNode = downcast<Text>(*caretPos.deprecatedNode());
         ContainerNode* parentNode = textNode.parentNode();
@@ -1524,7 +1526,7 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
 
     RefPtr<Node> endNode = end;
     for (node = start; node && node->parentNode() != endNode; node = node->parentNode()) {
-        if (!is<Element>(node->parentNode()))
+        if (!is<Element>(*node->parentNode()))
             break;
         // Do not split a node when doing so introduces an empty node.
         VisiblePosition positionInParent = firstPositionInNode(node->parentNode());

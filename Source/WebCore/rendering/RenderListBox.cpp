@@ -116,9 +116,9 @@ void RenderListBox::updateFromElement()
             HTMLElement* element = listItems[i];
             String text;
             Font itemFont = style().font();
-            if (is<HTMLOptionElement>(element))
+            if (is<HTMLOptionElement>(*element))
                 text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-            else if (is<HTMLOptGroupElement>(element)) {
+            else if (is<HTMLOptGroupElement>(*element)) {
                 text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
@@ -330,7 +330,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (is<HTMLOptionElement>(element) && !element->isDisabledFormControl()) {
+        if (is<HTMLOptionElement>(*element) && !element->isDisabledFormControl()) {
             selectElement().setActiveSelectionEndIndex(i);
             rects.append(snappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
@@ -385,10 +385,10 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     String itemText;
-    bool isOptionElement = is<HTMLOptionElement>(listItemElement);
+    bool isOptionElement = is<HTMLOptionElement>(*listItemElement);
     if (isOptionElement)
         itemText = downcast<HTMLOptionElement>(*listItemElement).textIndentedToRespectGroupLabel();
-    else if (is<HTMLOptGroupElement>(listItemElement))
+    else if (is<HTMLOptGroupElement>(*listItemElement))
         itemText = downcast<HTMLOptGroupElement>(*listItemElement).groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
@@ -409,7 +409,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
-    if (is<HTMLOptGroupElement>(listItemElement)) {
+    if (is<HTMLOptGroupElement>(*listItemElement)) {
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
@@ -426,7 +426,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     HTMLElement* listItemElement = listItems[listIndex];
 
     Color backColor;
-    if (is<HTMLOptionElement>(listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
+    if (is<HTMLOptionElement>(*listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor();
         else

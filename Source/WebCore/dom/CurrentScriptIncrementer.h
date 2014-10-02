@@ -39,7 +39,7 @@ class CurrentScriptIncrementer {
 public:
     CurrentScriptIncrementer(Document* document, Element* element)
         : m_document(document)
-        , m_isHTMLScriptElement(is<HTMLScriptElement>(element))
+        , m_isHTMLScriptElement(is<HTMLScriptElement>(*element))
     {
         if (m_isHTMLScriptElement)
             m_document->pushCurrentScript(downcast<HTMLScriptElement>(element));

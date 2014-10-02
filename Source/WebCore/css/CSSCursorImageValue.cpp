@@ -47,7 +47,7 @@ namespace WebCore {
 static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document& document)
 {
     Element* element = SVGURIReference::targetElementFromIRIString(url, document);
-    if (element && is<SVGCursorElement>(element))
+    if (is<SVGCursorElement>(element))
         return downcast<SVGCursorElement>(element);
 
     return nullptr;

@@ -182,7 +182,7 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
 HTMLImageElement* HTMLAreaElement::imageElement() const
 {
     Node* mapElement = parentNode();
-    if (!mapElement || !is<HTMLMapElement>(mapElement))
+    if (!is<HTMLMapElement>(mapElement))
         return nullptr;
     
     return downcast<HTMLMapElement>(*mapElement).imageElement();

@@ -169,7 +169,7 @@ void InsertParagraphSeparatorCommand::doApply()
     if (!startBlock
         || !startBlock->nonShadowBoundaryParentNode()
         || isTableCell(startBlock.get())
-        || is<HTMLFormElement>(startBlock.get())
+        || is<HTMLFormElement>(*startBlock)
         // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342
         || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->renderer() && canonicalPos.deprecatedNode()->renderer()->isTable())
         || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->hasTagName(hrTag))) {
@@ -331,7 +331,7 @@ void InsertParagraphSeparatorCommand::doApply()
     Position leadingWhitespace = insertionPosition.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
-    if (leadingWhitespace.isNotNull() && is<Text>(leadingWhitespace.deprecatedNode())) {
+    if (is<Text>(leadingWhitespace.deprecatedNode())) {
         Text& textNode = downcast<Text>(*leadingWhitespace.deprecatedNode());
         ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
         replaceTextInNodePreservingMarkers(&textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
@@ -339,7 +339,7 @@ void InsertParagraphSeparatorCommand::doApply()
     
     // Split at pos if in the middle of a text node.
     Position positionAfterSplit;
-    if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor && is<Text>(insertionPosition.containerNode())) {
+    if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor && is<Text>(*insertionPosition.containerNode())) {
         RefPtr<Text> textNode = downcast<Text>(insertionPosition.containerNode());
         bool atEnd = static_cast<unsigned>(insertionPosition.offsetInContainerNode()) >= textNode->length();
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
@@ -399,7 +399,7 @@ void InsertParagraphSeparatorCommand::doApply()
             // Clear out all whitespace and insert one non-breaking space
             ASSERT(!positionAfterSplit.containerNode()->renderer() || positionAfterSplit.containerNode()->renderer()->style().collapseWhiteSpace());
             deleteInsignificantTextDownstream(positionAfterSplit);
-            if (is<Text>(positionAfterSplit.deprecatedNode()))
+            if (is<Text>(*positionAfterSplit.deprecatedNode()))
                 insertTextIntoNode(downcast<Text>(positionAfterSplit.containerNode()), 0, nonBreakingSpaceString());
         }
     }

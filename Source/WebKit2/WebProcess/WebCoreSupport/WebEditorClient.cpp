@@ -295,7 +295,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
@@ -306,7 +306,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element* element)
 
 void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
@@ -317,7 +317,7 @@ void WebEditorClient::textFieldDidEndEditing(Element* element)
 
 void WebEditorClient::textDidChangeInTextField(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     bool initiatedByUserTyping = UserTypingGestureIndicator::processingUserTypingGesture() && UserTypingGestureIndicator::focusedElementAtGestureStart() == element;
@@ -330,7 +330,7 @@ void WebEditorClient::textDidChangeInTextField(Element* element)
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    if (!is<HTMLTextAreaElement>(element))
+    if (!is<HTMLTextAreaElement>(*element))
         return;
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
@@ -393,7 +393,7 @@ static API::InjectedBundle::FormClient::InputFieldAction toInputFieldAction(WKIn
 
 bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return false;
 
     WKInputFieldActionType actionType = static_cast<WKInputFieldActionType>(0);
@@ -408,7 +408,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
 
 void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(*element))
         return;
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());

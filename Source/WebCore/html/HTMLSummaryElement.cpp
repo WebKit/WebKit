@@ -102,7 +102,8 @@ bool HTMLSummaryElement::isMainSummary() const
 
 static bool isClickableControl(Node* node)
 {
-    if (!is<Element>(node))
+    ASSERT(node);
+    if (!is<Element>(*node))
         return false;
     Element& element = downcast<Element>(*node);
     if (is<HTMLFormControlElement>(element))
@@ -126,7 +127,7 @@ void HTMLSummaryElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (is<KeyboardEvent>(event)) {
+        if (is<KeyboardEvent>(*event)) {
             KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(*event);
             if (keyboardEvent.type() == eventNames().keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
                 setActive(true, true);

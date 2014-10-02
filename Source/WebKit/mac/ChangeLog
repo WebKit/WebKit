@@ -1,3 +1,32 @@
+2014-10-01  Christophe Dumez  <cdumez@apple.com>
+
+        Have is<>(T*) function do a null check on the pointer argument
+        https://bugs.webkit.org/show_bug.cgi?id=137333
+
+        Reviewed by Gavin Barraclough.
+
+        Have is<>(T*) function do a null check on the argument instead of a
+        simple assertion. This makes sense for 2 reasons:
+        1. It is more consistent with downcast<>(T*), which will succeed even
+           if the argument is a nullptr.
+        2. It simplifies the code a bit as it gets rid of a lot of explicit
+           null checks.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::focusedElementChanged):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textFieldDidBeginEditing):
+        (WebEditorClient::textFieldDidEndEditing):
+        (WebEditorClient::textDidChangeInTextField):
+        (WebEditorClient::doTextFieldCommandFromEvent):
+        (WebEditorClient::textWillBeDeletedInTextField):
+        (WebEditorClient::textDidChangeInTextArea):
+        * WebView/WebHTMLRepresentation.mm:
+        (inputElementFromDOMElement):
+        (searchForLabelsBeforeElement):
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+
 2014-10-01  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/137308> WebKit should build on OS X Yosemite for external users

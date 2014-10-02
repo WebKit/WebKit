@@ -408,7 +408,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     if (toolTip.isEmpty() && m_page.settings().showsURLsInToolTips()) {
         if (Element* element = result.innerNonSharedElement()) {
             // Get tooltip representing form action, if relevant
-            if (is<HTMLInputElement>(element)) {
+            if (is<HTMLInputElement>(*element)) {
                 HTMLInputElement& input = downcast<HTMLInputElement>(*element);
                 if (input.isSubmitButton()) {
                     if (HTMLFormElement* form = input.form()) {
@@ -441,7 +441,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
     if (toolTip.isEmpty()) {
         if (Element* element = result.innerNonSharedElement()) {
-            if (is<HTMLInputElement>(element)) {
+            if (is<HTMLInputElement>(*element)) {
                 toolTip = downcast<HTMLInputElement>(*element).defaultToolTip();
 
                 // FIXME: We should obtain text direction of tooltip from

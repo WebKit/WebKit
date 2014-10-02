@@ -42,7 +42,7 @@ SVGDocument::SVGDocument(Frame* frame, const URL& url)
 SVGSVGElement* SVGDocument::rootElement() const
 {
     Element* element = documentElement();
-    if (element && is<SVGSVGElement>(element))
+    if (is<SVGSVGElement>(element))
         return downcast<SVGSVGElement>(element);
 
     return nullptr;

@@ -164,7 +164,7 @@ static bool isNewLineAtPosition(const Position& position)
 {
     Node* textNode = position.containerNode();
     int offset = position.offsetInContainerNode();
-    if (!textNode || !is<Text>(textNode) || offset < 0 || offset >= textNode->maxCharacterOffset())
+    if (!is<Text>(textNode) || offset < 0 || offset >= textNode->maxCharacterOffset())
         return false;
 
     ExceptionCode ec = 0;
@@ -267,18 +267,18 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
     // Avoid this by splitting "\n"
     splitTextNode(text, 1);
 
-    if (text == start.containerNode() && text->previousSibling() && is<Text>(text->previousSibling())) {
+    if (text == start.containerNode() && is<Text>(text->previousSibling())) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
         start = Position(downcast<Text>(text->previousSibling()), start.offsetInContainerNode());
     }
-    if (text == end.containerNode() && text->previousSibling() && is<Text>(text->previousSibling())) {
+    if (text == end.containerNode() && is<Text>(text->previousSibling())) {
         ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
         end = Position(downcast<Text>(text->previousSibling()), end.offsetInContainerNode());
     }
     if (text == m_endOfLastParagraph.containerNode()) {
         if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode()) {
             // We can only fix endOfLastParagraph if the previous node was still text and hasn't been modified by script.
-            if (is<Text>(text->previousSibling())
+            if (is<Text>(*text->previousSibling())
                 && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= downcast<Text>(text->previousSibling())->length())
                 m_endOfLastParagraph = Position(downcast<Text>(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
         } else

@@ -81,10 +81,10 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     Node* node = &element();
     while ((node = (forward ? NodeTraversal::next(node) : NodeTraversal::previous(node)))) {
         // Once we encounter a form element, we know we're through.
-        if (is<HTMLFormElement>(node))
+        if (is<HTMLFormElement>(*node))
             break;
         // Look for more radio buttons.
-        if (!is<HTMLInputElement>(node))
+        if (!is<HTMLInputElement>(*node))
             continue;
         RefPtr<HTMLInputElement> inputElement = downcast<HTMLInputElement>(node);
         if (inputElement->form() != element().form())
@@ -122,7 +122,7 @@ bool RadioInputType::isKeyboardFocusable(KeyboardEvent* event) const
     // Never allow keyboard tabbing to leave you in the same radio group.  Always
     // skip any other elements in the group.
     Element* currentFocusedNode = element().document().focusedElement();
-    if (currentFocusedNode && is<HTMLInputElement>(currentFocusedNode)) {
+    if (is<HTMLInputElement>(currentFocusedNode)) {
         HTMLInputElement& focusedInput = downcast<HTMLInputElement>(*currentFocusedNode);
         if (focusedInput.isRadioButton() && focusedInput.form() == element().form() && focusedInput.name() == element().name())
             return false;

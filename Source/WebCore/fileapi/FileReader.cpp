@@ -81,7 +81,7 @@ void FileReader::readAsArrayBuffer(Blob* blob, ExceptionCode& ec)
     if (!blob)
         return;
 
-    LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob->url().string().utf8().data(), is<File>(blob) ? downcast<File>(*blob).path().utf8().data() : "");
+    LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
 
     readInternal(blob, FileReaderLoader::ReadAsArrayBuffer, ec);
 }
@@ -91,7 +91,7 @@ void FileReader::readAsBinaryString(Blob* blob, ExceptionCode& ec)
     if (!blob)
         return;
 
-    LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob->url().string().utf8().data(), is<File>(blob) ? downcast<File>(*blob).path().utf8().data() : "");
+    LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
 
     readInternal(blob, FileReaderLoader::ReadAsBinaryString, ec);
 }
@@ -101,7 +101,7 @@ void FileReader::readAsText(Blob* blob, const String& encoding, ExceptionCode& e
     if (!blob)
         return;
 
-    LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob->url().string().utf8().data(), is<File>(blob) ? downcast<File>(*blob).path().utf8().data() : "");
+    LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
 
     m_encoding = encoding;
     readInternal(blob, FileReaderLoader::ReadAsText, ec);
@@ -117,7 +117,7 @@ void FileReader::readAsDataURL(Blob* blob, ExceptionCode& ec)
     if (!blob)
         return;
 
-    LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob->url().string().utf8().data(), is<File>(blob) ? downcast<File>(*blob).path().utf8().data() : "");
+    LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob->url().string().utf8().data(), is<File>(*blob) ? downcast<File>(*blob).path().utf8().data() : "");
 
     readInternal(blob, FileReaderLoader::ReadAsDataURL, ec);
 }

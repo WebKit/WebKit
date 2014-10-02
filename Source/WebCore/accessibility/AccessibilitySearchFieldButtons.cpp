@@ -58,7 +58,7 @@ void AccessibilitySearchFieldCancelButton::accessibilityText(Vector<Accessibilit
 bool AccessibilitySearchFieldCancelButton::press()
 {
     Node* node = this->node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return false;
     
     Element& element = downcast<Element>(*node);

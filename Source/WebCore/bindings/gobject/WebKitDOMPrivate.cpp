@@ -84,7 +84,7 @@ WebKitDOMNode* wrap(Node* node)
 
     switch (node->nodeType()) {
     case Node::ELEMENT_NODE:
-        if (is<HTMLElement>(node))
+        if (is<HTMLElement>(*node))
             return WEBKIT_DOM_NODE(wrap(downcast<HTMLElement>(node)));
         return WEBKIT_DOM_NODE(wrapElement(downcast<Element>(node)));
     case Node::ATTRIBUTE_NODE:
@@ -100,7 +100,7 @@ WebKitDOMNode* wrap(Node* node)
     case Node::COMMENT_NODE:
         return WEBKIT_DOM_NODE(wrapComment(static_cast<Comment*>(node)));
     case Node::DOCUMENT_NODE:
-        if (is<HTMLDocument>(node))
+        if (is<HTMLDocument>(*node))
             return WEBKIT_DOM_NODE(wrapHTMLDocument(downcast<HTMLDocument>(node)));
         return WEBKIT_DOM_NODE(wrapDocument(downcast<Document>(node)));
     case Node::DOCUMENT_TYPE_NODE:

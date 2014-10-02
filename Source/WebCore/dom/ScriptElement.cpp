@@ -382,10 +382,10 @@ String ScriptElement::scriptContent() const
 
 ScriptElement* toScriptElementIfPossible(Element* element)
 {
-    if (is<HTMLScriptElement>(element))
+    if (is<HTMLScriptElement>(*element))
         return downcast<HTMLScriptElement>(element);
 
-    if (is<SVGScriptElement>(element))
+    if (is<SVGScriptElement>(*element))
         return downcast<SVGScriptElement>(element);
 
     return nullptr;

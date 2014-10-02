@@ -333,7 +333,7 @@ void SliderThumbElement::stopDragging()
 #if !PLATFORM(IOS)
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
-    if (!is<MouseEvent>(event)) {
+    if (!is<MouseEvent>(*event)) {
         HTMLDivElement::defaultEventHandler(event);
         return;
     }

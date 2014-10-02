@@ -343,7 +343,7 @@ void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, PassRefPtr<TextTrack
 HTMLMediaElement* HTMLTrackElement::mediaElement() const
 {
     Element* parent = parentElement();
-    if (parent && is<HTMLMediaElement>(parent))
+    if (is<HTMLMediaElement>(parent))
         return downcast<HTMLMediaElement>(parentNode());
 
     return nullptr;

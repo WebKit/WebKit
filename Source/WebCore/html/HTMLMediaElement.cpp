@@ -4877,7 +4877,7 @@ void HTMLMediaElement::enterFullscreen()
     m_isInVideoFullscreen = true;
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
-    if (document().page() && is<HTMLVideoElement>(this)) {
+    if (document().page() && is<HTMLVideoElement>(*this)) {
         HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
         if (document().page()->chrome().client().supportsVideoFullscreen()) {
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(&asVideo);
@@ -4901,7 +4901,7 @@ void HTMLMediaElement::exitFullscreen()
     m_isInVideoFullscreen = false;
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
-    if (document().page() && is<HTMLVideoElement>(this)) {
+    if (document().page() && is<HTMLVideoElement>(*this)) {
         if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
             pauseInternal();
 

@@ -222,7 +222,7 @@ void PageSerializer::serializeFrame(Frame* frame)
 
     for (Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); ++iter) {
         Node* node = *iter;
-        if (!is<Element>(node))
+        if (!is<Element>(*node))
             continue;
 
         Element& element = downcast<Element>(*node);

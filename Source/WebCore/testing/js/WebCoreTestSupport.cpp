@@ -46,7 +46,7 @@ void injectInternalsObject(JSContextRef context)
     JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
-    if (is<Document>(scriptContext))
+    if (is<Document>(*scriptContext))
         globalObject->putDirect(exec->vm(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(downcast<Document>(scriptContext))));
 }
 

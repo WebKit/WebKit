@@ -72,7 +72,6 @@ JSLazyEventListener::~JSLazyEventListener()
 
 JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* executionContext) const
 {
-    ASSERT(executionContext);
     ASSERT(is<Document>(executionContext));
     if (!executionContext)
         return nullptr;

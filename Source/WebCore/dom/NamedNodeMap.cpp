@@ -86,7 +86,7 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
     }
 
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
-    if (!is<Attr>(node)) {
+    if (!is<Attr>(*node)) {
         ec = HIERARCHY_REQUEST_ERR;
         return nullptr;
     }

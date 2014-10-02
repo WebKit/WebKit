@@ -115,7 +115,7 @@ void InsertLineBreakCommand::doApply()
     // FIXME: Need to merge text nodes when inserting just after or before text.
     
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
-        bool needExtraLineBreak = !is<HTMLHRElement>(pos.deprecatedNode()) && !is<HTMLTableElement>(pos.deprecatedNode());
+        bool needExtraLineBreak = !is<HTMLHRElement>(*pos.deprecatedNode()) && !is<HTMLTableElement>(*pos.deprecatedNode());
         
         insertNodeAt(nodeToInsert.get(), pos);
         
@@ -137,7 +137,7 @@ void InsertLineBreakCommand::doApply()
     } else if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.deprecatedNode()) || !pos.deprecatedNode()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
-    } else if (is<Text>(pos.deprecatedNode())) {
+    } else if (is<Text>(*pos.deprecatedNode())) {
         // Split a text node
         Text& textNode = downcast<Text>(*pos.deprecatedNode());
         splitTextNode(&textNode, pos.deprecatedEditingOffset());

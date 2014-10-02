@@ -60,9 +60,8 @@ inline bool is(ArgType& source)
 template <typename ExpectedType, typename ArgType>
 inline bool is(ArgType* source)
 {
-    ASSERT(source);
     static_assert(!std::is_base_of<ExpectedType, ArgType>::value, "Unnecessary type check");
-    return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
+    return source && TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
 }
 
 // Safe downcasting functions.

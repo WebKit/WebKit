@@ -129,7 +129,7 @@ void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
 
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
     Node* child = firstChild();
-    if (child && is<Text>(child) && !child->nextSibling())
+    if (is<Text>(child) && !child->nextSibling())
         downcast<Text>(*child).setData(text, ec);
     else {
         removeChildren();
@@ -160,7 +160,7 @@ int HTMLOptionElement::index() const
     const Vector<HTMLElement*>& items = selectElement->listItems();
     size_t length = items.size();
     for (size_t i = 0; i < length; ++i) {
-        if (!is<HTMLOptionElement>(items[i]))
+        if (!is<HTMLOptionElement>(*items[i]))
             continue;
         if (items[i] == this)
             return optionIndex;
@@ -257,7 +257,7 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
 HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 {
     for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {
-        if (is<HTMLDataListElement>(parent))
+        if (is<HTMLDataListElement>(*parent))
             return downcast<HTMLDataListElement>(parent);
     }
     return nullptr;
@@ -267,7 +267,7 @@ HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
     ContainerNode* select = parentNode();
-    while (select && !is<HTMLSelectElement>(select))
+    while (select && !is<HTMLSelectElement>(*select))
         select = select->parentNode();
 
     if (!select)
@@ -302,7 +302,7 @@ void HTMLOptionElement::willResetComputedStyle()
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     ContainerNode* parent = parentNode();
-    if (parent && is<HTMLOptGroupElement>(parent))
+    if (is<HTMLOptGroupElement>(parent))
         return "    " + text();
     return text();
 }
@@ -312,7 +312,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
     if (ownElementDisabled())
         return true;
 
-    if (!parentNode() || !is<HTMLOptGroupElement>(parentNode()))
+    if (!is<HTMLOptGroupElement>(parentNode()))
         return false;
 
     return downcast<HTMLOptGroupElement>(*parentNode()).isDisabledFormControl();
@@ -338,10 +338,10 @@ String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;
     for (Node* node = firstChild(); node; ) {
-        if (is<Text>(node))
+        if (is<Text>(*node))
             text.append(node->nodeValue());
         // Text nodes inside script elements are not part of the option text.
-        if (is<Element>(node) && toScriptElementIfPossible(downcast<Element>(node)))
+        if (is<Element>(*node) && toScriptElementIfPossible(downcast<Element>(node)))
             node = NodeTraversal::nextSkippingChildren(node, this);
         else
             node = NodeTraversal::next(node, this);

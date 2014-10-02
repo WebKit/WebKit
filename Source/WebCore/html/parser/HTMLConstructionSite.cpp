@@ -61,8 +61,8 @@ static bool hasImpliedEndTag(const HTMLStackItem* item)
     return item->hasTagName(ddTag)
         || item->hasTagName(dtTag)
         || item->hasTagName(liTag)
-        || is<HTMLOptionElement>(item->node())
-        || is<HTMLOptGroupElement>(item->node())
+        || is<HTMLOptionElement>(*item->node())
+        || is<HTMLOptGroupElement>(*item->node())
         || item->hasTagName(pTag)
         || item->hasTagName(rbTag)
         || item->hasTagName(rpTag)
@@ -158,7 +158,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 
 void HTMLConstructionSite::attachLater(ContainerNode* parent, PassRefPtr<Node> prpChild, bool selfClosing)
 {
-    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(prpChild.get()) || !toScriptElementIfPossible(downcast<Element>(prpChild.get())));
+    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(*prpChild) || !toScriptElementIfPossible(downcast<Element>(prpChild.get())));
     ASSERT(pluginContentIsAllowed(m_parserContentPolicy) || !prpChild->isPluginElement());
 
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
@@ -458,7 +458,7 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
 void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool isDemoted)
 {
     RefPtr<Element> element = createHTMLElement(token);
-    ASSERT(is<HTMLFormElement>(element.get()));
+    ASSERT(is<HTMLFormElement>(*element));
     RefPtr<HTMLFormElement> form = static_pointer_cast<HTMLFormElement>(element.release());
     if (!insideTemplateElement())
         m_form = form;
@@ -547,7 +547,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
     Node* previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
-    if (previousChild && is<Text>(previousChild)) {
+    if (is<Text>(previousChild)) {
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
         Text& textNode = downcast<Text>(*previousChild);
@@ -618,7 +618,7 @@ PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken* token, 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (is<HTMLTemplateElement>(currentNode()))
+    if (is<HTMLTemplateElement>(*currentNode()))
         return downcast<HTMLTemplateElement>(*currentElement()).content()->document();
 #endif
     return currentNode()->document();
@@ -727,7 +727,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
         // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
         bool parentCanBeFosterParent = parent && (parent->isElementNode() || (m_isParsingFragment && parent == m_openElements.rootNode()));
 #if ENABLE(TEMPLATE_ELEMENT)
-        parentCanBeFosterParent = parentCanBeFosterParent || (parent && is<DocumentFragment>(parent) && downcast<DocumentFragment>(parent)->isTemplateContent());
+        parentCanBeFosterParent = parentCanBeFosterParent || (is<DocumentFragment>(parent) && downcast<DocumentFragment>(parent)->isTemplateContent());
 #endif
         if (parentCanBeFosterParent) {
             task.parent = parent;

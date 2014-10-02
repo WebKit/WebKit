@@ -77,7 +77,7 @@ private:
 
 inline bool isActiveInsertionPoint(const Node* node)
 {
-    return node && is<InsertionPoint>(node) && downcast<InsertionPoint>(*node).isActive();
+    return is<InsertionPoint>(node) && downcast<InsertionPoint>(*node).isActive();
 }
 
 inline Node* parentNodeForDistribution(const Node* node)
@@ -85,7 +85,7 @@ inline Node* parentNodeForDistribution(const Node* node)
     ASSERT(node);
 
     if (Node* parent = node->parentNode()) {
-        if (is<InsertionPoint>(parent) && downcast<InsertionPoint>(*parent).shouldUseFallbackElements())
+        if (is<InsertionPoint>(*parent) && downcast<InsertionPoint>(*parent).shouldUseFallbackElements())
             return parent->parentNode();
         return parent;
     }
@@ -96,7 +96,7 @@ inline Node* parentNodeForDistribution(const Node* node)
 inline Element* parentElementForDistribution(const Node* node)
 {
     if (Node* parent = parentNodeForDistribution(node)) {
-        if (is<Element>(parent))
+        if (is<Element>(*parent))
             return downcast<Element>(parent);
     }
 

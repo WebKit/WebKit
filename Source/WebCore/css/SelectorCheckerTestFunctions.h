@@ -42,7 +42,7 @@ namespace WebCore {
 
 ALWAYS_INLINE bool isAutofilled(const Element* element)
 {
-    if (is<HTMLFormControlElement>(element)) {
+    if (is<HTMLFormControlElement>(*element)) {
         if (const HTMLInputElement* inputElement = element->toInputElement())
             return inputElement->isAutofilled();
     }
@@ -56,13 +56,13 @@ ALWAYS_INLINE bool isDefaultButtonForForm(const Element* element)
 
 ALWAYS_INLINE bool isDisabled(const Element* element)
 {
-    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
+    return (is<HTMLFormControlElement>(*element) || is<HTMLOptionElement>(*element) || is<HTMLOptGroupElement>(*element))
         && element->isDisabledFormControl();
 }
 
 ALWAYS_INLINE bool isEnabled(const Element* element)
 {
-    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
+    return (is<HTMLFormControlElement>(*element) || is<HTMLOptionElement>(*element) || is<HTMLOptGroupElement>(*element))
         && !element->isDisabledFormControl();
 }
 
@@ -79,7 +79,7 @@ ALWAYS_INLINE bool isChecked(Element* element)
     const HTMLInputElement* inputElement = element->toInputElement();
     if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
         return true;
-    if (is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(*element).selected())
+    if (is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected())
         return true;
     return false;
 }
@@ -127,7 +127,7 @@ inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* fil
 {
     AtomicString value;
 #if ENABLE(VIDEO_TRACK)
-    if (is<WebVTTElement>(element))
+    if (is<WebVTTElement>(*element))
         value = downcast<WebVTTElement>(*element).language();
     else
 #endif
@@ -304,12 +304,12 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element* element)
 #if ENABLE(VIDEO_TRACK)
 ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element* element)
 {
-    return is<WebVTTElement>(element) && !downcast<WebVTTElement>(*element).isPastNode();
+    return is<WebVTTElement>(*element) && !downcast<WebVTTElement>(*element).isPastNode();
 }
 
 ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element* element)
 {
-    return is<WebVTTElement>(element) && downcast<WebVTTElement>(*element).isPastNode();
+    return is<WebVTTElement>(*element) && downcast<WebVTTElement>(*element).isPastNode();
 }
 #endif
 

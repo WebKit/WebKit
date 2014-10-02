@@ -74,7 +74,7 @@ ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWo
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
 {
-    if (is<Document>(context))
+    if (is<Document>(*context))
         execute(downcast<Document>(context));
     else
         execute(downcast<WorkerGlobalScope>(context));

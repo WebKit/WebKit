@@ -156,7 +156,7 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
 SVGPathElement* SVGMPathElement::pathElement()
 {
     Element* target = targetElementFromIRIString(href(), document());
-    if (target && is<SVGPathElement>(target))
+    if (is<SVGPathElement>(target))
         return downcast<SVGPathElement>(target);
     return nullptr;
 }
@@ -168,7 +168,7 @@ void SVGMPathElement::targetPathChanged()
 
 void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
 {
-    if (parent && is<SVGAnimateMotionElement>(parent))
+    if (is<SVGAnimateMotionElement>(parent))
         downcast<SVGAnimateMotionElement>(*parent).updateAnimationPath();
 }
 

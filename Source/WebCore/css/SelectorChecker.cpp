@@ -556,11 +556,11 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
             {
                 bool result = true;
                 for (Node* node = element->firstChild(); node; node = node->nextSibling()) {
-                    if (node->isElementNode()) {
+                    if (is<Element>(*node)) {
                         result = false;
                         break;
                     }
-                    if (is<Text>(node)) {
+                    if (is<Text>(*node)) {
                         Text& textNode = downcast<Text>(*node);
                         if (!textNode.data().isEmpty()) {
                             result = false;

@@ -36,7 +36,7 @@ static bool isViewportElement(Node* node)
     return (node->hasTagName(SVGNames::svgTag)
         || node->hasTagName(SVGNames::symbolTag)
         || node->hasTagName(SVGNames::foreignObjectTag)
-        || is<SVGImageElement>(node));
+        || is<SVGImageElement>(*node));
 }
 
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
@@ -101,7 +101,7 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
-    if (target && is<SVGGraphicsElement>(target)) {
+    if (is<SVGGraphicsElement>(target)) {
         AffineTransform targetCTM = downcast<SVGGraphicsElement>(*target).getCTM(styleUpdateStrategy);
         if (!targetCTM.isInvertible()) {
             ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;

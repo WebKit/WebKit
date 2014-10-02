@@ -309,8 +309,6 @@ void WebChromeClientIOS::webAppOrientationsUpdated()
 
 void WebChromeClientIOS::focusedElementChanged(Element* element)
 {
-    if (!element)
-        return;
     if (!is<HTMLInputElement>(element))
         return;
 

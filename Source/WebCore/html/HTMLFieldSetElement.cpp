@@ -65,7 +65,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     while (control) {
         control->setAncestorDisabled(isDisabled);
         // Don't call setAncestorDisabled(false) on form contorls inside disabled fieldsets.
-        if (is<HTMLFieldSetElement>(control) && control->fastHasAttribute(disabledAttr))
+        if (is<HTMLFieldSetElement>(*control) && control->fastHasAttribute(disabledAttr))
             control = Traversal<HTMLFormControlElement>::nextSkippingChildren(control, &startNode);
         else
             control = Traversal<HTMLFormControlElement>::next(control, &startNode);
@@ -93,7 +93,7 @@ void HTMLFieldSetElement::disabledStateChanged()
     bool thisFieldsetIsDisabled = fastHasAttribute(disabledAttr);
     bool hasSeenFirstLegendElement = false;
     for (HTMLElement* control = Traversal<HTMLElement>::firstChild(this); control; control = Traversal<HTMLElement>::nextSibling(control)) {
-        if (!hasSeenFirstLegendElement && is<HTMLLegendElement>(control)) {
+        if (!hasSeenFirstLegendElement && is<HTMLLegendElement>(*control)) {
             hasSeenFirstLegendElement = true;
             updateFromControlElementsAncestorDisabledStateUnder(*control, false /* isDisabled */);
             continue;

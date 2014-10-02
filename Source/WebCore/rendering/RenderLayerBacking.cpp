@@ -1681,7 +1681,7 @@ static bool isRestartedPlugin(RenderObject* renderer)
         return false;
 
     Element* element = downcast<Element>(renderer->node());
-    if (!element || !is<HTMLPlugInElement>(element))
+    if (!is<HTMLPlugInElement>(element))
         return false;
 
     return downcast<HTMLPlugInElement>(*element).isRestartedPlugin();

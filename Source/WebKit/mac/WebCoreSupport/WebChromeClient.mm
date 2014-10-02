@@ -218,8 +218,6 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 
 void WebChromeClient::focusedElementChanged(Element* element)
 {
-    if (!element)
-        return;
     if (!is<HTMLInputElement>(element))
         return;
 

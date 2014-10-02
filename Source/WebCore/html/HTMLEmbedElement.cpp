@@ -189,7 +189,7 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
     // If my parent is an <object> and is not set to use fallback content, I
     // should be ignored and not get a renderer.
     ContainerNode* parent = parentNode();
-    if (parent && is<HTMLObjectElement>(parent)) {
+    if (is<HTMLObjectElement>(parent)) {
         if (!parent->renderer())
             return false;
         if (!downcast<HTMLObjectElement>(*parent).useFallbackContent()) {

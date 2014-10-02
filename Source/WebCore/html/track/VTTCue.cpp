@@ -497,12 +497,12 @@ void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* p
 {
     for (Node* node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
         RefPtr<Node> clonedNode;
-        if (is<WebVTTElement>(node))
+        if (is<WebVTTElement>(*node))
             clonedNode = downcast<WebVTTElement>(*node).createEquivalentHTMLElement(ownerDocument());
         else
             clonedNode = node->cloneNode(false);
         parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);
-        if (is<ContainerNode>(node))
+        if (is<ContainerNode>(*node))
             copyWebVTTNodeToDOMTree(downcast<ContainerNode>(node), downcast<ContainerNode>(clonedNode.get()));
     }
 }
@@ -766,7 +766,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
                 isPastNode = false;
         }
         
-        if (is<WebVTTElement>(child)) {
+        if (is<WebVTTElement>(*child)) {
             downcast<WebVTTElement>(*child).setIsPastNode(isPastNode);
             // Make an elemenet id match a cue id for style matching purposes.
             if (!id().isEmpty())

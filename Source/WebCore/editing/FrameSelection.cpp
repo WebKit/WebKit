@@ -398,7 +398,7 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
     if (position.anchorNode() == node)
         return true;
 
-    if (!is<Element>(node))
+    if (!is<Element>(*node))
         return false;
 
     Element* element = downcast<Element>(node);
@@ -1491,7 +1491,7 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 
     Color caretColor = Color::black;
     ColorSpace colorSpace = ColorSpaceDeviceRGB;
-    Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
+    Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
     Element* rootEditableElement = node->rootEditableElement();
 
     if (element && element->renderer()) {
@@ -1522,9 +1522,9 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 
 void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
 {
-    if (is<Element>(renderer->node())) {
-        Element* element = downcast<Element>(renderer->node());
-        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().string().utf8().data());
+    if (is<Element>(*renderer->node())) {
+        Element& element = downcast<Element>(*renderer->node());
+        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element.localName().string().utf8().data());
     } else if (renderer->isText()) {
         RenderText* textRenderer = toRenderText(renderer);
         if (!textRenderer->textLength() || !textRenderer->firstTextBox()) {
@@ -1668,7 +1668,7 @@ void FrameSelection::selectAll()
     Document* document = m_frame->document();
 
     Element* focusedElement = document->focusedElement();
-    if (focusedElement && is<HTMLSelectElement>(focusedElement)) {
+    if (is<HTMLSelectElement>(focusedElement)) {
         HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*focusedElement);
         if (selectElement.canSelectAll()) {
             selectElement.selectAll();
@@ -1686,7 +1686,7 @@ void FrameSelection::selectAll()
             selectStartTarget = root.get();
     } else {
         if (m_selection.isNone() && focusedElement) {
-            if (is<HTMLTextFormControlElement>(focusedElement)) {
+            if (is<HTMLTextFormControlElement>(*focusedElement)) {
                 downcast<HTMLTextFormControlElement>(*focusedElement).select();
                 return;
             }
@@ -2022,8 +2022,8 @@ static HTMLFormElement* scanForForm(Element* start)
     auto descendants = descendantsOfType<HTMLElement>(start->document());
     for (auto it = descendants.from(*start), end = descendants.end(); it != end; ++it) {
         HTMLElement& element = *it;
-        if (is<HTMLFormElement>(&element))
-            return downcast<HTMLFormElement>(&element);
+        if (is<HTMLFormElement>(element))
+            return &downcast<HTMLFormElement>(element);
         if (is<HTMLFormControlElement>(element))
             return downcast<HTMLFormControlElement>(element).form();
         if (is<HTMLFrameElementBase>(element)) {

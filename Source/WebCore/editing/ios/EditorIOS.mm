@@ -181,7 +181,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
         return;
 
     Element* focusedElement = m_frame.document()->focusedElement();
-    if (focusedElement && (is<HTMLTextAreaElement>(focusedElement) || (is<HTMLInputElement>(focusedElement)
+    if (focusedElement && (is<HTMLTextAreaElement>(*focusedElement) || (is<HTMLInputElement>(*focusedElement)
         && (downcast<HTMLInputElement>(*focusedElement).isTextField()
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
         if (direction == NaturalWritingDirection)

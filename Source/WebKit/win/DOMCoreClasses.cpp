@@ -1495,27 +1495,27 @@ DOMElement::~DOMElement()
 IDOMElement* DOMElement::createInstance(WebCore::Element* e)
 {
     if (!e)
-        return 0;
+        return nullptr;
 
     HRESULT hr;
     IDOMElement* domElement = 0;
 
-    if (is<WebCore::HTMLFormElement>(e)) {
+    if (is<WebCore::HTMLFormElement>(*e)) {
         DOMHTMLFormElement* newElement = new DOMHTMLFormElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(iframeTag)) {
         DOMHTMLIFrameElement* newElement = new DOMHTMLIFrameElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<WebCore::HTMLInputElement>(e)) {
+    } else if (is<WebCore::HTMLInputElement>(*e)) {
         DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<WebCore::HTMLOptionElement>(e)) {
+    } else if (is<WebCore::HTMLOptionElement>(*e)) {
         DOMHTMLOptionElement* newElement = new DOMHTMLOptionElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(selectTag)) {
         DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (is<WebCore::HTMLTextAreaElement>(e)) {
+    } else if (is<WebCore::HTMLTextAreaElement>(*e)) {
         DOMHTMLTextAreaElement* newElement = new DOMHTMLTextAreaElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->isHTMLElement()) {

@@ -1388,7 +1388,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
         return false;
 
     Node* ownerNode = m_pageStyleSheet->ownerNode();
-    if (!ownerNode || !is<Element>(ownerNode))
+    if (!is<Element>(ownerNode))
         return false;
     Element& ownerElement = downcast<Element>(*ownerNode);
 

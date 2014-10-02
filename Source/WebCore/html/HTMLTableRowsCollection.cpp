@@ -97,7 +97,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     else if (isInSection(*previous, tbodyTag))
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
-        if (is<HTMLTableRowElement>(child))
+        if (is<HTMLTableRowElement>(*child))
             return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
             if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
@@ -130,7 +130,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
     }
 
     for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
-        if (is<HTMLTableRowElement>(child))
+        if (is<HTMLTableRowElement>(*child))
             return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
             if (auto* row = childrenOfType<HTMLTableRowElement>(*child).last())

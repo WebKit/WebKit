@@ -351,7 +351,7 @@ static Node* ancestorRespondingToClickEvents(const HitTestResult& hitTestResult,
             // If we are interested about the frame, use it.
             if (nodeBounds) {
                 // This is a check to see whether this node is an area element.  The only way this can happen is if this is the first check.
-                if (node == hitTestResult.innerNode() && node != hitTestResult.innerNonSharedNode() && is<HTMLAreaElement>(node))
+                if (node == hitTestResult.innerNode() && node != hitTestResult.innerNonSharedNode() && is<HTMLAreaElement>(*node))
                     *nodeBounds = snappedIntRect(downcast<HTMLAreaElement>(*node).computeRect(hitTestResult.innerNonSharedNode()->renderer()));
                 else if (node && node->renderer())
                     *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);

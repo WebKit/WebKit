@@ -514,7 +514,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
         return;
 
     Element* focusedElement = document().focusedElement();
-    if (!focusedElement || !is<HTMLAreaElement>(focusedElement))
+    if (!is<HTMLAreaElement>(focusedElement))
         return;
 
     HTMLAreaElement& areaElement = downcast<HTMLAreaElement>(*focusedElement);
@@ -560,7 +560,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
     if (!img || img->isNull())
         return;
 
-    HTMLImageElement* imageElement = (element() && is<HTMLImageElement>(element())) ? downcast<HTMLImageElement>(element()) : nullptr;
+    HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
     Image* image = imageResource().image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, LayoutSize(rect.size()));
@@ -622,7 +622,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 HTMLMapElement* RenderImage::imageMap() const
 {
-    HTMLImageElement* image = element() && is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
+    HTMLImageElement* image = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     return image ? image->treeScope().getImageMap(image->fastGetAttribute(usemapAttr)) : nullptr;
 }
 

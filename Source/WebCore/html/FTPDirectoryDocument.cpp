@@ -300,7 +300,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     RefPtr<Element> tableElement = document()->getElementById(String(ASCIILiteral("ftpDirectoryTable")));
     if (!tableElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
-    else if (!is<HTMLTableElement>(tableElement.get()))
+    else if (!is<HTMLTableElement>(*tableElement))
         LOG_ERROR("Element of id \"ftpDirectoryTable\" is not a table element");
     else 
         m_tableElement = downcast<HTMLTableElement>(tableElement.get());

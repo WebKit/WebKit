@@ -1357,7 +1357,7 @@ NSDictionary* HTMLConverter::attributesForElement(Element& element)
 NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& node)
 {
     Node* ancestor = node.parentNode();
-    while (ancestor && !is<Element>(ancestor))
+    while (ancestor && !is<Element>(*ancestor))
         ancestor = ancestor->parentNode();
     if (!ancestor)
         return nullptr;
@@ -1374,7 +1374,7 @@ NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Eleme
     ASSERT(attributesForCurrentElement);
 
     Node* ancestor = element.parentNode();
-    while (ancestor && !is<Element>(ancestor))
+    while (ancestor && !is<Element>(*ancestor))
         ancestor = ancestor->parentNode();
 
     if (!ancestor) {
@@ -2571,7 +2571,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range)
         
         if (startContainer == endContainer && (startOffset == endOffset - 1)) {
             Node* node = startContainer->traverseToChildAt(startOffset);
-            if (node && is<HTMLImageElement>(node)) {
+            if (is<HTMLImageElement>(node)) {
                 NSFileWrapper* fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(node));
                 NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                 [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];

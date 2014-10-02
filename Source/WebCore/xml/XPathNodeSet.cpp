@@ -95,7 +95,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
             Node* node = parentMatrix[i][0];
-            if (is<Attr>(node) && downcast<Attr>(*node).ownerElement() == commonAncestor)
+            if (is<Attr>(*node) && downcast<Attr>(*node).ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {
@@ -157,7 +157,7 @@ void NodeSet::sort() const
         Vector<Node*>& parentsVector = parentMatrix[i];
         Node* node = m_nodes[i].get();
         parentsVector.append(node);
-        if (is<Attr>(node)) {
+        if (is<Attr>(*node)) {
             node = downcast<Attr>(*node).ownerElement();
             parentsVector.append(node);
             containsAttributeNodes = true;
@@ -179,7 +179,7 @@ void NodeSet::sort() const
 
 static Node* findRootNode(Node* node)
 {
-    if (is<Attr>(node))
+    if (is<Attr>(*node))
         node = downcast<Attr>(*node).ownerElement();
     if (node->inDocument())
         node = &node->document();
@@ -211,7 +211,7 @@ void NodeSet::traversalSort() const
         if (nodes.contains(node))
             sortedNodes.append(node);
 
-        if (!containsAttributeNodes || !is<Element>(node))
+        if (!containsAttributeNodes || !is<Element>(*node))
             continue;
 
         Element& element = downcast<Element>(*node);

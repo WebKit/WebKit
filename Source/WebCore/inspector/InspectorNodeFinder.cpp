@@ -89,7 +89,7 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
                 m_results.add(node);
 
             // Search inside frame elements.
-            if (is<HTMLFrameOwnerElement>(node)) {
+            if (is<HTMLFrameOwnerElement>(*node)) {
                 HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(*node);
                 if (Document* document = frameOwner.contentDocument())
                     performSearch(document);
@@ -146,7 +146,7 @@ void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
         if (ec)
             return;
 
-        if (is<Attr>(node))
+        if (is<Attr>(*node))
             node = downcast<Attr>(*node).ownerElement();
 
         // XPath can get out of the context node that we pass as the starting point to evaluate, so we need to filter for just the nodes we care about.
@@ -157,7 +157,8 @@ void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
 
 void InspectorNodeFinder::searchUsingCSSSelectors(Node* parentNode)
 {
-    if (!is<ContainerNode>(parentNode))
+    ASSERT(parentNode);
+    if (!is<ContainerNode>(*parentNode))
         return;
 
     ExceptionCode ec = 0;

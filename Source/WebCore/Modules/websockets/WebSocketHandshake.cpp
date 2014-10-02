@@ -196,7 +196,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (is<Document>(m_context)) {
+    if (is<Document>(*m_context)) {
         Document& document = downcast<Document>(*m_context);
         String cookie = cookieRequestHeaderFieldValue(&document, url);
         if (!cookie.isEmpty())

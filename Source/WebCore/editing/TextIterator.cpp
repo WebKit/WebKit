@@ -255,7 +255,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
     if (renderer->isImage() || renderer->isWidget() || renderer->isMedia())
         return true;
 
-    if (renderer->node() && is<Element>(renderer->node())) {
+    if (is<Element>(renderer->node())) {
         Element& element = downcast<Element>(*renderer->node());
         if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element))
             return true;

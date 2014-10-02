@@ -729,7 +729,7 @@ void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject& o)
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = o.node() && is<Element>(o.node()) && downcast<Element>(*o.node()).active();
+    bool pressed = is<Element>(o.node()) && downcast<Element>(*o.node()).active();
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }
@@ -1531,7 +1531,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     // Update the various states we respond to.
     updateEnabledState(sliderThumbCell, o);
-        Element* focusDelegate = (o.node() && is<Element>(o.node())) ? downcast<Element>(o.node())->focusDelegate() : nullptr;
+        Element* focusDelegate = is<Element>(o.node()) ? downcast<Element>(*o.node()).focusDelegate() : nullptr;
     if (focusDelegate)
         updateFocusedState(sliderThumbCell, *focusDelegate->renderer());
 
@@ -1683,7 +1683,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     NSSearchFieldCell* search = this->search();
 
-    if (!input->isDisabledFormControl() && (is<HTMLTextFormControlElement>(input) && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
+    if (!input->isDisabledFormControl() && (is<HTMLTextFormControlElement>(*input) && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
         updatePressedState([search cancelButtonCell], o);
     else if ([[search cancelButtonCell] isHighlighted])
         [[search cancelButtonCell] setHighlighted:NO];
@@ -1851,12 +1851,12 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
     // from our node. Assuming this node is the plugin overlay element, we should get to the
     // plugin itself by asking for the shadow root parent, and then its parent.
 
-    if (!is<HTMLElement>(renderBlock.element()))
+    if (!is<HTMLElement>(*renderBlock.element()))
         return true;
 
     HTMLElement& plugInOverlay = downcast<HTMLElement>(*renderBlock.element());
     Element* parent = plugInOverlay.parentOrShadowHostElement();
-    while (parent && !is<HTMLPlugInElement>(parent))
+    while (parent && !is<HTMLPlugInElement>(*parent))
         parent = parent->parentOrShadowHostElement();
 
     if (!parent)

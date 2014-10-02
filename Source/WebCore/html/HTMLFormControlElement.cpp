@@ -103,9 +103,9 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (is<HTMLFieldSetElement>(ancestor) && ancestor->fastHasAttribute(disabledAttr)) {
+        if (is<HTMLFieldSetElement>(*ancestor) && ancestor->fastHasAttribute(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = downcast<HTMLFieldSetElement>(*ancestor);
-            bool isInFirstLegend = previousAncestor && is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
+            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;
         }
         previousAncestor = ancestor;
@@ -192,7 +192,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
 
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
-    if (is<HTMLInputElement>(element))
+    if (is<HTMLInputElement>(*element))
         return !downcast<HTMLInputElement>(*element).isInputTypeHidden();
     if (element->hasTagName(selectTag))
         return true;
@@ -200,7 +200,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return true;
     if (element->hasTagName(buttonTag))
         return true;
-    if (is<HTMLTextAreaElement>(element))
+    if (is<HTMLTextAreaElement>(*element))
         return true;
 
     return false;
@@ -508,7 +508,7 @@ void HTMLFormControlElement::setAutocapitalize(const AtomicString& value)
 HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node* node)
 {
     for (; node; node = node->parentNode()) {
-        if (is<HTMLFormControlElement>(node))
+        if (is<HTMLFormControlElement>(*node))
             return downcast<HTMLFormControlElement>(node);
     }
     return nullptr;

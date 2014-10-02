@@ -86,7 +86,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
 void HTMLOptGroupElement::recalcSelectOptions()
 {
     ContainerNode* select = parentNode();
-    while (select && !is<HTMLSelectElement>(select))
+    while (select && !is<HTMLSelectElement>(*select))
         select = select->parentNode();
     if (select)
         downcast<HTMLSelectElement>(*select).setRecalcListItems();
@@ -107,7 +107,7 @@ String HTMLOptGroupElement::groupLabelText() const
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
     ContainerNode* select = parentNode();
-    while (select && !is<HTMLSelectElement>(select))
+    while (select && !is<HTMLSelectElement>(*select))
         select = select->parentNode();
     
     if (!select)

@@ -600,7 +600,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
     if (!shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason))
         return;
 
-    if (!is<MouseEvent>(event))
+    if (!is<MouseEvent>(*event))
         return;
 
     MouseEvent& mouseEvent = downcast<MouseEvent>(*event);

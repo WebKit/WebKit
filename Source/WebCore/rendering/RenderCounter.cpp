@@ -142,7 +142,7 @@ static bool planCounter(RenderElement& renderer, const AtomicString& identifier,
             return true;
         }
         if (Element* element = renderer.element()) {
-            if (is<HTMLOListElement>(element)) {
+            if (is<HTMLOListElement>(*element)) {
                 value = downcast<HTMLOListElement>(*element).start();
                 isReset = true;
                 return true;

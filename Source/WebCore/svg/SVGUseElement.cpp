@@ -282,7 +282,7 @@ static void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstan
     SVGElement* element = targetInstance->correspondingElement();
     ASSERT(element);
 
-    if (is<SVGUseElement>(element)) {
+    if (is<SVGUseElement>(*element)) {
         if (downcast<SVGUseElement>(*element).cachedDocumentIsStillLoading())
             return;
     }
@@ -544,9 +544,6 @@ void SVGUseElement::toClipPath(Path& path)
     ASSERT(path.isEmpty());
 
     SVGElement* element = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : nullptr;
-    if (!element)
-        return;
-
     if (is<SVGGraphicsElement>(element)) {
         if (!isDirectReference(*element)) {
             // Spec: Indirect references are an error (14.3.5)
@@ -710,7 +707,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
     // contains <use> tags, we'd miss them. So once we're done with settin' up the
     // actual shadow tree (after the special case modification for svg/symbol) we have
     // to walk it completely and expand all <use> elements.
-    if (is<SVGUseElement>(element)) {
+    if (is<SVGUseElement>(*element)) {
         SVGUseElement& use = downcast<SVGUseElement>(*element);
         ASSERT(!use.cachedDocumentIsStillLoading());
 
@@ -762,7 +759,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 
 void SVGUseElement::expandSymbolElementsInShadowTree(Node* node)
 {
-    if (is<SVGSymbolElement>(node)) {
+    if (is<SVGSymbolElement>(*node)) {
         // Spec: The referenced 'symbol' and its contents are deep-cloned into the generated tree,
         // with the exception that the 'symbol' is replaced by an 'svg'. This generated 'svg' will
         // always have explicit values for attributes width and height. If attributes width and/or

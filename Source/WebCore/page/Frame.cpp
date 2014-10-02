@@ -390,12 +390,12 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     Node* n;
     for (n = NodeTraversal::previous(element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(n)) {
         // We hit another form element or the start of the form - bail out
-        if (is<HTMLFormElement>(n) || is<HTMLFormControlElement>(n))
+        if (is<HTMLFormElement>(*n) || is<HTMLFormControlElement>(*n))
             break;
 
         if (n->hasTagName(tdTag) && !startingTableCell)
             startingTableCell = downcast<HTMLTableCellElement>(n);
-        else if (is<HTMLTableRowElement>(n) && startingTableCell) {
+        else if (is<HTMLTableRowElement>(*n) && startingTableCell) {
             String result = searchForLabelsAboveCell(regExp, startingTableCell, resultDistance);
             if (!result.isEmpty()) {
                 if (resultIsInCellAbove)
@@ -968,7 +968,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
-    if (is<SVGDocument>(document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
+    if (is<SVGDocument>(*document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
         return;
 
     if (m_pageZoomFactor != pageZoomFactor) {

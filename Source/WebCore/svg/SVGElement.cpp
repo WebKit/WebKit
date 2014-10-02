@@ -320,7 +320,7 @@ SVGElementRareData& SVGElement::ensureSVGRareData()
 
 bool SVGElement::isOutermostSVGSVGElement() const
 {
-    if (!is<SVGSVGElement>(this))
+    if (!is<SVGSVGElement>(*this))
         return false;
 
     // If we're living in a shadow tree, we're a <svg> element that got created as replacement
@@ -396,7 +396,7 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
 {
     ContainerNode* node = parentOrShadowHostNode();
     while (node) {
-        if (is<SVGSVGElement>(node))
+        if (is<SVGSVGElement>(*node))
             return downcast<SVGSVGElement>(node);
 
         node = node->parentOrShadowHostNode();
@@ -411,7 +411,7 @@ SVGElement* SVGElement::viewportElement() const
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
     ContainerNode* node = parentOrShadowHostNode();
     while (node) {
-        if (is<SVGSVGElement>(node) || is<SVGImageElement>(node) || node->hasTagName(SVGNames::symbolTag))
+        if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node) || node->hasTagName(SVGNames::symbolTag))
             return downcast<SVGElement>(node);
 
         node = node->parentOrShadowHostNode();

@@ -851,7 +851,7 @@ bool AccessibilityObject::press()
         document->renderView()->hitTest(request, hitTestResult);
         if (hitTestResult.innerNode()) {
             Node* innerNode = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
-            if (is<Element>(innerNode))
+            if (is<Element>(*innerNode))
                 hitTestElement = downcast<Element>(innerNode);
         }
     }
@@ -1759,15 +1759,12 @@ String AccessibilityObject::invalidStatus() const
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
     Node* node = this->node();
-    return node && is<Element>(node) && downcast<Element>(*node).hasTagName(tagName);
+    return is<Element>(node) && downcast<Element>(*node).hasTagName(tagName);
 }
     
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 {
     Node* node = this->node();
-    if (!node)
-        return false;
-    
     if (!is<Element>(node))
         return false;
     
@@ -1966,7 +1963,7 @@ bool AccessibilityObject::hasHighlighting() const
 Element* AccessibilityObject::element() const
 {
     Node* node = this->node();
-    if (node && is<Element>(node))
+    if (is<Element>(node))
         return downcast<Element>(node);
     return nullptr;
 }
@@ -2114,7 +2111,7 @@ String AccessibilityObject::identifierAttribute() const
 void AccessibilityObject::classList(Vector<String>& classList) const
 {
     Node* node = this->node();
-    if (!node || !is<Element>(node))
+    if (!is<Element>(node))
         return;
     
     Element* element = downcast<Element>(node);

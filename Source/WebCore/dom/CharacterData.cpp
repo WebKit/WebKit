@@ -87,8 +87,8 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     else
         m_data.append(string.characters16() + offset, characterLengthLimit);
 
-    ASSERT(!renderer() || is<Text>(this));
-    if (is<Text>(this))
+    ASSERT(!renderer() || is<Text>(*this));
+    if (is<Text>(*this))
         Style::updateTextRendererAfterContentChange(downcast<Text>(*this), oldLength, 0);
 
     document().incDOMTreeVersion();
@@ -194,11 +194,11 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     String oldData = m_data;
     m_data = newData;
 
-    ASSERT(!renderer() || is<Text>(this));
-    if (is<Text>(this))
+    ASSERT(!renderer() || is<Text>(*this));
+    if (is<Text>(*this))
         Style::updateTextRendererAfterContentChange(downcast<Text>(*this), offsetOfReplacedData, oldLength);
 
-    if (is<ProcessingInstruction>(this))
+    if (is<ProcessingInstruction>(*this))
         downcast<ProcessingInstruction>(*this).checkStyleSheet();
 
     if (document().frame())

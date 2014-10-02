@@ -155,7 +155,7 @@ CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cur
 
 void RenderSnapshottedPlugIn::handleEvent(Event* event)
 {
-    if (!is<MouseEvent>(event))
+    if (!is<MouseEvent>(*event))
         return;
 
     MouseEvent& mouseEvent = downcast<MouseEvent>(*event);

@@ -305,7 +305,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     Element* node = core(element);
-    return node && is<HTMLInputElement>(node) ? downcast<HTMLInputElement>(node) : nullptr;
+    return is<HTMLInputElement>(node) ? downcast<HTMLInputElement>(node) : nullptr;
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
@@ -447,7 +447,7 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
     for (n = NodeTraversal::previous(element);
         n && lengthSearched < charsSearchedThreshold;
         n = NodeTraversal::previous(n)) {
-        if (is<HTMLFormElement>(n) || is<HTMLFormControlElement>(n)) {
+        if (is<HTMLFormElement>(*n) || is<HTMLFormControlElement>(*n)) {
             // We hit another form element or the start of the form - bail out
             break;
         }

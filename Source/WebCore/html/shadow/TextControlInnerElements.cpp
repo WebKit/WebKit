@@ -142,7 +142,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 {
     // On mousedown, bring up a menu, if needed
     HTMLInputElement* input = downcast<HTMLInputElement>(shadowHost());
-    if (input && event->type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton) {
+    if (input && event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         input->focus();
         input->select();
 #if !PLATFORM(IOS)
@@ -199,7 +199,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton) {
+    if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
             if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsElement(this);
@@ -210,7 +210,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
         input->select();
         event->setDefaultHandled();
     }
-    if (event->type() == eventNames().mouseupEvent && is<MouseEvent>(event) && downcast<MouseEvent>(*event).button() == LeftButton) {
+    if (event->type() == eventNames().mouseupEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         if (m_capturing) {
             if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsElement(nullptr);
