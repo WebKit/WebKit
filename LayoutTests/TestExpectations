@@ -34,6 +34,7 @@ webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode-downmix8-2channel-i
 webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Skip ]
 webkit.org/b/112521 [ Release ] webaudio/audioprocessingevent.html [ Pass Failure ]
 webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
+webkit.org/b/137359 webaudio/distance-linear.html [ Pass Failure ]
 
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailure ]
