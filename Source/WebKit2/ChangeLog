@@ -1,3 +1,31 @@
+2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r172919): WebKitPluginProcess fails to scan GTK+2 plugins after r172919.
+        https://bugs.webkit.org/show_bug.cgi?id=137191
+
+        Reviewed by Philippe Normand.
+
+        In r172919 I moved the GTK+ symbols mix check earlier, before the
+        plugin is loaded and initialized. That made impossible to use the
+        GTK3 plugin process to scan gtk2 plugins, because we need to load
+        the plugin to get its metadata. But we don't need to initialize
+        the plugin to check if it requires GTK2, so we can do that check
+        in the UI process to decide which plugin process to use.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin):
+        Remove the requires GTK2 check.
+        (WebKit::NetscapePluginModule::scanPlugin): Don't write
+        requires-gtk2 to stdout.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::pluginRequiresGtk2): Helper function to check if the
+        given plugin path requires GTK2.
+        (WebKit::PluginProcessProxy::scanPlugin): Check if the plugin path
+        requires GTK2 and use WebKitPluginProcess2 in such case, or return
+        early if GTK2 plugins are not enabled. Log error messages when
+        something fails scanning the plugin to make it easiert to debug
+        problems in the future.
+
 2014-09-26  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Don't include full path names in WebKitEnumTypes.h
