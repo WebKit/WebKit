@@ -1,3 +1,9 @@
+2014-10-02  Beth Dakin  <bdakin@apple.com>
+
+        Marking flaky on Mavericks.
+
+        * platform/mac/TestExpectations:
+
 2014-10-02  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip a small handful of tests that fail consistently on Windows bots.
