@@ -1,3 +1,16 @@
+2014-10-02  Jeff Miller  <jeffm@apple.com>
+
+        DumpRenderTree and WebKitTestRunner should use WebKitystemInterfaceYosemite when building on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=137347
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        Use WebKitSystemInterfaceYosemite on OS X 10.10.
+
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        Ditto.
+
 2014-10-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [JHBuild] Switch sourceware.org mirror to http.
