@@ -28,16 +28,16 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "PageOverlay.h"
-
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorForwarding.h>
+#include <WebCore/PageOverlay.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
 class GraphicsContext;
 class GraphicsLayer;
 class IntRect;
+class PageOverlay;
 }
 
 namespace WebKit {
@@ -45,7 +45,7 @@ namespace WebKit {
 class WebPage;
 class RepaintIndicatorLayerClient;
 
-class WebInspectorClient : public WebCore::InspectorClient, private PageOverlay::Client {
+class WebInspectorClient : public WebCore::InspectorClient, private WebCore::PageOverlay::Client {
 friend class RepaintIndicatorLayerClient;
 public:
     WebInspectorClient(WebPage*);
@@ -74,18 +74,18 @@ private:
     virtual void showPaintRect(const WebCore::FloatRect&) override;
 
     // PageOverlay::Client
-    virtual void pageOverlayDestroyed(PageOverlay*) override;
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override;
+    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
 
     void animationEndedForLayer(const WebCore::GraphicsLayer*);
 
     WebPage* m_page;
-    PageOverlay* m_highlightOverlay;
+    WebCore::PageOverlay* m_highlightOverlay;
     
-    RefPtr<PageOverlay> m_paintRectOverlay;
+    RefPtr<WebCore::PageOverlay> m_paintRectOverlay;
     std::unique_ptr<RepaintIndicatorLayerClient> m_paintIndicatorLayerClient;
     HashSet<WebCore::GraphicsLayer*> m_paintRectLayers; // Ideally this would be HashSet<std::unique_ptr<GraphicsLayer>> but that doesn't work yet. webkit.org/b/136166
 };

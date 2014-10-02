@@ -1940,6 +1940,8 @@ set(WebCore_SOURCES
     page/PageConsoleClient.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
+    page/PageOverlay.cpp
+    page/PageOverlayController.cpp
     page/PageSerializer.cpp
     page/PageThrottler.cpp
     page/PageVisibilityState.cpp

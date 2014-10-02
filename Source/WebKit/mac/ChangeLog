@@ -1,3 +1,16 @@
+2014-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        Move PageOverlay[Controller] to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=137164
+        <rdar://problem/18508258>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::attachViewOverlayGraphicsLayer):
+        Add an empty ChromeClient override.
+
 2014-10-01  Christophe Dumez  <cdumez@apple.com>
 
         Have is<>(T*) function do a null check on the pointer argument

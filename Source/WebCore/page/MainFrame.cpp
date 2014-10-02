@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MainFrame.h"
 
+#include "PageOverlayController.h"
 #include "ScrollLatchingState.h"
 #include "WheelEventDeltaTracker.h"
 
@@ -38,6 +39,7 @@ inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
     , m_latchingState(std::make_unique<ScrollLatchingState>())
 #endif
     , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
+    , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
 {
 }
 

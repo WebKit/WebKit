@@ -511,6 +511,8 @@ public:
 
     virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;
 
+    void didChangeScrollOffset();
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) override;

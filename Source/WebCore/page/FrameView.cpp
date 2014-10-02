@@ -60,6 +60,7 @@
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
 #include "OverflowEvent.h"
+#include "PageOverlayController.h"
 #include "ProgressTracker.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
@@ -433,7 +434,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
 #if ENABLE(TEXT_AUTOSIZING)
     // Autosized font sizes depend on the width of the viewing area.
     if (newRect.width() != oldRect.width()) {
-        Page* page = frame().page();
         if (frame().isMainFrame() && page->settings().textAutosizingEnabled()) {
             for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
                 frame().document()->textAutosizer()->recalculateMultipliers();
@@ -449,6 +449,9 @@ void FrameView::setFrameRect(const IntRect& newRect)
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
     }
+
+    if (frame().isMainFrame())
+        frame().mainFrame().pageOverlayController().didChangeViewSize();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -561,6 +564,9 @@ void FrameView::setContentsSize(const IntSize& size)
     updateScrollableAreaSet();
 
     page->chrome().contentsSizeChanged(&frame(), size); // Notify only.
+
+    if (frame().isMainFrame())
+        frame().mainFrame().pageOverlayController().didChangeDocumentSize();
 
     ASSERT(m_deferSetNeedsLayouts);
     m_deferSetNeedsLayouts--;
@@ -2048,7 +2054,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
         // Update the scroll-bars to calculate new page-step size.
         updateScrollbars(scrollOffset());
     }
-    frame().loader().client().didChangeScrollOffset();
+    didChangeScrollOffset();
 }
 #endif
 
@@ -2059,6 +2065,12 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
 
     for (auto& renderer : *m_viewportConstrainedObjects)
         renderer->setNeedsLayout();
+}
+
+void FrameView::didChangeScrollOffset()
+{
+    frame().mainFrame().pageOverlayController().didScrollFrame(frame());
+    frame().loader().client().didChangeScrollOffset();
 }
 
 void FrameView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
@@ -3223,7 +3235,7 @@ void FrameView::scrollTo(const IntSize& newOffset)
     ScrollView::scrollTo(newOffset);
     if (offset != scrollOffset())
         scrollPositionChanged(oldPosition, scrollPosition());
-    frame().loader().client().didChangeScrollOffset();
+    didChangeScrollOffset();
 }
 
 float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientation orientation, ScrollGranularity granularity)
@@ -4292,7 +4304,7 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
         if (offset != newOffset) {
             ScrollView::scrollTo(newOffset);
             scrollPositionChanged(oldPosition, scrollPosition());
-            frame().loader().client().didChangeScrollOffset();
+            didChangeScrollOffset();
         }
         return true;
     }
@@ -4615,6 +4627,8 @@ void FrameView::setExposedRect(FloatRect exposedRect)
 
     if (auto* view = renderView())
         view->compositor().scheduleLayerFlush(false /* canThrottle */);
+
+    frame().mainFrame().pageOverlayController().didChangeExposedRect();
 }
     
 void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)

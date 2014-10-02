@@ -26,13 +26,13 @@
 #ifndef FindIndicatorOverlayClientIOS_h
 #define FindIndicatorOverlayClientIOS_h
 
-#import "PageOverlay.h"
 #import <WebCore/Frame.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/PageOverlay.h>
 
 namespace WebKit {
 
-class FindIndicatorOverlayClientIOS : public PageOverlay::Client {
+class FindIndicatorOverlayClientIOS : public WebCore::PageOverlay::Client {
 public:
     FindIndicatorOverlayClientIOS(WebCore::Frame& frame)
         : m_frame(frame)
@@ -40,11 +40,11 @@ public:
     }
 
 private:
-    virtual void pageOverlayDestroyed(PageOverlay*) override { }
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*) override { }
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*) override { }
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override { return false; }
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override { }
+    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
+    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override { }
+    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
 
     WebCore::Frame& m_frame;
 };

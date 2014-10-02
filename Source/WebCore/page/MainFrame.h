@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class PageOverlayController;
 class ScrollLatchingState;
 class WheelEventDeltaTracker;
 
@@ -43,6 +44,7 @@ public:
     void selfOnlyDeref();
 
     WheelEventDeltaTracker* wheelEventDeltaTracker() { return m_recentWheelEventDeltaTracker.get(); }
+    PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
 
 #if PLATFORM(MAC)
     ScrollLatchingState* latchingState() { return m_latchingState.get(); }
@@ -60,6 +62,7 @@ private:
     std::unique_ptr<ScrollLatchingState> m_latchingState;
 #endif
     std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
+    std::unique_ptr<PageOverlayController> m_pageOverlayController;
 };
 
 inline bool Frame::isMainFrame() const

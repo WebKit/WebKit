@@ -7180,6 +7180,8 @@
     <ClCompile Include="..\page\PageConsoleClient.cpp" />
     <ClCompile Include="..\page\PageGroup.cpp" />
     <ClCompile Include="..\page\PageGroupLoadDeferrer.cpp" />
+    <ClCompile Include="..\page\PageOverlay.cpp" />
+    <ClCompile Include="..\page\PageOverlayController.cpp" />
     <ClCompile Include="..\page\PageSerializer.cpp" />
     <ClCompile Include="..\page\PageThrottler.cpp" />
     <ClCompile Include="..\page\PageVisibilityState.cpp" />
@@ -19175,6 +19177,8 @@
     <ClInclude Include="..\page\PageConsoleClient.h" />
     <ClInclude Include="..\page\PageGroup.h" />
     <ClInclude Include="..\page\PageGroupLoadDeferrer.h" />
+    <ClInclude Include="..\page\PageOverlay.h" />
+    <ClInclude Include="..\page\PageOverlayController.h" />
     <ClInclude Include="..\page\PageSerializer.h" />
     <ClInclude Include="..\page\PageVisibilityState.h" />
     <ClInclude Include="..\page\Performance.h" />

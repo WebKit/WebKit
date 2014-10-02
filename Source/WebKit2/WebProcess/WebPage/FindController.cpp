@@ -40,6 +40,8 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlayController.h>
+#include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 
 using namespace WebCore;
@@ -63,7 +65,7 @@ static WebCore::FindOptions core(FindOptions options)
 
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
-    , m_findPageOverlay(0)
+    , m_findPageOverlay(nullptr)
     , m_isShowingFindIndicator(false)
     , m_foundStringMatchIndex(-1)
 {
@@ -182,12 +184,12 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
     if (!shouldShowOverlay) {
         if (m_findPageOverlay)
-            m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
+            m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
-            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
+            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(*this);
             m_findPageOverlay = findPageOverlay.get();
-            m_webPage->installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
+            m_webPage->mainFrame()->pageOverlayController().installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
         }
         m_findPageOverlay->setNeedsDisplay();
     }
@@ -330,7 +332,7 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     if (m_findPageOverlay)
-        m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
+        m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
     PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
     
@@ -439,20 +441,20 @@ Vector<IntRect> FindController::rectsForTextMatches()
     return rects;
 }
 
-void FindController::pageOverlayDestroyed(PageOverlay*)
+void FindController::pageOverlayDestroyed(PageOverlay&)
 {
 }
 
-void FindController::willMoveToWebPage(PageOverlay*, WebPage* webPage)
+void FindController::willMoveToPage(PageOverlay&, Page* page)
 {
-    if (webPage)
+    if (page)
         return;
 
     ASSERT(m_findPageOverlay);
     m_findPageOverlay = 0;
 }
     
-void FindController::didMoveToWebPage(PageOverlay*, WebPage*)
+void FindController::didMoveToPage(PageOverlay&, Page*)
 {
 }
 
@@ -468,7 +470,7 @@ const float shadowBlurRadius = 1;
 const float shadowColorAlpha = 0.5;
 #endif
 
-void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     Color overlayBackgroundColor(0.1f, 0.1f, 0.1f, 0.25f);
 
@@ -506,9 +508,9 @@ void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, co
     }
 }
 
-bool FindController::mouseEvent(PageOverlay*, const WebMouseEvent& mouseEvent)
+bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEvent)
 {
-    if (mouseEvent.type() == WebEvent::MouseDown)
+    if (mouseEvent.type() == PlatformEvent::MousePressed)
         hideFindUI();
 
     return false;

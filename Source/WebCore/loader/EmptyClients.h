@@ -182,6 +182,7 @@ public:
     virtual void scrollRectIntoView(const IntRect&) const override { }
 
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) override { }
+    virtual void attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*) override { }
     virtual void setNeedsOneShotDrawingSynchronization() override { }
     virtual void scheduleCompositingLayerFlush() override { }
 

@@ -327,7 +327,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(WEBGL)
     , m_systemWebGLPolicy(WebGLAllowCreation)
 #endif
-    , m_pageOverlayController(*this)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -366,7 +365,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setPaintingEnabled(false);
-    m_pageOverlayController.initialize();
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
@@ -1226,8 +1224,6 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     if (view->useFixedLayout())
         sendViewportAttributesChanged();
 #endif
-
-    m_pageOverlayController.didChangeViewSize();
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -1453,8 +1449,6 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
-
-    m_pageOverlayController.didChangeDeviceScaleFactor();
 }
 
 float WebPage::deviceScaleFactor() const
@@ -1575,16 +1569,6 @@ void WebPage::postInjectedBundleMessage(const String& messageName, IPC::MessageD
         return;
 
     injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());
-}
-
-void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, PageOverlay::FadeMode fadeMode)
-{
-    m_pageOverlayController.installPageOverlay(pageOverlay, fadeMode);
-}
-
-void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, PageOverlay::FadeMode fadeMode)
-{
-    m_pageOverlayController.uninstallPageOverlay(pageOverlay, fadeMode);
 }
 
 #if !PLATFORM(IOS)
@@ -1914,7 +1898,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
         return;
     }
 #endif
-    bool handled = m_pageOverlayController.handleMouseEvent(mouseEvent);
+    bool handled = false;
 
 #if !PLATFORM(IOS)
     if (!handled && m_headerBanner)
@@ -1940,7 +1924,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
 {
-    handled = m_pageOverlayController.handleMouseEvent(mouseEvent);
+    handled = false;
 #if !PLATFORM(IOS)
     if (!handled && m_headerBanner)
         handled = m_headerBanner->mouseEvent(mouseEvent);
@@ -2869,8 +2853,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
-
-    m_pageOverlayController.didChangePreferences();
 }
 
 #if PLATFORM(COCOA)
@@ -4093,7 +4075,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
     send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
-Frame* WebPage::mainFrame() const
+MainFrame* WebPage::mainFrame() const
 {
     return m_page ? &m_page->mainFrame() : nullptr;
 }
@@ -4808,8 +4790,6 @@ ServicesOverlayController& WebPage::servicesOverlayController()
 
 void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
 {
-    m_pageOverlayController.didScrollFrame(frame);
-
     if (!frame->isMainFrame())
         return;
 

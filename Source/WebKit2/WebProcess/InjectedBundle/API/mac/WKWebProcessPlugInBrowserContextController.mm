@@ -60,6 +60,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
+#import <WebCore/MainFrame.h>
 
 using namespace WebCore;
 using namespace WebKit;

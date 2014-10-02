@@ -40,6 +40,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageOverlayController.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 #import <WebKitSystemInterface.h>
@@ -75,19 +76,13 @@ using namespace WebKit;
 
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
-    WKRetainPtr<WKArrayRef> result = adoptWK(m_page->pageOverlayController().copyAccessibilityAttributesNames(true));
-    if (!result)
+    Vector<String> result = m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributesNames(true);
+    if (result.isEmpty())
         return nil;
     
     NSMutableArray *names = [NSMutableArray array];
-    size_t count = WKArrayGetSize(result.get());
-    for (size_t k = 0; k < count; k++) {
-        WKTypeRef item = WKArrayGetItemAtIndex(result.get(), k);
-        if (toImpl(item)->type() == API::String::APIType) {
-            RetainPtr<CFStringRef> name = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)item));
-            [names addObject:(NSString *)name.get()];
-        }
-    }
+    for (auto& name : result)
+        [names addObject:(NSString *)name];
     
     return names;
 }
@@ -164,23 +159,26 @@ using namespace WebKit;
 
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
 {
-    WKRetainPtr<WKTypeRef> pageOverlayParameter = 0;
-    
-    if ([parameter isKindOfClass:[NSValue class]] && strcmp([(NSValue*)parameter objCType], @encode(NSPoint)) == 0) {
-        NSPoint point = [self convertScreenPointToRootView:[(NSValue *)parameter pointValue]];
-        pageOverlayParameter = WKPointCreate(WKPointMake(point.x, point.y));
-    }
-    
-    WKRetainPtr<WKStringRef> attributeRef = adoptWK(WKStringCreateWithCFString((CFStringRef)attribute));
-    WKRetainPtr<WKTypeRef> result = adoptWK(m_page->pageOverlayController().copyAccessibilityAttributeValue(attributeRef.get(), pageOverlayParameter.get()));
-    if (!result)
+    WebCore::FloatPoint pageOverlayPoint;
+    if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)parameter objCType], @encode(NSPoint)))
+        pageOverlayPoint = [self convertScreenPointToRootView:[(NSValue *)parameter pointValue]];
+    else
         return nil;
-    
-    if (toImpl(result.get())->type() == API::String::APIType)
-        return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
-    if (toImpl(result.get())->type() == API::Boolean::APIType)
-        return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
-    
+
+    if ([attribute isEqualToString:@"AXDataDetectorExistsAtPoint"] || [attribute isEqualToString:@"AXDidShowDataDetectorMenuAtPoint"]) {
+        bool value;
+        if (!m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributeBoolValueForPoint(attribute, pageOverlayPoint, value))
+            return nil;
+        return [NSNumber numberWithBool:value];
+    }
+
+    if ([attribute isEqualToString:@"AXDataDetectorTypeAtPoint"]) {
+        String value;
+        if (!m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributeStringValueForPoint(attribute, pageOverlayPoint, value))
+            return nil;
+        return [NSString stringWithString:value];
+    }
+
     return nil;
 }
 
