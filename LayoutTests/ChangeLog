@@ -1,3 +1,53 @@
+2014-10-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: add the initial implementation of :nth-child(An+B of selector)
+        https://bugs.webkit.org/show_bug.cgi?id=137285
+
+        Reviewed by Andreas Kling.
+
+        Those are new tests on top of the existing tests for :nth-child(An+B of selector).
+        They cover mostly areas related to the JIT optimizations.
+
+        The areas with the least test coverage for correctness is multilevel backtracking.
+        I expect we will create more of those tests while extending :not() and adding :matches().
+
+        * fast/selectors/nth-child-of-backtracking-adjacent-expected.txt: Added.
+        * fast/selectors/nth-child-of-backtracking-adjacent-optimized.html: Added.
+        * fast/selectors/nth-child-of-backtracking-adjacent-expected.html: Added.
+        * fast/selectors/nth-child-of-backtracking-adjacent.html: Added.
+        * fast/selectors/nth-child-of-backtracking-adjacent-2-expected.txt: Added.
+        * fast/selectors/nth-child-of-backtracking-adjacent-2.html: Added.
+        Those tests are based on Yusuke's backtracking test suite for adjacent combinators.
+
+        The tests in nth-child-of-backtracking-adjacent.html use :nth-child(of) inside a regular
+        backtracking chain.
+
+        The tests in nth-child-of-backtracking-adjacent-2.html test backtracking inside :nth-chlid(of).
+
+        * fast/selectors/nth-child-of-boundaries-1-expected.txt: Added.
+        * fast/selectors/nth-child-of-boundaries-1.html: Added.
+        * fast/selectors/nth-child-of-boundaries-2-expected.txt: Added.
+        * fast/selectors/nth-child-of-boundaries-2.html: Added.
+        * fast/selectors/nth-child-of-boundaries-3-expected.txt: Added.
+        * fast/selectors/nth-child-of-boundaries-3.html: Added.
+        Test various abuse of :nth-child(of).
+
+        * fast/selectors/nth-child-of-chained-2-expected.txt: Added.
+        * fast/selectors/nth-child-of-chained-2.html: Added.
+        Test that disjoint :nth-child(of) are not agregated, unlike the old :nth-child().
+
+        * fast/selectors/nth-child-of-has-parent-expected.txt: Added.
+        * fast/selectors/nth-child-of-has-parent.html: Added.
+        Make sure we don't optimize out the parent check when skipping filters that always match.
+
+        * fast/selectors/nth-child-of-never-matching-selector-expected.txt: Added.
+        * fast/selectors/nth-child-of-never-matching-selector.html: Added.
+        Test code generation for things that never match.
+
+        * fast/selectors/nth-child-of-with-invalid-An+B-expected.txt: Added.
+        * fast/selectors/nth-child-of-with-invalid-An+B.html: Added.
+        Test for useless variation of An+B that can never match anything.
+
 2014-10-02  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip a small handful of tests that fail consistently on Windows bots Part 2.

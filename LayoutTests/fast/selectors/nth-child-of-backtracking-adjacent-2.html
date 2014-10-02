@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+span.target {
+    background-color:rgb(0,0,0);
+}
+span.target:nth-child(n+2 of a + b sibling) {
+    background-color:rgb(1,2,3);
+}
+span.target:nth-child(n+2 of c + c + d sibling) {
+    background-color:rgb(4,5,6);
+}
+span.target:nth-child(n+2 of e + f ~ g sibling) {
+    background-color:rgb(7,8,9);
+}
+span.target:nth-child(n+2 of h + sibling) {
+    background-color:rgb(10,11,12);
+}
+span.target:nth-child(n+2 of j+j+j~j>k sibling) {
+    background-color:rgb(13,14,15);
+}
+span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) {
+    background-color:rgb(16,17,18);
+}
+span.target:nth-child(n+2 of n o~n>n>n sibling) {
+    background-color:rgb(19,20,21);
+}
+span.target:nth-child(n+2 of p ~ sibling) {
+    background-color:rgb(22,23,24);
+}
+span.target:nth-child(n+2 of q ~ r sibling) {
+    background-color:rgb(25,26,27);
+}
+span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
+    background-color:rgb(28,29,30);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- span.target:nth-child(n+2 of a + b sibling) -->
+    <target1>
+        <a></a>
+        <b>
+            <sibling></sibling>
+            <span class="target" id="target1"></span>
+        </b>
+    </target1>
+
+    <!-- span.target:nth-child(n+2 of a + b sibling) -->
+    <target2>
+        <a></a>
+        <b>
+            <b></b>  <!-- Fail here and restart backtracking. -->
+            <b>
+                <sibling></sibling>
+                <span class="target" id="target2"></span>
+            </b>
+        </b>
+    </target2>
+
+    <!-- span.target:nth-child(n+2 of c + c + d sibling) -->
+    <target3>
+        <c></c>
+        <c></c>
+        <d>
+            <c></c>
+            <b></b>  <!-- Fail here and restart backtracking with the parent of the current element. -->
+            <d>
+                <b></b>  <!-- Fail here and restart backtracking with the parent of the current element. -->
+                <c></c>
+                <d>
+                    <sibling></sibling>
+                    <span class="target" id="target3"></span>
+                </d>
+            </d>
+        </d>
+    </target3>
+
+    <!-- span.target:nth-child(n+2 of e + f ~ g sibling) -->
+    <target4>
+        <d></d>
+        <e></e>
+        <f></f>
+        <d></d>
+        <d></d>
+        <g>
+            <d></d>  <!-- Fail here and restart backtracking indirect adjacent matching. -->
+            <f></f>
+            <g>
+                <sibling></sibling>
+                <span class="target" id="target4"></span>
+            </g>
+        </g>
+    </target4>
+
+    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <target6>
+        <h></h>
+        <sibling></sibling>
+        <span class="target" id="target6.1"></span>
+    </target6>
+
+    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <target6>
+        <a></a>
+        <sibling></sibling>
+        <span class="target" id="target6.2"></span>
+    </target6>
+
+    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <target6>
+        <sibling></sibling>
+        <span class="target" id="target6.3"></span>
+    </target6>
+
+    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <target7>
+        <d></d>  <!-- Fail here. -->
+        <j></j>
+        <j></j>
+        <j></j>
+        <k>
+            <sibling></sibling>
+            <span class="target" id="target7"></span>
+        </k>
+    </target7>
+
+    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <target8>
+        <j></j>  <!-- Match here. -->
+        <j></j>
+        <j></j>
+        <j></j>
+        <d></d>  <!-- Fail here. -->
+        <j></j>
+        <j></j>
+        <j>
+            <k>
+                <sibling></sibling>
+                <span class="target" id="target8"></span>
+            </k>
+        </j>
+    </target8>
+
+    <!-- span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
+    <target9>
+        <m>
+            <l></l>  <!-- Fail here -->
+            <l></l>
+            <l></l>
+            <m>
+                <a></a>  <!-- Fail here and backtrack with the tail -->
+                <l></l>
+                <l></l>
+                <a></a>  <!-- Fail here -->
+                <l></l>
+                <m>
+                    <m>
+                        <m>
+                            <sibling></sibling>
+                            <span class="target" id="target9"></span>
+                        </m>
+                    </m>
+                </m>
+            </m>
+        </m>
+    </target9>
+
+    <!-- span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
+    <target10>
+        <m>
+            <l></l>  <!-- Match here -->
+            <l></l>
+            <l></l>
+            <l></l>
+            <m>
+                <a></a>  <!-- Fail here and backtrack with the tail -->
+                <l></l>
+                <l></l>
+                <a></a>  <!-- Fail here -->
+                <l></l>
+                <m>
+                    <m>
+                        <m>
+                            <sibling></sibling>
+                            <span class="target" id="target10"></span>
+                        </m>
+                    </m>
+                </m>
+            </m>
+        </m>
+    </target10>
+
+    <!-- span.target:nth-child(n+2 of n o~n>n>n sibling) -->
+    <target11>
+        <n>
+            <a></a>  <!-- Fail here -->
+            <n>
+                <a></a>  <!-- Fail here and backtrack with the tail -->
+                <a></a>  <!-- Fail here -->
+                <n>
+                    <n>
+                        <n>
+                            <sibling></sibling>
+                            <span class="target" id="target11"></span>
+                        </n>
+                    </n>
+                </n>
+            </n>
+        </n>
+    </target11>
+
+    <!-- span.target:nth-child(n+2 of n o~n>n>n sibling) -->
+    <target12>
+        <n>
+            <o></o>  <!-- Match here -->
+            <a></a>  <!-- Fail here -->
+            <n>
+                <a></a>  <!-- Fail here and backtrack with the tail -->
+                <a></a>  <!-- Fail here -->
+                <n>
+                    <n>
+                        <n>
+                            <sibling></sibling>
+                            <span class="target" id="target12"></span>
+                        </n>
+                    </n>
+                </n>
+            </n>
+        </n>
+    </target12>
+
+    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <target13>
+        <p></p>  <!-- Match here -->
+        <sibling></sibling>
+        <span class="target" id="target13.1"></span>
+    </target13>
+
+    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <target13>
+        <a></a>  <!-- Fail here -->
+        <sibling></sibling>
+        <span class="target" id="target13.2"></span>
+    </target13>
+
+    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <target13>
+        <!-- Fail here -->
+        <sibling></sibling>
+        <span class="target" id="target13.3"></span>
+    </target13>
+
+    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <target14>
+        <q></q>  <!-- Match here -->
+        <a></a>
+        <r>
+            <a></a>  <!-- Fail here -->
+            <r>
+                <sibling></sibling>
+                <span class="target" id="target14.1"></span>
+            </r>
+        </r>
+    </target14>
+
+    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <target14>
+        <!-- Fail here -->
+        <r>
+            <a></a>  <!-- Fail here -->
+            <r>
+                <sibling></sibling>
+                <span class="target" id="target14.2"></span>
+            </r>
+        </r>
+    </target14>
+
+    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <target14>
+        <!-- Fail here -->
+        <r>
+            <!-- Fail here -->
+            <r>
+                <sibling></sibling>
+                <span class="target" id="target14.3"></span>
+            </r>
+        </r>
+    </target14>
+
+    <!-- span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
+    <target15>
+        <s>
+            <!-- Fail here and backtrack with the tail -->
+            <t></t>
+            <t></t>
+            <s>
+                <a></a>  <!-- Fail here and backtrack with the tail -->
+                <t></t>
+                <t></t>
+                <s>
+                    <s>
+                        <s>
+                            <sibling></sibling>
+                            <span class="target" id="target15"></span>
+                        </s>
+                    </s>
+                </s>
+            </s>
+        </s>
+    </target15>
+
+    <!-- span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
+    <target16>
+        <s>
+            <t></t>  <!-- Match here -->
+            <t></t>
+            <t></t>
+            <s>
+                <!-- Fail here and backtrack with the tail -->
+                <t></t>
+                <t></t>
+                <s>
+                    <a></a>  <!-- Fail here and backtrack with the tail -->
+                    <t></t>
+                    <t></t>
+                    <s>
+                        <s>
+                            <s>
+                                <sibling></sibling>
+                                <span class="target" id="target16"></span>
+                            </s>
+                        </s>
+                    </s>
+                </s>
+            </s>
+        </s>
+    </target16>
+</div>
+</body>
+<script>
+description('The backtracking from adjacent combinators inside :nth-child(An+B of selector)');
+
+debug("Backtracking without tail, succeeded without backtracking");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug("Backtracking without tail without indirect adjacent, failed and restart.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug("Backtracking without tail, 2 direct adjacents without indirect adjacent, failed and restart backtracking.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(4, 5, 6)');
+
+debug("Backtracking without tail, indirect adjacent.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(7, 8, 9)');
+
+debug("Backtracking from direct adjacent without tail. Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6.1")).backgroundColor', 'rgb(10, 11, 12)');
+
+debug("Backtracking from direct adjacent tag matching without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6.2")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from direct adjacent traversal without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6.3")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking without tail. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target7")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking without tail. And Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target8")).backgroundColor', 'rgb(13, 14, 15)');
+
+debug("Backtracking from direct adjacent with tail. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target9")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from direct adjacent with tail. And Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target10")).backgroundColor', 'rgb(16, 17, 18)');
+
+debug("Backtracking from indirect adjacent with tail. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target11")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from indirect adjacent with tail. And Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target12")).backgroundColor', 'rgb(19, 20, 21)');
+
+debug("Backtracking from indirect adjacent without tail. Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target13.1")).backgroundColor', 'rgb(22, 23, 24)');
+
+debug("Backtracking from indirect adjacent tag matching without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target13.2")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from indirect adjacent traversal without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target13.3")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from indirect adjacent without tail. Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target14.1")).backgroundColor', 'rgb(25, 26, 27)');
+
+debug("Backtracking from indirect adjacent tag matching without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target14.2")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from indirect adjacent traversal without tail. Fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target14.3")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from direct adjacent with tail. And fails.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target15")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug("Backtracking from direct adjacent with tail. And Matches.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target16")).backgroundColor', 'rgb(28, 29, 30)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
