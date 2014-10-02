@@ -1,5 +1,11 @@
 2014-10-02  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Skip a small handful of tests that fail consistently on Windows bots.
+
+        * platform/win/TestExpectations:
+
+2014-10-02  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Unskip media tests now that audio devices are installed on the bots.
 
         * platform/win/TestExpectations: There will likely still be a handful of failures left, which we will then skip.

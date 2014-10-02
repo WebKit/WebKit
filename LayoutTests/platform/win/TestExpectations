@@ -1511,9 +1511,6 @@ webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Cr
 
 # Asserts/crashes in PluginView::didFinishLoading
 [ Debug ] fast/loader/reload-zero-byte-plugin.html [ Crash ]
-[ Debug ] userscripts/user-script-plugin-document.html [ Crash ]
-
-[ Release ] userscripts/user-script-plugin-document.html [ Failure ]
 
 # JavaScript Experiments are not enabled on Windows
 webkit.org/b/87858 js/names.html
@@ -2857,7 +2854,7 @@ svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ Skip ]
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html [ Skip ]
 svg/custom/object-sizing-explicit-width.xhtml [ ImageOnlyFailure Timeout ]
 svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml [ ImageOnlyFailure Timeout ]
-userscripts/user-script-plugin-document.html [ Failure ]
+userscripts/user-script-plugin-document.html [ Crash Failure ]
 tables/mozilla/other/test6.html [ Skip ]
 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 fast/repaint/animation-after-layer-scroll.html [ Failure ]
@@ -2865,6 +2862,7 @@ fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
 http/tests/media/video-cancel-load.html [ Crash Failure ]
 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 js/dom/callback-function-with-handle-event.html [ Failure ]
+fast/forms/week/week-input-type.html [ Failure ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
@@ -2873,3 +2871,5 @@ js/dom/callback-function-with-handle-event.html [ Failure ]
 [ Debug ] fast/canvas/webgl [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
+[ Debug ]js/regress/getter-no-activation.html [ Skip ]
+[ Debug ]js/slow-stress/getter-richards.html [ Skip ]
