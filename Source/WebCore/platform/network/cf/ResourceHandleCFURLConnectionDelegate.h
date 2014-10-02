@@ -45,7 +45,7 @@ public:
     CFURLConnectionClient_V6 makeConnectionClient() const;
     virtual void setupRequest(CFMutableURLRequestRef) = 0;
     virtual void setupConnectionScheduling(CFURLConnectionRef) = 0;
-    void releaseHandle();
+    virtual void releaseHandle();
 
     virtual void continueWillSendRequest(CFURLRequestRef) = 0;
     virtual void continueDidReceiveResponse() = 0;

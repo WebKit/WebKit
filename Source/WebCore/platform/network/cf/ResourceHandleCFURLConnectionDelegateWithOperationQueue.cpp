@@ -63,6 +63,15 @@ bool ResourceHandleCFURLConnectionDelegateWithOperationQueue::hasHandle() const
     return !!m_handle;
 }
 
+void ResourceHandleCFURLConnectionDelegateWithOperationQueue::releaseHandle()
+{
+    ResourceHandleCFURLConnectionDelegate::releaseHandle();
+    m_requestResult = nullptr;
+    m_cachedResponseResult = nullptr;
+    m_boolResult = false;
+    dispatch_semaphore_signal(m_semaphore);
+}
+
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef request)
 {
 #if PLATFORM(IOS)
