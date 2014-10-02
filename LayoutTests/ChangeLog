@@ -1,3 +1,9 @@
+2014-10-02  Roger Fong  <roger_fong@apple.com>
+
+        [ Windows ] More Windows test gardening to get bots green Part 4.
+
+        * platform/win/TestExpectations: Hopefully the last batch of indiscriminate mass skipping.
+
 2014-10-02  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Default orientation for aria scrollbars should be vertical
