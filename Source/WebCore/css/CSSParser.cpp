@@ -8597,6 +8597,7 @@ bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSVal
 bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradientValue* gradient, bool expectComma)
 {
     CSSParserValue* a = valueList->current();
+    bool previousStopWasMidpoint = true;
 
     // Now look for color stops.
     while (a) {
@@ -8613,20 +8614,31 @@ bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradie
         // <color-stop> = <color> [ <percentage> | <length> ]?
         CSSGradientColorStop stop;
         stop.m_color = parseGradientColorOrKeyword(this, a);
-        if (!stop.m_color)
-            return false;
+        if (!stop.m_color) {
+            if (previousStopWasMidpoint) // 2 midpoints in a row is not allowed. This also catches starting with a midpoint.
+                return false;
 
-        a = valueList->next();
+            stop.isMidpoint = true;
+        } else
+            a = valueList->next();
+
+        previousStopWasMidpoint = stop.isMidpoint;
+
         if (a) {
             if (validUnit(a, FLength | FPercent)) {
                 stop.m_position = createPrimitiveNumericValue(a);
                 a = valueList->next();
-            }
+            } else if (stop.isMidpoint)
+                return false;
         }
 
         gradient->addStop(stop);
         expectComma = true;
     }
+
+    // We can't end on a midpoint.
+    if (previousStopWasMidpoint)
+        return false;
 
     // Must have 2 or more stops to be valid.
     return gradient->stopCount() >= 2;

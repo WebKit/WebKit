@@ -95,22 +95,25 @@ struct GradientStop {
     Color color;
     float offset;
     bool specified;
+    bool isMidpoint;
 
     GradientStop()
         : offset(0)
         , specified(false)
+        , isMidpoint(false)
     { }
 };
 
 PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleResolver* styleResolver)
 {
     bool derived = false;
-    for (unsigned i = 0; i < m_stops.size(); i++)
-        if (styleResolver->colorFromPrimitiveValueIsDerivedFromElement(m_stops[i].m_color.get())) {
+    for (unsigned i = 0; i < m_stops.size(); i++) {
+        if (!m_stops[i].isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(m_stops[i].m_color.get())) {
             m_stops[i].m_colorIsDerivedFromElement = true;
             derived = true;
             break;
         }
+    }
 
     RefPtr<CSSGradientValue> result;
     if (!derived)
@@ -124,10 +127,27 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
         return 0;
     }
 
-    for (unsigned i = 0; i < result->m_stops.size(); i++)
-        result->m_stops[i].m_resolvedColor = styleResolver->colorFromPrimitiveValue(result->m_stops[i].m_color.get());
+    for (unsigned i = 0; i < result->m_stops.size(); i++) {
+        if (!result->m_stops[i].isMidpoint)
+            result->m_stops[i].m_resolvedColor = styleResolver->colorFromPrimitiveValue(result->m_stops[i].m_color.get());
+    }
 
     return result.release();
+}
+
+static inline int interpolate(int min, int max, float position)
+{
+    return min + static_cast<int>(position * (max - min));
+}
+
+static inline Color interpolate(Color color1, Color color2, float position)
+{
+    int red = interpolate(color1.red(), color2.red(), position);
+    int green = interpolate(color1.green(), color2.green(), position);
+    int blue = interpolate(color1.blue(), color2.blue(), position);
+    int alpha = interpolate(color1.alpha(), color2.alpha(), position);
+
+    return Color(red, green, blue, alpha);
 }
 
 void CSSGradientValue::addStops(Gradient& gradient, const CSSToLengthConversionData& conversionData, float maxLengthForRepeat)
@@ -169,6 +189,7 @@ void CSSGradientValue::addStops(Gradient& gradient, const CSSToLengthConversionD
     for (size_t i = 0; i < numStops; ++i) {
         const CSSGradientColorStop& stop = m_stops[i];
 
+        stops[i].isMidpoint = stop.isMidpoint;
         stops[i].color = stop.m_resolvedColor;
 
         if (stop.m_position) {
@@ -249,6 +270,86 @@ void CSSGradientValue::addStops(Gradient& gradient, const CSSToLengthConversionD
             }
         }
     }
+
+    // Walk over the color stops, look for midpoints and add stops as needed.
+    // If mid < 50%, add 2 stops to the left and 6 to the right
+    // else add 6 stops to the left and 2 to the right.
+    // Stops on the side with the most stops start midway because the curve approximates
+    // a line in that region. We then add 5 more color stops on that side to minimize the change
+    // how the luminance changes at each of the colorstops. We don't have to add as many on the other side
+    // since it becomes small which increases the differentation of luminance which hides the colorstops.
+    // Even with 4 extra colorstops, it *is* possible to discern the steps when the gradient is large and has
+    // large luminance differences between midpoint and color stop. If this becomes an issue, we can consider
+    // making this algorithm a bit smarter.
+
+    // Midpoints that coincide with color stops are treated specially since they don't require
+    // extra stops and generate hard lines.
+    for (size_t x = 1; x < stops.size() - 1;) {
+        if (!stops[x].isMidpoint) {
+            ++x;
+            continue;
+        }
+
+        // Find previous and next color so we know what to interpolate between.
+        // We already know they have a color since we checked for that earlier.
+        Color color1 = stops[x - 1].color;
+        Color color2 = stops[x + 1].color;
+        // Likewise find the position of previous and next color stop.
+        float offset1 = stops[x - 1].offset;
+        float offset2 = stops[x + 1].offset;
+        float offset = stops[x].offset;
+
+        // Check if everything coincides or the midpoint is exactly in the middle.
+        // If so, ignore the midpoint.
+        if (offset - offset1 == offset2 - offset) {
+            stops.remove(x);
+            continue;
+        }
+
+        // Check if we coincide with the left color stop.
+        if (offset1 == offset) {
+            // Morph the midpoint to a regular stop with the color of the next color stop.
+            stops[x].color = color2;
+            stops[x].isMidpoint = false;
+            continue;
+        }
+
+        // Check if we coincide with the right color stop.
+        if (offset2 == offset) {
+            // Morph the midpoint to a regular stop with the color of the previous color stop.
+            stops[x].color = color1;
+            stops[x].isMidpoint = false;
+            continue;
+        }
+
+        float midpoint = (offset - offset1) / (offset2 - offset1);
+        GradientStop newStops[9];
+        if (midpoint > .5f) {
+            for (size_t y = 0; y < 7; ++y)
+                newStops[y].offset = offset1 + (offset - offset1) * (7 + y) / 13;
+
+            newStops[7].offset = offset + (offset2 - offset) / 3;
+            newStops[8].offset = offset + (offset2 - offset) * 2 / 3;
+        } else {
+            newStops[0].offset = offset1 + (offset - offset1) / 3;
+            newStops[1].offset = offset1 + (offset - offset1) * 2 / 3;
+
+            for (size_t y = 0; y < 7; ++y)
+                newStops[y + 2].offset = offset + (offset2 - offset) * y / 13;
+        }
+        // calculate colors
+        for (size_t y = 0; y < 9; ++y) {
+            float relativeOffset = (newStops[y].offset - offset1) / (offset2 - offset1);
+            float multiplier = powf(relativeOffset, logf(.5f) / logf(midpoint));
+            newStops[y].color = interpolate(color1, color2, multiplier);
+        }
+
+        stops.remove(x);
+        stops.insert(x, newStops, 9);
+        x += 9;
+    }
+
+    numStops = stops.size();
 
     // If the gradient is repeating, repeat the color stops.
     // We can't just push this logic down into the platform-specific Gradient code,
@@ -561,9 +662,11 @@ String CSSLinearGradientValue::customCSSText() const
             const CSSGradientColorStop& stop = m_stops[i];
             if (i)
                 result.appendLiteral(", ");
-            result.append(stop.m_color->cssText());
+            if (!stop.isMidpoint)
+                result.append(stop.m_color->cssText());
             if (stop.m_position) {
-                result.append(' ');
+                if (!stop.isMidpoint)
+                    result.append(' ');
                 result.append(stop.m_position->cssText());
             }
         }
@@ -877,9 +980,11 @@ String CSSRadialGradientValue::customCSSText() const
             const CSSGradientColorStop& stop = m_stops[i];
             if (i)
                 result.appendLiteral(", ");
-            result.append(stop.m_color->cssText());
+            if (!stop.isMidpoint)
+                result.append(stop.m_color->cssText());
             if (stop.m_position) {
-                result.append(' ');
+                if (!stop.isMidpoint)
+                    result.append(' ');
                 result.append(stop.m_position->cssText());
             }
         }

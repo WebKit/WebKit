@@ -48,11 +48,11 @@ enum CSSGradientType {
 enum CSSGradientRepeat { NonRepeating, Repeating };
 
 struct CSSGradientColorStop {
-    CSSGradientColorStop() : m_colorIsDerivedFromElement(false) { };
     RefPtr<CSSPrimitiveValue> m_position; // percentage or length
     RefPtr<CSSPrimitiveValue> m_color;
     Color m_resolvedColor;
-    bool m_colorIsDerivedFromElement;
+    bool m_colorIsDerivedFromElement = false;
+    bool isMidpoint = false;
     bool operator==(const CSSGradientColorStop& other) const
     {
         return compareCSSValuePtr(m_color, other.m_color)
