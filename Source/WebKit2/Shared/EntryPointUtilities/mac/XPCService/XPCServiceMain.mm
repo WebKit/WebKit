@@ -27,7 +27,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/OSObjectPtr.h>
-#import <xpc/xpc.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
 

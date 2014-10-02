@@ -1,3 +1,17 @@
+2014-10-02  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Move XPC forward declarations in JavaScriptCore to WTF SPI wrapper header
+        https://bugs.webkit.org/show_bug.cgi?id=137277
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use wtf/spi/darwin/XPCSPI.h instead of including the corresponding XPC headers/
+        forward declaring XPC functions.
+
+        * inspector/remote/RemoteInspector.mm:
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+
 2014-10-01  Anders Carlsson  <andersca@apple.com>
 
         Use variadic templates for jsMakeNontrivialString

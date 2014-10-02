@@ -41,27 +41,17 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-#import <xpc/xpc.h>
-
-#if __has_include(<xpc/private.h>)
-#import <xpc/private.h>
-#endif
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
-extern "C" void xpc_connection_set_instance(xpc_connection_t, uuid_t);
-extern "C" void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
-
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-extern "C" void xpc_connection_set_bootstrap(xpc_connection_t connection, xpc_object_t bootstrap);
-
 // FIXME: Soft linking is temporary, make this into a regular function call once this function is available everywhere we need.
 SOFT_LINK_FRAMEWORK(CoreFoundation)
 SOFT_LINK_OPTIONAL(CoreFoundation, _CFBundleSetupXPCBootstrap, void, unused, (xpc_object_t))
-
 #endif
 
 namespace WebKit {
