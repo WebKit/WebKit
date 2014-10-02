@@ -1,3 +1,22 @@
+2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        EWS and Commit Queue should know better than to spew 500 failed
+        results in the case of extremely red patches.
+        https://bugs.webkit.org/show_bug.cgi?id=137324
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Adds a check for did_exceed_test_failure_limit.
+        (AbstractEarlyWarningSystem._failing_tests_message):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        Alters the task mock to respond properly to
+        results_from_patch_test_run(patch)
+        (AbstractEarlyWarningSystemTest.test_failing_tests_message):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Adds a check for did_exceed_test_failure_limit.
+        (CommitQueue._failing_tests_message):
+
 2014-10-01  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r174192.

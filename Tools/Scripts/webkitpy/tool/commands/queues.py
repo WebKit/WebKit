@@ -336,6 +336,8 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
         unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
         if not unexpected_failures:
             return None
+        if results and results.did_exceed_test_failure_limit():
+            return "Number of test failures exceeded the failure limit."
         return "New failing tests:\n%s" % "\n".join(unexpected_failures)
 
     def _error_message_for_bug(self, task, patch, script_error):

@@ -63,6 +63,8 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
         if not unexpected_failures:
             return None
+        if results and results.did_exceed_test_failure_limit():
+            return "Number of test failures exceeded the failure limit."
         return "New failing tests:\n%s" % "\n".join(unexpected_failures)
 
     def _post_reject_message_on_bug(self, tool, patch, status_id, extra_message_text=None):

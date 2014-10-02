@@ -46,6 +46,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_logs=self._default_begin_work_queue_logs(ews.name))
         ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
+        task.results_from_patch_test_run = lambda a: None
         patch = ews._tool.bugs.fetch_attachment(10000)
         self.assertMultiLineEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
 
