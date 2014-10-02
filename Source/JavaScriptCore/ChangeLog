@@ -1,3 +1,56 @@
+2014-10-02  Mark Lam  <mark.lam@apple.com>
+
+        Fixed the Inspector to be able to properly distinguish between scope types.
+        <https://webkit.org/b/137279>
+
+        Reviewed by Geoffrey Garen.
+
+        The pre-existing code incorrectly labels Catch Scopes and Function Name Scopes
+        as With Scopes.  This patch will fix this.
+
+        * bytecode/BytecodeList.json:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        - These now passes stores the desired JSNameScope::Type in a bytecode operand.
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isCatchScope):
+        (JSC::DebuggerScope::isFunctionNameScope):
+        - Added queries to be able to explicitly test if the scope is a CatchScope
+          or FunctionNameScope.  The FunctionNameScope is the case where the
+          NameScope is used to capture the function name of a function expression.
+        * debugger/DebuggerScope.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE):
+        * inspector/protocol/Debugger.json:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::addNameScopeIfNeeded):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::isFunctionNameScope):
+        (JSC::JSNameScope::isCatchScope):
+        (JSC::JSNameScope::JSNameScope):
+        - Now stores the JSNameScope::Type in a field.
+
 2014-10-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174180, r174183, and r174186.

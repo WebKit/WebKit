@@ -1308,12 +1308,13 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
 }
 #endif
 
-void JIT_OPERATION operationPushNameScope(ExecState* exec, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
+void JIT_OPERATION operationPushNameScope(ExecState* exec, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes, int32_t type)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    JSNameScope* scope = JSNameScope::create(exec, *identifier, JSValue::decode(encodedValue), attibutes);
+    JSNameScope::Type scopeType = static_cast<JSNameScope::Type>(type);
+    JSNameScope* scope = JSNameScope::create(exec, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
 
     exec->setScope(scope);
 }

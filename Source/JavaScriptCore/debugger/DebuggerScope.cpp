@@ -28,6 +28,7 @@
 
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
+#include "JSNameScope.h"
 #include "JSWithScope.h"
 
 namespace JSC {
@@ -152,6 +153,16 @@ void DebuggerScope::invalidateChain()
         scope->m_scope.clear(); // This also marks this scope as invalid.
         scope = nextScope;
     }
+}
+
+bool DebuggerScope::isCatchScope() const
+{
+    return m_scope->isNameScopeObject() && reinterpret_cast<JSNameScope*>(m_scope.get())->isCatchScope();
+}
+
+bool DebuggerScope::isFunctionNameScope() const
+{
+    return m_scope->isNameScopeObject() && reinterpret_cast<JSNameScope*>(m_scope.get())->isFunctionNameScope();
 }
 
 bool DebuggerScope::isWithScope() const

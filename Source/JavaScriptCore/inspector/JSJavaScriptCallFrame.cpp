@@ -111,13 +111,16 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
         }
 
         if (!index) {
+            if (scope->isCatchScope())
+                return jsNumber(JSJavaScriptCallFrame::CATCH_SCOPE);
+            if (scope->isFunctionNameScope())
+                return jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE);
             if (scope->isWithScope())
                 return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
             if (scope->isGlobalScope()) {
                 ASSERT(++iter == end);
                 return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);
             }
-            // FIXME: We should be identifying and returning CATCH_SCOPE appropriately.
             ASSERT(scope->isFunctionOrEvalScope());
             return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
         }

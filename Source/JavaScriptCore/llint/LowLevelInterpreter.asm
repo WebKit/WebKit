@@ -1246,7 +1246,7 @@ _llint_op_pop_scope:
 _llint_op_push_name_scope:
     traceExecution()
     callSlowPath(_llint_slow_path_push_name_scope)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_throw:

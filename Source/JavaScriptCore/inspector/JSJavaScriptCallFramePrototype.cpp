@@ -59,6 +59,7 @@ static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantLOCAL_SCOPE(Exe
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantWITH_SCOPE(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCLOSURE_SCOPE(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCATCH_SCOPE(ExecState*);
+static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE(ExecState*);
 
 const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
@@ -94,6 +95,7 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     JSC_NATIVE_NON_INDEX_ACCESSOR("WITH_SCOPE", jsJavaScriptCallFrameConstantWITH_SCOPE, DontEnum | Accessor);
     JSC_NATIVE_NON_INDEX_ACCESSOR("CLOSURE_SCOPE", jsJavaScriptCallFrameConstantCLOSURE_SCOPE, DontEnum | Accessor);
     JSC_NATIVE_NON_INDEX_ACCESSOR("CATCH_SCOPE", jsJavaScriptCallFrameConstantCATCH_SCOPE, DontEnum | Accessor);
+    JSC_NATIVE_NON_INDEX_ACCESSOR("FUNCTION_NAME_SCOPE", jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE, DontEnum | Accessor);
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluate(ExecState* exec)
@@ -229,6 +231,11 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCLOSURE_SCOPE(ExecStat
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCATCH_SCOPE(ExecState*)
 {
     return JSValue::encode(jsNumber(JSJavaScriptCallFrame::CATCH_SCOPE));
+}
+
+EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE(ExecState*)
+{
+    return JSValue::encode(jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE));
 }
 
 } // namespace Inspector

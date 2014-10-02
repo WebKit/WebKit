@@ -164,7 +164,7 @@ typedef void JIT_OPERATION (*V_JITOperation_ECJJ)(ExecState*, JSCell*, EncodedJS
 typedef void JIT_OPERATION (*V_JITOperation_ECPSPS)(ExecState*, JSCell*, void*, size_t, void*, size_t);
 typedef void JIT_OPERATION (*V_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
-typedef void JIT_OPERATION (*V_JITOperation_EIdJZ)(ExecState*, Identifier*, EncodedJSValue, int32_t);
+typedef void JIT_OPERATION (*V_JITOperation_EIdJZZ)(ExecState*, Identifier*, EncodedJSValue, int32_t, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, StringImpl*);
 typedef void JIT_OPERATION (*V_JITOperation_EJIdJJ)(ExecState*, EncodedJSValue, Identifier*, EncodedJSValue, EncodedJSValue);
@@ -277,7 +277,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState*, EncodedJSValue, Identifi
 #else
 void JIT_OPERATION operationPutGetterSetter(ExecState*, JSCell*, Identifier*, JSCell*, JSCell*) WTF_INTERNAL;
 #endif
-void JIT_OPERATION operationPushNameScope(ExecState*, Identifier*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationPushNameScope(ExecState*, Identifier*, EncodedJSValue, int32_t, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationPushWithScope(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPopScope(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;

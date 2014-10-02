@@ -1,3 +1,16 @@
+2014-10-02  Mark Lam  <mark.lam@apple.com>
+
+        Fixed the Inspector to be able to properly distinguish between scope types.
+        <https://webkit.org/b/137279>
+
+        Reviewed by Geoffrey Garen and Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/DebuggerManager.js:
+        * UserInterface/Models/ScopeChainNode.js:
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        - Added handling of the FunctionNameScope case.
+
 2014-10-02  Andres Gomez  <agomez@igalia.com>
 
         Web Inspector: [GTK] Missing icons and enhancing the proportion and visibility of some icons

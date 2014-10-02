@@ -116,7 +116,7 @@ void JSFunction::addNameScopeIfNeeded(VM& vm)
         return;
     if (!functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode()))
         return;
-    setScope(vm, JSNameScope::create(vm, scope()->globalObject(), executable->name(), this, ReadOnly | DontDelete, scope()));
+    setScope(vm, JSNameScope::create(vm, scope()->globalObject(), executable->name(), this, ReadOnly | DontDelete, scope(), JSNameScope::FunctionNameScope));
 }
 
 JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)

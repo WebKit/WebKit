@@ -2294,6 +2294,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     instructions().append(addConstant(property));
     instructions().append(value->index());
     instructions().append(attributes);
+    instructions().append(JSNameScope::FunctionNameScope);
 }
 
 void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* value, unsigned attributes)
@@ -2307,6 +2308,7 @@ void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterI
     instructions().append(addConstant(property));
     instructions().append(value->index());
     instructions().append(attributes);
+    instructions().append(JSNameScope::CatchScope);
 }
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)

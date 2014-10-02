@@ -121,6 +121,12 @@ WebInspector.ScopeChainDetailsSidebarPanel.prototype = {
                     collapsedByDefault = false;
                     break;
 
+                case WebInspector.ScopeChainNode.Type.FunctionName:
+                    title = WebInspector.UIString("Function Name Variable");
+                    dontHighlightNonEnumerableProperties = true;
+                    collapsedByDefault = true;
+                    break;
+
                 case WebInspector.ScopeChainNode.Type.With:
                     title = WebInspector.UIString("With Object Properties");
                     collapsedByDefault = foundLocalScope;

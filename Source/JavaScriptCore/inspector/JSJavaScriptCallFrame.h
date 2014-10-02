@@ -77,6 +77,7 @@ public:
     static const unsigned short WITH_SCOPE = 2;
     static const unsigned short CLOSURE_SCOPE = 3;
     static const unsigned short CATCH_SCOPE = 4;
+    static const unsigned short FUNCTION_NAME_SCOPE = 5;
 
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;

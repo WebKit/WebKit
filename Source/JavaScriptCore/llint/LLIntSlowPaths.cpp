@@ -1300,7 +1300,8 @@ LLINT_SLOW_PATH_DECL(slow_path_push_name_scope)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[1].u.operand), LLINT_OP(2).jsValue(), pc[3].u.operand);
+    JSNameScope::Type type = static_cast<JSNameScope::Type>(pc[4].u.operand);
+    JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[1].u.operand), LLINT_OP(2).jsValue(), pc[3].u.operand, type);
     exec->setScope(scope);
     LLINT_END();
 }

@@ -36,17 +36,22 @@ class JSNameScope : public JSEnvironmentRecord {
 public:
     typedef JSEnvironmentRecord Base;
 
-    static JSNameScope* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
+    enum Type {
+        CatchScope,
+        FunctionNameScope
+    };
+
+    static JSNameScope* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes, Type type)
     {
         VM& vm = exec->vm();
-        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, exec->lexicalGlobalObject(), exec->scope());
+        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, exec->lexicalGlobalObject(), exec->scope(), type);
         scopeObject->finishCreation(vm, identifier, value, attributes);
         return scopeObject;
     }
 
-    static JSNameScope* create(VM& vm, JSGlobalObject* globalObject, const Identifier& identifier, JSValue value, unsigned attributes, JSScope* next)
+    static JSNameScope* create(VM& vm, JSGlobalObject* globalObject, const Identifier& identifier, JSValue value, unsigned attributes, JSScope* next, Type type)
     {
-        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, globalObject, next);
+        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, globalObject, next, type);
         scopeObject->finishCreation(vm, identifier, value, attributes);
         return scopeObject;
     }
@@ -60,6 +65,9 @@ public:
 
     DECLARE_INFO;
 
+    bool isFunctionNameScope() { return m_type == FunctionNameScope; }
+    bool isCatchScope() { return m_type == CatchScope; }
+
 protected:
     void finishCreation(VM& vm, const Identifier& identifier, JSValue value, unsigned attributes)
     {
@@ -71,17 +79,19 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
-    JSNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next)
+    JSNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next, Type type)
         : Base(
             vm,
             globalObject->nameScopeStructure(),
             reinterpret_cast<Register*>(&m_registerStore + 1),
             next
         )
+        , m_type(type)
     {
     }
 
     WriteBarrier<Unknown> m_registerStore;
+    Type m_type;
 };
 
 }

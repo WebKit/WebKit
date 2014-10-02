@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1018,6 +1018,7 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
     const WITH_SCOPE = 2;
     const CLOSURE_SCOPE = 3;
     const CATCH_SCOPE = 4;
+    const FUNCTION_NAME_SCOPE = 5;
 
     /** @type {!Object.<number, string>} */
     var scopeTypeNames = {};
@@ -1026,6 +1027,7 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
     scopeTypeNames[WITH_SCOPE] = "with";
     scopeTypeNames[CLOSURE_SCOPE] = "closure";
     scopeTypeNames[CATCH_SCOPE] = "catch";
+    scopeTypeNames[FUNCTION_NAME_SCOPE] = "functionName";
 
     return {
         object: injectedScript._wrapObject(scopeObject, groupId),

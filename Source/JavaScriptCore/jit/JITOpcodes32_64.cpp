@@ -805,7 +805,7 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
     emitLoad(currentInstruction[2].u.operand, regT1, regT0);
-    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[1].u.operand), regT1, regT0, currentInstruction[3].u.operand);
+    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[1].u.operand), regT1, regT0, currentInstruction[3].u.operand, currentInstruction[4].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

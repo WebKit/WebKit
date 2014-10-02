@@ -42,7 +42,8 @@ WebInspector.ScopeChainNode.Type = {
     Global: "scope-chain-type-global",
     With: "scope-chain-type-with",
     Closure: "scope-chain-type-closure",
-    Catch: "scope-chain-type-catch"
+    Catch: "scope-chain-type-catch",
+    FunctionName: "scope-chain-type-functionName"
 };
 
 WebInspector.ScopeChainNode.prototype = {

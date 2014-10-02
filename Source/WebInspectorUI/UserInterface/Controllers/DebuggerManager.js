@@ -572,6 +572,9 @@ WebInspector.DebuggerManager.prototype = {
         case "catch":
             type = WebInspector.ScopeChainNode.Type.Catch;
             break;
+        case "functionName":
+            type = WebInspector.ScopeChainNode.Type.FunctionName;
+            break;
         default:
             console.error("Unknown type: " + payload.type);
         }
