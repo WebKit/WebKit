@@ -1,3 +1,23 @@
+2014-10-02  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][WK2] test_ewk2_view is failed
+        https://bugs.webkit.org/show_bug.cgi?id=132983
+
+        Reviewed by Gyuyoung Kim.
+
+        Enable test_ewk2_view because test cases of test_ewk2_view are passed except
+        for few tests related to device_pixel_ratio.
+        This patch adds macro guard for ailed test case to CAIRO_SURFACE_SET_DEVICE_SCALE macro.
+        In addition, fixed some warnings while building with test_ewk2_view.
+
+        * PlatformEfl.cmake: Enables test_ewk2_view.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp: Added const keyword for argument to fix the warnings.
+        (EWK2UnitTest::EWK2UnitTestBase::keyDown):
+        (EWK2UnitTest::EWK2UnitTestBase::keyUp):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2014-10-02  JinYoung Hur  <hurims@gmail.com>
 
         Minor bug in UIClient::exceededDatabaseQuota()

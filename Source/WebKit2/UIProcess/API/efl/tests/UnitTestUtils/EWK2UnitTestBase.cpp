@@ -323,7 +323,7 @@ void EWK2UnitTestBase::multiMove(int id, int x, int y)
     evas_event_feed_multi_move(evas_object_evas_get(m_webView), id, x, y, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
-void EWK2UnitTestBase::keyDown(char* keyname, char* key, char* string, char* modifier)
+void EWK2UnitTestBase::keyDown(const char* keyname, const char* key, const char* string, const char* modifier)
 {
     Evas* evas = evas_object_evas_get(m_webView);
     ASSERT(evas);
@@ -338,7 +338,7 @@ void EWK2UnitTestBase::keyDown(char* keyname, char* key, char* string, char* mod
     evas_event_feed_key_down(evas, keyname, key, string, 0, 0, 0);
 }
 
-void EWK2UnitTestBase::keyUp(char* keyname, char* key, char* string)
+void EWK2UnitTestBase::keyUp(const char* keyname, const char* key, const char* string)
 {
     evas_event_feed_key_up(evas_object_evas_get(m_webView), keyname, key, string, 0, 0, 0);
 }

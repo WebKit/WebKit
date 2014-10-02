@@ -21,6 +21,7 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
+#include <WebCore/CairoUtilities.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -278,6 +279,7 @@ TEST_F(EWK2ViewTest, ewk_view_url_get)
     EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
 }
 
+#if HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
 TEST_F(EWK2ViewTest, ewk_view_device_pixel_ratio)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
@@ -291,6 +293,7 @@ TEST_F(EWK2ViewTest, ewk_view_device_pixel_ratio)
     ASSERT_TRUE(ewk_view_device_pixel_ratio_set(webView(), 1));
     ASSERT_FLOAT_EQ(1, ewk_view_device_pixel_ratio_get(webView()));
 }
+#endif
 
 TEST_F(EWK2ViewTest, ewk_view_html_string_load)
 {
@@ -1207,12 +1210,14 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_get)
     EXPECT_EQ(environment->defaultWidth(), contentsWidth);
     EXPECT_EQ(environment->defaultHeight(), contentsHeight);
 
+#if HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
     ewk_view_device_pixel_ratio_set(webView(), 2);
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     ewk_view_contents_size_get(webView(), &contentsWidth, &contentsHeight);
 
     EXPECT_EQ(environment->defaultWidth() / 2, contentsWidth);
     EXPECT_EQ(environment->defaultHeight() / 2, contentsHeight);
+#endif
 
     const char fixedContentsSize[] =
         "<!DOCTYPE html>"
