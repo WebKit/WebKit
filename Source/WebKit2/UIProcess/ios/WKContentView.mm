@@ -494,7 +494,7 @@ private:
 
 - (void)_zoomOutWithOrigin:(CGPoint)origin
 {
-    return [_webView _zoomOutWithOrigin:origin];
+    return [_webView _zoomOutWithOrigin:origin animated:YES];
 }
 
 - (void)_applicationWillResignActive:(NSNotification*)notification

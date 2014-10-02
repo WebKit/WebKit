@@ -34,6 +34,7 @@
 
 - (void)moveToPoint:(CGPoint)point animated:(BOOL)animated;
 - (void)show;
+- (void)hide;
 
 @end
 

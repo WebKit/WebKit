@@ -692,8 +692,9 @@ void PageClientImpl::didFinishLoadForMainFrame()
 {
 }
 
-void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType)
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)
 {
+    [m_webView _didSameDocumentNavigationForMainFrame:navigationType];
 }
 
 } // namespace WebKit

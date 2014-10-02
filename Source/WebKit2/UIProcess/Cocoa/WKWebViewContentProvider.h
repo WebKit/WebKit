@@ -29,6 +29,8 @@
 
 #if PLATFORM(IOS)
 
+#import <WebKit/WKPageLoadTypes.h>
+
 @class NSData;
 @class UIScrollView;
 @class UIView;
@@ -47,6 +49,7 @@ struct UIEdgeInsets;
 - (void)web_setOverlaidAccessoryViewsInset:(CGSize)inset;
 - (void)web_computedContentInsetDidChange;
 - (void)web_setFixedOverlayView:(UIView *)fixedOverlayView;
+- (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType;
 
 @end
 
