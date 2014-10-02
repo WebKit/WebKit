@@ -107,9 +107,9 @@ struct GradientStop {
 PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleResolver* styleResolver)
 {
     bool derived = false;
-    for (unsigned i = 0; i < m_stops.size(); i++) {
-        if (!m_stops[i].isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(m_stops[i].m_color.get())) {
-            m_stops[i].m_colorIsDerivedFromElement = true;
+    for (auto& stop : m_stops) {
+        if (!stop.isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(stop.m_color.get())) {
+            stop.m_colorIsDerivedFromElement = true;
             derived = true;
             break;
         }
@@ -127,9 +127,9 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
         return 0;
     }
 
-    for (unsigned i = 0; i < result->m_stops.size(); i++) {
-        if (!result->m_stops[i].isMidpoint)
-            result->m_stops[i].m_resolvedColor = styleResolver->colorFromPrimitiveValue(result->m_stops[i].m_color.get());
+    for (auto& stop : result->m_stops) {
+        if (!stop.isMidpoint)
+            stop.m_resolvedColor = styleResolver->colorFromPrimitiveValue(stop.m_color.get());
     }
 
     return result.release();
@@ -276,9 +276,9 @@ void CSSGradientValue::addStops(Gradient& gradient, const CSSToLengthConversionD
     // else add 6 stops to the left and 2 to the right.
     // Stops on the side with the most stops start midway because the curve approximates
     // a line in that region. We then add 5 more color stops on that side to minimize the change
-    // how the luminance changes at each of the colorstops. We don't have to add as many on the other side
-    // since it becomes small which increases the differentation of luminance which hides the colorstops.
-    // Even with 4 extra colorstops, it *is* possible to discern the steps when the gradient is large and has
+    // how the luminance changes at each of the color stops. We don't have to add as many on the other side
+    // since it becomes small which increases the differentation of luminance which hides the color stops.
+    // Even with 4 extra color stops, it *is* possible to discern the steps when the gradient is large and has
     // large luminance differences between midpoint and color stop. If this becomes an issue, we can consider
     // making this algorithm a bit smarter.
 
