@@ -1,3 +1,16 @@
+2014-10-01  Daniel Bates  <dabates@apple.com>
+
+        Unreviewed, rolling out r174192.
+
+        Revert the unit test fix in r174192 since we reverted r174187
+        in r174194 due to correctness issues. See
+        <http://webkit.org/b/137329> for more details.
+
+        Reverted changeset:
+
+        "Test fix after r174187"
+        http://trac.webkit.org/changeset/174192
+
 2014-10-01  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/137308> WebKit should build on OS X Yosemite for external users
