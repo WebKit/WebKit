@@ -1,3 +1,10 @@
+2014-10-02  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] The number of processes did not affect the crash inconsistency, increase number of child processes again.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes): Ambitiously try 3 processes the testers are too slow now.
+
 2014-10-02  David Farler  <dfarler@apple.com>
 
         Move ASan arguments from LLVM (-mllvm) to the frontend
