@@ -1,3 +1,10 @@
+2014-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Test fix after r174187
+
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_default_timeout_ms): Expect the new 50000 ms timeout for Windows tests.
+
 2014-10-01  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Increase layout test timeout for Windows following r174162.

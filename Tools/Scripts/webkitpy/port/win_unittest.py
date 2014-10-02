@@ -45,6 +45,10 @@ class WinPortTest(port_testcase.PortTestCase):
     port_name = 'win-xp'
     port_maker = WinPort
 
+    def test_default_timeout_ms(self):
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 50000)
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 50000)
+
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
