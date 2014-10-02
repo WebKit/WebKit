@@ -1,3 +1,15 @@
+2014-09-26  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Don't include full path names in WebKitEnumTypes.h
+        https://bugs.webkit.org/show_bug.cgi?id=137148
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace @filename@ with @basename@ in the template, since we don't
+        want to include the full path name in the generated header.
+
+        * UIProcess/API/gtk/WebKitEnumTypes.h.template:
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The remote web inspector shows the HTML content as plain text
