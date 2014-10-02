@@ -40,6 +40,7 @@ struct TypeCastTraits {
         // to add that specialization:
         // SPECIALIZE_TYPE_TRAITS_BEGIN() / SPECIALIZE_TYPE_TRAITS_END()
         static_assert(std::is_void<ExpectedType>::value, "Missing TypeCastTraits specialization");
+        return false;
     }
 };
 
