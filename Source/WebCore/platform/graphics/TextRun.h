@@ -62,14 +62,13 @@ public:
     typedef unsigned RoundingHacks;
 
     TextRun(const LChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_charactersLength(len)
-        , m_len(len)
+        : m_text(c, len)
+        , m_charactersLength(len)
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
-        , m_is8Bit(true)
         , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -78,18 +77,16 @@ public:
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
-        m_data.characters8 = c;
     }
 
     TextRun(const UChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_charactersLength(len)
-        , m_len(len)
+        : m_text(c, len)
+        , m_charactersLength(len)
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
-        , m_is8Bit(false)
         , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -98,12 +95,11 @@ public:
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
-        m_data.characters16 = c;
     }
     
     explicit TextRun(const String& s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_charactersLength(s.length())
-        , m_len(s.length())
+        : m_text(StringView(s))
+        , m_charactersLength(s.length())
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
@@ -117,24 +113,16 @@ public:
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
-        if (!m_charactersLength || s.is8Bit()) {
-            m_data.characters8 = s.characters8();
-            m_is8Bit = true;
-        } else {
-            m_data.characters16 = s.characters16();
-            m_is8Bit = false;
-        }
     }
 
     explicit TextRun(StringView s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_charactersLength(s.length())
-        , m_len(s.length())
+        : m_text(s)
+        , m_charactersLength(s.length())
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
-        , m_is8Bit(s.is8Bit())
         , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -143,15 +131,11 @@ public:
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
-        if (s.is8Bit())
-            m_data.characters8 = s.characters8();
-        else
-            m_data.characters16 = s.characters16();
     }
 
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_len);
+        ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_text.length());
 
         TextRun result = *this;
 
@@ -163,26 +147,21 @@ public:
         return result;
     }
 
-    UChar operator[](unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); return is8Bit() ? m_data.characters8[i] :m_data.characters16[i]; }
-    const LChar* data8(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); ASSERT(is8Bit()); return &m_data.characters8[i]; }
-    const UChar* data16(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); ASSERT(!is8Bit()); return &m_data.characters16[i]; }
+    UChar operator[](unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); return m_text[i]; }
+    const LChar* data8(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(is8Bit()); return &m_text.characters8()[i]; }
+    const UChar* data16(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(!is8Bit()); return &m_text.characters16()[i]; }
 
-    const LChar* characters8() const { ASSERT(is8Bit()); return m_data.characters8; }
-    const UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
+    const LChar* characters8() const { ASSERT(is8Bit()); return m_text.characters8(); }
+    const UChar* characters16() const { ASSERT(!is8Bit()); return m_text.characters16(); }
     
-    bool is8Bit() const { return m_is8Bit; }
-    int length() const { return m_len; }
+    bool is8Bit() const { return m_text.is8Bit(); }
+    int length() const { return m_text.length(); }
     int charactersLength() const { return m_charactersLength; }
-    String string() const
-    {
-        if (is8Bit())
-            return String(m_data.characters8, m_len);
-        return String(m_data.characters16, m_len);
-    }
+    String string() const { return m_text.toString(); }
 
-    void setText(const LChar* c, unsigned len) { m_data.characters8 = c; m_len = len; m_is8Bit = true;}
-    void setText(const UChar* c, unsigned len) { m_data.characters16 = c; m_len = len; m_is8Bit = false;}
-    void setText(StringView);
+    void setText(const LChar* c, unsigned len) { m_text = StringView(c, len); }
+    void setText(const UChar* c, unsigned len) { m_text = StringView(c, len); }
+    void setText(StringView stringView) { m_text = stringView; }
     void setCharactersLength(unsigned charactersLength) { m_charactersLength = charactersLength; }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
@@ -211,6 +190,7 @@ public:
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
+    StringView text() const { return m_text; }
 
     class RenderingContext : public RefCounted<RenderingContext> {
     public:
@@ -233,16 +213,11 @@ public:
 
 private:
     static bool s_allowsRoundingHacks;
-
-    union {
-        const LChar* characters8;
-        const UChar* characters16;
-    } m_data;
-
+    
     RefPtr<RenderingContext> m_renderingContext;
 
-    unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to m_len.
-    unsigned m_len;
+    StringView m_text;
+    unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to length of m_text.
 
     unsigned m_tabSize;
 
@@ -254,7 +229,6 @@ private:
 
     float m_expansion;
     ExpansionBehavior m_expansionBehavior : 2;
-    unsigned m_is8Bit : 1;
     unsigned m_allowTabs : 1;
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.
@@ -268,16 +242,6 @@ inline void TextRun::setTabSize(bool allow, unsigned size)
 {
     m_allowTabs = allow;
     m_tabSize = size;
-}
-
-inline void TextRun::setText(StringView string)
-{
-    m_len = string.length();
-    m_is8Bit = string.is8Bit();
-    if (string.is8Bit())
-        m_data.characters8 = string.characters8();
-    else
-        m_data.characters16 = string.characters16();
 }
 
 }
