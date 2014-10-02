@@ -604,13 +604,13 @@ void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
 
 void WebPage::blurAssistedNode()
 {
-    if (is<Element>(m_assistedNode))
+    if (is<Element>(m_assistedNode.get()))
         downcast<Element>(*m_assistedNode).blur();
 }
 
 void WebPage::setAssistedNodeValue(const String& value)
 {
-    if (is<HTMLInputElement>(m_assistedNode)) {
+    if (is<HTMLInputElement>(m_assistedNode.get())) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValue(value, DispatchInputAndChangeEvent);
     }
@@ -619,7 +619,7 @@ void WebPage::setAssistedNodeValue(const String& value)
 
 void WebPage::setAssistedNodeValueAsNumber(double value)
 {
-    if (is<HTMLInputElement>(m_assistedNode)) {
+    if (is<HTMLInputElement>(m_assistedNode.get())) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         element.setValueAsNumber(value, ASSERT_NO_EXCEPTION, DispatchInputAndChangeEvent);
     }
@@ -627,7 +627,7 @@ void WebPage::setAssistedNodeValueAsNumber(double value)
 
 void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (!is<HTMLSelectElement>(m_assistedNode))
+    if (!is<HTMLSelectElement>(m_assistedNode.get()))
         return;
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*m_assistedNode);
     select.optionSelectedByUser(index, true, allowMultipleSelection);

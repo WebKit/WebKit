@@ -1,5 +1,15 @@
 2014-10-02  Andy Estes  <aestes@apple.com>
 
+        Fix the iOS build.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::blurAssistedNode):
+        (WebKit::WebPage::setAssistedNodeValue):
+        (WebKit::WebPage::setAssistedNodeValueAsNumber):
+        (WebKit::WebPage::setAssistedNodeSelectedIndex):
+
+2014-10-02  Andy Estes  <aestes@apple.com>
+
         [iOS] Teach WKPDFView to navigate to pageNumber links
         https://bugs.webkit.org/show_bug.cgi?id=137358
 
