@@ -329,8 +329,6 @@ class ServerProcess(object):
             self._start()
 
     def stop(self, timeout_secs=3.0):
-        if sys.platform == 'win32':
-            _log.warning('The number of timeout seconds is %d' % timeout_secs)
         if not self._proc:
             return (None, None)
 

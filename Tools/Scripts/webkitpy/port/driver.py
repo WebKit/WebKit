@@ -334,9 +334,6 @@ class Driver(object):
             self._port._filesystem.rmtree(str(self._driver_tempdir))
             self._driver_tempdir = None
 
-        if sys.platform == 'win32':
-            _log.warning('Stopping operation completed')
-
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper()
         cmd.append(self._port._path_to_driver())

@@ -1,3 +1,18 @@
+2014-10-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174185.
+        https://bugs.webkit.org/show_bug.cgi?id=137334
+
+        Patch that adds logging causes webkitpy failures (Requested by
+        rfong on #webkit).
+
+        Reverted changeset:
+
+        "commitqueuetasks_unittest references a non-existent member
+        variable"
+        https://bugs.webkit.org/show_bug.cgi?id=137303
+        http://trac.webkit.org/changeset/174185
+
 2014-10-01  Jake Nielsen  <jacob_nielsen@apple.com>
 
         EWS and Commit Queue should know better than to spew 500 failed
