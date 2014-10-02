@@ -883,7 +883,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
-    DownloadProxy* downloadProxy = createDownloadProxy();
+    DownloadProxy* downloadProxy = createDownloadProxy(request);
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
 
 #if ENABLE(NETWORK_PROCESS)
@@ -1055,17 +1055,17 @@ void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy* WebContext::createDownloadProxy()
+DownloadProxy* WebContext::createDownloadProxy(const ResourceRequest& request)
 {
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess()) {
         ensureNetworkProcess();
         ASSERT(m_networkProcess);
-        return m_networkProcess->createDownloadProxy();
+        return m_networkProcess->createDownloadProxy(request);
     }
 #endif
 
-    return ensureSharedWebProcess().createDownloadProxy();
+    return ensureSharedWebProcess().createDownloadProxy(request);
 }
 
 void WebContext::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)

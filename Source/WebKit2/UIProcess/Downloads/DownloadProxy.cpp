@@ -51,15 +51,16 @@ static uint64_t generateDownloadID()
     return ++uniqueDownloadID;
 }
     
-PassRefPtr<DownloadProxy> DownloadProxy::create(DownloadProxyMap& downloadProxyMap, WebContext& webContext)
+PassRefPtr<DownloadProxy> DownloadProxy::create(DownloadProxyMap& downloadProxyMap, WebContext& webContext, const ResourceRequest& resourceRequest)
 {
-    return adoptRef(new DownloadProxy(downloadProxyMap, webContext));
+    return adoptRef(new DownloadProxy(downloadProxyMap, webContext, resourceRequest));
 }
 
-DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebContext& webContext)
+DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebContext& webContext, const ResourceRequest& resourceRequest)
     : m_downloadProxyMap(downloadProxyMap)
     , m_webContext(&webContext)
     , m_downloadID(generateDownloadID())
+    , m_request(resourceRequest)
 {
 }
 

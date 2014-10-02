@@ -52,6 +52,7 @@
 #endif
 
 namespace WebCore {
+class ResourceRequest;
 class URL;
 struct PluginInfo;
 };
@@ -118,7 +119,7 @@ public:
 
     static bool fullKeyboardAccessEnabled();
 
-    DownloadProxy* createDownloadProxy();
+    DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
     void pageSuppressibilityChanged(WebPageProxy*);
     void pagePreferencesChanged(WebPageProxy*);

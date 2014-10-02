@@ -1788,7 +1788,9 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
         // Create a download proxy.
-        DownloadProxy* download = m_process->context().createDownloadProxy();
+        // FIXME: We should ensure that the downloadRequest is never empty.
+        const ResourceRequest& downloadRequest = m_decidePolicyForResponseRequest ? *m_decidePolicyForResponseRequest : ResourceRequest();
+        DownloadProxy* download = m_process->context().createDownloadProxy(downloadRequest);
         downloadID = download->downloadID();
         handleDownloadRequest(download);
     }

@@ -1,3 +1,60 @@
+2014-10-02  Jeff Miller  <jeffm@apple.com>
+
+        WKDownloadCopyRequest() returns 0 until the download starts
+        https://bugs.webkit.org/show_bug.cgi?id=137322
+
+        Reviewed by Anders Carlsson.
+
+        The m_request ivar in DownloadProxy was only being initialized when didStart() was called after the
+        download starts. Since clients have access to the ResourceRequest when the DownloadProxy is created,
+        there's no reason not to pass that along to DownloadProxy::create() so it can be returned if
+        WKDownloadCopyRequest() is called before didStart().
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::create):
+        Add ResourceRequest parameter, and pass it to DownloadProxy constructor.
+
+        (WebKit::DownloadProxy::DownloadProxy):
+        Initialize m_request.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        Add ResourceRequest parameter to create() and constructor.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        Add ResourceRequest parameter and pass it to DownloadProxy::create().
+
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        Add ResourceRequest parameter to createDownloadProxy().
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        Add ResourceRequest parameter and pass it to DownloadProxy::create().
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        Add ResourceRequest parameter to createDownloadProxy().
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download):
+        Pass ResourceRequest to createDownloadProxy().
+
+        (WebKit::WebContext::createDownloadProxy):
+        Add ResourceRequest parameter and pass it to createDownloadProxy() functions.
+
+        * UIProcess/WebContext.h:
+        Add ResourceRequest parameter to createDownloadProxy().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Pass m_decidePolicyForResponseRequest to WebContext::createDownloadProxy().
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createDownloadProxy):
+        Add ResourceRequest parameter and pass it to DownloadProxyMap::create().
+
+        * UIProcess/WebProcessProxy.h:
+        Add ResourceRequest parameter to createDownloadProxy().
+
 2014-10-01  Christophe Dumez  <cdumez@apple.com>
 
         Have is<>(T*) function do a null check on the pointer argument

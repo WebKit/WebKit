@@ -97,12 +97,12 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
     connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-DownloadProxy* NetworkProcessProxy::createDownloadProxy()
+DownloadProxy* NetworkProcessProxy::createDownloadProxy(const ResourceRequest& resourceRequest)
 {
     if (!m_downloadProxyMap)
         m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
 
-    return m_downloadProxyMap->createDownloadProxy(m_webContext);
+    return m_downloadProxyMap->createDownloadProxy(m_webContext, resourceRequest);
 }
 
 void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()

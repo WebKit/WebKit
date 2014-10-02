@@ -30,6 +30,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
+namespace WebCore {
+class ResourceRequest;
+}
+
 namespace WebKit {
 
 class ChildProcessProxy;
@@ -43,7 +47,7 @@ public:
     explicit DownloadProxyMap(ChildProcessProxy*);
     ~DownloadProxyMap();
 
-    DownloadProxy* createDownloadProxy(WebContext&);
+    DownloadProxy* createDownloadProxy(WebContext&, const WebCore::ResourceRequest&);
     void downloadFinished(DownloadProxy*);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }

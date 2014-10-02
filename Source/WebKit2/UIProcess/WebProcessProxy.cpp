@@ -609,7 +609,7 @@ void WebProcessProxy::updateTextCheckerState()
         send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
 }
 
-DownloadProxy* WebProcessProxy::createDownloadProxy()
+DownloadProxy* WebProcessProxy::createDownloadProxy(const ResourceRequest& request)
 {
 #if ENABLE(NETWORK_PROCESS)
     ASSERT(!m_context->usesNetworkProcess());
@@ -618,7 +618,7 @@ DownloadProxy* WebProcessProxy::createDownloadProxy()
     if (!m_downloadProxyMap)
         m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
 
-    return m_downloadProxyMap->createDownloadProxy(m_context.get());
+    return m_downloadProxyMap->createDownloadProxy(m_context.get(), request);
 }
 
 void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 

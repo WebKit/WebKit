@@ -44,6 +44,7 @@
 
 namespace WebCore {
 class AuthenticationChallenge;
+class ResourceRequest;
 }
 
 namespace WebKit {
@@ -60,7 +61,7 @@ public:
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 
-    DownloadProxy* createDownloadProxy();
+    DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
 #if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);
