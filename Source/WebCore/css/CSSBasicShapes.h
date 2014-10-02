@@ -33,6 +33,7 @@
 #include "CSSPrimitiveValue.h"
 #include "WindRule.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -61,9 +62,6 @@ protected:
     CSSBasicShape() { }
     RefPtr<CSSPrimitiveValue> m_referenceBox;
 };
-
-#define CSS_BASIC_SHAPES_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, CSSBasicShape, basicShape, basicShape->type() == predicate, basicShape.type() == predicate) 
 
 class CSSBasicShapeInset : public CSSBasicShape {
 public:
@@ -130,8 +128,6 @@ private:
     RefPtr<CSSPrimitiveValue> m_bottomLeftRadius;
 };
 
-CSS_BASIC_SHAPES_TYPE_CASTS(CSSBasicShapeInset, CSSBasicShape::CSSBasicShapeInsetType)
-
 class CSSBasicShapeCircle : public CSSBasicShape {
 public:
     static PassRefPtr<CSSBasicShapeCircle> create() { return adoptRef(new CSSBasicShapeCircle); }
@@ -155,8 +151,6 @@ private:
     RefPtr<CSSPrimitiveValue> m_centerY;
     RefPtr<CSSPrimitiveValue> m_radius;
 };
-
-CSS_BASIC_SHAPES_TYPE_CASTS(CSSBasicShapeCircle, CSSBasicShape::CSSBasicShapeCircleType)
 
 class CSSBasicShapeEllipse : public CSSBasicShape {
 public:
@@ -184,8 +178,6 @@ private:
     RefPtr<CSSPrimitiveValue> m_radiusX;
     RefPtr<CSSPrimitiveValue> m_radiusY;
 };
-
-CSS_BASIC_SHAPES_TYPE_CASTS(CSSBasicShapeEllipse, CSSBasicShape::CSSBasicShapeEllipseType)
 
 class CSSBasicShapePolygon : public CSSBasicShape {
 public:
@@ -218,8 +210,16 @@ private:
     WindRule m_windRule;
 };
 
-CSS_BASIC_SHAPES_TYPE_CASTS(CSSBasicShapePolygon, CSSBasicShape::CSSBasicShapePolygonType)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::CSSBasicShape& basicShape) { return basicShape.type() == WebCore::CSSBasicShape::ToValueTypeName##Type; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeInset)
+SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeCircle)
+SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeEllipse)
+SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapePolygon)
 
 #endif // CSSBasicShapes_h
