@@ -310,7 +310,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 #if PLATFORM(IOS)
     if (visibleContentRectBehavior == LegacyIOSDocumentViewRect) {
         if (platformWidget())
-            return platformVisibleContentRect(true /* include scrollbars */);
+            return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars);
     }
     
     if (platformWidget())
