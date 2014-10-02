@@ -140,6 +140,7 @@ if ($wksi) {
     my @librariesToCopy = (
         "libWebKitSystemInterfaceMountainLion.a",
         "libWebKitSystemInterfaceMavericks.a",
+        "libWebKitSystemInterfaceYosemite.a",
     );
     
     foreach my $libName (@librariesToCopy) {
@@ -188,6 +189,9 @@ if ($llvm) {
     } elsif ($osxVersion eq "10.9") {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
+    } elsif ($osxVersion eq "10.10") {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesYosemite.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesYosemite.tar.bz2";
     } else {
         print "Don't know where to find LLVM!\n";
         print "\n";

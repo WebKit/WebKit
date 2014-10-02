@@ -42,14 +42,8 @@ typedef enum {
     WKCertificateParseResultPKCS7      = 2,
 } WKCertificateParseResult;
 
-CFStringRef WKCopyCFLocalizationPreferredName(CFStringRef localization);
-
 CFStringRef WKSignedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 WKCertificateParseResult WKAddCertificatesToKeychainFromData(const void *bytes, unsigned length);
-
-NSString *WKGetPreferredExtensionForMIMEType(NSString *type);
-NSArray *WKGetExtensionsForMIMEType(NSString *type);
-NSString *WKGetMIMETypeForExtension(NSString *extension);
 
 NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
@@ -71,7 +65,6 @@ OSType WKCarbonWindowPropertyCreator(void);
 OSType WKCarbonWindowPropertyTag(void);
 #endif
 
-void WKDisableCGDeferredUpdates(void);
 #endif
 
 void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *request, BOOL shouldContentSniff);
@@ -83,7 +76,6 @@ unsigned WKGetNSAutoreleasePoolCount(void);
 
 void WKAdvanceDefaultButtonPulseAnimation(NSButtonCell *button);
 
-NSString *WKMouseMovedNotification(void);
 NSString *WKWindowWillOrderOnScreenNotification(void);
 NSString *WKWindowWillOrderOffScreenNotification(void);
 void WKSetNSWindowShouldPostEventNotifications(NSWindow *window, BOOL post);
@@ -122,20 +114,6 @@ pid_t WKAXRemoteProcessIdentifier(id remoteElement);
 
 void WKSetUpFontCache(void);
 
-void WKSignalCFReadStreamEnd(CFReadStreamRef stream);
-void WKSignalCFReadStreamHasBytes(CFReadStreamRef stream);
-void WKSignalCFReadStreamError(CFReadStreamRef stream, CFStreamError *error);
-
-CFReadStreamRef WKCreateCustomCFReadStream(void *(*formCreate)(CFReadStreamRef, void *), 
-    void (*formFinalize)(CFReadStreamRef, void *), 
-    Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
-    CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
-    Boolean (*formCanRead)(CFReadStreamRef, void *), 
-    void (*formClose)(CFReadStreamRef, void *), 
-    void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
-    void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
-    void *context);
-
 #if !TARGET_OS_IPHONE
 void WKDrawCapsLockIndicator(CGContextRef, CGRect);
 
@@ -148,12 +126,9 @@ bool WKDrawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSView *
 
 void WKSetDragImage(NSImage *image, NSPoint offset);
 
-void WKDrawBezeledTextFieldCell(NSRect, BOOL enabled);
-void WKDrawTextFieldCellFocusRing(NSTextFieldCell*, NSRect);
 void WKDrawBezeledTextArea(NSRect, BOOL enabled);
 
 void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
-void WKPopupMenuWithSize(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
 void WKPopupContextMenu(NSMenu *menu, NSPoint screenLocation);
 void WKSendUserChangeNotifications(void);
 #ifndef __LP64__
@@ -162,7 +137,6 @@ void WKSendKeyEventToTSM(NSEvent *theEvent);
 void WKCallDrawingNotification(CGrafPtr port, Rect *bounds);
 #endif
 
-BOOL WKGetGlyphTransformedAdvances(CGFontRef, NSFont*, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
 NSFont *WKGetFontInLanguageForRange(NSFont *font, NSString *string, NSRange range);
 NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
 void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font, BOOL shouldSubpixelQuantize);
@@ -223,18 +197,6 @@ NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowR
 CGContextRef WKNSWindowOverrideCGContext(NSWindow *, CGContextRef);
 void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 
-void WKNSWindowMakeBottomCornersSquare(NSWindow *);
-
-// These constants match the ones used by ThemeScrollbarArrowStyle (some of the values are private, so we can't just
-// use that enum directly).
-typedef enum {
-    WKThemeScrollBarArrowsSingle     = 0,
-    WKThemeScrollBarArrowsLowerRight = 1,
-    WKThemeScrollBarArrowsDouble     = 2,
-    WKThemeScrollBarArrowsUpperLeft  = 3,
-} WKThemeScrollBarArrowStyle;
-
-OSStatus WKThemeDrawTrack(const HIThemeTrackDrawInfo* inDrawInfo, CGContextRef inContext, int inArrowStyle);
 #endif
 
 
@@ -258,10 +220,8 @@ int WKQTMovieGetType(QTMovie* movie);
 BOOL WKQTMovieHasClosedCaptions(QTMovie* movie);
 void WKQTMovieSetShowClosedCaptions(QTMovie* movie, BOOL showClosedCaptions);
 void WKQTMovieSelectPreferredAlternates(QTMovie* movie);
-void WKQTMovieSelectPreferredAlternateTrackForMediaType(QTMovie* movie, NSString* mediaType);
 
 unsigned WKQTIncludeOnlyModernMediaFileTypes(void);
-int WKQTMovieDataRate(QTMovie* movie);
 float WKQTMovieMaxTimeLoaded(QTMovie* movie);
 float WKQTMovieMaxTimeSeekable(QTMovie* movie);
 NSString *WKQTMovieMaxTimeLoadedChangeNotification(void);
@@ -391,11 +351,6 @@ void WKDestroyRenderingResources(void);
 
 void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
 
-@class CARenderer;
-
-void WKCARendererAddChangeNotificationObserver(CARenderer *, void (*callback)(void*), void* context);
-void WKCARendererRemoveChangeNotificationObserver(CARenderer *, void (*callback)(void*), void* context);
-
 #if !TARGET_OS_IPHONE
 typedef struct __WKWindowBounceAnimationContext *WKWindowBounceAnimationContextRef;
 
@@ -414,9 +369,6 @@ NSUInteger WKGetInputPanelWindowStyle(void);
 UInt8 WKGetNSEventKeyChar(NSEvent *);
 #endif
 
-@class CAPropertyAnimation;
-void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
-
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 int WKGetHTTPRequestPriority(CFURLRequestRef);
 void WKSetHTTPRequestMaximumPriority(int maximumPriority);
@@ -431,8 +383,6 @@ CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseUR
 #if !TARGET_OS_IPHONE
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
-
-void WKSyncSurfaceToView(NSView *view);
 
 void WKEnableSettingCursorWhenInBackground(void);
 #endif
@@ -490,8 +440,6 @@ CFStringRef WKCopyDefaultSearchProviderDisplayName(void);
 #endif
 
 void WKSetCrashReportApplicationSpecificInformation(CFStringRef);
-
-NSURL* WKAVAssetResolvedURL(AVAsset*);
 
 #if !TARGET_OS_IPHONE
 NSCursor *WKCursor(const char *name);
