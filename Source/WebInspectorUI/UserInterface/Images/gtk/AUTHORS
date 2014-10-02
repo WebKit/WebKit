@@ -1,5 +1,29 @@
-Andreas Nilsson <nisses.mail@home.se>
-Andres Gomez <tanty0@gmail.com>
-Barbara Muraus <barbara.muraus@gmail.com>
-Jakub Steinar <jsteiner@redhat.com>
-GNOME Project http://www.gnome.org
+* This artwork has been created or adapted by:
+        Andres Gomez <agomez@igalia.com>
+
+* With the exception of the individual files listed below, the artwork
+  included has been created as a derived work from the "inkscape
+  symbolic icons" and the "adwaita-icon-theme", whose authors are:
+        Barbara Muraus <barbara.muraus@gmail.com>
+        GNOME Project http://www.gnome.org
+
+* Cookie.png
+* Cookie@2x.png
+        by Nyall Dawson <nyall.dawson@gmail.com>
+
+* Database.png
+* Database@2x.png
+        by Jakub Steinar <jsteiner@redhat.com>
+
+* Log.png
+* Log@2x.png
+        by Lapo Calamandrei <calamandrei@gmail.com>
+
+* NavigationItemBug.svg
+        by Andreas Nilsson <nisses.mail@home.se>
+
+* SliderThumb.png
+* SliderThumb@2x.png
+* SliderThumbPressed.png
+* SliderThumbPressed@2x.png
+        by GTK+ Project http://www.gtk.org

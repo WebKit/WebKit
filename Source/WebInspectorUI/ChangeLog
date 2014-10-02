@@ -1,3 +1,39 @@
+2014-09-25  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed. Add more free icons for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/AUTHORS:
+        * UserInterface/Images/gtk/ApplicationCacheManifest.png: Added.
+        * UserInterface/Images/gtk/ApplicationCacheManifest@2x.png: Added.
+        * UserInterface/Images/gtk/COPYING:
+        * UserInterface/Images/gtk/COPYING_LGPL2: Added.
+        * UserInterface/Images/gtk/Cookie.png: Added.
+        * UserInterface/Images/gtk/Cookie@2x.png: Added.
+        * UserInterface/Images/gtk/HoverMenuButton.png: Added.
+        * UserInterface/Images/gtk/HoverMenuButton@2x.png: Added.
+        * UserInterface/Images/gtk/InstructionPointer.png: Added.
+        * UserInterface/Images/gtk/InstructionPointer@2x.png: Added.
+        * UserInterface/Images/gtk/Log.png: Added.
+        * UserInterface/Images/gtk/Log@2x.png: Added.
+        * UserInterface/Images/gtk/Profile.png: Added.
+        * UserInterface/Images/gtk/Profile@2x.png: Added.
+        * UserInterface/Images/gtk/Recording.png: Added.
+        * UserInterface/Images/gtk/Recording@2x.png: Added.
+        * UserInterface/Images/gtk/RecordingHovered.png: Added.
+        * UserInterface/Images/gtk/RecordingHovered@2x.png: Added.
+        * UserInterface/Images/gtk/RecordingStopped.png: Added.
+        * UserInterface/Images/gtk/RecordingStopped@2x.png: Added.
+        * UserInterface/Images/gtk/Script.png: Added.
+        * UserInterface/Images/gtk/Script@2x.png: Added.
+        * UserInterface/Images/gtk/ScriptLarge.png: Added.
+        * UserInterface/Images/gtk/ScriptLarge@2x.png: Added.
+        * UserInterface/Images/gtk/SliderThumb.png: Added.
+        * UserInterface/Images/gtk/SliderThumb@2x.png: Added.
+        * UserInterface/Images/gtk/SliderThumbPressed.png: Added.
+        * UserInterface/Images/gtk/SliderThumbPressed@2x.png: Added.
+        * UserInterface/Images/gtk/Stopwatch.png: Added.
+        * UserInterface/Images/gtk/Stopwatch@2x.png: Added.
+
 2014-09-24  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add more free icons for the Web Inspector in GTK+

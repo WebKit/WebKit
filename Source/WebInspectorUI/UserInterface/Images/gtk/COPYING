@@ -1,6 +1,13 @@
-Unless stated in the individual file, this work is licenced under the
-terms of the Creative Commons Attribution-Share Alike 3.0 United
-States License.
+This work is licenced under the terms of the Creative Commons
+Attribution-Share Alike 3.0 United States License with the exception
+of the files:
+
+* SliderThumb.png
+* SliderThumb@2x.png
+* SliderThumbPressed.png
+* SliderThumbPressed@2x.png
+
+Which are licensed under the terms of the GNU LGPL v2.
 
 To view a copy of the CC-BY-SA licence, visit
 http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative
