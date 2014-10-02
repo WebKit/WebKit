@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 200x23
           text run at (0,0) width 200: "Lorem ipsum dolor"
         RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (199,0) size 200x46
-            text run at (199,0) width 1: " "
+          RenderText {#text} at (200,0) size 200x46
+            text run at (200,0) width 0: " "
             text run at (0,23) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,70) size 200x46 [bgcolor=#FFFFE0]
@@ -102,8 +102,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 156: "Lorem ipsum "
           text run at (155,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
         RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
-          RenderText {#text} at (199,0) size 200x46
-            text run at (199,0) width 1: " "
+          RenderText {#text} at (200,0) size 200x46
+            text run at (200,0) width 0: " "
             text run at (0,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
             text run at (39,23) width 56: " amet"
         RenderText {#text} at (0,0) size 0x0

@@ -105,7 +105,7 @@ layer at (724,0) size 76x600
         RenderRubyRun (anonymous) at (0,256) size 48x32
           RenderRubyText {RT} at (0,0) size 8x32
             RenderText {#text} at (0,1) size 8x30
-              text run at (0,1) width 29: "\x{3112}\x{3127}\x{3123}"
+              text run at (0,1) width 30: "\x{3112}\x{3127}\x{3123}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (8,0) size 32x32
               text run at (8,0) width 32: "\x{5FC3}"
