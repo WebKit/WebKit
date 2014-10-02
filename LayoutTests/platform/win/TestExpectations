@@ -2873,6 +2873,3 @@ js/dom/callback-function-with-handle-event.html [ Failure ]
 [ Debug ] fast/canvas/webgl [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
-
-# Mass skip all media tests until bots have audio devices
-media
