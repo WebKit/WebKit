@@ -66,12 +66,11 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context
 {
     ASSERT(context);
 
-    if (is<WorkerGlobalScope>(context)) {
+    if (is<WorkerGlobalScope>(context))
         WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(context), request, client, options);
-        return;
-    }
-
-    DocumentThreadableLoader::loadResourceSynchronously(*downcast<Document>(context), request, client, options);
+    else
+        DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(*context), request, client, options);
+    context->didLoadResourceSynchronously(request);
 }
 
 } // namespace WebCore

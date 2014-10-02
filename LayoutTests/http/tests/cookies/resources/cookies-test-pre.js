@@ -23,6 +23,11 @@ function setCookies(cookie)
     }
 }
 
+function registerCookieForCleanup(cookie)
+{
+    cookies.push(cookie);
+}
+
 // Normalize a cookie string
 function normalizeCookie(cookie)
 {

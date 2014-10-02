@@ -173,6 +173,10 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
     m_messagePorts.remove(&messagePort);
 }
 
+void ScriptExecutionContext::didLoadResourceSynchronously(const ResourceRequest&)
+{
+}
+
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {
     checkConsistency();
