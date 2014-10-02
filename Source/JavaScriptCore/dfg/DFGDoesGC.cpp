@@ -138,7 +138,6 @@ bool doesGC(Graph& graph, Node* node)
     case ToPrimitive:
     case ToString:
     case In:
-    case TearOffActivation:
     case PhantomArguments:
     case TearOffArguments:
     case GetMyArgumentsLength:

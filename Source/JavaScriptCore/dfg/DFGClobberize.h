@@ -848,11 +848,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
-
-    case TearOffActivation:
-        read(Variables);
-        write(JSEnvironmentRecord_registers);
-        return;
         
     case TearOffArguments:
         read(Variables);

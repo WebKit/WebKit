@@ -463,7 +463,6 @@ namespace JSC {
         void emit_op_call_eval(Instruction*);
         void emit_op_call_varargs(Instruction*);
         void emit_op_construct_varargs(Instruction*);
-        void emit_op_captured_mov(Instruction*);
         void emit_op_catch(Instruction*);
         void emit_op_construct(Instruction*);
         void emit_op_get_callee(Instruction*);
@@ -543,7 +542,6 @@ namespace JSC {
         void emit_op_switch_char(Instruction*);
         void emit_op_switch_imm(Instruction*);
         void emit_op_switch_string(Instruction*);
-        void emit_op_tear_off_lexical_environment(Instruction*);
         void emit_op_tear_off_arguments(Instruction*);
         void emit_op_throw(Instruction*);
         void emit_op_throw_static_error(Instruction*);
@@ -570,7 +568,6 @@ namespace JSC {
         void emitSlow_op_call_eval(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_captured_mov(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_create_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -640,7 +637,7 @@ namespace JSC {
         void emitNotifyWrite(RegisterID tag, RegisterID payload, RegisterID scratch, VariableWatchpointSet*);
 #endif
         void emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet*);
-        void emitPutClosureVar(int scope, uintptr_t operand, int value);
+        void emitPutClosureVar(int scope, uintptr_t operand, int value, VariableWatchpointSet*);
 
         void emitInitRegister(int dst);
 

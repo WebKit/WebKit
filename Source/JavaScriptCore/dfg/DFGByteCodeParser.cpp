@@ -2630,16 +2630,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), op);
             NEXT_OPCODE(op_mov);
         }
-            
-        case op_captured_mov: {
-            Node* op = get(VirtualRegister(currentInstruction[2].u.operand));
-            if (VariableWatchpointSet* set = currentInstruction[3].u.watchpointSet) {
-                if (set->state() != IsInvalidated)
-                    addToGraph(NotifyWrite, OpInfo(set), op);
-            }
-            set(VirtualRegister(currentInstruction[1].u.operand), op);
-            NEXT_OPCODE(op_captured_mov);
-        }
 
         case op_check_has_instance:
             addToGraph(CheckHasInstance, get(VirtualRegister(currentInstruction[3].u.operand)));
@@ -3196,6 +3186,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVarWithVarInjectionChecks:
                 set(VirtualRegister(dst), weakJSConstant(m_inlineStackTop->m_codeBlock->globalObject()));
                 break;
+            case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 JSLexicalEnvironment* lexicalEnvironment = currentInstruction[5].u.lexicalEnvironment.get();
@@ -3271,6 +3262,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 set(VirtualRegister(dst), weakJSConstant(inferredValue));
                 break;
             }
+            case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
@@ -3314,7 +3306,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar)
                     watchpoints = currentInstruction[5].u.watchpointSet;
                 else
                     structure = currentInstruction[5].u.structure.get();
@@ -3353,11 +3345,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;
             }
+            case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
                 Node* scopeRegisters = addToGraph(GetClosureRegisters, scopeNode);
-                addToGraph(PutClosureVar, OpInfo(operand), scopeNode, scopeRegisters, get(VirtualRegister(value)));
+                Node* valueNode = get(VirtualRegister(value));
+
+                if (watchpoints && watchpoints->state() != IsInvalidated)
+                    addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
+
+                addToGraph(PutClosureVar, OpInfo(operand), scopeNode, scopeRegisters, valueNode);
                 break;
             }
             case Dynamic:
@@ -3405,11 +3403,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), createArguments);
             set(unmodifiedArgumentsRegister(VirtualRegister(currentInstruction[1].u.operand)), createArguments);
             NEXT_OPCODE(op_create_arguments);
-        }
-            
-        case op_tear_off_lexical_environment: {
-            addToGraph(TearOffActivation, get(VirtualRegister(currentInstruction[1].u.operand)));
-            NEXT_OPCODE(op_tear_off_lexical_environment);
         }
 
         case op_tear_off_arguments: {

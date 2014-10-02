@@ -4236,21 +4236,12 @@ void SpeculativeJIT::compile(Node* node)
     case CreateActivation: {
         DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
         
-        JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, Reuse, value);
-        
-        GPRReg valueGPR = value.gpr();
+        GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
-        
-        m_jit.move(valueGPR, resultGPR);
-        
-        JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, resultGPR);
-        
-        addSlowPathGenerator(
-            slowPathCall(
-                notCreated, this, operationCreateActivation, resultGPR,
-                framePointerOffsetToGetActivationRegisters()));
-        
+    
+        flushRegisters();
+        callOperation(operationCreateActivation, resultGPR, framePointerOffsetToGetActivationRegisters());
+
         cellResult(resultGPR, node);
         break;
     }
@@ -4303,41 +4294,6 @@ void SpeculativeJIT::compile(Node* node)
 
         alreadyCreated.link(&m_jit);
         cellResult(resultGPR, node);
-        break;
-    }
-
-    case TearOffActivation: {
-        DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
-
-        JSValueOperand activationValue(this, node->child1());
-        GPRTemporary scratch(this);
-        GPRReg activationValueGPR = activationValue.gpr();
-        GPRReg scratchGPR = scratch.gpr();
-
-        JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, activationValueGPR);
-
-        SymbolTable* symbolTable = m_jit.symbolTableFor(node->origin.semantic);
-        int registersOffset = JSLexicalEnvironment::registersOffset(symbolTable);
-
-        int bytecodeCaptureStart = symbolTable->captureStart();
-        int machineCaptureStart = m_jit.graph().m_machineCaptureStart;
-        for (int i = symbolTable->captureCount(); i--;) {
-            m_jit.load64(
-                JITCompiler::Address(
-                    GPRInfo::callFrameRegister,
-                    (machineCaptureStart - i) * sizeof(Register)),
-                scratchGPR);
-            m_jit.store64(
-                scratchGPR,
-                JITCompiler::Address(
-                    activationValueGPR,
-                    registersOffset + (bytecodeCaptureStart - i) * sizeof(Register)));
-        }
-        m_jit.addPtr(TrustedImm32(registersOffset), activationValueGPR, scratchGPR);
-        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValueGPR, JSLexicalEnvironment::offsetOfRegisters()));
-
-        notCreated.link(&m_jit);
-        noResult(node);
         break;
     }
 

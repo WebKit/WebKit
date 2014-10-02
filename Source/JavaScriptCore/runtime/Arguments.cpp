@@ -384,20 +384,11 @@ void Arguments::tearOff(CallFrame* callFrame)
     allocateRegisterArray(callFrame->vm());
     m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
-    // If we have a captured argument that logically aliases lexical environment storage,
-    // but we optimize away the lexicalEnvironment, the argument needs to tear off into
-    // our storage. The simplest way to do this is to revert it to Normal status.
-    if (m_slowArgumentData && !m_lexicalEnvironment) {
-        for (size_t i = 0; i < m_numArguments; ++i) {
-            if (m_slowArgumentData->slowArguments()[i].status != SlowArgument::Captured)
-                continue;
-            m_slowArgumentData->slowArguments()[i].status = SlowArgument::Normal;
-            m_slowArgumentData->slowArguments()[i].index = CallFrame::argumentOffset(i);
-        }
-    }
-
-    for (size_t i = 0; i < m_numArguments; ++i)
+    for (size_t i = 0; i < m_numArguments; ++i) {
+        if (m_slowArgumentData && m_slowArgumentData->slowArguments()[i].status == SlowArgument::Captured)
+            continue;
         trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
+    }
 }
 
 void Arguments::didTearOffActivation(ExecState* exec, JSLexicalEnvironment* lexicalEnvironment)

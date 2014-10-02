@@ -1,3 +1,175 @@
+2014-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Do all closed variable access through the local lexical object
+        https://bugs.webkit.org/show_bug.cgi?id=136869
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes all reads and writes from captured registers
+        go through the lexical record, and by doing so removes the
+        need for record tearoff.
+
+        To keep the patch simple we still number variables as though
+        they are local stack allocated registers, but ::local() will
+        fail. When local fails we perform a generic resolve, and in
+        that resolve we now use a ResolveScopeInfo struct to pass
+        around information about whether a lookup is a statically
+        known captured variable, and its location in the activation.
+        To ensure correct behaviour during codeblock linking we also
+        add a LocalClosureVariable resolution type.
+
+        To ensure correct semantics for the Arguments object, we now
+        have to eagerly create the Arguments object for any function
+        that uses both the Arguments object and requires a lexical
+        record.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeCapturedVariable):
+          During the entry to a function we are not yet in a position
+          to allocate temporaries so we directly use the lexical
+          environment register.
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::local):
+        (JSC::BytecodeGenerator::constLocal):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitResolveConstantLocal):
+          The two resolve scope operations could technically skip
+          the op_resolve_scope, and simply perform 
+              op_mov dst, recordRegister
+          but for now it seemed best to maintain the same basic
+          behaviour.
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+          If we have an environment we've already created Arguments
+          so no need to check again.
+        (JSC::BytecodeGenerator::emitReturn):
+          Don't need to emit tearoff_environment
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Local::Local):
+        (JSC::Local::operator bool):
+        (JSC::Local::get):
+        (JSC::Local::isReadOnly):
+        (JSC::Local::isSpecial):
+        (JSC::ResolveScopeInfo::ResolveScopeInfo):
+        (JSC::ResolveScopeInfo::isLocal):
+        (JSC::ResolveScopeInfo::localIndex):
+        (JSC::BytecodeGenerator::shouldCreateArgumentsEagerly):
+        (JSC::Local::isCaptured): Deleted.
+        (JSC::Local::captureMode): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::ForInNode::tryGetBoundLocal):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetRegisters):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_captured_mov): Deleted.
+        (JSC::JIT::emit_op_tear_off_lexical_environment): Deleted.
+        (JSC::JIT::emitSlow_op_captured_mov): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_captured_mov): Deleted.
+        (JSC::JIT::emit_op_tear_off_lexical_environment): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/Arguments.h:
+        (JSC::Arguments::argument):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Deleted.
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::visitChildren):
+        (JSC::JSLexicalEnvironment::symbolTableGet):
+        (JSC::JSLexicalEnvironment::symbolTablePut):
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSLexicalEnvironment::getOwnPropertySlot):
+        (JSC::JSLexicalEnvironment::argumentsGetter):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        (JSC::JSLexicalEnvironment::JSLexicalEnvironment):
+        (JSC::JSLexicalEnvironment::tearOff): Deleted.
+        (JSC::JSLexicalEnvironment::isTornOff): Deleted.
+        * runtime/JSScope.cpp:
+        (JSC::resolveTypeName):
+        * runtime/JSScope.h:
+        (JSC::makeType):
+        (JSC::needsVarInjectionChecks):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrier<Unknown>::WriteBarrier):
+
 2014-10-02  Filip Pizlo  <fpizlo@apple.com>
 
         Object allocation sinking should have a sound story for picking materialization points

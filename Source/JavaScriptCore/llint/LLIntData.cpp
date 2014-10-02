@@ -143,13 +143,14 @@ void Data::performAssertions(VM& vm)
     ASSERT(EvalCode == 1);
     ASSERT(FunctionCode == 2);
 
-    ASSERT(GlobalProperty == 0);
-    ASSERT(GlobalVar == 1);
-    ASSERT(ClosureVar == 2);
-    ASSERT(GlobalPropertyWithVarInjectionChecks == 3);
-    ASSERT(GlobalVarWithVarInjectionChecks == 4);
-    ASSERT(ClosureVarWithVarInjectionChecks == 5);
-    ASSERT(Dynamic == 6);
+    static_assert(GlobalProperty == 0, "LLInt assumes GlobalProperty ResultType is == 0");
+    static_assert(GlobalVar == 1, "LLInt assumes GlobalVar ResultType is == 1");
+    static_assert(ClosureVar == 2, "LLInt assumes ClosureVar ResultType is == 2");
+    static_assert(LocalClosureVar == 3, "LLInt assumes LocalClosureVar ResultType is == 3");
+    static_assert(GlobalPropertyWithVarInjectionChecks == 4, "LLInt assumes GlobalPropertyWithVarInjectionChecks ResultType is == 4");
+    static_assert(GlobalVarWithVarInjectionChecks == 5, "LLInt assumes GlobalVarWithVarInjectionChecks ResultType is == 5");
+    static_assert(ClosureVarWithVarInjectionChecks == 6, "LLInt assumes ClosureVarWithVarInjectionChecks ResultType is == 6");
+    static_assert(Dynamic == 7, "LLInt assumes Dynamic ResultType is == 7");
     
     ASSERT(ResolveModeAndType::mask == 0xffff);
 

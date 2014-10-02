@@ -1013,8 +1013,6 @@ WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
     JSLexicalEnvironment* lexicalEnvironment = tryGetActivation(node);
     if (!lexicalEnvironment)
         return 0;
-    if (!lexicalEnvironment->isTornOff())
-        return 0;
     return lexicalEnvironment->registers();
 }
 

@@ -824,24 +824,6 @@ macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
 .done:
 end
 
-_llint_op_captured_mov:
-    traceExecution()
-    loadi 8[PC], t1
-    loadConstantOrVariable(t1, t2, t3)
-    loadpFromInstruction(3, t0)
-    btpz t0, .opCapturedMovReady
-    notifyWrite(t0, t2, t3, t1, .opCapturedMovSlow)
-.opCapturedMovReady:
-    loadi 4[PC], t0
-    storei t2, TagOffset[cfr, t0, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-    dispatch(4)
-
-.opCapturedMovSlow:
-    callSlowPath(_slow_path_captured_mov)
-    dispatch(4)
-
-
 _llint_op_not:
     traceExecution()
     loadi 8[PC], t0
@@ -1970,16 +1952,6 @@ macro doCall(slowPath)
     slowPathForCall(slowPath)
 end
 
-
-_llint_op_tear_off_lexical_environment:
-    traceExecution()
-    loadi 4[PC], t0
-    bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffActivationNotCreated
-    callSlowPath(_llint_slow_path_tear_off_lexical_environment)
-.opTearOffActivationNotCreated:
-    dispatch(2)
-
-
 _llint_op_tear_off_arguments:
     traceExecution()
     loadi 4[PC], t0
@@ -2370,7 +2342,14 @@ _llint_op_put_to_scope:
     loadisFromInstruction(4, t0)
     andi ResolveModeMask, t0
 
-#pGlobalProperty:
+#pLocalClosureVar:
+    bineq t0, LocalClosureVar, .pGlobalProperty
+    writeBarrierOnOperands(1, 3)
+    loadVariable(1, t2, t1, t0)
+    putClosureVar()
+    dispatch(7)
+
+.pGlobalProperty:
     bineq t0, GlobalProperty, .pGlobalVar
     writeBarrierOnOperands(1, 3)
     loadWithStructureCheck(1, .pDynamic)

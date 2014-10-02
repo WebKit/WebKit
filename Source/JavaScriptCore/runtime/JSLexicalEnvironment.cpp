@@ -46,10 +46,6 @@ void JSLexicalEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    // No need to mark our registers if they're still in the JSStack.
-    if (!thisObject->isTornOff())
-        return;
-
     for (int i = 0; i < thisObject->symbolTable()->captureCount(); ++i)
         visitor.append(&thisObject->storage()[i]);
 }
@@ -61,7 +57,7 @@ inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, Prop
         return false;
 
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (isTornOff() && !isValid(entry))
+    if (!isValid(entry))
         return false;
 
     slot.setValue(this, DontEnum, registerAt(entry.getIndex()).get());
@@ -75,7 +71,7 @@ inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, Prop
         return false;
 
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (isTornOff() && !isValid(entry))
+    if (!isValid(entry))
         return false;
 
     descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes());
@@ -100,7 +96,7 @@ inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName p
             return true;
         }
         // Defend against the inspector asking for a var after it has been optimized out.
-        if (isTornOff() && !isValid(iter->value))
+        if (!isValid(iter->value))
             return false;
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
             set->invalidate(VariableWriteFireDetail(this, propertyName)); // Don't mess around - if we had found this statically, we would have invcalidated it.
@@ -113,10 +109,6 @@ inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName p
 void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
-
-    CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(thisObject->m_registers));
-    if (shouldIncludeDontEnumProperties(mode) && !thisObject->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
-        propertyNames.add(exec->propertyNames().arguments);
 
     {
         ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
@@ -158,15 +150,6 @@ inline bool JSLexicalEnvironment::symbolTablePutWithAttributes(VM& vm, PropertyN
 bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
-
-    if (propertyName == exec->propertyNames().arguments) {
-        // Defend against the inspector asking for the arguments object after it has been optimized out.
-        CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(thisObject->m_registers));
-        if (!thisObject->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval())) {
-            slot.setCustom(thisObject, DontEnum, argumentsGetter);
-            return true;
-        }
-    }
 
     if (thisObject->symbolTableGet(propertyName, slot))
         return true;
@@ -218,9 +201,7 @@ EncodedJSValue JSLexicalEnvironment::argumentsGetter(ExecState*, JSObject* slotB
 {
     JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(slotBase);
     CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(lexicalEnvironment->m_registers));
-    ASSERT(!lexicalEnvironment->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()));
-    if (lexicalEnvironment->isTornOff() || !(callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
-        return JSValue::encode(jsUndefined());
+    return JSValue::encode(jsUndefined());
 
     VirtualRegister argumentsRegister = callFrame->codeBlock()->argumentsRegister();
     if (JSValue arguments = callFrame->uncheckedR(argumentsRegister.offset()).jsValue())

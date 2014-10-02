@@ -369,7 +369,7 @@ CapabilityLevel canCompile(Graph& graph)
     
     if (graph.m_codeBlock->needsActivation()) {
         // Need this because although we also don't support
-        // CreateActivation/TearOffActivation, we might not see those nodes in case of
+        // CreateActivation, we might not see those nodes in case of
         // OSR entry.
         // FIXME: Support activations.
         // https://bugs.webkit.org/show_bug.cgi?id=129576

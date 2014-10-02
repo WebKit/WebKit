@@ -1040,14 +1040,6 @@ private:
             break;
         }
 
-        case TearOffActivation: {
-            Node* barrierNode = m_graph.addNode(
-                SpecNone, StoreBarrierWithNullCheck, m_currentNode->origin, 
-                Edge(node->child1().node(), UntypedUse));
-            m_insertionSet.insert(m_indexInBlock, barrierNode);
-            break;
-        }
-
         case IsString:
             if (node->child1()->shouldSpeculateString()) {
                 m_insertionSet.insertNode(

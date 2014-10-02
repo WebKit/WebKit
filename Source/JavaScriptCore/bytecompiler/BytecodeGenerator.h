@@ -189,29 +189,51 @@ namespace JSC {
         Local()
             : m_local(0)
             , m_attributes(0)
+            , m_kind(NormalLocal)
         {
         }
 
-        Local(RegisterID* local, unsigned attributes, CaptureMode captureMode)
+        enum LocalKind { NormalLocal, SpecialLocal };
+
+        Local(RegisterID* local, unsigned attributes, LocalKind kind)
             : m_local(local)
             , m_attributes(attributes)
-            , m_isCaptured(captureMode == IsCaptured)
+            , m_kind(kind)
         {
         }
 
-        operator bool() { return m_local; }
+        operator bool() const { return m_local; }
 
-        RegisterID* get() { return m_local; }
+        RegisterID* get() const { return m_local; }
 
-        bool isReadOnly() { return m_attributes & ReadOnly; }
-        
-        bool isCaptured() { return m_isCaptured; }
-        CaptureMode captureMode() { return isCaptured() ? IsCaptured : NotCaptured; }
+        bool isReadOnly() const { return m_attributes & ReadOnly; }
+        bool isSpecial() const { return m_kind != NormalLocal; }
 
     private:
         RegisterID* m_local;
         unsigned m_attributes;
-        bool m_isCaptured;
+        LocalKind m_kind;
+    };
+
+    struct ResolveScopeInfo {
+        ResolveScopeInfo()
+            : m_localIndex(0)
+            , m_resolveScopeKind(NonLocalScope)
+        {
+        }
+
+        ResolveScopeInfo(int index)
+            : m_localIndex(index)
+            , m_resolveScopeKind(LocalScope)
+        {
+        }
+
+        bool isLocal() const { return m_resolveScopeKind == LocalScope; }
+        int localIndex() const { return m_localIndex; }
+
+    private:
+        int m_localIndex;
+        enum { LocalScope, NonLocalScope } m_resolveScopeKind;
     };
 
     struct TryRange {
@@ -223,6 +245,8 @@ namespace JSC {
     enum ProfileTypeBytecodeFlag {
         ProfileTypeBytecodePutToScope,
         ProfileTypeBytecodeGetFromScope,
+        ProfileTypeBytecodePutToLocalScope,
+        ProfileTypeBytecodeGetFromLocalScope,
         ProfileTypeBytecodeHasGlobalID,
         ProfileTypeBytecodeDoesNotHaveGlobalID,
         ProfileTypeBytecodeFunctionArgument,
@@ -431,7 +455,6 @@ namespace JSC {
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
-        RegisterID* emitMove(RegisterID* dst, CaptureMode, RegisterID* src);
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
         RegisterID* emitToNumber(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_to_number, dst, src); }
@@ -473,9 +496,10 @@ namespace JSC {
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
         ResolveType resolveType();
-        RegisterID* emitResolveScope(RegisterID* dst, const Identifier&);
-        RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode);
-        RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode);
+        RegisterID* emitResolveConstantLocal(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
+        RegisterID* emitResolveScope(RegisterID* dst, const Identifier&, ResolveScopeInfo&);
+        RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode, const ResolveScopeInfo&);
+        RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode, const ResolveScopeInfo&);
 
         PassRefPtr<Label> emitLabel(Label*);
         void emitLoopHint();
@@ -633,7 +657,8 @@ namespace JSC {
         
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
-        
+        RegisterID* initializeCapturedVariable(RegisterID* dst, const Identifier&, RegisterID*);
+
     public:
         JSString* addStringConstant(const Identifier&);
 
@@ -669,6 +694,13 @@ namespace JSC {
         bool shouldTearOffArgumentsEagerly()
         {
             return m_codeType == FunctionCode && isStrictMode() && m_scopeNode->modifiesParameter();
+        }
+
+        bool shouldCreateArgumentsEagerly()
+        {
+            if (m_codeType != FunctionCode)
+                return false;
+            return m_lexicalEnvironmentRegister && m_codeBlock->usesArguments();
         }
 
         RegisterID* emitThrowExpressionTooDeepException();

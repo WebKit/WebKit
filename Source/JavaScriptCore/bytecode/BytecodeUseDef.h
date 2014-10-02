@@ -62,7 +62,6 @@ void computeUsesForBytecodeOffset(
     case op_create_lexical_environment: 
     case op_create_arguments:
     case op_to_this:
-    case op_tear_off_lexical_environment:
     case op_profile_will_call:
     case op_profile_did_call:
     case op_profile_type:
@@ -141,7 +140,6 @@ void computeUsesForBytecodeOffset(
     case op_eq_null:
     case op_not:
     case op_mov:
-    case op_captured_mov:
     case op_new_array_with_size:
     case op_create_this:
     case op_del_by_id:
@@ -305,7 +303,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_next_enumerator_pname:
     case op_resolve_scope:
     case op_strcat:
-    case op_tear_off_lexical_environment:
     case op_to_primitive:
     case op_catch:
     case op_create_this:
@@ -365,7 +362,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_eq_null:
     case op_not:
     case op_mov:
-    case op_captured_mov:
     case op_new_object:
     case op_to_this:
     case op_get_callee:

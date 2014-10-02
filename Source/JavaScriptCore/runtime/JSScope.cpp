@@ -180,12 +180,12 @@ const char* resolveTypeName(ResolveType type)
         "GlobalProperty",
         "GlobalVar",
         "ClosureVar",
+        "LocalClosureVar",
         "GlobalPropertyWithVarInjectionChecks",
         "GlobalVarWithVarInjectionChecks",
         "ClosureVarWithVarInjectionChecks",
         "Dynamic"
     };
-    ASSERT(type < sizeof(names) / sizeof(names[0]));
     return names[type];
 }
 

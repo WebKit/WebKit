@@ -4170,21 +4170,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CreateActivation: {
-        JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, Reuse, value, PayloadWord);
-        
-        GPRReg valueTagGPR = value.tagGPR();
-        GPRReg valuePayloadGPR = value.payloadGPR();
+        GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
-        
-        m_jit.move(valuePayloadGPR, resultGPR);
-        
-        JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
-        
-        addSlowPathGenerator(
-            slowPathCall(
-                notCreated, this, operationCreateActivation, resultGPR,
-                framePointerOffsetToGetActivationRegisters()));
+
+        flushRegisters();
+        callOperation(operationCreateActivation, resultGPR, framePointerOffsetToGetActivationRegisters());
         
         cellResult(resultGPR, node);
         break;
@@ -4239,45 +4229,6 @@ void SpeculativeJIT::compile(Node* node)
 
         alreadyCreated.link(&m_jit); 
         cellResult(resultGPR, node);
-        break;
-    }
-        
-    case TearOffActivation: {
-        JSValueOperand activationValue(this, node->child1());
-        GPRTemporary scratch(this);
-        
-        GPRReg activationValueTagGPR = activationValue.tagGPR();
-        GPRReg activationValuePayloadGPR = activationValue.payloadGPR();
-        GPRReg scratchGPR = scratch.gpr();
-
-        JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
-
-        SymbolTable* symbolTable = m_jit.symbolTableFor(node->origin.semantic);
-        int registersOffset = JSLexicalEnvironment::registersOffset(symbolTable);
-
-        int bytecodeCaptureStart = symbolTable->captureStart();
-        int machineCaptureStart = m_jit.graph().m_machineCaptureStart;
-        for (int i = symbolTable->captureCount(); i--;) {
-            m_jit.loadPtr(
-                JITCompiler::Address(
-                    GPRInfo::callFrameRegister, (machineCaptureStart - i) * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
-                scratchGPR);
-            m_jit.storePtr(
-                scratchGPR, JITCompiler::Address(
-                    activationValuePayloadGPR, registersOffset + (bytecodeCaptureStart - i) * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
-            m_jit.loadPtr(
-                JITCompiler::Address(
-                    GPRInfo::callFrameRegister, (machineCaptureStart - i) * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
-                scratchGPR);
-            m_jit.storePtr(
-                scratchGPR, JITCompiler::Address(
-                    activationValuePayloadGPR, registersOffset + (bytecodeCaptureStart - i) * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        }
-        m_jit.addPtr(TrustedImm32(registersOffset), activationValuePayloadGPR, scratchGPR);
-        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValuePayloadGPR, JSLexicalEnvironment::offsetOfRegisters()));
-        
-        notCreated.link(&m_jit);
-        noResult(node);
         break;
     }
         

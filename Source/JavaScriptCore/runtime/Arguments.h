@@ -270,10 +270,13 @@ inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
         return m_registers[CallFrame::argumentOffset(argument)];
 
     int index = m_slowArgumentData->slowArguments()[argument].index;
-    if (!m_lexicalEnvironment || m_slowArgumentData->slowArguments()[argument].status != SlowArgument::Captured)
+    if (m_slowArgumentData->slowArguments()[argument].status != SlowArgument::Captured)
         return m_registers[index];
 
-    return m_lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
+    JSLexicalEnvironment* lexicalEnvironment = m_lexicalEnvironment.get();
+    if (!lexicalEnvironment)
+        lexicalEnvironment = CallFrame::create(reinterpret_cast<Register*>(m_registers))->lexicalEnvironment();
+    return lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
 }
 
 inline void Arguments::finishCreation(CallFrame* callFrame, ArgumentsMode mode)

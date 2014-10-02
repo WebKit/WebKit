@@ -217,7 +217,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MakeRope:
     case In:
     case CreateActivation:
-    case TearOffActivation:
     case CreateArguments:
     case PhantomArguments:
     case TearOffArguments:

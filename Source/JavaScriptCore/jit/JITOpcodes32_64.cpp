@@ -153,16 +153,6 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     }
 }
 
-void JIT::emit_op_captured_mov(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int src = currentInstruction[2].u.operand;
-
-    emitLoad(src, regT1, regT0);
-    emitNotifyWrite(regT1, regT0, regT2, currentInstruction[3].u.watchpointSet);
-    emitStore(dst, regT1, regT0);
-}
-
 void JIT::emit_op_end(Instruction* currentInstruction)
 {
     ASSERT(returnValueGPR != callFrameRegister);
@@ -348,15 +338,6 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     
     done.link(this);
     emitStoreBool(dst, regT0);
-}
-
-void JIT::emit_op_tear_off_lexical_environment(Instruction* currentInstruction)
-{
-    int lexicalEnvironment = currentInstruction[1].u.operand;
-    Jump activationNotCreated = branch32(Equal, tagFor(lexicalEnvironment), TrustedImm32(JSValue::EmptyValueTag));
-    emitLoadPayload(lexicalEnvironment, regT0);
-    callOperation(operationTearOffActivation, regT0);
-    activationNotCreated.link(this);
 }
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)

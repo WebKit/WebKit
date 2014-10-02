@@ -263,7 +263,6 @@ namespace JSC { namespace DFG {
     /* epilgoues via TearOffActivation, and all CreateActivation nodes kept alive by */\
     /* being threaded with each other. */\
     macro(CreateActivation, NodeResultJS) \
-    macro(TearOffActivation, NodeMustGenerate) \
     \
     /* Nodes used for arguments. Similar to lexical environment support, only it makes even less */\
     /* sense. */\

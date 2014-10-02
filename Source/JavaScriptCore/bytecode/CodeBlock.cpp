@@ -833,14 +833,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
-        case op_captured_mov: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "captured_mov");
-            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
-            ++it;
-            break;
-        }
         case op_profile_type: {
             int r0 = (++it)->u.operand;
             ++it;
@@ -1316,12 +1308,7 @@ void CodeBlock::dumpBytecode(
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
-            
-        case op_tear_off_lexical_environment: {
-            int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "tear_off_lexical_environment", r0);
-            break;
-        }
+
         case op_tear_off_arguments: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1946,6 +1933,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_resolve_scope: {
             const Identifier& ident = identifier(pc[2].u.operand);
             ResolveType type = static_cast<ResolveType>(pc[3].u.operand);
+            if (type == LocalClosureVar) {
+                instructions[i + 3].u.operand = ClosureVar;
+                break;
+            }
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, type);
             instructions[i + 3].u.operand = op.type;
@@ -1962,8 +1953,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 1] = profile;
 
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
+
             const Identifier& ident = identifier(pc[3].u.operand);
             ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
+            if (modeAndType.type() == LocalClosureVar) {
+                instructions[i + 4] = ResolveModeAndType(modeAndType.mode(), ClosureVar).operand();
+                break;
+            }
+
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
@@ -1979,7 +1976,26 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_put_to_scope: {
             // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[2].u.operand);
+
             ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
+            if (modeAndType.type() == LocalClosureVar) {
+                if (pc[5].u.index == UINT_MAX) {
+                    instructions[i + 5].u.watchpointSet = 0;
+                    break;
+                }
+                StringImpl* uid = identifier(pc[5].u.index).impl();
+                RELEASE_ASSERT(didCloneSymbolTable);
+                if (ident != m_vm->propertyNames->arguments) {
+                    ConcurrentJITLocker locker(m_symbolTable->m_lock);
+                    SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
+                    ASSERT(iter != m_symbolTable->end(locker));
+                    iter->value.prepareToWatch(symbolTable());
+                    instructions[i + 5].u.watchpointSet = iter->value.watchpointSet();
+                } else
+                    instructions[i + 5].u.watchpointSet = nullptr;
+                break;
+            }
+
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Put, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
@@ -2031,6 +2047,19 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
                 break;
             }
+            case ProfileTypeBytecodePutToLocalScope:
+            case ProfileTypeBytecodeGetFromLocalScope: {
+                const Identifier& ident = identifier(pc[4].u.operand);
+                symbolTable = m_symbolTable.get();
+                ConcurrentJITLocker locker(symbolTable->m_lock);
+                // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
+                symbolTable->prepareForTypeProfiling(locker);
+                globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
+                globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+
+                break;
+            }
+
             case ProfileTypeBytecodeHasGlobalID: {
                 symbolTable = m_symbolTable.get();
                 ConcurrentJITLocker locker(symbolTable->m_lock);
@@ -2075,7 +2104,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 
-        case op_captured_mov:
         case op_new_captured_func: {
             if (pc[3].u.index == UINT_MAX) {
                 instructions[i + 3].u.watchpointSet = 0;
@@ -2546,7 +2574,7 @@ void CodeBlock::finalizeUnconditionally()
             case op_put_to_scope: {
                 ResolveModeAndType modeAndType =
                     ResolveModeAndType(curInstruction[4].u.operand);
-                if (modeAndType.type() == GlobalVar || modeAndType.type() == GlobalVarWithVarInjectionChecks)
+                if (modeAndType.type() == GlobalVar || modeAndType.type() == GlobalVarWithVarInjectionChecks || modeAndType.type() == LocalClosureVar)
                     continue;
                 WriteBarrierBase<Structure>& structure = curInstruction[5].u.structure;
                 if (!structure || Heap::isMarked(structure.get()))
@@ -3868,7 +3896,6 @@ struct VerifyCapturedDef {
 
         switch (opcodeID) {
         case op_enter:
-        case op_captured_mov:
         case op_init_lazy_reg:
         case op_create_arguments:
         case op_new_captured_func:
@@ -3876,11 +3903,14 @@ struct VerifyCapturedDef {
         default:
             break;
         }
-        
+
         VirtualRegister virtualReg(operand);
         if (!virtualReg.isLocal())
             return;
-        
+
+        if (codeBlock->usesArguments() && virtualReg == codeBlock->argumentsRegister())
+            return;
+
         if (codeBlock->captureCount() && codeBlock->symbolTable()->isCaptured(operand)) {
             codeBlock->beginValidationDidFail();
             dataLog("    At bc#", bytecodeOffset, " encountered invalid assignment to captured variable loc", virtualReg.toLocal(), ".\n");

@@ -262,15 +262,6 @@ SLOW_PATH_DECL(slow_path_to_this)
     RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
-SLOW_PATH_DECL(slow_path_captured_mov)
-{
-    BEGIN();
-    JSValue value = OP_C(2).jsValue();
-    if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(vm, value, "Executed op_captured_mov");
-    RETURN(value);
-}
-
 SLOW_PATH_DECL(slow_path_new_captured_func)
 {
     BEGIN();

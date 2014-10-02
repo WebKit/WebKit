@@ -183,10 +183,11 @@ const firstOutOfLineOffset = 100
 const GlobalProperty = 0
 const GlobalVar = 1
 const ClosureVar = 2
-const GlobalPropertyWithVarInjectionChecks = 3
-const GlobalVarWithVarInjectionChecks = 4
-const ClosureVarWithVarInjectionChecks = 5
-const Dynamic = 6
+const LocalClosureVar = 3
+const GlobalPropertyWithVarInjectionChecks = 4
+const GlobalVarWithVarInjectionChecks = 5
+const ClosureVarWithVarInjectionChecks = 6
+const Dynamic = 7
 
 const ResolveModeMask = 0xffff
 

@@ -656,7 +656,6 @@ private:
         case CheckCell:
         case CheckBadCell:
         case PutStructure:
-        case TearOffActivation:
         case TearOffArguments:
         case CheckArgumentsNotCreated:
         case VariableWatchpoint:

@@ -246,7 +246,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     emitOpcode(op_enter);
     if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
         m_lexicalEnvironmentRegister = addVar();
-        emitInitLazyRegister(m_lexicalEnvironmentRegister);
         m_codeBlock->setActivationRegister(m_lexicalEnvironmentRegister->virtualRegister());
         emitOpcode(op_create_lexical_environment);
         instructions().append(m_lexicalEnvironmentRegister->index());
@@ -267,9 +266,15 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitInitLazyRegister(argumentsRegister);
         emitInitLazyRegister(unmodifiedArgumentsRegister);
         
-        if (shouldTearOffArgumentsEagerly()) {
+        if (shouldCreateArgumentsEagerly() || shouldTearOffArgumentsEagerly()) {
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
+            if (m_codeBlock->hasActivationRegister()) {
+                RegisterID* argumentsRegister = &registerFor(m_codeBlock->argumentsRegister().offset());
+                initializeCapturedVariable(argumentsRegister, propertyNames().arguments, argumentsRegister);
+                RegisterID* uncheckedArgumentsRegister = &registerFor(JSC::unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
+                initializeCapturedVariable(uncheckedArgumentsRegister, propertyNames().arguments, uncheckedArgumentsRegister);
+            }
         }
     }
 
@@ -316,23 +321,26 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     // Captured variables and functions go first so that activations don't have
     // to step over the non-captured locals to mark them.
-    if (functionBody->hasCapturedVariables()) {
+    if (functionBody->hasCapturedVariables() || shouldCaptureAllTheThings) {
         for (size_t i = 0; i < boundParameterProperties.size(); i++) {
             const Identifier& ident = boundParameterProperties[i];
-            if (functionBody->captures(ident))
+            if (functionBody->captures(ident) || shouldCaptureAllTheThings)
                 addVar(ident, IsVariable, IsWatchable);
         }
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             const Identifier& ident = function->ident();
-            if (functionBody->captures(ident)) {
+            if (functionBody->captures(ident) || shouldCaptureAllTheThings) {
                 m_functions.add(ident.impl());
-                emitNewFunction(addVar(ident, IsVariable, IsWatchable), IsCaptured, function);
+                // We rely on still allocating stack space for captured variables
+                // here.
+                RegisterID* newFunction = emitNewFunction(addVar(ident, IsVariable, IsWatchable), IsCaptured, function);
+                initializeCapturedVariable(newFunction, ident, newFunction);
             }
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             const Identifier& ident = varStack[i].first;
-            if (functionBody->captures(ident))
+            if (functionBody->captures(ident) || shouldCaptureAllTheThings)
                 addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, IsWatchable);
         }
     }
@@ -341,36 +349,35 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks && !m_vm->typeProfiler();
     m_firstLazyFunction = codeBlock->m_numVars;
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        FunctionBodyNode* function = functionStack[i];
-        const Identifier& ident = function->ident();
-        if (!functionBody->captures(ident)) {
-            m_functions.add(ident.impl());
-            RefPtr<RegisterID> reg = addVar(ident, IsVariable, NotWatchable);
-            // Don't lazily create functions that override the name 'arguments'
-            // as this would complicate lazy instantiation of actual arguments.
-            if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
-                emitNewFunction(reg.get(), NotCaptured, function);
-            else {
-                emitInitLazyRegister(reg.get());
-                m_lazyFunctions.set(reg->virtualRegister().toLocal(), function);
+    if (!shouldCaptureAllTheThings) {
+        for (size_t i = 0; i < functionStack.size(); ++i) {
+            FunctionBodyNode* function = functionStack[i];
+            const Identifier& ident = function->ident();
+            if (!functionBody->captures(ident)) {
+                m_functions.add(ident.impl());
+                RefPtr<RegisterID> reg = addVar(ident, IsVariable, NotWatchable);
+                // Don't lazily create functions that override the name 'arguments'
+                // as this would complicate lazy instantiation of actual arguments.
+                if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
+                    emitNewFunction(reg.get(), NotCaptured, function);
+                else {
+                    emitInitLazyRegister(reg.get());
+                    m_lazyFunctions.set(reg->virtualRegister().toLocal(), function);
+                }
             }
         }
+        m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
+        for (size_t i = 0; i < boundParameterProperties.size(); i++) {
+            const Identifier& ident = boundParameterProperties[i];
+            if (!functionBody->captures(ident))
+                addVar(ident, IsVariable, IsWatchable);
+        }
+        for (size_t i = 0; i < varStack.size(); ++i) {
+            const Identifier& ident = varStack[i].first;
+            if (!functionBody->captures(ident))
+                addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, NotWatchable);
+        }
     }
-    m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
-    for (size_t i = 0; i < boundParameterProperties.size(); i++) {
-        const Identifier& ident = boundParameterProperties[i];
-        if (!functionBody->captures(ident))
-            addVar(ident, IsVariable, IsWatchable);
-    }
-    for (size_t i = 0; i < varStack.size(); ++i) {
-        const Identifier& ident = varStack[i].first;
-        if (!functionBody->captures(ident))
-            addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, NotWatchable);
-    }
-
-    if (shouldCaptureAllTheThings)
-        m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
 
     if (m_symbolTable->captureCount())
         emitOpcode(op_touch_entry);
@@ -396,7 +403,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(simpleParameter->boundProperty())) || shouldCaptureAllTheThings);
             index = capturedArguments[i]->index();
             RegisterID original(nextParameterIndex);
-            emitMove(capturedArguments[i], &original);
+            initializeCapturedVariable(capturedArguments[i], simpleParameter->boundProperty(), &original);
         }
         addParameter(simpleParameter->boundProperty(), index);
     }
@@ -476,6 +483,20 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
     return reg;
 }
 
+RegisterID* BytecodeGenerator::initializeCapturedVariable(RegisterID* dst, const Identifier& propertyName, RegisterID* value)
+{
+
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+    emitOpcode(op_put_to_scope);
+    instructions().append(m_lexicalEnvironmentRegister->index());
+    instructions().append(addConstant(propertyName));
+    instructions().append(value->index());
+    instructions().append(ResolveModeAndType(ThrowIfNotFound, LocalClosureVar).operand());
+    instructions().append(0);
+    instructions().append(dst->index());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
 {
     if (!functionNameIsInScope(functionBodyNode->ident(), functionBodyNode->functionMode()))
@@ -486,7 +507,7 @@ RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
 
     m_calleeRegister.setIndex(JSStack::Callee);
     if (functionBodyNode->captures(functionBodyNode->ident()))
-        return emitMove(addVar(), IsCaptured, &m_calleeRegister);
+        return initializeCapturedVariable(addVar(), functionBodyNode->ident(), &m_calleeRegister);
 
     return &m_calleeRegister;
 }
@@ -996,25 +1017,18 @@ unsigned BytecodeGenerator::addRegExp(RegExp* r)
     return m_codeBlock->addRegExp(r);
 }
 
-RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, CaptureMode captureMode, RegisterID* src)
+RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
 {
     m_staticPropertyAnalyzer.mov(dst->index(), src->index());
-
-    emitOpcode(captureMode == IsCaptured ? op_captured_mov : op_mov);
+    ASSERT(dst->virtualRegister() == m_codeBlock->argumentsRegister() || !isCaptured(dst->index()));
+    emitOpcode(op_mov);
     instructions().append(dst->index());
     instructions().append(src->index());
-    if (captureMode == IsCaptured)
-        instructions().append(watchableVariable(dst->index()));
 
     if (!dst->isTemporary() && vm()->typeProfiler())
         emitProfileType(dst, ProfileTypeBytecodeHasGlobalID, nullptr);
 
     return dst;
-}
-
-RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
-{
-    return emitMove(dst, captureMode(dst->index()), src);
 }
 
 RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src)
@@ -1197,9 +1211,9 @@ bool BytecodeGenerator::isCaptured(int operand)
 Local BytecodeGenerator::local(const Identifier& property)
 {
     if (property == propertyNames().thisIdentifier)
-        return Local(thisRegister(), ReadOnly, NotCaptured);
-    
-    if (property == propertyNames().arguments)
+        return Local(thisRegister(), ReadOnly, Local::SpecialLocal);
+    bool isArguments = property == propertyNames().arguments;
+    if (isArguments)
         createArgumentsIfNecessary();
 
     if (!shouldOptimizeLocals())
@@ -1209,8 +1223,13 @@ Local BytecodeGenerator::local(const Identifier& property)
     if (entry.isNull())
         return Local();
 
+
     RegisterID* local = createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
-    return Local(local, entry.getAttributes(), captureMode(local->index()));
+
+    if (isCaptured(local->index()) && m_lexicalEnvironmentRegister)
+        return Local();
+
+    return Local(local, entry.getAttributes(), isArguments ? Local::SpecialLocal : Local::NormalLocal);
 }
 
 Local BytecodeGenerator::constLocal(const Identifier& property)
@@ -1223,7 +1242,12 @@ Local BytecodeGenerator::constLocal(const Identifier& property)
         return Local();
 
     RegisterID* local = createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
-    return Local(local, entry.getAttributes(), captureMode(local->index()));
+
+    bool isArguments = property == propertyNames().arguments;
+    if (isCaptured(local->index()) && m_lexicalEnvironmentRegister)
+        return Local();
+
+    return Local(local, entry.getAttributes(), isArguments ? Local::SpecialLocal : Local::NormalLocal);
 }
 
 void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value, RegisterID* base, Label* target)
@@ -1247,9 +1271,23 @@ ResolveType BytecodeGenerator::resolveType()
     return GlobalProperty;
 }
 
-RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifier& identifier)
+RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifier& identifier, ResolveScopeInfo& info)
 {
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
+    if (m_symbolTable && m_codeType == FunctionCode && !m_localScopeDepth) {
+        SymbolTableEntry entry = m_symbolTable->get(identifier.impl());
+        if (!entry.isNull()) {
+            emitOpcode(op_resolve_scope);
+            instructions().append(kill(dst));
+            instructions().append(addConstant(identifier));
+            instructions().append(LocalClosureVar);
+            instructions().append(0);
+            instructions().append(0);
+            info = ResolveScopeInfo(entry.getIndex());
+            return dst;
+        }
+    }
 
     ASSERT(!m_symbolTable || !m_symbolTable->contains(identifier.impl()) || resolveType() == Dynamic);
 
@@ -1263,7 +1301,20 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier& identifier, ResolveMode resolveMode)
+RegisterID* BytecodeGenerator::emitResolveConstantLocal(RegisterID* dst, const Identifier& identifier, ResolveScopeInfo& info)
+{
+    if (!m_symbolTable || m_codeType != FunctionCode)
+        return nullptr;
+
+    SymbolTableEntry entry = m_symbolTable->get(identifier.impl());
+    if (entry.isNull())
+        return nullptr;
+    info = ResolveScopeInfo(entry.getIndex());
+    return emitMove(dst, m_lexicalEnvironmentRegister);
+
+}
+
+RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier& identifier, ResolveMode resolveMode, const ResolveScopeInfo& info)
 {
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 
@@ -1272,14 +1323,14 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
     instructions().append(kill(dst));
     instructions().append(scope->index());
     instructions().append(addConstant(identifier));
-    instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
+    instructions().append(ResolveModeAndType(resolveMode, info.isLocal() ? LocalClosureVar : resolveType()).operand());
     instructions().append(0);
-    instructions().append(0);
+    instructions().append(info.localIndex());
     instructions().append(profile);
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Identifier& identifier, RegisterID* value, ResolveMode resolveMode)
+RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Identifier& identifier, RegisterID* value, ResolveMode resolveMode, const ResolveScopeInfo& info)
 {
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 
@@ -1288,9 +1339,14 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Identifie
     instructions().append(scope->index());
     instructions().append(addConstant(identifier));
     instructions().append(value->index());
-    instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
-    instructions().append(0);
-    instructions().append(0);
+    if (info.isLocal()) {
+        instructions().append(ResolveModeAndType(resolveMode, LocalClosureVar).operand());
+        instructions().append(watchableVariable(registerFor(info.localIndex()).index()));
+    } else {
+        instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
+        instructions().append(0);
+    }
+    instructions().append(info.localIndex());
     return value;
 }
 
@@ -1659,7 +1715,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
     if (!m_codeBlock->usesArguments())
         return;
 
-    if (shouldTearOffArgumentsEagerly())
+    if (shouldTearOffArgumentsEagerly() || shouldCreateArgumentsEagerly())
         return;
 
     emitOpcode(op_create_arguments);
@@ -1855,11 +1911,6 @@ RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst,
 
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
-    if (m_lexicalEnvironmentRegister) {
-        emitOpcode(op_tear_off_lexical_environment);
-        instructions().append(m_lexicalEnvironmentRegister->index());
-    }
-
     if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister().offset());

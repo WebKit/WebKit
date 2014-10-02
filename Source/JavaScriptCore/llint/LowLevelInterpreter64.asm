@@ -707,23 +707,6 @@ macro notifyWrite(set, value, scratch, slow)
 .done:
 end
 
-_llint_op_captured_mov:
-    traceExecution()
-    loadisFromInstruction(2, t1)
-    loadConstantOrVariable(t1, t2)
-    loadpFromInstruction(3, t0)
-    btpz t0, .opCapturedMovReady
-    notifyWrite(t0, t2, t1, .opCapturedMovSlow)
-.opCapturedMovReady:
-    loadisFromInstruction(1, t0)
-    storeq t2, [cfr, t0, 8]
-    dispatch(4)
-
-.opCapturedMovSlow:
-    callSlowPath(_slow_path_captured_mov)
-    dispatch(4)
-
-
 _llint_op_not:
     traceExecution()
     loadisFromInstruction(2, t0)
@@ -1827,16 +1810,6 @@ macro doCall(slowPath)
     slowPathForCall(slowPath)
 end
 
-
-_llint_op_tear_off_lexical_environment:
-    traceExecution()
-    loadisFromInstruction(1, t0)
-    btqz [cfr, t0, 8], .opTearOffActivationNotCreated
-    callSlowPath(_llint_slow_path_tear_off_lexical_environment)
-.opTearOffActivationNotCreated:
-    dispatch(2)
-
-
 _llint_op_tear_off_arguments:
     traceExecution()
     loadisFromInstruction(1, t0)
@@ -2189,13 +2162,29 @@ macro putClosureVar()
     storeq t2, [t0, t1, 8]
 end
 
+macro putLocalClosureVar()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2)
+    notifyWrite(t0, t2, t1, .pDynamic)
+    loadp JSEnvironmentRecord::m_registers[t0], t0
+    loadisFromInstruction(6, t1)
+    storeq t2, [t0, t1, 8]
+end
+
 
 _llint_op_put_to_scope:
     traceExecution()
     loadisFromInstruction(4, t0)
     andi ResolveModeMask, t0
 
-#pGlobalProperty:
+#pLocalClosureVar:
+    bineq t0, LocalClosureVar, .pGlobalProperty
+    writeBarrierOnOperands(1, 3)
+    loadVariable(1, t0)
+    putLocalClosureVar()
+    dispatch(7)
+
+.pGlobalProperty:
     bineq t0, GlobalProperty, .pGlobalVar
     writeBarrierOnOperands(1, 3)
     loadWithStructureCheck(1, .pDynamic)

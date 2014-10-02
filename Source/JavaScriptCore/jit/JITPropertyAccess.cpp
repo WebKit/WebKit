@@ -621,6 +621,8 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
     case Dynamic:
         addSlowCase(jump());
         break;
+    case LocalClosureVar:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -691,6 +693,8 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
     case Dynamic:
         addSlowCase(jump());
         break;
+    case LocalClosureVar:
+        RELEASE_ASSERT_NOT_REACHED();
     }
     emitPutVirtualRegister(dst);
     emitValueProfilingSite();
@@ -738,11 +742,12 @@ void JIT::emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet* 
     storePtr(regT0, reinterpret_cast<void*>(operand));
 }
 
-void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)
+void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value, VariableWatchpointSet* set)
 {
     emitGetVirtualRegister(value, regT1);
     emitGetVirtualRegister(scope, regT0);
     loadPtr(Address(regT0, JSEnvironmentRecord::offsetOfRegisters()), regT0);
+    emitNotifyWrite(regT1, regT2, set);
     storePtr(regT1, Address(regT0, operand * sizeof(Register)));
 }
 
@@ -767,11 +772,12 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
+    case LocalClosureVar:
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
         emitWriteBarrier(scope, value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        emitPutClosureVar(scope, *operandSlot, value);
+        emitPutClosureVar(scope, *operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
     case Dynamic:
         addSlowCase(jump());
@@ -783,9 +789,9 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
 {
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
     unsigned linkCount = 0;
-    if (resolveType != GlobalVar && resolveType != ClosureVar)
+    if (resolveType != GlobalVar && resolveType != ClosureVar && resolveType != LocalClosureVar)
         linkCount++;
-    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar)
         && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
         linkCount++;
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks)

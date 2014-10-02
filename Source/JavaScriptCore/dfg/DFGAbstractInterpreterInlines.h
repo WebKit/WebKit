@@ -1299,7 +1299,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).merge(SpecArguments);
         break;
         
-    case TearOffActivation:
     case TearOffArguments:
         // Does nothing that is user-visible.
         break;

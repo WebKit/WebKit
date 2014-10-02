@@ -439,8 +439,6 @@ static bool unwindCallFrame(StackVisitor& visitor)
 {
     CallFrame* callFrame = visitor->callFrame();
     CodeBlock* codeBlock = visitor->codeBlock();
-    JSScope* scope = callFrame->scope();
-
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         ClearExceptionScope scope(&callFrame->vm());
         if (jsDynamicCast<JSFunction*>(callFrame->callee()))
@@ -455,15 +453,6 @@ static bool unwindCallFrame(StackVisitor& visitor)
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
-        lexicalEnvironment = callFrame->uncheckedActivation();
-        // Protect against the lexical environment not being created, or the variable still being
-        // initialized to Undefined inside op_enter.
-        if (lexicalEnvironment && lexicalEnvironment.isCell()) {
-            JSLexicalEnvironment* activationObject = jsCast<JSLexicalEnvironment*>(lexicalEnvironment);
-            // Protect against throwing exceptions after tear-off.
-            if (!activationObject->isTornOff())
-                activationObject->tearOff(*scope->vm());
-        }
     }
 
     if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {

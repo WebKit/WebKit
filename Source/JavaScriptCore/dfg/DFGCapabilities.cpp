@@ -122,7 +122,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_profile_did_call:
     case op_profile_type:
     case op_mov:
-    case op_captured_mov:
     case op_check_has_instance:
     case op_instanceof:
     case op_is_undefined:
@@ -232,7 +231,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
 
     case op_new_regexp: 
     case op_create_lexical_environment:
-    case op_tear_off_lexical_environment:
     case op_new_func:
     case op_new_captured_func:
     case op_new_func_exp:
