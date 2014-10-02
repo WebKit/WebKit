@@ -49,6 +49,7 @@ struct NodeOrigin {
     
     bool isSet() const
     {
+        ASSERT(semantic.isSet() == forExit.isSet());
         return semantic.isSet();
     }
     

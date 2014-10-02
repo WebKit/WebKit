@@ -42,7 +42,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     // Don't bother to preserve execution frequencies for now.
     BasicBlock* preHeader = insertionSet.insertBefore(block, PNaN);
     preHeader->appendNode(
-        graph, SpecNone, Jump, block->at(0)->origin, OpInfo(block));
+        graph, SpecNone, Jump, block->firstOrigin(), OpInfo(block));
     
     for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
         BasicBlock* predecessor = block->predecessors[predecessorIndex];

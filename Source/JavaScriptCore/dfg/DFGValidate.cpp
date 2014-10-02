@@ -213,6 +213,23 @@ public:
                 case Identity:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
                     break;
+                case SetLocal:
+                case PutLocal:
+                case Upsilon:
+                    VALIDATE((node), !!node->child1());
+                    switch (node->child1().useKind()) {
+                    case UntypedUse:
+                    case CellUse:
+                    case Int32Use:
+                    case Int52RepUse:
+                    case DoubleRepUse:
+                    case BooleanUse:
+                        break;
+                    default:
+                        VALIDATE((node), !"Bad use kind");
+                        break;
+                    }
+                    break;
                 case MakeRope:
                 case ValueAdd:
                 case ArithAdd:

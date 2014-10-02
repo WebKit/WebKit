@@ -845,7 +845,13 @@ public:
     virtual void visitChildren(SlotVisitor&) override;
     
     NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
-        Node* node, const char* file, int line, const char* function,
+        std::nullptr_t, const char* file, int line, const char* function,
+        const char* assertion);
+    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+        Node*, const char* file, int line, const char* function,
+        const char* assertion);
+    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+        BasicBlock*, const char* file, int line, const char* function,
         const char* assertion);
     
     VM& m_vm;

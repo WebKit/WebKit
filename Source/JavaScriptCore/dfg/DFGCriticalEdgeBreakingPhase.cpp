@@ -77,7 +77,7 @@ private:
         // don't know its execution frequency.
         BasicBlock* pad = m_insertionSet.insertBefore(*successor, PNaN);
         pad->appendNode(
-            m_graph, SpecNone, Jump, (*successor)->at(0)->origin, OpInfo(*successor));
+            m_graph, SpecNone, Jump, (*successor)->firstOrigin(), OpInfo(*successor));
         pad->predecessors.append(predecessor);
         (*successor)->replacePredecessor(predecessor, pad);
         

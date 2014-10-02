@@ -1212,23 +1212,39 @@ void Graph::assertIsRegistered(Structure* structure)
     DFG_CRASH(*this, nullptr, toCString("Structure ", pointerDump(structure), " is watchable but isn't being watched.").data());
 }
 
-void Graph::handleAssertionFailure(
-    Node* node, const char* file, int line, const char* function, const char* assertion)
+NO_RETURN_DUE_TO_CRASH static void crash(
+    Graph& graph, const CString& whileText, const char* file, int line, const char* function,
+    const char* assertion)
 {
     startCrashing();
     dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
     dataLog(file, "(", line, ") : ", function, "\n");
     dataLog("\n");
-    if (node) {
-        dataLog("While handling node ", node, "\n");
-        dataLog("\n");
-    }
+    dataLog(whileText);
     dataLog("Graph at time of failure:\n");
-    dump();
+    graph.dump();
     dataLog("\n");
     dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
     dataLog(file, "(", line, ") : ", function, "\n");
     CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+void Graph::handleAssertionFailure(
+    std::nullptr_t, const char* file, int line, const char* function, const char* assertion)
+{
+    crash(*this, "", file, line, function, assertion);
+}
+
+void Graph::handleAssertionFailure(
+    Node* node, const char* file, int line, const char* function, const char* assertion)
+{
+    crash(*this, toCString("While handling node ", node, "\n\n"), file, line, function, assertion);
+}
+
+void Graph::handleAssertionFailure(
+    BasicBlock* block, const char* file, int line, const char* function, const char* assertion)
+{
+    crash(*this, toCString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
 }
 
 } } // namespace JSC::DFG

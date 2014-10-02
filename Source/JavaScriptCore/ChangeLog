@@ -1,3 +1,44 @@
+2014-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Object allocation sinking should have a sound story for picking materialization points
+        https://bugs.webkit.org/show_bug.cgi?id=137315
+
+        Reviewed by Oliver Hunt.
+        
+        The only missing piece was having the object allocation sinking phase locate materialization
+        points that were at CFG edges.
+        
+        The logic for how and why this "just works" relies on some properties of critical edge
+        breaking, so I was fairly careful in how I did this. Also, this requires inserting things at
+        the "first origin node" of a block - that is the first node in a block that has a NodeOrigin
+        and therefore is allowed to exit. We basically had support for such a notion before, but
+        didn't close the loop on it; this patch does that.
+        
+        Also I added the ability to provide a BasicBlock* as context for a DFG_ASSERT().
+
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::firstOriginNode):
+        (JSC::DFG::BasicBlock::firstOrigin):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::crash):
+        (JSC::DFG::Graph::handleAssertionFailure):
+        * dfg/DFGGraph.h:
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        * dfg/DFGNodeOrigin.h:
+        (JSC::DFG::NodeOrigin::isSet):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * runtime/Options.h:
+
 2014-10-02  Daniel Bates  <dabates@apple.com>
 
         Clean up: Move XPC forward declarations in JavaScriptCore to WTF SPI wrapper header

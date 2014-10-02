@@ -178,7 +178,7 @@ typedef const char* optionString;
     v(bool, enableCallEdgeProfiling, true) \
     v(unsigned, frequentCallThreshold, 2) \
     v(bool, optimizeNativeCalls, false) \
-    v(bool, enableObjectAllocationSinking, false) \
+    v(bool, enableObjectAllocationSinking, true) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \

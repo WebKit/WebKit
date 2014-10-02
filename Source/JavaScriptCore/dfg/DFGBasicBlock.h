@@ -34,6 +34,7 @@
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
+#include "DFGNodeOrigin.h"
 #include "DFGStructureClobberState.h"
 #include "Operands.h"
 #include <wtf/HashMap.h>
@@ -89,6 +90,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     BlockNodeList::iterator begin() { return m_nodes.begin(); }
     BlockNodeList::iterator end() { return m_nodes.end(); }
+    
+    Node* firstOriginNode();
+    NodeOrigin firstOrigin();
     
     unsigned numSuccessors() { return last()->numSuccessors(); }
     
