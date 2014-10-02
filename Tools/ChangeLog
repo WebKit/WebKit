@@ -1,3 +1,17 @@
+2014-10-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174120.
+        https://bugs.webkit.org/show_bug.cgi?id=137350
+
+        While number of failures is reasonable with 2 processes, test
+        results seem to be inconsistent between runs (Requested by
+        rfong on #webkit).
+
+        Reverted changeset:
+
+        "[Windows] Back to 2 child processes for NRWT on Windows."
+        http://trac.webkit.org/changeset/174120
+
 2014-10-02  Jeff Miller  <jeffm@apple.com>
 
         DumpRenderTree and WebKitTestRunner should use WebKitystemInterfaceYosemite when building on Yosemite
