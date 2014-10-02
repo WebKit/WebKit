@@ -1,3 +1,32 @@
+2014-10-02  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r174199.
+
+    2014-10-01  Benjamin Poulain  <bpoulain@apple.com>
+
+            Click events offset in webkit-overflow-scrolling iframes
+            https://bugs.webkit.org/show_bug.cgi?id=134596
+
+            Reviewed by Sam Weinig.
+
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::visibleContentRectInternal):
+            When converting coordinates from the main frame to a subframe's document, the position
+            is first converted to the subframe's FrameView coordinate system, then offset by the scroll
+            offset of the subframe itself.
+
+            The bug in this case was that the scroll offset used was the global scroll offset of the frame
+            in the view instead of the scroll offset of the document in its own frameview.
+
+            The regression was introduced by the refactoring r162663. On iOS WebKit1, the coordinate system
+            is different depending on VisibleContentRectIncludesScrollbars. In r162663, the value was set
+            such that the rect returned is always in absolute coordinate.
+
+            The ideal solution would be to refactor ScrollView::platformVisibleContentRect() to always return
+            the offsets in scroll view coordinates and verify and update all the call sites to use explicit
+            conversion to the top frame. In this patch I only reverted the coordinate change of r162663 to avoid
+            large scale impact.
+
 2014-09-18  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for <rdar://problem/18382131>.
