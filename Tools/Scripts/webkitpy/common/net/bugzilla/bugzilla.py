@@ -204,7 +204,6 @@ class BugzillaQueries(object):
             patch_id = int(digits.search(patch_tag["href"]).group(0))
             date_tag = row.find("td", text=date_format)
             if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
-                _log.info("Patch is old: %d (%s)" % (patch_id, date_tag))
                 continue
             patch_ids.append(patch_id)
         return patch_ids

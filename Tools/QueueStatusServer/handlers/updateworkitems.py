@@ -1,4 +1,5 @@
 # Copyright (C) 2013 Google Inc. All rights reserved.
+# Copyright (C) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -42,21 +43,15 @@ class UpdateWorkItems(UpdateBase):
         self.response.out.write(template.render("templates/updateworkitems.html", None))
 
     def _parse_work_items_string(self, items_string):
-        try:
-            item_strings = items_string.split(" ") if items_string else []
-            return map(int, item_strings)
-        except ValueError:
-            return None
+        item_strings = items_string.split(" ") if items_string else []
+        return map(int, item_strings)
 
-    def _update_work_items_from_request(self, work_items):
+    def _work_items_from_request(self):
+        high_priority_items_string = self.request.get("high_priority_items")
         items_string = self.request.get("work_items")
-        new_work_items = self._parse_work_items_string(items_string)
-        if new_work_items == None:
-            self.response.out.write("Failed to parse work items: %s" % items_string)
-            return False
-        work_items.item_ids = new_work_items
-        work_items.date = datetime.utcnow()
-        return True
+        high_priority_work_items = self._parse_work_items_string(high_priority_items_string)
+        work_items = self._parse_work_items_string(items_string)
+        return high_priority_work_items, work_items
 
     def _queue_from_request(self):
         queue_name = self.request.get("queue_name")
@@ -71,17 +66,12 @@ class UpdateWorkItems(UpdateBase):
         if not queue:
             self.response.set_status(500)
             return
-        work_items = queue.work_items()
-        old_items = set(work_items.item_ids)
 
-        success = self._update_work_items_from_request(work_items)
-        if not success:
-            self.response.set_status(500)
-            return
-        new_items = set(work_items.item_ids)
-        work_items.put()
+        high_priority_items, items = self._work_items_from_request()
 
-        for work_item in new_items - old_items:
+        # Add items that are not currently in the work queue. Never remove any items,
+        # as that should be done by the queue, feeder only adds them.
+        added_items = queue.work_items().add_work_items(high_priority_items, items)
+
+        for work_item in added_items:
             RecordPatchEvent.added(work_item, queue.name())
-        for work_item in old_items - new_items:
-            RecordPatchEvent.stopped(work_item, queue.name())

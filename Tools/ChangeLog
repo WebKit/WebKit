@@ -1,3 +1,44 @@
+2014-10-02  Alexey Proskuryakov  <ap@apple.com>
+
+        update-work-items should never delete items
+        https://bugs.webkit.org/show_bug.cgi?id=137366
+
+        Reviewed by Ryosuke Niwa.
+
+        As we don't just replace the whole list any more, indicate which items are high
+        priority, and which are not. Hight priority ones will be prepended to the queue,
+        others will be appended.
+
+        This creates a bit of unfairness in that high priority item queue becomes a LIFO.
+        But hopefully we will never have many rollouts competing like that.
+
+        * QueueStatusServer/app.yaml: Update version.
+
+        * QueueStatusServer/handlers/updateworkitems.py: Never remove items. Pass high
+        priority and regular items separately. Removed some error handling that used to
+        end up in returning status 500 - an uncaught exception does that automatically.
+
+        * QueueStatusServer/main.py: Removed unnecessary regexps from URL matching code.
+
+        * QueueStatusServer/model/workitems.py: Added a way to add high priority items.
+
+        * QueueStatusServer/templates/updateworkitems.html: Added a field for high
+        priority items.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries._parse_attachment_ids_request_query): Removed an annoying log
+        line that complicated testing.
+
+        * Scripts/webkitpy/common/net/statusserver.py: Pass high priority items separately.
+
+        * Scripts/webkitpy/tool/bot/feeders.py: For commit queue, split high and regular
+        priority items into separate lists.
+
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        Updated tests.
+
 2014-10-02  Brendan Long  <b.long@cablelabs.com>
 
         Annoying build warnings in WTFString API tests

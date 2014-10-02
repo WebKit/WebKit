@@ -100,13 +100,15 @@ class StatusServer:
         self._browser["broken_bot"] = broken_bot
         return self._browser.submit().read()
 
-    def _post_work_items_to_server(self, queue_name, work_items):
+    def _post_work_items_to_server(self, queue_name, high_priority_work_items, work_items):
         update_work_items_url = "%s/update-work-items" % self.url
         self._browser.open(update_work_items_url)
         self._browser.select_form(name="update_work_items")
         self._browser["queue_name"] = queue_name
         work_items = map(unicode, work_items)  # .join expects strings
         self._browser["work_items"] = " ".join(work_items)
+        high_priority_work_items = map(unicode, high_priority_work_items)
+        self._browser["high_priority_work_items"] = " ".join(high_priority_work_items)
         return self._browser.submit().read()
 
     def _post_work_item_to_ews(self, attachment_id):
@@ -149,9 +151,9 @@ class StatusServer:
         _log.info("Releasing lock for work item %s from %s" % (patch.id(), queue_name))
         return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_lock(queue_name, patch))
 
-    def update_work_items(self, queue_name, work_items):
-        _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
-        return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))
+    def update_work_items(self, queue_name, high_priority_work_items, work_items):
+        _log.debug("Recording work items: %s for %s" % (high_priority_work_items + work_items, queue_name))
+        return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, high_priority_work_items, work_items))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):
         _log.info(status)

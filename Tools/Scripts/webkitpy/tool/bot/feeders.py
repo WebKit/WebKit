@@ -50,18 +50,16 @@ class CommitQueueFeeder(AbstractFeeder):
         AbstractFeeder.__init__(self, tool)
         self.committer_validator = CommitterValidator(self._tool)
 
-    def _update_work_items(self, item_ids):
-        # FIXME: This is the last use of update_work_items, the commit-queue
-        # should move to feeding patches one at a time like the EWS does.
-        self._tool.status_server.update_work_items(self.queue_name, item_ids)
-        _log.info("Feeding %s items %s" % (self.queue_name, item_ids))
-
     def feed(self):
         patches = self._validate_patches()
         patches = self._patches_with_acceptable_review_flag(patches)
         patches = sorted(patches, self._patch_cmp)
-        patch_ids = [patch.id() for patch in patches]
-        self._update_work_items(patch_ids)
+
+        high_priority_item_ids = [patch.id() for patch in patches if patch.is_rollout()]
+        item_ids = [patch.id() for patch in patches if not patch.is_rollout()]
+
+        _log.info("Feeding %s high priority items %s, regular items %s" % (self.queue_name, high_priority_item_ids, item_ids))
+        self._tool.status_server.update_work_items(self.queue_name, high_priority_item_ids, item_ids)
 
     def _patches_for_bug(self, bug_id):
         return self._tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True)
@@ -77,11 +75,6 @@ class CommitQueueFeeder(AbstractFeeder):
         return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
 
     def _patch_cmp(self, a, b):
-        # Sort first by is_rollout, then by attach_date.
-        # Reversing the order so that is_rollout is first.
-        rollout_cmp = cmp(b.is_rollout(), a.is_rollout())
-        if rollout_cmp != 0:
-            return rollout_cmp
         return cmp(a.attach_date(), b.attach_date())
 
 

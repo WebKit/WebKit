@@ -128,6 +128,7 @@ class AbstractQueueTest(CommandsTest):
 
 class FeederQueueTest(QueuesTest):
     def test_feeder_queue(self):
+        self.maxDiff = None
         queue = TestFeederQueue()
         tool = MockTool(log_executive=True)
         expected_logs = {
@@ -139,8 +140,8 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/contributors.json by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
+Feeding commit-queue high priority items [10005], regular items [10000]
 MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding commit-queue items [10005, 10000]
 Feeding EWS (1 r? patch, 1 new)
 MOCK: submit_to_ews: 10002
 """,

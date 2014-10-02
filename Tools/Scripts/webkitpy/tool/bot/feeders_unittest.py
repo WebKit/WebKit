@@ -37,6 +37,7 @@ from webkitpy.tool.mocktool import MockTool
 
 class FeedersTest(unittest.TestCase):
     def test_commit_queue_feeder(self):
+        self.maxDiff = None
         feeder = CommitQueueFeeder(MockTool())
         expected_logs = """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
 Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
@@ -45,8 +46,8 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/contributors.json by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
+Feeding commit-queue high priority items [10005], regular items [10000]
 MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding commit-queue items [10005, 10000]
 """
         OutputCapture().assert_outputs(self, feeder.feed, expected_logs=expected_logs)
 
@@ -55,19 +56,6 @@ Feeding commit-queue items [10005, 10000]
         attachment.is_rollout = lambda: is_rollout
         attachment.attach_date = lambda: attach_date
         return attachment
-
-    def test_patch_cmp(self):
-        long_ago_date = datetime(1900, 1, 21)
-        recent_date = datetime(2010, 1, 21)
-        attachment1 = self._mock_attachment(is_rollout=False, attach_date=recent_date)
-        attachment2 = self._mock_attachment(is_rollout=False, attach_date=long_ago_date)
-        attachment3 = self._mock_attachment(is_rollout=True, attach_date=recent_date)
-        attachment4 = self._mock_attachment(is_rollout=True, attach_date=long_ago_date)
-        attachments = [attachment1, attachment2, attachment3, attachment4]
-        expected_sort = [attachment4, attachment3, attachment2, attachment1]
-        queue = CommitQueueFeeder(MockTool())
-        attachments.sort(queue._patch_cmp)
-        self.assertEqual(attachments, expected_sort)
 
     def test_patches_with_acceptable_review_flag(self):
         class MockPatch(object):
