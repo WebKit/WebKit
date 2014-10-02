@@ -180,11 +180,11 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             // If the current type is blob, then we also need to include the filename
             if (value.blob()) {
                 String name;
-                if (value.blob()->isFile()) {
-                    File* file = toFile(value.blob());
-                    name = file->name();
+                if (is<File>(value.blob())) {
+                    File& file = downcast<File>(*value.blob());
+                    name = file.name();
                     // Let the application specify a filename if it's going to generate a replacement file for the upload.
-                    const String& path = file->path();
+                    const String& path = file.path();
                     if (!path.isEmpty()) {
                         if (Page* page = document->page()) {
                             String generatedFileName;
@@ -221,11 +221,11 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             // Append body
             appendData(header.data(), header.size());
             if (value.blob()) {
-                if (value.blob()->isFile()) {
-                    File* file = toFile(value.blob());
+                if (is<File>(value.blob())) {
+                    File& file = downcast<File>(*value.blob());
                     // Do not add the file if the path is empty.
-                    if (!file->path().isEmpty())
-                        appendFile(file->path(), shouldGenerateFile);
+                    if (!file.path().isEmpty())
+                        appendFile(file.path(), shouldGenerateFile);
                 }
                 else
                     appendBlob(value.blob()->url());

@@ -28,6 +28,7 @@
 
 #include "Blob.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -83,8 +84,10 @@ private:
     String m_name;
 };
 
-BLOB_TYPE_CASTS(File, isFile())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::File)
+    static bool isType(const WebCore::Blob& blob) { return blob.isFile(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // File_h

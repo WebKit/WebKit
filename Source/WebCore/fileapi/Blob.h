@@ -112,9 +112,6 @@ protected:
     mutable long long m_size;
 };
 
-#define BLOB_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, Blob, blob, blob->predicate, blob.predicate)
-
 } // namespace WebCore
 
 #endif // Blob_h
