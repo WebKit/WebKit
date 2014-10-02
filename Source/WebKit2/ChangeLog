@@ -1,3 +1,17 @@
+2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] The remote web inspector shows the HTML content as plain text
+        https://bugs.webkit.org/show_bug.cgi?id=137250
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use GResource API directly to get the resource data, instead of
+        using the GFile API, and use g_content_type_guess() to get the
+        MIME Type.
+
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+
 2014-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.0 release.
