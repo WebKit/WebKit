@@ -55,6 +55,9 @@ void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool le
     m_lengthComputable = lengthComputable;
     m_loaded = loaded;
     m_total = total;
+
+    if (!m_target->hasEventListeners(eventNames().progressEvent))
+        return;
     
     if (m_deferEvents) {
         // Only store the latest progress event while suspended.
@@ -100,7 +103,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
         m_target->dispatchEvent(event);
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicString &type)
+void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicString& type)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
@@ -110,7 +113,8 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicStri
         m_total = 0;
     }
 
-    dispatchEvent(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
+    if (m_target->hasEventListeners(type))
+        dispatchEvent(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
 
 void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
