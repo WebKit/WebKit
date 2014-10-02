@@ -438,7 +438,7 @@ fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 http/tests/websocket
 
 # Times out:
-webkit.org/b/58654 media/video-controls-in-media-document.html [ Skip ]
+# webkit.org/b/58654 media/video-controls-in-media-document.html [ Skip ]
 
 # Flaky http://webkit.org/b/62561
 animations/animation-direction-normal.html
@@ -830,8 +830,8 @@ editing/text-iterator [ Pass Failure ]
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
 
 # disable until 25220 is fixed: Loading a .ogv file into Safari downloads the file instead of playing it in a media document, even if XiphQT is installed (25220)
-webkit.org/b/25220 media/video-click-dblckick-standalone.html [ WontFix ]
-webkit.org/b/25220 media/video-document-types.html [ WontFix ]
+# webkit.org/b/25220 media/video-click-dblckick-standalone.html [ WontFix ]
+# webkit.org/b/25220 media/video-document-types.html [ WontFix ]
 
 webkit.org/b/25792 fast/encoding/percent-escaping.html [ Pass Timeout ]
 # Bug 26481: Implement layoutTestController.dispatchPendingLoadRequests <https://bugs.webkit.org/show_bug.cgi?id=26481>
@@ -845,7 +845,7 @@ http/tests/cache/subresource-expiration-2.html [ Pass Failure ]
 # FIXME: File bugs and examine these tests
 http/tests/xmlhttprequest/cache-override.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure Timeout ]
-media/video-empty-source.html [ Failure ]
+# media/video-empty-source.html [ Failure ]
 
 # <rdar://7127902> http/tests/misc/favicon-loads-with-images-disabled.html crashes on Windows debug
 http/tests/misc/favicon-loads-with-images-disabled.html
@@ -863,10 +863,10 @@ http/tests/notifications
 webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Failure ]
 
 # Failing media tests on windows <http://webkit.org/b/29047>
-webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Failure ]
+# webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Failure ]
 
 # This test requires media controls has a volume slider.
-media/video-volume-slider.html [ Failure ]
+# media/video-volume-slider.html [ Failure ]
 
 # Mixed content tests failing on Windows
 webkit.org/b/29213 http/tests/security/mixedContent [ Failure ]
@@ -884,7 +884,7 @@ http/tests/local/blob/send-sliced-data-blob.html
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
 
-webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
+# webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
 
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt
@@ -913,10 +913,10 @@ plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
 
 # This test requires ogg codecs
-media/media-can-play-ogg.html [ WontFix ]
+# media/media-can-play-ogg.html [ WontFix ]
 
 # This test requires flac codec
-media/media-can-play-flac-audio.html [ WontFix ]
+# media/media-can-play-flac-audio.html [ WontFix ]
 
 # These tests require touch support
 fast/events/touch
@@ -1018,7 +1018,7 @@ fast/overflow/scrollbar-restored-and-then-locked.html
 # Sometimes times out on Windows
 webkit.org/b/37096 http/tests/security/xss-DENIED-iframe-src-alias.html [ Pass Timeout ]
 
-webkit.org/b/38376 media/media-document-audio-size.html [ Failure ]
+# webkit.org/b/38376 media/media-document-audio-size.html [ Failure ]
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 webkit.org/b/128981 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
@@ -1214,7 +1214,7 @@ fullscreen/
 fast/viewport
 
 # needs enhanced eventSender.contextMenu() return value
-webkit.org/b/45021 media/context-menu-actions.html
+# webkit.org/b/45021 media/context-menu-actions.html
 
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
@@ -1380,38 +1380,38 @@ webkit.org/b/86914 webaudio/
 fast/css/draggable-region-parser.html
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
-webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
+# webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
+# webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 # Tests for MediaSource API. Feature is not yet functional.
 webkit.org/b/64731 http/tests/media/media-source/ [ Skip ]
 
 # Encrypted Media Extensions are not enabled.
-media/encrypted-media/ [ Skip ]
+# media/encrypted-media/ [ Skip ]
 fast/events/constructors/media-key-event-constructor.html [ Skip ]
 
 # Font feature settings is not implemented.
@@ -1481,7 +1481,7 @@ webkit.org/b/62698 batterystatus/
 proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
-webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html
+# webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html
 
 # Fail until SUBPIXEL_LAYOUT is enabled
 webkit.org/b/85532 fast/sub-pixel
@@ -1525,10 +1525,10 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-invoke.html
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html
 
 # [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild
-webkit.org/b/87450 [ Debug ] media/media-volume-slider-rendered-below.html [ Crash ]
+# webkit.org/b/87450 [ Debug ] media/media-volume-slider-rendered-below.html [ Crash ]
 
 # Time out
-webkit.org/b/88005 media/media-continues-playing-after-replace-source.html [ Failure Timeout ]
+# webkit.org/b/88005 media/media-continues-playing-after-replace-source.html [ Failure Timeout ]
 
 # Asserts in Interpreter::addStackTraceIfNecessary
 webkit.org/b/84073 plugins/npruntime/object-from-destroyed-plugin-in-subframe.html
@@ -1606,12 +1606,12 @@ fast/table/027.html
 fast/table/027-vertical.html
 fast/table/max-width-integer-overflow.html
 fast/writing-mode/fallback-orientation.html
-media/controls-after-reload.html [ Failure ]
-media/controls-strict.html [ Failure ]
-media/controls-without-preload.html [ Failure ]
-media/video-controls-rendering.html [ Failure ]
-media/video-display-toggle.html [ Failure ]
-media/video-pause-immediately.html [ Failure ]
+# media/controls-after-reload.html [ Failure ]
+# media/controls-strict.html [ Failure ]
+# media/controls-without-preload.html [ Failure ]
+# media/video-controls-rendering.html [ Failure ]
+# media/video-display-toggle.html [ Failure ]
+# media/video-pause-immediately.html [ Failure ]
 printing/iframe-print.html
 svg/as-image/img-preserveAspectRatio-support-1.html
 svg/carto.net/tabgroup.svg
@@ -2840,3 +2840,6 @@ mathml/presentation/style-changed.html [ Crash Pass ]
 [ Debug ] fast/canvas/webgl [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
+
+# Mass skip all media tests until bots have audio devices
+media

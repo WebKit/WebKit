@@ -1,5 +1,11 @@
 2014-10-01  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Mass skip all media tests until bots have audio devices to run them with.
+
+        * platform/win/TestExpectations:
+
+2014-10-01  Roger Fong  <roger_fong@apple.com>
+
         [ Windows ] More Windows test gardening to get bots green Part 3.
 
         * platform/win/TestExpectations: More indiscriminate mass skipping.
