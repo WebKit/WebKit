@@ -1,3 +1,14 @@
+2014-10-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening. Add expected results after r174002 and r136484.
+
+        * platform/efl/fast/css-generated-content/initial-letter-basic-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/initial-letter-border-padding-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/initial-letter-clearance-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/initial-letter-descender-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/initial-letter-raised-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/initial-letter-sunken-expected.txt: Added.
+
 2014-10-01  Rik Cabanier  <cabanier@adobe.com>
 
         Add support for midpoint to CSS gradients
