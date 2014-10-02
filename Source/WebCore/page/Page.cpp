@@ -788,6 +788,8 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
         for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
             frame->document()->pageScaleFactorChangedAndStable();
     }
+#else
+    UNUSED_PARAM(inStableState);
 #endif
 }
 
