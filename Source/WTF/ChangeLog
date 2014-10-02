@@ -1,3 +1,16 @@
+2014-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Simplify StringTypeAdapter templates
+        https://bugs.webkit.org/show_bug.cgi?id=137356
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringConcatenate.h:
+        Use StringView for copying characters. Use inheritance for char* vs const char* etc. Make all StringAdapter member functions const.
+
+        * wtf/text/StringView.h:
+        Move enough functions out of line so we can include WTFString.h after the StringView class definition.
+
 2014-10-01  Christophe Dumez  <cdumez@apple.com>
 
         Have is<>(T*) function do a null check on the pointer argument

@@ -26,7 +26,11 @@
 #ifndef StringView_h
 #define StringView_h
 
-#include <wtf/text/StringConcatenate.h>
+#include <unicode/utypes.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/LChar.h>
 
 namespace WTF {
 
@@ -53,27 +57,8 @@ public:
         initialize(characters, length);
     }
 
-    StringView(const StringImpl& string)
-    {
-        if (string.is8Bit())
-            initialize(string.characters8(), string.length());
-        else
-            initialize(string.characters16(), string.length());
-    }
-
-    StringView(const String& string)
-    {
-        if (!string.impl()) {
-            m_characters = nullptr;
-            m_length = 0;
-            return;
-        }
-        if (string.is8Bit()) {
-            initialize(string.characters8(), string.length());
-            return;
-        }
-        initialize(string.characters16(), string.length());
-    }
+    StringView(const StringImpl&);
+    StringView(const String&);
 
     static StringView empty()
     {
@@ -134,35 +119,12 @@ public:
         return StringView(characters16() + start, length);
     }
 
-    String toString() const
-    {
-        if (is8Bit())
-            return String(characters8(), length());
+    String toString() const;
 
-        return String(characters16(), length());
-    }
+    float toFloat(bool& isValid) const;
+    int toInt(bool& isValid) const;
 
-    float toFloat(bool& isValid)
-    {
-        if (is8Bit())
-            return charactersToFloat(characters8(), length(), &isValid);
-        return charactersToFloat(characters16(), length(), &isValid);
-    }
-
-    int toInt(bool& isValid)
-    {
-        if (is8Bit())
-            return charactersToInt(characters8(), length(), &isValid);
-        return charactersToInt(characters16(), length(), &isValid);
-    }
-
-    String toStringWithoutCopying() const
-    {
-        if (is8Bit())
-            return StringImpl::createWithoutCopying(characters8(), length());
-
-        return StringImpl::createWithoutCopying(characters16(), length());
-    }
+    String toStringWithoutCopying() const;
 
     UChar operator[](unsigned index) const
     {
@@ -172,12 +134,7 @@ public:
         return characters16()[index];
     }
 
-    size_t find(UChar character, unsigned start = 0) const
-    {
-        if (is8Bit())
-            return WTF::find(characters8(), length(), character, start);
-        return WTF::find(characters16(), length(), character, start);
-    }
+    size_t find(UChar character, unsigned start = 0) const;
 
     bool contains(UChar c) const { return find(c) != notFound; }
 
@@ -215,6 +172,34 @@ private:
     unsigned m_length;
 };
 
+}
+
+#include <wtf/text/WTFString.h>
+
+namespace WTF {
+
+inline StringView::StringView(const StringImpl& string)
+{
+    if (string.is8Bit())
+        initialize(string.characters8(), string.length());
+    else
+        initialize(string.characters16(), string.length());
+}
+
+inline StringView::StringView(const String& string)
+{
+    if (!string.impl()) {
+        m_characters = nullptr;
+        m_length = 0;
+        return;
+    }
+    if (string.is8Bit()) {
+        initialize(string.characters8(), string.length());
+        return;
+    }
+    initialize(string.characters16(), string.length());
+}
+
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 {
     ASSERT(is8Bit());
@@ -246,6 +231,45 @@ inline StringView::UpconvertedCharacters::UpconvertedCharacters(const StringView
         m_upconvertedCharacters.uncheckedAppend(characters8[i]);
     m_characters = m_upconvertedCharacters.data();
 }
+
+inline String StringView::toString() const
+{
+    if (is8Bit())
+        return String(characters8(), length());
+
+    return String(characters16(), length());
+}
+
+inline float StringView::toFloat(bool& isValid) const
+{
+    if (is8Bit())
+        return charactersToFloat(characters8(), length(), &isValid);
+    return charactersToFloat(characters16(), length(), &isValid);
+}
+
+inline int StringView::toInt(bool& isValid) const
+{
+    if (is8Bit())
+        return charactersToInt(characters8(), length(), &isValid);
+    return charactersToInt(characters16(), length(), &isValid);
+}
+
+inline String StringView::toStringWithoutCopying() const
+{
+    if (is8Bit())
+        return StringImpl::createWithoutCopying(characters8(), length());
+
+    return StringImpl::createWithoutCopying(characters16(), length());
+}
+
+inline size_t StringView::find(UChar character, unsigned start) const
+{
+    if (is8Bit())
+        return WTF::find(characters8(), length(), character, start);
+    return WTF::find(characters16(), length(), character, start);
+}
+
+template<typename StringType> class StringTypeAdapter;
 
 template<> class StringTypeAdapter<StringView> {
 public:
