@@ -1,5 +1,12 @@
 2014-10-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        [EFL] Unreviewed EFL gardening. Rebaseline after r174160.
+
+        * platform/efl/fast/borders/bidi-002-expected.txt:
+        * platform/efl/fast/borders/bidi-009a-expected.txt:
+
+2014-10-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         [EFL] Unreviewed EFL gardening. Add expected results after r174002 and r136484.
 
         * platform/efl/fast/css-generated-content/initial-letter-basic-expected.txt: Added.
