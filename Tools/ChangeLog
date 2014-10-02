@@ -1,3 +1,17 @@
+2014-10-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174187.
+        https://bugs.webkit.org/show_bug.cgi?id=137329
+
+        webkitpy failures, and thorton says the patch is wrong
+        (Requested by dethbakin on #webkit).
+
+        Reverted changeset:
+
+        "[Windows] Increase layout test timeout for Windows following
+        r174162."
+        http://trac.webkit.org/changeset/174187
+
 2014-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         Test fix after r174187
