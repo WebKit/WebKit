@@ -37,15 +37,27 @@
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+AffineTransform::AffineTransform()
+{
+    m_transform = { 1, 0, 0, 1, 0, 0 };
+}
+
+AffineTransform::AffineTransform(double a, double b, double c, double d, double e, double f)
+{
+    m_transform = { a, b, c, d, e, f };
+}
+#else
 AffineTransform::AffineTransform()
     : m_transform { { 1, 0, 0, 1, 0, 0 } }
 {
 }
 
 AffineTransform::AffineTransform(double a, double b, double c, double d, double e, double f)
-    : m_transform { { a, b, c, d, e, f } }
+    : m_transform{ { a, b, c, d, e, f } }
 {
 }
+#endif
 
 void AffineTransform::makeIdentity()
 {
