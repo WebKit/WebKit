@@ -1,3 +1,9 @@
+2014-10-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r174231 to fix non Apple builds.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2014-10-02  Andy Estes  <aestes@apple.com>
 
         [iOS] Create an SPI wrapper for _UIHighlightView and use it in WKContentView
