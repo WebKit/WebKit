@@ -474,7 +474,7 @@ class AutoInstaller(object):
 
         target_path = os.path.join(self._target_dir, target_name.replace('/', os.sep))
         if not should_refresh and self._is_downloaded(target_name, url):
-            return False
+            return
 
         files_to_remove = files_to_remove or []
         package_name = target_name.replace(os.sep, '.')
@@ -503,4 +503,3 @@ class AutoInstaller(object):
             shutil.rmtree(scratch_dir, ignore_errors=True)
         _log.debug('Auto-installed %s to:' % url)
         _log.debug('    "%s"' % target_path)
-        return True
