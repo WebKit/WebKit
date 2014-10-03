@@ -1,5 +1,16 @@
 2014-10-03  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Include batch size argument to layout tests on Windows.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start): 
+        This is a speculative fix for the the inconsistent crashes we are seeing on Windows.
+        These crashes seem to happen on random tests though generally in a spread out fashion.
+        It seems possible that the DRT instance is being clobbered somehow after running too many
+        tests in a row so we will try to mitigate this by just forcing DRT to restart periodically.
+
+2014-10-03  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Settle for 2 chid processes running NRWT on Windows.
 
         * Scripts/webkitpy/port/win.py:
