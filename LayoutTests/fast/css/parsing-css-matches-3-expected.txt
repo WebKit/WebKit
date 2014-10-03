@@ -1,0 +1,1726 @@
+Test the parsing of :matches(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 valid selectors
+PASS document.querySelector(":matches(*, *, *)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, *)"
+PASS document.querySelector(":matches(*, *, *    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, *)"
+PASS document.querySelector(":matches(*, *, #id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, #id)"
+PASS document.querySelector(":matches(*, *, #id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, #id)"
+PASS document.querySelector(":matches(*, *, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :first-child)"
+PASS document.querySelector(":matches(*, *, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :first-child)"
+PASS document.querySelector(":matches(*, *, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :visited)"
+PASS document.querySelector(":matches(*, *, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :visited)"
+PASS document.querySelector(":matches(*, *, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, ::first-line)"
+PASS document.querySelector(":matches(*, *, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, ::first-line)"
+PASS document.querySelector(":matches(*, *, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, ::after)"
+PASS document.querySelector(":matches(*, *, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, ::after)"
+PASS document.querySelector(":matches(*, *, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, *, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, *, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a > b)"
+PASS document.querySelector(":matches(*, *, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a > b)"
+PASS document.querySelector(":matches(*, *, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a + b)"
+PASS document.querySelector(":matches(*, *, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a + b)"
+PASS document.querySelector(":matches(*, *, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, *, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, *, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :not(:link))"
+PASS document.querySelector(":matches(*, *, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, *, :not(:link))"
+PASS document.querySelector(":matches(*, #id, #id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, #id)"
+PASS document.querySelector(":matches(*, #id, #id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, #id)"
+PASS document.querySelector(":matches(*, #id, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :first-child)"
+PASS document.querySelector(":matches(*, #id, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :first-child)"
+PASS document.querySelector(":matches(*, #id, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :visited)"
+PASS document.querySelector(":matches(*, #id, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :visited)"
+PASS document.querySelector(":matches(*, #id, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, ::first-line)"
+PASS document.querySelector(":matches(*, #id, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, ::first-line)"
+PASS document.querySelector(":matches(*, #id, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, ::after)"
+PASS document.querySelector(":matches(*, #id, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, ::after)"
+PASS document.querySelector(":matches(*, #id, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, #id, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, #id, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a > b)"
+PASS document.querySelector(":matches(*, #id, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a > b)"
+PASS document.querySelector(":matches(*, #id, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a + b)"
+PASS document.querySelector(":matches(*, #id, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a + b)"
+PASS document.querySelector(":matches(*, #id, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, #id, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, #id, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :not(:link))"
+PASS document.querySelector(":matches(*, #id, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, #id, :not(:link))"
+PASS document.querySelector(":matches(*, :first-child, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :first-child)"
+PASS document.querySelector(":matches(*, :first-child, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :first-child)"
+PASS document.querySelector(":matches(*, :first-child, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :visited)"
+PASS document.querySelector(":matches(*, :first-child, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :visited)"
+PASS document.querySelector(":matches(*, :first-child, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, ::first-line)"
+PASS document.querySelector(":matches(*, :first-child, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, ::first-line)"
+PASS document.querySelector(":matches(*, :first-child, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, ::after)"
+PASS document.querySelector(":matches(*, :first-child, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, ::after)"
+PASS document.querySelector(":matches(*, :first-child, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, :first-child, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, :first-child, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a > b)"
+PASS document.querySelector(":matches(*, :first-child, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a > b)"
+PASS document.querySelector(":matches(*, :first-child, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a + b)"
+PASS document.querySelector(":matches(*, :first-child, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a + b)"
+PASS document.querySelector(":matches(*, :first-child, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, :first-child, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, :first-child, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :not(:link))"
+PASS document.querySelector(":matches(*, :first-child, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :first-child, :not(:link))"
+PASS document.querySelector(":matches(*, :visited, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, :visited)"
+PASS document.querySelector(":matches(*, :visited, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, :visited)"
+PASS document.querySelector(":matches(*, :visited, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, ::first-line)"
+PASS document.querySelector(":matches(*, :visited, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, ::first-line)"
+PASS document.querySelector(":matches(*, :visited, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, ::after)"
+PASS document.querySelector(":matches(*, :visited, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, ::after)"
+PASS document.querySelector(":matches(*, :visited, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, :visited, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, :visited, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a > b)"
+PASS document.querySelector(":matches(*, :visited, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a > b)"
+PASS document.querySelector(":matches(*, :visited, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a + b)"
+PASS document.querySelector(":matches(*, :visited, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a + b)"
+PASS document.querySelector(":matches(*, :visited, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, :visited, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, :visited, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, :not(:link))"
+PASS document.querySelector(":matches(*, :visited, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :visited, :not(:link))"
+PASS document.querySelector(":matches(*, ::first-line, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(*, ::first-line, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(*, ::first-line, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, ::after)"
+PASS document.querySelector(":matches(*, ::first-line, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, ::after)"
+PASS document.querySelector(":matches(*, ::first-line, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, ::first-line, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, ::first-line, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a > b)"
+PASS document.querySelector(":matches(*, ::first-line, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a > b)"
+PASS document.querySelector(":matches(*, ::first-line, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a + b)"
+PASS document.querySelector(":matches(*, ::first-line, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a + b)"
+PASS document.querySelector(":matches(*, ::first-line, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, ::first-line, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, ::first-line, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(*, ::first-line, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(*, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, ::after)"
+PASS document.querySelector(":matches(*, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, ::after)"
+PASS document.querySelector(":matches(*, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(*, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a > b)"
+PASS document.querySelector(":matches(*, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a > b)"
+PASS document.querySelector(":matches(*, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a + b)"
+PASS document.querySelector(":matches(*, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a + b)"
+PASS document.querySelector(":matches(*, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, :not(:link))"
+PASS document.querySelector(":matches(*, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, ::after, :not(:link))"
+PASS document.querySelector(":matches(*, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(*, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(*, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(*, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a > b)"
+PASS document.querySelector(":matches(*, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a > b)"
+PASS document.querySelector(":matches(*, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a + b)"
+PASS document.querySelector(":matches(*, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a + b)"
+PASS document.querySelector(":matches(*, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, :not(:link))"
+PASS document.querySelector(":matches(*, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a > b, :not(:link))"
+PASS document.querySelector(":matches(*, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, a + b)"
+PASS document.querySelector(":matches(*, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, a + b)"
+PASS document.querySelector(":matches(*, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, :not(:link))"
+PASS document.querySelector(":matches(*, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b, :not(:link))"
+PASS document.querySelector(":matches(*, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(*, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(*, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(*, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(*, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(#id, #id, #id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, #id)"
+PASS document.querySelector(":matches(#id, #id, #id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, #id)"
+PASS document.querySelector(":matches(#id, #id, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :first-child)"
+PASS document.querySelector(":matches(#id, #id, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :first-child)"
+PASS document.querySelector(":matches(#id, #id, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :visited)"
+PASS document.querySelector(":matches(#id, #id, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :visited)"
+PASS document.querySelector(":matches(#id, #id, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, ::first-line)"
+PASS document.querySelector(":matches(#id, #id, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, ::first-line)"
+PASS document.querySelector(":matches(#id, #id, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, ::after)"
+PASS document.querySelector(":matches(#id, #id, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, ::after)"
+PASS document.querySelector(":matches(#id, #id, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, #id, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, #id, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a > b)"
+PASS document.querySelector(":matches(#id, #id, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a > b)"
+PASS document.querySelector(":matches(#id, #id, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a + b)"
+PASS document.querySelector(":matches(#id, #id, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a + b)"
+PASS document.querySelector(":matches(#id, #id, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, #id, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, #id, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :not(:link))"
+PASS document.querySelector(":matches(#id, #id, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, #id, :not(:link))"
+PASS document.querySelector(":matches(#id, :first-child, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :first-child)"
+PASS document.querySelector(":matches(#id, :first-child, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :first-child)"
+PASS document.querySelector(":matches(#id, :first-child, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :visited)"
+PASS document.querySelector(":matches(#id, :first-child, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :visited)"
+PASS document.querySelector(":matches(#id, :first-child, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, ::first-line)"
+PASS document.querySelector(":matches(#id, :first-child, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, ::first-line)"
+PASS document.querySelector(":matches(#id, :first-child, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, ::after)"
+PASS document.querySelector(":matches(#id, :first-child, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, ::after)"
+PASS document.querySelector(":matches(#id, :first-child, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, :first-child, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, :first-child, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a > b)"
+PASS document.querySelector(":matches(#id, :first-child, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a > b)"
+PASS document.querySelector(":matches(#id, :first-child, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a + b)"
+PASS document.querySelector(":matches(#id, :first-child, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a + b)"
+PASS document.querySelector(":matches(#id, :first-child, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, :first-child, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, :first-child, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :not(:link))"
+PASS document.querySelector(":matches(#id, :first-child, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :first-child, :not(:link))"
+PASS document.querySelector(":matches(#id, :visited, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, :visited)"
+PASS document.querySelector(":matches(#id, :visited, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, :visited)"
+PASS document.querySelector(":matches(#id, :visited, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, ::first-line)"
+PASS document.querySelector(":matches(#id, :visited, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, ::first-line)"
+PASS document.querySelector(":matches(#id, :visited, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, ::after)"
+PASS document.querySelector(":matches(#id, :visited, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, ::after)"
+PASS document.querySelector(":matches(#id, :visited, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, :visited, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, :visited, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a > b)"
+PASS document.querySelector(":matches(#id, :visited, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a > b)"
+PASS document.querySelector(":matches(#id, :visited, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a + b)"
+PASS document.querySelector(":matches(#id, :visited, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a + b)"
+PASS document.querySelector(":matches(#id, :visited, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, :visited, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, :visited, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, :not(:link))"
+PASS document.querySelector(":matches(#id, :visited, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :visited, :not(:link))"
+PASS document.querySelector(":matches(#id, ::first-line, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(#id, ::first-line, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(#id, ::first-line, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, ::after)"
+PASS document.querySelector(":matches(#id, ::first-line, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, ::after)"
+PASS document.querySelector(":matches(#id, ::first-line, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, ::first-line, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, ::first-line, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a > b)"
+PASS document.querySelector(":matches(#id, ::first-line, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a > b)"
+PASS document.querySelector(":matches(#id, ::first-line, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a + b)"
+PASS document.querySelector(":matches(#id, ::first-line, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a + b)"
+PASS document.querySelector(":matches(#id, ::first-line, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, ::first-line, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, ::first-line, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(#id, ::first-line, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(#id, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, ::after)"
+PASS document.querySelector(":matches(#id, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, ::after)"
+PASS document.querySelector(":matches(#id, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a > b)"
+PASS document.querySelector(":matches(#id, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a > b)"
+PASS document.querySelector(":matches(#id, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a + b)"
+PASS document.querySelector(":matches(#id, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a + b)"
+PASS document.querySelector(":matches(#id, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, :not(:link))"
+PASS document.querySelector(":matches(#id, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, ::after, :not(:link))"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(#id, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(#id, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a > b)"
+PASS document.querySelector(":matches(#id, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a > b)"
+PASS document.querySelector(":matches(#id, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a + b)"
+PASS document.querySelector(":matches(#id, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a + b)"
+PASS document.querySelector(":matches(#id, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, :not(:link))"
+PASS document.querySelector(":matches(#id, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a > b, :not(:link))"
+PASS document.querySelector(":matches(#id, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, a + b)"
+PASS document.querySelector(":matches(#id, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, a + b)"
+PASS document.querySelector(":matches(#id, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, :not(:link))"
+PASS document.querySelector(":matches(#id, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b, :not(:link))"
+PASS document.querySelector(":matches(#id, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(#id, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(#id, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(#id, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(#id, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:first-child, :first-child, :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :first-child)"
+PASS document.querySelector(":matches(:first-child, :first-child, :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :first-child)"
+PASS document.querySelector(":matches(:first-child, :first-child, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :visited)"
+PASS document.querySelector(":matches(:first-child, :first-child, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :visited)"
+PASS document.querySelector(":matches(:first-child, :first-child, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, ::first-line)"
+PASS document.querySelector(":matches(:first-child, :first-child, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, ::first-line)"
+PASS document.querySelector(":matches(:first-child, :first-child, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, ::after)"
+PASS document.querySelector(":matches(:first-child, :first-child, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, ::after)"
+PASS document.querySelector(":matches(:first-child, :first-child, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, :first-child, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, :first-child, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a > b)"
+PASS document.querySelector(":matches(:first-child, :first-child, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a > b)"
+PASS document.querySelector(":matches(:first-child, :first-child, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a + b)"
+PASS document.querySelector(":matches(:first-child, :first-child, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a + b)"
+PASS document.querySelector(":matches(:first-child, :first-child, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, :first-child, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, :first-child, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :not(:link))"
+PASS document.querySelector(":matches(:first-child, :first-child, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :first-child, :not(:link))"
+PASS document.querySelector(":matches(:first-child, :visited, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, :visited)"
+PASS document.querySelector(":matches(:first-child, :visited, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, :visited)"
+PASS document.querySelector(":matches(:first-child, :visited, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, ::first-line)"
+PASS document.querySelector(":matches(:first-child, :visited, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, ::first-line)"
+PASS document.querySelector(":matches(:first-child, :visited, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, ::after)"
+PASS document.querySelector(":matches(:first-child, :visited, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, ::after)"
+PASS document.querySelector(":matches(:first-child, :visited, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, :visited, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, :visited, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a > b)"
+PASS document.querySelector(":matches(:first-child, :visited, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a > b)"
+PASS document.querySelector(":matches(:first-child, :visited, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a + b)"
+PASS document.querySelector(":matches(:first-child, :visited, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a + b)"
+PASS document.querySelector(":matches(:first-child, :visited, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, :visited, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, :visited, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, :not(:link))"
+PASS document.querySelector(":matches(:first-child, :visited, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :visited, :not(:link))"
+PASS document.querySelector(":matches(:first-child, ::first-line, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(:first-child, ::first-line, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(:first-child, ::first-line, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, ::after)"
+PASS document.querySelector(":matches(:first-child, ::first-line, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, ::after)"
+PASS document.querySelector(":matches(:first-child, ::first-line, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, ::first-line, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, ::first-line, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a > b)"
+PASS document.querySelector(":matches(:first-child, ::first-line, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a > b)"
+PASS document.querySelector(":matches(:first-child, ::first-line, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a + b)"
+PASS document.querySelector(":matches(:first-child, ::first-line, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a + b)"
+PASS document.querySelector(":matches(:first-child, ::first-line, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, ::first-line, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, ::first-line, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(:first-child, ::first-line, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(:first-child, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, ::after)"
+PASS document.querySelector(":matches(:first-child, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, ::after)"
+PASS document.querySelector(":matches(:first-child, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a > b)"
+PASS document.querySelector(":matches(:first-child, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a > b)"
+PASS document.querySelector(":matches(:first-child, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a + b)"
+PASS document.querySelector(":matches(:first-child, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a + b)"
+PASS document.querySelector(":matches(:first-child, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, :not(:link))"
+PASS document.querySelector(":matches(:first-child, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, ::after, :not(:link))"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(:first-child, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(:first-child, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a > b)"
+PASS document.querySelector(":matches(:first-child, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a > b)"
+PASS document.querySelector(":matches(:first-child, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a + b)"
+PASS document.querySelector(":matches(:first-child, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a + b)"
+PASS document.querySelector(":matches(:first-child, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, :not(:link))"
+PASS document.querySelector(":matches(:first-child, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a > b, :not(:link))"
+PASS document.querySelector(":matches(:first-child, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, a + b)"
+PASS document.querySelector(":matches(:first-child, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, a + b)"
+PASS document.querySelector(":matches(:first-child, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, :not(:link))"
+PASS document.querySelector(":matches(:first-child, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b, :not(:link))"
+PASS document.querySelector(":matches(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:first-child, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(:first-child, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(:first-child, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:first-child, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:visited, :visited, :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, :visited)"
+PASS document.querySelector(":matches(:visited, :visited, :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, :visited)"
+PASS document.querySelector(":matches(:visited, :visited, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, ::first-line)"
+PASS document.querySelector(":matches(:visited, :visited, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, ::first-line)"
+PASS document.querySelector(":matches(:visited, :visited, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, ::after)"
+PASS document.querySelector(":matches(:visited, :visited, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, ::after)"
+PASS document.querySelector(":matches(:visited, :visited, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, :visited, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, :visited, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a > b)"
+PASS document.querySelector(":matches(:visited, :visited, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a > b)"
+PASS document.querySelector(":matches(:visited, :visited, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a + b)"
+PASS document.querySelector(":matches(:visited, :visited, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a + b)"
+PASS document.querySelector(":matches(:visited, :visited, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, :visited, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, :visited, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, :not(:link))"
+PASS document.querySelector(":matches(:visited, :visited, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :visited, :not(:link))"
+PASS document.querySelector(":matches(:visited, ::first-line, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(:visited, ::first-line, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(:visited, ::first-line, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, ::after)"
+PASS document.querySelector(":matches(:visited, ::first-line, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, ::after)"
+PASS document.querySelector(":matches(:visited, ::first-line, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, ::first-line, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, ::first-line, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a > b)"
+PASS document.querySelector(":matches(:visited, ::first-line, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a > b)"
+PASS document.querySelector(":matches(:visited, ::first-line, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a + b)"
+PASS document.querySelector(":matches(:visited, ::first-line, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a + b)"
+PASS document.querySelector(":matches(:visited, ::first-line, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, ::first-line, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, ::first-line, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(:visited, ::first-line, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(:visited, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, ::after)"
+PASS document.querySelector(":matches(:visited, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, ::after)"
+PASS document.querySelector(":matches(:visited, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a > b)"
+PASS document.querySelector(":matches(:visited, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a > b)"
+PASS document.querySelector(":matches(:visited, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a + b)"
+PASS document.querySelector(":matches(:visited, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a + b)"
+PASS document.querySelector(":matches(:visited, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, :not(:link))"
+PASS document.querySelector(":matches(:visited, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, ::after, :not(:link))"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(:visited, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(:visited, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a > b)"
+PASS document.querySelector(":matches(:visited, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a > b)"
+PASS document.querySelector(":matches(:visited, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a + b)"
+PASS document.querySelector(":matches(:visited, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a + b)"
+PASS document.querySelector(":matches(:visited, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, :not(:link))"
+PASS document.querySelector(":matches(:visited, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a > b, :not(:link))"
+PASS document.querySelector(":matches(:visited, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, a + b)"
+PASS document.querySelector(":matches(:visited, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, a + b)"
+PASS document.querySelector(":matches(:visited, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, :not(:link))"
+PASS document.querySelector(":matches(:visited, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b, :not(:link))"
+PASS document.querySelector(":matches(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:visited, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(:visited, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(:visited, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:visited, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(::first-line, ::first-line, ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(::first-line, ::first-line, ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, ::first-line)"
+PASS document.querySelector(":matches(::first-line, ::first-line, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, ::after)"
+PASS document.querySelector(":matches(::first-line, ::first-line, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, ::after)"
+PASS document.querySelector(":matches(::first-line, ::first-line, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, ::first-line, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, ::first-line, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a > b)"
+PASS document.querySelector(":matches(::first-line, ::first-line, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a > b)"
+PASS document.querySelector(":matches(::first-line, ::first-line, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a + b)"
+PASS document.querySelector(":matches(::first-line, ::first-line, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a + b)"
+PASS document.querySelector(":matches(::first-line, ::first-line, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, ::first-line, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, ::first-line, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(::first-line, ::first-line, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::first-line, :not(:link))"
+PASS document.querySelector(":matches(::first-line, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, ::after)"
+PASS document.querySelector(":matches(::first-line, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, ::after)"
+PASS document.querySelector(":matches(::first-line, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a > b)"
+PASS document.querySelector(":matches(::first-line, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a > b)"
+PASS document.querySelector(":matches(::first-line, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a + b)"
+PASS document.querySelector(":matches(::first-line, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a + b)"
+PASS document.querySelector(":matches(::first-line, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, :not(:link))"
+PASS document.querySelector(":matches(::first-line, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, ::after, :not(:link))"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(::first-line, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(::first-line, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a > b)"
+PASS document.querySelector(":matches(::first-line, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a > b)"
+PASS document.querySelector(":matches(::first-line, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a + b)"
+PASS document.querySelector(":matches(::first-line, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a + b)"
+PASS document.querySelector(":matches(::first-line, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, :not(:link))"
+PASS document.querySelector(":matches(::first-line, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a > b, :not(:link))"
+PASS document.querySelector(":matches(::first-line, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, a + b)"
+PASS document.querySelector(":matches(::first-line, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, a + b)"
+PASS document.querySelector(":matches(::first-line, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, :not(:link))"
+PASS document.querySelector(":matches(::first-line, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b, :not(:link))"
+PASS document.querySelector(":matches(::first-line, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::first-line, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(::first-line, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(::first-line, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(::first-line, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(::after, ::after, ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, ::after)"
+PASS document.querySelector(":matches(::after, ::after, ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, ::after)"
+PASS document.querySelector(":matches(::after, ::after, .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(::after, ::after, .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, .class:not(.notclass))"
+PASS document.querySelector(":matches(::after, ::after, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a > b)"
+PASS document.querySelector(":matches(::after, ::after, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a > b)"
+PASS document.querySelector(":matches(::after, ::after, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a + b)"
+PASS document.querySelector(":matches(::after, ::after, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a + b)"
+PASS document.querySelector(":matches(::after, ::after, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, ::after, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, ::after, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, :not(:link))"
+PASS document.querySelector(":matches(::after, ::after, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, ::after, :not(:link))"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(::after, .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(::after, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a > b)"
+PASS document.querySelector(":matches(::after, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a > b)"
+PASS document.querySelector(":matches(::after, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a + b)"
+PASS document.querySelector(":matches(::after, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a + b)"
+PASS document.querySelector(":matches(::after, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, :not(:link))"
+PASS document.querySelector(":matches(::after, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a > b, :not(:link))"
+PASS document.querySelector(":matches(::after, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, a + b)"
+PASS document.querySelector(":matches(::after, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, a + b)"
+PASS document.querySelector(":matches(::after, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, :not(:link))"
+PASS document.querySelector(":matches(::after, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b, :not(:link))"
+PASS document.querySelector(":matches(::after, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(::after, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(::after, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(::after, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(::after, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass))"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a > b)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), .class:not(.notclass), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), .class:not(.notclass), :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a > b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a > b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a > b, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, a + b)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :not(:link), :not(:link))"
+PASS document.querySelector(":matches(.class:not(.notclass), :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a > b, a > b, a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a > b)"
+PASS document.querySelector(":matches(a > b, a > b, a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a > b)"
+PASS document.querySelector(":matches(a > b, a > b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a + b)"
+PASS document.querySelector(":matches(a > b, a > b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a + b)"
+PASS document.querySelector(":matches(a > b, a > b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a > b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a > b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, :not(:link))"
+PASS document.querySelector(":matches(a > b, a > b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a > b, :not(:link))"
+PASS document.querySelector(":matches(a > b, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, a + b)"
+PASS document.querySelector(":matches(a > b, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, a + b)"
+PASS document.querySelector(":matches(a > b, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, :not(:link))"
+PASS document.querySelector(":matches(a > b, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b, :not(:link))"
+PASS document.querySelector(":matches(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a > b, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a > b, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a > b, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a > b, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a + b, a + b, a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, a + b)"
+PASS document.querySelector(":matches(a + b, a + b, a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, a + b)"
+PASS document.querySelector(":matches(a + b, a + b, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b, a + b, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b, a + b, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, :not(:link))"
+PASS document.querySelector(":matches(a + b, a + b, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b, :not(:link))"
+PASS document.querySelector(":matches(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a + b, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a + b, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a + b, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:not(:link), :not(:link), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :not(:link), :not(:link))"
+PASS document.querySelector(":matches(:not(:link), :not(:link), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :not(:link), :not(:link))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

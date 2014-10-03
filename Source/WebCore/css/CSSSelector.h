@@ -107,6 +107,7 @@ namespace WebCore {
             PseudoClassDisabled,
             PseudoClassOptional,
 #if ENABLE(CSS_SELECTORS_LEVEL4)
+            PseudoClassMatches,
             PseudoClassPlaceholderShown,
 #endif
             PseudoClassRequired,

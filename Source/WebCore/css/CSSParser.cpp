@@ -10685,6 +10685,15 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
         }
         return false;
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    case 7:
+        if (isEqualToCSSIdentifier(name, "matches")) {
+            m_token = MATCHESFUNCTION;
+            return true;
+        }
+        return false;
+#endif
+
     case 9:
         if (isEqualToCSSIdentifier(name, "nth-child")) {
             m_token = NTHCHILDFUNCTION;

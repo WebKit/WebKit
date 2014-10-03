@@ -253,6 +253,16 @@ static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector*
 
 }
 
+static void appendSelectorList(StringBuilder& str, const CSSSelectorList* selectorList)
+{
+    const CSSSelector* firstSubSelector = selectorList->first();
+    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (subSelector != firstSubSelector)
+            str.appendLiteral(", ");
+        str.append(subSelector->selectorText());
+    }
+}
+
 String CSSSelector::selectorText(const String& rightSide) const
 {
     StringBuilder str;
@@ -406,12 +416,7 @@ String CSSSelector::selectorText(const String& rightSide) const
 #if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = cs->selectorList()) {
                     str.appendLiteral(" of ");
-                    const CSSSelector* firstSubSelector = selectorList->first();
-                    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                        if (subSelector != firstSubSelector)
-                            str.appendLiteral(", ");
-                        str.append(subSelector->selectorText());
-                    }
+                    appendSelectorList(str, selectorList);
                 }
 #else
                 ASSERT(!cs->selectorList());
@@ -440,6 +445,12 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.appendLiteral(":optional");
                 break;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
+            case CSSSelector::PseudoClassMatches: {
+                str.appendLiteral(":matches(");
+                appendSelectorList(str, cs->selectorList());
+                str.append(')');
+                break;
+            }
             case CSSSelector::PseudoClassPlaceholderShown:
                 str.appendLiteral(":placeholder-shown");
                 break;

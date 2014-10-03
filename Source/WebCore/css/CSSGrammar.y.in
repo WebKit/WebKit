@@ -61,6 +61,9 @@ static inline bool isCSSTokenAString(int yytype)
     case MAXFUNCTION:
     case NTHCHILDFUNCTION:
     case NTHCHILDSELECTORSEPARATOR:
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    case MATCHESFUNCTION:
+#endif
     case UNICODERANGE:
         return true;
     default:
@@ -224,6 +227,10 @@ static bool isValidNthSelectorList(const Vector<std::unique_ptr<CSSParserSelecto
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
 %token <string> NTHCHILDFUNCTION
+
+#if ENABLE_CSS_SELECTORS_LEVEL4
+%token <string> MATCHESFUNCTION
+#endif
 
 %token <string> UNICODERANGE
 
@@ -1331,6 +1338,20 @@ pseudo:
         }
     }
 
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    | ':' MATCHESFUNCTION maybe_space selector_list maybe_space ')' {
+        $$ = nullptr;
+        if ($4) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
+            selector->setPseudoClassValue($2);
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassMatches)
+                $$ = selector.release();
+        }
+    }
+#endif
+
     // Definition of :nth-child().
     | ':' NTHCHILDFUNCTION maybe_space NTH nth_selector_ending {
         $$ = nullptr;
@@ -1803,6 +1824,9 @@ invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesi
 
 opening_parenthesis:
     '(' | FUNCTION | CALCFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    | MATCHESFUNCTION
+#endif
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION
 #endif
