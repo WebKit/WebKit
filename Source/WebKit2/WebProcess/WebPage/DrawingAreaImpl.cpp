@@ -215,36 +215,6 @@ bool DrawingAreaImpl::forceRepaintAsync(uint64_t callbackID)
     return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
 }
 
-void DrawingAreaImpl::didInstallPageOverlay(PageOverlay* pageOverlay)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didInstallPageOverlay(pageOverlay);
-}
-
-void DrawingAreaImpl::didUninstallPageOverlay(PageOverlay* pageOverlay)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didUninstallPageOverlay(pageOverlay);
-
-    setNeedsDisplay();
-}
-
-void DrawingAreaImpl::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
-{
-    if (m_layerTreeHost) {
-        m_layerTreeHost->setPageOverlayNeedsDisplay(pageOverlay, rect);
-        return;
-    }
-
-    setNeedsDisplayInRect(rect);
-}
-
-void DrawingAreaImpl::setPageOverlayOpacity(PageOverlay* pageOverlay, float value)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->setPageOverlayOpacity(pageOverlay, value);
-}
-
 void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
 {
     m_isPaintingEnabled = paintingEnabled;

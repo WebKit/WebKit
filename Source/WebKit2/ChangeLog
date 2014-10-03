@@ -1,3 +1,23 @@
+2014-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] URTBF after r174231.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkit_web_page_get_dom_document):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didInstallPageOverlay): Deleted.
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay): Deleted.
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay): Deleted.
+        (WebKit::DrawingAreaImpl::setPageOverlayOpacity): Deleted.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::createPageOverlayLayer):
+        (WebKit::LayerTreeHostGtk::destroyPageOverlayLayer):
+        (WebKit::LayerTreeHostGtk::didInstallPageOverlay): Deleted.
+        (WebKit::LayerTreeHostGtk::didUninstallPageOverlay): Deleted.
+        (WebKit::LayerTreeHostGtk::setPageOverlayNeedsDisplay): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2014-10-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix build break since r174231 and r174256

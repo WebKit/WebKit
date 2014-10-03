@@ -39,6 +39,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/MainFrame.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -420,7 +421,7 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
-    Frame* coreFrame = webPage->priv->webPage->mainFrame();
+    MainFrame* coreFrame = webPage->priv->webPage->mainFrame();
     if (!coreFrame)
         return 0;
 

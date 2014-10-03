@@ -241,28 +241,6 @@ void LayerTreeHostGtk::forceRepaint()
     scheduleLayerFlush();
 }
 
-void LayerTreeHostGtk::didInstallPageOverlay(PageOverlay* pageOverlay)
-{
-    createPageOverlayLayer(pageOverlay);
-    scheduleLayerFlush();
-}
-
-void LayerTreeHostGtk::didUninstallPageOverlay(PageOverlay* pageOverlay)
-{
-    destroyPageOverlayLayer(pageOverlay);
-    scheduleLayerFlush();
-}
-
-void LayerTreeHostGtk::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
-{
-    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
-    if (!layer)
-        return;
-
-    layer->setNeedsDisplayInRect(rect);
-    scheduleLayerFlush();
-}
-
 void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
     if (graphicsLayer == m_nonCompositedContentLayer.get()) {
@@ -349,7 +327,7 @@ void LayerTreeHostGtk::flushAndRenderLayers()
     }
 }
 
-void LayerTreeHostGtk::createPageOverlayLayer(PageOverlay* pageOverlay)
+void LayerTreeHostGtk::createPageOverlayLayer(WebCore::PageOverlay* pageOverlay)
 {
     std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), *this);
 #ifndef NDEBUG
@@ -366,7 +344,7 @@ void LayerTreeHostGtk::createPageOverlayLayer(PageOverlay* pageOverlay)
     m_pageOverlayLayers.add(pageOverlay, WTF::move(layer));
 }
 
-void LayerTreeHostGtk::destroyPageOverlayLayer(PageOverlay* pageOverlay)
+void LayerTreeHostGtk::destroyPageOverlayLayer(WebCore::PageOverlay* pageOverlay)
 {
     std::unique_ptr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
     ASSERT(layer);
