@@ -38,9 +38,9 @@ namespace WebCore {
 class CSSRule;
 class StyleRuleSupports;
 
-class CSSSupportsRule : public CSSGroupingRule {
+class CSSSupportsRule final : public CSSGroupingRule {
 public:
-    static PassRefPtr<CSSSupportsRule> create(StyleRuleSupports* rule, CSSStyleSheet* sheet)
+    static PassRefPtr<CSSSupportsRule> create(StyleRuleSupports& rule, CSSStyleSheet* sheet)
     {
         return adoptRef(new CSSSupportsRule(rule, sheet));
     }
@@ -53,7 +53,7 @@ public:
     String conditionText() const;
 
 private:
-    CSSSupportsRule(StyleRuleSupports*, CSSStyleSheet*);
+    CSSSupportsRule(StyleRuleSupports&, CSSStyleSheet*);
 };
 
 } // namespace WebCore

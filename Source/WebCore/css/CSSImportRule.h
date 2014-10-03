@@ -31,24 +31,24 @@ class MediaList;
 class MediaQuerySet;
 class StyleRuleImport;
 
-class CSSImportRule : public CSSRule {
+class CSSImportRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSImportRule> create(StyleRuleImport* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSImportRule(rule, sheet)); }
+    static PassRefPtr<CSSImportRule> create(StyleRuleImport& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSImportRule(rule, sheet)); }
     
     virtual ~CSSImportRule();
 
     virtual CSSRule::Type type() const override { return IMPORT_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     String href() const;
     MediaList& media() const;
     CSSStyleSheet* styleSheet() const;
 
 private:
-    CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
+    CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
 
-    RefPtr<StyleRuleImport> m_importRule;
+    Ref<StyleRuleImport> m_importRule;
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
 };

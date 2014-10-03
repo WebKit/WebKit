@@ -30,15 +30,15 @@ class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
 class StyleRule;
 
-class CSSStyleRule : public CSSRule {
+class CSSStyleRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSStyleRule> create(StyleRule* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSStyleRule(rule, sheet)); }
+    static PassRefPtr<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSStyleRule(rule, sheet)); }
 
     virtual ~CSSStyleRule();
 
     virtual CSSRule::Type type() const { return STYLE_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     String selectorText() const;
     void setSelectorText(const String&);
@@ -46,14 +46,14 @@ public:
     CSSStyleDeclaration& style();
 
     // FIXME: Not CSSOM. Remove.
-    StyleRule* styleRule() const { return m_styleRule.get(); }
+    StyleRule* styleRule() const { return &const_cast<StyleRule&>(m_styleRule.get()); }
 
 private:
-    CSSStyleRule(StyleRule*, CSSStyleSheet*);
+    CSSStyleRule(StyleRule&, CSSStyleSheet*);
 
     String generateSelectorText() const;
 
-    RefPtr<StyleRule> m_styleRule;    
+    Ref<StyleRule> m_styleRule;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

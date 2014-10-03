@@ -201,7 +201,7 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (!m_childRuleCSSOMWrappers[i])
             continue;
-        m_childRuleCSSOMWrappers[i]->reattach(m_contents->ruleAt(i));
+        m_childRuleCSSOMWrappers[i]->reattach(*m_contents->ruleAt(i));
     }
 }
 

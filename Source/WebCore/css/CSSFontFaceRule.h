@@ -30,22 +30,22 @@ class CSSStyleDeclaration;
 class StyleRuleFontFace;
 class StyleRuleCSSStyleDeclaration;
 
-class CSSFontFaceRule : public CSSRule {
+class CSSFontFaceRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSFontFaceRule> create(StyleRuleFontFace* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSFontFaceRule(rule, sheet)); }
+    static PassRefPtr<CSSFontFaceRule> create(StyleRuleFontFace& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSFontFaceRule(rule, sheet)); }
 
     virtual ~CSSFontFaceRule();
 
     virtual CSSRule::Type type() const override { return FONT_FACE_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     CSSStyleDeclaration& style();
 
 private:
-    CSSFontFaceRule(StyleRuleFontFace*, CSSStyleSheet* parent);
+    CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
 
-    RefPtr<StyleRuleFontFace> m_fontFaceRule;
+    Ref<StyleRuleFontFace> m_fontFaceRule;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

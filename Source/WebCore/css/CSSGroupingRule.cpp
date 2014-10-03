@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-CSSGroupingRule::CSSGroupingRule(StyleRuleGroup* groupRule, CSSStyleSheet* parent)
+CSSGroupingRule::CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_groupRule(groupRule)
-    , m_childRuleCSSOMWrappers(groupRule->childRules().size())
+    , m_childRuleCSSOMWrappers(groupRule.childRules().size())
 {
 }
 
@@ -148,13 +148,12 @@ CSSRuleList& CSSGroupingRule::cssRules() const
     return *m_ruleListCSSOMWrapper;
 }
 
-void CSSGroupingRule::reattach(StyleRuleBase* rule)
+void CSSGroupingRule::reattach(StyleRuleBase& rule)
 {
-    ASSERT(rule);
-    m_groupRule = static_cast<StyleRuleGroup*>(rule);
+    m_groupRule = static_cast<StyleRuleGroup&>(rule);
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->reattach(m_groupRule->childRules()[i].get());
+            m_childRuleCSSOMWrappers[i]->reattach(*m_groupRule.get().childRules()[i]);
     }
 }
 

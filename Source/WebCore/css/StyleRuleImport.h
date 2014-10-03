@@ -47,7 +47,7 @@ public:
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
     bool isLoading() const;
-    MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
+    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
 
     void requestStyleSheet();
 

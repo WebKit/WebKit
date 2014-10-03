@@ -41,9 +41,9 @@ class CSSStyleDeclaration;
 class StyleRuleViewport;
 class StyleRuleCSSStyleDeclaration;
 
-class WebKitCSSViewportRule: public CSSRule {
+class WebKitCSSViewportRule final : public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSViewportRule> create(StyleRuleViewport* viewportRule, CSSStyleSheet* sheet)
+    static PassRefPtr<WebKitCSSViewportRule> create(StyleRuleViewport& viewportRule, CSSStyleSheet* sheet)
     {
         return adoptRef(new WebKitCSSViewportRule(viewportRule, sheet));
     }
@@ -51,14 +51,14 @@ public:
 
     virtual CSSRule::Type type() const override { return WEBKIT_VIEWPORT_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     CSSStyleDeclaration& style();
 
 private:
     WebKitCSSViewportRule(StyleRuleViewport*, CSSStyleSheet*);
 
-    RefPtr<StyleRuleViewport> m_viewportRule;
+    Ref<StyleRuleViewport> m_viewportRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

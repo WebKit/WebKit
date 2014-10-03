@@ -64,7 +64,7 @@ public:
 
     virtual Type type() const = 0;
     virtual String cssText() const = 0;
-    virtual void reattach(StyleRuleBase*) = 0;
+    virtual void reattach(StyleRuleBase&) = 0;
 
     void setParentStyleSheet(CSSStyleSheet* styleSheet)
     {

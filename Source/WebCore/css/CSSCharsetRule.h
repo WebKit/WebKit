@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class CSSCharsetRule : public CSSRule {
+class CSSCharsetRule final : public CSSRule {
 public:
     static PassRefPtr<CSSCharsetRule> create(CSSStyleSheet* parent, const String& encoding)
     {
@@ -37,7 +37,7 @@ public:
 
     virtual CSSRule::Type type() const override { return CHARSET_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase* rule) override { ASSERT_UNUSED(rule, !rule); }
+    virtual void reattach(StyleRuleBase&) override { }
 
     const String& encoding() const { return m_encoding; }
     void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }

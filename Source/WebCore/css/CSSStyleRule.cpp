@@ -42,7 +42,7 @@ static SelectorTextCache& selectorTextCache()
     return cache;
 }
 
-CSSStyleRule::CSSStyleRule(StyleRule* styleRule, CSSStyleSheet* parent)
+CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_styleRule(styleRule)
 {
@@ -131,11 +131,10 @@ String CSSStyleRule::cssText() const
     return result.toString();
 }
 
-void CSSStyleRule::reattach(StyleRuleBase* rule)
+void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    ASSERT(rule);
-    ASSERT_WITH_SECURITY_IMPLICATION(rule->isStyleRule());
-    m_styleRule = static_cast<StyleRule*>(rule);
+    ASSERT_WITH_SECURITY_IMPLICATION(rule.isStyleRule());
+    m_styleRule = static_cast<StyleRule&>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }

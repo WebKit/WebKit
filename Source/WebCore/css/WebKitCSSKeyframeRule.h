@@ -65,13 +65,13 @@ private:
     String m_key;
 };
 
-class WebKitCSSKeyframeRule : public CSSRule {
+class WebKitCSSKeyframeRule final : public CSSRule {
 public:
     virtual ~WebKitCSSKeyframeRule();
 
     virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAME_RULE; }
     virtual String cssText() const override { return m_keyframe->cssText(); }
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String& s) { m_keyframe->setKeyText(s); }
@@ -79,9 +79,9 @@ public:
     CSSStyleDeclaration& style();
 
 private:
-    WebKitCSSKeyframeRule(StyleKeyframe*, WebKitCSSKeyframesRule* parent);
+    WebKitCSSKeyframeRule(StyleKeyframe&, WebKitCSSKeyframesRule* parent);
 
-    RefPtr<StyleKeyframe> m_keyframe;
+    Ref<StyleKeyframe> m_keyframe;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
     
     friend class WebKitCSSKeyframesRule;

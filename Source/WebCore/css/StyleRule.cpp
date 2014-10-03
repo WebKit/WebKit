@@ -147,39 +147,39 @@ PassRef<StyleRuleBase> StyleRuleBase::copy() const
 PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     RefPtr<CSSRule> rule;
-    StyleRuleBase* self = const_cast<StyleRuleBase*>(this);
+    StyleRuleBase& self = const_cast<StyleRuleBase&>(*this);
     switch (type()) {
     case Style:
-        rule = CSSStyleRule::create(static_cast<StyleRule*>(self), parentSheet);
+        rule = CSSStyleRule::create(static_cast<StyleRule&>(self), parentSheet);
         break;
     case Page:
-        rule = CSSPageRule::create(static_cast<StyleRulePage*>(self), parentSheet);
+        rule = CSSPageRule::create(static_cast<StyleRulePage&>(self), parentSheet);
         break;
     case FontFace:
-        rule = CSSFontFaceRule::create(static_cast<StyleRuleFontFace*>(self), parentSheet);
+        rule = CSSFontFaceRule::create(static_cast<StyleRuleFontFace&>(self), parentSheet);
         break;
     case Media:
-        rule = CSSMediaRule::create(static_cast<StyleRuleMedia*>(self), parentSheet);
+        rule = CSSMediaRule::create(static_cast<StyleRuleMedia&>(self), parentSheet);
         break;
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     case Supports:
-        rule = CSSSupportsRule::create(static_cast<StyleRuleSupports*>(self), parentSheet);
+        rule = CSSSupportsRule::create(static_cast<StyleRuleSupports&>(self), parentSheet);
         break;
 #endif
 #if ENABLE(CSS_REGIONS)
     case Region:
-        rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion*>(self), parentSheet);
+        rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion&>(self), parentSheet);
         break;
 #endif
     case Import:
-        rule = CSSImportRule::create(static_cast<StyleRuleImport*>(self), parentSheet);
+        rule = CSSImportRule::create(static_cast<StyleRuleImport&>(self), parentSheet);
         break;
     case Keyframes:
-        rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes*>(self), parentSheet);
+        rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes&>(self), parentSheet);
         break;
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
-        rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport*>(self), parentSheet);
+        rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport&>(self), parentSheet);
         break;
 #endif
     case Unknown:

@@ -65,15 +65,15 @@ private:
     AtomicString m_name;
 };
 
-class WebKitCSSKeyframesRule : public CSSRule {
+class WebKitCSSKeyframesRule final : public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSKeyframesRule> create(StyleRuleKeyframes* rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSKeyframesRule(rule, sheet)); }
+    static PassRefPtr<WebKitCSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSKeyframesRule(rule, sheet)); }
 
     virtual ~WebKitCSSKeyframesRule();
 
     virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAMES_RULE; }
     virtual String cssText() const override;
-    virtual void reattach(StyleRuleBase*) override;
+    virtual void reattach(StyleRuleBase&) override;
 
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);
@@ -90,9 +90,9 @@ public:
     WebKitCSSKeyframeRule* item(unsigned index) const;
 
 private:
-    WebKitCSSKeyframesRule(StyleRuleKeyframes*, CSSStyleSheet* parent);
+    WebKitCSSKeyframesRule(StyleRuleKeyframes&, CSSStyleSheet* parent);
 
-    RefPtr<StyleRuleKeyframes> m_keyframesRule;
+    Ref<StyleRuleKeyframes> m_keyframesRule;
     mutable Vector<RefPtr<WebKitCSSKeyframeRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

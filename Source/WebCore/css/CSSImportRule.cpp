@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CSSImportRule::CSSImportRule(StyleRuleImport* importRule, CSSStyleSheet* parent)
+CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_importRule(importRule)
 {
@@ -50,13 +50,13 @@ CSSImportRule::~CSSImportRule()
 
 String CSSImportRule::href() const
 {
-    return m_importRule->href();
+    return m_importRule.get().href();
 }
 
 MediaList& CSSImportRule::media() const
 {
     if (!m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper = MediaList::create(m_importRule->mediaQueries(), const_cast<CSSImportRule*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(m_importRule.get().mediaQueries(), const_cast<CSSImportRule*>(this));
     return *m_mediaCSSOMWrapper;
 }
 
@@ -64,11 +64,11 @@ String CSSImportRule::cssText() const
 {
     StringBuilder result;
     result.appendLiteral("@import url(\"");
-    result.append(m_importRule->href());
+    result.append(m_importRule.get().href());
     result.appendLiteral("\")");
 
-    if (m_importRule->mediaQueries()) {
-        String mediaText = m_importRule->mediaQueries()->mediaText();
+    if (m_importRule.get().mediaQueries()) {
+        String mediaText = m_importRule.get().mediaQueries()->mediaText();
         if (!mediaText.isEmpty()) {
             result.append(' ');
             result.append(mediaText);
@@ -81,15 +81,15 @@ String CSSImportRule::cssText() const
 
 CSSStyleSheet* CSSImportRule::styleSheet() const
 { 
-    if (!m_importRule->styleSheet())
+    if (!m_importRule.get().styleSheet())
         return 0;
 
     if (!m_styleSheetCSSOMWrapper)
-        m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule->styleSheet(), const_cast<CSSImportRule*>(this));
+        m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this));
     return m_styleSheetCSSOMWrapper.get(); 
 }
 
-void CSSImportRule::reattach(StyleRuleBase*)
+void CSSImportRule::reattach(StyleRuleBase&)
 {
     // FIXME: Implement when enabling caching for stylesheets with import rules.
     ASSERT_NOT_REACHED();

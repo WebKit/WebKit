@@ -92,7 +92,7 @@ String StyleKeyframe::cssText() const
     return result.toString();
 }
 
-WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSKeyframesRule* parent)
+WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe& keyframe, WebKitCSSKeyframesRule* parent)
     : CSSRule(0)
     , m_keyframe(keyframe)
 {
@@ -112,7 +112,7 @@ CSSStyleDeclaration& WebKitCSSKeyframeRule::style()
     return *m_propertiesCSSOMWrapper;
 }
 
-void WebKitCSSKeyframeRule::reattach(StyleRuleBase*)
+void WebKitCSSKeyframeRule::reattach(StyleRuleBase&)
 {
     // No need to reattach, the underlying data is shareable on mutation.
     ASSERT_NOT_REACHED();

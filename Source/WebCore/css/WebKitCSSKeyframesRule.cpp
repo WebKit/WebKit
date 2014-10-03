@@ -86,10 +86,10 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
     return -1;
 }
 
-WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes* keyframesRule, CSSStyleSheet* parent)
+WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_keyframesRule(keyframesRule)
-    , m_childRuleCSSOMWrappers(keyframesRule->keyframes().size())
+    , m_childRuleCSSOMWrappers(keyframesRule.keyframes().size())
 {
 }
 
@@ -180,7 +180,7 @@ WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
     RefPtr<WebKitCSSKeyframeRule>& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = adoptRef(new WebKitCSSKeyframeRule(m_keyframesRule->keyframes()[index].get(), const_cast<WebKitCSSKeyframesRule*>(this)));
+        rule = adoptRef(new WebKitCSSKeyframeRule(*m_keyframesRule->keyframes()[index], const_cast<WebKitCSSKeyframesRule*>(this)));
 
     return rule.get(); 
 }
@@ -192,11 +192,10 @@ CSSRuleList& WebKitCSSKeyframesRule::cssRules()
     return *m_ruleListCSSOMWrapper;
 }
 
-void WebKitCSSKeyframesRule::reattach(StyleRuleBase* rule)
+void WebKitCSSKeyframesRule::reattach(StyleRuleBase& rule)
 {
-    ASSERT(rule);
-    ASSERT_WITH_SECURITY_IMPLICATION(rule->isKeyframesRule());
-    m_keyframesRule = static_cast<StyleRuleKeyframes*>(rule);
+    ASSERT_WITH_SECURITY_IMPLICATION(rule.isKeyframesRule());
+    m_keyframesRule = static_cast<StyleRuleKeyframes&>(rule);
 }
 
 } // namespace WebCore

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-CSSSupportsRule::CSSSupportsRule(StyleRuleSupports* supportsRule, CSSStyleSheet* parent)
+CSSSupportsRule::CSSSupportsRule(StyleRuleSupports& supportsRule, CSSStyleSheet* parent)
     : CSSGroupingRule(supportsRule, parent)
 {
 }
@@ -61,7 +61,7 @@ String CSSSupportsRule::cssText() const
 
 String CSSSupportsRule::conditionText() const
 {
-    return toStyleRuleSupports(m_groupRule.get())->conditionText();
+    return toStyleRuleSupports(&m_groupRule.get())->conditionText();
 }
 
 } // namespace WebCore
