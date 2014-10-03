@@ -153,10 +153,10 @@ public:
 
     const LChar* characters8() const { ASSERT(is8Bit()); return m_text.characters8(); }
     const UChar* characters16() const { ASSERT(!is8Bit()); return m_text.characters16(); }
-    
+
     bool is8Bit() const { return m_text.is8Bit(); }
-    int length() const { return m_text.length(); }
-    int charactersLength() const { return m_charactersLength; }
+    unsigned length() const { return m_text.length(); }
+    unsigned charactersLength() const { return m_charactersLength; }
     String string() const { return m_text.toString(); }
 
     void setText(const LChar* c, unsigned len) { m_text = StringView(c, len); }

@@ -32,6 +32,7 @@
 
 #include "FloatSize.h"
 #include "Glyph.h"
+#include <climits>
 #include <wtf/Vector.h>
 
 #if USE(CG)
@@ -124,8 +125,8 @@ public:
 #endif
     }
     
-    static const int kNoOffset = -1;
-    void add(Glyph glyph, const SimpleFontData* font, float width, int offsetInString = kNoOffset, const FloatSize* offset = 0)
+    static const unsigned noOffset = UINT_MAX;
+    void add(Glyph glyph, const SimpleFontData* font, float width, unsigned offsetInString = noOffset, const FloatSize* offset = 0)
     {
         m_fontData.append(font);
 
@@ -153,12 +154,12 @@ public:
         UNUSED_PARAM(offset);
 #endif
         
-        if (offsetInString != kNoOffset && m_offsetsInString)
+        if (offsetInString != noOffset && m_offsetsInString)
             m_offsetsInString->append(offsetInString);
     }
     
 #if !USE(WINGDI)
-    void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance, int offsetInString = kNoOffset)
+    void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance, unsigned offsetInString = noOffset)
     {
         m_fontData.append(font);
 #if USE(CAIRO)
@@ -171,7 +172,7 @@ public:
 
         m_advances.append(advance);
         
-        if (offsetInString != kNoOffset && m_offsetsInString)
+        if (offsetInString != noOffset && m_offsetsInString)
             m_offsetsInString->append(offsetInString);
     }
 #endif
@@ -191,9 +192,10 @@ public:
     
     void saveOffsetsInString()
     {
-        m_offsetsInString.reset(new Vector<int, 2048>());
+        m_offsetsInString.reset(new Vector<unsigned, 2048>());
     }
-    
+
+    // FIXME: This converts from an unsigned to an int
     int offsetInString(int index) const
     {
         ASSERT(m_offsetsInString);
@@ -226,7 +228,7 @@ private:
     Vector<GlyphBufferGlyph, 2048> m_glyphs;
     Vector<GlyphBufferAdvance, 2048> m_advances;
     GlyphBufferAdvance m_initialAdvance;
-    std::unique_ptr<Vector<int, 2048>> m_offsetsInString;
+    std::unique_ptr<Vector<unsigned, 2048>> m_offsetsInString;
 #if PLATFORM(WIN)
     Vector<FloatSize, 2048> m_offsets;
 #endif

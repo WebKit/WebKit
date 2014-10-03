@@ -135,7 +135,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
 {
     const TextRun& run = iterator.run();
     Vector<SVGGlyph::ArabicForm>& arabicForms = iterator.arabicForms();
-    ASSERT(run.charactersLength() >= currentCharacter);
+    ASSERT(run.charactersLength() >= static_cast<unsigned>(currentCharacter));
 
     SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
     ASSERT(svgFontFaceElement);

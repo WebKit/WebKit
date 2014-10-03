@@ -298,8 +298,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         } else {
             // Check to see if the next character is a "rounding hack character", if so, adjust
             // width so that the total run width will be on an integer boundary.
-            if ((m_run.applyWordRounding() && textIterator.currentCharacter() < m_run.length() && Font::isRoundingHackCharacter(*(textIterator.characters())))
-                || (m_run.applyRunRounding() && textIterator.currentCharacter() >= m_run.length())) {
+            if ((m_run.applyWordRounding() && static_cast<unsigned>(textIterator.currentCharacter()) < m_run.length() && Font::isRoundingHackCharacter(*(textIterator.characters())))
+                || (m_run.applyRunRounding() && static_cast<unsigned>(textIterator.currentCharacter()) >= m_run.length())) {
                 float totalWidth = widthSinceLastRounding + width;
                 widthSinceLastRounding = ceilf(totalWidth);
                 width += widthSinceLastRounding - totalWidth;

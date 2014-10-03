@@ -254,7 +254,7 @@ void HarfBuzzShaper::setNormalizedBuffer(NormalizeMode normalizeMode)
     } else
         runCharacters = m_run.characters16();
 
-    for (int i = 0; i < m_run.length(); ++i) {
+    for (unsigned i = 0; i < m_run.length(); ++i) {
         UChar ch = runCharacters[i];
         if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
             icu::Normalizer::normalize(icu::UnicodeString(runCharacters,

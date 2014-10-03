@@ -341,7 +341,7 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || static_cast<unsigned>(to) != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -360,7 +360,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || static_cast<unsigned>(to) != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -513,7 +513,7 @@ void Font::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionR
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || static_cast<unsigned>(to) != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -1059,9 +1059,9 @@ GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& te
     // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
     // so we want to draw through CJK characters (on a character-by-character basis).
     UChar32 baseCharacter;
-    int offsetInString = glyphBuffer.offsetInString(index);
+    unsigned offsetInString = glyphBuffer.offsetInString(index);
 
-    if (offsetInString == GlyphBuffer::kNoOffset) {
+    if (offsetInString == GlyphBuffer::noOffset) {
         // We have no idea which character spawned this glyph. Bail.
         return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
     }
