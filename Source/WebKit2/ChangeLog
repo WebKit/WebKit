@@ -1,3 +1,12 @@
+2014-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove a workaround for a bug that's been fixed
+        https://bugs.webkit.org/show_bug.cgi?id=137411
+
+        Reviewed by Dan Bernstein.
+
+        * mac/rewrite-availability-macros.sh:
+
 2014-10-03  Jer Noble  <jer.noble@apple.com>
 
         Revert an accidental change introduced by r173318.
