@@ -1,5 +1,12 @@
 2014-10-02  Anders Carlsson  <andersca@apple.com>
 
+        Add back debugging/testing code that I accidentally removed.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<String>::writeTo):
+
+2014-10-02  Anders Carlsson  <andersca@apple.com>
+
         Simplify StringTypeAdapter templates
         https://bugs.webkit.org/show_bug.cgi?id=137356
 

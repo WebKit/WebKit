@@ -225,11 +225,13 @@ public:
     void writeTo(LChar* destination) const
     {
         StringView(m_string).getCharactersWithUpconvert(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
     }
 
     void writeTo(UChar* destination) const
     {
         StringView(m_string).getCharactersWithUpconvert(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
     }
 
 private:
