@@ -38,7 +38,7 @@
 #define SUPPORT_DICTATION_ALTERNATIVES
 #import <AppKit/NSTextAlternatives.h>
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #define SUPPORT_INSERTION_UNDO_GROUPING
 #if __has_include(<AppKit/NSTextInputContext_Private.h>)
 #import <AppKit/NSTextInputContext_Private.h>
