@@ -1,6 +1,6 @@
 GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 
-ASAN_OTHER_CFLAGS = -fsanitize=address -O1 -asan-blacklist=$(ASAN_IGNORE) -Wno-error -fno-omit-frame-pointer -g -DUSE_SYSTEM_MALLOC=1;
+ASAN_OTHER_CFLAGS = -fsanitize=address -O1 -fsanitize-blacklist=$(ASAN_IGNORE) -Wno-error -fno-omit-frame-pointer -g -DUSE_SYSTEM_MALLOC=1;
 ASAN_OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CFLAGS);
 ASAN_OTHER_LDFLAGS = -fsanitize=address $(ASAN_OTHER_LDFLAGS_$(PLATFORM_NAME));
 ASAN_OTHER_LDFLAGS_macosx = -lclang_rt.asan_osx_dynamic;

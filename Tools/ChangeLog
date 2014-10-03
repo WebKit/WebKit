@@ -1,3 +1,15 @@
+2014-10-02  David Farler  <dfarler@apple.com>
+
+        -asan-blacklist option also renamed to generic -fsanitize-blacklist
+        https://bugs.webkit.org/show_bug.cgi?id=137377
+
+        Reviewed by Daniel Bates.
+
+        * asan/asan.xcconfig:
+        -asan-blacklist -> -fsanitize-blacklist
+
+        http://llvm.org/viewvc/llvm-project?view=revision&revision=212505
+
 2014-10-03  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Include batch size argument to layout tests on Windows.
