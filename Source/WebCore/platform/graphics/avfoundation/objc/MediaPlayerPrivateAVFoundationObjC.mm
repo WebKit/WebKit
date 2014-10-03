@@ -603,7 +603,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 #if PLATFORM(IOS)
     [m_videoLayer web_disableAllActions];
     if (m_videoFullscreenLayer) {
-        [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
+        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
     } else
 #endif
@@ -1004,7 +1004,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
     [CATransaction setDisableActions:YES];
 
     if (m_videoFullscreenLayer && m_videoLayer) {
-        [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
+        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoLayer removeFromSuperlayer];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
     } else if (m_videoInlineLayer && m_videoLayer) {
