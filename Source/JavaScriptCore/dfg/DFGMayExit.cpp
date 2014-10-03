@@ -79,8 +79,6 @@ bool mayExit(Graph& graph, Node* node)
     case PutStructureHint:
     case PutByOffsetHint:
     case PhantomNewObject:
-    case PutLocal:
-    case KillLocal:
         break;
         
     default:

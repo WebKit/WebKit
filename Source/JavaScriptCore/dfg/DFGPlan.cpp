@@ -54,7 +54,6 @@
 #include "DFGPhantomRemovalPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
-#include "DFGPutLocalSinkingPhase.h"
 #include "DFGResurrectionForValidationPhase.h"
 #include "DFGSSAConversionPhase.h"
 #include "DFGSSALoweringPhase.h"
@@ -323,7 +322,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performSSALowering(dfg);
-        performPutLocalSinking(dfg);
         performGlobalCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
@@ -357,7 +355,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())
             performResurrectionForValidation(dfg);
-        performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by LLVM.
+        performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);
         performOSRAvailabilityAnalysis(dfg);

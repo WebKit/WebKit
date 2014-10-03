@@ -1562,9 +1562,6 @@
 		C49FE4AA19AAC83E00F40CE9 /* generate_protocol_types_implementation.py in Resources */ = {isa = PBXBuildFile; fileRef = C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */; };
 		C49FE4AB19AAC86100F40CE9 /* generate_protocol_types_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C49FE4A719AAC83E00F40CE9 /* generate_protocol_types_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C49FE4AC19AAC86100F40CE9 /* generate_protocol_types_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */ = {isa = PBXBuildFile; fileRef = DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DC00039819DBA70600023EB0 /* DFGPutLocalSinkingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC00039619DBA70600023EB0 /* DFGPutLocalSinkingPhase.cpp */; };
-		DC00039919DBA70600023EB0 /* DFGPutLocalSinkingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = DC00039719DBA70600023EB0 /* DFGPutLocalSinkingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
@@ -3225,9 +3222,6 @@
 		C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_protocol_types_implementation.py; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
-		DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPreciseLocalClobberize.h; path = dfg/DFGPreciseLocalClobberize.h; sourceTree = "<group>"; };
-		DC00039619DBA70600023EB0 /* DFGPutLocalSinkingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPutLocalSinkingPhase.cpp; path = dfg/DFGPutLocalSinkingPhase.cpp; sourceTree = "<group>"; };
-		DC00039719DBA70600023EB0 /* DFGPutLocalSinkingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPutLocalSinkingPhase.h; path = dfg/DFGPutLocalSinkingPhase.h; sourceTree = "<group>"; };
 		E124A8F50E555775003091F1 /* OpaqueJSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueJSString.h; sourceTree = "<group>"; };
 		E124A8F60E555775003091F1 /* OpaqueJSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpaqueJSString.cpp; sourceTree = "<group>"; };
 		E178633F0D9BEC0000D74E75 /* InitializeThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitializeThreading.h; sourceTree = "<group>"; };
@@ -4761,7 +4755,6 @@
 				0F2B9CDF19D0BA7D00B1D1B5 /* DFGPhiChildren.h */,
 				A78A9772179738B8009DF744 /* DFGPlan.cpp */,
 				A78A9773179738B8009DF744 /* DFGPlan.h */,
-				DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */,
 				0FBE0F6D16C1DB010082C5E8 /* DFGPredictionInjectionPhase.cpp */,
 				0FBE0F6E16C1DB010082C5E8 /* DFGPredictionInjectionPhase.h */,
 				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
@@ -4773,8 +4766,6 @@
 				0FAA3E0819D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h */,
 				0FB1765E196B8F9E0091052A /* DFGPureValue.cpp */,
 				0FB1765F196B8F9E0091052A /* DFGPureValue.h */,
-				DC00039619DBA70600023EB0 /* DFGPutLocalSinkingPhase.cpp */,
-				DC00039719DBA70600023EB0 /* DFGPutLocalSinkingPhase.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
 				0F666ECA1836B37E00D017F1 /* DFGResurrectionForValidationPhase.cpp */,
 				0F666ECB1836B37E00D017F1 /* DFGResurrectionForValidationPhase.h */,
@@ -5595,7 +5586,6 @@
 				0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */,
 				A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */,
 				0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */,
-				DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */,
 				0FEA0A1F1708B00700BB722C /* FTLAbstractHeapRepository.h in Headers */,
 				0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */,
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
@@ -5854,7 +5844,6 @@
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
-				DC00039919DBA70600023EB0 /* DFGPutLocalSinkingPhase.h in Headers */,
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */,
 				0F2B66FB17B6B5AB00A7AE3F /* JSTypedArrayConstructors.h in Headers */,
@@ -6730,7 +6719,6 @@
 				A7D89CF517A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0F2FC77216E12F710038D976 /* DFGDCEPhase.cpp in Sources */,
-				DC00039819DBA70600023EB0 /* DFGPutLocalSinkingPhase.cpp in Sources */,
 				0F8F2B99172F04FF007DBDA5 /* DFGDesiredIdentifiers.cpp in Sources */,
 				C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */,
 				0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */,

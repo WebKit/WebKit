@@ -3692,8 +3692,12 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         
         if (m_inlineCallFrame->caller.inlineCallFrame)
             m_inlineCallFrame->capturedVars = m_inlineCallFrame->caller.inlineCallFrame->capturedVars;
-        else
-            m_inlineCallFrame->capturedVars = byteCodeParser->m_graph.m_outermostCapturedVars;
+        else {
+            for (int i = byteCodeParser->m_codeBlock->m_numVars; i--;) {
+                if (byteCodeParser->m_codeBlock->isCaptured(virtualRegisterForLocal(i)))
+                    m_inlineCallFrame->capturedVars.set(i);
+            }
+        }
 
         for (int i = argumentCountIncludingThis; i--;) {
             VirtualRegister argument = virtualRegisterForArgument(i);

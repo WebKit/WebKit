@@ -74,7 +74,7 @@ public:
     } while (0)
 
     #define notSet (static_cast<size_t>(-1))
-        
+
     void validate()
     {
         // NB. This code is not written for performance, since it is not intended to run

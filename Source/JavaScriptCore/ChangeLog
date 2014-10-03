@@ -1,3 +1,17 @@
+2014-10-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174275.
+        https://bugs.webkit.org/show_bug.cgi?id=137408
+
+        Build failures on the internal bots. (Requested by dethbakin
+        on #webkit).
+
+        Reverted changeset:
+
+        "FTL should sink PutLocals"
+        https://bugs.webkit.org/show_bug.cgi?id=137168
+        http://trac.webkit.org/changeset/174275
+
 2014-10-03  Oliver Hunt  <oliver@apple.com>
 
         tearoff_arguments should always refer to the unmodified arguments register

@@ -252,7 +252,11 @@ public:
     }
     
     void dumpInContext(PrintStream& out, DumpContext* context) const;
-    void dump(PrintStream& out) const;
+    
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, 0);
+    }
     
 private:
     Vector<T, 8> m_arguments;

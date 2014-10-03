@@ -453,7 +453,6 @@
     <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPromotedHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGPureValue.cpp" />
-    <ClCompile Include="..\dfg\DFGPutLocalSinkingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
@@ -1105,13 +1104,11 @@
     <ClInclude Include="..\dfg\DFGPhiChildren.h" />
     <ClInclude Include="..\dfg\DFGPlan.h" />
     <ClInclude Include="..\dfg\DFGPrePostNumbering.h" />
-    <ClInclude Include="..\dfg\DFGPreciseLocalClobberize.h" />
     <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h" />
     <ClInclude Include="..\dfg\DFGPromoteHeapAccess.h" />
     <ClInclude Include="..\dfg\DFGPromotedHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGPureValue.h" />
-    <ClInclude Include="..\dfg\DFGPutLocalSinkingPhase.h" />
     <ClInclude Include="..\dfg\DFGRegisterBank.h" />
     <ClInclude Include="..\dfg\DFGRegisterSet.h" />
     <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h" />

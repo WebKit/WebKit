@@ -384,7 +384,7 @@ public:
             return 0;
         return symbolTable()->captureEnd();
     }
-    
+
     bool isCaptured(VirtualRegister operand, InlineCallFrame* = 0) const;
     
     int framePointerOffsetToGetActivationRegisters(int machineCaptureStart);
