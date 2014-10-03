@@ -720,8 +720,8 @@ PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element&
 
 static bool stringFromCSSValue(CSSValue& value, String& result)
 {
-    if (value.isPrimitiveValue()) {
-        unsigned short primitiveType = toCSSPrimitiveValue(value).primitiveType();
+    if (is<CSSPrimitiveValue>(value)) {
+        unsigned short primitiveType = downcast<CSSPrimitiveValue>(value).primitiveType();
         if (primitiveType == CSSPrimitiveValue::CSS_STRING || primitiveType == CSSPrimitiveValue::CSS_URI ||
             primitiveType == CSSPrimitiveValue::CSS_IDENT || primitiveType == CSSPrimitiveValue::CSS_ATTR) {
             String stringValue = value.cssText();
@@ -892,13 +892,13 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
 
     Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
-        if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
+        if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
             return true;
     }
 
     bool inherit = false;
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
-        if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
+        if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
             return true;
         if (value->isInheritedValue())
             inherit = true;
@@ -1061,14 +1061,14 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
 
     Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
-        if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
-            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
+        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
     }
 
     bool inherit = false;
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
-        if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
-            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
+        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
         if (value->isInheritedValue())
             inherit = true;
     }

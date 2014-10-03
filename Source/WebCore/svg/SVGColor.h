@@ -92,8 +92,8 @@ private:
     SVGColorType m_colorType;
 };
 
-CSS_VALUE_TYPE_CASTS(SVGColor, isSVGColor());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(SVGColor, isSVGColor())
 
 #endif // SVGColor_h

@@ -773,7 +773,7 @@ static PassRef<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle* st
     if (showVerticalBottomLeft)
         verticalRadiiList->append(*bottomLeftRadius->item(1));
 
-    if (!verticalRadiiList->equals(*toCSSValueList(list.get().item(0))))
+    if (!verticalRadiiList->equals(downcast<CSSValueList>(*list.get().item(0))))
         list.get().append(verticalRadiiList.releaseNonNull());
 
     return list;
@@ -3149,13 +3149,13 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
 
 bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value) const
 {
-    if (propertyID == CSSPropertyFontSize && value->isPrimitiveValue() && m_node) {
+    if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value) && m_node) {
         m_node->document().updateLayoutIgnorePendingStylesheets();
         RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier);
         if (style && style->fontDescription().keywordSize()) {
             CSSValueID sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
-            const CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-            if (primitiveValue->isValueID() && primitiveValue->getValueID() == sizeValue)
+            const CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+            if (primitiveValue.isValueID() && primitiveValue.getValueID() == sizeValue)
                 return true;
         }
     }

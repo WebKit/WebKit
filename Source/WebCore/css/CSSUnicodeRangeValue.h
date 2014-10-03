@@ -57,8 +57,8 @@ private:
     UChar32 m_to;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSUnicodeRangeValue, isUnicodeRangeValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSUnicodeRangeValue, isUnicodeRangeValue())
 
 #endif // CSSUnicodeRangeValue_h

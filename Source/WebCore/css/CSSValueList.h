@@ -81,8 +81,6 @@ private:
     Vector<Ref<CSSValue>, 4> m_values;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSValueList, isValueList())
-
 inline void CSSValueList::append(PassRef<CSSValue> value)
 {
     m_values.append(WTF::move(value));
@@ -97,7 +95,11 @@ inline void CSSValueList::prepend(PassRef<CSSValue> value)
 // Please take care not to pass these around as they do hold onto a raw pointer.
 class CSSValueListInspector {
 public:
-    CSSValueListInspector(CSSValue* value) : m_list((value && value->isValueList()) ? toCSSValueList(value) : 0) { }
+    CSSValueListInspector(CSSValue* value)
+        : m_list(is<CSSValueList>(value) ? downcast<CSSValueList>(value) : nullptr)
+    {
+    }
+
     CSSValue* item(size_t index) const { ASSERT_WITH_SECURITY_IMPLICATION(index < length()); return m_list->itemWithoutBoundsCheck(index); }
     CSSValue* first() const { return item(0); }
     CSSValue* second() const { return item(1); }
@@ -122,5 +124,7 @@ private:
     size_t m_position;
 };
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValueList, isValueList())
 
 #endif // CSSValueList_h

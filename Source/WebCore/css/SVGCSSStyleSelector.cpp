@@ -103,9 +103,9 @@ static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
 void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
 {
     ASSERT(value);
-    CSSPrimitiveValue* primitiveValue = 0;
-    if (value->isPrimitiveValue())
-        primitiveValue = toCSSPrimitiveValue(value);
+    CSSPrimitiveValue* primitiveValue = nullptr;
+    if (is<CSSPrimitiveValue>(*value))
+        primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     const State& state = m_state;
     SVGRenderStyle& svgStyle = state.style()->accessSVGStyle();
@@ -208,13 +208,13 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             // 'normal' is the only primitiveValue
             if (primitiveValue)
                 svgStyle.setPaintOrder(PaintOrderNormal);
-            if (!value->isValueList())
+            if (!is<CSSValueList>(*value))
                 break;
-            CSSValueList* orderTypeList = toCSSValueList(value);
+            CSSValueList& orderTypeList = downcast<CSSValueList>(*value);
 
             // Serialization happened during parsing. No additional checking needed.
-            unsigned length = orderTypeList->length();
-            primitiveValue = toCSSPrimitiveValue(orderTypeList->itemWithoutBoundsCheck(0));
+            unsigned length = orderTypeList.length();
+            primitiveValue = downcast<CSSPrimitiveValue>(orderTypeList.itemWithoutBoundsCheck(0));
             PaintOrder paintOrder;
             switch (primitiveValue->getValueID()) {
             case CSSValueFill:
@@ -266,9 +266,9 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 svgStyle.setFillPaint(SVGRenderStyle::initialFillPaintType(), SVGRenderStyle::initialFillPaintColor(), SVGRenderStyle::initialFillPaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
-            if (value->isSVGPaint()) {
-                SVGPaint* svgPaint = toSVGPaint(value);
-                svgStyle.setFillPaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, state.style()->color()), svgPaint->uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
+            if (is<SVGPaint>(*value)) {
+                SVGPaint& svgPaint = downcast<SVGPaint>(*value);
+                svgStyle.setFillPaint(svgPaint.paintType(), colorFromSVGColorCSSValue(&svgPaint, state.style()->color()), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
             break;
         }
@@ -283,30 +283,30 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 svgStyle.setStrokePaint(SVGRenderStyle::initialStrokePaintType(), SVGRenderStyle::initialStrokePaintColor(), SVGRenderStyle::initialStrokePaintUri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
                 return;
             }
-            if (value->isSVGPaint()) {
-                SVGPaint* svgPaint = toSVGPaint(value);
-                svgStyle.setStrokePaint(svgPaint->paintType(), colorFromSVGColorCSSValue(svgPaint, state.style()->color()), svgPaint->uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
+            if (is<SVGPaint>(*value)) {
+                SVGPaint& svgPaint = downcast<SVGPaint>(*value);
+                svgStyle.setStrokePaint(svgPaint.paintType(), colorFromSVGColorCSSValue(&svgPaint, state.style()->color()), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
             break;
         }
         case CSSPropertyStrokeDasharray:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
-            if (!value->isValueList()) {
+            if (!is<CSSValueList>(*value)) {
                 svgStyle.setStrokeDashArray(SVGRenderStyle::initialStrokeDashArray());
                 break;
             }
 
-            CSSValueList* dashes = toCSSValueList(value);
+            CSSValueList& dashes = downcast<CSSValueList>(*value);
 
             Vector<SVGLength> array;
-            size_t length = dashes->length();
+            size_t length = dashes.length();
             for (size_t i = 0; i < length; ++i) {
-                CSSValue* currValue = dashes->itemWithoutBoundsCheck(i);
-                if (!currValue->isPrimitiveValue())
+                CSSValue* currValue = dashes.itemWithoutBoundsCheck(i);
+                if (!is<CSSPrimitiveValue>(*currValue))
                     continue;
 
-                CSSPrimitiveValue* dash = toCSSPrimitiveValue(dashes->itemWithoutBoundsCheck(i));
+                CSSPrimitiveValue* dash = downcast<CSSPrimitiveValue>(dashes.itemWithoutBoundsCheck(i));
                 array.append(SVGLength::fromCSSPrimitiveValue(dash));
             }
 
@@ -491,15 +491,15 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
         case CSSPropertyStopColor:
         {
             HANDLE_INHERIT_AND_INITIAL(stopColor, StopColor);
-            if (value->isSVGColor())
-                svgStyle.setStopColor(colorFromSVGColorCSSValue(toSVGColor(value), state.style()->color()));
+            if (is<SVGColor>(*value))
+                svgStyle.setStopColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
             break;
         }
        case CSSPropertyLightingColor:
         {
             HANDLE_INHERIT_AND_INITIAL(lightingColor, LightingColor);
-            if (value->isSVGColor())
-                svgStyle.setLightingColor(colorFromSVGColorCSSValue(toSVGColor(value), state.style()->color()));
+            if (is<SVGColor>(*value))
+                svgStyle.setLightingColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
             break;
         }
         case CSSPropertyFloodOpacity:
@@ -523,8 +523,8 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
         case CSSPropertyFloodColor:
         {
             HANDLE_INHERIT_AND_INITIAL(floodColor, FloodColor);
-            if (value->isSVGColor())
-                svgStyle.setFloodColor(colorFromSVGColorCSSValue(toSVGColor(value), state.style()->color()));
+            if (is<SVGColor>(*value))
+                svgStyle.setFloodColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
             break;
         }
         case CSSPropertyGlyphOrientationHorizontal:
@@ -571,27 +571,27 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             if (isInitial || primitiveValue) // initial | none
                 return svgStyle.setShadow(nullptr);
 
-            if (!value->isValueList())
+            if (!is<CSSValueList>(*value))
                 return;
 
-            CSSValueList* list = toCSSValueList(value);
-            if (!list->length())
+            CSSValueList& list = downcast<CSSValueList>(*value);
+            if (!list.length())
                 return;
 
-            CSSValue* firstValue = list->itemWithoutBoundsCheck(0);
-            if (!firstValue->isShadowValue())
+            CSSValue* firstValue = list.itemWithoutBoundsCheck(0);
+            if (!is<CSSShadowValue>(*firstValue))
                 return;
-            CSSShadowValue* item = toCSSShadowValue(firstValue);
-            IntPoint location(item->x->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)),
-                item->y->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)));
-            int blur = item->blur ? item->blur->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) : 0;
+            CSSShadowValue& item = downcast<CSSShadowValue>(*firstValue);
+            IntPoint location(item.x->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)),
+                item.y->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)));
+            int blur = item.blur ? item.blur->computeLength<int>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) : 0;
             Color color;
-            if (item->color)
-                color = colorFromPrimitiveValue(item->color.get());
+            if (item.color)
+                color = colorFromPrimitiveValue(item.color.get());
 
             // -webkit-svg-shadow does should not have a spread or style
-            ASSERT(!item->spread);
-            ASSERT(!item->style);
+            ASSERT(!item.spread);
+            ASSERT(!item.style);
 
             auto shadowData = std::make_unique<ShadowData>(location, blur, 0, Normal, false, color.isValid() ? color : Color::transparent);
             svgStyle.setShadow(WTF::move(shadowData));

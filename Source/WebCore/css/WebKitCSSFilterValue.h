@@ -70,8 +70,8 @@ private:
     FilterOperationType m_type;
 };
 
-CSS_VALUE_TYPE_CASTS(WebKitCSSFilterValue, isWebKitCSSFilterValue())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(WebKitCSSFilterValue, isWebKitCSSFilterValue())
 
-#endif
+#endif // WebKitCSSFilterValue_h

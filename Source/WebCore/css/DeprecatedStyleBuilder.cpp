@@ -32,6 +32,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSToStyleMap.h"
@@ -149,8 +150,8 @@ public:
     static void setValue(RenderStyle* style, SetterType value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue())
-            setValue(styleResolver->style(), *toCSSPrimitiveValue(value));
+        if (is<CSSPrimitiveValue>(*value))
+            setValue(styleResolver->style(), downcast<CSSPrimitiveValue>(*value));
     }
     static PropertyHandler createHandler()
     {
@@ -165,14 +166,14 @@ public:
     static void setValue(RenderStyle* style, NumberType value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->getValueID() == idMapsToMinusOne)
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (primitiveValue.getValueID() == idMapsToMinusOne)
             setValue(styleResolver->style(), -1);
         else
-            setValue(styleResolver->style(), primitiveValue->getValue<NumberType>(CSSPrimitiveValue::CSS_NUMBER));
+            setValue(styleResolver->style(), primitiveValue.getValue<NumberType>(CSSPrimitiveValue::CSS_NUMBER));
     }
     static PropertyHandler createHandler()
     {
@@ -213,16 +214,16 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->getValueID() == autoIdentity)
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (primitiveValue.getValueID() == autoIdentity)
             setAuto(styleResolver->style());
         else if (valueType == Number)
-            setValue(styleResolver->style(), *primitiveValue);
+            setValue(styleResolver->style(), primitiveValue);
         else if (valueType == ComputeLength)
-            setValue(styleResolver->style(), primitiveValue->computeLength<T>(styleResolver->state().cssToLengthConversionData()));
+            setValue(styleResolver->style(), primitiveValue.computeLength<T>(styleResolver->state().cssToLengthConversionData()));
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
@@ -252,19 +253,19 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        if (Rect* rect = primitiveValue->getRectValue()) {
+        if (Rect* rect = primitiveValue.getRectValue()) {
             Length top = convertToLength(styleResolver, rect->top());
             Length right = convertToLength(styleResolver, rect->right());
             Length bottom = convertToLength(styleResolver, rect->bottom());
             Length left = convertToLength(styleResolver, rect->left());
             styleResolver->style()->setClip(top, right, bottom, left);
             styleResolver->style()->setHasClip(true);
-        } else if (primitiveValue->getValueID() == CSSValueAuto) {
+        } else if (primitiveValue.getValueID() == CSSValueAuto) {
             styleResolver->style()->setClip(Length(), Length(), Length(), Length());
             styleResolver->style()->setHasClip(false);
         }
@@ -298,17 +299,17 @@ public:
 
     static void applyValue(CSSPropertyID propertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (inheritColorFromParent && primitiveValue->getValueID() == CSSValueCurrentcolor)
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (inheritColorFromParent && primitiveValue.getValueID() == CSSValueCurrentcolor)
             applyInheritValue(propertyID, styleResolver);
         else {
             if (styleResolver->applyPropertyToRegularStyle())
-                (styleResolver->style()->*setterFunction)(styleResolver->colorFromPrimitiveValue(primitiveValue));
+                (styleResolver->style()->*setterFunction)(styleResolver->colorFromPrimitiveValue(&primitiveValue));
             if (styleResolver->applyPropertyToVisitedLinkStyle())
-                (styleResolver->style()->*visitedLinkSetterFunction)(styleResolver->colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+                (styleResolver->style()->*visitedLinkSetterFunction)(styleResolver->colorFromPrimitiveValue(&primitiveValue, /* forVisitedLink */ true));
         }
     }
 
@@ -359,46 +360,46 @@ public:
     static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(WTF::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (noneEnabled && primitiveValue->getValueID() == CSSValueNone) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (noneEnabled && primitiveValue.getValueID() == CSSValueNone) {
             if (noneUndefined)
                 setValue(styleResolver->style(), Length(Undefined));
             else
                 setValue(styleResolver->style(), Length());
         }
         if (legacyIntrinsicEnabled) {
-            if (primitiveValue->getValueID() == CSSValueIntrinsic)
+            if (primitiveValue.getValueID() == CSSValueIntrinsic)
                 setValue(styleResolver->style(), Length(Intrinsic));
-            else if (primitiveValue->getValueID() == CSSValueMinIntrinsic)
+            else if (primitiveValue.getValueID() == CSSValueMinIntrinsic)
                 setValue(styleResolver->style(), Length(MinIntrinsic));
         }
         if (intrinsicEnabled) {
-            if (primitiveValue->getValueID() == CSSValueWebkitMinContent)
+            if (primitiveValue.getValueID() == CSSValueWebkitMinContent)
                 setValue(styleResolver->style(), Length(MinContent));
-            else if (primitiveValue->getValueID() == CSSValueWebkitMaxContent)
+            else if (primitiveValue.getValueID() == CSSValueWebkitMaxContent)
                 setValue(styleResolver->style(), Length(MaxContent));
-            else if (primitiveValue->getValueID() == CSSValueWebkitFillAvailable)
+            else if (primitiveValue.getValueID() == CSSValueWebkitFillAvailable)
                 setValue(styleResolver->style(), Length(FillAvailable));
-            else if (primitiveValue->getValueID() == CSSValueWebkitFitContent)
+            else if (primitiveValue.getValueID() == CSSValueWebkitFitContent)
                 setValue(styleResolver->style(), Length(FitContent));
         }
 
         CSSToLengthConversionData conversionData = styleResolver->useSVGZoomRulesForLength() ?
             styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
             : styleResolver->state().cssToLengthConversionData();
-        if (autoEnabled && primitiveValue->getValueID() == CSSValueAuto)
+        if (autoEnabled && primitiveValue.getValueID() == CSSValueAuto)
             setValue(styleResolver->style(), Length());
-        else if (primitiveValue->isLength()) {
-            Length length = primitiveValue->computeLength<Length>(conversionData);
-            length.setHasQuirk(primitiveValue->isQuirkValue());
+        else if (primitiveValue.isLength()) {
+            Length length = primitiveValue.computeLength<Length>(conversionData);
+            length.setHasQuirk(primitiveValue.isQuirkValue());
             setValue(styleResolver->style(), length);
-        } else if (primitiveValue->isPercentage())
-            setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
-        else if (primitiveValue->isCalculatedPercentageWithLength())
-            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData)));
+        } else if (primitiveValue.isPercentage())
+            setValue(styleResolver->style(), Length(primitiveValue.getDoubleValue(), Percent));
+        else if (primitiveValue.isCalculatedPercentageWithLength())
+            setValue(styleResolver->style(), Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData)));
     }
 
     static PropertyHandler createHandler()
@@ -415,14 +416,14 @@ public:
     static void setValue(RenderStyle* style, const AtomicString& value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if ((identBehavior == MapNoneToNull && primitiveValue->getValueID() == CSSValueNone)
-            || (identBehavior == MapAutoToNull && primitiveValue->getValueID() == CSSValueAuto))
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if ((identBehavior == MapNoneToNull && primitiveValue.getValueID() == CSSValueNone)
+            || (identBehavior == MapAutoToNull && primitiveValue.getValueID() == CSSValueAuto))
             setValue(styleResolver->style(), nullAtom);
         else
-            setValue(styleResolver->style(), primitiveValue->getStringValue());
+            setValue(styleResolver->style(), primitiveValue.getStringValue());
     }
     static PropertyHandler createHandler()
     {
@@ -437,11 +438,11 @@ public:
     static void setValue(RenderStyle* style, LengthSize value) { (style->*setterFunction)(WTF::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        Pair* pair = primitiveValue->getPairValue();
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        Pair* pair = primitiveValue.getPairValue();
         if (!pair || !pair->first() || !pair->second())
             return;
 
@@ -552,13 +553,13 @@ public:
     {
         FillLayer* child = (styleResolver->style()->*accessLayersFunction)();
         FillLayer* previousChild = nullptr;
-        if (value->isValueList()
+        if (is<CSSValueList>(*value)
 #if ENABLE(CSS_IMAGE_SET)
-        && !value->isImageSetValue()
+        && !is<CSSImageSetValue>(*value)
 #endif
         ) {
             // Walk each value and put it into a layer, creating new layers as needed.
-            CSSValueList& valueList = toCSSValueList(*value);
+            CSSValueList& valueList = downcast<CSSValueList>(*value);
             for (unsigned i = 0; i < valueList.length(); i++) {
                 if (!child) {
                     previousChild->setNext(std::make_unique<FillLayer>(fillLayerType));
@@ -595,12 +596,12 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         // note: CSSPropertyLetter/WordSpacing right now sets to zero if it's not a primitive value for some reason...
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        CSSValueID ident = primitiveValue->getValueID();
+        CSSValueID ident = primitiveValue.getValueID();
         T length;
         if (normalEnabled && ident == CSSValueNormal) {
             length = 0;
@@ -615,9 +616,9 @@ public:
 
             // Any original result that was >= 1 should not be allowed to fall below 1.
             // This keeps border lines from vanishing.
-            length = primitiveValue->computeLength<T>(conversionData);
+            length = primitiveValue.computeLength<T>(conversionData);
             if (conversionData.zoom() < 1.0f && length < 1.0) {
-                T originalLength = primitiveValue->computeLength<T>(conversionData.copyWithAdjustedZoom(1.0f));
+                T originalLength = primitiveValue.computeLength<T>(conversionData.copyWithAdjustedZoom(1.0f));
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
@@ -654,11 +655,11 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         FontDescription fontDescription = styleResolver->fontDescription();
-        (fontDescription.*setterFunction)(*primitiveValue);
+        (fontDescription.*setterFunction)(primitiveValue);
         styleResolver->setFontDescription(fontDescription);
     }
 
@@ -697,10 +698,10 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isValueList())
+        if (!is<CSSValueList>(*value))
             return;
 
-        auto& valueList = toCSSValueList(*value);
+        auto& valueList = downcast<CSSValueList>(*value);
 
         FontDescription fontDescription = styleResolver->style()->fontDescription();
         // Before mapping in a new font-family property, we should reset the generic family.
@@ -712,14 +713,14 @@ public:
 
         for (unsigned i = 0; i < valueList.length(); ++i) {
             CSSValue* item = valueList.item(i);
-            if (!item->isPrimitiveValue())
+            if (!is<CSSPrimitiveValue>(*item))
                 continue;
-            CSSPrimitiveValue* contentValue = toCSSPrimitiveValue(item);
+            CSSPrimitiveValue& contentValue = downcast<CSSPrimitiveValue>(*item);
             AtomicString face;
-            if (contentValue->isString())
-                face = contentValue->getStringValue();
+            if (contentValue.isString())
+                face = contentValue.getStringValue();
             else if (Settings* settings = styleResolver->document().settings()) {
-                switch (contentValue->getValueID()) {
+                switch (contentValue.getValueID()) {
                 case CSSValueWebkitBody:
                     face = settings->standardFontFamily();
                     break;
@@ -840,10 +841,10 @@ public:
     
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
         FontDescription fontDescription = styleResolver->style()->fontDescription();
         fontDescription.setKeywordSize(0);
@@ -856,7 +857,7 @@ public:
             parentIsAbsoluteSize = styleResolver->parentStyle()->fontDescription().isAbsoluteSize();
         }
 
-        if (CSSValueID ident = primitiveValue->getValueID()) {
+        if (CSSValueID ident = primitiveValue.getValueID()) {
             // Keywords are being used.
             switch (ident) {
             case CSSValueXxSmall:
@@ -886,15 +887,14 @@ public:
 
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText));
         } else {
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
-                                              || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
-            if (primitiveValue->isLength()) {
-                size = primitiveValue->computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), styleResolver->document().renderView(), 1.0f, true));
-                styleResolver->state().setFontSizeHasViewportUnits(primitiveValue->isViewportPercentageLength());
-            } else if (primitiveValue->isPercentage())
-                size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
-            else if (primitiveValue->isCalculatedPercentageWithLength()) {
-                Ref<CalculationValue> calculationValue { primitiveValue->cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) };
+            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
+            if (primitiveValue.isLength()) {
+                size = primitiveValue.computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), styleResolver->document().renderView(), 1.0f, true));
+                styleResolver->state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
+            } else if (primitiveValue.isPercentage())
+                size = (primitiveValue.getFloatValue() * parentSize) / 100.0f;
+            else if (primitiveValue.isCalculatedPercentageWithLength()) {
+                Ref<CalculationValue> calculationValue { primitiveValue.cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) };
                 size = calculationValue->evaluate(parentSize);
             } else
                 return;
@@ -919,11 +919,11 @@ class ApplyPropertyFontWeight {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         FontDescription fontDescription = styleResolver->fontDescription();
-        switch (primitiveValue->getValueID()) {
+        switch (primitiveValue.getValueID()) {
         case CSSValueInvalid:
             ASSERT_NOT_REACHED();
             break;
@@ -934,7 +934,7 @@ public:
             fontDescription.setWeight(fontDescription.lighterWeight());
             break;
         default:
-            fontDescription.setWeight(*primitiveValue);
+            fontDescription.setWeight(primitiveValue);
         }
         styleResolver->setFontDescription(fontDescription);
     }
@@ -976,13 +976,12 @@ public:
         FontDescription::LigaturesState discretionaryLigaturesState = FontDescription::NormalLigaturesState;
         FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
 
-        if (value->isValueList()) {
-            CSSValueList* valueList = toCSSValueList(value);
-            for (size_t i = 0; i < valueList->length(); ++i) {
-                CSSValue* item = valueList->itemWithoutBoundsCheck(i);
-                ASSERT(item->isPrimitiveValue());
-                if (item->isPrimitiveValue()) {
-                    switch (toCSSPrimitiveValue(item)->getValueID()) {
+        if (is<CSSValueList>(*value)) {
+            CSSValueList& valueList = downcast<CSSValueList>(*value);
+            for (size_t i = 0; i < valueList.length(); ++i) {
+                CSSValue* item = valueList.itemWithoutBoundsCheck(i);
+                if (is<CSSPrimitiveValue>(*item)) {
+                    switch (downcast<CSSPrimitiveValue>(*item).getValueID()) {
                     case CSSValueNoCommonLigatures:
                         commonLigaturesState = FontDescription::DisabledLigaturesState;
                         break;
@@ -1009,10 +1008,8 @@ public:
             }
         }
 #if !ASSERT_DISABLED
-        else {
-            ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
-            ASSERT(toCSSPrimitiveValue(value)->getValueID() == CSSValueNormal);
-        }
+        else
+            ASSERT(downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNormal);
 #endif
 
         FontDescription fontDescription = styleResolver->fontDescription();
@@ -1159,9 +1156,9 @@ public:
     }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        bool setCounterIncrementToNone = counterBehavior == Increment && value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone;
+        bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNone;
 
-        if (!value->isValueList() && !setCounterIncrementToNone)
+        if (!is<CSSValueList>(*value) && !setCounterIncrementToNone)
             return;
 
         CounterDirectiveMap& map = styleResolver->style()->accessCounterDirectives();
@@ -1177,14 +1174,14 @@ public:
         if (setCounterIncrementToNone)
             return;
         
-        CSSValueList* list = toCSSValueList(value);
-        int length = list ? list->length() : 0;
+        CSSValueList& list = downcast<CSSValueList>(*value);
+        int length = list.length();
         for (int i = 0; i < length; ++i) {
-            CSSValue* currValue = list->itemWithoutBoundsCheck(i);
-            if (!currValue->isPrimitiveValue())
+            CSSValue* currValue = list.itemWithoutBoundsCheck(i);
+            if (!is<CSSPrimitiveValue>(*currValue))
                 continue;
 
-            Pair* pair = toCSSPrimitiveValue(currValue)->getPairValue();
+            Pair* pair = downcast<CSSPrimitiveValue>(*currValue).getPairValue();
             if (!pair || !pair->first() || !pair->second())
                 continue;
 
@@ -1219,27 +1216,27 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         styleResolver->style()->clearCursorList();
-        if (value->isValueList()) {
-            CSSValueList* list = toCSSValueList(value);
-            int len = list->length();
+        if (is<CSSValueList>(*value)) {
+            CSSValueList& list = downcast<CSSValueList>(*value);
+            int length = list.length();
             styleResolver->style()->setCursor(CursorAuto);
-            for (int i = 0; i < len; i++) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
-                if (item->isCursorImageValue()) {
-                    CSSCursorImageValue* image = toCSSCursorImageValue(item);
-                    if (image->updateIfSVGCursorIsUsed(styleResolver->element())) // Elements with SVG cursors are not allowed to share style.
+            for (int i = 0; i < length; i++) {
+                CSSValue* item = list.itemWithoutBoundsCheck(i);
+                if (is<CSSCursorImageValue>(*item)) {
+                    CSSCursorImageValue& image = downcast<CSSCursorImageValue>(*item);
+                    if (image.updateIfSVGCursorIsUsed(styleResolver->element())) // Elements with SVG cursors are not allowed to share style.
                         styleResolver->style()->setUnique();
-                    styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, image), image->hotSpot());
-                } else if (item->isPrimitiveValue()) {
-                    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
-                    if (primitiveValue->isValueID())
-                        styleResolver->style()->setCursor(*primitiveValue);
+                    styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, &image), image.hotSpot());
+                } else if (is<CSSPrimitiveValue>(*item)) {
+                    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*item);
+                    if (primitiveValue.isValueID())
+                        styleResolver->style()->setCursor(primitiveValue);
                 }
             }
-        } else if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-            if (primitiveValue->isValueID() && styleResolver->style()->cursor() != ECursor(*primitiveValue))
-                styleResolver->style()->setCursor(*primitiveValue);
+        } else if (is<CSSPrimitiveValue>(*value)) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+            if (primitiveValue.isValueID() && styleResolver->style()->cursor() != ECursor(primitiveValue))
+                styleResolver->style()->setCursor(primitiveValue);
         }
     }
 
@@ -1250,14 +1247,14 @@ class ApplyPropertyTextAlign {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        ASSERT(primitiveValue->isValueID());
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        ASSERT(primitiveValue.isValueID());
 
-        if (primitiveValue->getValueID() != CSSValueWebkitMatchParent)
-            styleResolver->style()->setTextAlign(*primitiveValue);
+        if (primitiveValue.getValueID() != CSSValueWebkitMatchParent)
+            styleResolver->style()->setTextAlign(primitiveValue);
         else if (styleResolver->parentStyle()->textAlign() == TASTART)
             styleResolver->style()->setTextAlign(styleResolver->parentStyle()->isLeftToRightDirection() ? LEFT : RIGHT);
         else if (styleResolver->parentStyle()->textAlign() == TAEND)
@@ -1279,8 +1276,7 @@ public:
         TextDecoration t = RenderStyle::initialTextDecoration();
         for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
-            ASSERT_WITH_SECURITY_IMPLICATION(item->isPrimitiveValue());
-            t |= *toCSSPrimitiveValue(item);
+            t |= downcast<CSSPrimitiveValue>(*item);
         }
         styleResolver->style()->setTextDecoration(t);
     }
@@ -1324,14 +1320,14 @@ class ApplyPropertyTextDecorationSkip {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue()) {
-            styleResolver->style()->setTextDecorationSkip(valueToDecorationSkip(*toCSSPrimitiveValue(value)));
+        if (is<CSSPrimitiveValue>(*value)) {
+            styleResolver->style()->setTextDecorationSkip(valueToDecorationSkip(downcast<CSSPrimitiveValue>(*value)));
             return;
         }
 
         TextDecorationSkip skip = RenderStyle::initialTextDecorationSkip();
         for (CSSValueListIterator i(value); i.hasMore(); i.advance())
-            skip |= valueToDecorationSkip(*toCSSPrimitiveValue(i.value()));
+            skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(*i.value()));
         styleResolver->style()->setTextDecorationSkip(skip);
     }
     static PropertyHandler createHandler()
@@ -1345,10 +1341,10 @@ class ApplyPropertyMarqueeIncrement {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue& primitiveValue = toCSSPrimitiveValue(*value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         Length marqueeLength(Undefined);
         switch (primitiveValue.getValueID()) {
         case CSSValueSmall:
@@ -1380,14 +1376,14 @@ class ApplyPropertyMarqueeRepetition {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->getValueID() == CSSValueInfinite)
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (primitiveValue.getValueID() == CSSValueInfinite)
             styleResolver->style()->setMarqueeLoopCount(-1); // -1 means repeat forever.
-        else if (primitiveValue->isNumber())
-            styleResolver->style()->setMarqueeLoopCount(primitiveValue->getIntValue());
+        else if (primitiveValue.isNumber())
+            styleResolver->style()->setMarqueeLoopCount(primitiveValue.getIntValue());
     }
     static PropertyHandler createHandler()
     {
@@ -1400,11 +1396,11 @@ class ApplyPropertyMarqueeSpeed {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (CSSValueID ident = primitiveValue->getValueID()) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (CSSValueID ident = primitiveValue.getValueID()) {
             switch (ident) {
             case CSSValueSlow:
                 styleResolver->style()->setMarqueeSpeed(500); // 500 msec.
@@ -1418,10 +1414,10 @@ public:
             default:
                 break;
             }
-        } else if (primitiveValue->isTime())
-            styleResolver->style()->setMarqueeSpeed(primitiveValue->computeTime<int, CSSPrimitiveValue::Milliseconds>());
-        else if (primitiveValue->isNumber()) // For scrollamount support.
-            styleResolver->style()->setMarqueeSpeed(primitiveValue->getIntValue());
+        } else if (primitiveValue.isTime())
+            styleResolver->style()->setMarqueeSpeed(primitiveValue.computeTime<int, CSSPrimitiveValue::Milliseconds>());
+        else if (primitiveValue.isNumber()) // For scrollamount support.
+            styleResolver->style()->setMarqueeSpeed(primitiveValue.getIntValue());
     }
     static PropertyHandler createHandler()
     {
@@ -1435,8 +1431,8 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         // This is true if value is 'auto' or 'alphabetic'.
-        if (value->isPrimitiveValue()) {
-            TextUnderlinePosition t = *toCSSPrimitiveValue(value);
+        if (is<CSSPrimitiveValue>(*value)) {
+            TextUnderlinePosition t = downcast<CSSPrimitiveValue>(*value);
             styleResolver->style()->setTextUnderlinePosition(t);
             return;
         }
@@ -1444,8 +1440,7 @@ public:
         unsigned t = 0;
         for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
-            ASSERT_WITH_SECURITY_IMPLICATION(item->isPrimitiveValue());
-            TextUnderlinePosition t2 = *toCSSPrimitiveValue(item);
+            TextUnderlinePosition t2 = downcast<CSSPrimitiveValue>(*item);
             t |= t2;
         }
         styleResolver->style()->setTextUnderlinePosition(static_cast<TextUnderlinePosition>(t));
@@ -1461,22 +1456,22 @@ class ApplyPropertyLineHeight {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         Length lineHeight;
 
-        if (primitiveValue->getValueID() == CSSValueNormal)
+        if (primitiveValue.getValueID() == CSSValueNormal)
             lineHeight = RenderStyle::initialLineHeight();
-        else if (primitiveValue->isLength()) {
-            lineHeight = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
-        } else if (primitiveValue->isPercentage()) {
+        else if (primitiveValue.isLength())
+            lineHeight = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
+        else if (primitiveValue.isPercentage()) {
             // FIXME: percentage should not be restricted to an integer here.
-            lineHeight = Length((styleResolver->style()->computedFontSize() * primitiveValue->getIntValue()) / 100, Fixed);
-        } else if (primitiveValue->isNumber()) {
+            lineHeight = Length((styleResolver->style()->computedFontSize() * primitiveValue.getIntValue()) / 100, Fixed);
+        } else if (primitiveValue.isNumber()) {
             // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
-            lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
+            lineHeight = Length(primitiveValue.getDoubleValue() * 100.0, Percent);
         } else
             return;
         styleResolver->style()->setLineHeight(lineHeight);
@@ -1494,27 +1489,27 @@ class ApplyPropertyLineHeightForIOSTextAutosizing {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         Length lineHeight;
 
-        if (primitiveValue->getValueID() == CSSValueNormal)
+        if (primitiveValue.getValueID() == CSSValueNormal)
             lineHeight = RenderStyle::initialLineHeight();
-        else if (primitiveValue->isLength()) {
-            lineHeight = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
+        else if (primitiveValue.isLength()) {
+            lineHeight = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
             if (styleResolver->style()->textSizeAdjust().isPercentage())
                 lineHeight = Length(lineHeight.value() * styleResolver->style()->textSizeAdjust().multiplier(), Fixed);
-        } else if (primitiveValue->isPercentage()) {
+        } else if (primitiveValue.isPercentage()) {
             // FIXME: percentage should not be restricted to an integer here.
-            lineHeight = Length((styleResolver->style()->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
-        } else if (primitiveValue->isNumber()) {
+            lineHeight = Length((styleResolver->style()->fontSize() * primitiveValue.getIntValue()) / 100, Fixed);
+        } else if (primitiveValue.isNumber()) {
             // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
             if (styleResolver->style()->textSizeAdjust().isPercentage())
-                lineHeight = Length(primitiveValue->getDoubleValue() * styleResolver->style()->textSizeAdjust().multiplier() * 100.0, Percent);
+                lineHeight = Length(primitiveValue.getDoubleValue() * styleResolver->style()->textSizeAdjust().multiplier() * 100.0, Percent);
             else
-                lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
+                lineHeight = Length(primitiveValue.getDoubleValue() * 100.0, Percent);
         } else
             return;
         styleResolver->style()->setLineHeight(lineHeight);
@@ -1544,20 +1539,20 @@ class ApplyPropertyWordSpacing {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         Length wordSpacing;
 
-        if (primitiveValue->getValueID() == CSSValueNormal)
+        if (primitiveValue.getValueID() == CSSValueNormal)
             wordSpacing = RenderStyle::initialWordSpacing();
-        else if (primitiveValue->isLength()) {
-            wordSpacing = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
-        } else if (primitiveValue->isPercentage())
-            wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
-        else if (primitiveValue->isNumber())
-            wordSpacing = Length(primitiveValue->getDoubleValue(), Fixed);
+        else if (primitiveValue.isLength()) {
+            wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
+        } else if (primitiveValue.isPercentage())
+            wordSpacing = Length(primitiveValue.getDoubleValue(), Percent);
+        else if (primitiveValue.isNumber())
+            wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
         else
             return;
         styleResolver->style()->setWordSpacing(wordSpacing);
@@ -1667,21 +1662,21 @@ public:
         switch (inspector.length()) {
         case 2: {
             // <length>{2} | <page-size> <orientation>
-            if (!inspector.first()->isPrimitiveValue() || !inspector.second()->isPrimitiveValue())
+            if (!is<CSSPrimitiveValue>(*inspector.first()) || !is<CSSPrimitiveValue>(*inspector.second()))
                 return;
-            CSSPrimitiveValue* first = toCSSPrimitiveValue(inspector.first());
-            CSSPrimitiveValue* second = toCSSPrimitiveValue(inspector.second());
-            if (first->isLength()) {
+            CSSPrimitiveValue& first = downcast<CSSPrimitiveValue>(*inspector.first());
+            CSSPrimitiveValue& second = downcast<CSSPrimitiveValue>(*inspector.second());
+            if (first.isLength()) {
                 // <length>{2}
-                if (!second->isLength())
+                if (!second.isLength())
                     return;
                 CSSToLengthConversionData conversionData = styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-                width = first->computeLength<Length>(conversionData);
-                height = second->computeLength<Length>(conversionData);
+                width = first.computeLength<Length>(conversionData);
+                height = second.computeLength<Length>(conversionData);
             } else {
                 // <page-size> <orientation>
                 // The value order is guaranteed. See CSSParser::parseSizeParameter.
-                if (!getPageSizeFromName(first, second, width, height))
+                if (!getPageSizeFromName(&first, &second, width, height))
                     return;
             }
             pageSizeType = PAGE_SIZE_RESOLVED;
@@ -1689,15 +1684,15 @@ public:
         }
         case 1: {
             // <length> | auto | <page-size> | [ portrait | landscape]
-            if (!inspector.first()->isPrimitiveValue())
+            if (!is<CSSPrimitiveValue>(*inspector.first()))
                 return;
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(inspector.first());
-            if (primitiveValue->isLength()) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*inspector.first());
+            if (primitiveValue.isLength()) {
                 // <length>
                 pageSizeType = PAGE_SIZE_RESOLVED;
-                width = height = primitiveValue->computeLength<Length>(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+                width = height = primitiveValue.computeLength<Length>(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             } else {
-                switch (primitiveValue->getValueID()) {
+                switch (primitiveValue.getValueID()) {
                 case 0:
                     return;
                 case CSSValueAuto:
@@ -1712,7 +1707,7 @@ public:
                 default:
                     // <page-size>
                     pageSizeType = PAGE_SIZE_RESOLVED;
-                    if (!getPageSizeFromName(primitiveValue, 0, width, height))
+                    if (!getPageSizeFromName(&primitiveValue, nullptr, width, height))
                         return;
                 }
             }
@@ -1745,45 +1740,45 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isValueList()) {
-            CSSValueList* list = toCSSValueList(value);
-            ASSERT(list->length() == 2);
-            if (list->length() != 2)
+        if (is<CSSValueList>(*value)) {
+            CSSValueList& list = downcast<CSSValueList>(*value);
+            ASSERT(list.length() == 2);
+            if (list.length() != 2)
                 return;
             for (unsigned i = 0; i < 2; ++i) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
-                if (!item->isPrimitiveValue())
+                CSSValue* item = list.itemWithoutBoundsCheck(i);
+                if (!is<CSSPrimitiveValue>(*item))
                     continue;
 
-                CSSPrimitiveValue* value = toCSSPrimitiveValue(item);
-                if (value->getValueID() == CSSValueFilled || value->getValueID() == CSSValueOpen)
-                    styleResolver->style()->setTextEmphasisFill(*value);
+                CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(*item);
+                if (value.getValueID() == CSSValueFilled || value.getValueID() == CSSValueOpen)
+                    styleResolver->style()->setTextEmphasisFill(value);
                 else
-                    styleResolver->style()->setTextEmphasisMark(*value);
+                    styleResolver->style()->setTextEmphasisMark(value);
             }
             styleResolver->style()->setTextEmphasisCustomMark(nullAtom);
             return;
         }
 
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        if (primitiveValue->isString()) {
+        if (primitiveValue.isString()) {
             styleResolver->style()->setTextEmphasisFill(TextEmphasisFillFilled);
             styleResolver->style()->setTextEmphasisMark(TextEmphasisMarkCustom);
-            styleResolver->style()->setTextEmphasisCustomMark(primitiveValue->getStringValue());
+            styleResolver->style()->setTextEmphasisCustomMark(primitiveValue.getStringValue());
             return;
         }
 
         styleResolver->style()->setTextEmphasisCustomMark(nullAtom);
 
-        if (primitiveValue->getValueID() == CSSValueFilled || primitiveValue->getValueID() == CSSValueOpen) {
-            styleResolver->style()->setTextEmphasisFill(*primitiveValue);
+        if (primitiveValue.getValueID() == CSSValueFilled || primitiveValue.getValueID() == CSSValueOpen) {
+            styleResolver->style()->setTextEmphasisFill(primitiveValue);
             styleResolver->style()->setTextEmphasisMark(TextEmphasisMarkAuto);
         } else {
             styleResolver->style()->setTextEmphasisFill(TextEmphasisFillFilled);
-            styleResolver->style()->setTextEmphasisMark(*primitiveValue);
+            styleResolver->style()->setTextEmphasisMark(primitiveValue);
         }
     }
 
@@ -1815,14 +1810,14 @@ class ApplyPropertyTextEmphasisPosition {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue()) {
-            styleResolver->style()->setTextEmphasisPosition(valueToEmphasisPosition(*toCSSPrimitiveValue(value)));
+        if (is<CSSPrimitiveValue>(*value)) {
+            styleResolver->style()->setTextEmphasisPosition(valueToEmphasisPosition(downcast<CSSPrimitiveValue>(*value)));
             return;
         }
 
         TextEmphasisPosition position = 0;
         for (CSSValueListIterator i(value); i.hasMore(); i.advance())
-            position |= valueToEmphasisPosition(*toCSSPrimitiveValue(i.value()));
+            position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(*i.value()));
         styleResolver->style()->setTextEmphasisPosition(position);
     }
     static PropertyHandler createHandler()
@@ -1935,23 +1930,23 @@ class ApplyPropertyResize {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        EResize r = RESIZE_NONE;
-        switch (primitiveValue->getValueID()) {
+        EResize resize = RESIZE_NONE;
+        switch (primitiveValue.getValueID()) {
         case 0:
             return;
         case CSSValueAuto:
             if (Settings* settings = styleResolver->document().settings())
-                r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+                resize = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
             break;
         default:
-            r = *primitiveValue;
+            resize = primitiveValue;
         }
-        styleResolver->style()->setResize(r);
+        styleResolver->style()->setResize(resize);
     }
 
     static PropertyHandler createHandler()
@@ -1965,15 +1960,15 @@ class ApplyPropertyVerticalAlign {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        if (primitiveValue->getValueID())
-            return styleResolver->style()->setVerticalAlign(*primitiveValue);
+        if (primitiveValue.getValueID())
+            return styleResolver->style()->setVerticalAlign(primitiveValue);
 
-        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData()));
+        styleResolver->style()->setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData()));
     }
 
     static PropertyHandler createHandler()
@@ -2003,26 +1998,26 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        if (is<CSSPrimitiveValue>(*value)) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-            if (primitiveValue->getValueID() == CSSValueAuto)
+            if (primitiveValue.getValueID() == CSSValueAuto)
                 return styleResolver->style()->setAspectRatioType(AspectRatioAuto);
-            if (primitiveValue->getValueID() == CSSValueFromDimensions)
+            if (primitiveValue.getValueID() == CSSValueFromDimensions)
                 return styleResolver->style()->setAspectRatioType(AspectRatioFromDimensions);
-            if (primitiveValue->getValueID() == CSSValueFromIntrinsic)
+            if (primitiveValue.getValueID() == CSSValueFromIntrinsic)
                 return styleResolver->style()->setAspectRatioType(AspectRatioFromIntrinsic);
         }
 
-        if (!value->isAspectRatioValue()) {
+        if (!is<CSSAspectRatioValue>(*value)) {
             styleResolver->style()->setAspectRatioType(AspectRatioAuto);
             return;
         }
 
-        CSSAspectRatioValue* aspectRatioValue = toCSSAspectRatioValue(value);
+        CSSAspectRatioValue& aspectRatioValue = downcast<CSSAspectRatioValue>(*value);
         styleResolver->style()->setAspectRatioType(AspectRatioSpecified);
-        styleResolver->style()->setAspectRatioDenominator(aspectRatioValue->denominatorValue());
-        styleResolver->style()->setAspectRatioNumerator(aspectRatioValue->numeratorValue());
+        styleResolver->style()->setAspectRatioDenominator(aspectRatioValue.denominatorValue());
+        styleResolver->style()->setAspectRatioNumerator(aspectRatioValue.numeratorValue());
     }
 
     static PropertyHandler createHandler()
@@ -2054,26 +2049,25 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-        if (primitiveValue->getValueID() == CSSValueNormal) {
+        if (primitiveValue.getValueID() == CSSValueNormal) {
             resetEffectiveZoom(styleResolver);
             styleResolver->setZoom(RenderStyle::initialZoom());
-        } else if (primitiveValue->getValueID() == CSSValueReset) {
+        } else if (primitiveValue.getValueID() == CSSValueReset) {
             styleResolver->setEffectiveZoom(RenderStyle::initialZoom());
             styleResolver->setZoom(RenderStyle::initialZoom());
-        } else if (primitiveValue->getValueID() == CSSValueDocument) {
+        } else if (primitiveValue.getValueID() == CSSValueDocument) {
             float docZoom = styleResolver->rootElementStyle() ? styleResolver->rootElementStyle()->zoom() : RenderStyle::initialZoom();
             styleResolver->setEffectiveZoom(docZoom);
             styleResolver->setZoom(docZoom);
-        } else if (primitiveValue->isPercentage()) {
+        } else if (primitiveValue.isPercentage()) {
             resetEffectiveZoom(styleResolver);
-            if (float percent = primitiveValue->getFloatValue())
+            if (float percent = primitiveValue.getFloatValue())
                 styleResolver->setZoom(percent / 100.0f);
-        } else if (primitiveValue->isNumber()) {
+        } else if (primitiveValue.isNumber()) {
             resetEffectiveZoom(styleResolver);
-            if (float number = primitiveValue->getFloatValue())
+            if (float number = primitiveValue.getFloatValue())
                 styleResolver->setZoom(number);
         }
     }
@@ -2108,10 +2102,10 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(*value))
             return;
 
-        EDisplay display = *toCSSPrimitiveValue(value);
+        EDisplay display = downcast<CSSPrimitiveValue>(*value);
 
         if (!isValidDisplayValue(styleResolver, display))
             return;
@@ -2131,8 +2125,8 @@ public:
     static void setValue(RenderStyle* style, PassRefPtr<ClipPathOperation> value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue()) {
-            auto& primitiveValue = toCSSPrimitiveValue(*value);
+        if (is<CSSPrimitiveValue>(*value)) {
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
             if (primitiveValue.getValueID() == CSSValueNone)
                 setValue(styleResolver->style(), 0);
             else if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
@@ -2143,13 +2137,13 @@ public:
             }
             return;
         }
-        if (!value->isValueList())
+        if (!is<CSSValueList>(*value))
             return;
         CSSBoxType referenceBox = BoxMissing;
         RefPtr<ClipPathOperation> operation;
-        auto& valueList = toCSSValueList(*value);
+        auto& valueList = downcast<CSSValueList>(*value);
         for (unsigned i = 0; i < valueList.length(); ++i) {
-            auto& primitiveValue = toCSSPrimitiveValue(*valueList.itemWithoutBoundsCheck(i));
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
             if (primitiveValue.isShape() && !operation)
                 operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue.getShapeValue()));
             else if ((primitiveValue.getValueID() == CSSValueContentBox
@@ -2186,26 +2180,26 @@ public:
     static void setValue(RenderStyle* style, PassRefPtr<ShapeValue> value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID property, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-            if (primitiveValue->getValueID() == CSSValueAuto)
+        if (is<CSSPrimitiveValue>(*value)) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+            if (primitiveValue.getValueID() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
         } else if (value->isImageValue() || value->isImageGeneratorValue() || value->isImageSetValue()) {
             RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver->styleImage(property, value));
             setValue(styleResolver->style(), shape.release());
-        } else if (value->isValueList()) {
+        } else if (is<CSSValueList>(*value)) {
             RefPtr<BasicShape> shape;
             CSSBoxType referenceBox = BoxMissing;
-            CSSValueList* valueList = toCSSValueList(value);
-            for (unsigned i = 0; i < valueList->length(); ++i) {
-                CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(valueList->itemWithoutBoundsCheck(i));
-                if (primitiveValue->isShape())
-                    shape = basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue->getShapeValue());
-                else if (primitiveValue->getValueID() == CSSValueContentBox
-                    || primitiveValue->getValueID() == CSSValueBorderBox
-                    || primitiveValue->getValueID() == CSSValuePaddingBox
-                    || primitiveValue->getValueID() == CSSValueMarginBox)
-                    referenceBox = CSSBoxType(*primitiveValue);
+            CSSValueList& valueList = downcast<CSSValueList>(*value);
+            for (unsigned i = 0; i < valueList.length(); ++i) {
+                CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
+                if (primitiveValue.isShape())
+                    shape = basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue.getShapeValue());
+                else if (primitiveValue.getValueID() == CSSValueContentBox
+                    || primitiveValue.getValueID() == CSSValueBorderBox
+                    || primitiveValue.getValueID() == CSSValuePaddingBox
+                    || primitiveValue.getValueID() == CSSValueMarginBox)
+                    referenceBox = CSSBoxType(primitiveValue);
                 else
                     return;
             }
@@ -2245,23 +2239,23 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isValueList())
+        if (!is<CSSValueList>(*value))
             return;
-        CSSValueList* valueList = toCSSValueList(value);
+        CSSValueList& valueList = downcast<CSSValueList>(*value);
         ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
         ImageResolutionSnap snap = RenderStyle::initialImageResolutionSnap();
         double resolution = RenderStyle::initialImageResolution();
-        for (size_t i = 0; i < valueList->length(); i++) {
-            CSSValue* item = valueList->itemWithoutBoundsCheck(i);
-            if (!item->isPrimitiveValue())
+        for (size_t i = 0; i < valueList.length(); ++i) {
+            CSSValue& item = *valueList.itemWithoutBoundsCheck(i);
+            if (!is<CSSPrimitiveValue>(item))
                 continue;
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
-            if (primitiveValue->getValueID() == CSSValueFromImage)
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(item);
+            if (primitiveValue.getValueID() == CSSValueFromImage)
                 source = ImageResolutionFromImage;
-            else if (primitiveValue->getValueID() == CSSValueSnap)
+            else if (primitiveValue.getValueID() == CSSValueSnap)
                 snap = ImageResolutionSnapPixels;
             else
-                resolution = primitiveValue->getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
+                resolution = primitiveValue.getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
         }
         styleResolver->style()->setImageResolutionSource(source);
         styleResolver->style()->setImageResolutionSnap(snap);
@@ -2297,7 +2291,7 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isValueList())
+        if (!is<CSSValueList>(*value))
             return;
 
         Length lengthOrPercentageValue;
@@ -2305,19 +2299,19 @@ public:
         TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
         TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
 #endif
-        CSSValueList* valueList = toCSSValueList(value);
-        for (size_t i = 0; i < valueList->length(); ++i) {
-            CSSValue* item = valueList->itemWithoutBoundsCheck(i);
-            if (!item->isPrimitiveValue())
+        CSSValueList& valueList = downcast<CSSValueList>(*value);
+        for (size_t i = 0; i < valueList.length(); ++i) {
+            CSSValue* item = valueList.itemWithoutBoundsCheck(i);
+            if (!is<CSSPrimitiveValue>(*item))
                 continue;
 
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
-            if (!primitiveValue->getValueID())
-                lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData());
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*item);
+            if (!primitiveValue.getValueID())
+                lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
-            else if (primitiveValue->getValueID() == CSSValueWebkitEachLine)
+            else if (primitiveValue.getValueID() == CSSValueWebkitEachLine)
                 textIndentLineValue = TextIndentEachLine;
-            else if (primitiveValue->getValueID() == CSSValueWebkitHanging)
+            else if (primitiveValue.getValueID() == CSSValueWebkitHanging)
                 textIndentTypeValue = TextIndentHanging;
 #endif
         }

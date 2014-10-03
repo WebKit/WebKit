@@ -476,9 +476,9 @@ static bool propertyMissingOrEqualToNone(StyleProperties* style, CSSPropertyID p
     RefPtr<CSSValue> value = style->getPropertyCSSValue(propertyID);
     if (!value)
         return true;
-    if (!value->isPrimitiveValue())
+    if (!is<CSSPrimitiveValue>(*value))
         return false;
-    return toCSSPrimitiveValue(value.get())->getValueID() == CSSValueNone;
+    return downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNone;
 }
 
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)

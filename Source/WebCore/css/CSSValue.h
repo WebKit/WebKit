@@ -26,6 +26,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -249,9 +250,11 @@ inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueTy
     return first.get().equals(second.get());
 }
 
-#define CSS_VALUE_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, CSSValue, value, value->predicate, value.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CSS_VALUE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::CSSValue& value) { return value.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // CSSValue_h

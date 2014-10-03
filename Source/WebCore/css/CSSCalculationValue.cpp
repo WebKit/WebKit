@@ -602,11 +602,11 @@ private:
             return false;
 
         RefPtr<CSSValue> value = parserValue->createCSSValue();
-        if (!value || !value->isPrimitiveValue())
+        if (!is<CSSPrimitiveValue>(value.get()))
             return false;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value.get());
-        result->value = CSSCalcPrimitiveValue::create(primitiveValue, parserValue->isInt);
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        result->value = CSSCalcPrimitiveValue::create(&primitiveValue, parserValue->isInt);
 
         ++*index;
         return true;

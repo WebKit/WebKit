@@ -328,10 +328,10 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
     unsigned propertyCount = styleDeclaration->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
         RefPtr<CSSValue> cssValue = styleDeclaration->propertyAt(i).value();
-        if (!cssValue->isImageValue())
+        if (!is<CSSImageValue>(*cssValue))
             continue;
 
-        StyleImage* styleImage = toCSSImageValue(cssValue.get())->cachedOrPendingImage();
+        StyleImage* styleImage = downcast<CSSImageValue>(*cssValue).cachedOrPendingImage();
         // Non cached-images are just place-holders and do not contain data.
         if (!styleImage || !styleImage->isCachedImage())
             continue;

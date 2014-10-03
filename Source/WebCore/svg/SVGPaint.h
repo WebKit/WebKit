@@ -112,8 +112,8 @@ private:
     String m_uri;
 };
 
-CSS_VALUE_TYPE_CASTS(SVGPaint, isSVGPaint());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(SVGPaint, isSVGPaint())
 
 #endif // SVGPaint_h

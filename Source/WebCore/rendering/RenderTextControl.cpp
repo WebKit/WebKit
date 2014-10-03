@@ -84,8 +84,8 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
     if (HTMLElement* innerText = control.innerTextElement()) {
         if (const StyleProperties* properties = innerText->presentationAttributeStyle()) {
             RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
-            if (value && value->isPrimitiveValue())
-                textBlockStyle->setUserModify(toCSSPrimitiveValue(*value));
+            if (is<CSSPrimitiveValue>(value.get()))
+                textBlockStyle->setUserModify(downcast<CSSPrimitiveValue>(*value));
         }
     }
 

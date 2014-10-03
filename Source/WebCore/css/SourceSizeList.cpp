@@ -60,7 +60,7 @@ static unsigned computeLength(CSSParserValue& value, RenderStyle& style, RenderV
         }
     }
     RefPtr<CSSValue> cssValue = value.createCSSValue();
-    RefPtr<CSSPrimitiveValue> primitiveValue = toCSSPrimitiveValue(cssValue.get());
+    RefPtr<CSSPrimitiveValue> primitiveValue = downcast<CSSPrimitiveValue>(cssValue.get());
     return primitiveValue->computeLength<unsigned>(conversionData);
 }
 

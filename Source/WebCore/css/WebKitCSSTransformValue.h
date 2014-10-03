@@ -79,18 +79,8 @@ private:
     TransformOperationType m_type;
 };
 
-inline WebKitCSSTransformValue* toWebKitCSSTransformValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSTransformValue());
-    return static_cast<WebKitCSSTransformValue*>(value);
-}
+} // namespace WebCore
 
-inline const WebKitCSSTransformValue* toWebKitCSSTransformValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSTransformValue());
-    return static_cast<const WebKitCSSTransformValue*>(value);
-}
-
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(WebKitCSSTransformValue, isWebKitCSSTransformValue())
 
 #endif

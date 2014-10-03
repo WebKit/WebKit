@@ -63,7 +63,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
         RefPtr<CSSValue> value = styleDeclaration->getPropertyCSSValue(CSSPropertyWebkitTransform);
 
         // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
-        if (!value || (value->isPrimitiveValue() && (toCSSPrimitiveValue(value.get()))->getValueID() == CSSValueNone))
+        if (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNone))
             return;
 
         TransformOperations operations;

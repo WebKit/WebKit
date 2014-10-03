@@ -92,8 +92,8 @@ private:
     HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSImageGeneratorValue, isImageGeneratorValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSImageGeneratorValue, isImageGeneratorValue())
 
 #endif // CSSImageGeneratorValue_h

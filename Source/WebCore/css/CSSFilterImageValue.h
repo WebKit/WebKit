@@ -117,8 +117,8 @@ private:
     FilterSubimageObserverProxy m_filterSubimageObserver;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSFilterImageValue, isFilterImageValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFilterImageValue, isFilterImageValue())
 
 #endif // CSSFilterImageValue_h

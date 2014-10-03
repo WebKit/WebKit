@@ -62,8 +62,8 @@ private:
         PassRefPtr<CSSPrimitiveValue> color);
 };
 
-CSS_VALUE_TYPE_CASTS(CSSShadowValue, isShadowValue())
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSShadowValue, isShadowValue())
 
-#endif
+#endif // CSSShadowValue_h

@@ -363,7 +363,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
         values[i] = getPropertyCSSValue(shorthand.properties()[i]);
         if (values[i]) {
             if (values[i]->isBaseValueList())
-                numLayers = std::max(toCSSValueList(values[i].get())->length(), numLayers);
+                numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
             else
                 numLayers = std::max<size_t>(1U, numLayers);
         }
@@ -384,7 +384,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
             RefPtr<CSSValue> value;
             if (values[j]) {
                 if (values[j]->isBaseValueList())
-                    value = toCSSValueList(values[j].get())->item(i);
+                    value = downcast<CSSValueList>(*values[j]).item(i);
                 else {
                     value = values[j];
 
@@ -408,16 +408,16 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                     || (j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyWebkitMaskRepeatY && value)) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
-                    if (nextValue->isValueList())
-                        yValue = toCSSValueList(nextValue.get())->itemWithoutBoundsCheck(i);
+                    if (is<CSSValueList>(*nextValue))
+                        yValue = downcast<CSSValueList>(*nextValue).itemWithoutBoundsCheck(i);
                     else
                         yValue = nextValue;
 
-                    if (!value->isPrimitiveValue() || !yValue->isPrimitiveValue())
+                    if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*yValue))
                         continue;
 
-                    CSSValueID xId = toCSSPrimitiveValue(value.get())->getValueID();
-                    CSSValueID yId = toCSSPrimitiveValue(yValue.get())->getValueID();
+                    CSSValueID xId = downcast<CSSPrimitiveValue>(*value).getValueID();
+                    CSSValueID yId = downcast<CSSPrimitiveValue>(*yValue).getValueID();
                     if (xId != yId) {
                         if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
                             useRepeatXShorthand = true;

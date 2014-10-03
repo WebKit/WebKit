@@ -59,8 +59,9 @@ private:
     RefPtr<CSSValueList> m_args;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSFunctionValue, isFunctionValue())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFunctionValue, isFunctionValue())
+
 #endif
 

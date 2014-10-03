@@ -63,8 +63,6 @@ private:
     double m_y2;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
-
 class CSSStepsTimingFunctionValue : public CSSValue {
 public:
     static PassRef<CSSStepsTimingFunctionValue> create(int steps, bool stepAtStart)
@@ -91,8 +89,9 @@ private:
     bool m_stepAtStart;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
 
-#endif
+#endif // CSSTimingFunctionValue_h

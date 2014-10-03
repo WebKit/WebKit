@@ -186,9 +186,9 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
 
 static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)
 {
-    if (value->isAspectRatioValue()) {
-        CSSAspectRatioValue* aspectRatio = toCSSAspectRatioValue(value);
-        return compareValue(width * static_cast<int>(aspectRatio->denominatorValue()), height * static_cast<int>(aspectRatio->numeratorValue()), op);
+    if (is<CSSAspectRatioValue>(*value)) {
+        CSSAspectRatioValue& aspectRatio = downcast<CSSAspectRatioValue>(*value);
+        return compareValue(width * static_cast<int>(aspectRatio.denominatorValue()), height * static_cast<int>(aspectRatio.numeratorValue()), op);
     }
 
     return false;
@@ -196,9 +196,8 @@ static bool compareAspectRatioValue(CSSValue* value, int width, int height, Medi
 
 static bool numberValue(CSSValue* value, float& result)
 {
-    if (value->isPrimitiveValue()
-        && toCSSPrimitiveValue(value)->isNumber()) {
-        result = toCSSPrimitiveValue(value)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+    if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isNumber()) {
+        result = downcast<CSSPrimitiveValue>(*value).getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
         return true;
     }
     return false;
@@ -246,8 +245,8 @@ static bool orientationMediaFeatureEval(CSSValue* value, const CSSToLengthConver
 
     int width = view->layoutWidth();
     int height = view->layoutHeight();
-    if (value && value->isPrimitiveValue()) {
-        const CSSValueID id = toCSSPrimitiveValue(value)->getValueID();
+    if (is<CSSPrimitiveValue>(value)) {
+        const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
         if (width > height) // Square viewport is portrait.
             return CSSValueLandscape == id;
         return CSSValuePortrait == id;
@@ -308,22 +307,22 @@ static bool evalResolution(CSSValue* value, Frame* frame, MediaFeaturePrefix op)
     if (!value)
         return !!deviceScaleFactor;
 
-    if (!value->isPrimitiveValue())
+    if (!is<CSSPrimitiveValue>(*value))
         return false;
 
-    CSSPrimitiveValue* resolution = toCSSPrimitiveValue(value);
-    return compareValue(deviceScaleFactor, resolution->isNumber() ? resolution->getFloatValue() : resolution->getFloatValue(CSSPrimitiveValue::CSS_DPPX), op);
+    CSSPrimitiveValue& resolution = downcast<CSSPrimitiveValue>(*value);
+    return compareValue(deviceScaleFactor, resolution.isNumber() ? resolution.getFloatValue() : resolution.getFloatValue(CSSPrimitiveValue::CSS_DPPX), op);
 }
 
 static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
 {
-    return (!value || toCSSPrimitiveValue(value)->isNumber()) && evalResolution(value, frame, op);
+    return (!value || downcast<CSSPrimitiveValue>(*value).isNumber()) && evalResolution(value, frame, op);
 }
 
 static bool resolutionMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix op)
 {
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
-    return (!value || toCSSPrimitiveValue(value)->isResolution()) && evalResolution(value, frame, op);
+    return (!value || downcast<CSSPrimitiveValue>(*value).isResolution()) && evalResolution(value, frame, op);
 #else
     UNUSED_PARAM(value);
     UNUSED_PARAM(frame);
@@ -344,18 +343,18 @@ static bool gridMediaFeatureEval(CSSValue* value, const CSSToLengthConversionDat
 
 static bool computeLength(CSSValue* value, bool strict, const CSSToLengthConversionData& conversionData, int& result)
 {
-    if (!value->isPrimitiveValue())
+    if (!is<CSSPrimitiveValue>(*value))
         return false;
 
-    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-    if (primitiveValue->isNumber()) {
-        result = primitiveValue->getIntValue();
+    if (primitiveValue.isNumber()) {
+        result = primitiveValue.getIntValue();
         return !strict || !result;
     }
 
-    if (primitiveValue->isLength()) {
-        result = primitiveValue->computeLength<int>(conversionData);
+    if (primitiveValue.isLength()) {
+        result = primitiveValue.computeLength<int>(conversionData);
         return true;
     }
 
@@ -593,7 +592,7 @@ static bool view_modeMediaFeatureEval(CSSValue* value, const CSSToLengthConversi
     if (!value)
         return true;
 
-    const int viewModeCSSKeywordID = toCSSPrimitiveValue(value)->getValueID();
+    const int viewModeCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
     const Page::ViewMode viewMode = frame->page()->viewMode();
     bool result = false;
     switch (viewMode) {
@@ -688,10 +687,10 @@ static bool pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversion
     if (!value)
         return pointer != NoPointer;
 
-    if (!value->isPrimitiveValue())
+    if (!is<CSSPrimitiveValue>(*value))
         return false;
 
-    const CSSValueID id = toCSSPrimitiveValue(value)->getValueID();
+    const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
     return (pointer == NoPointer && id == CSSValueNone)
         || (pointer == TouchPointer && id == CSSValueCoarse)
         || (pointer == MousePointer && id == CSSValueFine);

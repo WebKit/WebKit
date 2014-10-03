@@ -95,8 +95,8 @@ private:
 #endif
 };
 
-CSS_VALUE_TYPE_CASTS(CSSFontFaceSrcValue, isFontFaceSrcValue())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontFaceSrcValue, isFontFaceSrcValue())
 
 #endif

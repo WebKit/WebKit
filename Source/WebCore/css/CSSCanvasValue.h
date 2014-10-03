@@ -102,8 +102,8 @@ private:
     HTMLCanvasElement* m_element;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSCanvasValue, isCanvasValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCanvasValue, isCanvasValue())
 
 #endif // CSSCanvasValue_h

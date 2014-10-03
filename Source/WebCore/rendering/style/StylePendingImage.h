@@ -45,12 +45,12 @@ class StylePendingImage : public StyleImage {
 public:
     static PassRefPtr<StylePendingImage> create(CSSValue* value) { return adoptRef(new StylePendingImage(value)); }
 
-    CSSImageValue* cssImageValue() const { return m_value && m_value->isImageValue() ? toCSSImageValue(m_value) : nullptr; }
+    CSSImageValue* cssImageValue() const { return is<CSSImageValue>(m_value) ? downcast<CSSImageValue>(m_value) : nullptr; }
     CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value && m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
-    CSSCursorImageValue* cssCursorImageValue() const { return m_value && m_value->isCursorImageValue() ? toCSSCursorImageValue(m_value) : nullptr; }
+    CSSCursorImageValue* cssCursorImageValue() const { return is<CSSCursorImageValue>(m_value) ? downcast<CSSCursorImageValue>(m_value) : nullptr; }
 
 #if ENABLE(CSS_IMAGE_SET)
-    CSSImageSetValue* cssImageSetValue() const { return m_value && m_value->isImageSetValue() ? toCSSImageSetValue(m_value) : nullptr; }
+    CSSImageSetValue* cssImageSetValue() const { return is<CSSImageSetValue>(m_value) ? downcast<CSSImageSetValue>(m_value) : nullptr; }
 #endif
 
     void detachFromCSSValue() { m_value = nullptr; }

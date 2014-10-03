@@ -122,8 +122,8 @@ inline PassRef<CalculationValue> CSSCalcValue::createCalculationValue(const CSST
         m_shouldClampToNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
 }
 
-CSS_VALUE_TYPE_CASTS(CSSCalcValue, isCalcValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCalcValue, isCalcValue())
 
 #endif // CSSCalculationValue_h

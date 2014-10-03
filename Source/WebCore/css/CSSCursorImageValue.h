@@ -78,8 +78,8 @@ private:
     HashSet<SVGElement*> m_referencedElements;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSCursorImageValue, isCursorImageValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCursorImageValue, isCursorImageValue())
 
 #endif // CSSCursorImageValue_h

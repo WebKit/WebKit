@@ -60,8 +60,8 @@ private:
     float m_denominatorValue;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSAspectRatioValue, isAspectRatioValue())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSAspectRatioValue, isAspectRatioValue())
 
 #endif

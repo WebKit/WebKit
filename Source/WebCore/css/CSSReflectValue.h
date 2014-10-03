@@ -67,8 +67,8 @@ private:
     RefPtr<CSSValue> m_mask;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSReflectValue, isReflectValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSReflectValue, isReflectValue())
 
 #endif // CSSReflectValue_h

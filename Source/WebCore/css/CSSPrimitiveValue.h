@@ -421,8 +421,8 @@ private:
     } m_value;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSPrimitiveValue, isPrimitiveValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPrimitiveValue, isPrimitiveValue())
 
 #endif // CSSPrimitiveValue_h

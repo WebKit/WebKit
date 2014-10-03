@@ -52,9 +52,9 @@ private:
     CSSGridLineNamesValue();
 };
 
-CSS_VALUE_TYPE_CASTS(CSSGridLineNamesValue, isGridLineNamesValue());
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGridLineNamesValue, isGridLineNamesValue());
 
-#endif
-#endif
+#endif // ENABLE(CSS_GRID_LAYOUT)
+#endif // CSSGridLineNamesValue_h

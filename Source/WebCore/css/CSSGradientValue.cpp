@@ -46,12 +46,12 @@ namespace WebCore {
 PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
-        return 0;
+        return nullptr;
 
     bool cacheable = isCacheable();
     if (cacheable) {
         if (!clients().contains(renderer))
-            return 0;
+            return nullptr;
 
         Image* result = cachedImageForSize(size);
         if (result)
@@ -60,10 +60,10 @@ PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const FloatSi
 
     RefPtr<Gradient> gradient;
 
-    if (isLinearGradientValue())
-        gradient = toCSSLinearGradientValue(this)->createGradient(*renderer, size);
+    if (is<CSSLinearGradientValue>(*this))
+        gradient = downcast<CSSLinearGradientValue>(*this).createGradient(*renderer, size);
     else
-        gradient = toCSSRadialGradientValue(this)->createGradient(*renderer, size);
+        gradient = downcast<CSSRadialGradientValue>(*this).createGradient(*renderer, size);
 
     RefPtr<GradientImage> newImage = GradientImage::create(gradient, size);
     if (cacheable)
@@ -118,13 +118,13 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     RefPtr<CSSGradientValue> result;
     if (!derived)
         result = this;
-    else if (isLinearGradientValue())
-        result = toCSSLinearGradientValue(this)->clone();
-    else if (isRadialGradientValue())
-        result = toCSSRadialGradientValue(this)->clone();
+    else if (is<CSSLinearGradientValue>(*this))
+        result = downcast<CSSLinearGradientValue>(*this).clone();
+    else if (is<CSSRadialGradientValue>(*this))
+        result = downcast<CSSRadialGradientValue>(*this).clone();
     else {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     for (auto& stop : result->m_stops) {

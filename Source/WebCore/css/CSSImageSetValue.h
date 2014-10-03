@@ -87,9 +87,9 @@ private:
     Vector<ImageWithScale> m_imagesInSet;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSImageSetValue, isImageSetValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSImageSetValue, isImageSetValue())
 
 #endif // ENABLE(CSS_IMAGE_SET)
 

@@ -62,9 +62,9 @@ private:
     size_t m_columnCount;
 };
 
-CSS_VALUE_TYPE_CASTS(CSSGridTemplateAreasValue, isGridTemplateAreasValue())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGridTemplateAreasValue, isGridTemplateAreasValue())
 
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
 

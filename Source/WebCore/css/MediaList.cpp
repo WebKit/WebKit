@@ -332,10 +332,10 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
                 const MediaQueryExp* exp = expressions.at(j).get();
                 if (exp->mediaFeature() == MediaFeatureNames::resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::max_resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::min_resolutionMediaFeature) {
                     CSSValue* cssValue =  exp->value();
-                    if (cssValue && cssValue->isPrimitiveValue()) {
-                        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(cssValue);
-                        if (primitiveValue->isDotsPerInch() || primitiveValue->isDotsPerCentimeter())
-                            addResolutionWarningMessageToConsole(document, mediaQuerySet->mediaText(), primitiveValue);
+                    if (is<CSSPrimitiveValue>(cssValue)) {
+                        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*cssValue);
+                        if (primitiveValue.isDotsPerInch() || primitiveValue.isDotsPerCentimeter())
+                            addResolutionWarningMessageToConsole(document, mediaQuerySet->mediaText(), &primitiveValue);
                     }
                 }
             }
