@@ -1955,7 +1955,6 @@ end
 _llint_op_tear_off_arguments:
     traceExecution()
     loadi 4[PC], t0
-    addi 1, t0   # Get the unmodifiedArgumentsRegister
     bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:
