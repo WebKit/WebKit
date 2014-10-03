@@ -1,3 +1,23 @@
+2014-10-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Fix build break since r174231 and r174256
+        https://bugs.webkit.org/show_bug.cgi?id=137384
+
+        Unreviewed, EFL build fix.
+
+        r174231 and r174256 didn't consider EFL port and CoordinatedGraphics area.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::mainFrameContentSizeChanged):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::highlight):
+        (WebKit::TapHighlightController::hideHighlight):
+        * WebProcess/WebPage/TapHighlightController.h: Add WebCore:: namespace prefix to PageOverlay argument type.
+
 2014-10-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r174231 to fix non Apple builds.

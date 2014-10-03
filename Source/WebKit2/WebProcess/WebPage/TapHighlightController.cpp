@@ -34,7 +34,9 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GestureTapHighlighter.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderElement.h>
 
 using namespace std;
@@ -60,9 +62,9 @@ void TapHighlightController::highlight(Node* node)
     m_color = node->renderer()->style().tapHighlightColor();
 
     if (!m_overlay) {
-        RefPtr<PageOverlay> overlay = PageOverlay::create(this);
+        RefPtr<PageOverlay> overlay = PageOverlay::create(*this);
         m_overlay = overlay.get();
-        m_webPage->installPageOverlay(overlay.release());
+        m_webPage->mainFrame()->pageOverlayController().installPageOverlay(overlay.release(), PageOverlay::FadeMode::Fade);
     } else
         m_overlay->setNeedsDisplay();
 }
@@ -70,7 +72,7 @@ void TapHighlightController::highlight(Node* node)
 void TapHighlightController::hideHighlight()
 {
     if (m_overlay)
-        m_webPage->uninstallPageOverlay(m_overlay, PageOverlay::FadeMode::Fade);
+        m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_overlay, PageOverlay::FadeMode::Fade);
 }
 
 void TapHighlightController::pageOverlayDestroyed(PageOverlay*)

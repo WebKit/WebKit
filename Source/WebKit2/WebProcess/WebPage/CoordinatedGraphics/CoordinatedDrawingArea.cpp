@@ -39,7 +39,9 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -227,7 +229,7 @@ void CoordinatedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 
 void CoordinatedDrawingArea::mainFrameContentSizeChanged(const WebCore::IntSize&)
 {
-    m_webPage.pageOverlayController().didChangeDocumentSize();
+    m_webPage.mainFrame()->pageOverlayController().didChangeDocumentSize();
 }
 
 void CoordinatedDrawingArea::layerHostDidFlushLayers()

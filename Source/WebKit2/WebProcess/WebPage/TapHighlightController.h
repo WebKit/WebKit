@@ -24,7 +24,9 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "PageOverlay.h"
+#include "WebEvent.h"
 #include <WebCore/Color.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Path.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -40,7 +42,7 @@ namespace WebKit {
 
 class WebPage;
 
-class TapHighlightController : private PageOverlay::Client {
+class TapHighlightController : private WebCore::PageOverlay::Client {
     WTF_MAKE_NONCOPYABLE(TapHighlightController);
 
 public:
@@ -52,15 +54,15 @@ public:
 
 private:
     // PageOverlay::Client.
-    virtual void pageOverlayDestroyed(PageOverlay*);
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*);
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*);
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&);
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay*);
+    virtual void willMoveToWebPage(WebCore::PageOverlay*, WebPage*);
+    virtual void didMoveToWebPage(WebCore::PageOverlay*, WebPage*);
+    virtual bool mouseEvent(WebCore::PageOverlay*, const WebMouseEvent&);
+    virtual void drawRect(WebCore::PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
     WebPage* m_webPage;
-    PageOverlay* m_overlay;
+    WebCore::PageOverlay* m_overlay;
 
     WebCore::Path m_path;
     WebCore::Color m_color;

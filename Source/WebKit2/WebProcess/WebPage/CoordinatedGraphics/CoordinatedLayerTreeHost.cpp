@@ -40,6 +40,8 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/MainFrame.h>
+#include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
 #include <wtf/CurrentTime.h>
 
@@ -112,7 +114,7 @@ void CoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool 
 
 void CoordinatedLayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
 {
-    m_coordinator->setRootCompositingLayer(graphicsLayer, m_webPage->pageOverlayController().viewOverlayRootLayer());
+    m_coordinator->setRootCompositingLayer(graphicsLayer, &m_webPage->mainFrame()->pageOverlayController().viewOverlayRootLayer());
 }
 
 void CoordinatedLayerTreeHost::invalidate()
@@ -175,7 +177,8 @@ void CoordinatedLayerTreeHost::purgeBackingStores()
 
 void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 {
-    m_webPage->pageOverlayController().flushPageOverlayLayers(visibleContentRect);
+    // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
+    m_coordinator->mainContentsLayer()->flushCompositingState(visibleContentRect);
 }
 
 void CoordinatedLayerTreeHost::performScheduledLayerFlush()
@@ -224,7 +227,7 @@ PassRefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurfac
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator->deviceOrPageScaleFactorChanged();
-    m_webPage->pageOverlayController().didChangeDeviceScaleFactor();
+    m_webPage->mainFrame()->pageOverlayController().didChangeDeviceScaleFactor();
 }
 
 void CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()

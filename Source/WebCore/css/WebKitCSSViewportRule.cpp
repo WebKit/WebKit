@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WebKitCSSViewportRule::WebKitCSSViewportRule(StyleRuleViewport* viewportRule, CSSStyleSheet* sheet)
+WebKitCSSViewportRule::WebKitCSSViewportRule(StyleRuleViewport& viewportRule, CSSStyleSheet* sheet)
     : CSSRule(sheet)
     , m_viewportRule(viewportRule)
 {

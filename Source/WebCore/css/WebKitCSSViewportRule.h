@@ -56,7 +56,7 @@ public:
     CSSStyleDeclaration& style();
 
 private:
-    WebKitCSSViewportRule(StyleRuleViewport*, CSSStyleSheet*);
+    WebKitCSSViewportRule(StyleRuleViewport&, CSSStyleSheet*);
 
     Ref<StyleRuleViewport> m_viewportRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
