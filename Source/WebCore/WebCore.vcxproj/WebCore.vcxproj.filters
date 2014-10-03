@@ -3354,6 +3354,9 @@
     <ClCompile Include="..\dom\SelectorQuery.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\SharedEventSenders.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
     <ClCompile Include="..\dom\SpaceSplitString.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10450,6 +10453,9 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\SelectorQuery.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\SharedEventSenders.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\SimulatedClickOptions.h">

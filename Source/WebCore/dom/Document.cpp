@@ -138,6 +138,7 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SharedEventSenders.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -471,6 +472,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
     , m_eventQueue(*this)
+    , m_sharedEventSenders(std::make_unique<SharedEventSenders>())
     , m_weakFactory(this)
 #if ENABLE(FULLSCREEN_API)
     , m_areKeysEnabledInFullScreen(0)
@@ -2422,20 +2424,18 @@ void Document::implicitClose()
     //  -When any new HTMLLinkElement is inserted into the document
     // But those add a dynamic component to the favicon that has UI 
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
-    Frame* f = frame();
-    if (f) {
-        f->loader().icon().startLoader();
-        f->animation().startAnimationsIfNotSuspended(this);
-
-        // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
-        // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
-        // below SVG font parsing, for example. <https://webkit.org/b/136269>
-        ImageLoader::dispatchPendingBeforeLoadEvents();
-        ImageLoader::dispatchPendingLoadEvents();
-        ImageLoader::dispatchPendingErrorEvents();
-        HTMLLinkElement::dispatchPendingLoadEvents();
-        HTMLStyleElement::dispatchPendingLoadEvents();
+    Frame* frame = this->frame();
+    if (frame) {
+        frame->loader().icon().startLoader();
+        frame->animation().startAnimationsIfNotSuspended(this);
     }
+
+    sharedEventSenders().imageBeforeloadEventSender().dispatchPendingEvents();
+    sharedEventSenders().imageLoadEventSender().dispatchPendingEvents();
+    sharedEventSenders().imageErrorEventSender().dispatchPendingEvents();
+
+    sharedEventSenders().linkLoadEventSender().dispatchPendingEvents();
+    sharedEventSenders().styleLoadEventSender().dispatchPendingEvents();
 
     // To align the HTML load event and the SVGLoad event for the outermost <svg> element, fire it from
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
@@ -2447,15 +2447,15 @@ void Document::implicitClose()
     enqueuePageshowEvent(PageshowEventNotPersisted);
     enqueuePopstateEvent(m_pendingStateObject ? m_pendingStateObject.release() : SerializedScriptValue::nullValue());
     
-    if (f)
-        f->loader().handledOnloadEvents();
+    if (frame)
+        frame->loader().handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("onload fired at %lld\n", elapsedTime().count());
 #endif
 
     // An event handler may have removed the frame
-    if (!frame()) {
+    if (!this->frame()) {
         m_processingLoadEvent = false;
         return;
     }
@@ -2464,7 +2464,7 @@ void Document::implicitClose()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (frame()->navigationScheduler().locationChangePending() && elapsedTime() < settings()->layoutInterval()) {
+    if (this->frame()->navigationScheduler().locationChangePending() && elapsedTime() < settings()->layoutInterval()) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         m_processingLoadEvent = false;
@@ -2472,7 +2472,7 @@ void Document::implicitClose()
         return;
     }
 
-    frame()->loader().checkCallImplicitClose();
+    this->frame()->loader().checkCallImplicitClose();
     
     // We used to force a synchronous display and flush here.  This really isn't
     // necessary and can in fact be actively harmful if pages are loading at a rate of > 60fps
@@ -2489,7 +2489,7 @@ void Document::implicitClose()
     m_processingLoadEvent = false;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(EFL)
-    if (f && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
+    if (frame && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is 

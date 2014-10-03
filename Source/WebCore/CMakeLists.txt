@@ -1437,6 +1437,7 @@ set(WebCore_SOURCES
     dom/SecurityContext.cpp
     dom/SelectorQuery.cpp
     dom/ShadowRoot.cpp
+    dom/SharedEventSenders.cpp
     dom/SpaceSplitString.cpp
     dom/StaticNodeList.cpp
     dom/StringCallback.cpp

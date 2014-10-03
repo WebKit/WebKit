@@ -35,7 +35,6 @@ class ImageLoader;
 class RenderImageResource;
 
 template<typename T> class EventSender;
-typedef EventSender<ImageLoader> ImageEventSender;
 
 class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,11 +64,11 @@ public:
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
     bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
 
-    void dispatchPendingEvent(ImageEventSender*);
+    void dispatchPendingEvent(EventSender<ImageLoader>&);
 
-    static void dispatchPendingBeforeLoadEvents();
-    static void dispatchPendingLoadEvents();
-    static void dispatchPendingErrorEvents();
+    EventSender<ImageLoader>& beforeLoadEventSender() const;
+    EventSender<ImageLoader>& loadEventSender() const;
+    EventSender<ImageLoader>& errorEventSender() const;
 
 protected:
     explicit ImageLoader(Element&);

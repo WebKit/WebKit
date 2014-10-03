@@ -27,23 +27,18 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventSender.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
+#include "SharedEventSenders.h"
 #include "StyleSheetContents.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-static StyleEventSender& styleLoadEventSender()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(StyleEventSender, sharedLoadEventSender, (eventNames().loadEvent));
-    return sharedLoadEventSender;
-}
 
 inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
@@ -60,7 +55,7 @@ HTMLStyleElement::~HTMLStyleElement()
     // Therefore we can't ASSERT(m_scopedStyleRegistrationState == NotRegistered).
     m_styleSheetOwner.clearDocumentData(document(), *this);
 
-    styleLoadEventSender().cancelEvent(*this);
+    document().sharedEventSenders().styleLoadEventSender().cancelEvent(*this);
 }
 
 PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -114,14 +109,10 @@ void HTMLStyleElement::childrenChanged(const ChildChange& change)
     m_styleSheetOwner.childrenChanged(*this);
 }
 
-void HTMLStyleElement::dispatchPendingLoadEvents()
+void HTMLStyleElement::dispatchPendingEvent(EventSender<HTMLStyleElement>& eventSender)
 {
-    styleLoadEventSender().dispatchPendingEvents();
-}
+    ASSERT_UNUSED(eventSender, &eventSender == &document().sharedEventSenders().styleLoadEventSender());
 
-void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender)
-{
-    ASSERT_UNUSED(eventSender, eventSender == &styleLoadEventSender());
     if (m_loadedSheet)
         dispatchEvent(Event::create(eventNames().loadEvent, false, false));
     else
@@ -133,7 +124,7 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    styleLoadEventSender().dispatchEventSoon(*this);
+    document().sharedEventSenders().styleLoadEventSender().dispatchEventSoon(*this);
     m_firedLoad = true;
 }
 

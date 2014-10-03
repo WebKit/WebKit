@@ -33,7 +33,6 @@
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
 #include "Event.h"
-#include "EventSender.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -47,6 +46,7 @@
 #include "RenderStyle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SharedEventSenders.h"
 #include "StyleInheritedData.h"
 #include "StyleResolveForDocument.h"
 #include "StyleSheetContents.h"
@@ -56,12 +56,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static LinkEventSender& linkLoadEventSender()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(LinkEventSender, sharedLoadEventSender, (eventNames().loadEvent));
-    return sharedLoadEventSender;
-}
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
@@ -94,7 +88,7 @@ HTMLLinkElement::~HTMLLinkElement()
     if (inDocument())
         document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 
-    linkLoadEventSender().cancelEvent(*this);
+    document().sharedEventSenders().linkLoadEventSender().cancelEvent(*this);
 }
 
 void HTMLLinkElement::setDisabledState(bool disabled)
@@ -361,14 +355,10 @@ bool HTMLLinkElement::sheetLoaded()
     return false;
 }
 
-void HTMLLinkElement::dispatchPendingLoadEvents()
+void HTMLLinkElement::dispatchPendingEvent(EventSender<HTMLLinkElement>& eventSender)
 {
-    linkLoadEventSender().dispatchPendingEvents();
-}
+    ASSERT_UNUSED(eventSender, &eventSender == &document().sharedEventSenders().linkLoadEventSender());
 
-void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
-{
-    ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSender());
     if (m_loadedSheet)
         linkLoaded();
     else
@@ -380,7 +370,7 @@ void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccu
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    linkLoadEventSender().dispatchEventSoon(*this);
+    document().sharedEventSenders().linkLoadEventSender().dispatchEventSoon(*this);
     m_firedLoad = true;
 }
 

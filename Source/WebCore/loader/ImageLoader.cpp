@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
-#include "EventSender.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -38,6 +37,7 @@
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
 #include "SecurityOrigin.h"
+#include "SharedEventSenders.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)
@@ -63,22 +63,19 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 
 namespace WebCore {
 
-static ImageEventSender& beforeLoadEventSender()
+EventSender<ImageLoader>& ImageLoader::beforeLoadEventSender() const
 {
-    static NeverDestroyed<ImageEventSender> sender(eventNames().beforeloadEvent);
-    return sender;
+    return m_element.document().sharedEventSenders().imageBeforeloadEventSender();
 }
 
-static ImageEventSender& loadEventSender()
+EventSender<ImageLoader>& ImageLoader::loadEventSender() const
 {
-    static NeverDestroyed<ImageEventSender> sender(eventNames().loadEvent);
-    return sender;
+    return m_element.document().sharedEventSenders().imageLoadEventSender();
 }
 
-static ImageEventSender& errorEventSender()
+EventSender<ImageLoader>& ImageLoader::errorEventSender() const
 {
-    static NeverDestroyed<ImageEventSender> sender(eventNames().errorEvent);
-    return sender;
+    return m_element.document().sharedEventSenders().imageErrorEventSender();
 }
 
 static inline bool pageIsBeingDismissed(Document& document)
@@ -379,10 +376,10 @@ void ImageLoader::timerFired(Timer<ImageLoader>&)
     element().deref();
 }
 
-void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
+void ImageLoader::dispatchPendingEvent(EventSender<ImageLoader>& eventSender)
 {
-    ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender() || eventSender == &errorEventSender());
-    const AtomicString& eventType = eventSender->eventType();
+    ASSERT(&eventSender == &beforeLoadEventSender() || &eventSender == &loadEventSender() || &eventSender == &errorEventSender());
+    const AtomicString& eventType = eventSender.eventType();
     if (eventType == eventNames().beforeloadEvent)
         dispatchPendingBeforeLoadEvent();
     if (eventType == eventNames().loadEvent)
@@ -446,21 +443,6 @@ void ImageLoader::dispatchPendingErrorEvent()
     // Only consider updating the protection ref-count of the Element immediately before returning
     // from this function as doing so might result in the destruction of this ImageLoader.
     updatedHasPendingEvent();
-}
-
-void ImageLoader::dispatchPendingBeforeLoadEvents()
-{
-    beforeLoadEventSender().dispatchPendingEvents();
-}
-
-void ImageLoader::dispatchPendingLoadEvents()
-{
-    loadEventSender().dispatchPendingEvents();
-}
-
-void ImageLoader::dispatchPendingErrorEvents()
-{
-    errorEventSender().dispatchPendingEvents();
 }
 
 void ImageLoader::elementDidMoveToNewDocument()
