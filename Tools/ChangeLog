@@ -1,3 +1,15 @@
+2014-09-28  Sam Weinig  <sam@webkit.org>
+
+        Remove RefPtrHashMap
+        https://bugs.webkit.org/show_bug.cgi?id=137200
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for using a HashMap with RefPtr keys, focusing on ensuring that
+        a minimum of refcount churn occurs.
+
 2014-10-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove workarounds for versions of Python before 2.7

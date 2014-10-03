@@ -83,7 +83,6 @@ set(WTF_HEADERS
     RefCounted.h
     RefCountedLeakCounter.h
     RefPtr.h
-    RefPtrHashMap.h
     RetainPtr.h
     RunLoop.h
     SHA1.h

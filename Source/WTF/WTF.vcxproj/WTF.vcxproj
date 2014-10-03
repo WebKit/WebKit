@@ -257,7 +257,6 @@
     <ClInclude Include="..\wtf\RefCounted.h" />
     <ClInclude Include="..\wtf\RefCountedLeakCounter.h" />
     <ClInclude Include="..\wtf\RefPtr.h" />
-    <ClInclude Include="..\wtf\RefPtrHashMap.h" />
     <ClInclude Include="..\wtf\RetainPtr.h" />
     <ClInclude Include="..\wtf\RunLoop.h" />
     <ClInclude Include="..\wtf\SaturatedArithmetic.h" />

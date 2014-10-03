@@ -582,9 +582,6 @@
     <ClInclude Include="..\wtf\RefPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\RefPtrHashMap.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\RetainPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
