@@ -1,5 +1,5 @@
 application: webkit-queues
-version: 174291 # Bugzilla bug ID of last major change
+version: 174302 # Bugzilla bug ID of last major change
 runtime: python
 api_version: 1
 
