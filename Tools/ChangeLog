@@ -1,5 +1,20 @@
 2014-10-03  Alexey Proskuryakov  <ap@apple.com>
 
+        Bugzilla status bubble displays an exception showing attachment 175738
+        https://bugs.webkit.org/show_bug.cgi?id=137410
+
+        Reviewed by Tim Horton.
+
+        * QueueStatusServer/app.yaml: Update version.
+
+        * QueueStatusServer/handlers/statusbubble.py: (StatusBubble._build_bubble):
+        Don't fail even if expected status message is missing.
+
+        * QueueStatusServer/model/patchlog.py: (PatchLog): Quick unrelated fix - define
+        the field in the same way it's defined in QueueStatus table.
+
+2014-10-03  Alexey Proskuryakov  <ap@apple.com>
+
         Record latest message in PatchLog for quick access
         https://bugs.webkit.org/show_bug.cgi?id=137405
 
