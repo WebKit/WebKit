@@ -242,7 +242,6 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
 
         if (isValid) {
             description->setLeastCommonAncestor(typeSet->leastCommonAncestor());
-            description->setPrimitiveTypeNames(typeSet->allPrimitiveTypeNames());
             description->setStructures(typeSet->allStructureRepresentations());
             description->setTypeSet(typeSet->inspectorTypeSet());
             description->setIsTruncated(typeSet->isOverflown());

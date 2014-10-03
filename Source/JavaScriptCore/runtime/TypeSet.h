@@ -102,7 +102,6 @@ public:
     void invalidateCache();
     String dumpTypes() const;
     String displayName() const;
-    PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
     String toJSONString() const;
     bool isOverflown() const { return m_isOverflown; }

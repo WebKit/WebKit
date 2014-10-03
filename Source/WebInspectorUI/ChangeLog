@@ -1,3 +1,35 @@
+2014-10-03  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Move the computation that results in UI strings from JSC to the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=137295
+
+        Reviewed by Timothy Hatcher.
+
+        The inspector now computes a set of properties that was previously 
+        computed inside JSC. 
+
+        This patch also addresses the weird experience of the 
+        type of an expression claiming to be both a Number and 
+        an Integer. This could be a bit confusing because Number 
+        is supposed to represent Double|Integer and the previous
+        UI implied that Number was equivalent to Double. The new UI only 
+        ever shows either the type of Number or Integer when showing
+        the type information of an expression. It never shows both Number
+        and Integer simultaneously to describe a single expression.
+
+        * UserInterface/Models/TypeSet.js:
+        (WebInspector.TypeSet):
+        (WebInspector.TypeSet.prototype.isContainedIn):
+        (WebInspector.TypeSet.prototype.get primitiveTypeNames):
+        * UserInterface/Views/TypePropertiesSection.js:
+        (WebInspector.TypePropertiesSection):
+        (WebInspector.TypePropertiesSection.prototype.onpopulate):
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView):
+        (WebInspector.TypeTokenView.prototype.update):
+        (WebInspector.TypeTokenView.prototype._shouldShowPopover):
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+
 2014-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cannot add a new CSS Rule to elements with 3 or more class names

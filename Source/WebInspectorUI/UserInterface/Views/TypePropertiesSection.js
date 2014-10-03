@@ -27,6 +27,7 @@ WebInspector.TypePropertiesSection = function(types, title, subtitle)
 {
     this.emptyPlaceholder = WebInspector.UIString("No Properties");
     this.types = types;
+    this._typeSet = WebInspector.TypeSet.fromPayload(this.types);
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
 };
@@ -39,7 +40,7 @@ WebInspector.TypePropertiesSection.prototype = {
     {
         this.propertiesTreeOutline.removeChildren();
 
-        var primitiveTypeNames = this.types.primitiveTypeNames;
+        var primitiveTypeNames = this._typeSet.primitiveTypeNames;
         var structures = this.types.structures;
         var properties = [];
         for (var struct of structures) {

@@ -39,6 +39,7 @@ WebInspector.TypeTokenView = function(tokenAnnotator, shouldHaveRightMargin, sho
     this.element = span;
     this._tokenAnnotator = tokenAnnotator;
     this._types = null;
+    this._typeSet = null;
     this._colorClass = null;
 
     this._popoverTitle = WebInspector.TypeTokenView.titleForPopover(titleType, functionOrVariableName);
@@ -89,6 +90,7 @@ WebInspector.TypeTokenView.prototype = {
     update: function(types)
     {
         this._types = types;
+        this._typeSet = WebInspector.TypeSet.fromPayload(this._types);
 
         var title = this._displayTypeName();
         this.element.textContent = title;
@@ -129,7 +131,10 @@ WebInspector.TypeTokenView.prototype = {
 
     _shouldShowPopover: function()
     {
-        if (this._types.primitiveTypeNames && this._types.primitiveTypeNames.length > 1)
+        if (!this._types.isValid)
+            return false;
+
+        if (this._typeSet.primitiveTypeNames.length > 1)
             return true;
 
         if (this._types.structures && this._types.structures.length)
@@ -140,9 +145,12 @@ WebInspector.TypeTokenView.prototype = {
 
     _displayTypeName: function()
     {
-        var typeSet = WebInspector.TypeSet.fromPayload(this._types);
+        if (!this._types.isValid)
+            return "";
 
-        if (this._types.leastCommonAncestor && !(this._types.primitiveTypeNames && this._types.primitiveTypeNames.length)) {
+        var typeSet = this._typeSet;
+
+        if (this._types.leastCommonAncestor && !this._typeSet.primitiveTypeNames.length) {
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object))
                 return this._types.leastCommonAncestor;
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.NullOrUndefinedTypeBits))

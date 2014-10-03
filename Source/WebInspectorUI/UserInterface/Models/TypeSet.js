@@ -49,6 +49,8 @@ WebInspector.TypeSet = function(runtimeTypeDescriptionPayload)
 
     console.assert(bitString);
     this._bitString = bitString;
+
+    this._primitiveTypeNames = null;
 };
 
 WebInspector.TypeSet.fromPayload = function(payload)
@@ -91,5 +93,32 @@ WebInspector.TypeSet.prototype = {
         // 0b0010 != bitString
 
         return this._bitString && (this._bitString & test) === this._bitString;
+    },
+
+    get primitiveTypeNames()
+    {
+        if (this._primitiveTypeNames)
+            return this._primitiveTypeNames;
+
+        this._primitiveTypeNames = [];
+        var typeSet = this._types.typeSet;
+        if (typeSet.isUndefined)
+            this._primitiveTypeNames.push("Undefined");
+        if (typeSet.isNull)
+            this._primitiveTypeNames.push("Null");
+        if (typeSet.isBoolean)
+            this._primitiveTypeNames.push("Boolean");
+        if (typeSet.isString)
+            this._primitiveTypeNames.push("String");
+
+        // It's implied that type Integer is contained in type Number. Don't put 
+        // both 'Integer' and 'Number' into the set because this could imply that 
+        // Number means to Double instead of Double|Integer.
+        if (typeSet.isNumber)
+            this._primitiveTypeNames.push("Number");
+        else if (typeSet.isInteger)
+            this._primitiveTypeNames.push("Integer");
+
+        return this._primitiveTypeNames;
     }
 };

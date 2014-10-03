@@ -1,3 +1,20 @@
+2014-10-03  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Move the computation that results in UI strings from JSC to the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=137295
+
+        Reviewed by Timothy Hatcher.
+
+        Remove unnecessary functions and properties from JSC that are
+        now being computed inside the Web Inspector. 
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/protocol/Runtime.json:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::allPrimitiveTypeNames): Deleted.
+        * runtime/TypeSet.h:
+
 2014-10-02  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should sink PutLocals

@@ -145,7 +145,6 @@
                 { "name": "isValid", "type": "boolean", "description": "If true, we were able to correlate the offset successfuly with a program location. If false, the offset may be bogus or the offset may be from a CodeBlock that hasn't executed." },
                 { "name": "leastCommonAncestor", "type": "string", "optional": true, "description": "Least common ancestor of all Constructors if the TypeDescription has seen any structures. This string is the display name of the shared constructor function." },
                 { "name": "typeSet", "$ref": "TypeSet", "optional": true, "description": "Set of booleans for determining the aggregate type of this type description." },
-                { "name": "primitiveTypeNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Array of type names for primitive types (int, string, etc) seen at an instruction." },
                 { "name": "structures", "type": "array", "items": { "$ref": "StructureDescription" }, "optional": true, "description": "Array of descriptions for all structures seen for this variable." },
                 { "name": "isTruncated", "type": "boolean", "optional": true, "description": "If true, this indicates that no more structures are being profiled because some maximum threshold has been reached and profiling has stopped because of memory pressure." }
             ]
