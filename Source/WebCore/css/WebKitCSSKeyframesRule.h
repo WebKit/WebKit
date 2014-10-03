@@ -99,4 +99,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(WebKitCSSKeyframesRule, CSSRule::WEBKIT_KEYFRAMES_RULE)
+
 #endif // WebKitCSSKeyframesRule_h

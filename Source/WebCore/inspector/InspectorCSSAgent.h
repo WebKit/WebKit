@@ -92,7 +92,7 @@ public:
     InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
     ~InspectorCSSAgent();
 
-    static CSSStyleRule* asCSSStyleRule(CSSRule*);
+    static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
     bool forcePseudoState(Element*, CSSSelector::PseudoClassType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;

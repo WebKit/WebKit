@@ -214,15 +214,15 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (!rule)
         return nullptr;
 
-    if (rule->type() == CSSRule::MEDIA_RULE)
-        return &toCSSMediaRule(rule)->cssRules();
+    if (is<CSSMediaRule>(*rule))
+        return &downcast<CSSMediaRule>(*rule).cssRules();
 
-    if (rule->type() == CSSRule::WEBKIT_KEYFRAMES_RULE)
-        return &static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
+    if (is<WebKitCSSKeyframesRule>(*rule))
+        return &downcast<WebKitCSSKeyframesRule>(*rule).cssRules();
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
-    if (rule->type() == CSSRule::SUPPORTS_RULE)
-        return &toCSSSupportsRule(rule)->cssRules();
+    if (is<CSSSupportsRule>(*rule))
+        return &downcast<CSSSupportsRule>(*rule).cssRules();
 #endif
 
     return nullptr;
@@ -236,14 +236,14 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CS
     while (parentRule) {
         CSSStyleSheet* parentStyleSheet = nullptr;
         bool isMediaRule = true;
-        if (parentRule->type() == CSSRule::MEDIA_RULE) {
-            CSSMediaRule* mediaRule = toCSSMediaRule(parentRule);
-            mediaList = mediaRule->media();
-            parentStyleSheet = mediaRule->parentStyleSheet();
-        } else if (parentRule->type() == CSSRule::IMPORT_RULE) {
-            CSSImportRule* importRule = toCSSImportRule(parentRule);
-            mediaList = &importRule->media();
-            parentStyleSheet = importRule->parentStyleSheet();
+        if (is<CSSMediaRule>(*parentRule)) {
+            CSSMediaRule& mediaRule = downcast<CSSMediaRule>(*parentRule);
+            mediaList = mediaRule.media();
+            parentStyleSheet = mediaRule.parentStyleSheet();
+        } else if (is<CSSImportRule>(*parentRule)) {
+            CSSImportRule& importRule = downcast<CSSImportRule>(*parentRule);
+            mediaList = &importRule.media();
+            parentStyleSheet = importRule.parentStyleSheet();
             isMediaRule = false;
         } else
             mediaList = nullptr;
@@ -892,7 +892,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     CSSRule* rule = m_pageStyleSheet->item(lastRuleIndex);
     ASSERT(rule);
 
-    CSSStyleRule* styleRule = InspectorCSSAgent::asCSSStyleRule(rule);
+    CSSStyleRule* styleRule = InspectorCSSAgent::asCSSStyleRule(*rule);
     if (!styleRule) {
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
@@ -1421,7 +1421,7 @@ void InspectorStyleSheet::collectFlatRules(PassRefPtr<CSSRuleList> ruleList, CSS
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
         CSSRule* rule = ruleList->item(i);
-        CSSStyleRule* styleRule = InspectorCSSAgent::asCSSStyleRule(rule);
+        CSSStyleRule* styleRule = InspectorCSSAgent::asCSSStyleRule(*rule);
         if (styleRule)
             result->append(styleRule);
         else {

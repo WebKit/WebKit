@@ -427,11 +427,11 @@ private:
 };
 
 // static
-CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
+CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
 {
-    if (rule->type() != CSSRule::STYLE_RULE)
+    if (!is<CSSStyleRule>(rule))
         return nullptr;
-    return toCSSStyleRule(rule);
+    return downcast<CSSStyleRule>(&rule);
 }
 
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
@@ -918,9 +918,8 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Inspector:
     result->addItem(inspectorStyleSheet->buildObjectForStyleSheetInfo());
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
         CSSRule* rule = styleSheet->item(i);
-        if (rule->type() == CSSRule::IMPORT_RULE) {
-            CSSStyleSheet* importedStyleSheet = toCSSImportRule(rule)->styleSheet();
-            if (importedStyleSheet)
+        if (is<CSSImportRule>(*rule)) {
+            if (CSSStyleSheet* importedStyleSheet = downcast<CSSImportRule>(*rule).styleSheet())
                 collectStyleSheets(importedStyleSheet, result);
         }
     }
@@ -1046,7 +1045,7 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> Inspec
         return result.release();
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
-        CSSStyleRule* rule = asCSSStyleRule(ruleList->item(i));
+        CSSStyleRule* rule = asCSSStyleRule(*ruleList->item(i));
         RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(rule);
         if (!ruleObject)
             continue;

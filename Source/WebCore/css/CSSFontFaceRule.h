@@ -51,4 +51,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSFontFaceRule, CSSRule::FONT_FACE_RULE)
+
 #endif // CSSFontFaceRule_h
