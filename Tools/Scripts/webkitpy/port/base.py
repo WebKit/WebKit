@@ -41,7 +41,12 @@ import optparse
 import re
 import sys
 
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    # Needed for Python < 2.7
+    from webkitpy.thirdparty.ordered_dict import OrderedDict
+
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png

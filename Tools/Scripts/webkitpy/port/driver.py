@@ -531,7 +531,7 @@ class ContentBlock(object):
         self.content_hash = None
         self._content_length = None
         # Content is treated as binary data even though the text output is usually UTF-8.
-        self.content = bytearray()
+        self.content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
         self.decoded_content = None
         self.malloc = None
         self.js_heap = None
