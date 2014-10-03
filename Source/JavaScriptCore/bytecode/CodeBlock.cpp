@@ -1445,8 +1445,9 @@ void CodeBlock::dumpBytecode(
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             unsigned attributes = (++it)->u.operand;
+            JSNameScope::Type scopeType = (JSNameScope::Type)(++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "push_name_scope");
-            out.printf("%s, %s, %u", idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes);
+            out.printf("%s, %s, %u %s", idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes, (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : ((scopeType == JSNameScope::CatchScope) ? "catchScope" : "unknownScopeType"));
             break;
         }
         case op_catch: {
