@@ -66,5 +66,5 @@ class UpdateStatus(UpdateBase):
         queue_status.put()
         RecordBotEvent.record_activity(queue_status.queue_name, queue_status.bot_id)
         if queue_status.active_patch_id:
-            RecordPatchEvent.updated(queue_status.active_patch_id, queue_status.queue_name, queue_status.bot_id)
+            RecordPatchEvent.updated(queue_status.active_patch_id, queue_status.queue_name, queue_status.message, queue_status.bot_id)
         self.response.out.write(queue_status.key().id())

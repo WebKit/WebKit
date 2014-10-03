@@ -55,6 +55,6 @@ class ReleasePatch(UpdateBase):
         # WorkItems and ActiveWorkItems.
 
         queue.work_items().remove_work_item(attachment_id)
-        RecordPatchEvent.stopped(attachment_id, queue_name)
+        RecordPatchEvent.stopped(attachment_id, queue_name, last_status)
 
         queue.active_work_items().expire_item(attachment_id)

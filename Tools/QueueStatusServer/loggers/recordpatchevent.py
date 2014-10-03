@@ -69,7 +69,7 @@ class RecordPatchEvent(object):
             queue_log.put()
 
     @classmethod
-    def stopped(cls, attachment_id, queue_name, bot_id=None):
+    def stopped(cls, attachment_id, queue_name, status_message, bot_id=None):
         patch_log = PatchLog.lookup_if_exists(attachment_id, queue_name)
         if not patch_log:
             WarningLog.record("patchlog missing", "In stopped event.", attachment_id, queue_name, bot_id)
@@ -84,6 +84,7 @@ class RecordPatchEvent(object):
                 patch_log.bot_id = bot_id
             patch_log.finished = True
             patch_log.calculate_process_duration()
+            patch_log.latest_message = status_message
             patch_log.put()
 
             queue_log = QueueLog.get_current(queue_name, queue_log_duration)
@@ -91,7 +92,7 @@ class RecordPatchEvent(object):
             queue_log.put()
 
     @classmethod
-    def updated(cls, attachment_id, queue_name, bot_id=None):
+    def updated(cls, attachment_id, queue_name, status_message, bot_id=None):
         patch_log = PatchLog.lookup_if_exists(attachment_id, queue_name)
         if not patch_log:
             WarningLog.record("patchlog missing", "In updated event.", attachment_id, queue_name, bot_id)
@@ -100,6 +101,7 @@ class RecordPatchEvent(object):
         if bot_id:
             patch_log.bot_id = bot_id
         patch_log.status_update_count += 1
+        patch_log.latest_message = status_message
         patch_log.put()
 
         queue_log = QueueLog.get_current(queue_name, queue_log_duration)

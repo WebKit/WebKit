@@ -1,3 +1,17 @@
+2014-10-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Record latest message in PatchLog for quick access
+        https://bugs.webkit.org/show_bug.cgi?id=137405
+
+        Reviewed by Ryosuke Niwa.
+
+        It's no SQL...
+
+        * QueueStatusServer/handlers/releasepatch.py:
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/loggers/recordpatchevent.py:
+        * QueueStatusServer/model/patchlog.py:
+
 2014-10-02  David Farler  <dfarler@apple.com>
 
         -asan-blacklist option also renamed to generic -fsanitize-blacklist
