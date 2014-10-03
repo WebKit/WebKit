@@ -211,21 +211,17 @@ void FontLoader::loadError(CSSFontFaceRule* rule, CSSFontFaceSource* source)
 void FontLoader::notifyWhenFontsReady(PassRefPtr<VoidCallback> callback)
 {
     m_callbacks.append(callback);
-    loadingDone();
 }
 
 void FontLoader::loadingDone()
 {
-    if (loading())
+    if (loading() || !m_document->haveStylesheetsLoaded())
         return;
     if (!m_loadingDoneEvent && m_callbacks.isEmpty())
         return;
 
     if (FrameView* view = m_document->view()) {
         if (view->isInLayout() || view->needsLayout())
-            return;
-        m_document->updateStyleIfNeeded();
-        if (view->needsLayout())
             return;
     }
 
