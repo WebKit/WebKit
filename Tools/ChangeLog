@@ -1,3 +1,10 @@
+2014-10-03  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Settle for 2 chid processes running NRWT on Windows.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes): 3 child processes reintroduces the sporadic crashing, will settle for 2.
+
 2014-10-03  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [GTK] Bump up and patch dependencies to allow building for aarch64

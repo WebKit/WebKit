@@ -94,7 +94,7 @@ class WinPort(ApplePort):
         return 'win'
 
     def default_child_processes(self):
-        return 3
+        return 2
 
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
