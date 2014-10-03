@@ -1,3 +1,13 @@
+2014-10-03  Jer Noble  <jer.noble@apple.com>
+
+        Revert an accidental change introduced by r173318.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::suspendPainting):
+        (WebKit::TiledCoreAnimationDrawingArea::resumePainting):
+
 2014-10-03  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView snapshot of Daring Fireball has the wrong color in the obscured inset
