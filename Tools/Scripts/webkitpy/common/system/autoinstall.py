@@ -218,34 +218,6 @@ class AutoInstaller(object):
 
         return target_path
 
-    # This is a replacement for ZipFile.extractall(), which is
-    # available in Python 2.6 but not in earlier versions.
-    # NOTE: The version in 2.6.1 (which shipped on Snow Leopard) is broken!
-    def _extract_all(self, zip_file, target_dir):
-        for name in zip_file.namelist():
-            path = os.path.join(target_dir, name)
-            if not os.path.basename(path):
-                # Then the path ends in a slash, so it is a directory.
-                os.makedirs(path)
-                continue
-
-            try:
-                # We open this file w/o encoding, as we're reading/writing
-                # the raw byte-stream from the zip file.
-                outfile = open(path, 'wb')
-            except IOError:
-                # Not all zip files seem to list the directories explicitly,
-                # so try again after creating the containing directory.
-                _log.debug("Got IOError: retrying after creating directory...")
-                dirname = os.path.dirname(path)
-                os.makedirs(dirname)
-                outfile = open(path, 'wb')
-
-            try:
-                outfile.write(zip_file.read(name))
-            finally:
-                outfile.close()
-
     def _unzip(self, path, scratch_dir):
         # zipfile.extractall() extracts to a path without the trailing ".zip".
         target_basename = os.path.basename(path[:-len(".zip")])
@@ -260,7 +232,7 @@ class AutoInstaller(object):
             raise Exception(message)
 
         try:
-            self._extract_all(zip_file, scratch_dir)
+            zip_file.extractall(zip_file, scratch_dir)
         finally:
             zip_file.close()
 

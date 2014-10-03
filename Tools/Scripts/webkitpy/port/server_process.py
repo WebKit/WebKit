@@ -95,8 +95,8 @@ class ServerProcess(object):
                 self._proc.stderr = None
 
         self._proc = None
-        self._output = str()  # bytesarray() once we require Python 2.6
-        self._error = str()  # bytesarray() once we require Python 2.6
+        self._output = bytearray()
+        self._error = bytearray()
         self._crashed = False
         self.timed_out = False
 

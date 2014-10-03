@@ -1,5 +1,32 @@
 2014-10-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
+        Remove workarounds for versions of Python before 2.7
+        https://bugs.webkit.org/show_bug.cgi?id=137338
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._extract_targz):
+        (AutoInstaller._unzip):
+        (AutoInstaller): Deleted.
+        (AutoInstaller._extract_all): Deleted.
+        * Scripts/webkitpy/common/webkitunittest.py:
+        (TestCase.setUp): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfigurationConverter.collapse_macros):
+        (TestConfigurationConverter.to_specifiers_list.try_collapsing):
+        (TestConfigurationConverter.to_specifiers_list.try_abbreviating):
+        (TestConfigurationConverter):
+        (TestConfigurationConverter.combinations): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/driver.py:
+        (ContentBlock.__init__):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._reset):
+
+2014-10-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
         Remove autoinstaller workaround for python 2.6
         https://bugs.webkit.org/show_bug.cgi?id=137343
 
