@@ -40,6 +40,7 @@ class HTMLLinkElement;
 class URL;
 
 template<typename T> class EventSender;
+typedef EventSender<HTMLLinkElement> LinkEventSender;
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
 public:
@@ -67,7 +68,8 @@ public:
     void setSizes(const String&);
     DOMSettableTokenList* sizes() const;
 
-    void dispatchPendingEvent(EventSender<HTMLLinkElement>&);
+    void dispatchPendingEvent(LinkEventSender*);
+    static void dispatchPendingLoadEvents();
 
 private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

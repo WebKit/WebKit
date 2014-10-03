@@ -120,6 +120,9 @@ void XMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
     }
 
     doWrite(source.toString());
+
+    // After parsing, go ahead and dispatch image beforeload events.
+    ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
 void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition position)

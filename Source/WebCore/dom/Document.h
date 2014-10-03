@@ -144,7 +144,6 @@ class SelectorQueryCache;
 class SerializedScriptValue;
 class SegmentedString;
 class Settings;
-class SharedEventSenders;
 class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
@@ -1120,8 +1119,6 @@ public:
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
     virtual DocumentEventQueue& eventQueue() const override { return m_eventQueue; }
 
-    SharedEventSenders& sharedEventSenders() const { return *m_sharedEventSenders; }
-
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener*);
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener*);
     MediaCanStartListener* takeAnyMediaCanStartListener();
@@ -1578,8 +1575,6 @@ private:
 
     RenderPtr<RenderView> m_renderView;
     mutable DocumentEventQueue m_eventQueue;
-
-    const std::unique_ptr<SharedEventSenders> m_sharedEventSenders;
 
     WeakPtrFactory<Document> m_weakFactory;
 

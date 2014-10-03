@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
- * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,15 +31,10 @@
 
 namespace WebCore {
 
-template <typename T>
-class EventSender {
+template<typename T> class EventSender {
     WTF_MAKE_NONCOPYABLE(EventSender); WTF_MAKE_FAST_ALLOCATED;
 public:
-    EventSender(const AtomicString& eventType)
-        : m_eventType(eventType)
-        , m_timer(this, &EventSender::timerFired)
-    {
-    }
+    explicit EventSender(const AtomicString& eventType);
 
     const AtomicString& eventType() const { return m_eventType; }
     void dispatchEventSoon(T&);
@@ -48,9 +42,9 @@ public:
     void dispatchPendingEvents();
 
 #ifndef NDEBUG
-    bool hasPendingEvents(T& client) const
+    bool hasPendingEvents(T& sender) const
     {
-        return m_dispatchSoonList.find(&client) != notFound || m_dispatchingList.find(&client) != notFound;
+        return m_dispatchSoonList.find(&sender) != notFound || m_dispatchingList.find(&sender) != notFound;
     }
 #endif
 
@@ -63,31 +57,34 @@ private:
     Vector<T*> m_dispatchingList;
 };
 
-template <typename T>
-void EventSender<T>::dispatchEventSoon(T& client)
+template<typename T> EventSender<T>::EventSender(const AtomicString& eventType)
+    : m_eventType(eventType)
+    , m_timer(this, &EventSender::timerFired)
 {
-    m_dispatchSoonList.append(&client);
+}
+
+template<typename T> void EventSender<T>::dispatchEventSoon(T& sender)
+{
+    m_dispatchSoonList.append(&sender);
     if (!m_timer.isActive())
         m_timer.startOneShot(0);
 }
 
-template<typename T>
-void EventSender<T>::cancelEvent(T& client)
+template<typename T> void EventSender<T>::cancelEvent(T& sender)
 {
-    // Remove instances of this client from both lists.
+    // Remove instances of this sender from both lists.
     // Use loops because we allow multiple instances to get into the lists.
     for (auto& event : m_dispatchSoonList) {
-        if (event == &client)
+        if (event == &sender)
             event = nullptr;
     }
     for (auto& event : m_dispatchingList) {
-        if (event == &client)
+        if (event == &sender)
             event = nullptr;
     }
 }
 
-template<typename T>
-void EventSender<T>::dispatchPendingEvents()
+template<typename T> void EventSender<T>::dispatchPendingEvents()
 {
     // Need to avoid re-entering this function; if new dispatches are
     // scheduled before the parent finishes processing the list, they
@@ -97,11 +94,13 @@ void EventSender<T>::dispatchPendingEvents()
 
     m_timer.stop();
 
+    m_dispatchSoonList.checkConsistency();
+
     m_dispatchingList.swap(m_dispatchSoonList);
     for (auto& event : m_dispatchingList) {
-        if (T* client = event) {
+        if (T* sender = event) {
             event = nullptr;
-            client->dispatchPendingEvent(*this);
+            sender->dispatchPendingEvent(this);
         }
     }
     m_dispatchingList.clear();

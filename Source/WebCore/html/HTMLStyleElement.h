@@ -32,6 +32,7 @@ class HTMLStyleElement;
 class StyleSheet;
 
 template<typename T> class EventSender;
+typedef EventSender<HTMLStyleElement> StyleEventSender;
 
 class HTMLStyleElement final : public HTMLElement {
 public:
@@ -43,7 +44,8 @@ public:
     bool disabled() const;
     void setDisabled(bool);
 
-    void dispatchPendingEvent(EventSender<HTMLStyleElement>&);
+    void dispatchPendingEvent(StyleEventSender*);
+    static void dispatchPendingLoadEvents();
 
 private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);

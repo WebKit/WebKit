@@ -124,7 +124,6 @@
 #include "SecurityContext.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowRoot.cpp"
-#include "SharedEventSenders.cpp"
 #include "SpaceSplitString.cpp"
 #include "StaticNodeList.cpp"
 #include "StyledElement.cpp"
