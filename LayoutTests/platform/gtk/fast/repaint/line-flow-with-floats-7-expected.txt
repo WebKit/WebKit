@@ -14,41 +14,41 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (0,66) size 418x471 [border: (3px solid #800000)]
                 RenderText {#text} at (6,6) size 354x102
                   text run at (6,6) width 354: "The chief difficulty Alice found at first was in managing"
-                  text run at (6,23) width 25: "her "
+                  text run at (6,23) width 26: "her "
                   text run at (31,23) width 329: "flamingo: she succeeded in getting its body tucked"
-                  text run at (6,40) width 42: "away, "
+                  text run at (6,40) width 43: "away, "
                   text run at (48,40) width 312: "comfortably enough, under her arm, with its legs"
-                  text run at (6,57) width 106: "hanging down, "
+                  text run at (6,57) width 107: "hanging down, "
                   text run at (112,57) width 248: "but generally, just as she had got its"
-                  text run at (6,74) width 158: "neck nicely straightened "
+                  text run at (6,74) width 159: "neck nicely straightened "
                   text run at (164,74) width 196: "out, and was going to give the"
-                  text run at (6,91) width 239: "hedgehog a blow with its head, it "
-                RenderInline {I} at (0,0) size 39x17
-                  RenderText {#text} at (245,91) size 39x17
-                    text run at (245,91) width 39: "would"
+                  text run at (6,91) width 240: "hedgehog a blow with its head, it "
+                RenderInline {I} at (0,0) size 40x17
+                  RenderText {#text} at (245,91) size 40x17
+                    text run at (245,91) width 40: "would"
                 RenderText {#text} at (284,91) size 406x68
                   text run at (284,91) width 76: " twist itself"
-                  text run at (6,108) width 237: "round and look up in her face, with "
+                  text run at (6,108) width 238: "round and look up in her face, with "
                   text run at (243,108) width 169: "such a puzzled expression"
-                  text run at (6,125) width 227: "that she could not help bursting out "
+                  text run at (6,125) width 228: "that she could not help bursting out "
                   text run at (233,125) width 179: "laughing: and when she had"
                   text run at (6,142) width 248: "got its head down, and was going to "
                 RenderText {#text} at (254,142) size 406x119
                   text run at (254,142) width 158: "begin again, it was very"
-                  text run at (6,159) width 259: "provoking to find that the hedgehog had "
+                  text run at (6,159) width 260: "provoking to find that the hedgehog had "
                   text run at (265,159) width 147: "unrolled itself, and was"
-                  text run at (6,176) width 252: "in the act of crawling away: besides all "
+                  text run at (6,176) width 253: "in the act of crawling away: besides all "
                   text run at (258,176) width 154: "this, there was generally"
-                  text run at (6,193) width 256: "a ridge or furrow in the way wherever "
+                  text run at (6,193) width 257: "a ridge or furrow in the way wherever "
                   text run at (262,193) width 150: "she wanted to send the"
-                  text run at (6,210) width 264: "hedgehog to, and, as the doubled-up "
+                  text run at (6,210) width 265: "hedgehog to, and, as the doubled-up "
                   text run at (270,210) width 142: "soldiers were always"
                   text run at (6,227) width 292: "getting up and walking off to other parts of "
                   text run at (298,227) width 114: "the ground, Alice"
                   text run at (57,244) width 306: "soon came to the conclusion that it was a very "
                 RenderBlock (floating) {SPAN} at (6,247) size 48x65 [bgcolor=#ADD8E6]
-                RenderText {#text} at (362,244) size 355x34
-                  text run at (362,244) width 50: "difficult"
+                RenderText {#text} at (363,244) size 355x34
+                  text run at (363,244) width 49: "difficult"
                   text run at (57,261) width 89: "game indeed. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (57,278) size 304x17
@@ -63,10 +63,10 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (339,312) size 355x34
                     text run at (339,312) width 22: "the"
                     text run at (6,329) width 44: "Queen"
-                RenderText {#text} at (50,329) size 354x51
-                  text run at (50,329) width 253: " was in a furious passion, and went "
-                  text run at (303,329) width 57: "stamping"
-                  text run at (6,346) width 354: "about, and shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with"
+                RenderText {#text} at (50,329) size 355x51
+                  text run at (50,329) width 254: " was in a furious passion, and went "
+                  text run at (303,329) width 58: "stamping"
+                  text run at (6,346) width 355: "about, and shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with"
                   text run at (6,363) width 219: "her head!\x{2019} about once in a minute. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (6,380) size 406x85
@@ -74,7 +74,7 @@ layer at (0,0) size 800x600
                   text run at (393,380) width 19: "yet"
                   text run at (6,397) width 406: "had any dispute with the Queen, but she knew that it might"
                   text run at (6,414) width 406: "happen any minute, \x{2018}and then,\x{2019} thought she, \x{2018}what would"
-                  text run at (6,431) width 75: "become of "
+                  text run at (6,431) width 76: "become of "
                   text run at (81,431) width 331: "me? They\x{2019}re dreadfully fond of beheading people"
                   text run at (6,448) width 93: "here; the great "
                   text run at (99,448) width 261: "wonder is, that there\x{2018}s any one left alive!\x{2019}"

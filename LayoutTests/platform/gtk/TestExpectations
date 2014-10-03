@@ -2130,7 +2130,7 @@ webkit.org/b/136537 css3/flexbox/flex-rounding.html [ Failure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
 webkit.org/b/136672 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
-webkit.org/b/136673 fast/text/empty-shadow-with-color.html [ ImageOnlyFailure ]
+webkit.org/b/136673 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 
