@@ -436,6 +436,7 @@ protected:
                 && (m_printColorAdjust == other.m_printColorAdjust)
                 && (_pointerEvents == other._pointerEvents)
                 && (_insideLink == other._insideLink)
+                && (_insideDefaultButton == other._insideDefaultButton)
                 && (m_writingMode == other.m_writingMode);
         }
 
@@ -464,11 +465,12 @@ protected:
         unsigned m_printColorAdjust : PrintColorAdjustBits;
         unsigned _pointerEvents : 4; // EPointerEvents
         unsigned _insideLink : 2; // EInsideLink
-        // 43 bits
+        unsigned _insideDefaultButton : 1;
+        // 44 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned m_writingMode : 2; // WritingMode
-        // 45 bits
+        // 46 bits
     } inherited_flags;
 
 // don't inherit
@@ -854,6 +856,8 @@ public:
 
     EInsideLink insideLink() const { return static_cast<EInsideLink>(inherited_flags._insideLink); }
     bool isLink() const { return noninherited_flags.isLink(); }
+
+    bool insideDefaultButton() const { return inherited_flags._insideDefaultButton; }
 
     short widows() const { return rareInheritedData->widows; }
     short orphans() const { return rareInheritedData->orphans; }
@@ -1414,6 +1418,8 @@ public:
 
     void setInsideLink(EInsideLink insideLink) { inherited_flags._insideLink = insideLink; }
     void setIsLink(bool b) { noninherited_flags.setIsLink(b); }
+
+    void setInsideDefaultButton(bool insideDefaultButton) { inherited_flags._insideDefaultButton = insideDefaultButton; }
 
     PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(inherited_flags.m_printColorAdjust); }
     void setPrintColorAdjust(PrintColorAdjust value) { inherited_flags.m_printColorAdjust = value; }

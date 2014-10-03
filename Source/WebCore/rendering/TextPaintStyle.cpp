@@ -26,11 +26,14 @@
 #include "config.h"
 #include "TextPaintStyle.h"
 
+#include "FocusController.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
 
@@ -86,6 +89,15 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
         paintStyle.emphasisMarkColor = paintInfo.forcedTextColor();
         return paintStyle;
     }
+
+    if (lineStyle.insideDefaultButton()) {
+        Page* page = renderer.frame().page();
+        if (page && page->focusController().isActive()) {
+            paintStyle.fillColor = renderer.theme().systemColor(CSSValueActivebuttontext);
+            return paintStyle;
+        }
+    }
+
     paintStyle.fillColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
 
     bool forceBackgroundToWhite = false;

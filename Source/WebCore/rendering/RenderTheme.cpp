@@ -177,6 +177,8 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
             if (style.setFontDescription(controlFont))
                 style.font().update(0);
         }
+
+        style.setInsideDefaultButton(part == DefaultButtonPart);
     }
     break;
     default:

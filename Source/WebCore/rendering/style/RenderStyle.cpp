@@ -149,6 +149,7 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     inherited_flags.m_printColorAdjust = initialPrintColorAdjust();
     inherited_flags._pointerEvents = initialPointerEvents();
     inherited_flags._insideLink = NotInsideLink;
+    inherited_flags._insideDefaultButton = false;
     inherited_flags.m_writingMode = initialWritingMode();
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
@@ -714,6 +715,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) con
     if (inherited_flags._visibility != other->inherited_flags._visibility
         || inherited_flags.m_printColorAdjust != other->inherited_flags.m_printColorAdjust
         || inherited_flags._insideLink != other->inherited_flags._insideLink
+        || inherited_flags._insideDefaultButton != other->inherited_flags._insideDefaultButton
         || surround->border != other->surround->border
         || !m_background->isEquivalentForPainting(*other->m_background)
         || rareInheritedData->userModify != other->rareInheritedData->userModify
