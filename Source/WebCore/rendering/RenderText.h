@@ -156,6 +156,8 @@ public:
     void deleteLineBoxesBeforeSimpleLineLayout();
     const SimpleLineLayout::Layout* simpleLineLayout() const;
 
+    StringView stringView(int start, int stop) const;
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() override;
