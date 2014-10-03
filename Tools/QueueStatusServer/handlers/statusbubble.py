@@ -138,7 +138,8 @@ class StatusBubble(webapp.RequestHandler):
                 bubble["details_message"] = "Pass\n\n" + self._iso_time(statuses[0].date)
             elif statuses[0].message == "Fail":
                 bubble["state"] = "fail"
-                bubble["details_message"] = statuses[1].message + "\n\n" + self._iso_time(statuses[0].date)
+                message_to_display = statuses[1].message if len(statuses) > 1 else statuses[0].message
+                bubble["details_message"] = message_to_display + "\n\n" + self._iso_time(statuses[0].date)
             elif statuses[0].message == "Error: " + queue.name() + " did not process patch.":
                 bubble["state"] = "none"
                 bubble["details_message"] = "The patch is no longer eligible for processing."
@@ -150,7 +151,8 @@ class StatusBubble(webapp.RequestHandler):
                     bubble["details_message"] += "\n".join([status.message for status in statuses[1:]]) + "\n\n" + self._iso_time(statuses[0].date)
             elif statuses[0].message == "Error: " + queue.name() + " unable to apply patch.":
                 bubble["state"] = "fail"
-                bubble["details_message"] = statuses[1].message + "\n\n" + self._iso_time(statuses[0].date)
+                message_to_display = statuses[1].message if len(statuses) > 1 else statuses[0].message
+                bubble["details_message"] = message_to_display + "\n\n" + self._iso_time(statuses[0].date)
                 bubble["failed_to_apply"] = True
             elif statuses[0].message.startswith("Error: "):
                 bubble["state"] = "error"

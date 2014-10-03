@@ -41,7 +41,7 @@ class PatchLog(db.Model):
     finished = db.BooleanProperty(default=False)
     wait_duration = db.IntegerProperty()
     process_duration = db.IntegerProperty()
-    latest_message = db.StringProperty()
+    latest_message = db.StringProperty(multiline=True)
 
     @classmethod
     def lookup(cls, attachment_id, queue_name):
