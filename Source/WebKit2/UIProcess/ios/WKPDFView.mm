@@ -38,6 +38,7 @@
 #import <CorePDF/UIPDFPageView.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/_UIHighlightViewSPI.h>
 #import <chrono>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -318,6 +319,19 @@ typedef struct {
     _isStartingZoom = NO;
 }
 
+- (RetainPtr<_UIHighlightView>)_createHighlightViewWithFrame:(CGRect)frame
+{
+    static const CGFloat highlightBorderRadius = 3;
+    static const CGFloat highlightColorComponent = 26.0 / 255;
+    static UIColor *highlightColor = [[UIColor alloc] initWithRed:highlightColorComponent green:highlightColorComponent blue:highlightColorComponent alpha:0.3];
+
+    RetainPtr<_UIHighlightView> highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectInset(frame, -highlightBorderRadius, -highlightBorderRadius)]);
+    [highlightView setOpaque:NO];
+    [highlightView setCornerRadius:highlightBorderRadius];
+    [highlightView setColor:highlightColor];
+    return highlightView;
+}
+
 #pragma mark UIPDFPageViewDelegate
 
 - (void)zoom:(UIPDFPageView *)pageView to:(CGRect)targetRect atPoint:(CGPoint)origin kind:(UIPDFObjectKind)kind
@@ -368,9 +382,12 @@ typedef struct {
     static const int64_t dispatchOffset = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(200)).count();
     RetainPtr<WKWebView> retainedWebView = _webView;
 
-    // Call navigateToURLWithSimulatedClick() on a delay so that a tap highlight can be shown.
+    CGRect highlightViewFrame = [self convertRect:[controller.pageView convertRectFromPDFPageSpace:annotation.Rect] fromView:controller.pageView];
+    RetainPtr<_UIHighlightView> highlightView = [self _createHighlightViewWithFrame:highlightViewFrame];
+    [self addSubview:highlightView.get()];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, dispatchOffset), dispatch_get_main_queue(), ^ {
         retainedWebView->_page->navigateToURLWithSimulatedClick(urlString, roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
+        [highlightView removeFromSuperview];
     });
 }
 
