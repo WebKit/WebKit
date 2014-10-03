@@ -32,7 +32,6 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <UIKit/UIKit.h>
 #import <WebCore/DataTransfer.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -52,9 +51,6 @@
 #import <WebKitLegacy/WebViewPrivate.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Vector.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIColor)
 
 using namespace WebCore;
 
@@ -229,13 +225,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     CGSize boundingSize = [self _computePageRects:_document];
 
     [self setBoundsSize:boundingSize];
-
-    if ([self.delegate respondsToSelector:@selector(setBackgroundColor:)]) {
-        if (CGSizeEqualToSize(boundingSize, CGSizeZero))
-            [self.delegate setBackgroundColor:[getUIColorClass() whiteColor]];
-        else
-            [self.delegate setBackgroundColor:[getUIColorClass() blackColor]];
-    }
 
     _didCompleteLayout = YES;
     [self _notifyDidCompleteLayout];
