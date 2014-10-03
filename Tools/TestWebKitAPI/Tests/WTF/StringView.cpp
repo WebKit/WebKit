@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
 namespace TestWebKitAPI {
@@ -75,6 +76,70 @@ TEST(WTF, StringViewEmptyVsNull)
         FAIL();
     else
         SUCCEED();
+}
+
+bool compareLoopIterations(StringView::CodePoints codePoints, std::vector<UChar32> expected)
+{
+    std::vector<UChar32> actual;
+    for (auto codePoint : codePoints)
+        actual.push_back(codePoint);
+    return actual == expected;
+}
+
+static bool compareLoopIterations(StringView::CodeUnits codeUnits, std::vector<UChar> expected)
+{
+    std::vector<UChar> actual;
+    for (auto codeUnit : codeUnits)
+        actual.push_back(codeUnit);
+    return actual == expected;
+}
+
+static void build(StringBuilder& builder, std::vector<UChar> input)
+{
+    builder.clear();
+    for (auto codeUnit : input)
+        builder.append(codeUnit);
+}
+
+TEST(WTF, StringViewIterators)
+{
+    compareLoopIterations(StringView().codePoints(), { });
+    compareLoopIterations(StringView().codeUnits(), { });
+
+    compareLoopIterations(StringView::empty().codePoints(), { });
+    compareLoopIterations(StringView::empty().codeUnits(), { });
+
+    compareLoopIterations(StringView(String("hello")).codePoints(), {'h', 'e', 'l', 'l', 'o'});
+    compareLoopIterations(StringView(String("hello")).codeUnits(), {'h', 'e', 'l', 'l', 'o'});
+
+    StringBuilder b;
+    build(b, {0xD800, 0xDD55}); // Surrogates for unicode code point U+10155
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x10155}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xDD55}));
+
+    build(b, {0xD800}); // Leading surrogate only
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800}));
+
+    build(b, {0xD800, 0xD801}); // Two leading surrogates
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 0xD801}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xD801}));
+
+    build(b, {0xDD55}); // Trailing surrogate only
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xDD55}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xDD55}));
+
+    build(b, {0xD800, 'h'}); // Leading surrogate followed by non-surrogate
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 'h'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 'h'}));
+
+    build(b, {0x0306}); // "COMBINING BREVE"
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306}));
+
+    build(b, {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}); // Mix of single code unit and multi code unit code points
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306, 0x10155, 'h', 'e', 'l', 'o'}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}));
 }
 
 } // namespace TestWebKitAPI

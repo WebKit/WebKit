@@ -138,6 +138,12 @@ public:
 
     bool contains(UChar c) const { return find(c) != notFound; }
 
+    class CodePoints;
+    class CodeUnits;
+
+    CodePoints codePoints() const;
+    CodeUnits codeUnits() const;
+
 #if USE(CF)
     // This function converts null strings to empty strings.
     WTF_EXPORT_STRING_API RetainPtr<CFStringRef> createCFStringWithoutCopying() const;
@@ -199,6 +205,55 @@ inline StringView::StringView(const String& string)
     }
     initialize(string.characters16(), string.length());
 }
+
+class StringView::CodePoints {
+public:
+    class Iterator {
+    public:
+        Iterator(const StringView&, unsigned index);
+        Iterator& operator++();
+        UChar32 operator*() const;
+        bool operator==(const Iterator&) const;
+        bool operator!=(const Iterator&) const;
+
+    private:
+        const StringView& m_stringView;
+        mutable unsigned m_index;
+#if !ASSERT_DISABLED
+        mutable bool m_alreadyIncremented;
+#endif
+    };
+
+    explicit CodePoints(const StringView&);
+    Iterator begin() const;
+    Iterator end() const;
+
+private:
+    StringView m_stringView;
+};
+
+class StringView::CodeUnits {
+public:
+    class Iterator {
+    public:
+        Iterator(const StringView&, unsigned index);
+        Iterator& operator++();
+        UChar operator*() const;
+        bool operator==(const Iterator&) const;
+        bool operator!=(const Iterator&) const;
+
+    private:
+        const StringView& m_stringView;
+        unsigned m_index;
+    };
+
+    explicit CodeUnits(const StringView&);
+    Iterator begin() const;
+    Iterator end() const;
+
+private:
+    StringView m_stringView;
+};
 
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 {
@@ -292,6 +347,119 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + string.length());
     string.getCharactersWithUpconvert(buffer.data() + oldSize);
+}
+
+inline auto StringView::codePoints() const -> CodePoints
+{
+    return CodePoints(*this);
+}
+
+inline auto StringView::codeUnits() const -> CodeUnits
+{
+    return CodeUnits(*this);
+}
+
+inline StringView::CodePoints::CodePoints(const StringView& stringView)
+    : m_stringView(stringView)
+{
+}
+
+inline StringView::CodePoints::Iterator::Iterator(const StringView& stringView, unsigned index)
+    : m_stringView(stringView)
+    , m_index(index)
+#if !ASSERT_DISABLED
+    , m_alreadyIncremented(false)
+#endif
+{
+}
+
+inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
+{
+#if !ASSERT_DISABLED
+    ASSERT(m_alreadyIncremented);
+    m_alreadyIncremented = false;
+#endif
+    return *this;
+}
+
+inline UChar32 StringView::CodePoints::Iterator::operator*() const
+{
+#if !ASSERT_DISABLED
+    ASSERT(!m_alreadyIncremented);
+    m_alreadyIncremented = true;
+#endif
+
+    if (m_stringView.is8Bit())
+        return m_stringView.characters8()[m_index++];
+
+    UChar32 codePoint;
+    U16_NEXT(m_stringView.characters16(), m_index, m_stringView.length(), codePoint);
+    return codePoint;
+}
+
+inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
+{
+    ASSERT(&m_stringView == &other.m_stringView);
+    ASSERT(!m_alreadyIncremented);
+    return m_index == other.m_index;
+}
+
+inline bool StringView::CodePoints::Iterator::operator!=(const Iterator& other) const
+{
+    return !(*this == other);
+}
+
+inline auto StringView::CodePoints::begin() const -> Iterator
+{
+    return Iterator(m_stringView, 0);
+}
+
+inline auto StringView::CodePoints::end() const -> Iterator
+{
+    return Iterator(m_stringView, m_stringView.length());
+}
+
+inline StringView::CodeUnits::CodeUnits(const StringView& stringView)
+    : m_stringView(stringView)
+{
+}
+
+inline StringView::CodeUnits::Iterator::Iterator(const StringView& stringView, unsigned index)
+    : m_stringView(stringView)
+    , m_index(index)
+{
+}
+
+inline auto StringView::CodeUnits::Iterator::operator++() -> Iterator&
+{
+    ++m_index;
+    return *this;
+}
+
+inline UChar StringView::CodeUnits::Iterator::operator*() const
+{
+    return m_stringView[m_index];
+}
+
+inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) const
+{
+    ASSERT(&m_stringView == &other.m_stringView);
+    return m_index == other.m_index;
+}
+
+inline bool StringView::CodeUnits::Iterator::operator!=(const Iterator& other) const
+{
+    return !(*this == other);
+}
+
+inline auto StringView::CodeUnits::begin() const -> Iterator
+{
+    return Iterator(m_stringView, 0);
+}
+
+inline auto StringView::CodeUnits::end() const -> Iterator
+{
+    return Iterator(m_stringView, m_stringView.length());
 }
 
 } // namespace WTF

@@ -1,3 +1,32 @@
+2014-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support modern for loops over StringViews
+        https://bugs.webkit.org/show_bug.cgi?id=137165
+
+        Reviewed by Darin Adler.
+
+        This patch adds two functions, codePoints() and codeUnits(), on StringView.
+        These two functions return small objects which have begin() and end() functions,
+        which means it can be used by the modern for loop style. This small class also
+        has an inner iterator class which can be incremented, dereferenced, and
+        compared.
+
+        Using these new objects looks like this:
+        for (UChar codeunit : stringView.codeUnits()) { } and
+        for (UChar32 codepoint : stringView.codePoints()) { }.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::codepoints):
+        (WTF::StringView::codeunits):
+        (WTF::StringViewCodePointIterator::StringViewCodePointIterator):
+        (WTF::StringViewCodePointIterator::Iterator::Iterator):
+        (WTF::StringViewCodePointIterator::Iterator::operator*):
+        (WTF::StringViewCodePointIterator::Iterator::operator!=):
+        (WTF::StringViewCodeUnitIterator::StringViewCodeUnitIterator):
+        (WTF::StringViewCodeUnitIterator::Iterator::Iterator):
+        (WTF::StringViewCodeUnitIterator::Iterator::operator*):
+        (WTF::StringViewCodeUnitIterator::Iterator::operator!=):
+
 2014-09-28  Sam Weinig  <sam@webkit.org>
 
         Remove RefPtrHashMap
