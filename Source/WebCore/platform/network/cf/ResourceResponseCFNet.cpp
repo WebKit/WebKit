@@ -127,6 +127,9 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
 
 String ResourceResponse::platformSuggestedFilename() const
 {
+    if (!m_cfResponse)
+        return String();
+
     RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(m_cfResponse.get()));
     return suggestedFilename.get();
 }
