@@ -158,6 +158,8 @@ private:
             changed = false;
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 HashMap<Node*, bool> materialized = materializedAtHead[block];
+                if (verbose)
+                    dataLog("    Looking at block ", pointerDump(block), "\n");
                 for (Node* node : *block) {
                     handleNode(
                         node,
@@ -166,8 +168,11 @@ private:
                         },
                         [&] (Node* escapee) {
                             auto iter = materialized.find(escapee);
-                            if (iter != materialized.end())
+                            if (iter != materialized.end()) {
+                                if (verbose)
+                                    dataLog("    ", escapee, " escapes at ", node, "\n");
                                 iter->value = true;
+                            }
                         });
                 }
                 
@@ -271,6 +276,9 @@ private:
                     materialized.add(pair.key);
             }
             
+            if (verbose)
+                dataLog("Placing materialization points in ", pointerDump(block), " with materialization set ", listDump(materialized), "\n");
+            
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 
@@ -278,11 +286,20 @@ private:
                     node,
                     [&] () { },
                     [&] (Node* escapee) {
-                        if (!m_sinkCandidates.contains(escapee))
-                            return;
+                        if (verbose)
+                            dataLog("Seeing ", escapee, " escape at ", node, "\n");
                         
-                        if (!materialized.add(escapee).isNewEntry)
+                        if (!m_sinkCandidates.contains(escapee)) {
+                            if (verbose)
+                                dataLog("    It's not a sink candidate.\n");
                             return;
+                        }
+                        
+                        if (!materialized.add(escapee).isNewEntry) {
+                            if (verbose)
+                                dataLog("   It's already materialized.\n");
+                            return;
+                        }
                         
                         createMaterialize(escapee, node);
                     });
@@ -432,6 +449,16 @@ private:
                         if (Node* materialize = mapping.get(edge.node()))
                             edge.setNode(materialize);
                     });
+                
+                // If you cause an escape, you shouldn't see the original escapee.
+                if (validationEnabled()) {
+                    handleNode(
+                        node,
+                        [&] () { },
+                        [&] (Node* escapee) {
+                            DFG_ASSERT(m_graph, node, !m_sinkCandidates.contains(escapee));
+                        });
+                }
             }
             
             size_t upsilonInsertionPoint = block->size() - 1;

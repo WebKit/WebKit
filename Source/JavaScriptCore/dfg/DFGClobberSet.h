@@ -80,7 +80,7 @@ public:
     {
     }
     
-    void operator()(AbstractHeap heap)
+    void operator()(AbstractHeap heap) const
     {
         m_set.add(heap);
     }
@@ -96,7 +96,7 @@ public:
     {
     }
     
-    void operator()(AbstractHeap heap)
+    void operator()(AbstractHeap heap) const
     {
         m_result |= m_set.overlaps(heap);
     }
@@ -105,7 +105,7 @@ public:
     
 private:
     const ClobberSet& m_set;
-    bool m_result;
+    mutable bool m_result;
 };
 
 void addReads(Graph&, Node*, ClobberSet&);

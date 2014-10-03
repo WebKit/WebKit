@@ -1,3 +1,93 @@
+2014-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should sink PutLocals
+        https://bugs.webkit.org/show_bug.cgi?id=137168
+
+        Reviewed by Oliver Hunt.
+        
+        We've known for a while that our PutLocal situation was sub-optimal. We emit them anytime we
+        "pass" arguments to an inlined function call, because we need to enable the runtime to grab
+        those arguments when doing foo.arguments where foo is inlined: our engine doesn't deoptimize
+        in that case but rather just relies on the arguments being flushed (i.e. a copy of their
+        values is spilled) at a well-known place in a well-known format.
+        
+        The PutLocals incur two costs: (1) they are store instructions and stores ain't free, and (2)
+        they look like escaping sites and so they inhibit object allocation sinking.
+        
+        But in most cases, the PutLocals are unnecessary because the inlined code never performs any
+        side effect that could transitively lead to function.arguments. Even if the inlined code
+        could do such a side effect, it may be on a rare path so there is no need to penalize the
+        entire function.
+        
+        This patch implements one solution to the PutLocal problem: it aggressively sinks PutLocals
+        to the latest possible point. This is even more aggressive than the object allocation
+        sinking. That sinking algorithm avoids creating situations where an object could be
+        materialized more than one along any path. PutLocal sinking, on the other hand, doesn't avoid
+        this at all - both to make the phase cheaper and simpler and to make it more aggressive.
+        Every PutLocal is sunk no matter what.
+        
+        The upside of this patch is that it eliminates many PutLocals: many of them are sunk "past
+        their death", thus eliminating them completely. Others are sunk to rare paths. This enables a
+        lot of object allocation sinking and it removes a lot of pointless store instructions.
+        
+        It also has downsites. Sinking PutLocals increases register pressure because it increases the
+        live ranges of things like inlined arguments.
+        
+        This patch is a net performance win in its current form: 1% SunSpider regression, 2% OctaneV2
+        progression, 0.6% Kraken regression, 1% AsmBench progression, and 0.5% CompressionBench
+        regression. The biggest win is on Octane/raytrace, which improves by 27%.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * bytecode/Operands.h:
+        (JSC::Operands::dump): Deleted.
+        * bytecode/OperandsInlines.h:
+        (JSC::Traits>::dump):
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::isHeader):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGClobberSet.h:
+        (JSC::DFG::ClobberSetAdd::operator()):
+        (JSC::DFG::ClobberSetOverlaps::operator()):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        (JSC::DFG::NoOpClobberize::operator()):
+        (JSC::DFG::CheckClobberize::operator()):
+        (JSC::DFG::AbstractHeapOverlaps::operator()):
+        (JSC::DFG::ReadMethodClobberize::operator()):
+        (JSC::DFG::WriteMethodClobberize::operator()):
+        (JSC::DFG::DefMethodClobberize::operator()):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::merge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::capturedVarsFor):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPreciseLocalClobberize.h: Added.
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::PreciseLocalClobberizeAdaptor):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::read):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::write):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::def):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::callIfAppropriate):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::writeTop):
+        (JSC::DFG::forEachLocalReadByUnwind):
+        (JSC::DFG::preciseLocalClobberize):
+        * dfg/DFGPutLocalSinkingPhase.cpp: Added.
+        (JSC::DFG::performPutLocalSinking):
+        * dfg/DFGPutLocalSinkingPhase.h: Added.
+        * dfg/DFGSSACalculator.h:
+        (JSC::DFG::SSACalculator::computePhis):
+        * dfg/DFGValidate.cpp:
+
 2014-10-03  Saam Barati  <saambarati1@gmail.com>
 
         Change how 32-bit JSValues check if they are a Boolean

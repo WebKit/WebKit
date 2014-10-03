@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,76 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGMayExit.h"
+#ifndef DFGPutLocalSinkingPhase_h
+#define DFGPutLocalSinkingPhase_h
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include "DFGNode.h"
-#include "Operations.h"
-
 namespace JSC { namespace DFG {
 
-namespace {
+class Graph;
 
-class EdgeMayExit {
-public:
-    EdgeMayExit()
-        : m_result(false)
-    {
-    }
-    
-    void operator()(Node*, Edge edge)
-    {
-        m_result |= edge.willHaveCheck();
-    }
-    
-    bool result() const { return m_result; }
-    
-private:
-    bool m_result;
-};
+// Sinks PutLocals to the absolute latest point where they can possibly happen, which is usually
+// side-effects that may observe them. This eliminates PutLocals if it sinks them past the point of
+// their deaths.
 
-} // anonymous namespace
-
-bool mayExit(Graph& graph, Node* node)
-{
-    switch (node->op()) {
-    case SetArgument:
-    case JSConstant:
-    case DoubleConstant:
-    case Int52Constant:
-    case MovHint:
-    case SetLocal:
-    case Flush:
-    case Phantom:
-    case Check:
-    case HardPhantom:
-    case GetLocal:
-    case LoopHint:
-    case PhantomArguments:
-    case Phi:
-    case Upsilon:
-    case ZombieHint:
-    case BottomValue:
-    case PutStructureHint:
-    case PutByOffsetHint:
-    case PhantomNewObject:
-    case PutLocal:
-    case KillLocal:
-        break;
-        
-    default:
-        // If in doubt, return true.
-        return true;
-    }
-
-    EdgeMayExit functor;
-    DFG_NODE_DO_TO_CHILDREN(graph, node, functor);
-    return functor.result();
-}
+bool performPutLocalSinking(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGPutLocalSinkingPhase_h
+

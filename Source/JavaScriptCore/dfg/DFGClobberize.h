@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 namespace JSC { namespace DFG {
 
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
-void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write, DefFunctor& def)
+void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
 {
     // Some notes:
     //
@@ -897,7 +897,7 @@ class NoOpClobberize {
 public:
     NoOpClobberize() { }
     template<typename... T>
-    void operator()(T...) { }
+    void operator()(T...) const { }
 };
 
 class CheckClobberize {
@@ -908,12 +908,12 @@ public:
     }
     
     template<typename... T>
-    void operator()(T...) { m_result = true; }
+    void operator()(T...) const { m_result = true; }
     
     bool result() const { return m_result; }
     
 private:
-    bool m_result;
+    mutable bool m_result;
 };
 
 bool doesWrites(Graph&, Node*);
@@ -926,7 +926,7 @@ public:
     {
     }
     
-    void operator()(AbstractHeap otherHeap)
+    void operator()(AbstractHeap otherHeap) const
     {
         if (m_result)
             return;
@@ -937,7 +937,7 @@ public:
 
 private:
     AbstractHeap m_heap;
-    bool m_result;
+    mutable bool m_result;
 };
 
 bool accessesOverlap(Graph&, Node*, AbstractHeap);
@@ -954,7 +954,7 @@ public:
     {
     }
     
-    void operator()(AbstractHeap heap)
+    void operator()(AbstractHeap heap) const
     {
         m_value.read(heap);
     }
@@ -970,7 +970,7 @@ public:
     {
     }
     
-    void operator()(AbstractHeap heap)
+    void operator()(AbstractHeap heap) const
     {
         m_value.write(heap);
     }
@@ -986,12 +986,12 @@ public:
     {
     }
     
-    void operator()(PureValue value)
+    void operator()(PureValue value) const
     {
         m_value.def(value);
     }
     
-    void operator()(HeapLocation location, Node* node)
+    void operator()(HeapLocation location, Node* node) const
     {
         m_value.def(location, node);
     }

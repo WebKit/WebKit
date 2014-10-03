@@ -59,6 +59,7 @@ public:
     bool isValid() const { return (m_virtualRegister != s_invalidVirtualRegister); }
     bool isLocal() const { return operandIsLocal(m_virtualRegister); }
     bool isArgument() const { return operandIsArgument(m_virtualRegister); }
+    bool isHeader() const { return m_virtualRegister >= 0 && m_virtualRegister < JSStack::ThisArgument; }
     bool isConstant() const { return m_virtualRegister >= s_firstConstantRegisterIndex; }
     int toLocal() const { ASSERT(isLocal()); return operandToLocal(m_virtualRegister); }
     int toArgument() const { ASSERT(isArgument()); return operandToArgument(m_virtualRegister); }
