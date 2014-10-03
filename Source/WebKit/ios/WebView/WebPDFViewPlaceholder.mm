@@ -220,7 +220,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 - (void)layout
 {
-    if (!_didFinishLoadAndMemoryMap)
+    if (!_didFinishLoad)
         return;
 
     if (self.pageRects)
@@ -276,6 +276,17 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     [self dataSourceUpdated:dataSource];
+
+    _didFinishLoad = YES;
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]);
+    if (!provider)
+        return;
+
+    _document = CGPDFDocumentCreateWithProvider(provider);
+
+    CGDataProviderRelease(provider);
+
+    [self _doPostLoadOrUnlockTasks];
 }
 
 - (BOOL)canProvideDocumentSource

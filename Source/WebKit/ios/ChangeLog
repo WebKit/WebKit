@@ -1,3 +1,19 @@
+2014-10-03  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r173265): UIWebView PDF loading is completely broken
+        https://bugs.webkit.org/show_bug.cgi?id=137386
+        <rdar://problem/18524717>
+
+        Reviewed by David Kilzer.
+
+        * WebView/WebPDFViewPlaceholder.h:
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder layout]):
+        (-[WebPDFViewPlaceholder finishedLoadingWithDataSource:]):
+        Restore important code that creates the CGDataProvider and sets _didFinishLoad
+        and calls _doPostLoadOrUnlockTasks after finishing a load, which was haphazardly
+        removed in the aforementioned revision.
+
 2014-10-01  Christophe Dumez  <cdumez@apple.com>
 
         Have is<>(T*) function do a null check on the pointer argument

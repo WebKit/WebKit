@@ -46,7 +46,7 @@
 
     NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
 
-    BOOL _didFinishLoadAndMemoryMap;
+    BOOL _didFinishLoad;
 
     CGSize _containerSize;
 }
