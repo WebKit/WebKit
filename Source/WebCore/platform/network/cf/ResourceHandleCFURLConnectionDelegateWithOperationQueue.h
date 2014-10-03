@@ -45,6 +45,7 @@ private:
 
     virtual void setupRequest(CFMutableURLRequestRef) override;
     virtual void setupConnectionScheduling(CFURLConnectionRef) override;
+    virtual void releaseHandle() override;
 
     virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) override;
     virtual void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef) override;

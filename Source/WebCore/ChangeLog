@@ -1,3 +1,29 @@
+2014-10-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r174244.
+
+    2014-10-02  Pratik Solanki  <psolanki@apple.com>
+
+            [iOS] Networking process stops loading web pages while running Alexa test with random URL list
+            https://bugs.webkit.org/show_bug.cgi?id=137362
+            <rdar://problem/18507382>
+
+            Reviewed by Alexey Proskuryakov.
+
+            ResourceHandleCFURLConnectionDelegateWithOperationQueue needs to signal threads waiting on
+            its semaphore when the handle is being destroyed. Otherwise, we can leave dispatch threads
+            hanging around waiting for a response. This can happen when the Web Content process dies.
+            Any thread/queue waiting on a response from that web process will leak and stay around
+            forever. If we reach the dispatch queue limit of 64, then all networking will cease to
+            happen in the Networking process. Fix this by signalling waiting threads and clearing out
+            our state in much the same way that -[WebCoreResourceHandleAsOperationQueueDelegate
+            detachHandle] does for Mac.
+
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::releaseHandle):
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+
 2014-10-02  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r174199.
