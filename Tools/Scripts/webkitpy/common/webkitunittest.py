@@ -33,11 +33,6 @@ import unittest
 
 
 class TestCase(unittest.TestCase):
-    def setUp(self):
-        # For versions of Python before 2.7.
-        if not 'assertRaisesRegexp' in dir(self):
-            self.assertRaisesRegexp = self._assertRaisesRegexp
-
     def _assertRaisesRegexp(self, expected_exception, regex_message, callable, *args):
         try:
             callable(*args)
