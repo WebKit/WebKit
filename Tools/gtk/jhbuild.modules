@@ -76,10 +76,10 @@
 
   <autotools id="pixman" autogen-sh="configure"
              autogenargs="--enable-gtk=no">
-    <branch module="releases/pixman-0.24.0.tar.gz" version="0.24.0"
+    <branch module="releases/pixman-0.32.6.tar.gz" version="0.32.6"
             repo="cairographics.org"
-            hash="sha256:a5647c7158f103eedff5fba799018f4169f6b26b573ab7685812ebc9a1c5d2e4"
-            md5sum="a2d0b120509bdccb10aa7f4bec3730e4">
+            hash="sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904"
+            md5sum="3a30859719a41bd0f5cccffbfefdd4c2">
     </branch>
   </autotools>
 
@@ -107,10 +107,10 @@
   </autotools>
 
   <autotools id="libffi" autogen-sh="configure">
-    <branch module="libffi/libffi-3.0.10.tar.gz" version="3.0.10"
+    <branch module="libffi/libffi-3.1.tar.gz" version="3.1"
              repo="sourceware.org-mirror"
-             hash="sha256:f01eb9027e9eb56aeaeef636649877756d475d714ef8b47f627f65bc5f3b492f"
-             md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
+             hash="sha256:97feeeadca5e21870fa4433bc953d1b3af3f698d5df8a428f68b73cd60aef6eb"
+             md5sum="f5898b29bbfd70502831a212d9249d10"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"
@@ -134,7 +134,9 @@
     <branch module="/pub/GNOME/sources/librsvg/2.36/librsvg-2.36.1.tar.xz" version="2.36.1"
             repo="ftp.gnome.org"
             hash="sha256:786b95e1a091375c5ef2997a21c69ff24d7077afeff18197355f54d9dcbcd8c5"
-            md5sum="89d483f30a7c77245b7ee02faaea5a5a"/>
+            md5sum="89d483f30a7c77245b7ee02faaea5a5a">
+        <patch file="librsvg-2.36.1-bump-up-config.guess-to-support-aarch64.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gtk+" autogen-sh="configure"
@@ -158,19 +160,20 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.38/glib-2.38.0.tar.xz" version="2.38.0"
+    <branch module="/pub/GNOME/sources/glib/2.41/glib-2.41.2.tar.xz" version="2.41.2"
             repo="ftp.gnome.org"
-            hash="sha256:7513a7de5e814ccb48206340a8773ea523d6a7bf04dc74565de69b899bc2ff32"/>
+            hash="sha256:da1f7258655f0e196b9304cb9515784634f3797437923e236bb3466348811c96"
+            md5sum="9636f60e99b98fd0fdb5239f905ac008"/>
   </autotools>
 
   <autotools id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.33/glib-networking-2.33.2.tar.xz" version="2.33.2"
+    <branch module="/pub/GNOME/sources/glib-networking/2.41/glib-networking-2.41.4.tar.xz" version="2.41.4"
             repo="ftp.gnome.org"
-            hash="sha256:e298cff3935eb752be290bbf734e457f1870bdb5370ee292606e6040a82074e7"
-            md5sum="5abb364f2a0babe2ec1e3a6d59f69043"/>
+            hash="sha256:930ad618865dcf81765d0f48cb6f13e22d76203efa59d30604aed0384ce80fd7"
+            md5sum="f88e163322c0834f9781d6224771ab2e"/>
   </autotools>
 
   <autotools id="libsoup"
@@ -183,13 +186,17 @@
             tag="0ea86f566b7d526c8328c7c602ae1be8cda8dd68"/>
   </autotools>
 
-  <autotools id="fontconfig" autogen-sh="configure">
-    <branch module="software/fontconfig/release/fontconfig-2.8.0.tar.gz" version="2.8.0"
+  <autotools id="fontconfig" 
+             autogen-sh="configure"
+             autogenargs="--enable-libxml2">
+    <dependencies>
+      <dep package="freetype6"/>
+      <dep package="libxml2"/>
+    </dependencies>
+    <branch module="software/fontconfig/release/fontconfig-2.11.1.tar.gz" version="2.11.1"
             repo="freedesktop.org"
-            hash="sha256:fa2a1c6eea654d9fce7a4b1220f10c99cdec848dccaf1625c01f076b31382335"
-            md5sum="77e15a92006ddc2adbb06f840d591c0e">
-      <patch file="fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch" strip="1"/>
-    </branch>
+            hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
+            md5sum="e75e303b4f7756c2b16203a57ac87eba"/>
   </autotools>
 
   <autotools id="gnome-icon-theme" autogen-sh="configure">
@@ -256,13 +263,13 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libxml2">
-    <branch module="/libxml2/libxml2-2.9.0.tar.gz" version="2.9.0"
+  <autotools id="libxml2"
+             autogen-sh="configure"
+             autogenargs="--without-python">
+    <branch module="/libxml2/libxml2-2.9.1.tar.gz" version="2.9.1"
             repo="xmlsoft.org"
-            hash="sha256:ad25d91958b7212abdc12b9611cfb4dc4e5cddb6d1e9891532f48aacee422b82"
-            md5sum="5b9bebf4f5d2200ae2c4efe8fa6103f7">
-      <patch file="libxml2-2.9.0-dtd.patch" strip="1"/>
-    </branch>
+            hash="sha256:fd3c64cb66f2c4ea27e934d275904d92cec494a8e8405613780cbc8a71680fdb"
+            md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
   </autotools>
 
   <autotools id="gstreamer" autogenargs="--disable-gtk-doc">
@@ -272,7 +279,9 @@
             md5sum="55d50f48a496799dbb0b195c9c6c6153"/>
   </autotools>
 
-  <autotools id="gst-plugins-base" autogenargs="--disable-examples --disable-gtk-doc">
+  <autotools id="gst-plugins-base"
+             autogen-sh="autogen.sh"
+             autogenargs="--disable-examples --disable-gtk-doc">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
@@ -281,6 +290,7 @@
             hash="sha256:de2444a5c150d4e4b680364d7c0414cd8b015d95b305ff65d65a17683379532f"
             md5sum="2e75fb03ed7e4d24d88601fcac4d57aa">
       <patch file="gst-plugins-base-fix-build-gcc-4.9-x86.patch" strip="1"/>
+      <patch file="gst-prevent-neon-check-in-configure-from-passing-under-aarch64.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -293,6 +303,7 @@
             repo="gstreamer"
             hash="sha256:660fa02dbe01086fcf702d87acc0ba5dde2559d6a11ecf438874afe504c50517"
             md5sum="082156e9fb737ee6132b6b663f2901a1">
+      <patch file="gst-events-arent-gstobjects.patch" strip="1"/>
     </branch>
   </autotools>
 

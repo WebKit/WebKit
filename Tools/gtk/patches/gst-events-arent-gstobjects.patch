@@ -1,0 +1,23 @@
+From 673301ef4891e2f582ccc0f4f4bc25c2e1ae7eab Mon Sep 17 00:00:00 2001
+From: Thiago Santos <ts.santos@partner.samsung.com>
+Date: Wed, 23 Oct 2013 13:38:20 -0300
+Subject: qtdemux: use correct unref function
+
+Events aren't GstObjects, but GstMiniObjects
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index b1d82a4..79ad79c 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -1825,7 +1825,7 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
+ #endif
+     qtdemux->major_brand = 0;
+     if (qtdemux->pending_newsegment)
+-      gst_object_unref (qtdemux->pending_newsegment);
++      gst_event_unref (qtdemux->pending_newsegment);
+     qtdemux->pending_newsegment = NULL;
+     qtdemux->upstream_newsegment = TRUE;
+     qtdemux->upstream_seekable = FALSE;
+-- 
+cgit v0.10.2
+

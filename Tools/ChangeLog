@@ -1,3 +1,36 @@
+2014-10-03  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [GTK] Bump up and patch dependencies to allow building for aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=137147
+
+        Reviewed by Martin Robinson.
+
+        The currently used versions of pixman, libffi, librsvg, glib,
+        glib-networking, fontconfig, libxml2, gst-plugins-base fail to configure
+        and/or build for aarch64, so they are bumped up and patched where
+        necessary. Wherever possible, the same versions and patches were used as
+        for the EFL port bump-up
+        (https://bugs.webkit.org/show_bug.cgi?id=135885).
+
+        After the bump-up, a hitherto hidden bug in gst-plugins-good caused a
+        regression by crashing http/tests/media/video-redirect.html . A patch
+        already in upstream fixes that bug.
+
+        This change does not touch xserver, which also needs bumping up, but 
+        will be dealt with later.
+
+        * gtk/jhbuild.modules:
+        Specified versions and patches necessary to correctly build for aarch64.
+        * gtk/patches/gst-events-arent-gstobjects.patch:
+        Added. Patches gst-plugins-good to fix a bug in .mov file demuxing.
+        * gtk/patches/gst-prevent-neon-check-in-configure-from-passing-under-aarch64.patch:
+        Added. Patches gst-plugins-base to configure correctly for aarch64.
+        * gtk/patches/librsvg-2.36.1-bump-up-config.guess-to-support-aarch64.patch:
+        Added. Bumps up config.guess and config.sub in librsvg to recognize
+        aarch64.
+        * gtk/patches/libxml2-2.9.0-dtd.patch:
+        Removed. Not necessary for libxml2 v2.9.1 anymore.
+
 2014-09-28  Sam Weinig  <sam@webkit.org>
 
         Remove RefPtrHashMap
