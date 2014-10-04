@@ -1,3 +1,9 @@
+2014-10-04  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Skip remaining failing media tests after adding audio devices to the bots.
+
+        * platform/win/TestExpectations:
+
 2014-10-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce Promise A+ tests into WebKit
