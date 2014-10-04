@@ -2321,6 +2321,14 @@ bool Element::matches(const String& selector, ExceptionCode& ec)
     return selectorQuery && selectorQuery->matches(*this);
 }
 
+Element* Element::closest(const String& selector, ExceptionCode& ec)
+{
+    SelectorQuery* selectorQuery = document().selectorQueryForString(selector, ec);
+    if (selectorQuery)
+        return selectorQuery->closest(*this);
+    return nullptr;
+}
+
 bool Element::shouldAppearIndeterminate() const
 {
     return false;

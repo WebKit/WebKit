@@ -121,6 +121,7 @@
     [RaisesException] NodeList querySelectorAll(DOMString selectors);
 
     [RaisesException] boolean matches([Default=Undefined] optional DOMString selectors);
+    [RaisesException] Element closest(DOMString selectors);    
     [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector([Default=Undefined] optional DOMString selectors);
 
     // ElementTraversal API

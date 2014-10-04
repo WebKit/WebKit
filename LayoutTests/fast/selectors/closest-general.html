@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+	<tribe>
+		<realm>
+			<throne></throne>
+			<ancestor id="doe" name="young" class="classic">
+				<target id="anotherTarget"></target>
+			</ancestor>
+		</realm>
+		<ancestor id="john" name="old" class="classic">
+		    <sibling></sibling>
+		    <target id="theTarget" webkit="fast"></target>
+	    </ancestor>
+    </tribe>
+    <foo>
+    	<bar>
+    		<a id="a">
+    			<b id="b">
+    				<c id="c">
+    					<d id="d">
+    						<e id="e">
+    							<f id="f">
+    								<g id="g">
+    									<h id="h">
+    										<i id="i">
+    											<lemon id="sour"></lemon>
+    										</i>
+    									</h>
+    								</g>
+    							<f/>
+    						<e/>
+    					</d>
+    				<c/>
+    			</b>
+    		</a>
+    	</bar>
+    </foo>
+</body>
+<script>
+description('This test makes sure the closest() API works correctly');
+
+var theTarget = document.getElementById('theTarget');
+var ancestor = document.getElementById('john');
+var sour = document.getElementById('sour');
+var a = document.getElementById('a');
+var b = document.getElementById('b');
+var c = document.getElementById('c');
+var d = document.getElementById('d');
+var e = document.getElementById('e');
+var f = document.getElementById('f');
+var g = document.getElementById('g');
+var h = document.getElementById('h');
+var i = document.getElementById('i');
+
+shouldBe('theTarget.closest("#theTarget")', 'theTarget');
+shouldBe('theTarget.closest("ancestor")', 'ancestor');
+shouldBe('theTarget.closest("tribe ancestor")', 'ancestor');
+shouldBe('theTarget.closest("tribe > ancestor")', 'ancestor');
+shouldBe('theTarget.closest("realm + ancestor")', 'ancestor');
+shouldBe('theTarget.closest("realm ~ ancestor")', 'ancestor');
+shouldBe('theTarget.closest("tribe, ancestor")', 'ancestor');
+shouldBe('theTarget.closest("ancestor, tribe")', 'ancestor');
+
+shouldBeNull('theTarget.closest("tribe realm")');
+shouldBeNull('theTarget.closest("tribe realm throne")');
+shouldBeNull('theTarget.closest("tribe realm ancestor")');
+shouldBeNull('theTarget.closest("realm > ancestor")');
+shouldBeNull('theTarget.closest("throne + ancestor")');
+shouldBeNull('theTarget.closest("throne ~ ancestor")');
+
+shouldBe('theTarget.closest(".classic")', 'ancestor');
+shouldBe('theTarget.closest("john")', 'ancestor');
+shouldBeNull('theTarget.closest("doe")');
+shouldBe('theTarget.closest("ancestor[name=old]")', 'ancestor');
+shouldBeNull('theTarget.closest("ancestor[name=young]")', 'ancestor');
+
+shouldBeNull('theTarget.closest(null)');
+shouldBeNull('theTarget.closest(undefined)');
+
+shouldBe('sour.closest("lemon")', 'sour');
+shouldBe('sour.closest("a, b, c, d, e, f, g, h, i")', 'i');
+shouldBe('sour.closest("a, b, c, d, e, f, g, h")', 'h');
+shouldBe('sour.closest("a, b, c, d, e, f, g")', 'g');
+shouldBe('sour.closest("a, b, c, d, e, f")', 'f');
+shouldBe('sour.closest("a, b, c, d, e")', 'e');
+shouldBe('sour.closest("a, b, c")', 'c');
+shouldBe('sour.closest("a, b")', 'b');
+shouldBe('sour.closest("a")', 'a');
+shouldBe('sour.closest("i, h, g, f, e, d, c, b, a")', 'i');
+shouldBe('sour.closest("h, g, f, e, d, c, b, a")', 'h');
+shouldBe('sour.closest("g, f, e, d, c, b, a")', 'g');
+shouldBe('sour.closest("f, e, d, c, b, a")', 'f');
+shouldBe('sour.closest("e, d, c, b, a")', 'e');
+shouldBe('sour.closest("d, c, b, a")', 'd');
+shouldBe('sour.closest("c, b, a")', 'c');
+shouldBe('sour.closest("b, a")', 'b');
+shouldBe('sour.closest("a")', 'a');
+
+shouldBe('document.closest', 'undefined');
+shouldThrow('document.closest()');
+shouldThrow('theTarget.closest()');
+shouldThrow('theTarget.closest("")');
+shouldThrow('theTarget.closest(".123")');
+shouldThrow('theTarget.closest("    ")');
+shouldThrow('theTarget.closest(")")');
+shouldThrow('theTarget.closest("(")');
+shouldThrow('theTarget.closest("()")');
+shouldThrow('theTarget.closest("^_^")');
+shouldThrow('theTarget.closest("{")');
+shouldThrow('theTarget.closest("}")');
+shouldThrow('theTarget.closest("{}")');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

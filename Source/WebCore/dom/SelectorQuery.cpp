@@ -120,6 +120,17 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
     return selectorChecker.match(selectorData.selector, &element, selectorCheckingContext);
 }
 
+inline Element* SelectorDataList::selectorClosest(const SelectorData& selectorData, Element& element, const ContainerNode& rootNode) const
+{
+    SelectorChecker selectorChecker(element.document());
+    SelectorChecker::CheckingContext selectorCheckingContext(SelectorChecker::Mode::QueryingRules);
+    selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
+    Element* currentNode = &element;
+    if (!selectorChecker.match(selectorData.selector, currentNode, selectorCheckingContext))
+        return nullptr;
+    return currentNode;
+}
+
 bool SelectorDataList::matches(Element& targetElement) const
 {
     unsigned selectorCount = m_selectors.size();
@@ -128,6 +139,20 @@ bool SelectorDataList::matches(Element& targetElement) const
             return true;
     }
     return false;
+}
+
+Element* SelectorDataList::closest(Element& targetElement) const
+{
+    Element* currentNode = &targetElement;
+    do {
+        for (auto& selector : m_selectors) {
+            Element* candidateElement = selectorClosest(selector, *currentNode, targetElement);
+            if (candidateElement)
+                return candidateElement;
+        }
+        currentNode = currentNode->parentElement();
+    } while (currentNode);
+    return nullptr;
 }
 
 struct AllElementExtractorSelectorQueryTrait {
