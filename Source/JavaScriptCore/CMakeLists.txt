@@ -207,6 +207,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGPredictionPropagationPhase.cpp
     dfg/DFGPromotedHeapLocation.cpp
     dfg/DFGPureValue.cpp
+    dfg/DFGPutLocalSinkingPhase.cpp
     dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSACalculator.cpp
     dfg/DFGSSAConversionPhase.cpp

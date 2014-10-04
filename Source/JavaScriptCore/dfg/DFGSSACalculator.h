@@ -174,7 +174,7 @@ public:
     // nonLocalReachingDef() will find it later. Note that it is generally always sound to not
     // prune any Phis (that is, to always have the functor insert a Phi and never return nullptr).
     template<typename PhiInsertionFunctor>
-    void computePhis(PhiInsertionFunctor functor)
+    void computePhis(const PhiInsertionFunctor& functor)
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_dominators.isValid());
         

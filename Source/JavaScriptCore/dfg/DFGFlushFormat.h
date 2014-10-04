@@ -118,6 +118,17 @@ inline DataFormat dataFormatFor(FlushFormat format)
     return DataFormatDead;
 }
 
+inline FlushFormat merge(FlushFormat a, FlushFormat b)
+{
+    if (a == DeadFlush)
+        return b;
+    if (b == DeadFlush)
+        return a;
+    if (a == b)
+        return a;
+    return ConflictingFlush;
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

@@ -367,6 +367,13 @@ public:
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
     }
     
+    const BitVector& capturedVarsFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_outermostCapturedVars;
+        return inlineCallFrame->capturedVars;
+    }
+    
     bool isStrictModeFor(CodeOrigin codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)
@@ -894,6 +901,7 @@ public:
     unsigned m_parameterSlots;
     int m_machineCaptureStart;
     std::unique_ptr<SlowArgument[]> m_slowArguments;
+    BitVector m_outermostCapturedVars;
 
 #if USE(JSVALUE32_64)
     std::unordered_map<int64_t, double*> m_doubleConstantsMap;

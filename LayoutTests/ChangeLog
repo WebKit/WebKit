@@ -1,3 +1,17 @@
+2014-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should sink PutLocals
+        https://bugs.webkit.org/show_bug.cgi?id=137168
+
+        Reviewed by Oliver Hunt.
+
+        * js/regress/elidable-new-object-then-call-expected.txt: Added.
+        * js/regress/elidable-new-object-then-call.html: Added.
+        * js/regress/script-tests/elidable-new-object-then-call.js: Added.
+        (sumOfArithSeries):
+        (bar):
+        (foo):
+
 2014-10-04  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to test page overlays

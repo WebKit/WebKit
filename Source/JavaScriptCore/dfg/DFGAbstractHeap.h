@@ -127,6 +127,11 @@ public:
             return m_value;
         }
         
+        int32_t value32() const
+        {
+            return static_cast<int32_t>(value());
+        }
+        
         bool operator==(const Payload& other) const
         {
             return m_isTop == other.m_isTop

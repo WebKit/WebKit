@@ -75,6 +75,11 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     
     for (unsigned i = m_mustHandleValues.size(); i--;)
         m_mustHandleValues[i] = freezeFragile(plan.mustHandleValues[i]);
+    
+    for (unsigned i = m_codeBlock->m_numVars; i--;) {
+        if (m_codeBlock->isCaptured(virtualRegisterForLocal(i)))
+            m_outermostCapturedVars.set(i);
+    }
 }
 
 Graph::~Graph()

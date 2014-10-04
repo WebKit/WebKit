@@ -269,6 +269,58 @@ public:
         return IntHash<uintptr_t>::hash(value);
     }
     
+    class SetBitsIterable {
+    public:
+        SetBitsIterable(const BitVector& bitVector)
+            : m_bitVector(bitVector)
+        {
+        }
+        
+        class iterator {
+        public:
+            iterator()
+                : m_bitVector(nullptr)
+                , m_index(0)
+            {
+            }
+            
+            iterator(const BitVector& bitVector, size_t index)
+                : m_bitVector(&bitVector)
+                , m_index(index)
+            {
+            }
+            
+            size_t operator*() const { return m_index; }
+            
+            iterator& operator++()
+            {
+                m_index = m_bitVector->findBit(m_index + 1, true);
+                return *this;
+            }
+            
+            bool operator==(const iterator& other) const
+            {
+                return m_index == other.m_index;
+            }
+            
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+        private:
+            const BitVector* m_bitVector;
+            size_t m_index;
+        };
+        
+        iterator begin() const { return iterator(m_bitVector, m_bitVector.findBit(0, true)); }
+        iterator end() const { return iterator(m_bitVector, m_bitVector.size()); }
+        
+    private:
+        const BitVector& m_bitVector;
+    };
+    
+    SetBitsIterable setBits() const { return SetBitsIterable(*this); }
+    
 private:
     static unsigned bitsInPointer()
     {

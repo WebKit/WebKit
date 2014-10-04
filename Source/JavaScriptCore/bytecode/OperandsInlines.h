@@ -47,6 +47,22 @@ void Operands<T, Traits>::dumpInContext(PrintStream& out, DumpContext* context) 
     }
 }
 
+template<typename T, typename Traits>
+void Operands<T, Traits>::dump(PrintStream& out) const
+{
+    CommaPrinter comma(" ");
+    for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
+        if (Traits::isEmptyForDump(argument(argumentIndex)))
+            continue;
+        out.print(comma, "arg", argumentIndex, ":", argument(argumentIndex));
+    }
+    for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
+        if (Traits::isEmptyForDump(local(localIndex)))
+            continue;
+        out.print(comma, "loc", localIndex, ":", local(localIndex));
+    }
+}
+
 } // namespace JSC
 
 #endif // OperandsInlines_h
