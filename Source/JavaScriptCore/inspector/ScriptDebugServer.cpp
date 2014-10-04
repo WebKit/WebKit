@@ -38,7 +38,6 @@
 #include "JSJavaScriptCallFrame.h"
 #include "JSLock.h"
 #include "JavaScriptCallFrame.h"
-#include "LegacyProfiler.h"
 #include "ScriptValue.h"
 #include "SourceProvider.h"
 #include <wtf/NeverDestroyed.h>
@@ -307,14 +306,12 @@ void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exe
 void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vmEntryGlobalObject)
 {
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause);
-    LegacyProfiler::profiler()->didPause(currentDebuggerCallFrame());
     didPause(vmEntryGlobalObject);
 
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
 
     didContinue(vmEntryGlobalObject);
-    LegacyProfiler::profiler()->didContinue(currentDebuggerCallFrame());
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue);
 }
 

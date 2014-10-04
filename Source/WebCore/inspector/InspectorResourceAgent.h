@@ -138,6 +138,8 @@ public:
 private:
     void enable();
 
+    double timestamp();
+
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorNetworkFrontendDispatcher> m_frontendDispatcher;

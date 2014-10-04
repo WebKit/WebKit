@@ -61,11 +61,6 @@ using namespace Inspector;
 
 namespace WebCore {
 
-void TimelineTimeConverter::reset()
-{
-    m_startOffset = monotonicallyIncreasingTime() - currentTime();
-}
-
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
 }
@@ -76,6 +71,7 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorTimelineBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(this);
+    m_stopwatch->reset();
 
     if (m_scriptDebugServer)
         m_scriptDebugServer->recompileAllJSFunctions();
@@ -118,7 +114,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     else
         m_maxCallStackDepth = 5;
 
-    m_timeConverter.reset();
+    m_stopwatch->start();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
 
@@ -135,6 +131,8 @@ void InspectorTimelineAgent::internalStop()
 {
     if (!m_enabled)
         return;
+
+    m_stopwatch->stop();
 
     m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
 
@@ -157,9 +155,9 @@ void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scr
     m_scriptDebugServer = scriptDebugServer;
 }
 
-static inline void startProfiling(JSC::ExecState* exec, const String& title)
+static inline void startProfiling(JSC::ExecState* exec, const String& title, PassRefPtr<Stopwatch> stopwatch)
 {
-    JSC::LegacyProfiler::profiler()->startProfiling(exec, title);
+    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, stopwatch);
 }
 
 static inline PassRefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const String& title)
@@ -167,9 +165,9 @@ static inline PassRefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const
     return JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
 }
 
-static inline void startProfiling(Frame* frame, const String& title)
+static inline void startProfiling(Frame* frame, const String& title, PassRefPtr<Stopwatch> stopwatch)
 {
-    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title);
+    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title, stopwatch);
 }
 
 static inline PassRefPtr<JSC::Profile> stopProfiling(Frame* frame, const String& title)
@@ -193,7 +191,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     if (!m_enabled && m_pendingConsoleProfileRecords.isEmpty())
         internalStart();
 
-    startProfiling(exec, title);
+    startProfiling(exec, title, m_stopwatch);
 
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
@@ -232,7 +230,7 @@ void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scri
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 
     if (frame && !m_callStackDepth)
-        startProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
+        startProfiling(frame, ASCIILiteral("Timeline FunctionCall"), m_stopwatch);
 
     ++m_callStackDepth;
 }
@@ -407,7 +405,7 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 
     if (frame && !m_callStackDepth) {
         ++m_callStackDepth;
-        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
+        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"), m_stopwatch);
     }
 }
 
@@ -554,6 +552,16 @@ void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const I
     appendRecord(TimelineRecordFactory::createProbeSampleData(action, hitCount), TimelineRecordType::ProbeSample, false, frameFromExecState(exec));
 }
 
+void InspectorTimelineAgent::didPause(JSC::ExecState*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&)
+{
+    m_stopwatch->stop();
+}
+
+void InspectorTimelineAgent::didContinue()
+{
+    m_stopwatch->start();
+}
+
 static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)
 {
     switch (type) {
@@ -690,6 +698,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     : InspectorAgentBase(ASCIILiteral("Timeline"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_scriptDebugServer(nullptr)
+    , m_stopwatch(Stopwatch::create())
     , m_id(1)
     , m_callStackDepth(0)
     , m_maxCallStackDepth(5)
@@ -748,7 +757,7 @@ void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const
 
 double InspectorTimelineAgent::timestamp()
 {
-    return m_timeConverter.fromMonotonicallyIncreasingTime(monotonicallyIncreasingTime());
+    return m_stopwatch->elapsedTime();
 }
 
 Page* InspectorTimelineAgent::page()

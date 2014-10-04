@@ -29,6 +29,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Stopwatch.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -42,7 +43,7 @@ namespace JSC {
 
     class ProfileGenerator : public RefCounted<ProfileGenerator>  {
     public:
-        static PassRefPtr<ProfileGenerator> create(ExecState*, const WTF::String& title, unsigned uid);
+        static PassRefPtr<ProfileGenerator> create(ExecState*, const WTF::String& title, unsigned uid, PassRefPtr<Stopwatch>);
 
         // Members
         const WTF::String& title() const;
@@ -54,15 +55,12 @@ namespace JSC {
         void didExecute(ExecState* callerCallFrame, const CallIdentifier&);
         void exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&);
 
-        void didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
-        void didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&);
-
         void setIsSuspended(bool suspended) { ASSERT(m_suspended != suspended); m_suspended = suspended; }
 
         void stopProfiling();
 
     private:
-        ProfileGenerator(ExecState*, const WTF::String& title, unsigned uid);
+        ProfileGenerator(ExecState*, const WTF::String& title, unsigned uid, PassRefPtr<Stopwatch>);
         void addParentForConsoleStart(ExecState*);
 
         void removeProfileStart();
@@ -74,8 +72,7 @@ namespace JSC {
         RefPtr<Profile> m_profile;
         JSGlobalObject* m_origin;
         unsigned m_profileGroup;
-        // Timestamp is set to NAN when the debugger is not currently paused.
-        double m_debuggerPausedTimestamp;
+        RefPtr<Stopwatch> m_stopwatch;
         RefPtr<ProfileNode> m_rootNode;
         RefPtr<ProfileNode> m_currentNode;
         bool m_foundConsoleStartParent;

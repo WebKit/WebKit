@@ -1,3 +1,36 @@
+2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Reviewed by Timothy Hatcher.
+
+        Now that we have a stopwatch to provide pause-aware timing data, we can remove the
+        profiler's handling of debugger pause/continue callbacks. The timeline agent accounts
+        for debugger pauses by pausing and resuming the stopwatch.
+
+        * API/JSProfilerPrivate.cpp:
+        (JSStartProfiling): Use a fresh stopwatch when profiling from the JSC API.
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::handlePause):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::profiler): Use nullptr.
+        (JSC::LegacyProfiler::startProfiling): Hand off a stopwatch to the profile generator.
+        (JSC::LegacyProfiler::stopProfiling): Use nullptr.
+        (JSC::LegacyProfiler::didPause): Deleted.
+        (JSC::LegacyProfiler::didContinue): Deleted.
+        * profiler/LegacyProfiler.h:
+        * profiler/ProfileGenerator.cpp: Remove debugger pause/continue callbacks and the
+        timestamp member that was used to track time elapsed by the debugger. Just use the
+        stopwatch's elapsed times to generate start/elapsed times for function calls.
+        (JSC::ProfileGenerator::create):
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::ProfileGenerator::beginCallEntry):
+        (JSC::ProfileGenerator::endCallEntry):
+        (JSC::ProfileGenerator::didPause): Deleted.
+        (JSC::ProfileGenerator::didContinue): Deleted.
+        * profiler/ProfileGenerator.h:
+
 2014-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should sink PutLocals

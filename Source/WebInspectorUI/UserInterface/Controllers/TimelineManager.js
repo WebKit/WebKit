@@ -35,6 +35,8 @@ WebInspector.TimelineManager = function()
     this._activeRecording = null;
     this._isCapturing = false;
 
+    // For legacy backends, we compute the elapsed time of records relative to this timestamp.
+    this._legacyFirstRecordTimestamp = NaN;
     this._nextRecordingIdentifier = 1;
 
     this._boundStopCapturing = this.stopCapturing.bind(this);
@@ -55,6 +57,7 @@ WebInspector.TimelineManager.Event = {
     CapturingStopped: "timeline-manager-capturing-stopped"
 };
 
+WebInspector.TimelineManager.StartTimeThresholdForLegacyRecordConversion = 28800000; // Date.parse("Jan 1, 1970")
 WebInspector.TimelineManager.MaximumAutoRecordDuration = 90000; // 90 seconds
 WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent = 10000; // 10 seconds
 WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly = 2000; // 2 seconds
@@ -163,9 +166,20 @@ WebInspector.TimelineManager.prototype = {
 
         function processRecord(recordPayload, parentRecordPayload)
         {
-            // Convert the timestamps to seconds to match the resource timestamps.
-            var startTime = recordPayload.startTime / 1000;
-            var endTime = recordPayload.endTime / 1000;
+            var startTime = recordPayload.startTime;
+            var endTime = recordPayload.endTime;
+
+            // COMPATIBILITY (iOS8): old versions use milliseconds since the epoch, rather
+            // than seconds elapsed since timeline capturing started. We approximate the latter by
+            // subtracting the start timestamp, as old versions did not use monotonic times.
+            if (isNaN(this._legacyFirstRecordTimestamp))
+                this._legacyFirstRecordTimestamp = recordPayload.startTime;
+
+            // If the record's start time sems unreasonably large, treat it as a legacy timestamp.
+            if (startTime > WebInspector.StartTimeThresholdForLegacyRecordConversion) {
+                startTime = (startTime - this._legacyFirstRecordTimestamp) / 1000;
+                endTime = isNaN(endTime) ? NaN : (startTime - this._legacyFirstRecordTimestamp) / 1000;
+            }
 
             var callFrames = this._callFramesFromPayload(recordPayload.stackTrace);
 

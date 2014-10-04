@@ -34,7 +34,7 @@ using namespace JSC;
 
 void JSStartProfiling(JSContextRef ctx, JSStringRef title)
 {
-    LegacyProfiler::profiler()->startProfiling(toJS(ctx), title->string());
+    LegacyProfiler::profiler()->startProfiling(toJS(ctx), title->string(), Stopwatch::create());
 }
 
 void JSEndProfiling(JSContextRef ctx, JSStringRef title)

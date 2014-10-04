@@ -1,3 +1,19 @@
+2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Reviewed by Timothy Hatcher.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Stopwatch.h: Added. This implements a refcounted monotonic stopwatch.
+        (WTF::Stopwatch::reset):
+        (WTF::Stopwatch::start):
+        (WTF::Stopwatch::stop):
+
 2014-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should sink PutLocals

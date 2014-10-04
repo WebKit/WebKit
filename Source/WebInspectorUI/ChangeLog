@@ -1,3 +1,24 @@
+2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Reviewed by Timothy Hatcher.
+
+        Don't update the timeline's current time when the debugger is paused.
+
+        Start and end times for timeline records are now in seconds elapsed since timeline
+        recording started, rather than milliseconds since the epoch. Add a workaround to
+        preserve compatibility with old backends.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._debuggerPaused):
+        (WebInspector.TimelineContentView.prototype._debuggerResumed):
+
 2014-10-03  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Move the computation that results in UI strings from JSC to the Web Inspector
