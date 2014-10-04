@@ -1,0 +1,24 @@
+Test Promise with Promise A+ tests 2.2.4.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected already-fulfilled
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected immediately-fulfilled
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected eventually-fulfilled
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected already-rejected
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected immediately-rejected
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. `then` returns before the promise becomes fulfilled or rejected eventually-rejected
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (fulfillment case) when `onFulfilled` is added immediately before the promise is fulfilled
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (fulfillment case) when `onFulfilled` is added immediately after the promise is fulfilled
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (fulfillment case) when one `onFulfilled` is added inside another `onFulfilled`
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (fulfillment case) when `onFulfilled` is added inside an `onRejected`
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (fulfillment case) when the promise is fulfilled asynchronously
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (rejection case) when `onRejected` is added immediately before the promise is rejected
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (rejection case) when `onRejected` is added immediately after the promise is rejected
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (rejection case) when `onRejected` is added inside an `onFulfilled`
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (rejection case) when one `onRejected` is added inside another `onRejected`
+PASS 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only platform code. Clean-stack execution ordering tests (rejection case) when the promise is rejected asynchronously
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

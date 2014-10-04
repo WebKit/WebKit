@@ -225,3 +225,6 @@ webkit.org/b/137167 js/dom/function-dot-arguments2.html [ Failure ]
 webkit.org/b/137167 js/function-dot-arguments.html [ Failure ]
 webkit.org/b/137167 js/kde/function.html [ Failure ]
 webkit.org/b/137167 js/kde/function_arguments.html [ Failure ]
+
+# Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit.
+webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]

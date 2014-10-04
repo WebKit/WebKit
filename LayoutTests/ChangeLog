@@ -1,3 +1,147 @@
+2014-10-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce Promise A+ tests into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=136878
+
+        Reviewed by Sam Weinig.
+
+        To ensure WebKit Promise stability, introducing Promise A+ tests[1] into WebKit.
+        It's also used to test V8 Promise[2].
+        So the tests guarantee that WebKit Promise's spec validity and interchangeability
+        to the other browser's Promise implementation.
+
+        Promise A+ tests assumes that it works on the Node.js environment. To work it on
+        LayoutTests correctly, we need to transform Node.js styled JavaScript code into
+        browser styled code. In this patch, we use browserify[3] to transform the test code.
+        Through transforming pipeline, some dependent JS code is bundled into the produced code.
+        So added SinonJS[4] and browserify's license files into the test directory.
+
+        And tests assume that it is used with Mocha[5] test runner. So introducing mocha.js and
+        added LICENSE file into this directory.
+
+        And since Promises/A+ 2.3.3 has many tests, it consumes much time (13s in GTK debug build).
+        So mark it as a Slow test.
+
+        [1]: https://github.com/promises-aplus/promises-tests
+        [2]: https://code.google.com/p/v8/source/browse#svn%2Ftrunk%2Ftest%2Fpromises-aplus
+        [3]: http://browserify.org/
+        [4]: http://sinonjs.org/
+        [5]: http://visionmedia.github.io/mocha/
+
+        * TestExpectations:
+        * js/promises-tests/README: Added.
+        * js/promises-tests/browserify-entry-point.js: Added.
+        (.):
+        * js/promises-tests/browserify.LICENSE: Added.
+        * js/promises-tests/mocha.LICENSE: Added.
+        * js/promises-tests/promises-tests-2-1-2-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-1-2.html: Added.
+        * js/promises-tests/promises-tests-2-1-3-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-1-3.html: Added.
+        * js/promises-tests/promises-tests-2-2-1-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-1.html: Added.
+        * js/promises-tests/promises-tests-2-2-2-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-2.html: Added.
+        * js/promises-tests/promises-tests-2-2-3-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-3.html: Added.
+        * js/promises-tests/promises-tests-2-2-4-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-4.html: Added.
+        * js/promises-tests/promises-tests-2-2-5-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-5.html: Added.
+        * js/promises-tests/promises-tests-2-2-6-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-6.html: Added.
+        * js/promises-tests/promises-tests-2-2-7-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-2-7.html: Added.
+        * js/promises-tests/promises-tests-2-3-1-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-3-1.html: Added.
+        * js/promises-tests/promises-tests-2-3-2-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-3-2.html: Added.
+        * js/promises-tests/promises-tests-2-3-3-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-3-3.html: Added.
+        * js/promises-tests/promises-tests-2-3-4-expected.txt: Added.
+        * js/promises-tests/promises-tests-2-3-4.html: Added.
+        * js/promises-tests/promises-tests.LICENSE: Added.
+        * js/promises-tests/promises-tests.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/.gitignore: Added.
+        * js/promises-tests/promises-tests/.jshintrc: Added.
+        * js/promises-tests/promises-tests/.npmignore: Added.
+        * js/promises-tests/promises-tests/LICENSE.txt: Added.
+        * js/promises-tests/promises-tests/README.md: Added.
+        * js/promises-tests/promises-tests/lib/cli.js: Added.
+        (getAdapterFilePath):
+        (adapterObjectFromFilePath):
+        * js/promises-tests/promises-tests/lib/getMochaOpts.js: Added.
+        (module.exports):
+        * js/promises-tests/promises-tests/lib/programmaticRunner.js: Added.
+        (normalizeAdapter.adapter.resolved):
+        (normalizeAdapter.adapter.rejected):
+        (normalizeAdapter):
+        (.cb):
+        (.):
+        (module.exports):
+        (module.exports.mocha):
+        * js/promises-tests/promises-tests/lib/tests/2.1.2.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.1.3.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.2.1.js: Added.
+        * js/promises-tests/promises-tests/lib/tests/2.2.2.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.2.3.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.2.4.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.2.5.js: Added.
+        * js/promises-tests/promises-tests/lib/tests/2.2.6.js: Added.
+        (.return.if):
+        (callbackAggregator):
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.2.7.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.3.1.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/2.3.2.js: Added.
+        (.):
+        (testPromiseResolution):
+        * js/promises-tests/promises-tests/lib/tests/2.3.3.js: Added.
+        (.):
+        (testPromiseResolution):
+        (testCallingResolvePromiseRejectsWith):
+        (testCallingRejectPromiseRejectsWith):
+        (describe):
+        * js/promises-tests/promises-tests/lib/tests/2.3.4.js: Added.
+        (.):
+        * js/promises-tests/promises-tests/lib/tests/helpers/reasons.js: Added.
+        (exports.string_appeared_here):
+        (exports.string_appeared_here.return.then):
+        * js/promises-tests/promises-tests/lib/tests/helpers/testThreeCases.js: Added.
+        (.specify):
+        (.):
+        (exports.testFulfilled):
+        (exports.testRejected):
+        * js/promises-tests/promises-tests/lib/tests/helpers/thenables.js: Added.
+        (exports.fulfilled.string_appeared_here.return.then):
+        (exports.fulfilled.string_appeared_here):
+        (exports.fulfilled.string_appeared_here.):
+        (exports.fulfilled.get string_appeared_here.return.then):
+        (exports.fulfilled.get string_appeared_here):
+        (exports.rejected.string_appeared_here.return.then):
+        (exports.rejected.string_appeared_here):
+        (exports.rejected.string_appeared_here.):
+        (exports.rejected.get string_appeared_here.return.then):
+        (exports.rejected.get string_appeared_here):
+        * js/promises-tests/promises-tests/package.json: Added.
+        * js/promises-tests/promises-tests/test/getMochaOptsTest.js: Added.
+        * js/promises-tests/resources/adapter.js: Added.
+        (LayoutTestsReporter.runner):
+        (window.adapter.resolved):
+        (window.adapter.rejected):
+        (window.adapter.deferred):
+        * js/promises-tests/resources/mocha.js: Added.
+        (.):
+        * js/promises-tests/sinonjs.LICENSE: Added.
+
 2014-10-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174275.
