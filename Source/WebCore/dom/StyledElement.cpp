@@ -144,10 +144,9 @@ MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
     RefPtr<StyleProperties>& inlineStyle = ensureUniqueElementData().m_inlineStyle;
     if (!inlineStyle)
         inlineStyle = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
-    else if (!inlineStyle->isMutable())
+    else if (!is<MutableStyleProperties>(*inlineStyle))
         inlineStyle = inlineStyle->mutableCopy();
-    ASSERT_WITH_SECURITY_IMPLICATION(inlineStyle->isMutable());
-    return static_cast<MutableStyleProperties&>(*inlineStyle);
+    return downcast<MutableStyleProperties>(*inlineStyle);
 }
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
@@ -181,15 +180,13 @@ inline void StyledElement::setInlineStyleFromString(const AtomicString& newStyle
 
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
-    if (inlineStyle && !inlineStyle->isMutable())
+    if (inlineStyle && !is<MutableStyleProperties>(*inlineStyle))
         inlineStyle.clear();
 
     if (!inlineStyle)
         inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
-    else {
-        ASSERT(inlineStyle->isMutable());
-        static_pointer_cast<MutableStyleProperties>(inlineStyle)->parseDeclaration(newStyleString, &document().elementSheet().contents());
-    }
+    else
+        downcast<MutableStyleProperties>(*inlineStyle).parseDeclaration(newStyleString, &document().elementSheet().contents());
 }
 
 void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason reason)

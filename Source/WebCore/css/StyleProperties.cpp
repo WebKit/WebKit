@@ -61,9 +61,9 @@ PassRef<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProp
 
 PassRef<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 {
-    if (!isMutable())
-        return static_cast<ImmutableStyleProperties&>(const_cast<StyleProperties&>(*this));
-    const MutableStyleProperties& mutableThis = static_cast<const MutableStyleProperties&>(*this);
+    if (is<ImmutableStyleProperties>(*this))
+        return downcast<ImmutableStyleProperties>(const_cast<StyleProperties&>(*this));
+    const MutableStyleProperties& mutableThis = downcast<MutableStyleProperties>(*this);
     return ImmutableStyleProperties::create(mutableThis.m_propertyVector.data(), mutableThis.m_propertyVector.size(), cssParserMode());
 }
 
@@ -106,8 +106,8 @@ ImmutableStyleProperties::~ImmutableStyleProperties()
 MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     : StyleProperties(other.cssParserMode())
 {
-    if (other.isMutable())
-        m_propertyVector = static_cast<const MutableStyleProperties&>(other).m_propertyVector;
+    if (is<MutableStyleProperties>(other))
+        m_propertyVector = downcast<MutableStyleProperties>(other).m_propertyVector;
     else {
         m_propertyVector.reserveInitialCapacity(other.propertyCount());
         for (unsigned i = 0; i < other.propertyCount(); ++i)
@@ -1028,7 +1028,7 @@ String StyleProperties::asText() const
 
 bool StyleProperties::hasCSSOMWrapper() const
 {
-    return m_isMutable && static_cast<const MutableStyleProperties*>(this)->m_cssomWrapper;
+    return is<MutableStyleProperties>(*this) && downcast<MutableStyleProperties>(*this).m_cssomWrapper;
 }
 
 void MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& other)

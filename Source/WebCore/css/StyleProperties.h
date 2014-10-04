@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include <memory>
 #include <wtf/ListHashSet.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -235,38 +236,24 @@ private:
     friend class StyleProperties;
 };
 
-TYPE_CASTS_BASE(MutableStyleProperties, StyleProperties, set, set->isMutable(), set.isMutable());
-
-inline MutableStyleProperties* toMutableStyleProperties(const RefPtr<StyleProperties>& set)
-{
-    return toMutableStyleProperties(set.get());
-}
-
-TYPE_CASTS_BASE(ImmutableStyleProperties, StyleProperties, set, !set->isMutable(), !set.isMutable());
-
-inline ImmutableStyleProperties* toImmutableStyleProperties(const RefPtr<StyleProperties>& set)
-{
-    return toImmutableStyleProperties(set.get());
-}
-
 inline const StylePropertyMetadata& StyleProperties::PropertyReference::propertyMetadata() const
 {
-    if (m_propertySet.isMutable())
-        return static_cast<const MutableStyleProperties&>(m_propertySet).m_propertyVector.at(m_index).metadata();
-    return static_cast<const ImmutableStyleProperties&>(m_propertySet).metadataArray()[m_index];
+    if (is<MutableStyleProperties>(m_propertySet))
+        return downcast<MutableStyleProperties>(m_propertySet).m_propertyVector.at(m_index).metadata();
+    return downcast<ImmutableStyleProperties>(m_propertySet).metadataArray()[m_index];
 }
 
 inline const CSSValue* StyleProperties::PropertyReference::propertyValue() const
 {
-    if (m_propertySet.isMutable())
-        return static_cast<const MutableStyleProperties&>(m_propertySet).m_propertyVector.at(m_index).value();
-    return static_cast<const ImmutableStyleProperties&>(m_propertySet).valueArray()[m_index];
+    if (is<MutableStyleProperties>(m_propertySet))
+        return downcast<MutableStyleProperties>(m_propertySet).m_propertyVector.at(m_index).value();
+    return downcast<ImmutableStyleProperties>(m_propertySet).valueArray()[m_index];
 }
 
 inline unsigned StyleProperties::propertyCount() const
 {
-    if (m_isMutable)
-        return static_cast<const MutableStyleProperties*>(this)->m_propertyVector.size();
+    if (is<MutableStyleProperties>(*this))
+        return downcast<MutableStyleProperties>(*this).m_propertyVector.size();
     return m_arraySize;
 }
 
@@ -280,19 +267,27 @@ inline void StyleProperties::deref()
     if (!derefBase())
         return;
 
-    if (m_isMutable)
-        delete static_cast<MutableStyleProperties*>(this);
+    if (is<MutableStyleProperties>(*this))
+        delete downcast<MutableStyleProperties>(this);
     else
-        delete static_cast<ImmutableStyleProperties*>(this);
+        delete downcast<ImmutableStyleProperties>(this);
 }
 
 inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
 {
-    if (m_isMutable)
-        return toMutableStyleProperties(this)->findPropertyIndex(propertyID);
-    return toImmutableStyleProperties(this)->findPropertyIndex(propertyID);
+    if (is<MutableStyleProperties>(*this))
+        return downcast<MutableStyleProperties>(*this).findPropertyIndex(propertyID);
+    return downcast<ImmutableStyleProperties>(*this).findPropertyIndex(propertyID);
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MutableStyleProperties)
+    static bool isType(const WebCore::StyleProperties& set) { return set.isMutable(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
+    static bool isType(const WebCore::StyleProperties& set) { return !set.isMutable(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // StyleProperties_h

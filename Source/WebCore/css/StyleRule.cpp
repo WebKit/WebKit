@@ -220,9 +220,9 @@ StyleRule::~StyleRule()
 
 MutableStyleProperties& StyleRule::mutableProperties()
 {
-    if (!m_properties->isMutable())
+    if (!is<MutableStyleProperties>(m_properties.get()))
         m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStyleProperties&>(m_properties.get());
+    return downcast<MutableStyleProperties>(m_properties.get());
 }
 
 PassRef<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, PassRef<StyleProperties> properties)
@@ -282,9 +282,9 @@ StyleRulePage::~StyleRulePage()
 
 MutableStyleProperties& StyleRulePage::mutableProperties()
 {
-    if (!m_properties->isMutable())
+    if (!is<MutableStyleProperties>(m_properties.get()))
         m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStyleProperties&>(m_properties.get());
+    return downcast<MutableStyleProperties>(m_properties.get());
 }
 
 StyleRuleFontFace::StyleRuleFontFace(PassRef<StyleProperties> properties)
@@ -305,9 +305,9 @@ StyleRuleFontFace::~StyleRuleFontFace()
 
 MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 {
-    if (!m_properties->isMutable())
+    if (!is<MutableStyleProperties>(m_properties.get()))
         m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStyleProperties&>(m_properties.get());
+    return downcast<MutableStyleProperties>(m_properties.get());
 }
 
 StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase>>& adoptRule)
