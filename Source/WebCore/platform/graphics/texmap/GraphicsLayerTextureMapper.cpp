@@ -389,12 +389,14 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 
 void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()
 {
-    if (!shouldHaveBackingStore()) {
-        m_backingStore.clear();
-        m_changeMask |= BackingStoreChange;
-    } else {
+    if (shouldHaveBackingStore()) {
         if (!m_backingStore) {
             m_backingStore = TextureMapperTiledBackingStore::create();
+            m_changeMask |= BackingStoreChange;
+        }
+    } else {
+        if (m_backingStore) {
+            m_backingStore = nullptr;
             m_changeMask |= BackingStoreChange;
         }
     }
