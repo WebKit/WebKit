@@ -1,0 +1,41 @@
+/* RESET */
+html,body,div,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,p,blockquote,fieldset,input,abbr,article,aside,command,details,figcaption,figure,footer,header,hgroup,mark,meter,nav,output,progress,section,summary,time { margin: 0; padding: 0; }
+h1,h2,h3,h4,h5,h6,pre,code,address,caption,cite,code,em,strong,th,figcaption { font-size: 1em; font-weight: normal; font-style: normal; }
+fieldset,iframe{border:none}
+table{border-collapse:collapse;border-spacing:0}
+article,aside,footer,header,hgroup,nav,section,figure,figcaption{display: block;}
+
+/* FIXME: extra whitespace */
+caption  ,   th { text-align: left; }
+
+/* IMPORTANT */
+/* FIXME: whitespace between "!" and "important" can be improved */
+body{color:red!important;}
+body{color:red !important;}
+body{color:red ! important;}
+
+/* INLINE COMMENT */
+body{color:red;/* blue */}
+
+/* URLS */
+.myimage{background-image:url(http://example.com/image.png),url(two.png)}
+.myimage{background-image:url("http://example.com/image.png"),url("two.png")}
+
+/* PREFIXED SELECTORS AND PROPERTIES */
+.foo -webkit-any(a,b,c){-webkit-transition:all;color:red}
+
+/* PSEUDO SELECTORS */
+a:link,a:visited{color:black}
+
+/* PSEUDO ELEMENTS */
+p::before,p::after{content:"test";}
+
+/* RGB, HSL */
+body{color:rgb(1,1,1);color:rgba(100,0,255,0.5);color:hsl(120,100%,50%);color:hsla(120,60%,70%,0.3);}
+
+/*
+ * This is a multi-line comment.
+ * - with indentation
+ * - and is generally awesome.
+ */
+body{color:red}

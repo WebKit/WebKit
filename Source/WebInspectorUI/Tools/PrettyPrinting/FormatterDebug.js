@@ -23,11 +23,13 @@ Formatter.prototype.debug = function(from, to)
 
         // Language Specific Info
         if (state.lexical) {
+            // JavaScript
             debug += "Lexical: " + pad(String(state.lexical.type), 10); // JavaScript
             debug += "Prev: " + pad(String(state.lexical.prev ? state.lexical.prev.type : state.lexical.prev), 10, !state.lexical.prev);
+        } else if (state.state) {
+            // CSS
+            debug += "State: " + pad(String(state.state), 16);
         }
-        else if (state.stack)
-            debug += "Stack: " + pad(String(state.stack[state.stack.length-1]), 16); // CSS
 
         // String
         debug += "Current: '" + stream.current() + "'\n";

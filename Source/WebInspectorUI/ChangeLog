@@ -1,3 +1,31 @@
+2014-10-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add PrettyPrinter CSS tests
+        https://bugs.webkit.org/show_bug.cgi?id=134005
+
+        Reviewed by Timothy Hatcher.
+
+        Add CSS pretty printing tests. Improve pretty printing of calc()
+        expressions and media-queries with whitespace around operators
+        and keywords. Also fix the debug output in the tool for CSS.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/FormatterContentBuilder.js:
+        (FormatterContentBuilder.prototype._appendIndent):
+        * Tools/PrettyPrinting/FormatterDebug.js:
+        (.debugToken):
+        (Formatter.prototype.debug):
+        * Tools/PrettyPrinting/css-tests/basic-expected.css: Added.
+        * Tools/PrettyPrinting/css-tests/basic.css: Added.
+        * Tools/PrettyPrinting/css-tests/calc-expected.css: Added.
+        * Tools/PrettyPrinting/css-tests/calc.css: Added.
+        * Tools/PrettyPrinting/css-tests/media-query-expected.css: Added.
+        * Tools/PrettyPrinting/css-tests/media-query.css: Added.
+        * Tools/PrettyPrinting/css-tests/selectors-expected.css: Added.
+        * Tools/PrettyPrinting/css-tests/selectors.css: Added.
+        * Tools/PrettyPrinting/index.html:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+
 2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Unreviewed, rolling out r174319.

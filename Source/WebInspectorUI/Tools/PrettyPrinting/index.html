@@ -163,13 +163,11 @@
     // Button helpers.
     var buttons = ["mode", "populate", "run-tests", "clear", "select-output", "run-again"];
     function disableButtons() {
-        console.log("disableButtons");
         buttons.forEach(function(id) {
             document.getElementById(id).disabled = true;
         });
     }
     function enableButtons() {
-        console.log("enableButtons");
         buttons.forEach(function(id) {
             document.getElementById(id).disabled = false;
         });
@@ -243,7 +241,12 @@
         ]);
     }
     function runCSSTests(callback) {
-        _runTests(callback, []);
+        _runTests(callback, [
+            "css-tests/basic.css",
+            "css-tests/calc.css",
+            "css-tests/media-query.css",
+            "css-tests/selectors.css",
+        ]);
     }
     function _runTests(callback, manifest) {
         var index = -1;
@@ -264,7 +267,7 @@
 
             // Load test and expected results.
             var test = manifest[index];
-            var expected = test.replace(/\.js$/, "-expected.js");
+            var expected = test.replace(/\.([^\.]+)$/, "-expected.$1");
             var xhr1 = new XMLHttpRequest;
             xhr1.open("GET", test, false);
             xhr1.send();
@@ -291,6 +294,16 @@
             // Compare results.
             var pass = builder.formattedContent === expectedData;
             results.push("/* " + (pass ? "PASS" : "FAIL") + ": " + test + " */");
+
+            // Output failures to console.
+            if (!pass) {
+                console.log("Test", test, "Expected", expected);
+                console.log("Formatted Output", builder.formattedContent.length);
+                console.log(builder.formattedContent);
+                console.log("Expected Output", expectedData.length);
+                console.log(expectedData);
+            }
+
             runNextTest();
         }
 

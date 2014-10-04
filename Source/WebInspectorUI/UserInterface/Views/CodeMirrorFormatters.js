@@ -300,7 +300,7 @@ CodeMirror.extendMode("css", {
         if (!token) {
             if (content === "{")
                 return true;
-            return false;
+            return ">+~-*/".indexOf(content) >= 0; // calc() expression or child/sibling selectors
         }
 
         if (isComment)
@@ -322,11 +322,16 @@ CodeMirror.extendMode("css", {
                 return true;
             if (lastContent === ":") // Space in "prop: value" but not in a selectors "a:link" or "div::after" or media queries "(max-device-width:480px)".
                 return state.state === "prop";
-            return false;
+            if (lastContent === ")" && (content !== ")" && content !== ",")) // Space in "not(foo)and" but not at the end of "not(not(foo))"
+                return state.state === "media" || state.state === "media_parens";
+            return ">+~-*/".indexOf(lastContent) >= 0; // calc() expression or child/sibling selectors
         }
 
         if (/\bcomment\b/.test(lastToken))
             return true;
+
+        if (/\bkeyword\b/.test(lastToken)) // media-query keywords
+            return state.state === "media" || state.state === "media_parens";
 
         return false;
     },
