@@ -1,3 +1,45 @@
+2014-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to test page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=137339
+
+        Reviewed by Dan Bernstein.
+
+        * pageoverlay/overlay-installation.html: Added.
+        Add a test which just installs one view-relative and one document-relative
+        overlay, and dumps the layer tree and pixel results. The mock overlay
+        strokes a blue rectangle (inset a little from the overlay bounds) for
+        view-relative overlays, and a green rectangle (inset a bit more) for
+        document-relative overlays.
+        
+        * pageoverlay/overlay-large-document.html: Added.
+        * pageoverlay/overlay-large-document-scrolled.html: Added.
+        Tests that do the same as the -installation test, but with a larger document;
+        the view-relative overlay should be the same size (or slightly smaller,
+        because we have scrollbars now), but the document-relative overlay should
+        be the size of the document. The second test scrolls to maxX, maxY, and
+        the document-relative overlay should scroll along with it, while the
+        view-relative overlay should remain fixed.
+
+        * pageoverlay/overlay-installation-expected.txt: Added.
+        * pageoverlay/overlay-large-document-expected.txt: Added.
+        * pageoverlay/overlay-large-document-scrolled-expected.txt: Added.
+        "Normal" layer tree expectations.
+        
+        * platform/mac-wk1/pageoverlay/overlay-installation-expected.png: Added.
+        * platform/mac-wk1/pageoverlay/overlay-installation-expected.txt: Added.
+        * platform/mac-wk1/pageoverlay/overlay-large-document-expected.png: Added.
+        * platform/mac-wk1/pageoverlay/overlay-large-document-expected.txt: Added.
+        * platform/mac-wk1/pageoverlay/overlay-large-document-scrolled-expected.png: Added.
+        * platform/mac-wk1/pageoverlay/overlay-large-document-scrolled-expected.txt: Added.
+        Expected results for WebKit1 differ for view-relative overlays, because
+        we don't currently hook up view-relative overlays for WebKit1.
+
+        * platform/mac/pageoverlay/overlay-installation-expected.png: Added.
+        * platform/mac/pageoverlay/overlay-large-document-expected.png: Added.
+        * platform/mac/pageoverlay/overlay-large-document-scrolled-expected.png: Added.
+        "Normal" pixel dump expectations.
+
 2014-10-04  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip remaining failing media tests after adding audio devices to the bots.

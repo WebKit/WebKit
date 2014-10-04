@@ -211,7 +211,7 @@ public:
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 
     virtual bool isTrackingRepaints() const override;
-    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const override;
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
 
     virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;

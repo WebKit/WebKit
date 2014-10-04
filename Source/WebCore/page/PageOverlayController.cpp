@@ -358,4 +358,9 @@ void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay
     m_overlayGraphicsLayers.get(&overlay)->setBackgroundColor(overlay.backgroundColor());
 }
 
+bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior behavior) const
+{
+    return !(behavior & LayerTreeAsTextIncludePageOverlayLayers);
+}
+
 } // namespace WebKit

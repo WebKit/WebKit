@@ -87,7 +87,7 @@ private:
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
     virtual float deviceScaleFactor() const override;
-    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const override { return true; }
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
 
     std::unique_ptr<GraphicsLayer> m_documentOverlayRootLayer;
     std::unique_ptr<GraphicsLayer> m_viewOverlayRootLayer;

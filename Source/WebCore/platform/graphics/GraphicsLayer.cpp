@@ -605,7 +605,7 @@ static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children,
 {
     totalChildCount += children.size();
     for (auto* child : children) {
-        if (!child->client().shouldSkipLayerInDump(child)) {
+        if (!child->client().shouldSkipLayerInDump(child, behavior)) {
             child->dumpLayer(ts, indent + 2, behavior);
             continue;
         }

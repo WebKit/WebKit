@@ -3170,6 +3170,8 @@ set(WebCoreTestSupport_SOURCES
     testing/InternalSettings.cpp
     testing/Internals.cpp
 
+    testing/MockPageOverlayClient.cpp
+
     testing/js/WebCoreTestSupport.cpp
 )
 

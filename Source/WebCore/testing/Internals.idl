@@ -185,7 +185,7 @@
 
     // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
     // "Sequences must not be used as the type of an attribute, constant or exception field."
-    // FIXME: this will lead to BUG interals.consoleProfiles !== interals.consoleProfiles as profile will always returns new array.
+    // FIXME: this will lead to BUG internals.consoleProfiles !== internals.consoleProfiles as profile will always returns new array.
     readonly attribute ScriptProfile[] consoleProfiles;
 
     unsigned long numberOfLiveNodes();
@@ -230,7 +230,7 @@
 
     DOMString[] getReferencedFilePaths();
 
-    // These functions both reset the tracked repaint rects. They are inteded to be used in the following order:
+    // These functions both reset the tracked repaint rects. They are intended to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
     [RaisesException] void startTrackingRepaints();
     [RaisesException] void stopTrackingRepaints();
@@ -292,4 +292,12 @@
     
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
+    
+    [RaisesException] void installMockPageOverlay(PageOverlayType type);
+    [RaisesException] DOMString pageOverlayLayerTreeAsText();
+};
+
+enum PageOverlayType {
+    "view",
+    "document"
 };

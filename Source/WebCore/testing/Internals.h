@@ -342,6 +342,9 @@ public:
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
 
+    void installMockPageOverlay(const String& overlayType, ExceptionCode&);
+    String pageOverlayLayerTreeAsText(ExceptionCode&) const;
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

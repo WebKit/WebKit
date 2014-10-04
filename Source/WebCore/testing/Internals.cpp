@@ -75,7 +75,9 @@
 #include "MediaSessionManager.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
+#include "MockPageOverlayClient.h"
 #include "Page.h"
+#include "PageOverlay.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -300,6 +302,8 @@ void Internals::resetToConsistentState(Page* page)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibility();
 #endif
+
+    MockPageOverlayClient::shared().uninstallAllOverlays();
 }
 
 Internals::Internals(Document* document)
@@ -2354,6 +2358,30 @@ void Internals::simulateSystemWake() const
 #if ENABLE(VIDEO)
     MediaSessionManager::sharedManager().systemDidWake();
 #endif
+}
+
+void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    MockPageOverlayClient::shared().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+}
+
+String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    document->updateLayout();
+
+    return MockPageOverlayClient::shared().layerTreeAsText(document->frame()->mainFrame());
 }
 
 }
