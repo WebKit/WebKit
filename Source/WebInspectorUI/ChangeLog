@@ -1,5 +1,19 @@
 2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
 
+        Unreviewed, rolling out r174319.
+
+        Causes assertions in fast/profiler tests. Needs nontrivial
+        investigation, will take offline.
+
+        Reverted changeset:
+
+        "Web Inspector: timelines should not count time elapsed while
+        paused in the debugger"
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+        http://trac.webkit.org/changeset/174319
+
+2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: timelines should not count time elapsed while paused in the debugger
         https://bugs.webkit.org/show_bug.cgi?id=136351
 

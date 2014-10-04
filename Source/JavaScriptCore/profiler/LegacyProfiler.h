@@ -32,12 +32,13 @@
 #include "Profile.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
+class DebuggerCallFrame;
 class ExecState;
+class VM;
 class JSGlobalObject;
 class JSObject;
 class JSValue;
@@ -47,10 +48,10 @@ struct CallIdentifier;
 class LegacyProfiler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JS_EXPORT_PRIVATE static LegacyProfiler* profiler();
+    JS_EXPORT_PRIVATE static LegacyProfiler* profiler(); 
     static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber);
 
-    JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title, PassRefPtr<Stopwatch>);
+    JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title);
     JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
     void stopProfiling(JSGlobalObject*);
 
@@ -64,6 +65,9 @@ public:
     void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber);
 
     void exceptionUnwind(ExecState* handlerCallFrame);
+
+    void didPause(PassRefPtr<DebuggerCallFrame>);
+    void didContinue(PassRefPtr<DebuggerCallFrame>);
 
     const Vector<RefPtr<ProfileGenerator>>& currentProfiles() { return m_currentProfiles; };
 

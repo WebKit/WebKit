@@ -57,7 +57,6 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
-#include "InspectorTimelineAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
@@ -74,6 +73,7 @@
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
@@ -359,16 +359,6 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason
 #if ENABLE(TOUCH_EVENTS)
     updateTouchEventEmulationInPage(false);
 #endif
-}
-
-double InspectorPageAgent::timestamp()
-{
-    // If the timeline agent is recording now, use its stopwatch. Otherwise, just report 0.0
-    // since the timestamps are only used to accurately graph records on the timeline.
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        return timelineAgent->timestamp();
-
-    return 0.0;
 }
 
 void InspectorPageAgent::enable(ErrorString&)
@@ -762,12 +752,12 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 void InspectorPageAgent::domContentEventFired()
 {
     m_isFirstLayoutAfterOnLoad = true;
-    m_frontendDispatcher->domContentEventFired(timestamp());
+    m_frontendDispatcher->domContentEventFired(currentTime());
 }
 
 void InspectorPageAgent::loadEventFired()
 {
-    m_frontendDispatcher->loadEventFired(timestamp());
+    m_frontendDispatcher->loadEventFired(currentTime());
 }
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)

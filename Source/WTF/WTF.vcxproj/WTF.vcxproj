@@ -269,7 +269,6 @@
     <ClInclude Include="..\wtf\StackBounds.h" />
     <ClInclude Include="..\wtf\StaticConstructors.h" />
     <ClInclude Include="..\wtf\StdLibExtras.h" />
-    <ClInclude Include="..\wtf\Stopwatch.h" />
     <ClInclude Include="..\wtf\StringExtras.h" />
     <ClInclude Include="..\wtf\StringHasher.h" />
     <ClInclude Include="..\wtf\StringPrintStream.h" />

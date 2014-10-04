@@ -28,6 +28,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "Debugger.h"
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "JSFunction.h"
@@ -39,18 +40,21 @@
 
 namespace JSC {
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const String& title, unsigned uid, PassRefPtr<Stopwatch> stopwatch)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const String& title, unsigned uid)
 {
-    return adoptRef(new ProfileGenerator(exec, title, uid, stopwatch));
+    return adoptRef(new ProfileGenerator(exec, title, uid));
 }
 
-ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigned uid, PassRefPtr<Stopwatch> stopwatch)
+ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigned uid)
     : m_origin(exec ? exec->lexicalGlobalObject() : nullptr)
     , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
-    , m_stopwatch(stopwatch)
+    , m_debuggerPausedTimestamp(NAN)
     , m_foundConsoleStartParent(false)
     , m_suspended(false)
 {
+    if (Debugger* debugger = exec->lexicalGlobalObject()->debugger())
+        m_debuggerPausedTimestamp = debugger->isPaused() ? currentTime() : NAN;
+
     m_profile = Profile::create(title, uid);
     m_currentNode = m_rootNode = m_profile->rootNode();
     if (exec)
@@ -114,7 +118,12 @@ void ProfileGenerator::beginCallEntry(ProfileNode* node, double startTime)
     ASSERT_ARG(node, node);
 
     if (isnan(startTime))
-        startTime = m_stopwatch->elapsedTime();
+        startTime = currentTime();
+
+    // If the debugger is paused when beginning, then don't set the start time. It
+    // will be fixed up when the debugger unpauses or the call entry ends.
+    if (!isnan(m_debuggerPausedTimestamp))
+        startTime = NAN;
 
     node->appendCall(ProfileNode::Call(startTime));
 }
@@ -124,8 +133,22 @@ void ProfileGenerator::endCallEntry(ProfileNode* node)
     ASSERT_ARG(node, node);
 
     ProfileNode::Call& last = node->lastCall();
+
+    // If the debugger is paused, ignore the interval that ends now.
+    if (!isnan(m_debuggerPausedTimestamp) && !isnan(last.elapsedTime()))
+        return;
+
+    // If paused and no time was accrued then the debugger was never unpaused. The call will
+    // have no time accrued and appear to have started when the debugger was paused.
+    if (!isnan(m_debuggerPausedTimestamp)) {
+        last.setStartTime(m_debuggerPausedTimestamp);
+        last.setElapsedTime(0.0);
+        return;
+    }
+
+    // Otherwise, add the interval ending now to elapsed time.
     double previousElapsedTime = isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
-    double newlyElapsedTime = m_stopwatch->elapsedTime() - last.startTime();
+    double newlyElapsedTime = currentTime() - last.startTime();
     last.setElapsedTime(previousElapsedTime + newlyElapsedTime);
 }
 
@@ -198,6 +221,33 @@ void ProfileGenerator::exceptionUnwind(ExecState* handlerCallFrame, const CallId
         didExecute(m_currentNode->callerCallFrame(), m_currentNode->callIdentifier());
         ASSERT(m_currentNode);
     }
+}
+
+void ProfileGenerator::didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&)
+{
+    ASSERT(isnan(m_debuggerPausedTimestamp));
+
+    m_debuggerPausedTimestamp = currentTime();
+
+    for (ProfileNode* node = m_currentNode.get(); node != m_profile->rootNode(); node = node->parent()) {
+        ProfileNode::Call& last = node->lastCall();
+        ASSERT(!isnan(last.startTime()));
+
+        double previousElapsedTime = isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
+        double additionalElapsedTime = m_debuggerPausedTimestamp - last.startTime();
+        last.setStartTime(NAN);
+        last.setElapsedTime(previousElapsedTime + additionalElapsedTime);
+    }
+}
+
+void ProfileGenerator::didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&)
+{
+    ASSERT(!isnan(m_debuggerPausedTimestamp));
+
+    for (ProfileNode* node = m_currentNode.get(); node != m_profile->rootNode(); node = node->parent())
+        node->lastCall().setStartTime(m_debuggerPausedTimestamp);
+
+    m_debuggerPausedTimestamp = NAN;
 }
 
 void ProfileGenerator::stopProfiling()

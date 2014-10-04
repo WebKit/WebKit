@@ -47,6 +47,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <profiler/Profile.h>
+#include <wtf/CurrentTime.h>
 
 using namespace Inspector;
 

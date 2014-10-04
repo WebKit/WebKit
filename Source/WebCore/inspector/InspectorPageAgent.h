@@ -167,8 +167,6 @@ private:
     void updateTouchEventEmulationInPage(bool);
 #endif
 
-    double timestamp();
-
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
     static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
