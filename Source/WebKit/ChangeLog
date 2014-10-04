@@ -4,6 +4,12 @@
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
 
+2014-10-04  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the Windows build after r174315.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Replace wkGetGlyphsForCharacters() with CGFontGetGlyphsForUnichars()
