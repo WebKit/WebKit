@@ -38,13 +38,18 @@ add_library(WebKit2APITestCore STATIC
 )
 target_link_libraries(WebKit2APITestCore WebKit2)
 
-add_custom_target(test-gresource-bundle
+add_custom_command(
+    OUTPUT ${TEST_RESOURCES_DIR}/webkit2gtk-tests-resources.gresource
     DEPENDS resources/webkit2gtk-tests.gresource.xml
             resources/link-title.js
     COMMAND glib-compile-resources
             --target=${TEST_RESOURCES_DIR}/webkit2gtk-tests-resources.gresource
             --sourcedir=${CMAKE_SOURCE_DIR}
             ${CMAKE_CURRENT_LIST_DIR}/resources/webkit2gtk-tests.gresource.xml
+)
+
+add_custom_target(test-gresource-bundle
+    DEPENDS ${TEST_RESOURCES_DIR}/webkit2gtk-tests-resources.gresource
 )
 
 macro(ADD_WK2_TEST_WEB_EXTENSION extension_name)
