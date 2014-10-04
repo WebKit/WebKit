@@ -1,3 +1,12 @@
+2014-10-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [jhbuild] Simplify platform detection in update-webkit-libs-jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=137390
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/update-webkit-libs-jhbuild:
+
 2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not generate webkit2gtk-tests-resources.gresource unconditionally
