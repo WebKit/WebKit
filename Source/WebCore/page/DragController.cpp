@@ -114,13 +114,13 @@ DragController::~DragController()
     m_client.dragControllerDestroyed();
 }
 
-PassRefPtr<DocumentFragment> DragController::documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
     Document& document = context.ownerDocument();
     if (dragData.containsCompatibleContent()) {
-        if (PassRefPtr<DocumentFragment> fragment = createFragmentFromDragData(dragData, frame, context, allowPlainText, chosePlainText))
+        if (PassRefPtr<DocumentFragment> fragment = frame.editor().webContentFromPasteboard(*Pasteboard::createForDragAndDrop(dragData), context, allowPlainText, chosePlainText))
             return fragment;
 
         if (dragData.containsURL(DragData::DoNotConvertFilenames)) {

@@ -27,8 +27,10 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "DocumentFragment.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -45,6 +47,11 @@ void Editor::writeImageToPasteboard(Pasteboard&, Element&, const URL&, const Str
 void Editor::pasteWithPasteboard(Pasteboard*, bool, MailBlockquoteHandling)
 {
     notImplemented();
+}
+
+PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard&, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
+{
+    return nullptr;
 }
 
 } // namespace WebCore

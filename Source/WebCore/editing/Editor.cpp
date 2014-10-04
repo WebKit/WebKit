@@ -560,20 +560,6 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 
 #endif
 
-#if !PLATFORM(COCOA) && !PLATFORM(EFL) && !PLATFORM(GTK)
-void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, MailBlockquoteHandling mailBlockquoteHandling)
-{
-    RefPtr<Range> range = selectedRange();
-    if (!range)
-        return;
-
-    bool chosePlainText;
-    RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, *range, allowPlainText, chosePlainText);
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, mailBlockquoteHandling);
-}
-#endif
-
 bool Editor::canSmartReplaceWithPasteboard(Pasteboard& pasteboard)
 {
     return client() && client()->smartInsertDeleteEnabled() && pasteboard.canSmartReplace();

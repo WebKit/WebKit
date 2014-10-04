@@ -26,14 +26,10 @@
 #include "config.h"
 #include "DragController.h"
 
-#include "ClipboardUtilitiesWin.h"
 #include "DataTransfer.h"
 #include "Document.h"
-#include "DocumentFragment.h"
 #include "DragData.h"
 #include "Element.h"
-#include "Frame.h"
-#include "FrameSelection.h"
 #include "Pasteboard.h"
 #include "markup.h"
 #include "windows.h"
@@ -85,29 +81,6 @@ void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Elemen
     pasteboard.writeURLToWritableDataObject(url, label);
     pasteboard.writeImageToDataObject(element, url);
     pasteboard.writeMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
-}
-
-template <typename PlatformDragData>
-static PassRefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData* platformDragData, Frame& frame)
-{
-    if (containsFilenames(platformDragData)) {
-        if (PassRefPtr<DocumentFragment> fragment = fragmentFromFilenames(frame.document(), platformDragData))
-            return fragment;
-    }
-
-    if (containsHTML(platformDragData)) {
-        if (PassRefPtr<DocumentFragment> fragment = fragmentFromHTML(frame.document(), platformDragData))
-            return fragment;
-    }
-    return nullptr;
-}
-
-PassRefPtr<DocumentFragment> DragController::createFragmentFromDragData(DragData& dragData, Frame& frame, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
-{
-    if (DragDataRef platformDragData = dragData.platformData())
-        return createFragmentFromPlatformData(platformDragData, frame);
-
-    return createFragmentFromPlatformData(&dragData.dragDataMap(), frame);
 }
 
 }

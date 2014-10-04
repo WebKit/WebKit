@@ -92,12 +92,6 @@ void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Elemen
     m_client.declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, element.document().frame());
 }
 
-PassRefPtr<DocumentFragment> DragController::createFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
-{
-    Pasteboard pasteboard(dragData.pasteboardName());
-    return frame.editor().webContentFromPasteboard(pasteboard, context, allowPlainText, chosePlainText);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT)

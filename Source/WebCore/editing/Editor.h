@@ -426,6 +426,8 @@ public:
     DeleteButtonController& deleteButtonController() const { return *m_deleteButtonController; }
 #endif
 
+    PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
@@ -433,7 +435,6 @@ public:
     WEBCORE_EXPORT NSDictionary* fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
-    PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
 #if !PLATFORM(IOS)
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();

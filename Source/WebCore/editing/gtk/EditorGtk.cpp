@@ -129,4 +129,9 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboard.write(pasteboardContent);
 }
 
+PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
+{
+    return createFragmentFromPasteboardData(pasteboard, m_frame, context, allowPlainText, chosePlainText);
+}
+
 } // namespace WebCore

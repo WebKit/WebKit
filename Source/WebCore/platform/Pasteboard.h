@@ -202,6 +202,7 @@ public:
 #if PLATFORM(WIN)
     COMPtr<IDataObject> dataObject() const { return m_dataObject; }
     void setExternalDataObject(IDataObject*);
+    const DragDataMap& dragDataMap() const { return m_dragDataMap; }
     void writeURLToWritableDataObject(const URL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.

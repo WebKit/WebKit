@@ -10,6 +10,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     accessibility/win/AccessibilityObjectWin.cpp
 
+    editing/win/EditorWin.cpp
+
     html/HTMLSelectElementWin.cpp
 
     page/win/DragControllerWin.cpp
