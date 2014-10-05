@@ -29,6 +29,7 @@
 #include "Attribute.h"
 #include "SpaceSplitString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -181,10 +182,6 @@ private:
     PassRef<UniqueElementData> makeUniqueCopy() const;
 };
 
-#define ELEMENT_DATA_TYPE_CASTS(ToValueTypeName, pointerPredicate, referencePredicate) \
-    template<typename T> inline ToValueTypeName* to##ToValueTypeName(const RefPtr<T>& elementData) { return to##ToValueTypeName(elementData.get()); } \
-    TYPE_CASTS_BASE(ToValueTypeName, ElementData, elementData, pointerPredicate, referencePredicate)
-
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
@@ -202,8 +199,6 @@ public:
 
     Attribute m_attributeArray[0];
 };
-
-ELEMENT_DATA_TYPE_CASTS(ShareableElementData, !elementData->isUnique(), !elementData.isUnique())
 
 #if COMPILER(MSVC)
 #pragma warning(pop)
@@ -232,8 +227,6 @@ public:
     AttributeVector m_attributeVector;
 };
 
-ELEMENT_DATA_TYPE_CASTS(UniqueElementData, elementData->isUnique(), elementData.isUnique())
-
 inline void ElementData::deref()
 {
     if (!derefBase())
@@ -243,32 +236,32 @@ inline void ElementData::deref()
 
 inline unsigned ElementData::length() const
 {
-    if (isUnique())
-        return toUniqueElementData(this)->m_attributeVector.size();
+    if (is<UniqueElementData>(*this))
+        return downcast<UniqueElementData>(*this).m_attributeVector.size();
     return arraySize();
 }
 
 inline const Attribute* ElementData::attributeBase() const
 {
-    if (isUnique())
-        return toUniqueElementData(this)->m_attributeVector.data();
-    return toShareableElementData(this)->m_attributeArray;
+    if (is<UniqueElementData>(*this))
+        return downcast<UniqueElementData>(*this).m_attributeVector.data();
+    return downcast<ShareableElementData>(*this).m_attributeArray;
 }
 
 inline const StyleProperties* ElementData::presentationAttributeStyle() const
 {
-    if (!isUnique())
-        return 0;
-    return toUniqueElementData(this)->m_presentationAttributeStyle.get();
+    if (!is<UniqueElementData>(*this))
+        return nullptr;
+    return downcast<UniqueElementData>(*this).m_presentationAttributeStyle.get();
 }
 
 inline AttributeIteratorAccessor ElementData::attributesIterator() const
 {
-    if (isUnique()) {
-        const Vector<Attribute, 4>& attributeVector = toUniqueElementData(this)->m_attributeVector;
+    if (is<UniqueElementData>(*this)) {
+        const Vector<Attribute, 4>& attributeVector = downcast<UniqueElementData>(*this).m_attributeVector;
         return AttributeIteratorAccessor(attributeVector.data(), attributeVector.size());
     }
-    return AttributeIteratorAccessor(toShareableElementData(this)->m_attributeArray, arraySize());
+    return AttributeIteratorAccessor(downcast<ShareableElementData>(*this).m_attributeArray, arraySize());
 }
 
 ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
@@ -276,7 +269,7 @@ ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomicStri
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
         return &attributeAt(index);
-    return 0;
+    return nullptr;
 }
 
 ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
@@ -342,7 +335,15 @@ inline Attribute& UniqueElementData::attributeAt(unsigned index)
     return m_attributeVector.at(index);
 }
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShareableElementData)
+    static bool isType(const WebCore::ElementData& elementData) { return !elementData.isUnique(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::UniqueElementData)
+    static bool isType(const WebCore::ElementData& elementData) { return elementData.isUnique(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ElementData_h
 
