@@ -19,6 +19,8 @@
 #ifndef GtkDragAndDropHelper_h
 #define GtkDragAndDropHelper_h
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include "DataObjectGtk.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -56,5 +58,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 #endif // DataObjectGtk_h
