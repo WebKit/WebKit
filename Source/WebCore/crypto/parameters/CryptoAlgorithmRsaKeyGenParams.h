@@ -43,9 +43,9 @@ public:
     virtual Class parametersClass() const override { return Class::RsaKeyGenParams; }
 };
 
-CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaKeyGenParams)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaKeyGenParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoAlgorithmRsaKeyGenParams_h

@@ -41,9 +41,9 @@ public:
     virtual Class parametersClass() const override { return Class::AesCbcParams; }
 };
 
-CRYPTO_ALGORITHM_PARAMETERS_CASTS(AesCbcParams)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesCbcParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoAlgorithmAesCbcParams_h

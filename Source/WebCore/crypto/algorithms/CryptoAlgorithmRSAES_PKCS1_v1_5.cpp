@@ -86,7 +86,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParameters&, 
 
 void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = toCryptoAlgorithmRsaKeyGenParams(parameters);
+    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);

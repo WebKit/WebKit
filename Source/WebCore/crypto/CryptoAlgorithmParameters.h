@@ -27,6 +27,7 @@
 #define CryptoAlgorithmParameters_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TypeCasts.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -52,10 +53,12 @@ public:
     virtual Class parametersClass() const { return Class::None; }
 };
 
-#define CRYPTO_ALGORITHM_PARAMETERS_CASTS(ToClassName) \
-    TYPE_CASTS_BASE(CryptoAlgorithm##ToClassName, CryptoAlgorithmParameters, parameters, parameters->parametersClass() == CryptoAlgorithmParameters::Class::ToClassName, parameters.parametersClass() == CryptoAlgorithmParameters::Class::ToClassName)
+} // namespace WebCore
 
-}
+#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName) \
+    static bool isType(const WebCore::CryptoAlgorithmParameters& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParameters::Class::ToClassName; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoAlgorithmParameters_h

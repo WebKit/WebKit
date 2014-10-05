@@ -40,9 +40,9 @@ public:
     virtual Class parametersClass() const override { return Class::AesKeyGenParams; }
 };
 
-CRYPTO_ALGORITHM_PARAMETERS_CASTS(AesKeyGenParams)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesKeyGenParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoAlgorithmAesKeyGenParams_h

@@ -72,7 +72,7 @@ bool CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches(const CryptoAlgorithmRsaOaepPa
 
 void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = toCryptoAlgorithmRsaOaepParams(parameters);
+    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
 
     if (!keyAlgorithmMatches(rsaOAEPParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -84,7 +84,7 @@ void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameter
 
 void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = toCryptoAlgorithmRsaOaepParams(parameters);
+    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
 
     if (!keyAlgorithmMatches(rsaOAEPParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -96,7 +96,7 @@ void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameter
 
 void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = toCryptoAlgorithmRsaKeyGenParams(parameters);
+    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);
@@ -107,7 +107,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
 
 void CryptoAlgorithmRSA_OAEP::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = toCryptoKeyDataRSAComponents(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSA_OAEP, rsaComponents, extractable, usage);

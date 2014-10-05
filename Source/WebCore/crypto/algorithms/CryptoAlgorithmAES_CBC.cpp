@@ -67,7 +67,7 @@ bool CryptoAlgorithmAES_CBC::keyAlgorithmMatches(const CryptoAlgorithmAesCbcPara
 
 void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = downcast<CryptoAlgorithmAesCbcParams>(parameters);
 
     if (!keyAlgorithmMatches(aesCBCParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -79,7 +79,7 @@ void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters
 
 void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = downcast<CryptoAlgorithmAesCbcParams>(parameters);
 
     if (!keyAlgorithmMatches(aesCBCParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -91,7 +91,7 @@ void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters
 
 void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmAesKeyGenParams& aesParameters = toCryptoAlgorithmAesKeyGenParams(parameters);
+    const CryptoAlgorithmAesKeyGenParams& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(parameters);
 
     RefPtr<CryptoKeyAES> result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_CBC, aesParameters.length, extractable, usages);
     if (!result) {

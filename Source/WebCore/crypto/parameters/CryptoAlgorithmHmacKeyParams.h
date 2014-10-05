@@ -51,9 +51,9 @@ public:
     virtual Class parametersClass() const override { return Class::HmacKeyParams; }
 };
 
-CRYPTO_ALGORITHM_PARAMETERS_CASTS(HmacKeyParams)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacKeyParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoAlgorithmHmacKeyParams_h

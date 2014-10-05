@@ -86,7 +86,7 @@ void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParameters&
 
 void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmAesKeyGenParams& aesParameters = toCryptoAlgorithmAesKeyGenParams(parameters);
+    const CryptoAlgorithmAesKeyGenParams& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(parameters);
 
     RefPtr<CryptoKeyAES> result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_KW, aesParameters.length, extractable, usages);
     if (!result) {

@@ -72,7 +72,7 @@ bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithm
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
+    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParams>(parameters);
 
     if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -84,7 +84,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
+    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParams>(parameters);
 
     if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -96,7 +96,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = toCryptoAlgorithmRsaKeyGenParams(parameters);
+    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);
@@ -107,7 +107,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParamete
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = toCryptoKeyDataRSAComponents(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaComponents, extractable, usage);

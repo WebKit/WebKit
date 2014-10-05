@@ -232,11 +232,11 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         return false;
 
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC)
-        return toCryptoAlgorithmHmacParams(*parameters).hash == toCryptoAlgorithmHmacParams(*suggestedParameters).hash;
+        return downcast<CryptoAlgorithmHmacParams>(*parameters).hash == downcast<CryptoAlgorithmHmacParams>(*suggestedParameters).hash;
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5
         || algorithm->identifier() == CryptoAlgorithmIdentifier::RSA_OAEP) {
-        CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*parameters);
-        CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*suggestedParameters);
+        CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*parameters);
+        CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*suggestedParameters);
         ASSERT(rsaKeyParameters.hasHash);
         if (suggestedRSAKeyParameters.hasHash)
             return suggestedRSAKeyParameters.hash == rsaKeyParameters.hash;
