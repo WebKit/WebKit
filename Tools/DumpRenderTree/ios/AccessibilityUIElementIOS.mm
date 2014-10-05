@@ -191,8 +191,7 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& element
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
 {
-    NSUInteger childCount = [m_element accessibilityElementCount];
-    for (NSUInteger k = location; k < childCount && k < (location+length); ++k)
+    for (NSInteger k = location; k < (location+length); ++k)
         elementVector.append(AccessibilityUIElement([m_element accessibilityElementAtIndex:k]));    
 }
 

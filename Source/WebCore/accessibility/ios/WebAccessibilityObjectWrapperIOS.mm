@@ -375,11 +375,12 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return [[self attachmentView] accessibilityElementAtIndex:index];
     
     const auto& children = m_object->children();
-    if (static_cast<unsigned>(index) >= children.size())
+    size_t elementIndex = static_cast<size_t>(index);
+    if (elementIndex >= children.size())
         return nil;
     
-    AccessibilityObjectWrapper* wrapper = children[index]->wrapper();
-    if (children[index]->isAttachment())
+    AccessibilityObjectWrapper* wrapper = children[elementIndex]->wrapper();
+    if (children[elementIndex]->isAttachment())
         return [wrapper attachmentView];
 
     return wrapper;
