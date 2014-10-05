@@ -134,6 +134,7 @@ private:
     typedef void (SVGToOTFFontConverter::*FontAppendingFunction)();
     void appendTable(const char identifier[4], FontAppendingFunction);
     void appendCMAPTable();
+    void appendGSUBTable();
     void appendHEADTable();
     void appendHHEATable();
     void appendHMTXTable();
@@ -159,6 +160,8 @@ private:
     void addKerningPair(Vector<KerningData>&, const SVGKerningPair&) const;
     template<typename T> size_t appendKERNSubtable(bool (T::*buildKerningPair)(SVGKerningPair&) const, uint16_t coverage);
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
+
+    void appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[]);
 
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
@@ -556,6 +559,119 @@ void SVGToOTFFontConverter::appendCFFTable()
     }
     for (auto& glyph : m_glyphs)
         m_result.appendVector(glyph.charString);
+}
+
+void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[])
+{
+    Vector<std::pair<Glyph, Glyph>> arabicFinalReplacements;
+    for (auto& pair : m_codepointsToIndicesMap) {
+        for (auto glyphIndex : pair.value) {
+            auto& glyph = m_glyphs[glyphIndex];
+            if (glyph.glyphElement && equalIgnoringCase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), arabicForm))
+                arabicFinalReplacements.append(std::make_pair(pair.value[0], glyphIndex));
+        }
+    }
+    if (arabicFinalReplacements.size() > std::numeric_limits<uint16_t>::max())
+        arabicFinalReplacements.clear();
+
+    overwrite16(subtableRecordLocation + 6, m_result.size() - subtableRecordLocation);
+    auto subtableLocation = m_result.size();
+    append16(2); // Format 2
+    append16(0); // Placeholder for offset to coverage table, relative to beginning of substitution table
+    append16(arabicFinalReplacements.size()); // GlyphCount
+    for (auto& pair : arabicFinalReplacements)
+        append16(pair.second);
+
+    overwrite16(subtableLocation + 2, m_result.size() - subtableLocation);
+    append16(1); // CoverageFormat
+    append16(arabicFinalReplacements.size()); // GlyphCount
+    for (auto& pair : arabicFinalReplacements)
+        append16(pair.first);
+}
+
+void SVGToOTFFontConverter::appendGSUBTable()
+{
+    auto tableLocation = m_result.size();
+    auto headerSize = 10;
+
+    append32(0x00010000); // Version
+    append16(headerSize); // Offset to ScriptList
+    auto featureListOffsetLocation = m_result.size();
+    append16(0); // Placeholder for FeatureList offset
+    auto lookupListOffsetLocation = m_result.size();
+    append16(0); // Placeholder for LookupList offset
+    ASSERT(tableLocation + headerSize == m_result.size());
+
+    // ScriptList
+    auto scriptListLocation = m_result.size();
+    append16(1); // Number of ScriptRecords
+    append32BitCode("arab");
+    append16(m_result.size() + 2 - scriptListLocation); // Offset of Script table, relative to beginning of ScriptList
+
+    auto scriptTableLocation = m_result.size();
+    auto sizeOfEmptyScriptTable = 4;
+    append16(sizeOfEmptyScriptTable); // Offset of default language system table, relative to beginning of Script table
+    append16(0); // Number of following language system tables
+    ASSERT_UNUSED(scriptTableLocation, scriptTableLocation + sizeOfEmptyScriptTable == m_result.size());
+
+    append16(0); // LookupOrder "= NULL ... reserved"
+    append16(0); // First feature is required
+    uint16_t featureCount = 4;
+    append16(4); // FeatureCount
+    for (uint16_t i = 0; i < featureCount; ++i)
+        append16(i); // Index of our feature into the FeatureList
+
+    // FeatureList
+    overwrite16(featureListOffsetLocation, m_result.size() - tableLocation);
+    auto featureListLocation = m_result.size();
+    size_t featureListSize = 2 + 6 * featureCount;
+    size_t featureTableSize = 6;
+    append16(featureCount); // FeatureCount
+    append32BitCode("fina");
+    append16(featureListSize + featureTableSize * 0); // Offset of feature table, relative to beginning of FeatureList table
+    append32BitCode("medi");
+    append16(featureListSize + featureTableSize * 1); // Offset of feature table, relative to beginning of FeatureList table
+    append32BitCode("init");
+    append16(featureListSize + featureTableSize * 2); // Offset of feature table, relative to beginning of FeatureList table
+    append32BitCode("rlig");
+    append16(featureListSize + featureTableSize * 3); // Offset of feature table, relative to beginning of FeatureList table
+    ASSERT_UNUSED(featureListLocation, featureListLocation + featureListSize == m_result.size());
+
+    for (unsigned i = 0; i < featureCount; ++i) {
+        auto featureTableStart = m_result.size();
+        append16(0); // FeatureParams "= NULL ... reserved"
+        append16(1); // LookupCount
+        append16(i); // LookupListIndex
+        ASSERT_UNUSED(featureTableStart, featureTableStart + featureTableSize == m_result.size());
+    }
+
+    // LookupList
+    overwrite16(lookupListOffsetLocation, m_result.size() - tableLocation);
+    auto lookupListLocation = m_result.size();
+    append16(featureCount); // LookupCount
+    for (unsigned i = 0; i < featureCount; ++i)
+        append16(0); // Placeholder for offset to feature table, relative to beginning of LookupList
+    size_t subtableRecordLocations[featureCount];
+    for (unsigned i = 0; i < featureCount; ++i) {
+        subtableRecordLocations[i] = m_result.size();
+        overwrite16(lookupListLocation + 2 + 2 * i, m_result.size() - lookupListLocation);
+        append16(i == 3 ? 3 : 1); // Type 1: "Replace one glyph with one glyph" / Type 3: "Replace one glyph with one of many glyphs"
+        append16(0); // LookupFlag
+        append16(1); // SubTableCount
+        append16(0); // Placeholder for offset to subtable, relative to beginning of Lookup table
+    }
+
+    appendArabicReplacementSubtable(subtableRecordLocations[0], "terminal");
+    appendArabicReplacementSubtable(subtableRecordLocations[1], "medial");
+    appendArabicReplacementSubtable(subtableRecordLocations[2], "initial");
+
+    // Manually append empty "rlig" subtable
+    overwrite16(subtableRecordLocations[3] + 6, m_result.size() - subtableRecordLocations[3]);
+    append16(1); // Format 1
+    append16(6); // offset to coverage table, relative to beginning of substitution table
+    append16(0); // AlternateSetCount
+    append16(1); // CoverageFormat
+    append16(0); // GlyphCount
 }
 
 void SVGToOTFFontConverter::appendVORGTable()
@@ -972,8 +1088,14 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             if (!glyphName.isNull())
                 m_glyphNameToIndexMap.add(glyphName, i);
         }
-        if (m_codepointsToIndicesMap.isValidKey(glyph.codepoints))
-            m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph>()).iterator->value.append(i);
+        if (m_codepointsToIndicesMap.isValidKey(glyph.codepoints)) {
+            auto& glyphVector = m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph>()).iterator->value;
+            // Prefer isolated arabic forms
+            if (glyph.glyphElement && equalIgnoringCase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated"))
+                glyphVector.insert(0, i);
+            else
+                glyphVector.append(i);
+        }
     }
 
     // FIXME: Handle commas.
@@ -1050,7 +1172,7 @@ void SVGToOTFFontConverter::convertSVGToOTFFont()
     if (m_glyphs.isEmpty())
         return;
 
-    uint16_t numTables = 13;
+    uint16_t numTables = 14;
     uint16_t roundedNumTables = roundDownToPowerOfTwo(numTables);
     uint16_t searchRange = roundedNumTables * 16; // searchRange: "(Maximum power of 2 <= numTables) x 16."
 
@@ -1070,6 +1192,7 @@ void SVGToOTFFontConverter::convertSVGToOTFFont()
         m_result.append(0);
 
     appendTable("CFF ", &SVGToOTFFontConverter::appendCFFTable);
+    appendTable("GSUB", &SVGToOTFFontConverter::appendGSUBTable);
     appendTable("OS/2", &SVGToOTFFontConverter::appendOS2Table);
     appendTable("VORG", &SVGToOTFFontConverter::appendVORGTable);
     appendTable("cmap", &SVGToOTFFontConverter::appendCMAPTable);
