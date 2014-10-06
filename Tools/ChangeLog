@@ -1,3 +1,10 @@
+2014-10-06  Mario Sanchez Prada  <mario@webkit.org>
+
+        Unreviewed, updated list of email addresses in contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json: Added my former
+        email address in Igalia, for the sake of completeness.
+
 2014-10-06  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Unreviewed, moved myself to the list of committers.

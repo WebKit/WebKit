@@ -4283,7 +4283,8 @@
       "Mario Sanchez Prada" : {
          "emails" : [
             "mario@webkit.org",
-            "mario.prada@samsung.com"
+            "mario.prada@samsung.com",
+            "msanchez@igalia.com"
          ],
          "expertise" : "WebKitGTK+, Accessibility, WebKit2, Epiphany/WebKit Contributor",
          "nicks" : [
