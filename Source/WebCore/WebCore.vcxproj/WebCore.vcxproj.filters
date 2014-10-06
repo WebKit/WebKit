@@ -7234,6 +7234,12 @@
     <ClCompile Include="..\platform\audio\AudioHardwareListener.cpp">
       <Filter>platform\audio</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.cpp">
+      <Filter>platform\graphics\avfoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editing\win\EditorWin.cpp">
+      <Filter>editing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15226,6 +15232,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\audio\AudioHardwareListener.h">
       <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h">
+      <Filter>platform\graphics\avfoundation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
