@@ -171,11 +171,16 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_size)));
 }
 
-void RemoteLayerBackingStore::swapToValidFrontBuffer()
+IntSize RemoteLayerBackingStore::backingStoreSize() const
 {
     FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
-    IntSize expandedScaledSize = roundedIntSize(scaledSize);
+    return roundedIntSize(scaledSize);
+}
+
+void RemoteLayerBackingStore::swapToValidFrontBuffer()
+{
+    IntSize expandedScaledSize = backingStoreSize();
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
@@ -215,7 +220,9 @@ bool RemoteLayerBackingStore::display()
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
 
-    if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
+    IntSize expandedScaledSize = backingStoreSize();
+
+    if (m_dirtyRegion.isEmpty() || expandedScaledSize.isEmpty())
         return false;
 
     IntRect layerBounds(IntPoint(), expandedIntSize(m_size));
@@ -227,9 +234,6 @@ bool RemoteLayerBackingStore::display()
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    FloatSize scaledSize = m_size;
-    scaledSize.scale(m_scale);
-    IntSize expandedScaledSize = roundedIntSize(scaledSize);
     IntRect expandedScaledLayerBounds(IntPoint(), expandedScaledSize);
     bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 

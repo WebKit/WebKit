@@ -96,6 +96,8 @@ private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
     void clearBackingStore();
     void swapToValidFrontBuffer();
+    
+    WebCore::IntSize backingStoreSize() const;
 
     PlatformCALayerRemote* m_layer;
 

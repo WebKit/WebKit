@@ -1,3 +1,23 @@
+2014-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't attempt to paint into zero-sized backing store
+        https://bugs.webkit.org/show_bug.cgi?id=137465
+
+        Reviewed by Tim Horton.
+        
+        Page scale could cause the backing store for a small composited element to become empty,
+        in which case we'd try to allocate, and paint into a graphics context with no surface
+        behind it.
+        
+        Fix by bailing from RemoteLayerBackingStore::display() when checking the backing store
+        size after accounting for scale.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::backingStoreSize):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::display):
+
 2014-10-06  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for ScrollingTree subclasses
