@@ -53,7 +53,7 @@ class RecordPatchEvent(object):
 
         # An existing wait_duration implies the patch had been started previously and is
         # being picked up again because it had expired, or was released.
-        if patch_log.wait_duration:
+        if patch_log.wait_duration is not None:
             patch_log.retry_count += 1
             patch_log.put()
 
