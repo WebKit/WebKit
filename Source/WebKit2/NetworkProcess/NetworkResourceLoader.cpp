@@ -475,6 +475,13 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
     ASSERT(RunLoop::isMain());
     ASSERT_UNUSED(handle, handle == m_handle);
 
+    // Handle server trust evaluation at platform-level if requested, for performance reasons.
+    if (protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        && !NetworkProcess::shared().canHandleHTTPSServerTrustEvaluation()) {
+        continueCanAuthenticateAgainstProtectionSpace(false);
+        return;
+    }
+
     if (isSynchronous()) {
         // FIXME: We should ask the WebProcess like the asynchronous case below does.
         // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.

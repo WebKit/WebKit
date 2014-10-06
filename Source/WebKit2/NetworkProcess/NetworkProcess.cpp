@@ -67,6 +67,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_canHandleHTTPSServerTrustEvaluation(true)
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
@@ -163,6 +164,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     memoryPressureHandler().install();
 
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
+    setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
@@ -250,6 +252,11 @@ void NetworkProcess::setCacheModel(uint32_t cm)
         m_cacheModel = cacheModel;
         platformSetCacheModel(cacheModel);
     }
+}
+
+void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
+{
+    m_canHandleHTTPSServerTrustEvaluation = value;
 }
 
 void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
