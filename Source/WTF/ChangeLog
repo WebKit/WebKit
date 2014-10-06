@@ -1,3 +1,10 @@
+2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Project file gardening.
+
+        * WTF.vcxproj/WTF.vcxproj.filters: Move HashMethod.h and
+        FastBitVector.cpp to proper places in hierarchy.
+
 2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Unreviewed, rolling out r174319.

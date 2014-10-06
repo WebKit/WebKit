@@ -240,9 +240,11 @@
     <ClCompile Include="..\wtf\win\RunLoopWin.cpp">
       <Filter>win</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\FastBitVector.cpp" />
     <ClCompile Include="..\wtf\gobject\GMainLoopSource.cpp">
       <Filter>wtf\gobject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\FastBitVector.cpp">
+      <Filter>wtf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -700,12 +702,14 @@
     <ClInclude Include="..\wtf\RunLoop.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\HashMethod.h" />
     <ClInclude Include="..\wtf\gobject\GMainLoopSource.h">
       <Filter>wtf\gobject</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\gobject\GUniquePtr.h">
       <Filter>wtf\gobject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashMethod.h">
+      <Filter>wtf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
