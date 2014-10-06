@@ -120,9 +120,9 @@
     [RaisesException] Element querySelector(DOMString selectors);
     [RaisesException] NodeList querySelectorAll(DOMString selectors);
 
-    [RaisesException] boolean matches([Default=Undefined] optional DOMString selectors);
+    [RaisesException] boolean matches(DOMString selectors);
     [RaisesException] Element closest(DOMString selectors);    
-    [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector([Default=Undefined] optional DOMString selectors);
+    [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector(DOMString selectors);
 
     // ElementTraversal API
     readonly attribute Element firstElementChild;
