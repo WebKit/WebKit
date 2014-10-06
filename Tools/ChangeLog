@@ -1,3 +1,16 @@
+2014-10-06  Alexey Proskuryakov  <ap@apple.com>
+
+        webkit-queues PatchLog is incorrect for patches that took less than a second
+        https://bugs.webkit.org/show_bug.cgi?id=137453
+
+        Reviewed by Tim Horton.
+
+        * QueueStatusServer/app.yaml: Updated app version.
+
+        * QueueStatusServer/loggers/recordpatchevent.py: (RecordPatchEvent.stopped):
+        Don't bail out for patches that took 0 seconds to process (as frequently happens
+        when a patch is obsolete).
+
 2014-10-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         EWS bubble hover shows wrong timestamps

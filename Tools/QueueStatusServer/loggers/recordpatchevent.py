@@ -75,7 +75,7 @@ class RecordPatchEvent(object):
             WarningLog.record("patchlog missing", "In stopped event.", attachment_id, queue_name, bot_id)
             return
 
-        if not patch_log.wait_duration:
+        if patch_log.wait_duration is None:
             WarningLog.record("patchlog wait duration missing", "In stopped event.", attachment_id, queue_name, bot_id)
             return
 
