@@ -1,3 +1,11 @@
+2014-10-06  Mark Lam  <mark.lam@apple.com>
+
+        Unreviewed build fix.
+        <https://webkit.org/b/137279>
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2014-10-06  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(r174226): [JSC] Crash when running the perf test Speedometer/Full.html

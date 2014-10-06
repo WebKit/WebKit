@@ -1296,17 +1296,6 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
-#if CPU(X86_64) || CPU(ARM64)
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
-    {
-        move(arg2, GPRInfo::argumentGPR2); // In case arg2 is argumentGPR1.
-        move(arg1, GPRInfo::argumentGPR1);
-        move(arg3, GPRInfo::argumentGPR3);
-        move(arg4, GPRInfo::argumentGPR4);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-#endif
-
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImmPtr arg3)
     {
         move(arg2, GPRInfo::argumentGPR2); // In case arg2 is argumentGPR1.
@@ -1375,6 +1364,12 @@ public:
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, GPRReg arg3, TrustedImmPtr arg4)
+    {
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
     {
         poke(arg4, POKE_ARGUMENT_OFFSET);
         setupArgumentsWithExecState(arg1, arg2, arg3);
@@ -1674,6 +1669,15 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
     
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
+    {
+        move(arg2, GPRInfo::argumentGPR2); // In case arg2 is argumentGPR1.
+        move(arg1, GPRInfo::argumentGPR1);
+        move(arg3, GPRInfo::argumentGPR3);
+        move(arg4, GPRInfo::argumentGPR4);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, GPRReg arg3, TrustedImm32 arg4, TrustedImm32 arg5)
     {
         setupTwoStubArgsGPR<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
