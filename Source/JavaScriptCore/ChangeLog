@@ -1,5 +1,12 @@
 2014-10-06  Oliver Hunt  <oliver@apple.com>
 
+        Remove incorrect assertion.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+
+2014-10-06  Oliver Hunt  <oliver@apple.com>
+
         Fix cloop build
 
         * interpreter/Interpreter.cpp:

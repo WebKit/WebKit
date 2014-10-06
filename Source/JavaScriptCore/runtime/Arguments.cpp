@@ -372,8 +372,6 @@ void Arguments::allocateRegisterArray(VM& vm)
 
 void Arguments::tearOff(CallFrame* callFrame)
 {
-    if (m_callee->jsExecutable()->needsActivation())
-        RELEASE_ASSERT(m_lexicalEnvironment);
     if (isTornOff())
         return;
 
