@@ -1208,8 +1208,7 @@ void Page::updateIsPlayingAudio()
 
     m_isPlayingAudio = isPlayingAudio;
 
-    // FIXME: Notify the ChromeClient that the isPlayingAudio state has changed.
-    // https://bugs.webkit.org/show_bug.cgi?id=137220
+    chrome().client().isPlayingAudioDidChange(m_isPlayingAudio);
 }
 
 #if !ASSERT_DISABLED
