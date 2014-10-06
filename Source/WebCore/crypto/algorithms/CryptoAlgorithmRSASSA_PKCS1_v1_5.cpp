@@ -61,10 +61,9 @@ bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithm
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
-    ASSERT(isCryptoKeyRSA(key));
 
     CryptoAlgorithmIdentifier keyHash;
-    if (toCryptoKeyRSA(key).isRestrictedToHash(keyHash) && keyHash != algorithmParameters.hash)
+    if (downcast<CryptoKeyRSA>(key).isRestrictedToHash(keyHash) && keyHash != algorithmParameters.hash)
         return false;
 
     return true;
@@ -79,7 +78,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
         return;
     }
 
-    platformSign(rsaSSAParameters, toCryptoKeyRSA(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformSign(rsaSSAParameters, downcast<CryptoKeyRSA>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
@@ -91,7 +90,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
         return;
     }
 
-    platformVerify(rsaSSAParameters, toCryptoKeyRSA(key), signature, data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformVerify(rsaSSAParameters,  downcast<CryptoKeyRSA>(key), signature, data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)

@@ -556,17 +556,17 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
     String jwkAlgorithm;
     switch (key.algorithmIdentifier()) {
     case CryptoAlgorithmIdentifier::HMAC:
-        switch (toCryptoKeyHMAC(key).hashAlgorithmIdentifier()) {
+        switch (downcast<CryptoKeyHMAC>(key).hashAlgorithmIdentifier()) {
         case CryptoAlgorithmIdentifier::SHA_256:
-            if (toCryptoKeyHMAC(key).key().size() * 8 >= 256)
+            if (downcast<CryptoKeyHMAC>(key).key().size() * 8 >= 256)
                 jwkAlgorithm = "HS256";
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            if (toCryptoKeyHMAC(key).key().size() * 8 >= 384)
+            if (downcast<CryptoKeyHMAC>(key).key().size() * 8 >= 384)
                 jwkAlgorithm = "HS384";
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            if (toCryptoKeyHMAC(key).key().size() * 8 >= 512)
+            if (downcast<CryptoKeyHMAC>(key).key().size() * 8 >= 512)
                 jwkAlgorithm = "HS512";
             break;
         default:
@@ -574,7 +574,7 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
         }
         break;
     case CryptoAlgorithmIdentifier::AES_CBC:
-        switch (toCryptoKeyAES(key).key().size() * 8) {
+        switch (downcast<CryptoKeyAES>(key).key().size() * 8) {
         case 128:
             jwkAlgorithm = "A128CBC";
             break;
@@ -587,7 +587,7 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
         }
         break;
     case CryptoAlgorithmIdentifier::AES_KW:
-        switch (toCryptoKeyAES(key).key().size() * 8) {
+        switch (downcast<CryptoKeyAES>(key).key().size() * 8) {
         case 128:
             jwkAlgorithm = "A128KW";
             break;
@@ -600,7 +600,7 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
         }
         break;
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5: {
-        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        const CryptoKeyRSA& rsaKey = downcast<CryptoKeyRSA>(key);
         CryptoAlgorithmIdentifier hash;
         if (!rsaKey.isRestrictedToHash(hash))
             break;
@@ -622,14 +622,14 @@ static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoK
         break;
     }
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
-        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        const CryptoKeyRSA& rsaKey = downcast<CryptoKeyRSA>(key);
         if (rsaKey.keySizeInBits() < 2048)
             break;
         jwkAlgorithm = "RSA1_5";
         break;
     }
     case CryptoAlgorithmIdentifier::RSA_OAEP: {
-        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        const CryptoKeyRSA& rsaKey = downcast<CryptoKeyRSA>(key);
         CryptoAlgorithmIdentifier hash;
         // WebCrypto RSA-OAEP keys are not tied to any particular hash, unless previously imported from JWK, which only supports SHA-1.
         if (rsaKey.isRestrictedToHash(hash) && hash != CryptoAlgorithmIdentifier::SHA_1)

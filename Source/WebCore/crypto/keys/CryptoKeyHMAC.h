@@ -60,14 +60,9 @@ private:
     Vector<uint8_t> m_key;
 };
 
-inline bool isCryptoKeyHMAC(const CryptoKey& key)
-{
-    return key.keyClass() == CryptoKeyClass::HMAC;
-}
-
-CRYPTO_KEY_TYPE_CASTS(CryptoKeyHMAC)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyHMAC, CryptoKeyClass::HMAC)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyHMAC_h

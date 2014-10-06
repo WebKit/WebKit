@@ -60,7 +60,7 @@ bool CryptoAlgorithmAES_CBC::keyAlgorithmMatches(const CryptoAlgorithmAesCbcPara
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
-    ASSERT(isCryptoKeyAES(key));
+    ASSERT(is<CryptoKeyAES>(key));
 
     return true;
 }
@@ -74,7 +74,7 @@ void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters
         return;
     }
 
-    platformEncrypt(aesCBCParameters, toCryptoKeyAES(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformEncrypt(aesCBCParameters, downcast<CryptoKeyAES>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
@@ -86,7 +86,7 @@ void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters
         return;
     }
 
-    platformDecrypt(aesCBCParameters, toCryptoKeyAES(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformDecrypt(aesCBCParameters, downcast<CryptoKeyAES>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)

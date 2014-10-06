@@ -1173,19 +1173,19 @@ private:
         switch (key->keyClass()) {
         case CryptoKeyClass::HMAC:
             write(CryptoKeyClassSubtag::HMAC);
-            write(toCryptoKeyHMAC(key)->key());
-            write(toCryptoKeyHMAC(key)->hashAlgorithmIdentifier());
+            write(downcast<CryptoKeyHMAC>(*key).key());
+            write(downcast<CryptoKeyHMAC>(*key).hashAlgorithmIdentifier());
             break;
         case CryptoKeyClass::AES:
             write(CryptoKeyClassSubtag::AES);
             write(key->algorithmIdentifier());
-            write(toCryptoKeyAES(key)->key());
+            write(downcast<CryptoKeyAES>(*key).key());
             break;
         case CryptoKeyClass::RSA:
             write(CryptoKeyClassSubtag::RSA);
             write(key->algorithmIdentifier());
             CryptoAlgorithmIdentifier hash;
-            bool isRestrictedToHash = toCryptoKeyRSA(key)->isRestrictedToHash(hash);
+            bool isRestrictedToHash = downcast<CryptoKeyRSA>(*key).isRestrictedToHash(hash);
             write(isRestrictedToHash);
             if (isRestrictedToHash)
                 write(hash);

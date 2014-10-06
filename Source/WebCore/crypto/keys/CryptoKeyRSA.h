@@ -81,14 +81,9 @@ private:
     CryptoAlgorithmIdentifier m_hash;
 };
 
-inline bool isCryptoKeyRSA(const CryptoKey& key)
-{
-    return key.keyClass() == CryptoKeyClass::RSA;
-}
-
-CRYPTO_KEY_TYPE_CASTS(CryptoKeyRSA)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRSA, CryptoKeyClass::RSA)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyRSA_h

@@ -26,14 +26,15 @@
 #ifndef CryptoKey_h
 #define CryptoKey_h
 
+#if ENABLE(SUBTLE_CRYPTO)
+
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKeyType.h"
 #include "CryptoKeyUsage.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
@@ -73,10 +74,12 @@ private:
     CryptoKeyUsage m_usages;
 };
 
-#define CRYPTO_KEY_TYPE_CASTS(ToClassName) \
-    TYPE_CASTS_BASE(ToClassName, CryptoKey, key, WebCore::is##ToClassName(*key), WebCore::is##ToClassName(key))
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(ToClassName, KeyClass) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::CryptoKey& key) { return key.keyClass() == WebCore::KeyClass; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKey_h

@@ -60,9 +60,8 @@ bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParams& p
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
-    ASSERT(isCryptoKeyHMAC(key));
 
-    if (toCryptoKeyHMAC(key).hashAlgorithmIdentifier() != parameters.hash)
+    if (downcast<CryptoKeyHMAC>(key).hashAlgorithmIdentifier() != parameters.hash)
         return false;
 
     return true;
@@ -77,7 +76,7 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
         return;
     }
 
-    platformSign(hmacParameters, toCryptoKeyHMAC(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformSign(hmacParameters, downcast<CryptoKeyHMAC>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
@@ -89,7 +88,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
         return;
     }
 
-    platformVerify(hmacParameters, toCryptoKeyHMAC(key), expectedSignature, data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformVerify(hmacParameters, downcast<CryptoKeyHMAC>(key), expectedSignature, data, WTF::move(callback), WTF::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)

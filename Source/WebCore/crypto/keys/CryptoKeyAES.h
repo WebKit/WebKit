@@ -59,16 +59,10 @@ private:
     Vector<uint8_t> m_key;
 };
 
-inline bool isCryptoKeyAES(const CryptoKey& key)
-{
-    return key.keyClass() == CryptoKeyClass::AES;
-}
-
-CRYPTO_KEY_TYPE_CASTS(CryptoKeyAES)
-
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyAES, CryptoKeyClass::AES)
 
+#endif // ENABLE(SUBTLE_CRYPTO)
 
 #endif // CryptoKeyAES_h
