@@ -701,6 +701,8 @@ private:
     virtual bool canReceiveRemoteControlCommands() const override { return true; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
     virtual bool overrideBackgroundPlaybackRestriction() const override;
+    virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics) const override;
+    virtual void mediaStateDidChange() override;
 
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);

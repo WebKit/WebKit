@@ -71,6 +71,14 @@ public:
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
+    enum MediaCharacteristicFlags {
+        MediaCharacteristicAudible = 1,
+        MediaCharacteristicVisual = 1 << 1,
+        MediaCharacteristicLegible = 1 << 2,
+    };
+    typedef unsigned MediaCharacteristics;
+    bool hasMediaCharacteristics(MediaCharacteristics) const;
+
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;
 
@@ -135,6 +143,9 @@ public:
     virtual bool elementIsHidden() const { return false; }
 
     virtual bool overrideBackgroundPlaybackRestriction() const = 0;
+
+    virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics) const = 0;
+    virtual void mediaStateDidChange() { }
 
 protected:
     virtual ~MediaSessionClient() { }

@@ -436,6 +436,9 @@ public:
     WEBCORE_EXPORT void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
+    bool isPlayingAudio() const { return m_isPlayingAudio; }
+    void updateIsPlayingAudio();
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -595,6 +598,8 @@ private:
     SessionID m_sessionID;
 
     bool m_isClosing;
+
+    bool m_isPlayingAudio;
 };
 
 inline PageGroup& Page::group()

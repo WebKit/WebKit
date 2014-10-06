@@ -99,6 +99,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
+#include "MediaSession.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
@@ -519,6 +520,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_renderTreeBeingDestroyed(false)
     , m_hasPreparedForDestruction(false)
     , m_hasStyleWithViewportUnits(false)
+    , m_isPlayingAudio(false)
 {
     allDocuments().add(this);
 
@@ -3272,6 +3274,37 @@ void Document::updateViewportUnitsOnResize()
         if (renderer && renderer->style().hasViewportUnits())
             element->setNeedsStyleRecalc(InlineStyleChange);
     }
+}
+
+void Document::registerMediaSession(MediaSession& mediaSession)
+{
+    m_mediaSessions.add(&mediaSession);
+    updateIsPlayingAudio();
+}
+
+void Document::unregisterMediaSession(MediaSession& mediaSession)
+{
+    m_mediaSessions.remove(&mediaSession);
+    updateIsPlayingAudio();
+}
+
+void Document::updateIsPlayingAudio()
+{
+    bool isPlayingAudio = false;
+    for (auto mediaSession : m_mediaSessions) {
+        if (mediaSession->hasMediaCharacteristics(MediaSession::MediaCharacteristicAudible) && mediaSession->state() == MediaSession::Playing) {
+            isPlayingAudio = true;
+            break;
+        }
+    }
+
+    if (isPlayingAudio == m_isPlayingAudio)
+        return;
+
+    m_isPlayingAudio = isPlayingAudio;
+
+    if (page())
+        page()->updateIsPlayingAudio();
 }
 
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)

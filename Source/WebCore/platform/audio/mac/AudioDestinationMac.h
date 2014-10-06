@@ -57,6 +57,7 @@ private:
     virtual bool canReceiveRemoteControlCommands() const override { return false; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override { }
     virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }
+    virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics characteristics) const override { return characteristics == MediaSession::MediaCharacteristicAudible; }
 
     virtual void start() override;
     virtual void stop() override;

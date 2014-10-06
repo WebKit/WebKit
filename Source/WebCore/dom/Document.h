@@ -123,6 +123,7 @@ class Locale;
 class MediaCanStartListener;
 class MediaQueryList;
 class MediaQueryMatcher;
+class MediaSession;
 class MouseEventWithHitTestResults;
 class NamedFlowCollection;
 class NodeFilter;
@@ -1288,6 +1289,11 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
+    void registerMediaSession(MediaSession&);
+    void unregisterMediaSession(MediaSession&);
+    bool isPlayingAudio() const { return m_isPlayingAudio; }
+    void updateIsPlayingAudio();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1717,6 +1723,9 @@ private:
     bool m_hasPreparedForDestruction;
 
     bool m_hasStyleWithViewportUnits;
+
+    HashSet<MediaSession*> m_mediaSessions;
+    bool m_isPlayingAudio;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

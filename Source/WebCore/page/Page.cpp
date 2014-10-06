@@ -204,6 +204,7 @@ Page::Page(PageClients& pageClients)
     , m_visitedLinkStore(WTF::move(pageClients.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
+    , m_isPlayingAudio(false)
 {
     ASSERT(m_editorClient);
     
@@ -1190,6 +1191,25 @@ void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
     ASSERT(m_sessionID == SessionID::defaultSessionID() || m_sessionID == SessionID::legacyPrivateSessionID());
 
     setSessionID(privateBrowsingEnabled ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
+}
+
+void Page::updateIsPlayingAudio()
+{
+    bool isPlayingAudio = false;
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->document()->isPlayingAudio()) {
+            isPlayingAudio = true;
+            break;
+        }
+    }
+
+    if (isPlayingAudio == m_isPlayingAudio)
+        return;
+
+    m_isPlayingAudio = isPlayingAudio;
+
+    // FIXME: Notify the ChromeClient that the isPlayingAudio state has changed.
+    // https://bugs.webkit.org/show_bug.cgi?id=137220
 }
 
 #if !ASSERT_DISABLED
