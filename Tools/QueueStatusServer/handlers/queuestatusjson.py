@@ -116,5 +116,5 @@ class QueueStatusJSON(webapp.RequestHandler):
             "queue": self._rows_for_work_items(queue),
             "bots": self._bots(queue),
         }
-        dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
+        dthandler = lambda obj: obj.isoformat() + "Z" if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date) else None
         self.response.out.write(json.dumps(status, default=dthandler))

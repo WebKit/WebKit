@@ -1,3 +1,17 @@
+2014-10-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        EWS bubble hover shows wrong timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=137252
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add "Z" suffix to timestamps to make sure if it is handled as UTC time.
+
+        * QueueStatusServer/handlers/queuestatusjson.py:
+        (QueueStatusJSON.get):
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._iso_time):
+
 2014-10-06  Mario Sanchez Prada  <mario@webkit.org>
 
         Unreviewed, updated list of email addresses in contributors.json

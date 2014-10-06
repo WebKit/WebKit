@@ -56,7 +56,7 @@ progress_statuses = Set([
 
 class StatusBubble(webapp.RequestHandler):
     def _iso_time(self, time):
-        return "[[" + time.isoformat() + "]]"
+        return "[[" + time.isoformat() + "Z]]"
 
     # queue_position includes items that are already active, so it's misleading.
     # For a queue that has 8 bots, being #9 in the queue actually means being #1.
