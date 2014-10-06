@@ -459,8 +459,8 @@ static bool unwindCallFrame(StackVisitor& visitor)
 #if ENABLE(DFG_JIT)
             if (visitor->isInlinedFrame())
                 arguments->tearOff(callFrame, visitor->inlineCallFrame());
-#endif
             else
+#endif
                 arguments->tearOff(callFrame);
         }
     }
