@@ -292,7 +292,7 @@
     
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
-    
+
     [RaisesException] void installMockPageOverlay(PageOverlayType type);
     [RaisesException] DOMString pageOverlayLayerTreeAsText();
 };
