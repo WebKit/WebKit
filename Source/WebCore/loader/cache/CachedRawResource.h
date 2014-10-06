@@ -89,8 +89,10 @@ private:
     Vector<RedirectPair> m_redirectChain;
 };
 
-TYPE_CASTS_BASE(CachedRawResource, CachedResource, resource, resource->isMainOrRawResource(), resource.isMainOrRawResource())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CachedRawResource)
+    static bool isType(const WebCore::CachedResource& resource) { return resource.isMainOrRawResource(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // CachedRawResource_h

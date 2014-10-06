@@ -244,12 +244,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(C
 
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest& request)
 {
-    return toCachedRawResource(requestResource(CachedResource::RawResource, request).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::RawResource, request).get());
 }
 
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResource(CachedResourceRequest& request)
 {
-    return toCachedRawResource(requestResource(CachedResource::MainResource, request).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::MainResource, request).get());
 }
 
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
