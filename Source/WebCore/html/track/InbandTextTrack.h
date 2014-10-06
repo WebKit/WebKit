@@ -32,6 +32,7 @@
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -92,9 +93,12 @@ private:
 #endif
 };
 
-TYPE_CASTS_BASE(InbandTextTrack, TextTrack, track, track->isInband(), track.isInband());
-
 } // namespace WebCore
 
-#endif
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrack)
+    static bool isType(const WebCore::TextTrack& track) { return track.isInband(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(VIDEO_TRACK)
+
+#endif // InbandTextTrack_h

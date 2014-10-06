@@ -30,6 +30,7 @@
 
 #include "TextTrack.h"
 #include "TextTrackLoader.h"
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -79,5 +80,10 @@ private:
 };
 } // namespace WebCore
 
-#endif
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LoadableTextTrack)
+    static bool isType(const WebCore::TextTrack& track) { return track.trackType() == WebCore::TextTrack::TrackElement; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(VIDEO_TRACK)
+
+#endif // LoadableTextTrack_h

@@ -51,10 +51,10 @@ unsigned TextTrackList::length() const
     return m_addTrackTracks.size() + m_elementTracks.size() + m_inbandTracks.size();
 }
 
-int TextTrackList::getTrackIndex(TextTrack *textTrack)
+int TextTrackList::getTrackIndex(TextTrack* textTrack)
 {
-    if (textTrack->trackType() == TextTrack::TrackElement)
-        return static_cast<LoadableTextTrack*>(textTrack)->trackElementIndex();
+    if (is<LoadableTextTrack>(textTrack))
+        return downcast<LoadableTextTrack>(*textTrack).trackElementIndex();
 
     if (textTrack->trackType() == TextTrack::AddTrack)
         return m_elementTracks.size() + m_addTrackTracks.find(textTrack);
@@ -176,9 +176,9 @@ void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
 
     if (track->trackType() == TextTrack::AddTrack)
         m_addTrackTracks.append(track);
-    else if (track->trackType() == TextTrack::TrackElement) {
+    else if (is<LoadableTextTrack>(*track)) {
         // Insert tracks added for <track> element in tree order.
-        size_t index = static_cast<LoadableTextTrack*>(track.get())->trackElementIndex();
+        size_t index = downcast<LoadableTextTrack>(*track).trackElementIndex();
         m_elementTracks.insert(index, track);
     } else if (track->trackType() == TextTrack::InBand) {
         // Insert tracks added for in-band in the media file order.

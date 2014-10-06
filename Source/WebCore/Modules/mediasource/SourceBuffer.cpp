@@ -922,13 +922,13 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
         ASSERT(segment.textTracks.size() == textTracks()->length());
         for (auto& textTrackInfo : segment.textTracks) {
             if (textTracks()->length() == 1) {
-                toInbandTextTrack(textTracks()->item(0))->setPrivate(textTrackInfo.track);
+                downcast<InbandTextTrack>(*textTracks()->item(0)).setPrivate(textTrackInfo.track);
                 break;
             }
 
             auto textTrack = textTracks()->getTrackById(textTrackInfo.track->id());
             ASSERT(textTrack);
-            toInbandTextTrack(textTrack)->setPrivate(textTrackInfo.track);
+            downcast<InbandTextTrack>(*textTrack).setPrivate(textTrackInfo.track);
         }
 
         for (auto& trackBuffer : m_trackBufferMap.values())
