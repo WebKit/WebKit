@@ -1189,7 +1189,7 @@ private:
             write(isRestrictedToHash);
             if (isRestrictedToHash)
                 write(hash);
-            write(toCryptoKeyDataRSAComponents(*key->exportData()));
+            write(downcast<CryptoKeyDataRSAComponents>(*key->exportData()));
             break;
         }
     }

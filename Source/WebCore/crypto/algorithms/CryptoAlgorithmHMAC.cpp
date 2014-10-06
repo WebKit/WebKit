@@ -107,11 +107,11 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
 
 void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback, ExceptionCode& ec)
 {
-    if (keyData.format() != CryptoKeyData::Format::OctetSequence) {
+    if (!is<CryptoKeyDataOctetSequence>(keyData)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoKeyDataOctetSequence& keyDataOctetSequence = toCryptoKeyDataOctetSequence(keyData);
+    const CryptoKeyDataOctetSequence& keyDataOctetSequence = downcast<CryptoKeyDataOctetSequence>(keyData);
 
     const CryptoAlgorithmHmacParams& hmacParameters = downcast<CryptoAlgorithmHmacParams>(parameters);
 

@@ -69,10 +69,10 @@ bool CryptoKeySerializationRaw::serialize(const CryptoKey& key, Vector<uint8_t>&
         return false;
     }
 
-    if (!isCryptoKeyDataOctetSequence(*keyData))
+    if (!is<CryptoKeyDataOctetSequence>(*keyData))
         return false;
 
-    result.appendVector(toCryptoKeyDataOctetSequence(*keyData).octetSequence());
+    result.appendVector(downcast<CryptoKeyDataOctetSequence>(*keyData).octetSequence());
     return true;
 }
 

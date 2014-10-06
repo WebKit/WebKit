@@ -26,9 +26,10 @@
 #ifndef CryptoKeyData_h
 #define CryptoKeyData_h
 
-#include <wtf/Noncopyable.h>
-
 #if ENABLE(SUBTLE_CRYPTO)
+
+#include <wtf/Noncopyable.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -52,10 +53,12 @@ private:
     Format m_format;
 };
 
-#define CRYPTO_KEY_DATA_CASTS(ToClassName) \
-    TYPE_CASTS_BASE(ToClassName, CryptoKeyData, keyData, WebCore::is##ToClassName(*keyData), WebCore::is##ToClassName(keyData))
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY_DATA(ToClassName, Format) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::CryptoKeyData& keyData) { return keyData.format() == WebCore::Format; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyData_h

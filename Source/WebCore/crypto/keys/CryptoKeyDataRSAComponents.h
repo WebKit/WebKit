@@ -95,14 +95,9 @@ private:
     Vector<PrimeInfo> m_otherPrimeInfos; // When three or more primes have been used, the number of array elements is be the number of primes used minus two.
 };
 
-inline bool isCryptoKeyDataRSAComponents(const CryptoKeyData& data)
-{
-    return data.format() == CryptoKeyData::Format::RSAComponents;
-}
-
-CRYPTO_KEY_DATA_CASTS(CryptoKeyDataRSAComponents)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY_DATA(CryptoKeyDataRSAComponents, CryptoKeyData::Format::RSAComponents)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyDataRSAComponents_h

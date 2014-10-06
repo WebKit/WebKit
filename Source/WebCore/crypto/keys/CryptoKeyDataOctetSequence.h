@@ -49,14 +49,9 @@ private:
     Vector<uint8_t> m_keyData;
 };
 
-inline bool isCryptoKeyDataOctetSequence(const CryptoKeyData& data)
-{
-    return data.format() == CryptoKeyData::Format::OctetSequence;
-}
-
-CRYPTO_KEY_DATA_CASTS(CryptoKeyDataOctetSequence)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY_DATA(CryptoKeyDataOctetSequence, CryptoKeyData::Format::OctetSequence)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
 #endif // CryptoKeyDataOctetSequence_h

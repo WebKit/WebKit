@@ -698,10 +698,10 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
     if (exec->hadException())
         return String();
 
-    if (isCryptoKeyDataOctetSequence(*keyData))
-        buildJSONForOctetSequence(exec, toCryptoKeyDataOctetSequence(*keyData).octetSequence(), result);
-    else if (isCryptoKeyDataRSAComponents(*keyData))
-        buildJSONForRSAComponents(exec, toCryptoKeyDataRSAComponents(*keyData), result);
+    if (is<CryptoKeyDataOctetSequence>(*keyData))
+        buildJSONForOctetSequence(exec, downcast<CryptoKeyDataOctetSequence>(*keyData).octetSequence(), result);
+    else if (is<CryptoKeyDataRSAComponents>(*keyData))
+        buildJSONForRSAComponents(exec, downcast<CryptoKeyDataRSAComponents>(*keyData), result);
     else {
         throwTypeError(exec, "Key doesn't support exportKey");
         return String();
