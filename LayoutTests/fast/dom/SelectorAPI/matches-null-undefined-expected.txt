@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 Test Element.matches() with no argument, null, and undefined.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

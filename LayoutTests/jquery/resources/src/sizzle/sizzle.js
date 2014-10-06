@@ -1200,7 +1200,7 @@ if ( document.querySelectorAll ) {
 
 (function(){
 	var html = document.documentElement,
-		matches = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector,
+		matches = html.matches || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector,
 		pseudoWorks = false;
 
 	try {

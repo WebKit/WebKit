@@ -1,3 +1,15 @@
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 This tests that we throw a NAMESPACE_ERR when parsing a selector string for querySelector and querySelectorAll that contains a namespace.
 
 PASS: document.querySelector('bbb|pre') throws: Error: NamespaceError: DOM Exception 14

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 PASS document.querySelector('div SPAN') is null
 PASS document.getElementById('lower1').matches('div SPAN') is false
 PASS document.getElementById('lower1').webkitMatchesSelector('div SPAN') is false

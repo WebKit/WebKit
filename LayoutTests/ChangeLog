@@ -1,3 +1,30 @@
+2014-10-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a deprecation warning for Element.webkitMatchesSelector
+        https://bugs.webkit.org/show_bug.cgi?id=137417
+
+        Reviewed by Christophe Dumez.
+
+        * jquery/resources/src/sizzle/sizzle.js:
+        This is a great example of library that needs fixing. The old sizzle
+        we have in WebKit used "matchesSelector" instead of "matches".
+
+        * fast/dom/SelectorAPI/attrname-case-insensitive-expected.txt:
+        * fast/dom/SelectorAPI/attrname-case-sensitive-expected.txt:
+        * fast/dom/SelectorAPI/caseID-almost-strict-expected.txt:
+        * fast/dom/SelectorAPI/caseID-expected.txt:
+        * fast/dom/SelectorAPI/caseID-strict-expected.txt:
+        * fast/dom/SelectorAPI/caseTag-expected.txt:
+        * fast/dom/SelectorAPI/caseTagX-expected.txt:
+        * fast/dom/SelectorAPI/detached-element-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector-expected.txt:
+        * fast/dom/SelectorAPI/undefined-null-stringify-expected.txt:
+        Update the test results due to the warning.
+
+        * fast/forms/radio/radio-live-validation-style-expected.txt:
+        * fast/forms/radio/radio-live-validation-style.html:
+        That duplicate I added back when I unprefixed Element.matches() is useless.
+
 2014-10-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Element.matches()'s argument is not supposed to be optional

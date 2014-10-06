@@ -2329,6 +2329,12 @@ Element* Element::closest(const String& selector, ExceptionCode& ec)
     return nullptr;
 }
 
+bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
+{
+    document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, ASCIILiteral("Element.webkitMatchesSelector is deprecated. Use Element.matches instead."));
+    return matches(selector, ec);
+}
+
 bool Element::shouldAppearIndeterminate() const
 {
     return false;
