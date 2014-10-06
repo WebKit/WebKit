@@ -64,6 +64,7 @@ private:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
     static bool isAvailable();
 
     virtual void cancelLoad();

@@ -143,6 +143,9 @@ AtomicString InbandTextTrackPrivateAVCF::label() const
 
     RetainPtr<CFArrayRef> commonMetaData = adoptCF(AVCFMediaSelectionOptionCopyCommonMetadata(mediaSelectionOption()));
     RetainPtr<CFArrayRef> titles = adoptCF(AVCFMetadataItemCopyItemsWithKeyAndKeySpace(commonMetaData.get(), AVCFMetadataCommonKeyTitle, AVCFMetadataKeySpaceCommon));
+    if (!titles)
+        return emptyAtom;
+
     CFIndex titlesCount = CFArrayGetCount(titles.get());
     if (!titlesCount)
         return emptyAtom;
@@ -170,6 +173,9 @@ AtomicString InbandTextTrackPrivateAVCF::language() const
         return emptyAtom;
 
     RetainPtr<CFLocaleRef> locale = adoptCF(AVCFMediaSelectionOptionCopyLocale(mediaSelectionOption()));
+    if (!locale)
+        return emptyAtom;
+
     return CFLocaleGetIdentifier(locale.get());
 }
 

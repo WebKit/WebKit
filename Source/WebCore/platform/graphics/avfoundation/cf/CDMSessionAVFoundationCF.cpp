@@ -85,8 +85,7 @@ PassRefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String
             userInfo = adoptCF(CFErrorCopyUserInfo(cfError));
 
             if (userInfo) {
-                CFErrorRef underlyingError = (CFErrorRef)CFDictionaryGetValue(userInfo.get(), kCFErrorUnderlyingErrorKey);
-                if (underlyingError)
+                if (CFErrorRef underlyingError = (CFErrorRef)CFDictionaryGetValue(userInfo.get(), kCFErrorUnderlyingErrorKey))
                     systemCode = CFErrorGetCode(underlyingError);
             }
 
@@ -113,9 +112,7 @@ bool CDMSessionAVFoundationCF::update(Uint8Array* key, RefPtr<Uint8Array>& nextM
     RetainPtr<CFMutableDataRef> keyData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, key->byteLength()));
     CFDataAppendBytes(keyData.get(), reinterpret_cast<const UInt8*>(key->baseAddress()), key->byteLength());
 
-    // TODO: AVCFAssetResourceLoadingDataRequestRespondWithData(m_request.get(), keyData.get());
-    // TODO: AVCFAssetResourceLoadingRequestFinishedLoading(m_request.get());
-    notImplemented();
+    AVCFAssetResourceLoadingRequestFinishLoadingWithResponse(m_request.get(), nullptr, keyData.get(), nullptr);
 
     errorCode = MediaPlayer::NoError;
     systemCode = 0;

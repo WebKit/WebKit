@@ -302,6 +302,9 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetResourceLoadingRequestFinishLoadin
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetResourceLoadingRequestGetURLRequest, CFURLRequestRef, __cdecl, (AVCFAssetResourceLoadingRequestRef loadingRequest), (loadingRequest))
 #define AVCFAssetResourceLoadingRequestGetURLRequest  softLink_AVCFAssetResourceLoadingRequestGetURLRequest 
 
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetResourceLoadingRequestFinishLoadingWithResponse, void, __cdecl, (AVCFAssetResourceLoadingRequestRef loadingRequest, CFURLResponseRef response, CFDataRef data, CFURLRequestRef redirect), (loadingRequest, response, data, redirect))
+#define AVCFAssetResourceLoadingRequestFinishLoadingWithResponse  softLink_AVCFAssetResourceLoadingRequestFinishLoadingWithResponse 
+
 #endif
 
 // Variables
