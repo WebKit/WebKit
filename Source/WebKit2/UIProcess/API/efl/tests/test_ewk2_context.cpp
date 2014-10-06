@@ -230,9 +230,9 @@ TEST_F(EWK2ContextTest, ewk_context_new)
     ewk_object_unref(context);
 }
 
-TEST_F(EWK2ContextTest, ewk_context_new_with_injected_bundle_path)
+TEST_F(EWK2ContextTest, ewk_context_new_with_extensions_path)
 {
-    Ewk_Context* context = ewk_context_new_with_injected_bundle_path(environment->injectedBundleSample());
+    Ewk_Context* context = ewk_context_new_with_extensions_path(environment->extensionSample());
     ASSERT_TRUE(context);
     ewk_object_unref(context);
 }

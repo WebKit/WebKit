@@ -1,3 +1,18 @@
+2014-10-05  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Introduce EWebKit_Extension
+        https://bugs.webkit.org/show_bug.cgi?id=134921
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Added x option to test extension path.
+        (window_create):
+        (elm_main):
+        * Scripts/webkitpy/common/config/watchlist:
+        Added Source/WebKit2/WebProcess/InjectedBundle/API/efl/ into EFLWebKit2PublicAPI.
+        * Scripts/webkitpy/style/checker.py:
+        Added Source/WebKit2/WebProcess/InjectedBundle/API/efl/ into EFL exceptions.
+
 2014-10-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [jhbuild] Simplify platform detection in update-webkit-libs-jhbuild

@@ -48,6 +48,7 @@ static int verbose = 1;
 static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
 static char *user_agent_string = NULL;
+static char *extensions_path = NULL;
 static char *background_color_string = NULL;
 static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
@@ -157,6 +158,8 @@ static const Ecore_Getopt options = {
             ('s', "window-size", "Window size in following format (width)x(height)."),
         ECORE_GETOPT_STORE_STR
             ('u', "user-agent", "User agent to set."),
+        ECORE_GETOPT_STORE_STR
+            ('x', "extensions-path", "The path which extensions are stored."),
         ECORE_GETOPT_STORE_DOUBLE
             ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_CALLBACK_NOARGS
@@ -2152,7 +2155,14 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-    Ewk_Context *context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
+    Ewk_Context *context;
+    if (opener)
+        context = ewk_view_context_get(opener);
+    else if (extensions_path)
+        context = ewk_context_new_with_extensions_path(extensions_path);
+    else
+        context = ewk_context_default_get();
+
     Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
     window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
 
@@ -2284,6 +2294,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
         ECORE_GETOPT_VALUE_STR(user_agent_string),
+        ECORE_GETOPT_VALUE_STR(extensions_path),
         ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
