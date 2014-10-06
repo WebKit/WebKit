@@ -2812,6 +2812,15 @@
             "azbest_hu"
          ]
       },
+      "Zsolt Borbely" : {
+         "emails" : [
+            "zsborbely.u-szeged@partner.samsung.com",
+            "borbezs@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "bzsolt"
+         ]
+      },
       "\u017dan Dober\u0161ek" : {
          "emails" : [
             "zandobersek@gmail.com",
@@ -3338,15 +3347,6 @@
       "Zeev Lieber" : {
          "emails" : [
             "zlieber@chromium.org"
-         ]
-      },
-      "Zsolt Borbely" : {
-         "emails" : [
-            "zsborbely.u-szeged@partner.samsung.com",
-            "borbezs@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "bzsolt"
          ]
       }
    },
