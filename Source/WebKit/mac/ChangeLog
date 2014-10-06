@@ -1,3 +1,12 @@
+2014-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r174333.
+
+        Forgot explicit WebCore:: namespace.
+
+        * Misc/WebCache.mm:
+        (+[WebCache imageForURL:]):
+
 2014-10-05  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for CachedResource subclasses
