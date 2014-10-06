@@ -1167,8 +1167,6 @@ void SVGToOTFFontConverter::appendTable(const char identifier[4], FontAppendingF
 
 void SVGToOTFFontConverter::convertSVGToOTFFont()
 {
-    Vector<char> result;
-
     if (m_glyphs.isEmpty())
         return;
 
@@ -1185,7 +1183,7 @@ void SVGToOTFFontConverter::convertSVGToOTFFont()
     append16(integralLog2(roundedNumTables)); // entrySelector: "Log2(maximum power of 2 <= numTables)."
     append16(numTables * 16 - searchRange); // rangeShift: "NumTables x 16-searchRange."
 
-    ASSERT(result.size() == headerSize);
+    ASSERT(m_result.size() == headerSize);
 
     // Leave space for the directory entries.
     for (size_t i = 0; i < directoryEntrySize * numTables; ++i)
@@ -1211,7 +1209,7 @@ void SVGToOTFFontConverter::convertSVGToOTFFont()
 
     // checksumAdjustment: "To compute: set it to 0, calculate the checksum for the 'head' table and put it in the table directory,
     // sum the entire font as uint32, then store B1B0AFBA - sum. The checksum for the 'head' table will now be wrong. That is OK."
-    overwrite32(headTableOffset + 8, 0xB1B0AFBAU - calculateChecksum(0, result.size()));
+    overwrite32(headTableOffset + 8, 0xB1B0AFBAU - calculateChecksum(0, m_result.size()));
 }
 
 Vector<char> convertSVGToOTFFont(const SVGFontElement& element)
