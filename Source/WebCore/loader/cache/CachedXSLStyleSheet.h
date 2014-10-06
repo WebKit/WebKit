@@ -26,6 +26,8 @@
 #ifndef CachedXSLStyleSheet_h
 #define CachedXSLStyleSheet_h
 
+#if ENABLE(XSLT)
+
 #include "CachedResource.h"
 #include <wtf/Vector.h>
 
@@ -34,7 +36,6 @@ namespace WebCore {
     class CachedResourceLoader;
     class TextResourceDecoder;
 
-#if ENABLE(XSLT)
     class CachedXSLStyleSheet final : public CachedResource {
     public:
         CachedXSLStyleSheet(const ResourceRequest&, SessionID);
@@ -57,10 +58,10 @@ namespace WebCore {
         virtual void finishLoading(ResourceBuffer*) override;
     };
 
-CACHED_RESOURCE_TYPE_CASTS(CachedXSLStyleSheet, CachedResource, CachedResource::XSLStyleSheet)
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedXSLStyleSheet, CachedResource::XSLStyleSheet)
 
-}
+#endif // ENABLE(XSLT)
 
-#endif
+#endif // CachedXSLStyleSheet_h

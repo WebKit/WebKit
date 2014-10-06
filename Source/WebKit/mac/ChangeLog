@@ -1,3 +1,15 @@
+2014-10-05  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for CachedResource subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137431
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() for CachedResource subclasses.
+
+        * Misc/WebCache.mm:
+        (+[WebCache imageForURL:]):
+
 2014-10-02  Daniel Bates  <dabates@apple.com>
 
         Use version number 101000 instead of 10100 for OS X Yosemite

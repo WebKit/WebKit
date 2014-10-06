@@ -61,8 +61,8 @@ namespace WebCore {
         RefPtr<TextResourceDecoder> m_decoder;
     };
 
-CACHED_RESOURCE_TYPE_CASTS(CachedScript, CachedResource, CachedResource::Script)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedScript, CachedResource::Script)
 
-#endif
+#endif // CachedScript_h

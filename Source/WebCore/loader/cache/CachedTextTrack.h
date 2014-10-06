@@ -44,9 +44,10 @@ private:
     virtual void finishLoading(ResourceBuffer*) override;
 };
 
-CACHED_RESOURCE_TYPE_CASTS(CachedTextTrack, CachedResource, CachedResource::TextTrackResource)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedTextTrack, CachedResource::TextTrackResource)
 
-#endif
-#endif
+#endif // ENABLE(VIDEO_TRACK)
+
+#endif // CachedTextTrack_h

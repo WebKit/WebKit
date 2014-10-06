@@ -84,12 +84,11 @@ public:
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
 
     bool isOriginClean(SecurityOrigin*);
 
 private:
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
-
     void clear();
 
     void createImage();
@@ -135,8 +134,8 @@ private:
     unsigned char m_shouldPaintBrokenImage : 1;
 };
 
-CACHED_RESOURCE_TYPE_CASTS(CachedImage, CachedResource, CachedResource::ImageResource)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedImage, CachedResource::ImageResource)
 
-#endif
+#endif // CachedImage_h

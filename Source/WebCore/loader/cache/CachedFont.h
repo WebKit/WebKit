@@ -78,8 +78,8 @@ private:
     friend class MemoryCache;
 };
 
-CACHED_RESOURCE_TYPE_CASTS(CachedFont, CachedResource, CachedResource::FontResource)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedFont, CachedResource::FontResource)
 
 #endif // CachedFont_h

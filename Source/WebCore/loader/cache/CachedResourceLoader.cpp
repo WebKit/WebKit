@@ -170,24 +170,24 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
     }
     
     request.setDefer(clientDefersImage(request.resourceRequest().url()) ? CachedResourceRequest::DeferredByClient : CachedResourceRequest::NoDefer);
-    return toCachedImage(requestResource(CachedResource::ImageResource, request).get());
+    return downcast<CachedImage>(requestResource(CachedResource::ImageResource, request).get());
 }
 
 CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request)
 {
-    return toCachedFont(requestResource(CachedResource::FontResource, request).get());
+    return downcast<CachedFont>(requestResource(CachedResource::FontResource, request).get());
 }
 
 #if ENABLE(VIDEO_TRACK)
 CachedResourceHandle<CachedTextTrack> CachedResourceLoader::requestTextTrack(CachedResourceRequest& request)
 {
-    return toCachedTextTrack(requestResource(CachedResource::TextTrackResource, request).get());
+    return downcast<CachedTextTrack>(requestResource(CachedResource::TextTrackResource, request).get());
 }
 #endif
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleSheet(CachedResourceRequest& request)
 {
-    return toCachedCSSStyleSheet(requestResource(CachedResource::CSSStyleSheet, request).get());
+    return downcast<CachedCSSStyleSheet>(requestResource(CachedResource::CSSStyleSheet, request).get());
 }
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest& request)
@@ -199,8 +199,8 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 #endif
 
     if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest(), sessionID())) {
-        if (existing->type() == CachedResource::CSSStyleSheet)
-            return toCachedCSSStyleSheet(existing);
+        if (is<CachedCSSStyleSheet>(*existing))
+            return downcast<CachedCSSStyleSheet>(existing);
         memoryCache()->remove(existing);
     }
     if (url.string() != request.resourceRequest().url())
@@ -218,19 +218,19 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
 CachedResourceHandle<CachedScript> CachedResourceLoader::requestScript(CachedResourceRequest& request)
 {
-    return toCachedScript(requestResource(CachedResource::Script, request).get());
+    return downcast<CachedScript>(requestResource(CachedResource::Script, request).get());
 }
 
 #if ENABLE(XSLT)
 CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleSheet(CachedResourceRequest& request)
 {
-    return toCachedXSLStyleSheet(requestResource(CachedResource::XSLStyleSheet, request).get());
+    return downcast<CachedXSLStyleSheet>(requestResource(CachedResource::XSLStyleSheet, request).get());
 }
 #endif
 
 CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(CachedResourceRequest& request)
 {
-    return toCachedSVGDocument(requestResource(CachedResource::SVGDocumentResource, request).get());
+    return downcast<CachedSVGDocument>(requestResource(CachedResource::SVGDocumentResource, request).get());
 }
 
 #if ENABLE(LINK_PREFETCH)
@@ -703,8 +703,8 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it) {
         CachedResource* resource = it->value.get();
-        if (resource->isImage() && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
-            const_cast<CachedResource*>(resource)->load(this, defaultCachedResourceOptions());
+        if (is<CachedImage>(*resource) && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
+            downcast<CachedImage>(*resource).load(this, defaultCachedResourceOptions());
     }
 }
 

@@ -36,6 +36,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -360,9 +361,11 @@ private:
     double m_redirectChainEndOfValidity;
 };
 
-#define CACHED_RESOURCE_TYPE_CASTS(ToClassName, FromClassName, CachedResourceType) \
-    TYPE_CASTS_BASE(ToClassName, FromClassName, resource, resource->type() == CachedResourceType, resource.type() == CachedResourceType)
+} // namespace WebCore
 
-}
+#define SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(ToClassName, CachedResourceType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::CachedResource& resource) { return resource.type() == WebCore::CachedResourceType; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // CachedResource_h
