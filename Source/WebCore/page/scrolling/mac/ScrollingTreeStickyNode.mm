@@ -53,7 +53,7 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 
 void ScrollingTreeStickyNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateStickyNode& stickyStateNode = toScrollingStateStickyNode(stateNode);
+    const ScrollingStateStickyNode& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
 
     if (stickyStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_layer = stickyStateNode.layer();

@@ -52,7 +52,7 @@ void ScrollingTreeFrameScrollingNode::updateBeforeChildren(const ScrollingStateN
 {
     ScrollingTreeScrollingNode::updateBeforeChildren(stateNode);
     
-    const ScrollingStateFrameScrollingNode& state = toScrollingStateFrameScrollingNode(stateNode);
+    const ScrollingStateFrameScrollingNode& state = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state.frameScaleFactor();

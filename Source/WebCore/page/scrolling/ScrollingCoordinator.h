@@ -32,6 +32,7 @@
 #include "RenderObject.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #include <wtf/HashMap.h>
@@ -232,9 +233,11 @@ private:
     bool m_forceSynchronousScrollLayerPositionUpdates;
 };
 
-#define SCROLLING_COORDINATOR_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::ScrollingCoordinator, value, value->predicate, value.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_SCROLLING_COORDINATOR(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::ScrollingCoordinator& value) { return value.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ScrollingCoordinator_h

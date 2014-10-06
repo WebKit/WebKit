@@ -145,7 +145,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::
 
     ScrollingTreeOverflowScrollingNode::updateBeforeChildren(stateNode);
 
-    const auto& scrollingStateNode = toScrollingStateOverflowScrollingNode(stateNode);
+    const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
 
@@ -159,7 +159,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 
     TemporaryChange<bool> updatingChange(m_updatingFromStateNode, true);
 
-    const auto& scrollingStateNode = toScrollingStateOverflowScrollingNode(stateNode);
+    const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)

@@ -333,16 +333,16 @@ static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const Scroll
 
     switch (stateNode.nodeType()) {
     case FrameScrollingNode:
-        encoder << toScrollingStateFrameScrollingNode(stateNode);
+        encoder << downcast<ScrollingStateFrameScrollingNode>(stateNode);
         break;
     case OverflowScrollingNode:
-        encoder << toScrollingStateOverflowScrollingNode(stateNode);
+        encoder << downcast<ScrollingStateOverflowScrollingNode>(stateNode);
         break;
     case FixedNode:
-        encoder << toScrollingStateFixedNode(stateNode);
+        encoder << downcast<ScrollingStateFixedNode>(stateNode);
         break;
     case StickyNode:
-        encoder << toScrollingStateStickyNode(stateNode);
+        encoder << downcast<ScrollingStateStickyNode>(stateNode);
         break;
     }
 
@@ -417,19 +417,19 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
         
         switch (nodeType) {
         case FrameScrollingNode:
-            if (!decoder.decode(*toScrollingStateFrameScrollingNode(newNode)))
+            if (!decoder.decode(downcast<ScrollingStateFrameScrollingNode>(*newNode)))
                 return false;
             break;
         case OverflowScrollingNode:
-            if (!decoder.decode(*toScrollingStateOverflowScrollingNode(newNode)))
+            if (!decoder.decode(downcast<ScrollingStateOverflowScrollingNode>(*newNode)))
                 return false;
             break;
         case FixedNode:
-            if (!decoder.decode(*toScrollingStateFixedNode(newNode)))
+            if (!decoder.decode(downcast<ScrollingStateFixedNode>(*newNode)))
                 return false;
             break;
         case StickyNode:
-            if (!decoder.decode(*toScrollingStateStickyNode(newNode)))
+            if (!decoder.decode(downcast<ScrollingStateStickyNode>(*newNode)))
                 return false;
             break;
         }
@@ -556,16 +556,16 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateNode& node, bool ch
     
     switch (node.nodeType()) {
     case FrameScrollingNode:
-        dump(toScrollingStateFrameScrollingNode(node), changedPropertiesOnly);
+        dump(downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
         break;
     case OverflowScrollingNode:
-        dump(toScrollingStateOverflowScrollingNode(node), changedPropertiesOnly);
+        dump(downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);
         break;
     case FixedNode:
-        dump(toScrollingStateFixedNode(node), changedPropertiesOnly);
+        dump(downcast<ScrollingStateFixedNode>(node), changedPropertiesOnly);
         break;
     case StickyNode:
-        dump(toScrollingStateStickyNode(node), changedPropertiesOnly);
+        dump(downcast<ScrollingStateStickyNode>(node), changedPropertiesOnly);
         break;
     }
 }

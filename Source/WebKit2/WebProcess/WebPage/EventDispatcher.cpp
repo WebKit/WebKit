@@ -72,8 +72,8 @@ void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
     ASSERT(webPage->corePage()->scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage->pageID()));
 
-    AsyncScrollingCoordinator* scrollingCoordinator = toAsyncScrollingCoordinator(webPage->corePage()->scrollingCoordinator());
-    m_scrollingTrees.set(webPage->pageID(), toThreadedScrollingTree(scrollingCoordinator->scrollingTree()));
+    AsyncScrollingCoordinator& scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage->corePage()->scrollingCoordinator());
+    m_scrollingTrees.set(webPage->pageID(), toThreadedScrollingTree(scrollingCoordinator.scrollingTree()));
 }
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)

@@ -52,7 +52,7 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
 
 void ScrollingTreeFixedNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateFixedNode& fixedStateNode = toScrollingStateFixedNode(stateNode);
+    const ScrollingStateFixedNode& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
 
     if (fixedStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_layer = fixedStateNode.layer();

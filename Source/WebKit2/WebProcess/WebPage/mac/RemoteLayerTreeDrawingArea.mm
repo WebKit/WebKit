@@ -358,7 +358,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
     if (m_webPage.scrollingCoordinator())
-        toRemoteScrollingCoordinator(m_webPage.scrollingCoordinator())->buildTransaction(scrollingTransaction);
+        downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
 #endif
 
     m_waitingForBackingStoreSwap = true;

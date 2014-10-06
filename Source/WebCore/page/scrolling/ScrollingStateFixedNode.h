@@ -63,9 +63,9 @@ private:
     FixedPositionViewportConstraints m_constraints;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, isFixedNode());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_STATE_NODE(ScrollingStateFixedNode, isFixedNode())
 
 #endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 

@@ -57,9 +57,9 @@ private:
     LayerRepresentation m_scrolledContentsLayer;    
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateOverflowScrollingNode, isOverflowScrollingNode());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_STATE_NODE(ScrollingStateOverflowScrollingNode, isOverflowScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 

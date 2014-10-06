@@ -44,7 +44,7 @@ ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode()
 
 void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& state = toScrollingStateScrollingNode(stateNode);
+    const ScrollingStateScrollingNode& state = downcast<ScrollingStateScrollingNode>(stateNode);
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
         m_scrollableAreaSize = state.scrollableAreaSize();
@@ -81,7 +81,7 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 
 void ScrollingTreeScrollingNode::updateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+    const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), scrollingStateNode.requestedScrollPosition(), scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll());
 }

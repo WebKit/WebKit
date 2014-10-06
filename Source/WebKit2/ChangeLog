@@ -1,3 +1,31 @@
+2014-10-05  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for ScrollingCoordinator / ScrollingStateNode subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137440
+
+        Reviewed by Ryosuke Niwa.
+
+        Use is<>() / downcast<>() for ScrollingCoordinator / ScrollingStateNode subclasses.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::RemoteScrollingTreeTextStream::dump):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2014-10-05  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Introduce EWebKit_Extension

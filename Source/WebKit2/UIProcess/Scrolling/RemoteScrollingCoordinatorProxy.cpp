@@ -105,33 +105,33 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 
         switch (currNode->nodeType()) {
         case FrameScrollingNode: {
-            ScrollingStateFrameScrollingNode* scrollingStateNode = toScrollingStateFrameScrollingNode(currNode);
+            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
             
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode.scrolledContentsLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
-                scrollingStateNode->setCounterScrollingLayer(layerTreeHost.getLayer(scrollingStateNode->counterScrollingLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
+                scrollingStateNode.setCounterScrollingLayer(layerTreeHost.getLayer(scrollingStateNode.counterScrollingLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
-                scrollingStateNode->setInsetClipLayer(layerTreeHost.getLayer(scrollingStateNode->insetClipLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
+                scrollingStateNode.setInsetClipLayer(layerTreeHost.getLayer(scrollingStateNode.insetClipLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
-                scrollingStateNode->setContentShadowLayer(layerTreeHost.getLayer(scrollingStateNode->contentShadowLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
+                scrollingStateNode.setContentShadowLayer(layerTreeHost.getLayer(scrollingStateNode.contentShadowLayer()));
 
             // FIXME: we should never have header and footer layers coming from the WebProcess.
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
-                scrollingStateNode->setHeaderLayer(layerTreeHost.getLayer(scrollingStateNode->headerLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
+                scrollingStateNode.setHeaderLayer(layerTreeHost.getLayer(scrollingStateNode.headerLayer()));
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
-                scrollingStateNode->setFooterLayer(layerTreeHost.getLayer(scrollingStateNode->footerLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
+                scrollingStateNode.setFooterLayer(layerTreeHost.getLayer(scrollingStateNode.footerLayer()));
             break;
         }
         case OverflowScrollingNode: {
-            ScrollingStateOverflowScrollingNode* scrollingStateNode = toScrollingStateOverflowScrollingNode(currNode);
+            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
 
-            if (scrollingStateNode->hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode->scrolledContentsLayer()));
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.getLayer(scrollingStateNode.scrolledContentsLayer()));
             break;
         }
         case FixedNode:

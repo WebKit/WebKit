@@ -93,7 +93,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
 
@@ -158,7 +158,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView
 
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
-    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     node->setLayer(scrollLayerForFrameView(frameView));
     node->setScrolledContentsLayer(rootContentLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
@@ -185,7 +185,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView
     if (frameView->frame().document()->inPageCache())
         return true;
 
-    ScrollingStateScrollingNode* stateNode = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateScrollingNode* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     if (!stateNode)
         return false;
 
@@ -387,7 +387,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frame
 
 void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry* scrollingGeometry)
 {
-    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
+    ScrollingStateFrameScrollingNode* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
     ASSERT(node);
     if (!node)
         return;
@@ -408,7 +408,7 @@ void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID,
     
 void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry* scrollingGeometry)
 {
-    ScrollingStateOverflowScrollingNode* node = toScrollingStateOverflowScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
+    ScrollingStateOverflowScrollingNode* node = downcast<ScrollingStateOverflowScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
     ASSERT(node);
     if (!node)
         return;
@@ -439,15 +439,15 @@ void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID no
 
     switch (constraints.constraintType()) {
     case ViewportConstraints::FixedPositionConstraint: {
-        ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
-        fixedNode->setLayer(graphicsLayer);
-        fixedNode->updateConstraints((const FixedPositionViewportConstraints&)constraints);
+        ScrollingStateFixedNode& fixedNode = downcast<ScrollingStateFixedNode>(*node);
+        fixedNode.setLayer(graphicsLayer);
+        fixedNode.updateConstraints((const FixedPositionViewportConstraints&)constraints);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint: {
-        ScrollingStateStickyNode* stickyNode = toScrollingStateStickyNode(node);
-        stickyNode->setLayer(graphicsLayer);
-        stickyNode->updateConstraints((const StickyPositionViewportConstraints&)constraints);
+        ScrollingStateStickyNode& stickyNode = downcast<ScrollingStateStickyNode>(*node);
+        stickyNode.setLayer(graphicsLayer);
+        stickyNode.updateConstraints((const StickyPositionViewportConstraints&)constraints);
         break;
     }
     }
@@ -483,7 +483,7 @@ void AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition()
 
 void AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
 {
-    ScrollingStateFrameScrollingNode* node = toScrollingStateFrameScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateFrameScrollingNode* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
     node->setWheelEventHandlerCount(computeCurrentWheelEventHandlerCount());

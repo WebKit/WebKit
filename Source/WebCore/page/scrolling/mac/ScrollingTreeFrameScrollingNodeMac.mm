@@ -73,7 +73,7 @@ ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeFrameScrollingNode::updateBeforeChildren(stateNode);
-    const auto& scrollingStateNode = toScrollingStateFrameScrollingNode(stateNode);
+    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
@@ -127,7 +127,7 @@ void ScrollingTreeFrameScrollingNodeMac::updateAfterChildren(const ScrollingStat
 {
     ScrollingTreeFrameScrollingNode::updateAfterChildren(stateNode);
 
-    const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
 
     // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))

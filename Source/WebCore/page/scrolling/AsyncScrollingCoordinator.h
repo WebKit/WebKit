@@ -144,9 +144,9 @@ private:
     RefPtr<ScrollingTree> m_scrollingTree;
 };
 
-SCROLLING_COORDINATOR_TYPE_CASTS(AsyncScrollingCoordinator, isAsyncScrollingCoordinator());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_COORDINATOR(WebCore::AsyncScrollingCoordinator, isAsyncScrollingCoordinator());
 
 #endif // ENABLE(ASYNC_SCROLLING)
 
