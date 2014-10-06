@@ -145,7 +145,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
         CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        void* jumpTarget;
+        void* jumpTarget = nullptr;
         void* trueReturnPC = nullptr;
         
         unsigned callBytecodeIndex = inlineCallFrame->caller.bytecodeIndex;

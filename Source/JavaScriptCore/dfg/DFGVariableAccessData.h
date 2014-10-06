@@ -71,7 +71,7 @@ public:
     
     bool mergeIsProfitableToUnbox(bool isProfitableToUnbox)
     {
-        return checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox | isProfitableToUnbox);
+        return checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox || isProfitableToUnbox);
     }
     
     bool isProfitableToUnbox()
@@ -100,12 +100,12 @@ public:
 
     bool mergeStructureCheckHoistingFailed(bool failed)
     {
-        return checkAndSet(m_structureCheckHoistingFailed, m_structureCheckHoistingFailed | failed);
+        return checkAndSet(m_structureCheckHoistingFailed, m_structureCheckHoistingFailed || failed);
     }
     
     bool mergeCheckArrayHoistingFailed(bool failed)
     {
-        return checkAndSet(m_checkArrayHoistingFailed, m_checkArrayHoistingFailed | failed);
+        return checkAndSet(m_checkArrayHoistingFailed, m_checkArrayHoistingFailed || failed);
     }
     
     bool structureCheckHoistingFailed()
@@ -120,7 +120,7 @@ public:
     
     bool mergeIsArgumentsAlias(bool isArgumentsAlias)
     {
-        return checkAndSet(m_isArgumentsAlias, m_isArgumentsAlias | isArgumentsAlias);
+        return checkAndSet(m_isArgumentsAlias, m_isArgumentsAlias || isArgumentsAlias);
     }
     
     bool isArgumentsAlias()
@@ -130,7 +130,7 @@ public:
     
     bool mergeIsLoadedFrom(bool isLoadedFrom)
     {
-        return checkAndSet(m_isLoadedFrom, m_isLoadedFrom | isLoadedFrom);
+        return checkAndSet(m_isLoadedFrom, m_isLoadedFrom || isLoadedFrom);
     }
     
     void setIsLoadedFrom(bool isLoadedFrom)

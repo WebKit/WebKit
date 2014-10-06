@@ -203,11 +203,11 @@ public:
 
         // Copy argument 5
         load64(Address(X86Registers::esp, 4 * sizeof(int64_t)), scratchRegister);
-        store64(scratchRegister, Address(X86Registers::esp, -4 * sizeof(int64_t)));
+        store64(scratchRegister, Address(X86Registers::esp, -4 * static_cast<int32_t>(sizeof(int64_t))));
 
         // Copy argument 6
         load64(Address(X86Registers::esp, 5 * sizeof(int64_t)), scratchRegister);
-        store64(scratchRegister, Address(X86Registers::esp, -3 * sizeof(int64_t)));
+        store64(scratchRegister, Address(X86Registers::esp, -3 * static_cast<int32_t>(sizeof(int64_t))));
 
         // We also need to allocate the shadow space on the stack for the 4 parameter registers.
         // Also, we should allocate 16 bytes for the frame pointer, and return address (not populated).

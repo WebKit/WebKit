@@ -2016,7 +2016,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             // The format of this instruction is: op_profile_type regToProfile, TypeLocation*, flag, identifier?, resolveType?
             size_t instructionOffset = i + opLength - 1;
             unsigned divotStart, divotEnd;
-            GlobalVariableID globalVariableID;
+            GlobalVariableID globalVariableID = 0;
             RefPtr<TypeSet> globalTypeSet;
             bool shouldAnalyze = m_unlinkedCode->typeProfilerExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
             VirtualRegister profileRegister(pc[1].u.operand);
