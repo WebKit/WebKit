@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var hasEWS = typeof ews != "undefined";
-var EWSCategory = "ews";
+var hasBubbles = typeof bubbleQueueServer != "undefined";
+var BubblesCategory = "bubbles";
 
 var categorizedQueuesByPlatformAndBuildType = {};
 
@@ -64,16 +64,16 @@ for (var i = 0; i < buildbots.length; ++i) {
     }
 }
 
-if (hasEWS) {
-    for (var id in ews.queues) {
-        var queue = ews.queues[id];
+if (hasBubbles) {
+    for (var id in bubbleQueueServer.queues) {
+        var queue = bubbleQueueServer.queues[id];
         var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
         if (!platform)
             platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
         if (!platform.builders)
             platform.builders = {};
 
-        var categoryName = EWSCategory;
+        var categoryName = BubblesCategory;
 
         platformQueues = platform[categoryName];
         if (!platformQueues)
@@ -154,9 +154,11 @@ function documentReady()
     header.textContent = "Performance";
     row.appendChild(header);
 
-    if (hasEWS) {
+    if (hasBubbles) {
+        // Currently, EWS and commit queues are the only items in Other category.
+        // To add more (e.g. leaks bot), we'll need to refactor view classes.
         var header = document.createElement("th");
-        header.textContent = "EWS";
+        header.textContent = "Other";
         row.appendChild(header);
     }
 
@@ -220,11 +222,11 @@ function documentReady()
 
         row.appendChild(cell);
 
-        if (hasEWS) {
+        if (hasBubbles) {
             var cell = document.createElement("td");
 
-            if (platformQueues[EWSCategory]) {
-                var view = new EWSQueueView(platformQueues[EWSCategory]);
+            if (platformQueues[BubblesCategory]) {
+                var view = new BubbleQueueView(platformQueues[BubblesCategory]);
                 cell.appendChild(view.element);
             }
 

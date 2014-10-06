@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var hasEWS = typeof ews !== "undefined";
-var EWSCategory = "ews";
-
 var analyzer = new Analyzer;
 
 var allBuilderResultsPseudoQueue = { id: "allBuilderResultsPseudoQueue" };
@@ -64,25 +61,6 @@ for (var i = 0; i < buildbots.length; ++i) {
             buildQueues = category[buildType] = [];
 
         buildQueues.push(queue);
-    }
-}
-
-if (hasEWS) {
-    for (var id in ews.queues) {
-        var queue = ews.queues[id];
-        var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
-        if (!platform)
-            platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
-        if (!platform.builders)
-            platform.builders = {};
-
-        var categoryName = EWSCategory;
-
-        platformQueues = platform[categoryName];
-        if (!platformQueues)
-            platformQueues = platform[categoryName] = [];
-
-        platformQueues.push(queue);
     }
 }
 
@@ -174,12 +152,6 @@ function buildAggregateTable()
     header.textContent = "All queues";
     row.appendChild(header);
 
-    if (hasEWS) {
-        var header = document.createElement("th");
-        header.textContent = "EWS";
-        row.appendChild(header);
-    }
-
     table.appendChild(row);
 
     var row = document.createElement("tr");
@@ -225,12 +197,6 @@ function buildQueuesTable()
     for (var testerKey in Buildbot.TestCategory) {
         var header = document.createElement("th");
         header.textContent = testNames[Buildbot.TestCategory[testerKey]];
-        row.appendChild(header);
-    }
-
-    if (hasEWS) {
-        var header = document.createElement("th");
-        header.textContent = "EWS";
         row.appendChild(header);
     }
 
@@ -280,17 +246,6 @@ function buildQueuesTable()
             var testerProperty = Buildbot.TestCategory[testerKey];
             if (platformQueues[testerProperty]) {
                 var view = new MetricsView(analyzer, allQueues(platformQueues[testerProperty]));
-                cell.appendChild(view.element);
-            }
-
-            row.appendChild(cell);
-        }
-
-        if (hasEWS) {
-            var cell = document.createElement("td");
-
-            if (platformQueues[EWSCategory]) {
-                var view = new EWSQueueView(platformQueues[EWSCategory]);
                 cell.appendChild(view.element);
             }
 

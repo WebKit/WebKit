@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-EWS = function()
+BubbleQueueServer = function()
 {
     const queueInfo = {
-        "mac": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit1 Release Tests"},
-        "mac-wk2": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit2 Release Tests"},
-        "win": {platform: Dashboard.Platform.Windows7, title: "WebKit1 Release Build"},
-        "gtk-wk2": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit2 Release Build"},
-        "efl-wk2": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit2 Release Build"}
+        "commit-queue": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "commit", title: "Commit Queue"},
+        "style-queue": {shortName: "style", title: "Style Checker Queue"},
+        "mac-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
+        "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
+        "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
+        "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
+        "efl-wk2-ews": {platform: Dashboard.Platform.LinuxEFL, shortName: "efl-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"}
     };
 
     BaseObject.call(this);
@@ -39,27 +41,27 @@ EWS = function()
     this.queues = {};
 
     for (var id in queueInfo)
-        this.queues[id] = new EWSQueue(this, id, queueInfo[id]);
+        this.queues[id] = new BubbleQueue(this, id, queueInfo[id]);
 };
 
-BaseObject.addConstructorFunctions(EWS);
+BaseObject.addConstructorFunctions(BubbleQueueServer);
 
-EWS.prototype = {
-    constructor: EWS,
+BubbleQueueServer.prototype = {
+    constructor: BubbleQueueServer,
     __proto__: BaseObject.prototype,
 
     jsonQueueLengthURL: function(queueID)
     {
-        return this.baseURL + "queue-length-json/" + encodeURIComponent(queueID) + "-ews";
+        return this.baseURL + "queue-length-json/" + encodeURIComponent(queueID);
     },
 
     jsonQueueStatusURL: function(queueID)
     {
-        return this.baseURL + "queue-status-json/" + encodeURIComponent(queueID) + "-ews";
+        return this.baseURL + "queue-status-json/" + encodeURIComponent(queueID);
     },
 
     queueStatusURL: function(queueID)
     {
-        return this.baseURL + "queue-status/" + encodeURIComponent(queueID) + "-ews";
+        return this.baseURL + "queue-status/" + encodeURIComponent(queueID);
     },
 };

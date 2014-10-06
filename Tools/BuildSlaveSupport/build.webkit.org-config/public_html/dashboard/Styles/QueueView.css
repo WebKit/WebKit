@@ -120,7 +120,7 @@
     padding-left: 7px;
 }
 
-.ews-popover,
+.bubble-server-popover,
 .performance-popover {
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
@@ -129,22 +129,22 @@
     padding: 1px 6px 1px 6px;
 }
 
-.ews-popover .popover-queue-heading .queue-status-link,
-.ews-popover .popover-queue-heading .queue-charts-link {
+.bubble-server-popover .popover-queue-heading .queue-status-link,
+.bubble-server-popover .popover-queue-heading .queue-charts-link {
     color: rgb(145, 135, 95);
     padding-left: 7px;
 }
 
-.ews-popover .latest-status-with-link,
-.ews-popover .latest-status-no-link {
+.bubble-server-popover .latest-status-with-link,
+.bubble-server-popover .latest-status-no-link {
     color: black;
     padding-left: 7px;
 }
 
-.ews-popover .failure-count,
-.ews-popover .time-since-message,
-.ews-popover .bugzilla-link,
-.ews-popover .bot-status-description {
+.bubble-server-popover .failure-count,
+.bubble-server-popover .time-since-message,
+.bubble-server-popover .bugzilla-link,
+.bubble-server-popover .bot-status-description {
     padding-left: 7px;
 }
 

@@ -23,33 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-EWSQueue = function(ews, id, info)
+BubbleQueue = function(queueServer, id, info)
 {
     BaseObject.call(this);
 
-    console.assert(ews);
+    console.assert(queueServer);
     console.assert(id);
 
-    this.ews = ews;
+    this.queueServer = queueServer;
     this.id = id;
     this.title = info.title || "\xa0";
 
-    this.platform = info.platform.name || "unknown";
+    this.platform = info.platform ? info.platform.name : "unknown";
 };
 
-BaseObject.addConstructorFunctions(EWSQueue);
+BaseObject.addConstructorFunctions(BubbleQueue);
 
-EWSQueue.Event = {
+BubbleQueue.Event = {
     Updated: "updated"
 };
 
-EWSQueue.prototype = {
-    constructor: EWSQueue,
+BubbleQueue.prototype = {
+    constructor: BubbleQueue,
     __proto__: BaseObject.prototype,
 
     get statusPageURL()
     {
-        return this.ews.queueStatusURL(this.id);
+        return this.queueServer.queueStatusURL(this.id);
     },
 
     get chartsPageURL()
@@ -83,18 +83,18 @@ EWSQueue.prototype = {
     {
         this._loadedDetailedStatus = false;
 
-        JSON.load(this.ews.jsonQueueLengthURL(this.id), function(data) {
+        JSON.load(this.queueServer.jsonQueueLengthURL(this.id), function(data) {
             var newPatchCount = data.queue_length;
             if (this._patchCount == newPatchCount)
                 return;
             this._patchCount = newPatchCount;
-            this.dispatchEventToListeners(EWSQueue.Event.Updated, null);
+            this.dispatchEventToListeners(BubbleQueue.Event.Updated, null);
         }.bind(this));
     },
 
     loadDetailedStatus: function(callback)
     {
-        JSON.load(this.ews.jsonQueueStatusURL(this.id), function(data) {
+        JSON.load(this.queueServer.jsonQueueStatusURL(this.id), function(data) {
             this._queue = [];
             for (var i = 0, end = data.queue.length; i < end; ++i) {
                 var patch = data.queue[i];

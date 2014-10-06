@@ -1,5 +1,53 @@
 2014-10-06  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard: Add commit queue
+        https://bugs.webkit.org/show_bug.cgi?id=137462
+
+        Reviewed by Tim Horton.
+
+        Generalizes EWS into "bubble queue", which also includes commit queue and style queue.
+        Style queue is still invisible, as it doesn't have an associated platform, and also
+        we never have problems with it anyway, so it's not worth watching.
+
+        The UI now allows for adding more bots to the Other column (such as leaks bot).
+        To make that actually happen, we'll need to refactor QueueView, allowing for multiple
+        sources of data in a cell.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueue.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js.
+        (BubbleQueue):
+        (BubbleQueue.prototype.get statusPageURL):
+        (BubbleQueue.prototype.update):
+        (BubbleQueue.prototype.loadDetailedStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js.
+        (BubbleQueueServer):
+        (BubbleQueueServer.prototype.jsonQueueLengthURL):
+        (BubbleQueueServer.prototype.jsonQueueStatusURL):
+        (BubbleQueueServer.prototype.queueStatusURL):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueView.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js.
+        (BubbleQueueView):
+        (BubbleQueueView.prototype.update.appendQueue):
+        (BubbleQueueView.prototype.update):
+        (BubbleQueueView.prototype._addQueueHeadingToPopover):
+        (BubbleQueueView.prototype._popoverContentForBubbleQueue):
+        (BubbleQueueView.prototype._presentPopoverForBubbleQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        (.bubble-server-popover .popover-queue-heading .queue-charts-link):
+        (.bubble-server-popover .latest-status-no-link):
+        (.bubble-server-popover .bot-status-description):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+        (buildAggregateTable):
+        (buildQueuesTable):
+        Removed dysfunctional support for EWS for now. It will be different.
+
+2014-10-06  Alexey Proskuryakov  <ap@apple.com>
+
         One more case of incorrect comparison in recordpatchevent.py
         https://bugs.webkit.org/show_bug.cgi?id=137459
 

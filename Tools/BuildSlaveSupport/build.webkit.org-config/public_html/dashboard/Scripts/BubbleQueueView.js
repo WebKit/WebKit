@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-EWSQueueView = function(queues)
+BubbleQueueView = function(queues)
 {
     QueueView.call(this);
 
@@ -31,19 +31,19 @@ EWSQueueView = function(queues)
 
     this.queues.forEach(function(queue) {
         if (this.platform && this.platform != queue.platform)
-            throw "A EWS view may not contain queues for multiple platforms."
+            throw "A bubble queue view may not contain queues for multiple platforms."
         else
             this.platform = queue.platform;
-        queue.addEventListener(EWSQueue.Event.Updated, this._queueUpdated, this);
+        queue.addEventListener(BubbleQueue.Event.Updated, this._queueUpdated, this);
     }.bind(this));
 
     this.update();
 };
 
-BaseObject.addConstructorFunctions(EWSQueueView);
+BaseObject.addConstructorFunctions(BubbleQueueView);
 
-EWSQueueView.prototype = {
-    constructor: EWSQueueView,
+BubbleQueueView.prototype = {
+    constructor: BubbleQueueView,
     __proto__: QueueView.prototype,
 
     update: function()
@@ -67,7 +67,7 @@ EWSQueueView.prototype = {
             var status = new StatusLineView(message, StatusLineView.Status.Neutral, null, patchCount || "0");
             this.element.appendChild(status.element);
 
-            new PopoverTracker(status.statusBubbleElement, this._presentPopoverForEWSQueue.bind(this), queue);
+            new PopoverTracker(status.statusBubbleElement, this._presentPopoverForBubbleQueue.bind(this), queue);
         }
 
         this.queues.forEach(function(queue) {
@@ -98,7 +98,7 @@ EWSQueueView.prototype = {
         var title = document.createElement("div");
         title.className = "popover-queue-heading";
 
-        this.addTextToRow(title, "queue-name", queue.id + " ews queue");
+        this.addTextToRow(title, "queue-name", queue.id);
         this.addLinkToRow(title, "queue-status-link", "status page", queue.statusPageURL);
         this.addLinkToRow(title, "queue-charts-link", "charts", queue.chartsPageURL);
 
@@ -138,10 +138,10 @@ EWSQueueView.prototype = {
         return hoursPart + minutes + "\xa0minutes";
     },
 
-    _popoverContentForEWSQueue: function(queue)
+    _popoverContentForBubbleQueue: function(queue)
     {
         var content = document.createElement("div");
-        content.className = "ews-popover";
+        content.className = "bubble-server-popover";
 
         this._addQueueHeadingToPopover(queue, content);
         this._addDividerToPopover(content);
@@ -194,13 +194,13 @@ EWSQueueView.prototype = {
         return content;
     },
 
-    _presentPopoverForEWSQueue: function(element, popover, queue)
+    _presentPopoverForBubbleQueue: function(element, popover, queue)
     {
         if (queue.loadedDetailedStatus)
-            var content = this._popoverContentForEWSQueue(queue);
+            var content = this._popoverContentForBubbleQueue(queue);
         else {
             var content = document.createElement("div");
-            content.className = "ews-popover";
+            content.className = "bubble-server-popover";
 
             var loadingIndicator = document.createElement("div");
             loadingIndicator.className = "loading-indicator";
@@ -208,7 +208,7 @@ EWSQueueView.prototype = {
             content.appendChild(loadingIndicator);
 
             queue.loadDetailedStatus(function() {
-                popover.content = this._popoverContentForEWSQueue(queue);
+                popover.content = this._popoverContentForBubbleQueue(queue);
             }.bind(this));
         }
 

@@ -28,7 +28,7 @@ var buildbots = [ new WebKitBuildbot ];
 var webkitTrac = new Trac("https://trac.webkit.org/");
 if (typeof Bugzilla !== "undefined")
     var bugzilla = new Bugzilla;
-if (typeof EWS !== "undefined")
-    var ews = new EWS;
+if (typeof BubbleQueueServer !== "undefined")
+    var bubbleQueueServer = new BubbleQueueServer;
 if (typeof TestHistory !== "undefined")
     var testHistory = new TestHistory;
