@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 PASS document.querySelector('div SPAN').textContent is 'lower'
 PASS document.querySelector('div p').textContent is 'UPPER'
 PASS document.getElementById('lower1').matches('div SPAN') is true

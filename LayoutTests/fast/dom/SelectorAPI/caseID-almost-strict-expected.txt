@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 PASS document.querySelector('#lower1').textContent is 'lower 1'
 PASS document.querySelector('#LOWER2') is null
 PASS document.querySelector('#UPPER1').textContent is 'UPPER 1'

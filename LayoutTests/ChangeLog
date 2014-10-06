@@ -1,3 +1,15 @@
+2014-10-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unreviewed, rolling out r174336.
+
+        Mozilla's Dromaeo still relies on the deprecated function.
+
+        Reverted changeset:
+
+        "Add a deprecation warning for Element.webkitMatchesSelector"
+        https://bugs.webkit.org/show_bug.cgi?id=137417
+        http://trac.webkit.org/changeset/174336
+
 2014-10-06  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip remaining failing media tests after adding audio devices to the bots Part 2.

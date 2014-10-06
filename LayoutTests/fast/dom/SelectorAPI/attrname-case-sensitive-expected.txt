@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
-CONSOLE MESSAGE: Element.webkitMatchesSelector is deprecated. Use Element.matches instead.
 PASS document.querySelector('div[baR]') is document.getElementById('bar')
 PASS document.getElementById('bar').matches('div[baR]') is true
 PASS document.getElementById('bar').webkitMatchesSelector('div[baR]') is true
