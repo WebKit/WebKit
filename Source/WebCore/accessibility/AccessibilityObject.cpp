@@ -1583,8 +1583,11 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::chi
 
 void AccessibilityObject::updateChildrenIfNecessary()
 {
-    if (!hasChildren())
-        addChildren();    
+    if (!hasChildren()) {
+        // Enable the cache in case we end up adding a lot of children, we don't want to recompute axIsIgnored each time.
+        AXAttributeCacheEnabler enableCache(axObjectCache());
+        addChildren();
+    }
 }
     
 void AccessibilityObject::clearChildren()
@@ -2494,7 +2497,8 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 bool AccessibilityObject::accessibilityIsIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;
-    if (AXObjectCache* cache = axObjectCache())
+    AXObjectCache* cache = axObjectCache();
+    if (cache)
         attributeCache = cache->computedObjectAttributeCache();
     
     if (attributeCache) {
@@ -2511,7 +2515,8 @@ bool AccessibilityObject::accessibilityIsIgnored() const
 
     bool result = computeAccessibilityIsIgnored();
 
-    if (attributeCache)
+    // In case computing axIsIgnored disables attribute caching, we should refetch the object to see if it exists.
+    if (cache && (attributeCache = cache->computedObjectAttributeCache()))
         attributeCache->setIgnored(axObjectID(), result ? IgnoreObject : IncludeObject);
 
     return result;
