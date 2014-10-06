@@ -448,7 +448,6 @@ static bool unwindCallFrame(StackVisitor& visitor)
         ASSERT(!callFrame->hadException());
     }
 
-    JSValue lexicalEnvironment;
     if (codeBlock->codeType() == FunctionCode && codeBlock->needsActivation()) {
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
@@ -457,10 +456,8 @@ static bool unwindCallFrame(StackVisitor& visitor)
 
     if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
         if (Arguments* arguments = visitor->existingArguments()) {
-            if (lexicalEnvironment && lexicalEnvironment.isCell())
-                arguments->didTearOffActivation(callFrame, jsCast<JSLexicalEnvironment*>(lexicalEnvironment));
 #if ENABLE(DFG_JIT)
-            else if (visitor->isInlinedFrame())
+            if (visitor->isInlinedFrame())
                 arguments->tearOff(callFrame, visitor->inlineCallFrame());
 #endif
             else

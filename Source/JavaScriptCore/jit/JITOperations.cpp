@@ -1590,13 +1590,9 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
     return JSValue::encode(result);
 }
 
-void JIT_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell* activationCell)
+void JIT_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell*)
 {
     ASSERT(exec->codeBlock()->usesArguments());
-    if (activationCell) {
-        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec, jsCast<JSLexicalEnvironment*>(activationCell));
-        return;
-    }
     jsCast<Arguments*>(argumentsCell)->tearOff(exec);
 }
 

@@ -87,7 +87,6 @@ public:
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
     bool isTornOff() const { return m_registerArray.get(); }
-    void didTearOffActivation(ExecState*, JSLexicalEnvironment*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
@@ -273,10 +272,8 @@ inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
     if (m_slowArgumentData->slowArguments()[argument].status != SlowArgument::Captured)
         return m_registers[index];
 
-    JSLexicalEnvironment* lexicalEnvironment = m_lexicalEnvironment.get();
-    if (!lexicalEnvironment)
-        lexicalEnvironment = CallFrame::create(reinterpret_cast<Register*>(m_registers))->lexicalEnvironment();
-    return lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
+    RELEASE_ASSERT(m_lexicalEnvironment);
+    return m_lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
 }
 
 inline void Arguments::finishCreation(CallFrame* callFrame, ArgumentsMode mode)
@@ -307,7 +304,10 @@ inline void Arguments::finishCreation(CallFrame* callFrame, ArgumentsMode mode)
             m_slowArgumentData->setBytecodeToMachineCaptureOffset(
                 codeBlock->framePointerOffsetToGetActivationRegisters());
         }
-
+        if (codeBlock->needsActivation()) {
+            RELEASE_ASSERT(callFrame->lexicalEnvironment());
+            m_lexicalEnvironment.set(callFrame->vm(), this, callFrame->lexicalEnvironment());
+        }
         // The bytecode generator omits op_tear_off_lexical_environment in cases of no
         // declared parameters, so we need to tear off immediately.
         if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
@@ -320,8 +320,8 @@ inline void Arguments::finishCreation(CallFrame* callFrame, ArgumentsMode mode)
         m_registers = nullptr;
         tearOff(callFrame);
         break;
-    } }
-        
+    }
+    }
 }
 
 inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)

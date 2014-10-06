@@ -1250,10 +1250,7 @@ LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
     LLINT_BEGIN();
     ASSERT(exec->codeBlock()->usesArguments());
     Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(VirtualRegister(pc[1].u.operand).offset()).jsValue());
-    if (JSValue activationValue = LLINT_OP_C(2).jsValue())
-        arguments->didTearOffActivation(exec, jsCast<JSLexicalEnvironment*>(activationValue));
-    else
-        arguments->tearOff(exec);
+    arguments->tearOff(exec);
     LLINT_END();
 }
 

@@ -1,3 +1,30 @@
+2014-10-06  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r174226): [JSC] Crash when running the perf test Speedometer/Full.html
+        https://bugs.webkit.org/show_bug.cgi?id=137404
+
+        Reviewed by Michael Saboff.
+
+        Update the Arguments object to recognise that it must always have an
+        environment record if the referenced callee has one, and if such is not
+        present it should not try to extract one from the callframe, as that
+        path leads to madness.
+
+        Happily this makes some of the other code more sensible, and removes a
+        bunch of unnecessary and icky logic.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        (JSC::Arguments::didTearOffActivation): Deleted.
+        * runtime/Arguments.h:
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+
 2014-10-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Unreviewed, rolling out r174319.

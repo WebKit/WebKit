@@ -372,6 +372,8 @@ void Arguments::allocateRegisterArray(VM& vm)
 
 void Arguments::tearOff(CallFrame* callFrame)
 {
+    if (m_callee->jsExecutable()->needsActivation())
+        RELEASE_ASSERT(m_lexicalEnvironment);
     if (isTornOff())
         return;
 
@@ -391,21 +393,9 @@ void Arguments::tearOff(CallFrame* callFrame)
     }
 }
 
-void Arguments::didTearOffActivation(ExecState* exec, JSLexicalEnvironment* lexicalEnvironment)
-{
-    RELEASE_ASSERT(lexicalEnvironment);
-    if (isTornOff())
-        return;
-
-    if (!m_numArguments)
-        return;
-    
-    m_lexicalEnvironment.set(exec->vm(), this, lexicalEnvironment);
-    tearOff(exec);
-}
-
 void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
 {
+    RELEASE_ASSERT(!inlineCallFrame->baselineCodeBlock()->needsActivation());
     if (isTornOff())
         return;
     
