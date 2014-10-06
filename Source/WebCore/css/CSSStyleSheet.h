@@ -27,6 +27,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -139,8 +140,10 @@ private:
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
-STYLE_SHEET_TYPE_CASTS(CSSStyleSheet)
+} // namespace WebCore
 
-} // namespace
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSStyleSheet)
+    static bool isType(const WebCore::StyleSheet& styleSheet) { return styleSheet.isCSSStyleSheet(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // CSSStyleSheet_h

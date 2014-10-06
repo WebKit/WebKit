@@ -32,6 +32,7 @@
 #include <libxslt/transform.h>
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -97,11 +98,11 @@ public:
     virtual URL baseURL() const override { return m_finalURL; }
     virtual bool isLoading() const override;
 
-    virtual bool isXSLStyleSheet() const override { return true; }
-
 private:
     XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL, bool embedded);
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL);
+
+    virtual bool isXSLStyleSheet() const override { return true; }
     
     Node* m_ownerNode;
     String m_originalURL;
@@ -120,6 +121,10 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::XSLStyleSheet)
+    static bool isType(const WebCore::StyleSheet& styleSheet) { return styleSheet.isXSLStyleSheet(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(XSLT)
 

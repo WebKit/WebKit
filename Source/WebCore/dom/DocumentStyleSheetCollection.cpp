@@ -409,14 +409,14 @@ static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet>>& sheets)
 static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i) {
-        if (!sheets[i]->isCSSStyleSheet())
+        if (!is<CSSStyleSheet>(*sheets[i]))
             continue;
-        if (sheets[i]->disabled())
+        CSSStyleSheet& sheet = downcast<CSSStyleSheet>(*sheets[i]);
+        if (sheet.disabled())
             continue;
-        CSSStyleSheet* sheet = toCSSStyleSheet(sheets[i]);
-        if (!sheet->length())
+        if (!sheet.length())
             continue;
-        result.append(sheet);
+        result.append(&sheet);
     }
 }
 

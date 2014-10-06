@@ -684,8 +684,8 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString&, RefPtr<Inspector::Protoc
         StyleSheetList& list = (*it)->styleSheets();
         for (unsigned i = 0; i < list.length(); ++i) {
             StyleSheet& styleSheet = *list.item(i);
-            if (styleSheet.isCSSStyleSheet())
-                collectStyleSheets(&toCSSStyleSheet(styleSheet), styleInfos.get());
+            if (is<CSSStyleSheet>(styleSheet))
+                collectStyleSheets(&downcast<CSSStyleSheet>(styleSheet), styleInfos.get());
         }
     }
 }

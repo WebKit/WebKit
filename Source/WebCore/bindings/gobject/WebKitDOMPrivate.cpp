@@ -140,8 +140,8 @@ WebKitDOMStyleSheet* wrap(StyleSheet* styleSheet)
 {
     ASSERT(styleSheet);
 
-    if (styleSheet->isCSSStyleSheet())
-        return WEBKIT_DOM_STYLE_SHEET(wrapCSSStyleSheet(toCSSStyleSheet(styleSheet)));
+    if (is<CSSStyleSheet>(*styleSheet))
+        return WEBKIT_DOM_STYLE_SHEET(wrapCSSStyleSheet(downcast<CSSStyleSheet>(styleSheet)));
     return wrapStyleSheet(styleSheet);
 }
 

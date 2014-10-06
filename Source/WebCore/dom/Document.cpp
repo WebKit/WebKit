@@ -4383,7 +4383,7 @@ void Document::popCurrentScript()
 void Document::applyXSLTransform(ProcessingInstruction* pi)
 {
     RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
-    processor->setXSLStyleSheet(static_cast<XSLStyleSheet*>(pi->sheet()));
+    processor->setXSLStyleSheet(downcast<XSLStyleSheet>(pi->sheet()));
     String resultMIMEType;
     String newSource;
     String resultEncoding;

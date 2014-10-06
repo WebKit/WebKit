@@ -222,10 +222,10 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& base
 void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
     if (m_isCSS)
-        toCSSStyleSheet(*m_sheet).contents().parseString(sheet);
+        downcast<CSSStyleSheet>(*m_sheet).contents().parseString(sheet);
 #if ENABLE(XSLT)
     else if (m_isXSL)
-        static_cast<XSLStyleSheet*>(m_sheet.get())->parseString(sheet);
+        downcast<XSLStyleSheet>(*m_sheet).parseString(sheet);
 #endif
 
     if (m_cachedSheet)
@@ -235,10 +235,10 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_loading = false;
 
     if (m_isCSS)
-        toCSSStyleSheet(*m_sheet).contents().checkLoaded();
+        downcast<CSSStyleSheet>(*m_sheet).contents().checkLoaded();
 #if ENABLE(XSLT)
     else if (m_isXSL)
-        static_cast<XSLStyleSheet*>(m_sheet.get())->checkLoaded();
+        downcast<XSLStyleSheet>(*m_sheet).checkLoaded();
 #endif
 }
 
