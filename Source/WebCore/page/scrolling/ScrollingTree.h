@@ -36,6 +36,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -178,11 +179,12 @@ private:
     unsigned m_fixedOrStickyNodeCount;
 };
 
-#define SCROLLING_TREE_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::ScrollingTree, value, value->predicate, value.predicate)
-
 } // namespace WebCore
 
+#define SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::ScrollingTree& tree) { return tree.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 #endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingTree_h

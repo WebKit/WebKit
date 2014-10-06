@@ -68,9 +68,9 @@ private:
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
 };
 
-SCROLLING_TREE_TYPE_CASTS(RemoteScrollingTree, isRemoteScrollingTree());
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebKit::RemoteScrollingTree, isRemoteScrollingTree());
 
 #endif // ENABLE(ASYNC_SCROLLING)
 

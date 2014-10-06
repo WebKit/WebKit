@@ -92,7 +92,7 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEv
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, toThreadedScrollingTree(scrollingTree()), wheelEvent));
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, downcast<ThreadedScrollingTree>(scrollingTree()), wheelEvent));
     return true;
 }
 
@@ -116,7 +116,7 @@ void ScrollingCoordinatorMac::commitTreeState()
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
     OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, toThreadedScrollingTree(scrollingTree()), treeState.release()));
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, downcast<ThreadedScrollingTree>(scrollingTree()), treeState.release()));
 
     updateTiledScrollingIndicator();
 }

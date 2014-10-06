@@ -1,3 +1,16 @@
+2014-10-06  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for ScrollingTree subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137449
+
+        Reviewed by Ryosuke Niwa.
+
+        Use is<>() / downcast<>() for ScrollingTree subclasses.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+
 2014-10-05  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for ScrollingCoordinator / ScrollingStateNode subclasses
