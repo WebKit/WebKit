@@ -1,3 +1,9 @@
+2014-10-06  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Skip remaining failing media tests after adding audio devices to the bots Part 2.
+
+        * platform/win/TestExpectations:
+
 2014-10-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Add a deprecation warning for Element.webkitMatchesSelector
