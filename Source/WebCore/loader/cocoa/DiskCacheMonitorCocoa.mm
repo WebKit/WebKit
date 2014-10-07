@@ -110,8 +110,10 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
 #if USE(WEB_THREAD)
     CFCachedURLResponseCallBackBlock blockToRun = ^ (CFCachedURLResponseRef response)
     {
+        CFRetain(response);
         WebThreadRun(^ {
             block(response);
+            CFRelease(response);
         });
     };
 #else
