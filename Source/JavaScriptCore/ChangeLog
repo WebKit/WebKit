@@ -1,3 +1,17 @@
+2014-10-06  Andy Estes  <aestes@apple.com>
+
+        Objective-C objects must be fully defined when used in a WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=137479
+
+        Reviewed by Mark Rowe.
+
+        When compiling an Objective-C++ file under ARC, @class types are considered non-trivially destructable, so
+        Vector needs to see their definition in order to call their destructor.
+
+        See <http://clang.llvm.org/docs/AutomaticReferenceCounting.html#ownership-qualified-fields-of-structs-and-unions> for details.
+
+        * API/ObjcRuntimeExtras.h: Imported <objc/Protocol.h>.
+
 2014-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use of 1-bit Enum type behaves improperly

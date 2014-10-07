@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <objc/Protocol.h>
 #import <objc/runtime.h>
 #import <wtf/HashSet.h>
 #import <wtf/Vector.h>
