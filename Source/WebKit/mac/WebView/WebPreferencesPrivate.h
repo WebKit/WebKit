@@ -220,9 +220,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 
-- (BOOL)multithreadedWebGLEnabled;
-- (void)setMultithreadedWebGLEnabled:(BOOL)enabled;
-
 - (BOOL)forceSoftwareWebGLRendering;
 - (void)setForceSoftwareWebGLRendering:(BOOL)forced;
 

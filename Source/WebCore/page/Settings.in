@@ -100,7 +100,6 @@ experimentalNotificationsEnabled initial=false
 webGLEnabled initial=false
 webGLErrorsToConsoleEnabled initial=true
 openGLMultisamplingEnabled initial=true
-multithreadedWebGLEnabled initial=false
 privilegedWebGLExtensionsEnabled initial=false
 forceSoftwareWebGLRendering initial=false
 accelerated2dCanvasEnabled initial=false

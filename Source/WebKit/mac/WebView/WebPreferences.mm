@@ -494,7 +494,6 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
@@ -1872,16 +1871,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGLEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGLEnabledPreferenceKey];
-}
-
-- (BOOL)multithreadedWebGLEnabled
-{
-    return [self _boolValueForKey:WebKitMultithreadedWebGLEnabledPreferenceKey];
-}
-
-- (void)setMultithreadedWebGLEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitMultithreadedWebGLEnabledPreferenceKey];
 }
 
 - (BOOL)forceSoftwareWebGLRendering

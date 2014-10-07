@@ -1,3 +1,21 @@
+2014-09-19  Dean Jackson  <dino@apple.com>
+
+        Multithreaded WebGL is a bad idea - remove it
+        https://bugs.webkit.org/show_bug.cgi?id=136964
+        <rdar://problem/18399858>
+
+        Reviewed by Brent Fulgham.
+
+        Remove the setting to allow multithreaded WebGL.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMultithreadedWebGLEnabled): Deleted.
+        (WKPreferencesGetMultithreadedWebGLEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r172919): WebKitPluginProcess fails to scan GTK+2 plugins after r172919.

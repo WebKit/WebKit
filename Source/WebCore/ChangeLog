@@ -1,3 +1,22 @@
+2014-09-19  Dean Jackson  <dino@apple.com>
+
+        Multithreaded WebGL is a bad idea - remove it
+        https://bugs.webkit.org/show_bug.cgi?id=136964
+        <rdar://problem/18399858>
+
+        Reviewed by Brent Fulgham.
+
+        We should not allow multithreaded GL access. Remove the
+        feature.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        * page/Settings.in:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2014-09-26  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Fix support for the initial-letter CSS property to first-letter

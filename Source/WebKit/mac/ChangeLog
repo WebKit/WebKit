@@ -1,3 +1,22 @@
+2014-09-19  Dean Jackson  <dino@apple.com>
+
+        Multithreaded WebGL is a bad idea - remove it
+        https://bugs.webkit.org/show_bug.cgi?id=136964
+        <rdar://problem/18399858>
+
+        Reviewed by Brent Fulgham.
+
+        Remove the setting to allow multithreaded WebGL.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences multithreadedWebGLEnabled]): Deleted.
+        (-[WebPreferences setMultithreadedWebGLEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r173695.
