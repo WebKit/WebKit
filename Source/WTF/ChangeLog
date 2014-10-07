@@ -1,3 +1,50 @@
+2014-10-06  Darin Adler  <darin@apple.com>
+
+        Make StringView check the lifetime of the StringImpl it's created from
+        https://bugs.webkit.org/show_bug.cgi?id=137202
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.vcxproj/WTF.vcxproj: Added StringView.cpp.
+        * WTF.vcxproj/WTF.vcxproj.filters: Added StringView.cpp.
+        * WTF.xcodeproj/project.pbxproj: Added StringView.cpp.
+        * wtf/CMakeLists.txt: Added StringView.cpp.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl): Call StringView::invalidate.
+
+        * wtf/text/StringView.cpp: Added.
+        (WTF::underlyingStrings): Returns map from StringImpl to the underlying
+        string object used by StringView to track validity.
+        (WTF::StringView::invalidate): Mark the underlying string object invalid,
+        and remove it from the map, so any future StringImpl will get a new one,
+        even if it has the same pointer.
+        (WTF::StringView::underlyingStringIsValid): Return true only if the
+        underlying string is still valid.
+        (WTF::StringView::setUnderlyingString): Create and manage reference counts
+        of underlying string objects as needed.
+
+        * wtf/text/StringView.h: Moved function bodies out of the class definition,
+        so we can now read a clean class definition to see the class design and what
+        functions it offers.
+        (WTF::StringView::StringView): Added a comment to the default constructor.
+        Also added copy and move constructors so they can call setUnderlyingString
+        and assert the underlying string is valid as needed, replacing the
+        compiler-generated ones.
+        (WTF::StringView::~StringView): Added a call to setUnderlyingString.
+        (WTF::StringView::operator=): Added these assignment operators with the same
+        job as the constructors above.
+        (WTF::StringView::initialize): Added a comment.
+        (WTF::StringView::characters8): Added an assertion that the underlying
+        string is valid.
+        (WTF::StringView::characters16): Ditto.
+        (WTF::StringView::substring): Added code to propagate the underlying string
+        from the original string to the substring.
+        (WTF::StringView::invalidate): Inline empty version of this function for
+        non-debug builds.
+        (WTF::StringView::underlyingStringIsValid): Ditto.
+        (WTF::StringView::setUnderlyingString): Ditto.
+
 2014-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] DateMath's calculateUTFOffset does not account for DST.

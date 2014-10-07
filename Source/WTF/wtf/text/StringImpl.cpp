@@ -105,6 +105,8 @@ StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
 
+    StringView::invalidate(*this);
+
     STRING_STATS_REMOVE_STRING(*this);
 
     if (isAtomic() && m_length)

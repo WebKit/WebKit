@@ -60,6 +60,9 @@
     <ClCompile Include="..\wtf\text\StringStatics.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\text\StringView.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\text\AtomicString.cpp">
       <Filter>text</Filter>
     </ClCompile>

@@ -201,6 +201,7 @@ set(WTF_SOURCES
     text/StringBuilder.cpp
     text/StringImpl.cpp
     text/StringStatics.cpp
+    text/StringView.cpp
     text/WTFString.cpp
 
     threads/BinarySemaphore.cpp

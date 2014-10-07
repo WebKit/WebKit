@@ -84,6 +84,7 @@
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93AC91A818942FC400244939 /* LChar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC91A718942FC400244939 /* LChar.h */; };
 		93B1AA80180E5AF3004A2F05 /* PassRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B1AA7F180E5AF3004A2F05 /* PassRef.h */; };
+		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
 		9BD8F40B176C2B470002D865 /* AtomicStringTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */; };
@@ -373,6 +374,7 @@
 		93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringViewCF.cpp; path = cf/StringViewCF.cpp; sourceTree = "<group>"; };
 		93AC91A718942FC400244939 /* LChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LChar.h; sourceTree = "<group>"; };
 		93B1AA7F180E5AF3004A2F05 /* PassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassRef.h; sourceTree = "<group>"; };
+		93F1993D19D7958D00C2390B /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
@@ -954,12 +956,13 @@
 				A8A47327151A825B004123FF /* StringHash.h */,
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
+				1A6EB1DF187D0BD30030126F /* StringView.h */,
+				93F1993D19D7958D00C2390B /* StringView.cpp */,
 				A8A4732A151A825B004123FF /* StringOperators.h */,
 				A8A4732B151A825B004123FF /* StringStatics.cpp */,
 				A8A4732C151A825B004123FF /* TextPosition.h */,
 				A8A4732D151A825B004123FF /* WTFString.cpp */,
 				A8A4732E151A825B004123FF /* WTFString.h */,
-				1A6EB1DF187D0BD30030126F /* StringView.h */,
 			);
 			path = text;
 			sourceTree = "<group>";
@@ -1351,6 +1354,7 @@
 				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
 				A8A473F7151A825B004123FF /* OSAllocatorPosix.cpp in Sources */,
+				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,
 				A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
