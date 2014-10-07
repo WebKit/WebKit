@@ -38,14 +38,15 @@ namespace WTF {
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.
 
 struct StringView::UnderlyingString {
-    std::atomic_uint refCount { 1 };
+    std::atomic_uint refCount;
     bool isValid { true };
     const StringImpl& string;
     explicit UnderlyingString(const StringImpl&);
 };
 
 StringView::UnderlyingString::UnderlyingString(const StringImpl& string)
-    : string(string)
+    : refCount(1)
+    , string(string)
 {
 }
 
