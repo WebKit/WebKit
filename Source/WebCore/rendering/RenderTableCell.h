@@ -318,4 +318,6 @@ inline RenderTableCell* RenderTableRow::lastCell() const
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCell, isTableCell())
+
 #endif // RenderTableCell_h

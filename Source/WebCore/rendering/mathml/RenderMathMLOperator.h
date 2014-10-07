@@ -189,9 +189,9 @@ protected:
     virtual void SetOperatorProperties();
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLOperator, isRenderMathMLOperator())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLOperator, isRenderMathMLOperator())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLOperator_h

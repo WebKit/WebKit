@@ -59,4 +59,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderFieldset, isFieldset())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFieldset, isFieldset())
+
 #endif // RenderFieldset_h

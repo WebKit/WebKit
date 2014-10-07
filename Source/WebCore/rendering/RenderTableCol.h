@@ -102,6 +102,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderTableCol, isRenderTableCol())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCol, isRenderTableCol())
+
+#endif // RenderTableCol_h

@@ -69,8 +69,6 @@ private:
     virtual const char* renderName() const override;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())
-
 class RenderMathMLTable final : public RenderTable {
 public:
     explicit RenderMathMLTable(Element& element, PassRef<RenderStyle> style)
@@ -85,12 +83,14 @@ private:
     virtual const char* renderName() const override { return "RenderMathMLTable"; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLTable, isRenderMathMLTable())
-
 // Parsing functions for MathML Length values
 bool parseMathMLLength(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
 bool parseMathMLNamedSpace(const String&, LayoutUnit&, const RenderStyle*, bool allowNegative = true);
-}
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLBlock, isRenderMathMLBlock())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLTable, isRenderMathMLTable())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLBlock_h

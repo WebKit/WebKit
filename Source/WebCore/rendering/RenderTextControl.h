@@ -109,7 +109,8 @@ public:
 
 };
 
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControl, isTextControl())
 
 #endif // RenderTextControl_h

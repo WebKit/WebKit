@@ -767,4 +767,6 @@ inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBox, isBox())
+
 #endif // RenderBox_h

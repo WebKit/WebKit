@@ -67,4 +67,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderSnapshottedPlugIn, isSnapshottedPlugIn())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSnapshottedPlugIn, isSnapshottedPlugIn())
+
 #endif // RenderSnapshottedPlugIn_h

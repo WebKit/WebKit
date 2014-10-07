@@ -456,4 +456,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderView, isRenderView())
+
 #endif // RenderView_h

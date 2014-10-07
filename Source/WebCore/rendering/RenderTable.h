@@ -385,4 +385,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderTable, isTable())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isTable())
+
 #endif // RenderTable_h

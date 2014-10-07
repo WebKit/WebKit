@@ -126,4 +126,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGRoot, isSVGRoot())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGRoot, isSVGRoot())
+
 #endif // RenderSVGRoot_h

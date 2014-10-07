@@ -132,4 +132,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderImage, isRenderImage())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderImage, isRenderImage())
+
 #endif // RenderImage_h

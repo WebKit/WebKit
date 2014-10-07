@@ -538,4 +538,6 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock&, Render
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBlock, isRenderBlock())
+
 #endif // RenderBlock_h

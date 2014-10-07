@@ -55,8 +55,10 @@ protected:
 
 RENDER_OBJECT_TYPE_CASTS(RenderFullScreen, isRenderFullScreen())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFullScreen, isRenderFullScreen())
 
-#endif
+#endif // ENABLE(FULLSCREEN_API)
+
+#endif // RenderFullScreen_h

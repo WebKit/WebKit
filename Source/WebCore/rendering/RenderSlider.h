@@ -55,4 +55,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderSlider, isSlider())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSlider, isSlider())
+
 #endif // RenderSlider_h

@@ -59,9 +59,9 @@ private:
     bool m_containsElement;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLToken, isRenderMathMLToken())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLToken, isRenderMathMLToken())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLToken_h

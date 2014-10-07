@@ -186,7 +186,7 @@ inline RenderAncestorConstIteratorAdapter<T> ancestorsOfType(const RenderObject&
 template <typename T>
 inline RenderAncestorIteratorAdapter<T> lineageOfType(RenderObject& first)
 {
-    if (isRendererOfType<const T>(first))
+    if (isRendererOfType<T>(first))
         return RenderAncestorIteratorAdapter<T>(static_cast<T*>(&first));
     return ancestorsOfType<T>(first);
 }
@@ -194,7 +194,7 @@ inline RenderAncestorIteratorAdapter<T> lineageOfType(RenderObject& first)
 template <typename T>
 inline RenderAncestorConstIteratorAdapter<T> lineageOfType(const RenderObject& first)
 {
-    if (isRendererOfType<const T>(first))
+    if (isRendererOfType<T>(first))
         return RenderAncestorConstIteratorAdapter<T>(static_cast<const T*>(&first));
     return ancestorsOfType<T>(first);
 }

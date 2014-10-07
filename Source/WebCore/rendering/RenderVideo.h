@@ -94,5 +94,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderVideo, isVideo())
 
 } // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderVideo, isVideo())
+
+#endif // ENABLE(VIDEO)
 #endif // RenderVideo_h

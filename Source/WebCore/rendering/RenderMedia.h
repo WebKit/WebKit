@@ -60,6 +60,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderMedia, isMedia())
 
 } // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMedia, isMedia())
+
+#endif // ENABLE(VIDEO)
 
 #endif // RenderMedia_h

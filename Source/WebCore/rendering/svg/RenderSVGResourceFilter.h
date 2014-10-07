@@ -99,6 +99,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceFilter, isSVGResourceFilter())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceFilter, isSVGResourceFilter())
+
+#endif // RenderSVGResourceFilter_h

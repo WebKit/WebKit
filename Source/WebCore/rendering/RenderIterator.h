@@ -72,6 +72,10 @@ private:
     const T* m_current;
 };
 
+// Similar to WTF::is<>() but without the static_assert() making sure the check is necessary.
+template <typename T, typename U>
+inline bool isRendererOfType(const U& renderer) { return TypeCastTraits<const T, const U>::isOfType(renderer); }
+
 // Traversal helpers
 
 namespace RenderTraversal {
@@ -80,7 +84,7 @@ template <typename T, typename U>
 inline T* firstChild(U& current)
 {
     RenderObject* object = current.firstChild();
-    while (object && !isRendererOfType<const T>(*object))
+    while (object && !isRendererOfType<T>(*object))
         object = object->nextSibling();
     return static_cast<T*>(object);
 }
@@ -89,7 +93,7 @@ template <typename T, typename U>
 inline T* lastChild(U& current)
 {
     RenderObject* object = current.lastChild();
-    while (object && !isRendererOfType<const T>(*object))
+    while (object && !isRendererOfType<T>(*object))
         object = object->previousSibling();
     return static_cast<T*>(object);
 }
@@ -98,7 +102,7 @@ template <typename T, typename U>
 inline T* nextSibling(U& current)
 {
     RenderObject* object = current.nextSibling();
-    while (object && !isRendererOfType<const T>(*object))
+    while (object && !isRendererOfType<T>(*object))
         object = object->nextSibling();
     return static_cast<T*>(object);
 }
@@ -107,7 +111,7 @@ template <typename T, typename U>
 inline T* previousSibling(U& current)
 {
     RenderObject* object = current.previousSibling();
-    while (object && !isRendererOfType<const T>(*object))
+    while (object && !isRendererOfType<T>(*object))
         object = object->previousSibling();
     return static_cast<T*>(object);
 }
@@ -115,8 +119,8 @@ inline T* previousSibling(U& current)
 template <typename T>
 inline T* findAncestorOfType(const RenderObject& current)
 {
-    for (auto ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
-        if (isRendererOfType<const T>(*ancestor))
+    for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (isRendererOfType<T>(*ancestor))
             return static_cast<T*>(ancestor);
     }
     return nullptr;

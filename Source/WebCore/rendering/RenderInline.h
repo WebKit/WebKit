@@ -184,4 +184,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderInline, isRenderInline())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderInline, isRenderInline())
+
 #endif // RenderInline_h

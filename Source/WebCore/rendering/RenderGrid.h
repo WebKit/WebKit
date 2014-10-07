@@ -135,6 +135,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderGrid, isRenderGrid())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderGrid, isRenderGrid())
+
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
 
 #endif // RenderGrid_h

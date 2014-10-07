@@ -97,6 +97,8 @@ Renderer* getRenderSVGResourceById(Document& document, const AtomicString& id)
     return nullptr;
 }
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceContainer, isSVGResourceContainer())
+
+#endif // RenderSVGResourceContainer_h

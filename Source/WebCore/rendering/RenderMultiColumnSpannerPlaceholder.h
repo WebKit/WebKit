@@ -59,4 +59,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnSpannerPlaceholder, isRenderMultiColum
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnSpannerPlaceholder, isRenderMultiColumnSpannerPlaceholder())
+
 #endif // RenderMultiColumnSpannerPlaceholder_h

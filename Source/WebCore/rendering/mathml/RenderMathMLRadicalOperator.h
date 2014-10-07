@@ -48,9 +48,9 @@ private:
     void SetOperatorProperties() override;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLRadicalOperator, isRenderMathMLRadicalOperator())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRadicalOperator, isRenderMathMLRadicalOperator())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLRadicalOperator_h

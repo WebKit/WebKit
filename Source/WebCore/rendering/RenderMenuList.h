@@ -154,6 +154,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderMenuList, isMenuList())
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMenuList, isMenuList())
 
 #endif

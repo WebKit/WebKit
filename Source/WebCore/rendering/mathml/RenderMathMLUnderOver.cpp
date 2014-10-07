@@ -55,9 +55,9 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, PassRef<RenderSty
 RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
 {
     RenderObject* base = firstChild();
-    if (!base || !base->isRenderMathMLBlock())
-        return 0;
-    return toRenderMathMLBlock(base)->unembellishedOperator();
+    if (!is<RenderMathMLBlock>(base))
+        return nullptr;
+    return downcast<RenderMathMLBlock>(*base).unembellishedOperator();
 }
 
 int RenderMathMLUnderOver::firstLineBaseline() const

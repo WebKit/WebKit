@@ -53,6 +53,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderTextControlMultiLine, isTextArea())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlMultiLine, isTextArea())
+
+#endif // RenderTextControlMultiLine_h

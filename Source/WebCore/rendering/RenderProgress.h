@@ -62,5 +62,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderProgress, isProgress())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderProgress, isProgress())
+
 #endif // RenderProgress_h
 

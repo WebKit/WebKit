@@ -179,8 +179,6 @@ private:
     bool m_isValid : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderRegion, isRenderRegion())
-
 class CurrentRenderRegionMaintainer {
     WTF_MAKE_NONCOPYABLE(CurrentRenderRegionMaintainer);
 public:
@@ -193,5 +191,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRegion, isRenderRegion())
 
 #endif // RenderRegion_h

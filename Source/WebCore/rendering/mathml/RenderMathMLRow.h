@@ -50,9 +50,9 @@ private:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLRow, isRenderMathMLRow())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRow, isRenderMathMLRow())
 
 #endif // ENABLE(MATHML)
 #endif // RenderMathMLRow_h

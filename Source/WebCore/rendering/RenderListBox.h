@@ -165,4 +165,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderListBox, isListBox())
 
 } // namepace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListBox, isListBox())
+
 #endif // RenderListBox_h

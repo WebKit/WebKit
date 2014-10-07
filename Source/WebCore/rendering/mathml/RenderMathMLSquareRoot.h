@@ -47,7 +47,9 @@ private:
     virtual const char* renderName() const override { return "RenderMathMLSquareRoot"; }
 };
     
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLSquareRoot, isRenderMathMLSquareRoot())
 
 #endif // ENABLE(MATHML)
 

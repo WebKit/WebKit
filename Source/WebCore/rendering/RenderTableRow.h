@@ -143,4 +143,6 @@ inline RenderTableRow* RenderTableRow::previousRow() const
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isTableRow())
+
 #endif // RenderTableRow_h

@@ -107,6 +107,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderSVGText, isSVGText())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGText, isSVGText())
+
+#endif // RenderSVGText_h

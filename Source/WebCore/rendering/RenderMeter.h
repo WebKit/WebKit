@@ -51,7 +51,9 @@ RENDER_OBJECT_TYPE_CASTS(RenderMeter, isMeter())
 
 } // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMeter, isMeter())
+
+#endif // ENABLE(METER_ELEMENT)
 
 #endif // RenderMeter_h
 

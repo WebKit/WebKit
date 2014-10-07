@@ -66,4 +66,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderIFrame, isRenderIFrame())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderIFrame, isRenderIFrame())
+
 #endif // RenderIFrame_h

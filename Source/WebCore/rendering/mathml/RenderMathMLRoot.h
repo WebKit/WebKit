@@ -71,8 +71,6 @@ private:
     LayoutUnit m_extraAscender;
     float m_degreeBottomRaisePercent;
 };
-    
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLRoot, isRenderMathMLRoot())
 
 // These are specific wrappers for the index and base, that ask the parent to restructure the renderers after child removal.
 class RenderMathMLRootWrapper : public RenderMathMLRow {
@@ -91,9 +89,10 @@ private:
     virtual const char* renderName() const override { return "RenderMathMLRootWrapper"; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLRootWrapper, isRenderMathMLRootWrapper())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRoot, isRenderMathMLRoot())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLRootWrapper, isRenderMathMLRootWrapper())
 
 #endif // ENABLE(MATHML)
 

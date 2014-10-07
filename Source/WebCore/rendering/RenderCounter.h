@@ -66,6 +66,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderCounter, isCounter())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isCounter())
+
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showCounterRendererTree(const WebCore::RenderObject*, const char* counterName = 0);

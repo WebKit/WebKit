@@ -636,4 +636,6 @@ inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBlockFlow, isRenderBlockFlow())
+
 #endif // RenderBlockFlow_h

@@ -38,6 +38,7 @@
 #include "StyleInheritedData.h"
 #include "TextAffinity.h"
 #include <wtf/HashSet.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -1030,9 +1031,6 @@ private:
     void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
 };
 
-template <typename Type> bool isRendererOfType(const RenderObject&);
-template <> inline bool isRendererOfType<const RenderObject>(const RenderObject&) { return true; }
-
 inline Frame& RenderObject::frame() const
 {
     return *document().frame();
@@ -1128,11 +1126,16 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
 }
 
+// FIXME: Remove this macro and use SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT() instead.
 #define RENDER_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
-    template <> inline bool isRendererOfType<const ToValueTypeName>(const RenderObject& renderer) { return renderer.predicate; } \
-    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, renderer, isRendererOfType<const ToValueTypeName>(*renderer), isRendererOfType<const ToValueTypeName>(renderer))
+    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, renderer, is<ToValueTypeName>(*renderer), is<ToValueTypeName>(renderer))
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.

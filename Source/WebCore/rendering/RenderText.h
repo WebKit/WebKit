@@ -259,4 +259,6 @@ inline RenderText* Text::renderer() const
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isText())
+
 #endif // RenderText_h

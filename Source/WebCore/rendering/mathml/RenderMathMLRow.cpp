@@ -58,8 +58,8 @@ RenderPtr<RenderMathMLRow> RenderMathMLRow::createAnonymousWithParentRenderer(Re
 void RenderMathMLRow::updateOperatorProperties()
 {
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderMathMLBlock()) {
-            if (auto renderOperator = toRenderMathMLBlock(child)->unembellishedOperator())
+        if (is<RenderMathMLBlock>(*child)) {
+            if (auto* renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator())
                 renderOperator->updateOperatorProperties();
         }
     }
@@ -71,26 +71,26 @@ void RenderMathMLRow::layout()
     int stretchHeightAboveBaseline = 0, stretchDepthBelowBaseline = 0;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->needsLayout())
-            toRenderElement(child)->layout();
-        if (child->isRenderMathMLBlock()) {
+            downcast<RenderElement>(*child).layout();
+        if (is<RenderMathMLBlock>(*child)) {
             // We skip the stretchy operators as they must not be included in the computation of the stretch size.
-            auto renderOperator = toRenderMathMLBlock(child)->unembellishedOperator();
+            auto* renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator();
             if (renderOperator && renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy))
                 continue;
         }
         LayoutUnit childHeightAboveBaseline = 0, childDepthBelowBaseline = 0;
-        if (child->isRenderMathMLBlock()) {
-            RenderMathMLBlock* mathmlChild = toRenderMathMLBlock(child);
-            childHeightAboveBaseline = mathmlChild->firstLineBaseline();
+        if (is<RenderMathMLBlock>(*child)) {
+            RenderMathMLBlock& mathmlChild = downcast<RenderMathMLBlock>(*child);
+            childHeightAboveBaseline = mathmlChild.firstLineBaseline();
             if (childHeightAboveBaseline == -1)
-                childHeightAboveBaseline = mathmlChild->logicalHeight();
-            childDepthBelowBaseline = mathmlChild->logicalHeight() - childHeightAboveBaseline;
-        } else if (child->isRenderMathMLTable()) {
-            RenderMathMLTable* tableChild = toRenderMathMLTable(child);
-            childHeightAboveBaseline = tableChild->firstLineBaseline();
-            childDepthBelowBaseline = tableChild->logicalHeight() - childHeightAboveBaseline;
-        } else if (child->isBox()) {
-            childHeightAboveBaseline = toRenderBox(child)->logicalHeight();
+                childHeightAboveBaseline = mathmlChild.logicalHeight();
+            childDepthBelowBaseline = mathmlChild.logicalHeight() - childHeightAboveBaseline;
+        } else if (is<RenderMathMLTable>(*child)) {
+            RenderMathMLTable& tableChild = downcast<RenderMathMLTable>(*child);
+            childHeightAboveBaseline = tableChild.firstLineBaseline();
+            childDepthBelowBaseline = tableChild.logicalHeight() - childHeightAboveBaseline;
+        } else if (is<RenderBox>(*child)) {
+            childHeightAboveBaseline = downcast<RenderBox>(*child).logicalHeight();
             childDepthBelowBaseline = 0;
         }
         stretchHeightAboveBaseline = std::max<LayoutUnit>(stretchHeightAboveBaseline, childHeightAboveBaseline);

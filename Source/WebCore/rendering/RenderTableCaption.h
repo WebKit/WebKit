@@ -48,4 +48,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderTableCaption, isTableCaption())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCaption, isTableCaption())
+
 #endif // RenderTableCaption_h

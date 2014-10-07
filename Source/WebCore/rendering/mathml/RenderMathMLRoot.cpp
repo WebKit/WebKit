@@ -35,6 +35,7 @@
 #include "PaintInfo.h"
 #include "RenderIterator.h"
 #include "RenderMathMLRadicalOperator.h"
+#include "RenderMathMLSquareRoot.h"
 
 namespace WebCore {
     
@@ -67,25 +68,25 @@ RenderMathMLRoot::RenderMathMLRoot(Document& document, PassRef<RenderStyle> styl
 RenderMathMLRootWrapper* RenderMathMLRoot::baseWrapper() const
 {
     ASSERT(!isEmpty());
-    return toRenderMathMLRootWrapper(lastChild());
+    return downcast<RenderMathMLRootWrapper>(lastChild());
 }
 
 RenderMathMLBlock* RenderMathMLRoot::radicalWrapper() const
 {
     ASSERT(!isEmpty());
-    return toRenderMathMLBlock(lastChild()->previousSibling());
+    return downcast<RenderMathMLBlock>(lastChild()->previousSibling());
 }
 
 RenderMathMLRootWrapper* RenderMathMLRoot::indexWrapper() const
 {
     ASSERT(!isEmpty());
-    return isRenderMathMLSquareRoot() ? nullptr : toRenderMathMLRootWrapper(firstChild());
+    return is<RenderMathMLSquareRoot>(*this) ? nullptr : downcast<RenderMathMLRootWrapper>(firstChild());
 }
 
 RenderMathMLRadicalOperator* RenderMathMLRoot::radicalOperator() const
 {
     ASSERT(!isEmpty());
-    return toRenderMathMLRadicalOperator(radicalWrapper()->firstChild());
+    return downcast<RenderMathMLRadicalOperator>(radicalWrapper()->firstChild());
 }
 
 void RenderMathMLRoot::restructureWrappers()
@@ -358,7 +359,7 @@ RenderObject* RenderMathMLRootWrapper::removeChild(RenderObject& child)
     RenderObject* next = RenderMathMLBlock::removeChild(child);
 
     if (!(beingDestroyed() || documentBeingDestroyed()))
-        toRenderMathMLRoot(parent())->restructureWrappers();
+        downcast<RenderMathMLRoot>(*parent()).restructureWrappers();
 
     return next;
 }

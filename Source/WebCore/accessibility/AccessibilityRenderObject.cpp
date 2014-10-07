@@ -3536,18 +3536,18 @@ bool AccessibilityRenderObject::isMathOperator() const
 
 bool AccessibilityRenderObject::isMathFenceOperator() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLOperator())
+    if (!is<RenderMathMLOperator>(m_renderer))
         return false;
 
-    return toRenderMathMLOperator(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Fence);
+    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Fence);
 }
 
 bool AccessibilityRenderObject::isMathSeparatorOperator() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLOperator())
+    if (!is<RenderMathMLOperator>(m_renderer))
         return false;
 
-    return toRenderMathMLOperator(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Separator);
+    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Separator);
 }
     
 bool AccessibilityRenderObject::isMathText() const
@@ -3823,10 +3823,10 @@ void AccessibilityRenderObject::mathPostscripts(AccessibilityMathMultiscriptPair
 
 int AccessibilityRenderObject::mathLineThickness() const
 {
-    if (!isMathFraction())
+    if (!is<RenderMathMLFraction>(m_renderer))
         return -1;
     
-    return toRenderMathMLFraction(m_renderer)->lineThickness();
+    return downcast<RenderMathMLFraction>(*m_renderer).lineThickness();
 }
 
 #endif

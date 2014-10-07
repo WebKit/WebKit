@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-template <typename ExpectedType, typename ArgType>
+template <typename ExpectedType, typename ArgType, bool isBaseType = std::is_base_of<ExpectedType, ArgType>::value>
 struct TypeCastTraits {
     static bool isOfType(ArgType&)
     {
@@ -44,9 +44,11 @@ struct TypeCastTraits {
     }
 };
 
-template <typename ExpectedType>
-struct TypeCastTraits<ExpectedType, ExpectedType> {
-    static bool isOfType(ExpectedType&) { return true; }
+// Template specialization for the case where ExpectedType is a base of ArgType,
+// so we can return return true unconditionally.
+template <typename ExpectedType, typename ArgType>
+struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
+    static bool isOfType(ArgType&) { return true; }
 };
 
 // Type checking function, to use before casting with downcast<>().
@@ -83,7 +85,7 @@ template<typename Target, typename Source> inline typename std::conditional<std:
 #define SPECIALIZE_TYPE_TRAITS_BEGIN(ClassName) \
 namespace WTF { \
 template <typename ArgType> \
-class TypeCastTraits<const ClassName, ArgType> { \
+class TypeCastTraits<const ClassName, ArgType, false /* isBaseType */> { \
 public: \
     static bool isOfType(ArgType& source) { return isType(source); } \
 private:
@@ -94,6 +96,7 @@ private:
 
 } // namespace WTF
 
+using WTF::TypeCastTraits;
 using WTF::is;
 using WTF::downcast;
 

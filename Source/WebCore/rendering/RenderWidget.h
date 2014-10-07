@@ -108,4 +108,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderWidget, isWidget())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isWidget())
+
 #endif // RenderWidget_h

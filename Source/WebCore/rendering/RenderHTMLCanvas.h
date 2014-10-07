@@ -53,4 +53,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderHTMLCanvas, isCanvas())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderHTMLCanvas, isCanvas())
+
 #endif // RenderHTMLCanvas_h

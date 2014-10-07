@@ -76,4 +76,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextFragment, isText() && toRenderText(renderer).
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextFragment, isText() && toRenderText(renderer).isTextFragment())
+
 #endif // RenderTextFragment_h

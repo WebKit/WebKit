@@ -57,6 +57,8 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderSVGPath, isSVGPath())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())
+
+#endif // RenderSVGPath_h

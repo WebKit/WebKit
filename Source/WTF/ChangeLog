@@ -1,3 +1,21 @@
+2014-10-06  Christophe Dumez  <cdumez@apple.com>
+
+        Add is<>() / downcast<>() support for RenderObject subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137424
+
+        Reviewed by Benjamin Poulain.
+
+        Handle correctly calling TypeCastTraits<ExpectedType, ArgType>::isOfType(ArgType&)
+        with ExpectedType being a base class of ArgType (or the same as ArgType). The
+        previous template specialization was only meant to support the case where
+        ExpectedType is the same as ArgType but even that wasn't working as the compiler
+        would complain about ambiguous partial specializations. Since this is needed by
+        RenderTraversal functions, this patch adds an extra isBaseType template parameter
+        to TypeCastTraits to resolve the ambiguity and relies on std::is_base_of for the
+        detection.
+
+        * wtf/TypeCasts.h:
+
 2014-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Project file gardening.

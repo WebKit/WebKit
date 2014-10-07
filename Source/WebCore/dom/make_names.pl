@@ -644,7 +644,7 @@ class $class;
 }
 namespace WTF {
 template <typename ArgType>
-class TypeCastTraits<const WebCore::$class, ArgType> {
+class TypeCastTraits<const WebCore::$class, ArgType, false /* isBaseType */> {
 public:
     static bool isOfType(ArgType& node) { return checkTagName(node); }
 private:

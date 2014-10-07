@@ -410,4 +410,6 @@ template <> struct ValueToString<RenderRegion*> {
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlowThread, isRenderFlowThread())
+
 #endif // RenderFlowThread_h

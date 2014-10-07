@@ -65,8 +65,6 @@ private:
     WrapperType m_kind;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLScriptsWrapper, isRenderMathMLScriptsWrapper())
-
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
 
@@ -105,9 +103,10 @@ private:
     RenderMathMLScriptsWrapper* m_baseWrapper;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMathMLScripts, isRenderMathMLScripts())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLScriptsWrapper, isRenderMathMLScriptsWrapper())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLScripts, isRenderMathMLScripts())
 
 #endif // ENABLE(MATHML)
 

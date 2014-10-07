@@ -53,15 +53,15 @@ PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tag
 void MathMLTextElement::didAttachRenderers()
 {
     MathMLElement::didAttachRenderers();
-    if (renderer() && renderer()->isRenderMathMLToken())
-        toRenderMathMLToken(renderer())->updateTokenContent();
+    if (is<RenderMathMLToken>(renderer()))
+        downcast<RenderMathMLToken>(*renderer()).updateTokenContent();
 }
 
 void MathMLTextElement::childrenChanged(const ChildChange& change)
 {
     MathMLElement::childrenChanged(change);
-    if (renderer() && renderer()->isRenderMathMLToken())
-        toRenderMathMLToken(renderer())->updateTokenContent();
+    if (is<RenderMathMLToken>(renderer()))
+        downcast<RenderMathMLToken>(*renderer()).updateTokenContent();
 }
 
 RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<RenderStyle> style)

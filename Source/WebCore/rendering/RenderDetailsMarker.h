@@ -47,9 +47,11 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderDetailsMarker, isDetailsMarker())
 
-}
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isDetailsMarker())
+
+#endif // ENABLE(DETAILS_ELEMENT)
 
 #endif // RenderDetailsMarker_h
 

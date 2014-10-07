@@ -81,4 +81,6 @@ RENDER_OBJECT_TYPE_CASTS(RenderRubyRun, isRubyRun())
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyRun, isRubyRun())
+
 #endif // RenderRubyRun_h
