@@ -1,5 +1,12 @@
 2014-10-07  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix attempt.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::UnderlyingString::UnderlyingString):
+
+2014-10-07  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * wtf/text/StringView.cpp:
