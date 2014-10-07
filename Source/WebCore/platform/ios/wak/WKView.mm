@@ -247,8 +247,9 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
             }
                 // Do the 50/50 split even if XorY = 0 and the WidthOrHeight is only
                 // one pixel shorter...
+                // FIXME: If origMarginsTotal is in the range (0, 1) then we won't do the 50/50 split. Is this right?
                 else if (origMarginsTotal == 0.0f 
-                         || (abs(origMarginsTotal) == 1)) {
+                    || (abs(static_cast<int>(origMarginsTotal)) == 1)) {
                     prop = 0.5f;  // Then split it 50:50.
                 }
                 else {
