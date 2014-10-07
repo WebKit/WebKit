@@ -317,6 +317,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_ignoreErrorsInDeclaration(false)
     , m_defaultNamespace(starAtom)
     , m_parsedTextPrefixLength(0)
+    , m_nestedSelectorLevel(0)
     , m_propertyRange(UINT_MAX, UINT_MAX)
     , m_ruleSourceDataResult(0)
     , m_parsingMode(NormalMode)
@@ -12052,7 +12053,7 @@ void CSSParser::markRuleHeaderEnd()
 
 void CSSParser::markSelectorStart()
 {
-    if (!isExtractingSourceData())
+    if (!isExtractingSourceData() || m_nestedSelectorLevel)
         return;
     ASSERT(!m_selectorRange.end);
 
@@ -12061,7 +12062,7 @@ void CSSParser::markSelectorStart()
 
 void CSSParser::markSelectorEnd()
 {
-    if (!isExtractingSourceData())
+    if (!isExtractingSourceData() || m_nestedSelectorLevel)
         return;
     ASSERT(!m_selectorRange.end);
     ASSERT(m_currentRuleDataStack->size());

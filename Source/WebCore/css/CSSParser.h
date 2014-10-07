@@ -375,6 +375,7 @@ public:
 
     // tokenizer methods and data
     size_t m_parsedTextPrefixLength;
+    unsigned m_nestedSelectorLevel;
     SourceRange m_selectorRange;
     SourceRange m_propertyRange;
     std::unique_ptr<RuleSourceDataList> m_currentRuleDataStack;
@@ -384,8 +385,12 @@ public:
     void fixUnparsedPropertyRanges(CSSRuleSourceData*);
     void markRuleHeaderStart(CSSRuleSourceData::Type);
     void markRuleHeaderEnd();
+
+    void startNestedSelectorList() { ++m_nestedSelectorLevel; }
+    void endNestedSelectorList() { --m_nestedSelectorLevel; }
     void markSelectorStart();
     void markSelectorEnd();
+
     void markRuleBodyStart();
     void markRuleBodyEnd();
     void markPropertyStart();

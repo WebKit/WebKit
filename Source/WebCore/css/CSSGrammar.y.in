@@ -309,8 +309,8 @@ static bool isValidNthSelectorList(const Vector<std::unique_ptr<CSSParserSelecto
 %destructor { delete $$; } attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
 
 %union { Vector<std::unique_ptr<CSSParserSelector>>* selectorList; }
-%type <selectorList> selector_list simple_selector_list nth_selector_ending
-%destructor { delete $$; } selector_list simple_selector_list nth_selector_ending
+%type <selectorList> selector_list nested_selector_list simple_selector_list nth_selector_ending
+%destructor { delete $$; } selector_list nested_selector_list simple_selector_list nth_selector_ending
 
 %union { bool boolean; }
 %type <boolean> declaration declaration_list decl_list priority
@@ -1091,6 +1091,15 @@ selector_list:
     }
    ;
 
+before_nested_selector_list: { parser->startNestedSelectorList(); } ;
+after_nested_selector_list: { parser->endNestedSelectorList(); } ;
+
+nested_selector_list:
+    before_nested_selector_list selector_list after_nested_selector_list {
+        $$ = $2;
+    }
+    ;
+
 complex_selector_with_trailing_whitespace:
     complex_selector WHITESPACE;
 
@@ -1300,7 +1309,7 @@ nth_selector_ending:
     | space ')' {
         $$ = nullptr;
     }
-    | space NTHCHILDSELECTORSEPARATOR space selector_list maybe_space ')' {
+    | space NTHCHILDSELECTORSEPARATOR space nested_selector_list maybe_space ')' {
         if ($4)
             $$ = $4;
         else
@@ -1339,7 +1348,7 @@ pseudo:
     }
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
-    | ':' MATCHESFUNCTION maybe_space selector_list maybe_space ')' {
+    | ':' MATCHESFUNCTION maybe_space nested_selector_list maybe_space ')' {
         $$ = nullptr;
         if ($4) {
             auto selector = std::make_unique<CSSParserSelector>();
