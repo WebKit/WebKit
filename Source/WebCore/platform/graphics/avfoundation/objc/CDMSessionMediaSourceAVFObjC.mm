@@ -37,6 +37,7 @@
 #import "SoftLinking.h"
 #import "UUID.h"
 #import <CoreMedia/CMBase.h>
+#import <cstdlib>
 #import <objc/objc-runtime.h>
 #import <wtf/NeverDestroyed.h>
 #import <runtime/TypedArrayInlines.h>
@@ -216,7 +217,7 @@ void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLay
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, abs([error code]));
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs([error code]));
 }
 
 void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
@@ -224,7 +225,7 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, abs([error code]));
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs([error code]));
 }
 
 void CDMSessionMediaSourceAVFObjC::addSourceBuffer(SourceBufferPrivateAVFObjC* sourceBuffer)
