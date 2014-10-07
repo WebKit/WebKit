@@ -152,10 +152,6 @@ float computeMinimumScaleFactorForContentContained(const ViewportAttributes& res
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);
 
-#if PLATFORM(IOS)
-void finalizeViewportArguments(ViewportArguments&, const FloatSize& screenSize);
-#endif
-
 } // namespace WebCore
 
 #endif // ViewportArguments_h

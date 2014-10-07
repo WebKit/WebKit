@@ -105,6 +105,7 @@ public:
     
 private:
     void updateConfiguration();
+    double viewportArgumentsLength(double length) const;
     int layoutWidth() const;
     int layoutHeight() const;
 
