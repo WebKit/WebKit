@@ -799,7 +799,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (void)_didCommitLoadForMainFrame
 {
-    _firstPaintAfterCommitLoadTransactionID = downcast<RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _firstPaintAfterCommitLoadTransactionID = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
 
     _hasCommittedLoadForMainFrame = YES;
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
@@ -935,7 +935,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
 
     _needsToRestoreUnobscuredCenter = NO;
     _needsToRestoreExposedRect = YES;
-    _firstTransactionIDAfterPageRestore = downcast<RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
     _exposedRectToRestore = exposedRect;
     _scaleToRestore = scale;
 }
@@ -950,7 +950,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
 
     _needsToRestoreExposedRect = NO;
     _needsToRestoreUnobscuredCenter = YES;
-    _firstTransactionIDAfterPageRestore = downcast<RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
     _unobscuredCenterToRestore = center;
     _scaleToRestore = scale;
 }

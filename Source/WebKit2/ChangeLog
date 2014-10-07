@@ -1,3 +1,14 @@
+2014-10-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r174400.
+
+        Missing explicit WebKit:: namespace.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        (-[WKWebView _restorePageStateToExposedRect:scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+
 2014-10-07  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderText / RenderTextFragment
