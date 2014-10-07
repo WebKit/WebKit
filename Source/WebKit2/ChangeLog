@@ -1,5 +1,17 @@
 2014-10-07  Christophe Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for RenderText / RenderTextFragment
+        https://bugs.webkit.org/show_bug.cgi?id=137476
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for RenderText / RenderTextFragment.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+
+2014-10-07  Christophe Dumez  <cdumez@apple.com>
+
         [WK2] Use is<>() / downcast<>() for DrawingAreaProxy subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137477
 

@@ -841,16 +841,14 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
             return true;
         }
 
-        if (p->node() && p->node() == this && o->isText() && !toRenderText(o)->firstTextBox()) {
+        if (p->node() && p->node() == this && is<RenderText>(*o) && !downcast<RenderText>(*o).firstTextBox()) {
             // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
-        } else if (o->isText() || o->isReplaced()) {
+        } else if (is<RenderText>(*o) || o->isReplaced()) {
             point = FloatPoint();
-            if (o->isText() && toRenderText(o)->firstTextBox()) {
-                point.move(toRenderText(o)->linesBoundingBox().x(), toRenderText(o)->firstTextBox()->root().lineTop());
-            } else if (o->isBox()) {
-                RenderBox* box = toRenderBox(o);
-                point.moveBy(box->location());
-            }
+            if (is<RenderText>(*o) && downcast<RenderText>(*o).firstTextBox())
+                point.move(downcast<RenderText>(*o).linesBoundingBox().x(), downcast<RenderText>(*o).firstTextBox()->root().lineTop());
+            else if (is<RenderBox>(*o))
+                point.moveBy(downcast<RenderBox>(*o).location());
             point = o->container()->localToAbsolute(point, UseTransforms);
             return true;
         }
@@ -894,18 +892,15 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             o = prev;
         }
         ASSERT(o);
-        if (o->isText() || o->isReplaced()) {
+        if (is<RenderText>(*o) || o->isReplaced()) {
             point = FloatPoint();
-            if (o->isText()) {
-                RenderText* text = toRenderText(o);
-                IntRect linesBox = text->linesBoundingBox();
+            if (is<RenderText>(*o)) {
+                IntRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
                 if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
                 point.moveBy(linesBox.maxXMaxYCorner());
-            } else {
-                RenderBox* box = toRenderBox(o);
-                point.moveBy(box->frameRect().maxXMaxYCorner());
-            }
+            } else
+                point.moveBy(downcast<RenderBox>(*o).frameRect().maxXMaxYCorner());
             point = o->container()->localToAbsolute(point, UseTransforms);
             return true;
         }

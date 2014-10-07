@@ -5413,7 +5413,7 @@
 		BCEA4875097D93020094C9E4 /* RenderImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4836097D93020094C9E4 /* RenderImage.cpp */; };
 		BCEA4876097D93020094C9E4 /* RenderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4837097D93020094C9E4 /* RenderImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4877097D93020094C9E4 /* RenderInline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4838097D93020094C9E4 /* RenderInline.cpp */; };
-		BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4839097D93020094C9E4 /* RenderInline.h */; };
+		BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4839097D93020094C9E4 /* RenderInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA483A097D93020094C9E4 /* RenderLayer.cpp */; };
 		BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA483B097D93020094C9E4 /* RenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4840097D93020094C9E4 /* RenderObject.cpp */; };

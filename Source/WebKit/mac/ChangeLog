@@ -1,3 +1,13 @@
+2014-10-07  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderText / RenderTextFragment
+        https://bugs.webkit.org/show_bug.cgi?id=137476
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebRenderNode.mm:
+        (copyRenderNode):
+
 2014-10-06  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

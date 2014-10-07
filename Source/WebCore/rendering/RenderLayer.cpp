@@ -6286,16 +6286,16 @@ static bool hasPaintingNonLayerDescendants(const RenderElement& renderer, int de
         if (++siblingCount > maxSiblingCount)
             return true;
         
-        if (child.isText()) {
+        if (is<RenderText>(child)) {
             bool isSelectable = renderer.style().userSelect() != SELECT_NONE;
-            if (isSelectable || !toRenderText(child).isAllCollapsibleWhitespace())
+            if (isSelectable || !downcast<RenderText>(child).isAllCollapsibleWhitespace())
                 return true;
         }
         
-        if (!child.isRenderElement())
+        if (!is<RenderElement>(child))
             continue;
         
-        const RenderElement& renderElementChild = toRenderElement(child);
+        const RenderElement& renderElementChild = downcast<RenderElement>(child);
 
         if (renderElementChild.isRenderLayerModelObject() && toRenderLayerModelObject(renderElementChild).hasSelfPaintingLayer())
             continue;

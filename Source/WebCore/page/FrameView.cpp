@@ -2237,8 +2237,8 @@ void FrameView::repaintContentRectangle(const IntRect& r)
 static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderObject& renderer, unsigned countSoFar, unsigned threshold)
 {
     // FIXME: Consider writing this using RenderObject::nextInPreOrder() instead of using recursion.
-    if (renderer.isText())
-        countSoFar += toRenderText(renderer).text()->length();
+    if (is<RenderText>(renderer))
+        countSoFar += downcast<RenderText>(renderer).text()->length();
 
     for (RenderObject* child = renderer.firstChildSlow(); child; child = child->nextSibling()) {
         if (countSoFar >= threshold)

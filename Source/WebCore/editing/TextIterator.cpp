@@ -490,8 +490,8 @@ static bool hasVisibleTextNode(RenderText& renderer)
 {
     if (renderer.style().visibility() == VISIBLE)
         return true;
-    if (renderer.isTextFragment()) {
-        if (auto firstLetter = toRenderTextFragment(renderer).firstLetter()) {
+    if (is<RenderTextFragment>(renderer)) {
+        if (auto firstLetter = downcast<RenderTextFragment>(renderer).firstLetter()) {
             if (firstLetter->style().visibility() == VISIBLE)
                 return true;
         }
@@ -518,8 +518,8 @@ bool TextIterator::handleTextNode()
             emitCharacter(' ', textNode, nullptr, runStart, runStart);
             return false;
         }
-        if (!m_handledFirstLetter && renderer.isTextFragment() && !m_offset) {
-            handleTextNodeFirstLetter(toRenderTextFragment(renderer));
+        if (!m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset) {
+            handleTextNodeFirstLetter(downcast<RenderTextFragment>(renderer));
             if (m_firstLetterText) {
                 String firstLetter = m_firstLetterText->text();
                 emitText(textNode, *m_firstLetterText, m_offset, m_offset + firstLetter.length());
@@ -575,9 +575,9 @@ bool TextIterator::handleTextNode()
     if (renderer.firstTextBox())
         m_textBox = renderer.firstTextBox();
 
-    bool shouldHandleFirstLetter = !m_handledFirstLetter && renderer.isTextFragment() && !m_offset;
+    bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
-        handleTextNodeFirstLetter(toRenderTextFragment(renderer));
+        handleTextNodeFirstLetter(downcast<RenderTextFragment>(renderer));
 
     if (!renderer.firstTextBox() && rendererText.length() && !shouldHandleFirstLetter) {
         if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
@@ -912,8 +912,8 @@ static int maxOffsetIncludingCollapsedSpaces(Node& node)
 {
     int offset = caretMaxOffset(&node);
     if (auto* renderer = node.renderer()) {
-        if (renderer->isText())
-            offset += collapsedSpaceLength(toRenderText(*renderer), offset);
+        if (is<RenderText>(*renderer))
+            offset += collapsedSpaceLength(downcast<RenderText>(*renderer), offset);
     }
     return offset;
 }
@@ -1301,31 +1301,31 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 
 RenderText* SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset, int& offsetInNode)
 {
-    RenderText* renderer = toRenderText(m_node->renderer());
+    RenderText& renderer = downcast<RenderText>(*m_node->renderer());
     startOffset = (m_node == m_startContainer) ? m_startOffset : 0;
 
-    if (!renderer->isTextFragment()) {
+    if (!is<RenderTextFragment>(renderer)) {
         offsetInNode = 0;
-        return renderer;
+        return &renderer;
     }
 
-    RenderTextFragment* fragment = toRenderTextFragment(renderer);
-    int offsetAfterFirstLetter = fragment->start();
+    RenderTextFragment& fragment = downcast<RenderTextFragment>(renderer);
+    int offsetAfterFirstLetter = fragment.start();
     if (startOffset >= offsetAfterFirstLetter) {
         ASSERT(!m_shouldHandleFirstLetter);
         offsetInNode = offsetAfterFirstLetter;
-        return renderer;
+        return &renderer;
     }
 
     if (!m_shouldHandleFirstLetter && startOffset + offsetAfterFirstLetter < m_offset) {
         m_shouldHandleFirstLetter = true;
         offsetInNode = offsetAfterFirstLetter;
-        return renderer;
+        return &renderer;
     }
 
     m_shouldHandleFirstLetter = false;
     offsetInNode = 0;
-    return firstRenderTextInFirstLetter(fragment->firstLetter());
+    return firstRenderTextInFirstLetter(fragment.firstLetter());
 }
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()

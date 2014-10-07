@@ -413,7 +413,7 @@ bool TextAutosizer::containerIsRowOfLinks(const RenderObject* container)
 
     while (renderer) {
         if (!isAutosizingContainer(renderer)) {
-            if (renderer->isText() && toRenderText(renderer)->text()->stripWhiteSpace()->length() > 3)
+            if (is<RenderText>(*renderer) && downcast<RenderText>(*renderer).text()->stripWhiteSpace()->length() > 3)
                 return false;
             if (!renderer->isInline())
                 return false;
@@ -493,9 +493,9 @@ void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, Tex
 
     RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(container, container);
     while (descendant) {
-        if (!skipLocalText && descendant->isText()) {
-            textWidth += toRenderText(descendant)->renderedTextLength() * descendant->style()->specifiedFontSize();
-        } else if (isAutosizingContainer(descendant)) {
+        if (!skipLocalText && is<RenderText>(*descendant))
+            textWidth += downcast<RenderText>(*descendant).renderedTextLength() * descendant->style()->specifiedFontSize();
+        else if (isAutosizingContainer(descendant)) {
             RenderBlock* descendantBlock = toRenderBlock(descendant);
             if (!isAutosizingCluster(descendantBlock, clusterInfo))
                 measureDescendantTextWidth(descendantBlock, clusterInfo, minTextWidth, textWidth);

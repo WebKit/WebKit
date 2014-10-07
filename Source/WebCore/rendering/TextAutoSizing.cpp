@@ -100,8 +100,7 @@ int TextAutoSizingValue::numNodes() const
 void TextAutoSizingValue::addNode(Node* node, float size)
 {
     ASSERT(node);
-    RenderText* renderText = toRenderText(node->renderer());
-    renderText->setCandidateComputedTextSize(size);
+    downcast<RenderText>(*node->renderer()).setCandidateComputedTextSize(size);
     m_autoSizedNodes.add(node);
 }
 

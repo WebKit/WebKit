@@ -72,10 +72,11 @@ private:
     RenderBoxModelObject* m_firstLetter;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderTextFragment, isText() && toRenderText(renderer).isTextFragment())
-
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextFragment, isText() && toRenderText(renderer).isTextFragment())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderTextFragment)
+    static bool isType(const WebCore::RenderText& renderer) { return renderer.isTextFragment(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return is<WebCore::RenderText>(renderer) && isType(downcast<WebCore::RenderText>(renderer)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // RenderTextFragment_h

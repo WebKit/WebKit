@@ -41,7 +41,7 @@ BidiRun::BidiRun(int start, int stop, RenderObject& renderer, BidiContext* conte
 #ifndef NDEBUG
     bidiRunCounter.increment();
 #endif
-    ASSERT(!m_renderer.isText() || static_cast<unsigned>(stop) <= toRenderText(m_renderer).textLength());
+    ASSERT(!is<RenderText>(m_renderer) || static_cast<unsigned>(stop) <= downcast<RenderText>(m_renderer).textLength());
     // Stored in base class to save space.
     m_hasHyphen = false;
 }

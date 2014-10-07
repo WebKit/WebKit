@@ -242,11 +242,9 @@ using WebCore::VisiblePosition;
 
 - (CGFloat)textHeight
 {  
-    RenderObject *o = core(self)->renderer();
-    if (o && o->isText()) {
-        RenderText *t = toRenderText(o);
-        return t->style().computedLineHeight();;
-    }
+    RenderObject* renderer = core(self)->renderer();
+    if (is<RenderText>(renderer))
+        return downcast<RenderText>(*renderer).style().computedLineHeight();
     
     return CGFLOAT_MAX;
 }
@@ -258,11 +256,11 @@ using WebCore::VisiblePosition;
     // a node returned from elementAtPoint.  We make the assumption that either the node or one
     // of its immediate children contains the root line boxes in question.
     // See <rdar://problem/6824650> for context.
-    RenderObject *renderer = core(self)->renderer();
-    if (!renderer || !renderer->isRenderBlockFlow())
+    RenderObject* renderer = core(self)->renderer();
+    if (!is<RenderBlockFlow>(renderer))
         return nil;
 
-    RenderBlock *block = static_cast<RenderBlock *>(renderer);
+    RenderBlock* block = downcast<RenderBlockFlow>(renderer);
     
     FloatPoint absPoint(point);
     FloatPoint localPoint = block->absoluteToLocal(absPoint);
@@ -279,7 +277,7 @@ using WebCore::VisiblePosition;
                 nextChild = nextChild->nextSiblingBox();
             if (!nextChild) {
                 if (localPoint.y() >= top) {
-                    block = static_cast<RenderBlock *>(child);
+                    block = downcast<RenderBlock>(child);
                     break;
                 }
                 continue;
@@ -287,8 +285,8 @@ using WebCore::VisiblePosition;
             
             float bottom = nextChild->y();
             
-            if (localPoint.y() >= top && localPoint.y() < bottom && child->isRenderBlock()) {
-                block = static_cast<RenderBlock *>(child);
+            if (localPoint.y() >= top && localPoint.y() < bottom && is<RenderBlock>(*child)) {
+                block = downcast<RenderBlock>(child);
                 break;
             }                
         }
@@ -299,25 +297,24 @@ using WebCore::VisiblePosition;
         localPoint = block->absoluteToLocal(absPoint);
     }
 
-    RenderBlockFlow *blockFlow = toRenderBlockFlow(block);
+    RenderBlockFlow& blockFlow = downcast<RenderBlockFlow>(*block);
     
     // Only check the gaps between the root line boxes.  We deliberately ignore overflow because
     // experience has shown that hit tests on an exploded text node can fail when within the
     // overflow region.
-    for (RootInlineBox *cur = blockFlow->firstRootBox(); cur && cur != blockFlow->lastRootBox(); cur = cur->nextRootBox()) {
-        float currentBottom = cur->y() + cur->logicalHeight();        
+    for (RootInlineBox* current = blockFlow.firstRootBox(); current && current != blockFlow.lastRootBox(); current = current->nextRootBox()) {
+        float currentBottom = current->y() + current->logicalHeight();
         if (localPoint.y() < currentBottom)
             return nil;
 
-        RootInlineBox *next = cur->nextRootBox();
+        RootInlineBox* next = current->nextRootBox();
         float nextTop = next->y();
         if (localPoint.y() < nextTop) {
-            InlineBox *inlineBox = cur->closestLeafChildForLogicalLeftPosition(localPoint.x());
-            if (inlineBox && inlineBox->behavesLikeText() && inlineBox->renderer().isText()) {
-                RenderText *t = toRenderText(&inlineBox->renderer());
-                if (t->textNode()) {
-                    return kit(t->textNode());
-                }
+            InlineBox* inlineBox = current->closestLeafChildForLogicalLeftPosition(localPoint.x());
+            if (inlineBox && inlineBox->behavesLikeText() && is<RenderText>(inlineBox->renderer())) {
+                RenderText& renderText = downcast<RenderText>(inlineBox->renderer());
+                if (renderText.textNode())
+                    return kit(renderText.textNode());
             }
         }
 

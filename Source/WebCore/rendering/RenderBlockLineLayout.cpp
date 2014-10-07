@@ -136,41 +136,41 @@ RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
     return rootBox;
 }
 
-static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRootLineBox, bool isOnlyRun = false)
+static inline InlineBox* createInlineBoxForRenderer(RenderObject* renderer, bool isRootLineBox, bool isOnlyRun = false)
 {
     if (isRootLineBox)
-        return toRenderBlockFlow(obj)->createAndAppendRootInlineBox();
+        return downcast<RenderBlockFlow>(*renderer).createAndAppendRootInlineBox();
 
-    if (obj->isText())
-        return toRenderText(obj)->createInlineTextBox();
+    if (is<RenderText>(*renderer))
+        return downcast<RenderText>(*renderer).createInlineTextBox();
 
-    if (obj->isBox()) {
+    if (is<RenderBox>(*renderer)) {
         // FIXME: This is terrible. This branch returns an *owned* pointer!
-        return toRenderBox(obj)->createInlineBox().release();
+        return downcast<RenderBox>(*renderer).createInlineBox().release();
     }
 
-    if (obj->isLineBreak()) {
+    if (is<RenderLineBreak>(*renderer)) {
         // FIXME: This is terrible. This branch returns an *owned* pointer!
-        auto inlineBox = toRenderLineBreak(obj)->createInlineBox().release();
+        auto inlineBox = downcast<RenderLineBreak>(*renderer).createInlineBox().release();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
-        inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode() || obj->isLineBreakOpportunity());
+        inlineBox->setBehavesLikeText(isOnlyRun || renderer->document().inNoQuirksMode() || renderer->isLineBreakOpportunity());
         return inlineBox;
     }
 
-    return toRenderInline(obj)->createAndAppendInlineFlowBox();
+    return downcast<RenderInline>(*renderer).createAndAppendInlineFlowBox();
 }
 
 static inline void dirtyLineBoxesForRenderer(RenderObject& renderer, bool fullLayout)
 {
-    if (renderer.isText()) {
-        RenderText& renderText = toRenderText(renderer);
+    if (is<RenderText>(renderer)) {
+        RenderText& renderText = downcast<RenderText>(renderer);
         updateCounterIfNeeded(renderText);
         renderText.dirtyLineBoxes(fullLayout);
-    } else if (renderer.isLineBreak())
-        toRenderLineBreak(renderer).dirtyLineBoxes(fullLayout);
+    } else if (is<RenderLineBreak>(renderer))
+        downcast<RenderLineBreak>(renderer).dirtyLineBoxes(fullLayout);
     else
-        toRenderInline(renderer).dirtyLineBoxes(fullLayout);
+        downcast<RenderInline>(renderer).dirtyLineBoxes(fullLayout);
 }
 
 static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
@@ -262,10 +262,10 @@ static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
     if (!run)
         return true;
     unsigned pos = run->stop();
-    const RenderObject& r = run->renderer();
-    if (!r.isText())
+    const RenderObject& renderer = run->renderer();
+    if (!is<RenderText>(renderer))
         return false;
-    const RenderText& renderText = toRenderText(r);
+    const RenderText& renderText = downcast<RenderText>(renderer);
     unsigned length = renderText.textLength();
     if (pos >= length)
         return true;
@@ -669,7 +669,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = true;
     Vector<unsigned, 16> expansionOpportunities;
-    RenderObject* previousObject = 0;
+    RenderObject* previousObject = nullptr;
 
     BidiRun* r = firstRun;
     for (; r; r = r->next()) {
@@ -677,23 +677,23 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.
                       // Similarly, line break boxes have no effect on the width.
-        if (r->renderer().isText()) {
-            RenderText& rt = toRenderText(r->renderer());
+        if (is<RenderText>(r->renderer())) {
+            RenderText& renderText = downcast<RenderText>(r->renderer());
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
                 if (!isAfterExpansion)
                     toInlineTextBox(r->box())->setCanHaveLeadingExpansion(true);
-                unsigned opportunitiesInRun = Font::expansionOpportunityCount(rt.stringView(r->m_start, r->m_stop), r->box()->direction(), isAfterExpansion);
+                unsigned opportunitiesInRun = Font::expansionOpportunityCount(renderText.stringView(r->m_start, r->m_stop), r->box()->direction(), isAfterExpansion);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
             }
 
-            if (int length = rt.textLength()) {
-                if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt.characterAt(r->m_start)))
-                    totalLogicalWidth += lineStyle(*rt.parent(), lineInfo).font().wordSpacing();
-                needsWordSpacing = !isSpaceOrNewline(rt.characterAt(r->m_stop - 1)) && r->m_stop == length;
+            if (int length = renderText.textLength()) {
+                if (!r->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(r->m_start)))
+                    totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).font().wordSpacing();
+                needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(r->m_stop - 1)) && r->m_stop == length;
             }
 
-            setLogicalWidthForTextRun(lineBox, r, &rt, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
+            setLogicalWidthForTextRun(lineBox, r, &renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             isAfterExpansion = false;
             if (!r->renderer().isRenderInline()) {
@@ -741,12 +741,12 @@ void RenderBlockFlow::computeBlockDirectionPositionsForLine(RootInlineBox* lineB
 
         // Position is used to properly position both replaced elements and
         // to update the static normal flow x/y of positioned elements.
-        if (r->renderer().isText())
-            toRenderText(r->renderer()).positionLineBox(toInlineTextBox(box));
-        else if (r->renderer().isBox())
-            toRenderBox(r->renderer()).positionLineBox(toInlineElementBox(box));
-        else if (r->renderer().isLineBreak())
-            toRenderLineBreak(r->renderer()).replaceInlineBoxWrapper(toInlineElementBox(box));
+        if (is<RenderText>(r->renderer()))
+            downcast<RenderText>(r->renderer()).positionLineBox(toInlineTextBox(box));
+        else if (is<RenderBox>(r->renderer()))
+            downcast<RenderBox>(r->renderer()).positionLineBox(toInlineElementBox(box));
+        else if (is<RenderLineBreak>(r->renderer()))
+            downcast<RenderLineBreak>(r->renderer()).replaceInlineBoxWrapper(toInlineElementBox(box));
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
     // position(), which unnecessarily dirties the line.
@@ -783,14 +783,14 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
     if (!bidiRuns.runCount()
         || !bidiRuns.logicallyLastRun()->renderer().style().breakOnlyAfterWhiteSpace()
         || !bidiRuns.logicallyLastRun()->renderer().style().autoWrap())
-        return 0;
+        return nullptr;
 
     BidiRun* trailingSpaceRun = bidiRuns.logicallyLastRun();
     const RenderObject& lastObject = trailingSpaceRun->renderer();
-    if (!lastObject.isText())
-        return 0;
+    if (!is<RenderText>(lastObject))
+        return nullptr;
 
-    const RenderText& lastText = toRenderText(lastObject);
+    const RenderText& lastText = downcast<RenderText>(lastObject);
     int firstSpace;
     if (lastText.is8Bit())
         firstSpace = findFirstTrailingSpace(lastText, lastText.characters8(), trailingSpaceRun->start(), trailingSpaceRun->stop());
@@ -798,7 +798,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
         firstSpace = findFirstTrailingSpace(lastText, lastText.characters16(), trailingSpaceRun->start(), trailingSpaceRun->stop());
 
     if (firstSpace == trailingSpaceRun->stop())
-        return 0;
+        return nullptr;
 
     TextDirection direction = style().direction();
     bool shouldReorder = trailingSpaceRun != (direction == LTR ? bidiRuns.lastRun() : bidiRuns.firstRun());
@@ -1561,10 +1561,11 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
             // We have a dirty line.
             if (RootInlineBox* prevRootBox = curr->prevRootBox()) {
                 // We have a previous line.
-                if (!dirtiedByFloat && (!prevRootBox->endsWithBreak() || !prevRootBox->lineBreakObj() || (prevRootBox->lineBreakObj()->isText() && prevRootBox->lineBreakPos() >= toRenderText(prevRootBox->lineBreakObj())->textLength())))
+                if (!dirtiedByFloat && (!prevRootBox->endsWithBreak() || !prevRootBox->lineBreakObj() || (is<RenderText>(*prevRootBox->lineBreakObj()) && prevRootBox->lineBreakPos() >= downcast<RenderText>(*prevRootBox->lineBreakObj()).textLength()))) {
                     // The previous line didn't break cleanly or broke at a newline
                     // that has been deleted, so treat it as dirty too.
                     curr = prevRootBox;
+                }
             }
         } else {
             // No dirty lines were found.

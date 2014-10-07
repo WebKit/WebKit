@@ -1614,16 +1614,16 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
 
     Node* stopNode = pastLastNode();
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
-        RenderObject* r = node->renderer();
-        if (!r)
+        RenderObject* renderer = node->renderer();
+        if (!renderer)
             continue;
         bool isFixed = false;
-        if (r->isBR())
-            r->absoluteRects(rects, flooredLayoutPoint(r->localToAbsolute()));
-        else if (r->isText()) {
+        if (renderer->isBR())
+            renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+        else if (is<RenderText>(*renderer)) {
             int startOffset = node == startContainer ? m_start.offset() : 0;
             int endOffset = node == endContainer ? m_end.offset() : std::numeric_limits<int>::max();
-            rects.appendVector(toRenderText(r)->absoluteRectsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
+            rects.appendVector(downcast<RenderText>(*renderer).absoluteRectsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
         allFixed &= isFixed;
@@ -1650,16 +1650,16 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
 
     Node* stopNode = pastLastNode();
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
-        RenderObject* r = node->renderer();
-        if (!r)
+        RenderObject* renderer = node->renderer();
+        if (!renderer)
             continue;
         bool isFixed = false;
-        if (r->isBR())
-            r->absoluteQuads(quads, &isFixed);
-        else if (r->isText()) {
+        if (renderer->isBR())
+            renderer->absoluteQuads(quads, &isFixed);
+        else if (is<RenderText>(*renderer)) {
             int startOffset = node == startContainer ? m_start.offset() : 0;
             int endOffset = node == endContainer ? m_end.offset() : std::numeric_limits<int>::max();
-            quads.appendVector(toRenderText(r)->absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
+            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
         allFixed &= isFixed;
@@ -2233,13 +2233,12 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 quads.appendVector(elementQuads);
             }
         } else if (is<Text>(*node)) {
-            if (RenderObject* renderer = downcast<Text>(*node).renderer()) {
-                const RenderText& renderText = toRenderText(*renderer);
+            if (RenderText* renderText = downcast<Text>(*node).renderer()) {
                 int startOffset = (node == startContainer) ? m_start.offset() : 0;
                 int endOffset = (node == endContainer) ? m_end.offset() : INT_MAX;
                 
-                auto textQuads = renderText.absoluteQuadsForRange(startOffset, endOffset);
-                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText.style());
+                auto textQuads = renderText->absoluteQuadsForRange(startOffset, endOffset);
+                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText->style());
 
                 quads.appendVector(textQuads);
             }

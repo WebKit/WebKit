@@ -344,9 +344,9 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     const RenderStyle& rubyTextStyle = firstLine ? rubyText->firstLineStyle() : rubyText->style();
     int halfWidthOfFontSize = rubyTextStyle.fontSize() / 2;
     if (startOverhang)
-        startOverhang = std::min<int>(startOverhang, std::min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+        startOverhang = std::min<int>(startOverhang, std::min<int>(downcast<RenderText>(*startRenderer).minLogicalWidth(), halfWidthOfFontSize));
     if (endOverhang)
-        endOverhang = std::min<int>(endOverhang, std::min<int>(toRenderText(endRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+        endOverhang = std::min<int>(endOverhang, std::min<int>(downcast<RenderText>(*endRenderer).minLogicalWidth(), halfWidthOfFontSize));
 }
 
 } // namespace WebCore

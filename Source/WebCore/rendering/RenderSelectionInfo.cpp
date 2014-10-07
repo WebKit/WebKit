@@ -46,8 +46,8 @@ RenderSelectionInfo::RenderSelectionInfo(RenderObject& renderer, bool clipToVisi
     : RenderSelectionInfoBase(renderer)
 {
     if (renderer.canUpdateSelectionOnRootLineBoxes()) {
-        if (renderer.isText())
-            m_rect = toRenderText(renderer).collectSelectionRectsForLineBoxes(m_repaintContainer, clipToVisibleContent, m_collectedSelectionRects);
+        if (is<RenderText>(renderer))
+            m_rect = downcast<RenderText>(renderer).collectSelectionRectsForLineBoxes(m_repaintContainer, clipToVisibleContent, m_collectedSelectionRects);
         else
             m_rect = renderer.selectionRectForRepaint(m_repaintContainer, clipToVisibleContent);
     }

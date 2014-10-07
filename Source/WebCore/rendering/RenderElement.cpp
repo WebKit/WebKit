@@ -303,7 +303,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
 inline bool RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const
 {
     for (auto& child : childrenOfType<RenderObject>(*this)) {
-        if (child.isText() && !toRenderText(child).isAllCollapsibleWhitespace())
+        if (is<RenderText>(child) && !downcast<RenderText>(child).isAllCollapsibleWhitespace())
             return true;
         if (child.style().hasOutline() || child.style().hasBorder())
             return true;
@@ -494,8 +494,8 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
     } else
         insertChildInternal(newChild, beforeChild, NotifyChildren);
 
-    if (newChild->isText())
-        toRenderText(newChild)->styleDidChange(StyleDifferenceEqual, nullptr);
+    if (is<RenderText>(newChild))
+        downcast<RenderText>(*newChild).styleDidChange(StyleDifferenceEqual, nullptr);
 
     // SVG creates renderers for <g display="none">, as SVG requires children of hidden
     // <g>s to have renderers - at least that's how our implementation works. Consider:

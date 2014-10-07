@@ -647,13 +647,13 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
 #if ENABLE(MATHML)
     // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
     // so rangeOfContents does not work for them (nor does regular text selection).
-    if (m_renderer->isText() && m_renderer->isAnonymous() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
-        return toRenderText(*m_renderer).text();
+    if (is<RenderText>(*m_renderer) && m_renderer->isAnonymous() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
+        return downcast<RenderText>(*m_renderer).text();
 #endif
 
     // We use a text iterator for text objects AND for those cases where we are
     // explicitly asking for the full text under a given element.
-    if (m_renderer->isText() || mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren) {
+    if (is<RenderText>(*m_renderer) || mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren) {
         // If possible, use a text iterator to get the text, so that whitespace
         // is handled consistently.
         Document* nodeDocument = nullptr;
@@ -692,18 +692,18 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     
         // Sometimes text fragments don't have Nodes associated with them (like when
         // CSS content is used to insert text or when a RenderCounter is used.)
-        if (m_renderer->isText()) {
-            RenderText* renderTextObject = toRenderText(m_renderer);
-            if (renderTextObject->isTextFragment()) {
-                
+        if (is<RenderText>(*m_renderer)) {
+            RenderText& renderTextObject = downcast<RenderText>(*m_renderer);
+            if (is<RenderTextFragment>(renderTextObject)) {
+                RenderTextFragment& renderTextFragment = downcast<RenderTextFragment>(renderTextObject);
                 // The alt attribute may be set on a text fragment through CSS, which should be honored.
-                const String& altText = toRenderTextFragment(renderTextObject)->altText();
+                const String& altText = renderTextFragment.altText();
                 if (!altText.isEmpty())
                     return altText;
-                return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
+                return renderTextFragment.contentString();
             }
 
-            return String(renderTextObject->text());
+            return renderTextObject.text();
         }
     }
     
@@ -821,8 +821,8 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     if (obj->isSVGRoot())
         isSVGRoot = true;
 
-    if (obj->isText())
-        quads = toRenderText(obj)->absoluteQuadsClippedToEllipsis();
+    if (is<RenderText>(*obj))
+        quads = downcast<RenderText>(*obj).absoluteQuadsClippedToEllipsis();
     else if (isWebArea() || isSVGRoot)
         obj->absoluteQuads(quads);
     else
@@ -1211,12 +1211,12 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (m_renderer->isBR())
         return true;
 
-    if (m_renderer->isText()) {
+    if (is<RenderText>(*m_renderer)) {
         // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
         AccessibilityObject* parent = parentObjectUnignored();
         if (parent && (parent->isMenuItem() || parent->ariaRoleAttribute() == MenuButtonRole))
             return true;
-        auto& renderText = toRenderText(*m_renderer);
+        auto& renderText = downcast<RenderText>(*m_renderer);
         if (!renderText.hasRenderedText())
             return true;
 
@@ -1227,8 +1227,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         }
         
         // The alt attribute may be set on a text fragment through CSS, which should be honored.
-        if (renderText.isTextFragment()) {
-            AccessibilityObjectInclusion altTextInclusion = objectInclusionFromAltText(toRenderTextFragment(&renderText)->altText());
+        if (is<RenderTextFragment>(renderText)) {
+            AccessibilityObjectInclusion altTextInclusion = objectInclusionFromAltText(downcast<RenderTextFragment>(renderText).altText());
             if (altTextInclusion == IgnoreObject)
                 return true;
             if (altTextInclusion == IncludeObject)
@@ -3443,14 +3443,14 @@ String AccessibilityRenderObject::passwordFieldValue() const
 
     // Look for the RenderText object in the RenderObject tree for this input field.
     RenderObject* renderer = node()->renderer();
-    while (renderer && !renderer->isText())
-        renderer = toRenderElement(renderer)->firstChild();
+    while (renderer && !is<RenderText>(renderer))
+        renderer = downcast<RenderElement>(*renderer).firstChild();
 
-    if (!renderer || !renderer->isText())
+    if (!is<RenderText>(renderer))
         return String();
 
     // Return the text that is actually being rendered in the input field.
-    return toRenderText(renderer)->textWithoutConvertingBackslashToYenSymbol();
+    return downcast<RenderText>(*renderer).textWithoutConvertingBackslashToYenSymbol();
 }
 
 ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const

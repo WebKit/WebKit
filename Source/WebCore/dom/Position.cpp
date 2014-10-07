@@ -55,11 +55,11 @@ using namespace HTMLNames;
 
 static bool hasInlineBoxWrapper(RenderObject& renderer)
 {
-    if (renderer.isBox() && toRenderBox(renderer).inlineBoxWrapper())
+    if (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).inlineBoxWrapper())
         return true;
-    if (renderer.isText() && toRenderText(renderer).firstTextBox())
+    if (is<RenderText>(renderer) && downcast<RenderText>(renderer).firstTextBox())
         return true;
-    if (renderer.isLineBreak() && toRenderLineBreak(renderer).inlineBoxWrapper())
+    if (is<RenderLineBreak>(renderer) && downcast<RenderLineBreak>(renderer).inlineBoxWrapper())
         return true;
     return false;
 }
@@ -625,8 +625,8 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         }
 
         // return current position if it is in rendered text
-        if (renderer->isText()) {
-            auto& textRenderer = toRenderText(*renderer);
+        if (is<RenderText>(*renderer)) {
+            auto& textRenderer = downcast<RenderText>(*renderer);
             textRenderer.ensureLineBoxes();
 
             if (!textRenderer.firstTextBox())
@@ -757,8 +757,8 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         }
 
         // return current position if it is in rendered text
-        if (renderer->isText()) {
-            auto& textRenderer = toRenderText(*renderer);
+        if (is<RenderText>(*renderer)) {
+            auto& textRenderer = downcast<RenderText>(*renderer);
             textRenderer.ensureLineBoxes();
 
             if (!textRenderer.firstTextBox())
@@ -846,23 +846,23 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
     for (RenderObject* o = renderer.firstChild(); o && o != stop; o = o->nextInPreOrder()) {
         if (!o->nonPseudoNode())
             continue;
-        if (o->isText()) {
-            if (boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
+        if (is<RenderText>(*o)) {
+            if (boundingBoxLogicalHeight(o, downcast<RenderText>(*o).linesBoundingBox()))
                 return true;
             continue;
         }
-        if (o->isLineBreak()) {
-            if (boundingBoxLogicalHeight(o, toRenderLineBreak(o)->linesBoundingBox()))
+        if (is<RenderLineBreak>(*o)) {
+            if (boundingBoxLogicalHeight(o, downcast<RenderLineBreak>(*o).linesBoundingBox()))
                 return true;
             continue;
         }
-        if (o->isBox()) {
-            if (toRenderBox(o)->pixelSnappedLogicalHeight())
+        if (is<RenderBox>(*o)) {
+            if (downcast<RenderBox>(*o).pixelSnappedLogicalHeight())
                 return true;
             continue;
         }
-        if (o->isRenderInline()) {
-            const RenderInline& renderInline = toRenderInline(*o);
+        if (is<RenderInline>(*o)) {
+            const RenderInline& renderInline = downcast<RenderInline>(*o);
             if (isEmptyInline(renderInline) && boundingBoxLogicalHeight(o, renderInline.linesBoundingBox()))
                 return true;
             continue;
@@ -926,8 +926,8 @@ bool Position::isCandidate() const
         // FIXME: The condition should be m_anchorType == PositionIsBeforeAnchor, but for now we still need to support legacy positions.
         return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
 
-    if (renderer->isText())
-        return !nodeIsUserSelectNone(deprecatedNode()) && toRenderText(renderer)->containsCaretOffset(m_offset);
+    if (is<RenderText>(*renderer))
+        return !nodeIsUserSelectNone(deprecatedNode()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offset);
 
     if (isRenderedTable(deprecatedNode()) || editingIgnoresContent(deprecatedNode()))
         return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
@@ -935,8 +935,8 @@ bool Position::isCandidate() const
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
         
-    if (renderer->isRenderBlockFlow()) {
-        RenderBlockFlow& block = toRenderBlockFlow(*renderer);
+    if (is<RenderBlockFlow>(*renderer)) {
+        RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
         if (block.logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
                 return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());
@@ -1004,14 +1004,14 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (!inSameEnclosingBlockFlowElement(deprecatedNode(), pos.deprecatedNode()))
         return true;
 
-    if (renderer->isText() && !toRenderText(renderer)->containsCaretOffset(m_offset))
+    if (is<RenderText>(*renderer) && !downcast<RenderText>(*renderer).containsCaretOffset(m_offset))
         return false;
 
-    if (posRenderer->isText() && !toRenderText(posRenderer)->containsCaretOffset(pos.m_offset))
+    if (is<RenderText>(*posRenderer) && !downcast<RenderText>(*posRenderer).containsCaretOffset(pos.m_offset))
         return false;
 
-    int thisRenderedOffset = renderer->isText() ? toRenderText(renderer)->countRenderedCharacterOffsetsUntil(m_offset) : m_offset;
-    int posRenderedOffset = posRenderer->isText() ? toRenderText(posRenderer)->countRenderedCharacterOffsetsUntil(pos.m_offset) : pos.m_offset;
+    int thisRenderedOffset = is<RenderText>(*renderer) ? downcast<RenderText>(*renderer).countRenderedCharacterOffsetsUntil(m_offset) : m_offset;
+    int posRenderedOffset = is<RenderText>(*posRenderer) ? downcast<RenderText>(*posRenderer).countRenderedCharacterOffsetsUntil(pos.m_offset) : pos.m_offset;
 
     if (renderer == posRenderer && thisRenderedOffset == posRenderedOffset)
         return false;
@@ -1109,16 +1109,16 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
     RenderBlock* container = renderer->containingBlock();
     RenderObject* next = renderer;
     while ((next = next->nextInPreOrder(container))) {
-        if (next->isRenderBlock())
-            return 0;
+        if (is<RenderBlock>(*next))
+            return nullptr;
         if (next->isBR())
-            return 0;
+            return nullptr;
         if (isNonTextLeafChild(next))
-            return 0;
-        if (next->isText()) {
-            InlineTextBox* match = 0;
+            return nullptr;
+        if (is<RenderText>(*next)) {
+            InlineTextBox* match = nullptr;
             int minOffset = INT_MAX;
-            for (InlineTextBox* box = toRenderText(next)->firstTextBox(); box; box = box->nextTextBox()) {
+            for (InlineTextBox* box = downcast<RenderText>(*next).firstTextBox(); box; box = box->nextTextBox()) {
                 int caretMinOffset = box->caretMinOffset();
                 if (caretMinOffset < minOffset) {
                     match = box;
@@ -1129,7 +1129,7 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
                 return match;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 static Position downstreamIgnoringEditingBoundaries(Position position)
@@ -1159,14 +1159,14 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
     if (renderer->isBR())
         inlineBox = !caretOffset ? toRenderLineBreak(renderer)->inlineBoxWrapper() : nullptr;
-    else if (renderer->isText()) {
-        auto textRenderer = toRenderText(renderer);
-        textRenderer->ensureLineBoxes();
+    else if (is<RenderText>(*renderer)) {
+        auto& textRenderer = downcast<RenderText>(*renderer);
+        textRenderer.ensureLineBoxes();
 
         InlineTextBox* box;
-        InlineTextBox* candidate = 0;
+        InlineTextBox* candidate = nullptr;
 
-        for (box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+        for (box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
             int caretMinOffset = box->caretMinOffset();
             int caretMaxOffset = box->caretMaxOffset();
 
@@ -1185,15 +1185,15 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
             candidate = box;
         }
-        if (candidate && candidate == textRenderer->lastTextBox() && affinity == DOWNSTREAM) {
-            box = searchAheadForBetterMatch(textRenderer);
+        if (candidate && candidate == textRenderer.lastTextBox() && affinity == DOWNSTREAM) {
+            box = searchAheadForBetterMatch(&textRenderer);
             if (box)
                 caretOffset = box->caretMinOffset();
         }
         inlineBox = box ? box : candidate;
     } else {
-        inlineBox = 0;
-        if (canHaveChildrenForEditing(deprecatedNode()) && renderer->isRenderBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(toRenderBlock(*renderer))) {
+        inlineBox = nullptr;
+        if (canHaveChildrenForEditing(deprecatedNode()) && is<RenderBlockFlow>(*renderer) && hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderBlockFlow>(*renderer))) {
             // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
             // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
             // of RenderObject::createVisiblePosition().
@@ -1207,8 +1207,8 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             equivalent.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
             return;
         }
-        if (renderer->isBox()) {
-            inlineBox = toRenderBox(renderer)->inlineBoxWrapper();
+        if (is<RenderBox>(*renderer)) {
+            inlineBox = downcast<RenderBox>(*renderer).inlineBoxWrapper();
             if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
                 return;
         }

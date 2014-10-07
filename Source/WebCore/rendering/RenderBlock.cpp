@@ -3151,14 +3151,14 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         // Move the first letter into the new renderer.
         LayoutStateDisabler layoutStateDisabler(&view());
         while (RenderObject* child = firstLetter->firstChild()) {
-            if (child->isText())
-                toRenderText(child)->removeAndDestroyTextBoxes();
+            if (is<RenderText>(*child))
+                downcast<RenderText>(*child).removeAndDestroyTextBoxes();
             firstLetter->removeChild(*child);
-            newFirstLetter->addChild(child, 0);
+            newFirstLetter->addChild(child, nullptr);
         }
 
         RenderObject* nextSibling = firstLetter->nextSibling();
-        if (RenderTextFragment* remainingText = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText()) {
+        if (RenderTextFragment* remainingText = downcast<RenderBoxModelObject>(*firstLetter).firstLetterRemainingText()) {
             ASSERT(remainingText->isAnonymous() || remainingText->textNode()->renderer() == remainingText);
             // Replace the old renderer with the new one.
             remainingText->setFirstLetter(*newFirstLetter);
@@ -3314,14 +3314,14 @@ void RenderBlock::updateFirstLetter()
         return;
     }
 
-    if (!firstLetterObj->isText())
+    if (!is<RenderText>(*firstLetterObj))
         return;
 
     // Our layout state is not valid for the repaints we are going to trigger by
     // adding and removing children of firstLetterContainer.
     LayoutStateDisabler layoutStateDisabler(&view());
 
-    createFirstLetterRenderer(firstLetterContainer, toRenderText(firstLetterObj));
+    createFirstLetterRenderer(firstLetterContainer, downcast<RenderText>(firstLetterObj));
 }
 
 LayoutUnit RenderBlock::paginationStrut() const

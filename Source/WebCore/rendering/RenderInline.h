@@ -53,6 +53,12 @@ public:
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override final;
 
+    virtual IntRect borderBoundingBox() const override final
+    {
+        IntRect boundingBox = linesBoundingBox();
+        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
+    }
+
     IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBoxInRegion(const RenderRegion*) const;
@@ -147,12 +153,6 @@ private:
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override final;
 
     virtual LayoutRect frameRectForStickyPositioning() const override final { return linesBoundingBox(); }
-
-    virtual IntRect borderBoundingBox() const override final
-    {
-        IntRect boundingBox = linesBoundingBox();
-        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
-    }
 
     virtual std::unique_ptr<InlineFlowBox> createInlineFlowBox(); // Subclassed by RenderSVGInline
 

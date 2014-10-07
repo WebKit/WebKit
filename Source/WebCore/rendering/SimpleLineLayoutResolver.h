@@ -252,7 +252,7 @@ inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const
 
 inline RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
     : m_layout(layout)
-    , m_string(toRenderText(*flow.firstChild()).text())
+    , m_string(downcast<RenderText>(*flow.firstChild()).text())
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
     , m_borderAndPaddingBefore(flow.borderAndPaddingBefore())

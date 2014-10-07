@@ -97,7 +97,7 @@ bool canUseFor(const RenderBlockFlow& flow)
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     if (flow.firstChild() != flow.lastChild())
         return false;
-    if (!flow.firstChild()->isText())
+    if (!is<RenderText>(flow.firstChild()))
         return false;
     if (!flow.isHorizontalWritingMode())
         return false;
@@ -162,7 +162,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.borderFit() == BorderFitLines)
         return false;
-    const RenderText& textRenderer = toRenderText(*flow.firstChild());
+    const RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
     if (flow.containsFloats()) {
         // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
         float minimumWidthNeeded = textRenderer.minLogicalWidth();
@@ -441,7 +441,7 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     Layout::RunVector runs;
     unsigned lineCount = 0;
 
-    RenderText& textRenderer = toRenderText(*flow.firstChild());
+    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
 
     if (textRenderer.is8Bit())

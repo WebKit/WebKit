@@ -1525,15 +1525,15 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
     if (is<Element>(*renderer->node())) {
         Element& element = downcast<Element>(*renderer->node());
         fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element.localName().string().utf8().data());
-    } else if (renderer->isText()) {
-        RenderText* textRenderer = toRenderText(renderer);
-        if (!textRenderer->textLength() || !textRenderer->firstTextBox()) {
+    } else if (is<RenderText>(*renderer)) {
+        RenderText& textRenderer = downcast<RenderText>(*renderer);
+        if (!textRenderer.textLength() || !textRenderer.firstTextBox()) {
             fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
             return;
         }
         
         static const int max = 36;
-        String text = textRenderer->text();
+        String text = textRenderer.text();
         int textLength = text.length();
         if (selected) {
             int offset = 0;
@@ -1543,7 +1543,7 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
                 offset = m_selection.end().computeOffsetInContainerNode();
 
             int pos;
-            InlineTextBox* box = textRenderer->findNextInlineTextBox(offset, pos);
+            InlineTextBox* box = textRenderer.findNextInlineTextBox(offset, pos);
             text = text.substring(box->start(), box->len());
             
             String show;

@@ -32,6 +32,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
+#import <WebCore/RenderInline.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
@@ -94,10 +95,10 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
 
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : 0;
-    Widget* widget = renderWidget ? renderWidget->widget() : 0;
-    FrameView* frameView = widget && widget->isFrameView() ? toFrameView(widget) : 0;
-    Frame* frame = frameView ? &frameView->frame() : 0;
+    RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : nullptr;
+    Widget* widget = renderWidget ? renderWidget->widget() : nullptr;
+    FrameView* frameView = widget && widget->isFrameView() ? toFrameView(widget) : nullptr;
+    Frame* frame = frameView ? &frameView->frame() : nullptr;
 
     // FIXME: broken with transforms
     FloatPoint absPos = node->localToAbsolute();
@@ -105,24 +106,24 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     int y = 0;
     int width = 0;
     int height = 0;
-    if (node->isBox()) {
-        RenderBox* box = toRenderBox(node);
-        x = box->x();
-        y = box->y();
-        width = box->width();
-        height = box->height();
-    } else if (node->isText()) {
-        // FIXME: Preserve old behavior even though it's strange.
-        RenderText* text = toRenderText(node);
-        IntPoint firstRunLocation = text->firstRunLocation();
-        x = firstRunLocation.x();
-        y = firstRunLocation.y();
-        IntRect box = text->linesBoundingBox();
+    if (is<RenderBox>(*node)) {
+        RenderBox& box = downcast<RenderBox>(*node);
+        x = box.x();
+        y = box.y();
         width = box.width();
         height = box.height();
-    } else if (node->isRenderInline()) {
-        RenderBoxModelObject* inlineFlow = toRenderBoxModelObject(node);
-        IntRect boundingBox = inlineFlow->borderBoundingBox();
+    } else if (is<RenderText>(*node)) {
+        // FIXME: Preserve old behavior even though it's strange.
+        RenderText& text = downcast<RenderText>(*node);
+        IntPoint firstRunLocation = text.firstRunLocation();
+        x = firstRunLocation.x();
+        y = firstRunLocation.y();
+        IntRect box = text.linesBoundingBox();
+        width = box.width();
+        height = box.height();
+    } else if (is<RenderInline>(*node)) {
+        RenderInline& inlineFlow = downcast<RenderInline>(*node);
+        IntRect boundingBox = inlineFlow.borderBoundingBox();
         x = boundingBox.x();
         y = boundingBox.y();
         width = boundingBox.width();

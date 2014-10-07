@@ -67,7 +67,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     if (style.visibility() != VISIBLE)
         return;
 
-    RenderText& textRenderer = toRenderText(*flow.firstChild());
+    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
 
     bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
@@ -110,7 +110,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     if (style.visibility() != VISIBLE || style.pointerEvents() == PE_NONE)
         return false;
 
-    RenderText& textRenderer = toRenderText(*flow.firstChild());
+    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
 
     LayoutRect rangeRect = locationInContainer.boundingBox();
     rangeRect.moveBy(-accumulatedOffset);

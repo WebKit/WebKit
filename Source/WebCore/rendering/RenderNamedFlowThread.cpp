@@ -658,7 +658,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
         bool startsAboveRegion = true;
         bool endsBelowRegion = true;
         bool skipOverOutsideNodes = false;
-        Node* lastEndNode = 0;
+        Node* lastEndNode = nullptr;
 
         for (Node* node = contentElement; node; node = nextNodeInsideContentElement(node, contentElement)) {
             RenderObject* renderer = node->renderer();
@@ -666,16 +666,17 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
                 continue;
 
             LayoutRect boundingBox;
-            if (renderer->isRenderInline())
-                boundingBox = toRenderInline(renderer)->linesBoundingBox();
-            else if (renderer->isText())
-                boundingBox = toRenderText(renderer)->linesBoundingBox();
-            else if (renderer->isLineBreak())
-                boundingBox = toRenderLineBreak(renderer)->linesBoundingBox();
+            if (is<RenderInline>(*renderer))
+                boundingBox = downcast<RenderInline>(*renderer).linesBoundingBox();
+            else if (is<RenderText>(*renderer))
+                boundingBox = downcast<RenderText>(*renderer).linesBoundingBox();
+            else if (is<RenderLineBreak>(*renderer))
+                boundingBox = downcast<RenderLineBreak>(*renderer).linesBoundingBox();
             else if (renderer->isBox()) {
-                boundingBox = toRenderBox(renderer)->frameRect();
-                if (toRenderBox(renderer)->isRelPositioned())
-                    boundingBox.move(toRenderBox(renderer)->relativePositionLogicalOffset());
+                RenderBox& renderBox = downcast<RenderBox>(*renderer);
+                boundingBox = renderBox.frameRect();
+                if (renderBox.isRelPositioned())
+                    boundingBox.move(renderBox.relativePositionLogicalOffset());
             } else
                 continue;
 
@@ -710,11 +711,11 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
 
             // start position
             if (logicalTopForRenderer < logicalTopForRegion && startsAboveRegion) {
-                if (renderer->isText()) {
+                if (is<RenderText>(*renderer)) {
                     // Text crosses region top
                     // for Text elements, just find the last textbox that is contained inside the region and use its start() offset as start position
-                    RenderText* textRenderer = toRenderText(renderer);
-                    for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                    RenderText& textRenderer = downcast<RenderText>(*renderer);
+                    for (InlineTextBox* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
                         if (offsetTop + box->logicalBottom() < logicalTopForRegion)
                             continue;
                         range->setStart(Position(downcast<Text>(node), box->start()));
@@ -742,11 +743,11 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
             // end position
             if (logicalBottomForRegion < logicalBottomForRenderer && (endsBelowRegion || (!endsBelowRegion && !node->isDescendantOf(lastEndNode)))) {
                 // for Text elements, just find just find the last textbox that is contained inside the region and use its start()+len() offset as end position
-                if (renderer->isText()) {
+                if (is<RenderText>(*renderer)) {
                     // Text crosses region bottom
-                    RenderText* textRenderer = toRenderText(renderer);
+                    RenderText& textRenderer = downcast<RenderText>(*renderer);
                     InlineTextBox* lastBox = nullptr;
-                    for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                    for (InlineTextBox* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
                         if ((offsetTop + box->logicalTop()) < logicalBottomForRegion) {
                             lastBox = box;
                             continue;

@@ -335,24 +335,23 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
     // Try to figure out which line box we belong in.  First try to find a previous
     // line box by examining our siblings.  If we didn't find a line box, then use our 
     // parent's first line box.
-    RootInlineBox* box = 0;
-    RenderObject* curr = 0;
-    for (curr = child->previousSibling(); curr; curr = curr->previousSibling()) {
-        if (curr->isFloatingOrOutOfFlowPositioned())
+    RootInlineBox* box = nullptr;
+    RenderObject* current;
+    for (current = child->previousSibling(); current; current = current->previousSibling()) {
+        if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
-        if (curr->isReplaced()) {
-            if (auto wrapper = toRenderBox(curr)->inlineBoxWrapper())
+        if (current->isReplaced()) {
+            if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
-        } if (curr->isLineBreak()) {
-            if (auto wrapper = toRenderLineBreak(curr)->inlineBoxWrapper())
+        } if (is<RenderLineBreak>(*current)) {
+            if (auto wrapper = downcast<RenderLineBreak>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
-        } else if (curr->isText()) {
-            InlineTextBox* textBox = toRenderText(curr)->lastTextBox();
-            if (textBox)
+        } else if (is<RenderText>(*current)) {
+            if (InlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
                 box = &textBox->root();
-        } else if (curr->isRenderInline()) {
-            InlineBox* lastSiblingBox = toRenderInline(curr)->lastLineBoxIncludingCulling();
+        } else if (is<RenderInline>(*current)) {
+            InlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBoxIncludingCulling();
             if (lastSiblingBox)
                 box = &lastSiblingBox->root();
         }
@@ -396,7 +395,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
         // space, the search for |child|'s linebox will go past the leading space to the previous linebox and select that
         // one as |box|. If we hit that situation here, dirty the |box| actually containing the child too. 
         bool insertedAfterLeadingSpace = box->lineBreakObj() == child->previousSibling();
-        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR())
+        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (current && current->isBR())
             || insertedAfterLeadingSpace || isIsolated(container->style().unicodeBidi())))
             adjacentBox->markDirty();
     }

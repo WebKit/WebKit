@@ -117,7 +117,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 return context.lineBreak();
             }
         } else if (context.currentObject()->isLineBreakOpportunity())
-            context.commitLineBreakAtCurrentWidth(context.currentObject());
+            context.commitLineBreakAtCurrentWidth(*context.currentObject());
         else
             ASSERT_NOT_REACHED();
 

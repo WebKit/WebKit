@@ -1142,11 +1142,11 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
         if (r->isBR() || isBlock(n))
             break;
 
-        if (r->isText() && toRenderText(r)->hasRenderedText()) {
+        if (is<RenderText>(*r) && downcast<RenderText>(*r).hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                StringImpl& text = *toRenderText(r)->text();
+                StringImpl& text = *downcast<RenderText>(*r).text();
                 int i = text.length();
                 int o = offset;
                 if (n == startNode && o < i)
@@ -1225,11 +1225,11 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
             break;
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
-        if (r->isText() && toRenderText(r)->hasRenderedText()) {
+        if (is<RenderText>(*r) && downcast<RenderText>(*r).hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                StringImpl& text = *toRenderText(r)->text();
+                StringImpl& text = *downcast<RenderText>(*r).text();
                 int o = n == startNode ? offset : 0;
                 int length = text.length();
                 for (int i = o; i < length; ++i) {

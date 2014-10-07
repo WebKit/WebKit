@@ -33,6 +33,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/MainFrame.h>
+#include <WebCore/RenderInline.h>
 #include <WebCore/RenderText.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderWidget.h>
@@ -87,13 +88,13 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     // FIXME: broken with transforms
     m_absolutePosition = flooredIntPoint(renderer->localToAbsolute());
 
-    if (renderer->isBox())
-        m_frameRect = snappedIntRect(toRenderBox(renderer)->frameRect());
-    else if (renderer->isText()) {
-        m_frameRect = toRenderText(renderer)->linesBoundingBox();
-        m_frameRect.setLocation(toRenderText(renderer)->firstRunLocation());
-    } else if (renderer->isRenderInline())
-        m_frameRect = toRenderBoxModelObject(renderer)->borderBoundingBox();
+    if (is<RenderBox>(*renderer))
+        m_frameRect = snappedIntRect(downcast<RenderBox>(*renderer).frameRect());
+    else if (is<RenderText>(*renderer)) {
+        m_frameRect = downcast<RenderText>(*renderer).linesBoundingBox();
+        m_frameRect.setLocation(downcast<RenderText>(*renderer).firstRunLocation());
+    } else if (is<RenderInline>(*renderer))
+        m_frameRect = downcast<RenderInline>(*renderer).borderBoundingBox();
 
     if (!shouldIncludeDescendants)
         return;

@@ -169,10 +169,10 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
 
     if (auto* renderer = node->renderer()) {
         // FIXME: Factor the marker painting code out of InlineTextBox and teach simple line layout to use it.
-        if (renderer->isText())
-            toRenderText(*renderer).ensureLineBoxes();
-        else if (renderer->isRenderBlockFlow())
-            toRenderBlockFlow(*renderer).ensureLineBoxes();
+        if (is<RenderText>(*renderer))
+            downcast<RenderText>(*renderer).ensureLineBoxes();
+        else if (is<RenderBlockFlow>(*renderer))
+            downcast<RenderBlockFlow>(*renderer).ensureLineBoxes();
     }
 
     m_possiblyExistingMarkerTypes.add(newMarker.type());

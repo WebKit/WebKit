@@ -3500,7 +3500,7 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
     ASSERT(m_lineLayoutPath == SimpleLinesPath);
     lineBoxes().deleteLineBoxes();
-    toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
+    downcast<RenderText>(*firstChild()).deleteLineBoxesBeforeSimpleLineLayout();
 }
 
 void RenderBlockFlow::ensureLineBoxes()
@@ -3555,10 +3555,10 @@ void RenderBlockFlow::materializeRareBlockFlowData()
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 inline static bool isVisibleRenderText(RenderObject* renderer)
 {
-    if (!renderer->isText())
+    if (!is<RenderText>(*renderer))
         return false;
-    RenderText* renderText = toRenderText(renderer);
-    return !renderText->linesBoundingBox().isEmpty() && !renderText->text()->containsOnlyWhitespace();
+    RenderText& renderText = downcast<RenderText>(*renderer);
+    return !renderText.linesBoundingBox().isEmpty() && !renderText.text()->containsOnlyWhitespace();
 }
 
 inline static bool resizeTextPermitted(RenderObject* render)
@@ -3638,8 +3638,8 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     
     for (RenderObject* descendent = traverseNext(this, isNonBlocksOrNonFixedHeightListItems); descendent; descendent = descendent->traverseNext(this, isNonBlocksOrNonFixedHeightListItems)) {
         if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
-            RenderText* text = toRenderText(descendent);
-            RenderStyle& oldStyle = text->style();
+            RenderText& text = downcast<RenderText>(*descendent);
+            RenderStyle& oldStyle = text.style();
             FontDescription fontDescription = oldStyle.fontDescription();
             float specifiedSize = fontDescription.specifiedSize();
             float scaledSize = roundf(specifiedSize * scale);
@@ -3654,8 +3654,8 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
                 float candidateNewSize = 0;
                 float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
                 candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
-                if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text->textNode() && oldStyle.textSizeAdjust().isAuto())
-                    document().addAutoSizingNode(text->textNode(), candidateNewSize);
+                if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
+                    document().addAutoSizingNode(text.textNode(), candidateNewSize);
             }
         }
     }
@@ -3931,12 +3931,12 @@ static LayoutUnit getBorderPaddingMargin(const RenderBoxModelObject& child, bool
 
 static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, RenderObject* trailingSpaceChild)
 {
-    if (trailingSpaceChild && trailingSpaceChild->isText()) {
+    if (is<RenderText>(trailingSpaceChild)) {
         // Collapse away the trailing space at the end of a block.
-        RenderText* t = toRenderText(trailingSpaceChild);
+        RenderText& renderText = downcast<RenderText>(*trailingSpaceChild);
         const UChar space = ' ';
-        const Font& font = t->style().font(); // FIXME: This ignores first-line.
-        float spaceWidth = font.width(RenderBlock::constructTextRun(t, font, &space, 1, t->style()));
+        const Font& font = renderText.style().font(); // FIXME: This ignores first-line.
+        float spaceWidth = font.width(RenderBlock::constructTextRun(&renderText, font, &space, 1, renderText.style()));
         inlineMax -= spaceWidth + font.wordSpacing();
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -3960,7 +3960,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
     bool stripFrontSpaces = true;
-    RenderObject* trailingSpaceChild = 0;
+    RenderObject* trailingSpaceChild = nullptr;
 
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific cirucumstances (in order to match common WinIE renderings). 
@@ -4121,14 +4121,14 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 // We are no longer stripping whitespace at the start of a line.
                 if (!child->isFloating()) {
                     stripFrontSpaces = false;
-                    trailingSpaceChild = 0;
+                    trailingSpaceChild = nullptr;
                 }
-            } else if (child->isText()) {
+            } else if (is<RenderText>(*child)) {
                 // Case (3). Text.
-                RenderText* t = toRenderText(child);
+                RenderText& renderText = downcast<RenderText>(*child);
 
-                if (t->style().hasTextCombine() && t->isCombineText())
-                    toRenderCombineText(*t).combineText();
+                if (renderText.style().hasTextCombine() && renderText.isCombineText())
+                    downcast<RenderCombineText>(renderText).combineText();
 
                 // Determine if we have a breakable character. Pass in
                 // whether or not we should ignore any spaces at the front
@@ -4139,7 +4139,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 float beginMin, endMin;
                 bool beginWS, endWS;
                 float beginMax, endMax;
-                t->trimmedPrefWidths(inlineMax, beginMin, beginWS, endMin, endWS,
+                renderText.trimmedPrefWidths(inlineMax, beginMin, beginWS, endMin, endWS,
                                      hasBreakableChar, hasBreak, beginMax, endMax,
                                      childMin, childMax, stripFrontSpaces);
 

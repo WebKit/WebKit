@@ -31,7 +31,7 @@ namespace WebCore {
 
 UCharDirection InlineIterator::surrogateTextDirection(UChar currentCodeUnit) const
 {
-    RenderText& text = toRenderText(*m_renderer);
+    RenderText& text = downcast<RenderText>(*m_renderer);
     UChar lead;
     UChar trail;
     if (U16_IS_LEAD(currentCodeUnit)) {

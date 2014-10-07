@@ -2709,9 +2709,9 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
         // Check to make sure we're not saving the firstLetter as the nextSibling.
         // When the |child| object will be moved, its firstLetter will be recreated,
         // so saving it now in nextSibling would let us with a destroyed object.
-        if (child->isText() && toRenderText(child)->isTextFragment() && nextSibling && nextSibling->isText()) {
+        if (is<RenderTextFragment>(*child) && is<RenderText>(nextSibling)) {
             RenderObject* firstLetterObj = nullptr;
-            if (RenderBlock* block = toRenderTextFragment(child)->blockForAccompanyingFirstLetter()) {
+            if (RenderBlock* block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
                 RenderElement* firstLetterContainer = nullptr;
                 block->getFirstLetter(firstLetterObj, firstLetterContainer, child);
             }
