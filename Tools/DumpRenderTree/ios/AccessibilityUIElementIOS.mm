@@ -191,7 +191,10 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& element
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
 {
-    for (NSInteger k = location; k < (location+length); ++k)
+    // accessibilityElementAtIndex: takes an NSInteger.
+    // We want to preserve that in order to test against invalid indexes being input.
+    NSInteger maxValue = static_cast<NSInteger>(location + length);
+    for (NSInteger k = location; k < maxValue; ++k)
         elementVector.append(AccessibilityUIElement([m_element accessibilityElementAtIndex:k]));    
 }
 
