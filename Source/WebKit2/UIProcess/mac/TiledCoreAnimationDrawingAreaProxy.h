@@ -71,9 +71,9 @@ private:
     WebCore::IntSize m_lastSentMinimumLayoutSize;
 };
 
-DRAWING_AREA_PROXY_TYPE_CASTS(TiledCoreAnimationDrawingAreaProxy, type() == DrawingAreaTypeTiledCoreAnimation);
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(TiledCoreAnimationDrawingAreaProxy, DrawingAreaTypeTiledCoreAnimation)
 
 #endif // !PLATFORM(IOS)
 

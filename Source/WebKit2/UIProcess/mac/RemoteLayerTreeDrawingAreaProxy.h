@@ -108,8 +108,8 @@ private:
     RetainPtr<OneShotDisplayLinkHandler> m_displayLinkHandler;
 };
 
-DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(RemoteLayerTreeDrawingAreaProxy, DrawingAreaTypeRemoteLayerTree)
 
 #endif // RemoteLayerTreeDrawingAreaProxy_h

@@ -1,3 +1,19 @@
+2014-10-07  Christophe Dumez  <cdumez@apple.com>
+
+        [WK2] Use is<>() / downcast<>() for DrawingAreaProxy subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137477
+
+        Reviewed by Andreas Kling.
+
+        Rename wtf/cf/TypeCasts.h to wtf/cf/TypeCastsCF.h to avoid conflict
+        with wtf/TypeCasts.h. They were using the same #ifndef guard and it
+        was causing problems when both were included in the same context.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/cf/TypeCastsCF.h: Renamed from Source/WTF/wtf/cf/TypeCasts.h.
+        (WTF::dynamic_cf_cast):
+        (WTF::checked_cf_cast):
+
 2014-10-07  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Mountain Lion build.

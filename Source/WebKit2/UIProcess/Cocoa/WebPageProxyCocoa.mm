@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
-#import <wtf/cf/TypeCasts.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {
 

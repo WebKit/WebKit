@@ -184,7 +184,7 @@ void WebPageProxy::updateVisibleContentRects(const WebCore::FloatRect& exposedRe
     if (!isValid())
         return;
 
-    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(exposedRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, customFixedPositionRect, scale, inStableState, isChangingObscuredInsetsInteractively, timestamp, horizontalVelocity, verticalVelocity, scaleChangeRate, toRemoteLayerTreeDrawingAreaProxy(drawingArea())->lastCommittedLayerTreeTransactionID());
+    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(exposedRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, customFixedPositionRect, scale, inStableState, isChangingObscuredInsetsInteractively, timestamp, horizontalVelocity, verticalVelocity, scaleChangeRate, downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).lastCommittedLayerTreeTransactionID());
 
     if (visibleContentRectUpdateInfo == m_lastVisibleContentRectUpdate)
         return;
@@ -662,7 +662,7 @@ float WebPageProxy::textAutosizingWidth()
 void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
 {
     if (m_dynamicViewportSizeUpdateWaitingForTarget) {
-        m_dynamicViewportSizeUpdateLayerTreeTransactionID = toRemoteLayerTreeDrawingAreaProxy(drawingArea())->nextLayerTreeTransactionID();
+        m_dynamicViewportSizeUpdateLayerTreeTransactionID = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
         m_dynamicViewportSizeUpdateWaitingForTarget = false;
         m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition, m_dynamicViewportSizeUpdateLayerTreeTransactionID);
     }

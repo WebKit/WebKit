@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KeyedDecoder.h"
 
-#include <wtf/cf/TypeCasts.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

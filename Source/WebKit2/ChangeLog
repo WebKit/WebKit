@@ -1,3 +1,30 @@
+2014-10-07  Christophe Dumez  <cdumez@apple.com>
+
+        [WK2] Use is<>() / downcast<>() for DrawingAreaProxy subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137477
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for DrawingAreaProxy subclasses.
+
+        * Shared/cf/KeyedDecoder.cpp:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        (-[WKWebView _restorePageStateToExposedRect:scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::layerTreeHost):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+        (WebKit::WebPageProxy::dynamicViewportUpdateChangedTarget):
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+
 2014-10-06  Vivek Galatage  <vivek.vg@samsung.com>
 
         Remove unused warning in WebPageOverlay

@@ -30,7 +30,7 @@
 #include "SessionState.h"
 #include <mutex>
 #include <wtf/MallocPtr.h>
-#include <wtf/cf/TypeCasts.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/StringView.h>
 
 namespace WebKit {

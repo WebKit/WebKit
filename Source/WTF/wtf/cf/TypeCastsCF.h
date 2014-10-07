@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypeCasts_h
-#define TypeCasts_h
+#ifndef TypeCastsCF_h
+#define TypeCastsCF_h
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/Assertions.h>
@@ -72,4 +72,4 @@ template<typename T> T checked_cf_cast(CFTypeRef object)
 using WTF::checked_cf_cast;
 using WTF::dynamic_cf_cast;
 
-#endif // TypeCasts_h
+#endif // TypeCastsCF_h

@@ -91,7 +91,7 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID
         [m_layerHost setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
     }
 
-    UIView *parentView = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea())->remoteLayerTreeHost().rootLayer();
+    UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
     setupFullscreen(*m_layerHost.get(), initialRect, parentView);
 }
     

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include <wtf/cf/TypeCasts.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
 
