@@ -51,7 +51,7 @@ class Image;
 
 class Pattern : public RefCounted<Pattern> {
 public:
-    static PassRefPtr<Pattern> create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY);
+    static PassRef<Pattern> create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY);
     virtual ~Pattern();
 
     Image* tileImage() const { return m_tileImage.get(); }

@@ -28,8 +28,8 @@
 
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -45,14 +45,15 @@ public:
 
     static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
-    Pattern* pattern() const { return m_pattern.get(); }
+    Pattern& pattern() { return m_pattern.get(); }
+    const Pattern& pattern() const { return m_pattern.get(); }
 
     bool originClean() const { return m_originClean; }
 
 private:
     CanvasPattern(PassRefPtr<Image>, bool repeatX, bool repeatY, bool originClean);
 
-    RefPtr<Pattern> m_pattern;
+    Ref<Pattern> m_pattern;
     bool m_originClean;
 };
 
