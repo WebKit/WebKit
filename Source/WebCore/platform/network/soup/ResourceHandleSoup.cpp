@@ -306,11 +306,41 @@ static bool isAuthenticationFailureStatusCode(int httpStatusCode)
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
 }
 
+static bool handleUnignoredTLSErrors(ResourceHandle* handle, SoupMessage* message)
+{
+    if (gIgnoreSSLErrors)
+        return false;
+
+    GTlsCertificate* certificate = nullptr;
+    GTlsCertificateFlags tlsErrors = static_cast<GTlsCertificateFlags>(0);
+    soup_message_get_https_status(message, &certificate, &tlsErrors);
+    if (!tlsErrors)
+        return false;
+
+    String lowercaseHostURL = handle->firstRequest().url().host().lower();
+    if (allowsAnyHTTPSCertificateHosts().contains(lowercaseHostURL))
+        return false;
+
+    // We aren't ignoring errors globally, but the user may have already decided to accept this certificate.
+    auto it = clientCertificates().find(lowercaseHostURL);
+    if (it != clientCertificates().end() && it->value.contains(certificate))
+        return false;
+
+    ResourceHandleInternal* d = handle->getInternal();
+    handle->client()->didFail(handle, ResourceError::tlsError(d->m_soupRequest.get(), tlsErrors, certificate));
+    return true;
+}
+
 static void gotHeadersCallback(SoupMessage* message, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle || handle->cancelledOrClientless())
         return;
+
+    if (handleUnignoredTLSErrors(handle, message)) {
+        handle->cancel();
+        return;
+    }
 
     ResourceHandleInternal* d = handle->getInternal();
 
@@ -569,27 +599,6 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         handle->deref();
 }
 
-static bool handleUnignoredTLSErrors(ResourceHandle* handle)
-{
-    ResourceHandleInternal* d = handle->getInternal();
-    const ResourceResponse& response = d->m_response;
-
-    if (!response.soupMessageTLSErrors() || gIgnoreSSLErrors)
-        return false;
-
-    String lowercaseHostURL = handle->firstRequest().url().host().lower();
-    if (allowsAnyHTTPSCertificateHosts().contains(lowercaseHostURL))
-        return false;
-
-    // We aren't ignoring errors globally, but the user may have already decided to accept this certificate.
-    CertificatesMap::iterator i = clientCertificates().find(lowercaseHostURL);
-    if (i != clientCertificates().end() && i->value.contains(response.soupMessageCertificate()))
-        return false;
-
-    handle->client()->didFail(handle, ResourceError::tlsError(d->m_soupRequest.get(), response.soupMessageTLSErrors(), response.soupMessageCertificate()));
-    return true;
-}
-
 size_t ResourceHandle::currentStreamPosition() const
 {
     GInputStream* baseStream = d->m_inputStream.get();
@@ -675,11 +684,6 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
             d->m_response.setSniffedContentType(sniffedType);
         }
         d->m_response.updateFromSoupMessage(soupMessage);
-
-        if (handleUnignoredTLSErrors(handle.get())) {
-            cleanupSoupRequestOperation(handle.get());
-            return;
-        }
 
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
             d->m_inputStream = inputStream;
