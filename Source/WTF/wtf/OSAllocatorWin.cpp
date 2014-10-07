@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +73,8 @@ void OSAllocator::decommit(void* address, size_t bytes)
     // See: https://bugs.webkit.org/show_bug.cgi?id=121972.
     if (!bytes)
         return;
+    // Silence warning about using MEM_DECOMMIT instead of MEM_RELEASE:
+#pragma warning(suppress: 6250)
     bool result = VirtualFree(address, bytes, MEM_DECOMMIT);
     if (!result)
         CRASH();

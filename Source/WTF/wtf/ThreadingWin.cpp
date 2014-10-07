@@ -296,6 +296,7 @@ void Mutex::lock()
     ++m_mutex.m_recursionCount;
 }
     
+#pragma warning(suppress: 26115)
 bool Mutex::tryLock()
 {
     // This method is modeled after the behavior of pthread_mutex_trylock,
