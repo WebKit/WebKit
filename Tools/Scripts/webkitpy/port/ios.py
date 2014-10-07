@@ -134,7 +134,8 @@ class IOSSimulatorPort(Port):
     def _generate_all_test_configurations(self):
         configurations = []
         for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type))
+            for architecture in self.ARCHITECTURES:
+                configurations.append(TestConfiguration(version=self._version, architecture=architecture, build_type=build_type))
         return configurations
 
     def _driver_class(self):

@@ -1,3 +1,17 @@
+2014-10-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=137499
+
+        Reviewed by Simon Fraser.
+
+        Add a new platform directory, called ios-simulator, and associated TestExpectation file.
+        For now, there is a single entry to skip all accessibility tests on iOS due to significant
+        API differences. We'll likely update TestExpectations as we rebaseline iOS Simulator
+        layout test results.
+
+        * platform/ios-simulator/TestExpectations: Added.
+
 2014-10-07  Jer Noble  <jer.noble@apple.com>
 
         [Media] Expose AudioTracks in the "captions" menu.

@@ -1,3 +1,18 @@
+2014-10-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=137499
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where the TestExpectation file for the iOS Simulator platform was only
+        honored when running run-webkit-tests with a 32-bit simulator build of iOS WebKit. We
+        should honor the TestExpectation file for the iOS Simulator platform for both 32- and 64-
+        bit simulator builds of iOS WebKit.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._generate_all_test_configurations):
+
 2014-10-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [GTK] jhbuild modules should build xserver with the --without-dtrace option.

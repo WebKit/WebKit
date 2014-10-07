@@ -1,0 +1,7 @@
+# These are the layout test expectations for Apple's iOS port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# Cannot enable AX tests because there are too many differences between what is available
+# through the iPhone AX API and the OS X AX API.
+accessibility
