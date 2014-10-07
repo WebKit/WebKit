@@ -1,3 +1,16 @@
+2014-10-06  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Remove unused warning in WebPageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=137444
+
+        Reviewed by Darin Adler.
+
+        Commenting the unused parameter to supress the warning.
+
+        * WebProcess/WebPage/WebPageOverlay.h:
+        (WebKit::WebPageOverlay::Client::copyAccessibilityAttributeStringValueForPoint):
+        (WebKit::WebPageOverlay::Client::copyAccessibilityAttributeBoolValueForPoint):
+
 2014-10-06  Ada Chan  <adachan@apple.com>
 
         Call WKPageUIClient::isPlayingAudioDidChange() whenever audio starts/stops playing on a page.

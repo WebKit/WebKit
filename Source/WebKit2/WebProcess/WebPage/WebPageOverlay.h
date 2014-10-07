@@ -51,8 +51,8 @@ public:
         virtual bool mouseEvent(WebPageOverlay&, const WebCore::PlatformMouseEvent&) = 0;
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
 
-        virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) { return false; }
-        virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) { return false; }
+        virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& /* value */) { return false; }
+        virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& /* value */) { return false; }
         virtual Vector<String> copyAccessibilityAttributeNames(WebPageOverlay&, bool /* parameterizedNames */) { return Vector<String>(); }
     };
 
