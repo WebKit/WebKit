@@ -1,4 +1,5 @@
 # Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.tool.multicommandtool import Command
+from webkitpy.common.config.committers import CommitterList
 
 
 class FindUsers(Command):
@@ -35,10 +37,6 @@ class FindUsers(Command):
 
     def execute(self, options, args, tool):
         search_string = args[0]
-        login_userid_pairs = tool.bugs.queries.fetch_login_userid_pairs_matching_substring(search_string)
-        for (login, user_id) in login_userid_pairs:
-            user = tool.bugs.fetch_user(user_id)
-            groups_string = ", ".join(user['groups']) if user['groups'] else "none"
-            print "%s <%s> (%s) (%s)" % (user['name'], user['login'], user_id, groups_string)
-        else:
-            print "No users found matching '%s'" % search_string
+        users = CommitterList().contributors_by_search_string(search_string)
+        for user in users:
+            print user
