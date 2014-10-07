@@ -1137,14 +1137,28 @@ void WebFrameLoaderClient::frameLoadCompleted()
     }
 }
 
-#if !PLATFORM(IOS)
-void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
+void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* historyItem)
 {
-    notImplemented();
+#if PLATFORM(IOS) || PLATFORM(EFL)
+    if (m_frame->isMainFrame())
+        m_frame->page()->savePageState(*historyItem);
+#else
+    UNUSED_PARAM(historyItem);
+#endif
 }
 
 void WebFrameLoaderClient::restoreViewState()
 {
+#if PLATFORM(IOS) || PLATFORM(EFL)
+    Frame& frame = *m_frame->coreFrame();
+    HistoryItem* currentItem = frame.loader().history().currentItem();
+    if (FrameView* view = frame.view()) {
+        if (m_frame->isMainFrame())
+            m_frame->page()->restorePageState(*currentItem);
+        else if (!view->wasScrolledByUser())
+            view->setScrollPosition(currentItem->scrollPoint());
+    }
+#else
     // Inform the UI process of the scale factor.
     double scaleFactor = m_frame->coreFrame()->loader().history().currentItem()->pageScaleFactor();
 
@@ -1156,8 +1170,8 @@ void WebFrameLoaderClient::restoreViewState()
     // the view on restores from the back/forward cache.
     if (m_frame == m_frame->page()->mainWebFrame())
         m_frame->page()->drawingArea()->setNeedsDisplay();
-}
 #endif
+}
 
 void WebFrameLoaderClient::provisionalLoadStarted()
 {

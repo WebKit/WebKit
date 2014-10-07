@@ -1,3 +1,39 @@
+2014-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Restore previous scroll position using restoreViewState()
+        https://bugs.webkit.org/show_bug.cgi?id=136999
+
+        Reviewed by Benjamin Poulain.
+
+        There are duplicating code paths to restore previous scroll position and scale factor in
+        HistoryController::restoreScrollPositionAndViewState. EFL port has processed the two code paths.
+        It causes wrong rendering update or scroll position change when previous page's scroll position
+        is restored. Thus EFL port begins to use restoreViewState() to restore scroll position and scale factor.
+        This patch is first step to support it.
+
+        Additionally EFL port has supported to use ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate()
+        since r173785. So EFL port can use the requestScrollPositionUpdate() to restore scroll position on previous page
+        instead of delegatedScrollRequested(). However setScrollPosition() can't be used there for now, because iOS port
+        should call it when delegatesScrolling is disabled. On the other hand, EFL port supports it only when delegatesScrolling
+        is enabled.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem):
+        Move iOS saveViewStateToItem() to common place in order to share iOS implementation with EFL port.
+
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        EFL begins to share restoreViewState() of iOS, thus move iOS restoreViewState() to common place.
+
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem): Deleted.
+        (WebKit::WebFrameLoaderClient::restoreViewState): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::restorePageState):
+        Call scalePage() to update previous scaleFactor and scrollPosition of historyItem both to WebProcess and UIProcess.
+
+        (WebKit::WebPage::savePageState):
+
 2014-10-06  Chris Dumez  <cdumez@apple.com>
 
         [Mac] We are spending too much time serializing ProtectionSpace objects

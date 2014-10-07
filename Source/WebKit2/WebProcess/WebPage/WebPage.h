@@ -445,14 +445,17 @@ public:
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 #endif
 
+#if PLATFORM(IOS) || PLATFORM(EFL)
+    void savePageState(WebCore::HistoryItem&);
+    void restorePageState(const WebCore::HistoryItem&);
+#endif
+
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize() const;
     WebCore::FloatSize availableScreenSize() const;
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void didReceiveMobileDocType(bool);
-    void savePageState(WebCore::HistoryItem&);
-    void restorePageState(const WebCore::HistoryItem&);
 
     void setUseTestingViewportConfiguration(bool useTestingViewport) { m_useTestingViewportConfiguration = useTestingViewport; }
     bool isUsingTestingViewportConfiguration() const { return m_useTestingViewportConfiguration; }

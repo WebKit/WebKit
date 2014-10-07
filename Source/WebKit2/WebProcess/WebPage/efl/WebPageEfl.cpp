@@ -32,12 +32,14 @@
 #include "EventHandler.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
+#include "WebPageProxyMessages.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
 #include <WebCore/EflKeyboardUtilities.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HistoryItem.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -222,6 +224,22 @@ void WebPage::cancelComposition()
 String WebPage::platformUserAgent(const URL&) const
 {
     return String();
+}
+
+void WebPage::restorePageState(const HistoryItem& historyItem)
+{
+    float restorePageScaleFactor = historyItem.pageScaleFactor();
+    IntPoint restoreScrollPoint = historyItem.scrollPoint();
+
+    // A scale factor or scroll point of zero means that the history item has the default scale factor or scroll position,
+    // thus we don't need to update it.
+    if (restorePageScaleFactor || restoreScrollPoint != IntPoint(0, 0))
+        scalePage(restorePageScaleFactor, restoreScrollPoint);
+}
+
+void WebPage::savePageState(HistoryItem&)
+{
+    notImplemented();
 }
 
 } // namespace WebKit
