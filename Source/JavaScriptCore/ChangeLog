@@ -1,3 +1,16 @@
+2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use of 1-bit Enum type behaves improperly
+        https://bugs.webkit.org/show_bug.cgi?id=137471
+        <rdar://problem/18559172>
+
+        Reviewed by Mark Lam.
+
+        Represent 1-bit enum element as 'unsigned', as we have done elsewhere
+        in WebKit to avoid problems when building with MSVC.
+
+        * debugger/Debugger.h:
+
 2014-10-06  Mark Lam  <mark.lam@apple.com>
 
         Fixed compiler warnings on Windows build.
