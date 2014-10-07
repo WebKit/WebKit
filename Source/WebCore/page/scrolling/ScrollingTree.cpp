@@ -31,6 +31,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeNode.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/TemporaryChange.h>
 
@@ -96,32 +97,26 @@ void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, 
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (m_rootNode)
-        toScrollingTreeScrollingNode(m_rootNode.get())->handleWheelEvent(wheelEvent);
+        downcast<ScrollingTreeScrollingNode>(*m_rootNode).handleWheelEvent(wheelEvent);
 }
 
 void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatRect& fixedPositionRect, double scale)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
-    if (!node)
+    if (!is<ScrollingTreeScrollingNode>(node))
         return;
 
-    if (!node->isScrollingNode())
-        return;
-
-    toScrollingTreeScrollingNode(node)->updateLayersAfterViewportChange(fixedPositionRect, scale);
+    downcast<ScrollingTreeScrollingNode>(*node).updateLayersAfterViewportChange(fixedPositionRect, scale);
 }
 
 void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteration)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
-    if (!node)
-        return;
-
-    if (node->nodeType() != OverflowScrollingNode)
+    if (!is<ScrollingTreeOverflowScrollingNode>(node))
         return;
 
     // Update descendant nodes
-    toScrollingTreeScrollingNode(node)->updateLayersAfterDelegatedScroll(scrollPosition);
+    downcast<ScrollingTreeOverflowScrollingNode>(*node).updateLayersAfterDelegatedScroll(scrollPosition);
 
     // Update GraphicsLayers and scroll state.
     scrollingTreeNodeDidScroll(nodeID, scrollPosition, inUserInteration ? SyncScrollingLayerPosition : SetScrollingLayerPosition);

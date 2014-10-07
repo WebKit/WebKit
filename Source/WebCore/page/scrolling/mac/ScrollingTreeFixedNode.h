@@ -54,9 +54,9 @@ private:
     RetainPtr<CALayer> m_layer;
 };
 
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeFixedNode, isFixedNode());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeFixedNode, isFixedNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
 

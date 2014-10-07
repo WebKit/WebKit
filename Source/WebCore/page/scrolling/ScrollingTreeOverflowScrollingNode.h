@@ -41,9 +41,9 @@ protected:
     WEBCORE_EXPORT ScrollingTreeOverflowScrollingNode(ScrollingTree&, ScrollingNodeID);
 };
 
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeOverflowScrollingNode, isOverflowScrollingNode());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeOverflowScrollingNode, isOverflowScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
 

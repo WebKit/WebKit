@@ -32,6 +32,7 @@
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -81,10 +82,12 @@ private:
     ScrollingTreeNode* m_parent;
 };
 
-#define SCROLLING_NODE_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, ScrollingTreeNode, value, value->predicate, value.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::ScrollingTreeNode& node) { return node.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(ASYNC_SCROLLING)
 

@@ -30,6 +30,7 @@
 
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include <QuartzCore/CALayer.h>
 
@@ -72,10 +73,10 @@ void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTre
     bool adjustStickyLayer = false;
     FloatRect constrainingRect;
 
-    if (parent()->isOverflowScrollingNode()) {
-        constrainingRect = FloatRect(toScrollingTreeOverflowScrollingNode(parent())->scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+    if (is<ScrollingTreeOverflowScrollingNode>(*parent())) {
+        constrainingRect = FloatRect(downcast<ScrollingTreeOverflowScrollingNode>(*parent()).scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
         adjustStickyLayer = true;
-    } else if (parent()->isFrameScrollingNode()) {
+    } else if (is<ScrollingTreeFrameScrollingNode>(*parent())) {
         constrainingRect = fixedPositionRect;
         adjustStickyLayer = true;
     }

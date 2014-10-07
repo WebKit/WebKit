@@ -104,9 +104,9 @@ private:
     ScrollableAreaParameters m_scrollableAreaParameters;
 };
 
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeScrollingNode, isScrollingNode());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeScrollingNode, isScrollingNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)
 
