@@ -1,3 +1,91 @@
+2014-10-02  Andres Gomez  <agomez@igalia.com>
+
+        Web Inspector: [GTK] Missing icons and enhancing the proportion and visibility of some icons
+        https://bugs.webkit.org/show_bug.cgi?id=137248
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add more free icons and removed some unused ones for the Web
+        Inspector in GTK+.
+        Also, enhanced the visibility and/or proportion of several of the
+        icons.
+
+        * UserInterface/Images/gtk/AUTHORS:
+        * UserInterface/Images/gtk/COPYING:
+        * UserInterface/Images/gtk/Checkers.svg: Added.
+        * UserInterface/Images/gtk/Circle.svg: Added.
+        * UserInterface/Images/gtk/CloseLarge.svg: Added.
+        * UserInterface/Images/gtk/CloseTimeline.png: Removed.
+        * UserInterface/Images/gtk/CloseTimeline@2x.png: Removed.
+        * UserInterface/Images/gtk/Crosshair.svg:
+        * UserInterface/Images/gtk/DOMCharacterData.svg:
+        * UserInterface/Images/gtk/DOMComment.svg:
+        * UserInterface/Images/gtk/DOMDocument.svg:
+        * UserInterface/Images/gtk/DOMDocumentType.svg:
+        * UserInterface/Images/gtk/DOMElement.svg:
+        * UserInterface/Images/gtk/DOMNode.svg:
+        * UserInterface/Images/gtk/DOMTextNode.svg:
+        * UserInterface/Images/gtk/DOMTree.svg:
+        * UserInterface/Images/gtk/EventListener.svg:
+        * UserInterface/Images/gtk/Exception.svg:
+        * UserInterface/Images/gtk/Function.svg:
+        * UserInterface/Images/gtk/GradientStop.png: Added.
+        * UserInterface/Images/gtk/GradientStop@2x.png: Added.
+        * UserInterface/Images/gtk/GradientStopSelected.png: Added.
+        * UserInterface/Images/gtk/GradientStopSelected@2x.png: Added.
+        * UserInterface/Images/gtk/Issues.svg:
+        * UserInterface/Images/gtk/IssuesEnabled.svg:
+        * UserInterface/Images/gtk/LessColumns.svg: Removed.
+        * UserInterface/Images/gtk/Logs.svg:
+        * UserInterface/Images/gtk/Memory.svg: Removed.
+        * UserInterface/Images/gtk/MoreColumns.svg: Removed.
+        * UserInterface/Images/gtk/Native.svg:
+        * UserInterface/Images/gtk/NavigationItemAngleBrackets.svg:
+        * UserInterface/Images/gtk/NavigationItemBrushAndRuler.svg:
+        * UserInterface/Images/gtk/NavigationItemBug.svg:
+        * UserInterface/Images/gtk/NavigationItemFile.svg:
+        * UserInterface/Images/gtk/NavigationItemLayers.svg:
+        * UserInterface/Images/gtk/NavigationItemMagnifyingGlass.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemProbes.pdf: Added.
+        * UserInterface/Images/gtk/NavigationItemStopwatch.svg:
+        * UserInterface/Images/gtk/NavigationItemTypes.svg: Added.
+        * UserInterface/Images/gtk/PaintFlashing.svg: Added.
+        * UserInterface/Images/gtk/PseudoElement.svg:
+        * UserInterface/Images/gtk/Record.svg: Added.
+        * UserInterface/Images/gtk/Recording.png: Removed.
+        * UserInterface/Images/gtk/Recording@2x.png: Removed.
+        * UserInterface/Images/gtk/RecordingHovered.png: Removed.
+        * UserInterface/Images/gtk/RecordingHovered@2x.png: Removed.
+        * UserInterface/Images/gtk/RecordingStopped.png: Removed.
+        * UserInterface/Images/gtk/RecordingStopped@2x.png: Removed.
+        * UserInterface/Images/gtk/Reflection.svg:
+        * UserInterface/Images/gtk/ReplayPauseButton.svg: Added.
+        * UserInterface/Images/gtk/ReplayPlayButton.svg: Added.
+        * UserInterface/Images/gtk/ReplayRecordingButton.svg: Added.
+        * UserInterface/Images/gtk/Request.svg:
+        * UserInterface/Images/gtk/Resources.svg:
+        * UserInterface/Images/gtk/Response.svg:
+        * UserInterface/Images/gtk/ResultLine.svg:
+        * UserInterface/Images/gtk/SourceCode.svg:
+        * UserInterface/Images/gtk/Stop.svg: Added.
+        * UserInterface/Images/gtk/StyleRuleAuthor.svg:
+        * UserInterface/Images/gtk/StyleRuleInherited.svg:
+        * UserInterface/Images/gtk/StyleRuleInheritedElement.svg:
+        * UserInterface/Images/gtk/StyleRuleInspector.svg:
+        * UserInterface/Images/gtk/StyleRuleUser.svg:
+        * UserInterface/Images/gtk/StyleRuleUserAgent.svg:
+        * UserInterface/Images/gtk/Time.svg:
+        * UserInterface/Images/gtk/TimelineRecordAnimation.svg:
+        * UserInterface/Images/gtk/TimelineRecordConsoleProfile.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordEvent.svg:
+        * UserInterface/Images/gtk/TimelineRecordLayout.svg:
+        * UserInterface/Images/gtk/TimelineRecordPaint.svg:
+        * UserInterface/Images/gtk/TimelineRecordProbeSampled.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordScriptEvaluated.svg:
+        * UserInterface/Images/gtk/TimelineRecordStyle.svg:
+        * UserInterface/Images/gtk/TimelineRecordTimer.svg:
+        * UserInterface/Images/gtk/Weight.svg:
+
 2014-09-25  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Add more free icons for the Web Inspector in GTK+.

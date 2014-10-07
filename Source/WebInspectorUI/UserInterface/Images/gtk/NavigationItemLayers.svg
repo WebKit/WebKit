@@ -42,16 +42,20 @@
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <path
-     d="m 1,14.5 3,-3 11,0 -3,3 z"
-     id="path11960"
-     style="fill-opacity:1;stroke:none" />
-  <path
-     d="m 1,9.5 3,-3 11,0 -3,3 z"
-     id="path11962"
-     style="fill-opacity:1;stroke:none" />
-  <path
-     d="m 1,4.5 3,-3 11,0 -3,3 z"
-     id="path11964"
-     style="fill-opacity:1;stroke:none" />
+  <g
+     transform="matrix(1.1428571,0,0,1.1428571,-1.1428568,-1.1428568)"
+     id="g3119">
+    <path
+       d="m 1,14.5 3,-3 11,0 -3,3 z"
+       id="path11960"
+       style="fill-opacity:1;stroke:none" />
+    <path
+       d="m 1,9.5 3,-3 11,0 -3,3 z"
+       id="path11962"
+       style="fill-opacity:1;stroke:none" />
+    <path
+       d="m 1,4.5 3,-3 11,0 -3,3 z"
+       id="path11964"
+       style="fill-opacity:1;stroke:none" />
+  </g>
 </svg>

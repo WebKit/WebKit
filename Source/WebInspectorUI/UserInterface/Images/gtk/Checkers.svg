@@ -8,13 +8,14 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    version="1.1"
-   width="16"
-   height="16"
-   id="svg3371">
+   width="6"
+   height="6"
+   id="svg15431"
+   style="fill:#cccccc">
   <defs
-     id="defs3373" />
+     id="defs15433" />
   <metadata
-     id="metadata3376">
+     id="metadata15436">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -43,11 +44,21 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="matrix(0.79994145,0,0,0.79994145,1.6004685,1.6004683)"
+     transform="translate(0,-10)"
      id="layer1">
-    <path
-       d="m 2.8124438,0.5005491 a 1.0000999,1.0000999 0 0 0 -0.8125,1.0000001 l 0,12.9999998 a 1.0000999,1.0000999 0 0 0 1.0000001,1 l 9.9999991,0 a 1.0000999,1.0000999 0 0 0 1,-1 l 0,-9.4374998 a 1.0000999,1.0000999 0 0 0 -0.28125,-0.71875 L 10.156194,0.78179915 A 1.0000999,1.0000999 0 0 0 9.4374439,0.5005491 l -6.4375,0 a 1.0000999,1.0000999 0 0 0 -0.0937,0 1.0000999,1.0000999 0 0 0 -0.0937,0 z m 1.1875001,2.0000001 5,0 0,3 2.9999991,0 0,7.9999998 -7.9999991,0 0,-10.9999998 z"
-       id="path1234"
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+    <rect
+       width="3"
+       height="3"
+       x="0"
+       y="13"
+       id="rect15439"
+       style="color:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       width="3"
+       height="3"
+       x="3"
+       y="10"
+       id="rect15439-9"
+       style="color:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
   </g>
 </svg>

@@ -10,11 +10,11 @@
    version="1.1"
    width="16"
    height="16"
-   id="svg3371">
+   id="svg2987">
   <defs
-     id="defs3373" />
+     id="defs2989" />
   <metadata
-     id="metadata3376">
+     id="metadata2992">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -43,11 +43,10 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="matrix(0.79994145,0,0,0.79994145,1.6004685,1.6004683)"
      id="layer1">
     <path
-       d="m 2.8124438,0.5005491 a 1.0000999,1.0000999 0 0 0 -0.8125,1.0000001 l 0,12.9999998 a 1.0000999,1.0000999 0 0 0 1.0000001,1 l 9.9999991,0 a 1.0000999,1.0000999 0 0 0 1,-1 l 0,-9.4374998 a 1.0000999,1.0000999 0 0 0 -0.28125,-0.71875 L 10.156194,0.78179915 A 1.0000999,1.0000999 0 0 0 9.4374439,0.5005491 l -6.4375,0 a 1.0000999,1.0000999 0 0 0 -0.0937,0 1.0000999,1.0000999 0 0 0 -0.0937,0 z m 1.1875001,2.0000001 5,0 0,3 2.9999991,0 0,7.9999998 -7.9999991,0 0,-10.9999998 z"
-       id="path1234"
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;stroke:none;stroke-width:1.99999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+       d="m 4,4 1,0 c 0.01037,-1.2e-4 0.02079,-4.6e-4 0.03125,0 0.254951,0.0112 0.50987,0.12858 0.6875,0.3125 L 8,6.59375 10.3125,4.3125 C 10.578125,4.082 10.759172,4.007 11,4 l 1,0 0,1 c 0,0.28647 -0.03434,0.55065 -0.25,0.75 l -2.28125,2.28125 2.25,2.25 C 11.906938,10.46942 11.999992,10.7347 12,11 l 0,1 -1,0 c -0.265301,-10e-6 -0.530586,-0.0931 -0.71875,-0.28125 L 8,9.4375 5.71875,11.71875 C 5.530586,11.90694 5.26529,12 5,12 l -1,0 0,-1 c -3e-6,-0.26529 0.09306,-0.53058 0.28125,-0.71875 L 6.5625,8.03125 4.28125,5.75 C 4.070508,5.55537 3.97809,5.28075 4,5 L 4,4 z"
+       id="path10839-9"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#bebebe;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.78100002;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new;font-family:Andale Mono;-inkscape-font-specification:Andale Mono" />
   </g>
 </svg>
