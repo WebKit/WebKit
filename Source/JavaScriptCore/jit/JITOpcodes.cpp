@@ -1035,12 +1035,6 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
         lazyJump.link(this);
 }
 
-void JIT::emit_op_new_captured_func(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_new_captured_func);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

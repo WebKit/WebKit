@@ -1270,14 +1270,6 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, f%d, %s", registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
             break;
         }
-        case op_new_captured_func: {
-            int r0 = (++it)->u.operand;
-            int f0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "new_captured_func");
-            out.printf("%s, f%d", registerName(r0).data(), f0);
-            ++it;
-            break;
-        }
         case op_new_func_exp: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
@@ -2102,21 +2094,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 vm()->typeProfiler()->insertNewLocation(location);
 
             instructions[i + 2].u.location = location;
-            break;
-        }
-
-        case op_new_captured_func: {
-            if (pc[3].u.index == UINT_MAX) {
-                instructions[i + 3].u.watchpointSet = 0;
-                break;
-            }
-            StringImpl* uid = identifier(pc[3].u.index).impl();
-            RELEASE_ASSERT(didCloneSymbolTable);
-            ConcurrentJITLocker locker(m_symbolTable->m_lock);
-            SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
-            ASSERT(iter != m_symbolTable->end(locker));
-            iter->value.prepareToWatch(symbolTable());
-            instructions[i + 3].u.watchpointSet = iter->value.watchpointSet();
             break;
         }
 
@@ -3899,7 +3876,6 @@ struct VerifyCapturedDef {
         case op_enter:
         case op_init_lazy_reg:
         case op_create_arguments:
-        case op_new_captured_func:
             return;
         default:
             break;

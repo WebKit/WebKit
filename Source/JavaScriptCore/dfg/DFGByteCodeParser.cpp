@@ -3439,16 +3439,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             NEXT_OPCODE(op_new_func);
         }
-            
-        case op_new_captured_func: {
-            Node* function = addToGraph(
-                NewFunctionNoCheck, OpInfo(currentInstruction[2].u.operand));
-            if (VariableWatchpointSet* set = currentInstruction[3].u.watchpointSet)
-                addToGraph(NotifyWrite, OpInfo(set), function);
-            set(VirtualRegister(currentInstruction[1].u.operand), function);
-            NEXT_OPCODE(op_new_captured_func);
-        }
-            
+
         case op_new_func_exp: {
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(NewFunctionExpression, OpInfo(currentInstruction[2].u.operand)));

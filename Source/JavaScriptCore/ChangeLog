@@ -1,3 +1,48 @@
+2014-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Remove op_new_captured_func
+        https://bugs.webkit.org/show_bug.cgi?id=137491
+
+        Reviewed by Mark Lam.
+
+        Removes the op_captured_new_func opcode as part of the work
+        towards having any magical opcodes that write directly to
+        named "registers" and then have a follow on op to ensure that
+        the environment record correctly represents the stack state.
+
+        For this we add a non-captured scratch register so we don't
+        have to have any kind of magic opcode, and instead simply
+        have sensible creation and move semantics for capturing new
+        functions.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_captured_func): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): Deleted.
+        * runtime/CommonSlowPaths.h:
+
 2014-10-06  Andy Estes  <aestes@apple.com>
 
         Objective-C objects must be fully defined when used in a WTF::Vector

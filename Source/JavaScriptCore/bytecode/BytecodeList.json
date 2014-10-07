@@ -93,7 +93,6 @@
             { "name" : "op_switch_char", "length" : 4 },
             { "name" : "op_switch_string", "length" : 4 },
             { "name" : "op_new_func", "length" : 4 },
-            { "name" : "op_new_captured_func", "length" : 4 },
             { "name" : "op_new_func_exp", "length" : 3 },
             { "name" : "op_call", "length" : 9 },
             { "name" : "op_call_eval", "length" : 9 },

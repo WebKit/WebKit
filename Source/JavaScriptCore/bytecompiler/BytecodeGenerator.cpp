@@ -250,7 +250,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitOpcode(op_create_lexical_environment);
         instructions().append(m_lexicalEnvironmentRegister->index());
     }
-
+    RegisterID* scratch = addVar();
     m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
 
     if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
@@ -332,10 +332,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             const Identifier& ident = function->ident();
             if (functionBody->captures(ident) || shouldCaptureAllTheThings) {
                 m_functions.add(ident.impl());
-                // We rely on still allocating stack space for captured variables
-                // here.
-                RegisterID* newFunction = emitNewFunction(addVar(ident, IsVariable, IsWatchable), IsCaptured, function);
-                initializeCapturedVariable(newFunction, ident, newFunction);
+                emitNewFunction(scratch, function);
+                initializeCapturedVariable(addVar(ident, IsVariable, IsWatchable), ident, scratch);
             }
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
@@ -359,7 +357,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 // Don't lazily create functions that override the name 'arguments'
                 // as this would complicate lazy instantiation of actual arguments.
                 if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
-                    emitNewFunction(reg.get(), NotCaptured, function);
+                    emitNewFunction(reg.get(), function);
                 else {
                     emitInitLazyRegister(reg.get());
                     m_lazyFunctions.set(reg->virtualRegister().toLocal(), function);
@@ -1657,9 +1655,9 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, CaptureMode captureMode, FunctionBodyNode* function)
+RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
-    return emitNewFunctionInternal(dst, captureMode, m_codeBlock->addFunctionDecl(makeFunction(function)), false);
+    return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(makeFunction(function)), false);
 }
 
 RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* function)
@@ -1667,19 +1665,15 @@ RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBody
     FunctionOffsetMap::AddResult ptr = m_functionOffsets.add(function, 0);
     if (ptr.isNewEntry)
         ptr.iterator->value = m_codeBlock->addFunctionDecl(makeFunction(function));
-    return emitNewFunctionInternal(dst, NotCaptured, ptr.iterator->value, true);
+    return emitNewFunctionInternal(dst, ptr.iterator->value, true);
 }
 
-RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, CaptureMode captureMode, unsigned index, bool doNullCheck)
+RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned index, bool doNullCheck)
 {
-    emitOpcode(captureMode == IsCaptured ? op_new_captured_func : op_new_func);
+    emitOpcode(op_new_func);
     instructions().append(dst->index());
     instructions().append(index);
-    if (captureMode == IsCaptured) {
-        ASSERT(!doNullCheck);
-        instructions().append(watchableVariable(dst->index()));
-    } else
-        instructions().append(doNullCheck);
+    instructions().append(doNullCheck);
     return dst;
 }
 

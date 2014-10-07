@@ -1769,13 +1769,6 @@ _llint_op_new_func:
 .opNewFuncDone:
     dispatch(4)
 
-
-_llint_op_new_captured_func:
-    traceExecution()
-    callSlowPath(_slow_path_new_captured_func)
-    dispatch(4)
-
-
 macro arrayProfileForCall()
     loadisFromInstruction(4, t3)
     negp t3

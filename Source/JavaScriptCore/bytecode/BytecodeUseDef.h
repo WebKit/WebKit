@@ -58,7 +58,6 @@ void computeUsesForBytecodeOffset(
     case op_touch_entry:
         return;
     case op_new_func:
-    case op_new_captured_func:
     case op_create_lexical_environment: 
     case op_create_arguments:
     case op_to_this:
@@ -311,7 +310,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_array_with_size:
     case op_new_regexp:
     case op_new_func:
-    case op_new_captured_func:
     case op_new_func_exp:
     case op_call_varargs:
     case op_construct_varargs:

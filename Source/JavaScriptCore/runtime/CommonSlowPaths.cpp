@@ -262,17 +262,6 @@ SLOW_PATH_DECL(slow_path_to_this)
     RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
-SLOW_PATH_DECL(slow_path_new_captured_func)
-{
-    BEGIN();
-    CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
-    JSValue value = JSFunction::create(vm, codeBlock->functionDecl(pc[2].u.operand), exec->scope());
-    if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(vm, value, "Executed op_new_captured_func");
-    RETURN(value);
-}
-
 SLOW_PATH_DECL(slow_path_not)
 {
     BEGIN();

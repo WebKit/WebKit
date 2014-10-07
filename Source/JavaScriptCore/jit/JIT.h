@@ -514,7 +514,6 @@ namespace JSC {
         void emit_op_new_array_with_size(Instruction*);
         void emit_op_new_array_buffer(Instruction*);
         void emit_op_new_func(Instruction*);
-        void emit_op_new_captured_func(Instruction*);
         void emit_op_new_func_exp(Instruction*);
         void emit_op_new_object(Instruction*);
         void emit_op_new_regexp(Instruction*);
