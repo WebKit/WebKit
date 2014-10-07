@@ -1,5 +1,11 @@
 2014-10-07  Anders Carlsson  <andersca@apple.com>
 
+        Use "1", not "true".
+
+        * wtf/text/StringView.h:
+
+2014-10-07  Anders Carlsson  <andersca@apple.com>
+
         Temporarily disable the StringView lifetime checking.
 
         * wtf/text/StringView.h:

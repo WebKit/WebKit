@@ -34,7 +34,7 @@
 
 // FIXME: Enabling the StringView lifetime checking causes the MSVC build to fail. Figure out why.
 // FIXME: Enable StringView lifetime checking once the underlying assertions have been fixed.
-#if defined(NDEBUG) || COMPILER(MSVC) || true
+#if defined(NDEBUG) || COMPILER(MSVC) || 1
 #define CHECK_STRINGVIEW_LIFETIME 0
 #else
 #define CHECK_STRINGVIEW_LIFETIME 1
