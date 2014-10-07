@@ -1,3 +1,19 @@
+2014-09-26  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Fix support for the initial-letter CSS property to first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=137108
+
+        Reviewed by Alejandro G. Castro.
+
+        Add missing GTK test expectation files after http://webkit.org/b/136484
+
+        * platform/gtk/fast/css-generated-content/initial-letter-basic-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/initial-letter-border-padding-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/initial-letter-clearance-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/initial-letter-descender-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/initial-letter-raised-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/initial-letter-sunken-expected.txt: Added.
+
 2014-09-22  David Hyatt  <hyatt@apple.com>
 
         Bad cast in isValidColumnSpanner.

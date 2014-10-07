@@ -63,10 +63,12 @@ void SimpleFontData::platformInit()
 
     float ascent = narrowPrecisionToFloat(fontExtents.ascent);
     float descent = narrowPrecisionToFloat(fontExtents.descent);
+    float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setCapHeight(capHeight);
 
 #if PLATFORM(EFL)
     m_fontMetrics.setLineSpacing(ascent + descent + lineGap);

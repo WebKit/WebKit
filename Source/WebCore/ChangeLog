@@ -1,3 +1,15 @@
+2014-09-26  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Fix support for the initial-letter CSS property to first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=137108
+
+        Reviewed by Alejandro G. Castro.
+
+        Add support for cap-height to the font system.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2014-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         WebSocket crash when a connection is closed from server side
