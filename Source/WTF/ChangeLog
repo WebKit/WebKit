@@ -1,5 +1,14 @@
 2014-10-07  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Mountain Lion build.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::underlyingStringIsValid):
+        (WTF::StringView::setUnderlyingString):
+        (WTF::StringView::invalidate):
+
+2014-10-07  Anders Carlsson  <andersca@apple.com>
+
         Use "1", not "true".
 
         * wtf/text/StringView.h:

@@ -116,9 +116,15 @@ private:
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
 
+#if CHECK_STRINGVIEW_LIFETIME
     WTF_EXPORT_STRING_API bool underlyingStringIsValid() const;
     WTF_EXPORT_STRING_API void setUnderlyingString(const StringImpl*);
     WTF_EXPORT_STRING_API void setUnderlyingString(const StringView&);
+#else
+    bool underlyingStringIsValid() const { return true; }
+    void setUnderlyingString(const StringImpl*) { }
+    void setUnderlyingString(const StringView&) { }
+#endif
 
     static const unsigned is16BitStringFlag = 1u << 31;
 
@@ -413,24 +419,9 @@ inline size_t StringView::find(UChar character, unsigned start) const
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME
-
 inline void StringView::invalidate(const StringImpl&)
 {
 }
-
-inline bool StringView::underlyingStringIsValid() const
-{
-    return true;
-}
-
-inline void StringView::setUnderlyingString(const StringImpl*)
-{
-}
-
-inline void StringView::setUnderlyingString(const StringView&)
-{
-}
-
 #endif
 
 template<typename StringType> class StringTypeAdapter;
