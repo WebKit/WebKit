@@ -177,13 +177,13 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 
     if (resourceMode & ApplyToFillMode) {
         context->setAlpha(svgStyle.fillOpacity());
-        context->setFillGradient(gradientData->gradient);
+        context->setFillGradient(*gradientData->gradient);
         context->setFillRule(svgStyle.fillRule());
     } else if (resourceMode & ApplyToStrokeMode) {
         if (svgStyle.vectorEffect() == VE_NON_SCALING_STROKE)
             gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
         context->setAlpha(svgStyle.strokeOpacity());
-        context->setStrokeGradient(gradientData->gradient);
+        context->setStrokeGradient(*gradientData->gradient);
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
     }
 
@@ -209,7 +209,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
 
             FloatRect targetRect;
             gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, targetRect, &renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform));
-            context->setFillGradient(gradientData->gradient);
+            context->setFillGradient(*gradientData->gradient);
 
             context->fillRect(targetRect);
             m_imageBuffer.reset();

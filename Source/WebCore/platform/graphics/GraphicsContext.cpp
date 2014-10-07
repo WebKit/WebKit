@@ -347,25 +347,15 @@ void GraphicsContext::setFillPattern(PassRef<Pattern> pattern)
     m_state.fillPattern = WTF::move(pattern);
 }
 
-void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
+void GraphicsContext::setStrokeGradient(PassRef<Gradient> gradient)
 {
-    ASSERT(gradient);
-    if (!gradient) {
-        setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-        return;
-    }
-    m_state.strokeGradient = gradient;
+    m_state.strokeGradient = WTF::move(gradient);
     m_state.strokePattern.clear();
 }
 
-void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
+void GraphicsContext::setFillGradient(PassRef<Gradient> gradient)
 {
-    ASSERT(gradient);
-    if (!gradient) {
-        setFillColor(Color::black, ColorSpaceDeviceRGB);
-        return;
-    }
-    m_state.fillGradient = gradient;
+    m_state.fillGradient = WTF::move(gradient);
     m_state.fillPattern.clear();
 }
 

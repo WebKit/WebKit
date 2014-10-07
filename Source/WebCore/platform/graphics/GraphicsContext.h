@@ -237,7 +237,7 @@ namespace WebCore {
         void setStrokePattern(PassRef<Pattern>);
         Pattern* strokePattern() const;
 
-        void setStrokeGradient(PassRefPtr<Gradient>);
+        void setStrokeGradient(PassRef<Gradient>);
         Gradient* strokeGradient() const;
 
         WindRule fillRule() const;
@@ -249,7 +249,7 @@ namespace WebCore {
         void setFillPattern(PassRef<Pattern>);
         Pattern* fillPattern() const;
 
-        WEBCORE_EXPORT void setFillGradient(PassRefPtr<Gradient>);
+        WEBCORE_EXPORT void setFillGradient(PassRef<Gradient>);
         Gradient* fillGradient() const;
 
         void setShadowsIgnoreTransforms(bool);

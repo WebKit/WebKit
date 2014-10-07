@@ -57,13 +57,13 @@ namespace WebCore {
 
     class Gradient : public RefCounted<Gradient> {
     public:
-        static PassRefPtr<Gradient> create(const FloatPoint& p0, const FloatPoint& p1)
+        static PassRef<Gradient> create(const FloatPoint& p0, const FloatPoint& p1)
         {
-            return adoptRef(new Gradient(p0, p1));
+            return adoptRef(*new Gradient(p0, p1));
         }
-        static PassRefPtr<Gradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio = 1)
+        static PassRef<Gradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio = 1)
         {
-            return adoptRef(new Gradient(p0, r0, p1, r1, aspectRatio));
+            return adoptRef(*new Gradient(p0, r0, p1, r1, aspectRatio));
         }
         WEBCORE_EXPORT ~Gradient();
 

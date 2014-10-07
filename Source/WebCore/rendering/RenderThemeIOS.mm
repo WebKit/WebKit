@@ -874,7 +874,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     strokeGradient->addColorStop(0.45, Color(0xee, 0xee, 0xee));
     strokeGradient->addColorStop(0.55, Color(0xee, 0xee, 0xee));
     strokeGradient->addColorStop(1.0, Color(0x8d, 0x8d, 0x8d));
-    context->setStrokeGradient(strokeGradient.release());
+    context->setStrokeGradient(strokeGradient.releaseNonNull());
 
     ColorSpace colorSpace = renderer.style().colorSpace();
     context->setFillColor(Color(255, 255, 255), colorSpace);
@@ -893,7 +893,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     RefPtr<Gradient> upperGradient = Gradient::create(FloatPoint(rect.x(), verticalRenderingPosition + 0.5), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5));
     upperGradient->addColorStop(0.0, Color(133, 133, 133, 188));
     upperGradient->addColorStop(1.0, Color(18, 18, 18, 51));
-    context->setFillGradient(upperGradient.release());
+    context->setFillGradient(upperGradient.releaseNonNull());
 
     context->fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
 
@@ -909,13 +909,13 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         barGradient->addColorStop(0.51, Color(36, 114, 210));
         barGradient->addColorStop(0.55, Color(36, 114, 210));
         barGradient->addColorStop(1.0, Color(57, 142, 244));
-        context->setFillGradient(barGradient.release());
+        context->setFillGradient(barGradient.releaseNonNull());
 
         RefPtr<Gradient> barStrokeGradient = Gradient::create(FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1));
         barStrokeGradient->addColorStop(0.0, Color(95, 107, 183));
         barStrokeGradient->addColorStop(0.5, Color(66, 106, 174, 240));
         barStrokeGradient->addColorStop(1.0, Color(38, 104, 166));
-        context->setStrokeGradient(barStrokeGradient.release());
+        context->setStrokeGradient(barStrokeGradient.releaseNonNull());
 
         Path barPath;
         int left = rect.x();
