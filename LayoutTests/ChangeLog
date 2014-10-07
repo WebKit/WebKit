@@ -1,3 +1,16 @@
+2014-10-07  Jer Noble  <jer.noble@apple.com>
+
+        [Media] Expose AudioTracks in the "captions" menu.
+        https://bugs.webkit.org/show_bug.cgi?id=137472
+
+        Reviewed by Brent Fulgham.
+
+        * media/content/audio-tracks.mp4: Added.
+        * media/content/audio-tracks.ogg: Added.
+        * media/content/audio-tracks.webm: Added.
+        * media/video-controls-audiotracks-trackmenu-expected.txt: Added.
+        * media/video-controls-audiotracks-trackmenu.html: Added.
+
 2014-10-06  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (Simple Line Layout): Inline block baselines computed incorrectly

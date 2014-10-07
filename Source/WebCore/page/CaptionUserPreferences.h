@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "AudioTrack.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "TextTrack.h"
@@ -38,6 +39,7 @@ namespace WebCore {
 
 class HTMLMediaElement;
 class PageGroup;
+class AudioTrackList;
 class TextTrackList;
 
 class CaptionUserPreferences {
@@ -79,6 +81,9 @@ public:
 
     virtual String displayNameForTrack(TextTrack*) const;
     virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
+
+    virtual String displayNameForTrack(AudioTrack*) const;
+    virtual Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
 
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;

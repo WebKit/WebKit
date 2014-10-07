@@ -162,9 +162,9 @@ Controller.prototype = {
         this.listenFor(this.video.textTracks, 'removetrack', this.handleTextTrackRemove);
 
         /* audio tracks */
-        this.listenFor(this.video.audioTracks, 'change', this.updateHasAudio);
-        this.listenFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
-        this.listenFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
+        this.listenFor(this.video.audioTracks, 'change', this.handleAudioTrackChange);
+        this.listenFor(this.video.audioTracks, 'addtrack', this.handleAudioTrackAdd);
+        this.listenFor(this.video.audioTracks, 'removetrack', this.handleAudioTrackRemove);
 
         /* video tracks */
         this.listenFor(this.video.videoTracks, 'change', this.updateHasVideo);
@@ -188,9 +188,9 @@ Controller.prototype = {
         this.stopListeningFor(this.video.textTracks, 'removetrack', this.handleTextTrackRemove);
 
         /* audio tracks */
-        this.stopListeningFor(this.video.audioTracks, 'change', this.updateHasAudio);
-        this.stopListeningFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
-        this.stopListeningFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
+        this.stopListeningFor(this.video.audioTracks, 'change', this.handleAudioTrackChange);
+        this.stopListeningFor(this.video.audioTracks, 'addtrack', this.handleAudioTrackAdd);
+        this.stopListeningFor(this.video.audioTracks, 'removetrack', this.handleAudioTrackRemove);
 
         /* video tracks */
         this.stopListeningFor(this.video.videoTracks, 'change', this.updateHasVideo);
@@ -613,6 +613,23 @@ Controller.prototype = {
         this.updateThumbnail();
         this.updateCaptionButton();
         this.updateCaptionContainer();
+    },
+
+    handleAudioTrackChange: function(event)
+    {
+        this.updateHasAudio();
+    },
+
+    handleAudioTrackAdd: function(event)
+    {
+        this.updateHasAudio();
+        this.updateCaptionButton();
+    },
+
+    handleAudioTrackRemove: function(event)
+    {
+        this.updateHasAudio();
+        this.updateCaptionButton();
     },
 
     isFullScreen: function()
@@ -1088,7 +1105,7 @@ Controller.prototype = {
 
     updateCaptionButton: function()
     {
-        if (this.video.webkitHasClosedCaptions)
+        if (this.video.webkitHasClosedCaptions || this.video.audioTracks.length > 1)
             this.controls.captionButton.classList.remove(this.ClassNames.hidden);
         else
             this.controls.captionButton.classList.add(this.ClassNames.hidden);
@@ -1113,8 +1130,10 @@ Controller.prototype = {
 
     buildCaptionMenu: function()
     {
-        var tracks = this.host.sortedTrackListForMenu(this.video.textTracks);
-        if (!tracks || !tracks.length)
+        var audioTracks = this.host.sortedTrackListForMenu(this.video.audioTracks);
+        var textTracks = this.host.sortedTrackListForMenu(this.video.textTracks);
+
+        if ((!textTracks || !textTracks.length) && (!audioTracks || !audioTracks.length))
             return;
 
         this.captionMenu = document.createElement('div');
@@ -1130,56 +1149,97 @@ Controller.prototype = {
         this.captionMenu.appendChild(list);
         list.classList.add(this.ClassNames.list);
 
-        var heading = document.createElement('h3');
-        heading.id = 'webkitMediaControlsClosedCaptionsHeading'; // for AX menu label
-        list.appendChild(heading);
-        heading.innerText = this.UIString('Subtitles');
+        if (audioTracks && audioTracks.length > 1) {
+            var heading = document.createElement('h3');
+            heading.id = 'webkitMediaControlsAudioTrackHeading'; // for AX menu label
+            list.appendChild(heading);
+            heading.innerText = this.UIString('Audio');
 
-        var ul = document.createElement('ul');
-        ul.setAttribute('role', 'menu');
-        ul.setAttribute('aria-labelledby', 'webkitMediaControlsClosedCaptionsHeading');
-        list.appendChild(ul);
+            var ul = document.createElement('ul');
+            ul.setAttribute('role', 'menu');
+            ul.setAttribute('aria-labelledby', 'webkitMediaControlsAudioTrackHeading');
+            list.appendChild(ul);
 
-        for (var i = 0; i < tracks.length; ++i) {
-            var menuItem = document.createElement('li');
-            menuItem.setAttribute('role', 'menuitemradio');
-            menuItem.setAttribute('tabindex', '-1');
-            this.captionMenuItems.push(menuItem);
-            this.listenFor(menuItem, 'click', this.captionItemSelected);
-            this.listenFor(menuItem, 'keyup', this.handleCaptionItemKeyUp);
-            ul.appendChild(menuItem);
+            for (var i = 0; i < audioTracks.length; ++i) {
+                var menuItem = document.createElement('li');
+                menuItem.setAttribute('role', 'menuitemradio');
+                menuItem.setAttribute('tabindex', '-1');
+                this.captionMenuItems.push(menuItem);
+                this.listenFor(menuItem, 'click', this.audioTrackItemSelected);
+                this.listenFor(menuItem, 'keyup', this.handleAudioTrackItemKeyUp);
+                ul.appendChild(menuItem);
 
-            var track = tracks[i];
-            menuItem.innerText = this.host.displayNameForTrack(track);
-            menuItem.track = track;
+                var track = audioTracks[i];
+                menuItem.innerText = this.host.displayNameForTrack(track);
+                menuItem.track = track;
 
-            if (track === offItem) {
-                var offMenu = menuItem;
-                continue;
-            }
-
-            if (track === automaticItem) {
-                if (displayMode === 'automatic') {
+                if (track.enabled) {
+                    var trackMenuItemSelected = true;
                     menuItem.classList.add(this.ClassNames.selected);
                     menuItem.setAttribute('tabindex', '0');
                     menuItem.setAttribute('aria-checked', 'true');
                 }
-                continue;
             }
 
-            if (displayMode != 'automatic' && track.mode === 'showing') {
-                var trackMenuItemSelected = true;
-                menuItem.classList.add(this.ClassNames.selected);
+            if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
+                offMenu.classList.add(this.ClassNames.selected);
                 menuItem.setAttribute('tabindex', '0');
                 menuItem.setAttribute('aria-checked', 'true');
             }
-
         }
 
-        if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
-            offMenu.classList.add(this.ClassNames.selected);
-            menuItem.setAttribute('tabindex', '0');
-            menuItem.setAttribute('aria-checked', 'true');
+        if (textTracks && textTracks.length > 2) {
+            var heading = document.createElement('h3');
+            heading.id = 'webkitMediaControlsClosedCaptionsHeading'; // for AX menu label
+            list.appendChild(heading);
+            heading.innerText = this.UIString('Subtitles');
+
+            var ul = document.createElement('ul');
+            ul.setAttribute('role', 'menu');
+            ul.setAttribute('aria-labelledby', 'webkitMediaControlsClosedCaptionsHeading');
+            list.appendChild(ul);
+
+            for (var i = 0; i < textTracks.length; ++i) {
+                var menuItem = document.createElement('li');
+                menuItem.setAttribute('role', 'menuitemradio');
+                menuItem.setAttribute('tabindex', '-1');
+                this.captionMenuItems.push(menuItem);
+                this.listenFor(menuItem, 'click', this.captionItemSelected);
+                this.listenFor(menuItem, 'keyup', this.handleCaptionItemKeyUp);
+                ul.appendChild(menuItem);
+
+                var track = textTracks[i];
+                menuItem.innerText = this.host.displayNameForTrack(track);
+                menuItem.track = track;
+
+                if (track === offItem) {
+                    var offMenu = menuItem;
+                    continue;
+                }
+
+                if (track === automaticItem) {
+                    if (displayMode === 'automatic') {
+                        menuItem.classList.add(this.ClassNames.selected);
+                        menuItem.setAttribute('tabindex', '0');
+                        menuItem.setAttribute('aria-checked', 'true');
+                    }
+                    continue;
+                }
+
+                if (displayMode != 'automatic' && track.mode === 'showing') {
+                    var trackMenuItemSelected = true;
+                    menuItem.classList.add(this.ClassNames.selected);
+                    menuItem.setAttribute('tabindex', '0');
+                    menuItem.setAttribute('aria-checked', 'true');
+                }
+
+            }
+
+            if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
+                offMenu.classList.add(this.ClassNames.selected);
+                menuItem.setAttribute('tabindex', '0');
+                menuItem.setAttribute('aria-checked', 'true');
+            }
         }
         
         // focus first selected menuitem
@@ -1238,6 +1298,61 @@ Controller.prototype = {
             break;
         default:
             return;
+        }
+        // handled
+        event.stopPropagation();
+        event.preventDefault();
+    },
+
+    audioTrackItemSelected: function(event)
+    {
+        for (var i = 0; i < this.video.audioTracks.length; ++i) {
+            var track = this.video.audioTracks[i];
+            track.enabled = (track == event.target.track);
+        }
+
+        this.destroyCaptionMenu();
+    },
+
+    focusSiblingAudioTrackItem: function(event)
+    {
+        var currentItem = event.target;
+        var pendingItem = false;
+        switch(event.keyCode) {
+            case this.KeyCodes.left:
+            case this.KeyCodes.up:
+                pendingItem = currentItem.previousSibling;
+                break;
+            case this.KeyCodes.right:
+            case this.KeyCodes.down:
+                pendingItem = currentItem.nextSibling;
+                break;
+        }
+        if (pendingItem) {
+            currentItem.setAttribute('tabindex', '-1');
+            pendingItem.setAttribute('tabindex', '0');
+            pendingItem.focus();
+        }
+    },
+
+    handleAudioTrackItemKeyUp: function(event)
+    {
+        switch (event.keyCode) {
+            case this.KeyCodes.enter:
+            case this.KeyCodes.space:
+                this.audioTrackItemSelected(event);
+                break;
+            case this.KeyCodes.escape:
+                this.destroyCaptionMenu();
+                break;
+            case this.KeyCodes.left:
+            case this.KeyCodes.up:
+            case this.KeyCodes.right:
+            case this.KeyCodes.down:
+                this.focusSiblingAudioTrackItem(event);
+                break;
+            default:
+                return;
         }
         // handled
         event.stopPropagation();
