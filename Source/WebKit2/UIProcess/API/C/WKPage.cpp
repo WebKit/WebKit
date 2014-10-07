@@ -1610,6 +1610,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
             m_client.didCancelTrackingPotentialLongMousePress(toAPI(page), toAPI(userInfo), m_client.base.clientInfo);
         }
+
+        virtual void isPlayingAudioDidChange(WebPageProxy& page)
+        {
+            if (!m_client.isPlayingAudioDidChange)
+                return;
+
+            m_client.isPlayingAudioDidChange(toAPI(&page), m_client.base.clientInfo);
+        }
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));

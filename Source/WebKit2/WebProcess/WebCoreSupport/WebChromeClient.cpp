@@ -1051,6 +1051,11 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameVi
     return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
+void WebChromeClient::isPlayingAudioDidChange(bool newIsPlayingAudio)
+{
+    m_page->send(Messages::WebPageProxy::IsPlayingAudioDidChange(newIsPlayingAudio));
+}
+
 #if ENABLE(SUBTLE_CRYPTO)
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {

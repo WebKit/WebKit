@@ -144,6 +144,8 @@ public:
     virtual void didRecognizeLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
     virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
 
+    virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
+
 #if PLATFORM(IOS)
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return WTF::move(defaultActions); }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }

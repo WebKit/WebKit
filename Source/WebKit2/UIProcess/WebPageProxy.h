@@ -911,6 +911,9 @@ public:
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
+    void isPlayingAudioDidChange(bool);
+    bool isPlayingAudio() const { return m_isPlayingAudio; }
+
 #if PLATFORM(MAC)
     void removeNavigationGestureSnapshot();
 #endif
@@ -1546,6 +1549,8 @@ private:
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
     WebCore::ViewState::Flags m_potentiallyChangedViewStateFlags;
     bool m_viewStateChangeWantsReply;
+
+    bool m_isPlayingAudio;
 };
 
 } // namespace WebKit

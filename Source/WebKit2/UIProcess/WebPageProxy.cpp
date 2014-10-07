@@ -370,6 +370,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_configurationPreferenceValues(configuration.preferenceValues)
     , m_potentiallyChangedViewStateFlags(ViewState::NoFlags)
     , m_viewStateChangeWantsReply(false)
+    , m_isPlayingAudio(false)
 {
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
@@ -5242,6 +5243,15 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
 void WebPageProxy::willChangeCurrentHistoryItemForMainFrame()
 {
     recordNavigationSnapshot();
+}
+
+void WebPageProxy::isPlayingAudioDidChange(bool newIsPlayingAudio)
+{
+    if (m_isPlayingAudio == newIsPlayingAudio)
+        return;
+
+    m_isPlayingAudio = newIsPlayingAudio;
+    m_uiClient->isPlayingAudioDidChange(*this);
 }
 
 #if PLATFORM(MAC)

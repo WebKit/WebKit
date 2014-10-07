@@ -1,3 +1,28 @@
+2014-10-06  Ada Chan  <adachan@apple.com>
+
+        Call WKPageUIClient::isPlayingAudioDidChange() whenever audio starts/stops playing on a page.
+        https://bugs.webkit.org/show_bug.cgi?id=137050
+
+        Reviewed by Anders Carlsson.
+
+        Implement WebChromeClient::isPlayingAudioDidChange() which sends the new isPlayingAudio state
+        over to the UI process. WebPageProxy caches the isPlayingAudio state, and when that changes,
+        it calls WKPageUIClient::isPlayingAudioDidChange().
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::isPlayingAudioDidChange):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::isPlayingAudioDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isPlayingAudio):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingAudioDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2014-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Restore previous scroll position using restoreViewState()
