@@ -1,3 +1,9 @@
+2014-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Bug link should be at the beginning of the line.
+
+        * platform/mac/TestExpectations:
+
 2014-10-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds
