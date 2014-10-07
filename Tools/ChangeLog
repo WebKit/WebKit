@@ -1,3 +1,39 @@
+2014-10-07  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Commit queue doesn't drop obsolete patches sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=137460
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        Adds another test patch for use in queues_unittest.py.
+        courtesy of Csaba Osztrogonác <ossy@webkit.org>
+        (MockBugzilla):
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        Raises a PatchIsNotValid exception in the case of validate() returning
+        false.
+        (CommitQueueTask.run):
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        Raises a PatchIsNotValid exception in the case of validate() returning
+        false.
+        (EarlyWarningSystemTask.run):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Defines PatchIsNotValid exception. 
+        (PatchIsNotValid):
+        (PatchIsNotValid.__init__):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Remove call to validate() and instead catches the PatchIsNotValid
+        exception.
+        (AbstractEarlyWarningSystem.review_patch):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Adds logic to catch the PatchIsNotValid exception.
+        (CommitQueue.process_work_item):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        Adds the test_non_valid_patch test to ensure that invalid patches are
+        handled properly, and don't just result in indefinite spinning.
+        courtesy of Csaba Osztrogonác <ossy@webkit.org>
+        (test_non_valid_patch):
+
 2014-10-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds

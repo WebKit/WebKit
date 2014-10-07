@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, UnableToApplyPatch
+from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, UnableToApplyPatch, PatchIsNotValid
 
 
 class EarlyWarningSystemTaskDelegate(PatchAnalysisTaskDelegate):
@@ -50,7 +50,7 @@ class EarlyWarningSystemTask(PatchAnalysisTask):
 
     def run(self):
         if not self.validate():
-            return False
+            raise PatchIsNotValid(self._patch)
         if not self._clean():
             return False
         if not self._update():

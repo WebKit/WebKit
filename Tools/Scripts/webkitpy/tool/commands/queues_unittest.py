@@ -370,6 +370,18 @@ MOCK: release_work_item: commit-queue 10005
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_logs=expected_logs)
 
+    def test_non_valid_patch(self):
+        tool = MockTool()
+        patch = tool.bugs.fetch_attachment(10007)  # _patch8, resolved bug, without review flag, not marked obsolete (maybe already landed)
+        expected_logs = {
+            "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
+            "process_work_item": """MOCK: update_status: commit-queue Error: commit-queue did not process patch.
+MOCK: release_work_item: commit-queue 10007
+""",
+        }
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=patch, expected_logs=expected_logs)
+
+
     def test_auto_retry(self):
         queue = CommitQueue()
         options = Mock()
@@ -406,7 +418,8 @@ Running: webkit-patch --status-host=example.com build --no-clean --no-update --b
 MOCK: update_status: commit-queue Built patch
 Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
 MOCK: update_status: commit-queue Passed tests
-MOCK: release_lock: commit-queue 10000
+MOCK: update_status: commit-queue Error: commit-queue did not process patch.
+MOCK: release_work_item: commit-queue 10000
 """
         self.maxDiff = None
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_logs=expected_logs)

@@ -141,6 +141,15 @@ _patch7 = {  # Valid review, patch is marked obsolete.
     "attacher_email": "eric@webkit.org",
 }
 
+_patch8 = {  # Resolved bug, without review flag, not marked obsolete (maybe already landed)
+    "id": 10007,
+    "bug_id": 50005,
+    "url": "http://example.com/10002",
+    "name": "Patch8",
+    "is_obsolete": False,
+    "is_patch": True,
+    "attacher_email": "eric@webkit.org",
+}
 
 # This matches one of Bug.unassigned_emails
 _unassigned_email = "webkit-unassigned@lists.webkit.org"
@@ -242,7 +251,7 @@ _bug6 = {
     "reporter_email": _commit_queue_email,
     "assigned_to_email": "foo@foo.com",
     "cc_emails": [],
-    "attachments": [],
+    "attachments": [_patch8],
     "bug_status": "RESOLVED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
@@ -343,7 +352,8 @@ class MockBugzilla(object):
                                                 _patch4,
                                                 _patch5,
                                                 _patch6,
-                                                _patch7)
+                                                _patch7,
+                                                _patch8)
 
     def __init__(self):
         self.queries = MockBugzillaQueries(self)

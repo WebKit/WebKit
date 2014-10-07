@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate
+from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, PatchIsNotValid
 
 
 class CommitQueueTaskDelegate(PatchAnalysisTaskDelegate):
@@ -69,7 +69,7 @@ class CommitQueueTask(PatchAnalysisTask):
 
     def run(self):
         if not self.validate():
-            return False
+            raise PatchIsNotValid(self._patch)
         if not self._clean():
             return False
         if not self._update():
@@ -88,7 +88,7 @@ class CommitQueueTask(PatchAnalysisTask):
         # Make sure the patch is still valid before landing (e.g., make sure
         # no one has set commit-queue- since we started working on the patch.)
         if not self.validate():
-            return False
+            raise PatchIsNotValid(self._patch)
         # FIXME: We should understand why the land failure occurred and retry if possible.
         if not self._land():
             return self.report_failure()

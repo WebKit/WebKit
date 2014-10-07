@@ -37,7 +37,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
-from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch
+from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
 from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.queues import AbstractReviewQueue
 
@@ -83,15 +83,14 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
     def review_patch(self, patch):
         task = EarlyWarningSystemTask(self, patch, self._options.run_tests)
-        if not task.validate():
-            self._did_error(patch, "%s did not process patch." % self.name)
-            return False
         try:
             succeeded = task.run()
             if not succeeded:
                 # Caller unlocks when review_patch returns True, so we only need to unlock on transient failure.
                 self._unlock_patch(patch)
             return succeeded
+        except PatchIsNotValid:
+            self._did_error(patch, "%s did not process patch." % self.name)
         except UnableToApplyPatch, e:
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False

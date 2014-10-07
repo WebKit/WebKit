@@ -50,7 +50,7 @@ from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
-from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch
+from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.bot.stylequeuetask import StyleQueueTask, StyleQueueTaskDelegate
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
@@ -322,6 +322,8 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
                 return True
             self._unlock_patch(patch)
             return False
+        except PatchIsNotValid:
+            self._did_error(patch, "%s did not process patch." % self.name)
         except ScriptError, e:
             validator = CommitterValidator(self._tool)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
