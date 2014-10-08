@@ -1,3 +1,19 @@
+2014-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Stack overflow with enormous SVG filter.
+        https://bugs.webkit.org/show_bug.cgi?id=63290.
+
+        Reviewed by Dean Jackson.
+
+        Test if an SVG filter with deeply nested tree of FilterEffects can be loaded
+        with no crash. Make sure other valid filters can still be referenced by SVG 
+        drawing elements. An SVG Filter will be ignored if the number of effects in
+        its map is greater than 200 or the total number of effects connected to its 
+        last effect is greater than 100.
+
+        * svg/filters/svg-deeply-nested-crash-expected.txt: Added.
+        * svg/filters/svg-deeply-nested-crash.html: Added.
+
 2014-08-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Caret not shown at the end of line in overtype mode

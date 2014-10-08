@@ -1,3 +1,27 @@
+2014-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Stack overflow with enormous SVG filter
+        https://bugs.webkit.org/show_bug.cgi?id=63290
+
+        Prevent building an SVG filter if it has more than 200 FilterEffect nodes in its map 
+        regardless whether they will be connected to its lastEffect or not. Also discard any
+        filter which has more 100 contributing FilterEffect nodes in its tree.
+
+        Reviewed by Dean Jackson.
+
+        Tests: svg/filters/svg-deeply-nested-crash.html
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::collectEffects):
+        (WebCore::FilterEffect::totalNumberOfEffectInputs):
+        * platform/graphics/filters/FilterEffect.h:
+        -- Add a method to return the total number of input FilterEffect's contributing to a FilterEffect.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        -- Do not build a filter if it has more than 200 FilterEffects in its map.
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        -- Discard a filter after it was built if it has more than 100 FilterEffects in its tree.
+
 2014-09-30  David Hyatt  <hyatt@apple.com>
 
         Remove a multicolumn ASSERT and replace with a guard.

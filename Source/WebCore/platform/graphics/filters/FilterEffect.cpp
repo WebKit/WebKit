@@ -104,6 +104,23 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
+static unsigned collectEffects(const FilterEffect*effect, HashSet<const FilterEffect*>& allEffects)
+{
+    allEffects.add(effect);
+    unsigned size = effect->numberOfEffectInputs();
+    for (unsigned i = 0; i < size; ++i) {
+        FilterEffect* in = effect->inputEffect(i);
+        collectEffects(in, allEffects);
+    }
+    return allEffects.size();
+}
+
+unsigned FilterEffect::totalNumberOfEffectInputs() const
+{
+    HashSet<const FilterEffect*> allEffects;
+    return collectEffects(this, allEffects);
+}
+
 #if ENABLE(OPENCL)
 void FilterEffect::applyAll()
 {
