@@ -1,3 +1,11 @@
+2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing inspector files to compilation.
+
+        * PlatformGTK.cmake: Add javascript sources in
+        WebInspectorUI/UserInterface/External/Esprima to the list of
+        inspector files.
+
 2014-09-19  Dean Jackson  <dino@apple.com>
 
         Multithreaded WebGL is a bad idea - remove it
