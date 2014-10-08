@@ -1,3 +1,28 @@
+2014-09-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        The style resolution cache applies properties incorrectly whenever direction != ltr
+        https://bugs.webkit.org/show_bug.cgi?id=137052
+
+        Reviewed by Andreas Kling.
+
+        The optimization r135021 introduced a bug whenever the direction of subtree is not
+        uniform in the whole page.
+
+        When StyleResolver::applyMatchedProperties() resolves the style, some properties are
+        resolved differently based on the writing-mode and the direction.
+
+        In isCacheableInMatchedPropertiesCache(), the cases for writing-mode are already handled
+        by not caching any style with anything else than the default.
+        The direction was ignored, causing the bugs solved here.
+
+        Tests: css3/flexbox/flex-flow-2.html
+               fast/css/style-resolver-cache-direction-1.html
+               fast/css/style-resolver-cache-direction-2.html
+               fast/css/style-resolver-cache-direction-3.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::isCacheableInMatchedPropertiesCache):
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Ensure that layout is up-to-date before hit-testing via RenderView
