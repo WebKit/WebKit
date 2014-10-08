@@ -1,3 +1,9 @@
+2014-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use proper v120 target for 64-bit builds.
+
+        * ANGLE.vcxproj/libEGL.vcxproj:
+
 2014-09-29  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] D3D11 is not used by default.
