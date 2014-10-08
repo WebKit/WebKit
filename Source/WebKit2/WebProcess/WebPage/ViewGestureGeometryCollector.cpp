@@ -82,11 +82,10 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     if (m_webPage.mainWebFrame()->handlesPageScaleGesture())
         return;
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
-    m_webPage.mainFrameView()->renderView()->hitTest(request, hitTestResult);
+    m_webPage.mainFrameView()->renderView()->hitTest(HitTestRequest(), hitTestResult);
 
     if (Node* node = hitTestResult.innerNode()) {
         bool isReplaced;

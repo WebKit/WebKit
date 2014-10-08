@@ -1,3 +1,25 @@
+2014-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Provide a default argument for the most commonly used HitTestRequest variant
+        https://bugs.webkit.org/show_bug.cgi?id=136653
+
+        Reviewed by Darin Adler.
+
+        Make the default HitTestRequest flags be ReadOnly | Active | DisallowShadowContent
+        and change call sites using the default flags to use a HitTestRequest temporary.
+
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains):
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::handleMousePressEvent):
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::HitTestRequest):
+
 2014-09-19  Chris Dumez  <cdumez@apple.com>
 
         Minimize virtual function calls in MarkupAccumulator

@@ -286,9 +286,8 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     float zoomFactor = frame ? frame->pageZoomFactor() : 1;
     LayoutPoint point(p.x() * zoomFactor, p.y() * zoomFactor);
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     HitTestResult result(point);
-    documentUnderMouse->renderView()->hitTest(request, result);
+    documentUnderMouse->renderView()->hitTest(HitTestRequest(), result);
 
     Node* n = result.innerNode();
     while (n && !n->isElementNode())
