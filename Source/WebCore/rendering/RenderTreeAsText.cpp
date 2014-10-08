@@ -139,7 +139,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 
-String quoteAndEscapeNonPrintables(const String& s)
+String quoteAndEscapeNonPrintables(StringView s)
 {
     StringBuilder result;
     result.append('"');
@@ -479,11 +479,11 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
     ts << ": "
         << quoteAndEscapeNonPrintables(String(o.text()).substring(run.start(), run.len()));
     if (run.hasHyphen())
-        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style().hyphenString());
+        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style().hyphenString().string());
     ts << "\n";
 }
 
-static void writeSimpleLine(TextStream& ts, const RenderText& o, const LayoutRect& rect, const String& text)
+static void writeSimpleLine(TextStream& ts, const RenderText& o, const LayoutRect& rect, StringView text)
 {
     int x = rect.x();
     int y = rect.y();

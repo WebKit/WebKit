@@ -83,9 +83,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     paintRect.moveBy(-paintOffset);
 
     auto resolver = runResolver(flow, layout);
-    auto range = resolver.rangeForRect(paintRect);
-    for (auto it = range.begin(), end = range.end(); it != end; ++it) {
-        const auto& run = *it;
+    for (const auto& run : resolver.rangeForRect(paintRect)) {
         if (!run.rect().intersects(paintRect))
             continue;
         TextRun textRun(run.text());
@@ -223,7 +221,7 @@ void showLineLayoutForFlow(const RenderBlockFlow& flow, const Layout& layout, in
         LayoutRect r = run.rect();
         printPrefix(printedCharacters, depth);
         fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
-            r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat(), run.text().utf8().data());
+            r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat(), run.text().toStringWithoutCopying().utf8().data());
     }
 }
 #endif
