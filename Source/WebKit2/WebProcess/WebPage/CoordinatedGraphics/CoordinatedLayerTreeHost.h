@@ -70,6 +70,8 @@ public:
     virtual void scheduleAnimation() override;
 #endif
 
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
+
     static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:
@@ -85,6 +87,8 @@ private:
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
+
+    void updateRootLayers();
 
     // CompositingCoordinator::Client
     virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
@@ -104,6 +108,9 @@ private:
     WebCore::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
+
+    WebCore::GraphicsLayer* m_contentLayer;
+    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 
 } // namespace WebKit

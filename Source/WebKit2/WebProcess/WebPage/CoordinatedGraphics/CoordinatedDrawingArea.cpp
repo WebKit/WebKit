@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedDrawingArea.h"
 
+#include "CoordinatedLayerTreeHost.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
 #include "PageOverlayController.h"
@@ -603,6 +604,18 @@ void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Conn
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
+}
+
+void CoordinatedDrawingArea::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebCore::GraphicsLayer* viewOverlayRootLayer)
+{
+    if (!frame->isMainFrame())
+        return;
+
+    if (!m_layerTreeHost)
+        return;
+
+    CoordinatedLayerTreeHost* coordinatedLayerTreeHost = static_cast<CoordinatedLayerTreeHost*>(m_layerTreeHost.get());
+    coordinatedLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 } // namespace WebKit

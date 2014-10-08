@@ -1,3 +1,26 @@
+2014-10-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][CoordinatedGraphics] All EFL layout tests are broken since r174231
+        https://bugs.webkit.org/show_bug.cgi?id=137443
+
+        Reviewed by Zoltan Herczeg.
+
+        EFL layout test and MiniBrowser have broken since r174231. r174231 was to move PageOverlay implementation
+        from WebKit2 to WebCore with lazy initializing of PageOverlayController. It caused all EFL layout tests
+        crash and build break. To restore EFL layout test, this patch sets viewOverlayRootLayer through
+        attachViewOverlayGraphicsLayer() as mac port's one in r174231.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::updateRootLayers):
+        (WebKit::CoordinatedLayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2014-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174335.
