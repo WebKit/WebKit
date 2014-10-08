@@ -1,3 +1,35 @@
+2014-09-29  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r168046): Confused column spans when combined with dynamic animations
+        https://bugs.webkit.org/show_bug.cgi?id=134048.
+
+        Reviewed by Dean Jackson.
+
+        Added fast/multicol/multicol-fieldset-span-changes.html
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant):
+        Refactor handling of insertions into the multicolumn flow thread into
+        a helper function, processPossibleSpannerDescendant. This makes it easier
+        to call the code from more than one place.
+
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        Modify the nested columns span shifting code to avoid problems. The
+        new code suppresses notifications and does the move of the spanner back
+        into the original spot *before* removing the placeholder. This ensures that
+        the placeholder parent still exists.
+        
+        The stale placeholder is then removed and destroyed after the spanner has been put back
+        into place.
+
+        (WebCore::RenderMultiColumnFlowThread::handleSpannerRemoval):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        Refactor the removal notifications for spanners into a helper function so that it can
+        be called to do cleanup from the code that cleans up stale placeholders on a shift.
+
+        * rendering/RenderMultiColumnFlowThread.h:
+        Modified to add the new helpers.
+
 2014-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: in an aria-labelledby computation, do not traverse into elements whose nameFrom value does not include 'contents'

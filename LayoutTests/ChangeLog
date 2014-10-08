@@ -1,3 +1,13 @@
+2014-09-29  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r168046): Confused column spans when combined with dynamic animations
+        https://bugs.webkit.org/show_bug.cgi?id=134048.
+
+        Reviewed by Dean Jackson.
+
+        * fast/multicol/multicol-fieldset-span-changes-expected.txt: Added.
+        * fast/multicol/multicol-fieldset-span-changes.html: Added.
+
 2014-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: in an aria-labelledby computation, do not traverse into elements whose nameFrom value does not include 'contents'

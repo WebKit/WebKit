@@ -1,0 +1,20 @@
+<p>This test passes if it doesn't crash. '<a id="a"></a>:
+<script>
+if (window.testRunner)
+        testRunner.dumpAsText();
+document.getElementById("a").appendChild(document.createElement("fieldset")).setAttribute("style","-webkit-column-span:all;");
+head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+var rule = document.createTextNode(":first-of-type { \n\
+-webkit-animation-name: name1; \n\
+-webkit-animation-duration: 6s; \n\
+} \n\
+@-webkit-keyframes name1 { \n\
+  from { \n\
+  } \n\
+  to { \n\
+    -webkit-column-width: auto \n\
+");
+style.appendChild(rule);
+head.appendChild(style);
+</script>

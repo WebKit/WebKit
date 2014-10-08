@@ -132,6 +132,9 @@ private:
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     virtual bool isPageLogicalHeightKnown() const override;
 
+    void handleSpannerRemoval(RenderObject* spanner);
+    RenderObject* processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject* descendant);
+    
 private:
     typedef HashMap<RenderBox*, RenderMultiColumnSpannerPlaceholder*> SpannerMap;
     SpannerMap m_spannerMap;
