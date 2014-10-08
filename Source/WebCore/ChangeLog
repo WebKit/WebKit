@@ -1,3 +1,13 @@
+2014-09-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
+        https://bugs.webkit.org/show_bug.cgi?id=129642
+
+        Apply post-review comments from Alexey Proskuryakov.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::deleteEmptyDatabase): Make a thread-safe isolated copy of the string.
+
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
         StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
