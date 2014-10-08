@@ -1,3 +1,12 @@
+2014-09-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a size check for CSSSelector
+        https://bugs.webkit.org/show_bug.cgi?id=136882
+
+        Reviewed by Christophe Dumez.
+
+        * css/CSSSelector.cpp:
+
 2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLS errors should take precedence over HTTP authentication

@@ -277,15 +277,15 @@ namespace WebCore {
         void setForPage() { m_isForPage = true; }
 
     private:
-        unsigned m_relation           : 3; // enum Relation
-        mutable unsigned m_match      : 4; // enum Match
-        mutable unsigned m_pseudoType : 8; // PseudoType
-        mutable bool m_parsedNth      : 1; // Used for :nth-*
-        bool m_isLastInSelectorList   : 1;
-        bool m_isLastInTagHistory     : 1;
-        bool m_hasRareData            : 1;
-        bool m_isForPage              : 1;
-        bool m_tagIsForNamespaceRule  : 1;
+        unsigned m_relation              : 3; // enum Relation.
+        mutable unsigned m_match         : 4; // enum Match.
+        mutable unsigned m_pseudoType    : 8; // PseudoType.
+        mutable unsigned m_parsedNth     : 1; // Used for :nth-*.
+        unsigned m_isLastInSelectorList  : 1;
+        unsigned m_isLastInTagHistory    : 1;
+        unsigned m_hasRareData           : 1;
+        unsigned m_isForPage             : 1;
+        unsigned m_tagIsForNamespaceRule : 1;
 
         unsigned specificityForOneSelector() const;
         unsigned specificityForPage() const;

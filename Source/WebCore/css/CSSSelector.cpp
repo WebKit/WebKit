@@ -42,6 +42,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+struct SameSizeAsCSSSelector {
+    unsigned flags;
+    void* unionPointer;
+};
+
+static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
+
 void CSSSelector::createRareData()
 {
     ASSERT(match() != Tag);
