@@ -727,7 +727,7 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld& world, const UserScriptVe
 
 RenderView* Frame::contentRenderer() const
 {
-    return document() ? document()->renderView() : 0;
+    return document() ? document()->renderView() : nullptr;
 }
 
 RenderWidget* Frame::ownerRenderer() const

@@ -1,3 +1,43 @@
+2014-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Ensure that layout is up-to-date before hit-testing via RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=136651
+
+        Reviewed by David Hyatt.
+
+        Ensure that layout is up-to-date before we do hit-testing via the RenderView.
+        Previously, RenderLayer::hitTest() called updateLayout(), but it's better
+        to push that responsibility onto RenderView before entering the RenderLayer
+        tree.
+        
+        Make callers a little more consistent in getting the RenderView via
+        Frame::contentRenderer(), though perhaps we should remove that and just
+        call Document::renderView() everywhere.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press): Hit test via the RenderView, rather
+        than doing so on the RenderView's layer, to ensure that we updateLayout().
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest): This code calls
+        hitTest() on arbitrary layers, so needs to explicitly update layout.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint): The explicit updateLayout() is
+        no longer needed.
+        (WebCore::EventHandler::updateCursor):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::hitTestResultInFrame):
+        * page/Frame.cpp:
+        (WebCore::Frame::contentRenderer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::hitTest): Here's where we ensure that layout is up-to-date.
+
 2014-09-19  Brent Fulgham  <bfulgham@apple.com>
 
         Latching in iframes is not working as expected

@@ -174,6 +174,8 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
+    document().updateLayout();
+
     if (layer()->hitTest(request, location, result))
         return true;
 

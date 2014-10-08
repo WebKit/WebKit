@@ -2199,6 +2199,8 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
     
+    m_renderer->document().updateLayout();
+
     RenderLayer* layer = toRenderBox(m_renderer)->layer();
      
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);

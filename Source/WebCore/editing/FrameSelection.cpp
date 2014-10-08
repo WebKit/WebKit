@@ -1589,16 +1589,16 @@ void FrameSelection::debugRenderer(RenderObject* r, bool selected) const
 
 bool FrameSelection::contains(const LayoutPoint& point)
 {
-    Document* document = m_frame->document();
-    
     // Treat a collapsed selection like no selection.
     if (!isRange())
         return false;
-    if (!document->renderView()) 
+    
+    RenderView* renderView = m_frame->contentRenderer();
+    if (!renderView)
         return false;
     
     HitTestResult result(point);
-    document->renderView()->hitTest(HitTestRequest(), result);
+    renderView->hitTest(HitTestRequest(), result);
     Node* innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
