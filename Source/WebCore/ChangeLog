@@ -1,3 +1,50 @@
+2014-09-27  Chris Dumez  <cdumez@apple.com>
+
+        HTMLPlugInElement::isUserObservable() is causing layout
+        https://bugs.webkit.org/show_bug.cgi?id=137156
+
+        Reviewed by Ryosuke Niwa.
+
+        While profiling the page load of nytimes.com, I noticed that we were
+        spending ~4-5% of cpu time in HTMLPlugInElement::isUserObservable().
+        The reason is that the function calls pluginWidget(), which causes a
+        layout update in HTMLObjectElement::renderWidgetForJSBindings(), to
+        make sure the plugin is loaded and its renderer is created.
+
+        HTMLPlugInElement::isUserObservable() shouldn't need to do a layout.
+        This patch does the following to address the problem:
+        - Rename renderWidgetForJSBindings() to renderWidgetLoadingPlugin()
+          because this function is not always called from the JS Bindings
+          nowadays. The new name makes it clearer that this will load the
+          plugin if needed (to make sure the renderer is created, and by
+          doing a layout).
+        - Add a PluginLoadingPolicy argument to
+          HTMLPlugInElement::pluginWidget() to let the caller control if the
+          plugin should be loaded or not.
+        - Update the call to pluginWidget() in isUserObservable() so that
+          we do not attempt to load the plugin (thus not causing a layout).
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetLoadingPlugin):
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings): Deleted.
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetLoadingPlugin):
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings): Deleted.
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetLoadingPlugin):
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings): Deleted.
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::pluginWidget):
+        (WebCore::HTMLPlugInElement::isUserObservable):
+        * html/HTMLPlugInElement.h:
+
 2014-09-26  Brian J. Burg  <burg@cs.washington.edu>
 
         StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
