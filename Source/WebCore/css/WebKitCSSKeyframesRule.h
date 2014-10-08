@@ -81,7 +81,7 @@ public:
     CSSRuleList& cssRules();
 
     void insertRule(const String& rule);
-    void appendRule(const String& rule) { insertRule(rule); }
+    void appendRule(const String& rule);
     void deleteRule(const String& key);
     WebKitCSSKeyframeRule* findRule(const String& key);
 

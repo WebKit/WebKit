@@ -1,3 +1,20 @@
+2014-10-08  Dean Jackson  <dino@apple.com>
+
+        Add deprecation warning for CSSKeyframesRule::appendRule
+        https://bugs.webkit.org/show_bug.cgi?id=137532
+        <rdar://problem/18585745>
+
+        Reviewed by Brent Fulgham.
+
+        In r173982 (webkit.org/b/57910) we added insertRule to match
+        the spec. We should print a warning to the JS console suggesting
+        users move to insertRule.
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::appendRule): Add a message to the system
+        console.
+        * css/WebKitCSSKeyframesRule.h:
+
 2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text drawn with an SVG font has no spaces when word-rounding hacks are enabled

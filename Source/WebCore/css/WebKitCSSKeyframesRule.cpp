@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
+#include "Document.h"
 #include "StyleProperties.h"
 #include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
@@ -108,6 +109,15 @@ void WebKitCSSKeyframesRule::setName(const String& name)
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     m_keyframesRule->setName(name);
+}
+
+void WebKitCSSKeyframesRule::appendRule(const String& ruleText)
+{
+    if (CSSStyleSheet* parent = parentStyleSheet()) {
+        if (Document* ownerDocument = parent->ownerDocument())
+            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("CSSKeyframesRule 'appendRule' function is deprecated.  Use 'insertRule' instead."));
+    }
+    insertRule(ruleText);
 }
 
 void WebKitCSSKeyframesRule::insertRule(const String& ruleText)
