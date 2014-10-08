@@ -2281,6 +2281,7 @@ set(WebCore_SOURCES
     rendering/InlineBox.cpp
     rendering/InlineElementBox.cpp
     rendering/InlineFlowBox.cpp
+    rendering/InlineIterator.cpp
     rendering/InlineTextBox.cpp
     rendering/LayoutRepainter.cpp
     rendering/LayoutState.cpp

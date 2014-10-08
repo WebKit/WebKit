@@ -94,12 +94,15 @@ public:
         return (m_renderer && m_renderer->isBR()) || atTextParagraphSeparator();
     }
 
-    UChar characterAt(unsigned) const;
     UChar current() const;
     UChar previousInSameNode() const;
     ALWAYS_INLINE UCharDirection direction() const;
 
 private:
+    UChar characterAt(unsigned) const;
+
+    UCharDirection surrogateTextDirection(UChar currentCodeUnit) const;
+
     RenderElement* m_root;
     RenderObject* m_renderer;
 
@@ -419,18 +422,22 @@ inline UChar InlineIterator::current() const
 
 inline UChar InlineIterator::previousInSameNode() const
 {
-    if (!m_pos)
-        return 0;
-
     return characterAt(m_pos - 1);
 }
 
 ALWAYS_INLINE UCharDirection InlineIterator::direction() const
 {
-    if (UChar character = current())
-        return u_charDirection(character);
+    if (UNLIKELY(!m_renderer))
+        return U_OTHER_NEUTRAL;
 
-    if (m_renderer && m_renderer->isListMarker())
+    if (LIKELY(m_renderer->isText())) {
+        UChar codeUnit = toRenderText(*m_renderer).characterAt(m_pos);
+        if (LIKELY(U16_IS_SINGLE(codeUnit)))
+            return u_charDirection(codeUnit);
+        return surrogateTextDirection(codeUnit);
+    }
+
+    if (m_renderer->isListMarker())
         return m_renderer->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;
