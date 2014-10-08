@@ -227,15 +227,20 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
 
         bool okay;
         TypeLocation* typeLocation = vm.typeProfiler()->findLocation(divot, sourceIDAsString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor));
-        RefPtr<Inspector::Protocol::Runtime::TypeDescription> description = Inspector::Protocol::Runtime::TypeDescription::create()
-            .setIsValid(!!typeLocation);
+
+        RefPtr<TypeSet> typeSet;
         if (typeLocation) {
-            RefPtr<TypeSet> typeSet;
             if (typeLocation->m_globalTypeSet && typeLocation->m_globalVariableID != TypeProfilerNoGlobalIDExists)
                 typeSet = typeLocation->m_globalTypeSet;
             else
                 typeSet = typeLocation->m_instructionTypeSet;
+        }
 
+        bool isValid = typeLocation && typeSet && !typeSet->isEmpty();
+        RefPtr<Inspector::Protocol::Runtime::TypeDescription> description = Inspector::Protocol::Runtime::TypeDescription::create()
+            .setIsValid(isValid);
+
+        if (isValid) {
             description->setLeastCommonAncestor(typeSet->leastCommonAncestor());
             description->setPrimitiveTypeNames(typeSet->allPrimitiveTypeNames());
             description->setStructures(typeSet->allStructureRepresentations());

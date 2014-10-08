@@ -108,6 +108,7 @@ public:
     bool isOverflown() const { return m_isOverflown; }
     String leastCommonAncestor() const;
     PassRefPtr<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
+    bool isEmpty() const { return m_seenTypes == TypeNothing; }
 
 private:
     void dumpSeenTypes();

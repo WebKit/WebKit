@@ -89,6 +89,6 @@ WebInspector.TypeSet.prototype = {
         // ------ (AND)
         // 0b0010 != bitString
 
-        return (this._bitString & test) === this._bitString;
+        return this._bitString && (this._bitString & test) === this._bitString;
     }
 };

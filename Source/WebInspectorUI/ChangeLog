@@ -1,3 +1,17 @@
+2014-09-25  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: console.assert(bitString) TypeSet:50 
+        https://bugs.webkit.org/show_bug.cgi?id=137051
+
+        Reviewed by Joseph Pecoraro.
+
+        This fixes TypeSet's isContainedIn method by ensuring that 
+        the type bit string isn't zero because the test would trivially 
+        pass if the bit string is zero.
+
+        * UserInterface/Models/TypeSet.js:
+        (WebInspector.TypeSet.prototype.isContainedIn):
+
 2014-10-02  Andres Gomez  <agomez@igalia.com>
 
         Web Inspector: [GTK] Missing icons and enhancing the proportion and visibility of some icons
