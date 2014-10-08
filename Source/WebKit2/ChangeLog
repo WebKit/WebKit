@@ -1,3 +1,19 @@
+2014-10-07  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove WKPageSetInvalidMessageFunction.
+        https://bugs.webkit.org/show_bug.cgi?id=137509
+
+        Reviewed by Benjamin Poulain.
+
+        According to the FIXME comment in WKPageSetInvalidMessageFunction,
+        we can remove this function when doing so won't break the nightlies.
+        Currently, this is not used anywhere and does not break the nightlies.
+        So we can remove this.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetInvalidMessageFunction): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2014-10-07  Christophe Dumez  <cdumez@apple.com>
 
         [WK2] Use is<>() / downcast<>() for DrawingArea subclasses

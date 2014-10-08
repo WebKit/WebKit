@@ -1898,11 +1898,6 @@ bool WKPageIsPlayingAudio(WKPageRef)
     return false;
 }
 
-void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
-{
-    // FIXME: Remove this function when doing so won't break WebKit nightlies.
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 // -- DEPRECATED --

@@ -98,9 +98,6 @@ WK_EXPORT void WKPageGetBytecodeProfile(WKPageRef page, void* context, WKPageGet
     
 WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 
-typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
-WK_EXPORT void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function);
-
 enum {
     kWKScrollPinningBehaviorDoNotPin,
     kWKScrollPinningBehaviorPinToTop,
