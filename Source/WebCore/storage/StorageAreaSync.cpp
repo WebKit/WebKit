@@ -521,9 +521,11 @@ void StorageAreaSync::deleteEmptyDatabase()
     if (!count) {
         query.finalize();
         m_database.close();
-        if (StorageTracker::tracker().isActive())
-            StorageTracker::tracker().deleteOriginWithIdentifier(m_databaseIdentifier);
-        else {
+        if (StorageTracker::tracker().isActive()) {
+            callOnMainThread([this] {
+                StorageTracker::tracker().deleteOriginWithIdentifier(m_databaseIdentifier);
+            });
+        } else {
             String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
             if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))
                 LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());

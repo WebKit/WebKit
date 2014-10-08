@@ -1,3 +1,19 @@
+2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
+
+        StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
+        https://bugs.webkit.org/show_bug.cgi?id=129642
+
+        Reviewed by Brady Eidson.
+
+        When tearing down the inspector frontend's page, we trigger a threading violation
+        in StorageAreaSync's final sync code underneath StorageAreaSync::deleteEmptyDatabase().
+
+        No new tests. Regression is covered by inspector/test-harness-trivially-works.html.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::deleteEmptyDatabase): add a missing callOnMainThread() when
+        calling StorageTracker::deleteOriginWithIdentifier().
+
 2014-09-25  Javier Fernandez  <jfernandez@igalia.com>
 
         ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow

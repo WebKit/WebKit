@@ -90,8 +90,6 @@ webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
 webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 webkit.org/b/127414 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
 
-webkit.org/b/129642 inspector [ Skip ]
-
 # These tests cause assertion failures in subsequent tests
 webkit.org/b/131919 inspector/dom [ Skip ]
 
@@ -99,16 +97,17 @@ webkit.org/b/131919 inspector/dom [ Skip ]
 # webkit.org/b/129817 inspector/dom/content-flow-list.html [ Pass Failure ]
 # webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failure ]
 
-# Collecting region's children in a named flow not supported yet
-webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
-webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
-webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
+# These tests still mysteriously flake and/or time out.
+webkit.org/b/137131 inspector/debugger [ Skip ]
+webkit.org/b/137130 inspector/replay [ Skip ]
 
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 
-# Asserts in debug builds.
-[ Debug ] http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
+# Collecting region's children in a named flow not supported yet
+webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
+webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
+webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
