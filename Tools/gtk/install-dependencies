@@ -69,7 +69,7 @@ function installDependenciesWithApt {
         libgudev-1.0-dev \
         libharfbuzz-dev \
         libicu-dev \
-        libjpeg8-dev \
+        libjpeg-dev \
         libmpg123-dev \
         libopus-dev \
         libpango1.0-dev \
