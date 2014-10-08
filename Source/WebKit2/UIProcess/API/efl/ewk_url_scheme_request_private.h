@@ -30,7 +30,7 @@
 #include "WKBase.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
-#include "WKSoupRequestManager.h"
+#include "WKSoupCustomProtocolRequestManager.h"
 #include "ewk_object_private.h"
 
 /**
@@ -41,12 +41,12 @@ class EwkUrlSchemeRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlSchemeRequest)
 
-    static PassRefPtr<EwkUrlSchemeRequest> create(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
+    static PassRefPtr<EwkUrlSchemeRequest> create(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
     {
-        if (!manager || !url)
+        if (!manager || !urlRequest)
             return 0;
 
-        return adoptRef(new EwkUrlSchemeRequest(manager, url, requestID));
+        return adoptRef(new EwkUrlSchemeRequest(manager, urlRequest, requestID));
     }
 
     uint64_t id() const;
@@ -57,9 +57,9 @@ public:
     void finish(const void* contentData, uint64_t contentLength, const char* mimeType);
 
 private:
-    EwkUrlSchemeRequest(WKSoupRequestManagerRef manager, WKURLRef urlRef, uint64_t requestID);
+    EwkUrlSchemeRequest(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID);
 
-    WKRetainPtr<WKSoupRequestManagerRef> m_wkRequestManager;
+    WKRetainPtr<WKSoupCustomProtocolRequestManagerRef> m_wkRequestManager;
     WKEinaSharedString m_url;
     uint64_t m_requestID;
     WKEinaSharedString m_scheme;

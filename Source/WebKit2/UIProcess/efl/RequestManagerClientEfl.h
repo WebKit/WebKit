@@ -26,7 +26,11 @@
 #ifndef RequestManagerClientEfl_h
 #define RequestManagerClientEfl_h
 
+#include "WebContext.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 #include "ewk_context_private.h"
+#include "ewk_url_scheme_request_private.h"
+
 #include <WebKit/WKBase.h>
 #include <WebKit/WKRetainPtr.h>
 #include <wtf/HashMap.h>
@@ -34,18 +38,53 @@
 
 namespace WebKit {
 
+class WebKitURISchemeHandler: public RefCounted<WebKitURISchemeHandler> {
+public:
+    WebKitURISchemeHandler()
+        : m_callback(nullptr)
+        , m_userData(nullptr)
+    {
+    }
+
+    WebKitURISchemeHandler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
+        : m_callback(callback)
+        , m_userData(userData)
+    {
+    }
+
+    bool hasCallback()
+    {
+        return m_callback;
+    }
+
+    void performCallback(EwkUrlSchemeRequest* request)
+    {
+        ASSERT(m_callback);
+
+        m_callback(request, m_userData);
+    }
+
+private:
+    Ewk_Url_Scheme_Request_Cb m_callback;
+    void* m_userData;
+};
+
+typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
+typedef HashMap<uint64_t, RefPtr<EwkUrlSchemeRequest> > URISchemeRequestMap;
+
 class RequestManagerClientEfl {
 public:
     explicit RequestManagerClientEfl(WKContextRef);
-    ~RequestManagerClientEfl();
 
     void registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
 
 private:
-    static void didReceiveURIRequest(WKSoupRequestManagerRef, WKURLRef, WKPageRef, uint64_t requestID, const void* clientInfo);
+    static void startLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, WKURLRequestRef, const void* clientInfo);
+    static void stopLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, const void* clientInfo);
 
-    WKRetainPtr<WKSoupRequestManagerRef> m_soupRequestManager;
-    HashMap<String, class EwkUrlSchemeHandler> m_urlSchemeHandlers;
+    WKRetainPtr<WKSoupCustomProtocolRequestManagerRef> m_requestManager;
+    URISchemeHandlerMap m_uriSchemeHandlers;
+    URISchemeRequestMap m_uriSchemeRequests;
 };
 
 } // namespace WebKit

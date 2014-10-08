@@ -1,3 +1,36 @@
+2014-10-07  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        [EFL] Enable custom URI schemes with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=128177
+
+        Reviewed by Gyuyoung Kim.
+
+        Fixing ewk_context_url_scheme_register() ewebkit2 API
+        rely on r162449 - CustomProtocols implementation from Carlos Garcia Campos
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (EwkUrlSchemeRequest::EwkUrlSchemeRequest):
+        (EwkUrlSchemeRequest::finish):
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (EwkUrlSchemeRequest::create):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::startLoading):
+        (WebKit::RequestManagerClientEfl::stopLoading):
+        (WebKit::RequestManagerClientEfl::registerURLSchemeHandler):
+        (WebKit::EwkUrlSchemeHandler::EwkUrlSchemeHandler): Deleted.
+        (WebKit::RequestManagerClientEfl::didReceiveURIRequest): Deleted.
+        * UIProcess/efl/RequestManagerClientEfl.h:
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/soup/WebContextSoup.cpp:
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+
 2014-10-07  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove WKPageCreateSnapshotOfVisibleContent API.

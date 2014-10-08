@@ -260,7 +260,7 @@ EAPI Ewk_Storage_Manager *ewk_context_storage_manager_get(const Ewk_Context *con
  * When an URL request with @a scheme is made in the #Ewk_Context, the callback
  * function provided will be called with a #Ewk_Url_Scheme_Request.
  *
- * It is possible to handle URL scheme requests asynchronously, by calling ewk_url_scheme_ref() on the
+ * It is possible to handle URL scheme requests asynchronously, by calling ewk_object_ref() on the
  * #Ewk_Url_Scheme_Request and calling ewk_url_scheme_request_finish() later when the data of
  * the request is available.
  *
@@ -270,24 +270,20 @@ EAPI Ewk_Storage_Manager *ewk_context_storage_manager_get(const Ewk_Context *con
  * @param user_data data to pass to callback function
  *
  * @code
- * static void about_url_scheme_request_cb(Ewk_Url_Scheme_Request *request, void *user_data)
+ * static void custom_url_scheme_request_cb(Ewk_Url_Scheme_Request *request, void *user_data)
  * {
- *     const char *path;
+ *     const char *scheme;
  *     char *contents_data = NULL;
- *     unsigned int contents_length = 0;
+ *     unsigned contents_length = 0;
  *
- *     path = ewk_url_scheme_request_path_get(request);
- *     if (!strcmp(path, "plugins")) {
- *         // Initialize contents_data with the contents of plugins about page, and set its length to contents_length
- *     } else if (!strcmp(path, "memory")) {
- *         // Initialize contents_data with the contents of memory about page, and set its length to contents_length
- *     } else if (!strcmp(path, "applications")) {
- *         // Initialize contents_data with the contents of application about page, and set its length to contents_length
+ *     scheme = ewk_url_scheme_request_scheme_get(request);
+ *     if (!strcmp(scheme, "myapp")) {
+ *         // Initialize contents_data with a welcome page, and set its length to contents_length
  *     } else {
  *         Eina_Strbuf *buf = eina_strbuf_new();
- *         eina_strbuf_append_printf(buf, "&lt;html&gt;&lt;body&gt;&lt;p&gt;Invalid about:%s page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;", path);
+ *         eina_strbuf_append_printf(buf, "&lt;html&gt;&lt;body&gt;&lt;p&gt;Invalid application: %s&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;", scheme);
  *         contents_data = eina_strbuf_string_steal(buf);
- *         contents_length = strlen(contents);
+ *         contents_length = strlen(contents_data);
  *         eina_strbuf_free(buf);
  *     }
  *     ewk_url_scheme_request_finish(request, contents_data, contents_length, "text/html");

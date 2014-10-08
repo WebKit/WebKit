@@ -1,3 +1,15 @@
+2014-10-07  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        [EFL] Enable custom URI schemes with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=128177
+
+        Reviewed by Gyuyoung Kim.
+
+        Fixing ewk_context_url_scheme_register() ewebkit2 API
+        rely on r162449 - CustomProtocols implementation from Carlos Garcia Campos
+
+        * Source/cmake/OptionsEfl.cmake: Forcing CUSTOM_PROTOCOLS flag
+
 2014-10-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Bump version to 2.7.0

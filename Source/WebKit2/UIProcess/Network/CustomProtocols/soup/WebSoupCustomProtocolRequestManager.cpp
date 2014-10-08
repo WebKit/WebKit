@@ -31,6 +31,8 @@
 
 #if PLATFORM(GTK)
 #include <WebCore/ErrorsGtk.h>
+#elif PLATFORM(EFL)
+#include <WebCore/ErrorsEfl.h>
 #endif
 
 namespace WebKit {

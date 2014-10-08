@@ -26,70 +26,61 @@
 #include "config.h"
 #include "RequestManagerClientEfl.h"
 
-#include "WKContextSoup.h"
-#include "WKSoupRequestManager.h"
 #include "ewk_context_private.h"
 #include "ewk_url_scheme_request_private.h"
 
 namespace WebKit {
-
-struct EwkUrlSchemeHandler {
-    Ewk_Url_Scheme_Request_Cb callback;
-    void* userData;
-
-    EwkUrlSchemeHandler()
-        : callback(0)
-        , userData(0)
-    { }
-
-    EwkUrlSchemeHandler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
-        : callback(callback)
-        , userData(userData)
-    { }
-};
 
 static inline RequestManagerClientEfl* toRequestManagerClientEfl(const void* clientInfo)
 {
     return static_cast<RequestManagerClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-void RequestManagerClientEfl::didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
-{
-    RequestManagerClientEfl* requestManager = toRequestManagerClientEfl(clientInfo);
-
-    RefPtr<EwkUrlSchemeRequest> schemeRequest = EwkUrlSchemeRequest::create(soupRequestManagerRef, urlRef, requestID);
-    EwkUrlSchemeHandler handler = requestManager->m_urlSchemeHandlers.get(schemeRequest->scheme());
-    if (!handler.callback)
-        return;
-
-    handler.callback(schemeRequest.get(), handler.userData);
-}
-
 RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
-    : m_soupRequestManager(WKContextGetSoupRequestManager(context))
 {
+    m_requestManager = toAPI(toImpl(context)->supplement<WebSoupCustomProtocolRequestManager>());
     ASSERT(m_soupRequestManager);
 
-    WKSoupRequestManagerClientV0 wkRequestManagerClient;
-    memset(&wkRequestManagerClient, 0, sizeof(WKSoupRequestManagerClientV0));
+    WKSoupCustomProtocolRequestManagerClientV0 wkRequestManagerClient;
+    memset(&wkRequestManagerClient, 0, sizeof(WKSoupCustomProtocolRequestManagerClientV0));
 
     wkRequestManagerClient.base.version = 0;
     wkRequestManagerClient.base.clientInfo = this;
-    wkRequestManagerClient.didReceiveURIRequest = didReceiveURIRequest;
+    wkRequestManagerClient.startLoading = startLoading;
+    wkRequestManagerClient.stopLoading = stopLoading;
 
-    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), &wkRequestManagerClient.base);
+    WKSoupCustomProtocolRequestManagerSetClient(m_requestManager.get(), &wkRequestManagerClient.base);
 }
 
-RequestManagerClientEfl::~RequestManagerClientEfl()
+void RequestManagerClientEfl::startLoading(WKSoupCustomProtocolRequestManagerRef manager, uint64_t customProtocolID, WKURLRequestRef requestRef, const void* clientInfo)
 {
+    RequestManagerClientEfl* client = toRequestManagerClientEfl(clientInfo);
+    RefPtr<EwkUrlSchemeRequest> request = EwkUrlSchemeRequest::create(manager, toImpl(requestRef), customProtocolID);
+    String scheme(String::fromUTF8(request.get()->scheme()));
+    RefPtr<WebKitURISchemeHandler> handler = (client->m_uriSchemeHandlers).get(scheme);
+    ASSERT(handler.get());
+    if (!handler->hasCallback())
+        return;
+
+    (client->m_uriSchemeRequests).set(customProtocolID, request);
+    handler->performCallback(request.get());
+}
+
+void RequestManagerClientEfl::stopLoading(WKSoupCustomProtocolRequestManagerRef manager, uint64_t customProtocolID, const void* clientInfo)
+{
+    UNUSED_PARAM(manager);
+
+    RequestManagerClientEfl* client = toRequestManagerClientEfl(clientInfo);
+    (client->m_uriSchemeRequests).remove(customProtocolID);
 }
 
 void RequestManagerClientEfl::registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
 {
     ASSERT(callback);
 
-    m_urlSchemeHandlers.set(scheme, EwkUrlSchemeHandler(callback, userData));
-    WKSoupRequestManagerRegisterURIScheme(m_soupRequestManager.get(), adoptWK(toCopiedAPI(scheme)).get());
+    RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData));
+    m_uriSchemeHandlers.set(scheme, handler);
+    toImpl(m_requestManager.get())->registerSchemeForCustomProtocol(scheme);
 }
 
 } // namespace WebKit

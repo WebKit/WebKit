@@ -29,17 +29,20 @@
 #include "WKData.h"
 #include "WKString.h"
 #include "WKURL.h"
+#include "WebSoupCustomProtocolRequestManager.h"
+
 #include "ewk_url_scheme_request_private.h"
 
 using namespace WebKit;
 
-EwkUrlSchemeRequest::EwkUrlSchemeRequest(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
+EwkUrlSchemeRequest::EwkUrlSchemeRequest(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
     : m_wkRequestManager(manager)
-    , m_url(url)
     , m_requestID(requestID)
-    , m_scheme(AdoptWK, WKURLCopyScheme(url))
-    , m_path(AdoptWK, WKURLCopyPath(url))
 {
+    WKURLRef url = toCopiedURLAPI(urlRequest->resourceRequest().url());
+    m_url = WKEinaSharedString(url);
+    m_scheme = WKEinaSharedString(AdoptWK, WKURLCopyScheme(url));
+    m_path = WKEinaSharedString(AdoptWK, WKURLCopyPath(url));
 }
 
 uint64_t EwkUrlSchemeRequest::id() const
@@ -68,7 +71,13 @@ void EwkUrlSchemeRequest::finish(const void* contentData, uint64_t contentLength
     WKRetainPtr<WKStringRef> wkMimeType = mimeType ? adoptWK(WKStringCreateWithUTF8CString(mimeType)) : 0;
 
     // In case of empty reply an empty WKDataRef is sent to the WebProcess.
-    WKSoupRequestManagerDidHandleURIRequest(m_wkRequestManager.get(), wkData.get(), contentLength, wkMimeType.get(), m_requestID);
+    WebCore::ResourceResponse response(WebCore::URL(WebCore::URL(), String::fromUTF8(m_url)),
+        String::fromUTF8(mimeType), contentLength, emptyString());
+
+    toImpl(m_wkRequestManager.get())->didReceiveResponse(m_requestID, response);
+    toImpl(m_wkRequestManager.get())->didLoadData(m_requestID, toImpl(wkData.get()));
+    toImpl(m_wkRequestManager.get())->didFinishLoading(m_requestID);
+    toImpl(m_wkRequestManager.get())->stopLoading(m_requestID);
 }
 
 const char* ewk_url_scheme_request_scheme_get(const Ewk_Url_Scheme_Request* request)

@@ -40,9 +40,7 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.languages = WebCore::userPreferredLanguages();
-#if ENABLE(CUSTOM_PROTOCOLS)
     parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
-#endif
 }
 
 }

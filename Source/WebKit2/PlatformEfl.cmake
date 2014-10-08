@@ -30,6 +30,9 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Downloads/soup/DownloadSoup.cpp
 
+    Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
+    Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
+
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     Shared/cairo/ShareableBitmapCairo.cpp
@@ -67,9 +70,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/efl/WKPopupMenuListener.cpp
     UIProcess/API/C/efl/WKViewEfl.cpp
 
-    UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
-    UIProcess/API/C/soup/WKSoupRequestManager.cpp
+    UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp
 
     UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp
 
@@ -125,6 +127,10 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
 
+    UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
+    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
+    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
+
     UIProcess/Network/soup/NetworkProcessProxySoup.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
@@ -169,8 +175,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/soup/WebContextSoup.cpp
     UIProcess/soup/WebCookieManagerProxySoup.cpp
-    UIProcess/soup/WebSoupRequestManagerClient.cpp
-    UIProcess/soup/WebSoupRequestManagerProxy.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
@@ -206,17 +210,12 @@ list(APPEND WebKit2_SOURCES
     WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
     WebProcess/soup/WebProcessSoup.cpp
-    WebProcess/soup/WebSoupRequestManager.cpp
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in
 
-    UIProcess/soup/WebSoupRequestManagerProxy.messages.in
-
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in
-
-    WebProcess/soup/WebSoupRequestManager.messages.in
 )
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
@@ -232,6 +231,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/c/efl"
     "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
+    "${WEBKIT2_DIR}/Shared/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"

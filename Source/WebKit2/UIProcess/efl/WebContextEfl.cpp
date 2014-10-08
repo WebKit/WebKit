@@ -31,7 +31,7 @@
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include "WebSoupRequestManagerProxy.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 #include <Efreet.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/IconDatabase.h>
@@ -89,7 +89,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     initializeInspectorServer();
 
-    parameters.urlSchemesRegistered = supplement<WebSoupRequestManagerProxy>()->registeredURISchemes();
+    parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
