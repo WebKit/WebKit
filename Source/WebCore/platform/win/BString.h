@@ -32,7 +32,11 @@
 typedef const struct __CFString * CFStringRef;
 #endif
 
+#ifndef _PREFAST_
 typedef wchar_t* BSTR;
+#else // _PREFAST_
+typedef _Null_terminated_ wchar_t* BSTR;
+#endif
 
 namespace WebCore {
 

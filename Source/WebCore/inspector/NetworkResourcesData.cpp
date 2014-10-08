@@ -338,6 +338,7 @@ void NetworkResourcesData::clear(const String& preservedLoaderId)
     ResourceDataMap::iterator end = m_requestIdToResourceDataMap.end();
     for (it = m_requestIdToResourceDataMap.begin(); it != end; ++it) {
         ResourceData* resourceData = it->value;
+        ASSERT(resourceData);
         if (!preservedLoaderId.isNull() && resourceData->loaderId() == preservedLoaderId)
             preservedMap.set(it->key, it->value);
         else

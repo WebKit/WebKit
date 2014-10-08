@@ -669,7 +669,7 @@ static void printLayer(const PlatformCALayer* layer, int indent)
         if (CFGetTypeID(layerContents) == CGImageGetTypeID()) {
             CGImageRef imageContents = static_cast<CGImageRef>(const_cast<void*>(layerContents));
             printIndent(indent + 1);
-            fprintf(stderr, "(contents (image [%d %d]))\n",
+            fprintf(stderr, "(contents (image [%Iu %Iu]))\n",
                 CGImageGetWidth(imageContents), CGImageGetHeight(imageContents));
         }
     }

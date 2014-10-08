@@ -155,16 +155,23 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     HWndDC dc(0);
 
     DWORD acpCodePages;
-    langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
+    if (FAILED(langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages))) {
+        WTFLogAlways("SimpleFontData::containsCharacters: Unable to convert to CP_ACP code page.");
+        return false;
+    }
 
     DWORD fontCodePages;
-    langFontLink->GetFontCodePages(dc, m_platformData.hfont(), &fontCodePages);
+    if (FAILED(langFontLink->GetFontCodePages(dc, m_platformData.hfont(), &fontCodePages))) {
+        WTFLogAlways("SimpleFontData::containsCharacters: Unable to find matching code page for specified font.");
+        return false;
+    }
 
-    DWORD actualCodePages;
-    long numCharactersProcessed;
+    DWORD actualCodePages = 0;
+    long numCharactersProcessed = 0;
     long offset = 0;
     while (offset < length) {
-        langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &numCharactersProcessed);
+        if (FAILED(langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &numCharactersProcessed)))
+            return false;
         if ((actualCodePages & fontCodePages) == 0)
             return false;
         offset += numCharactersProcessed;

@@ -49,10 +49,10 @@ GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
-    LPVOID bits;
+    LPVOID bits = nullptr;
     auto hbmp = adoptGDIObject(::CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0));
 
-    if (!targetRef)
+    if (!targetRef || !hbmp)
         return hbmp;
 
     CGContextRef bitmapContext = CGBitmapContextCreate(bits, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 8,

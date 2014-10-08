@@ -55,13 +55,16 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
     PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
     frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
 
-    void* bits;
+    void* bits = nullptr;
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
     int w = ir.width();
     int h = ir.height();
     BitmapInfo bmp = BitmapInfo::create(IntSize(w, h));
 
     GDIObject<HBITMAP> hbmp = adoptGDIObject(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0));
+    if (!hbmp)
+        return hbmp;
+
     HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
     CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
         8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);

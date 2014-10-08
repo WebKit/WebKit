@@ -160,7 +160,8 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
             setFocusedIndex(index);
     }
 
-    ::SystemParametersInfo(SPI_GETCOMBOBOXANIMATION, 0, &shouldAnimate, 0);
+    if (!::SystemParametersInfo(SPI_GETCOMBOBOXANIMATION, 0, &shouldAnimate, 0))
+        shouldAnimate = FALSE;
 
     if (shouldAnimate) {
         RECT viewRect = {0};
@@ -943,7 +944,8 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             }
 
             BOOL shouldHotTrack = FALSE;
-            ::SystemParametersInfo(SPI_GETHOTTRACKING, 0, &shouldHotTrack, 0);
+            if (!::SystemParametersInfo(SPI_GETHOTTRACKING, 0, &shouldHotTrack, 0))
+                shouldHotTrack = FALSE;
 
             RECT bounds;
             GetClientRect(popupHandle(), &bounds);

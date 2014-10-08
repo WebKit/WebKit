@@ -1,3 +1,43 @@
+2014-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Resolve various static analyzer warnings in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=137526
+
+        Reviewed by Dean Jackson.
+
+        A series of small changes to resolve various issues found by the MSVC static analyzer.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::clear): Add assertion that it->value should never be null.
+        * page/SessionIDHash.h:
+        (WTF::HashTraits<WebCore::SessionID>::constructDeletedValue): Add explicit cast to avoid
+        compiler warning.
+        (WTF::HashTraits<WebCore::SessionID>::isDeletedValue): Ditto.
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect): Resolve static analyzer warnings by initializing bits, and
+        checking the return value of ::CreateDIBSection, which return nullptr on error.
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (printLayer): Use correct MSVC format specifier for size_t.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getLinkedFonts): Handle possibility that a font link key does not exist.
+        (WebCore::FontCache::systemFallbackForCharacters): Handle error case when a valid code page
+        does not exist for a given character.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::containsCharacters): Handle error cases for mapping to the CP_ACP code page,
+        and related failures when attempting to access the contents of a given code page.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::itemizeShapeAndPlace): Handle possible failure in the
+        ScriptItemize API call.
+        (WebCore::UniscribeController::shapeAndPlaceItem): Ditto for ScriptXtoCP API call.
+        * platform/win/BString.h: Use consistent SAL annotations for our typedeof of BSTR as in
+        the system header.
+        * platform/win/COMPtr.h: Ditto for HRESULT.
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::allocImage): Handle case of failing CreateDIBSection API call.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::show): Handle case of failing SystemParamtersInfo API call.
+        (WebCore::PopupMenuWin::wndProc): Ditto.
+
 2014-10-07  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Update CDMSessionMediaSourceAVFObjC to match new API provided by AVStreamSession

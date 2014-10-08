@@ -34,7 +34,11 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
 
-typedef long HRESULT;
+#ifdef __midl
+typedef LONG HRESULT;
+#else
+typedef _Return_type_success_(return >= 0) long HRESULT;
+#endif // __midl
 
 // FIXME: Should we put this into the WebCore namespace and use "using" on it
 // as we do with things in WTF? 

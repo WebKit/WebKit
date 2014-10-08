@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013-2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <mlang.h>
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 #include <wtf/win/GDIObject.h>
@@ -97,12 +98,16 @@ static const Vector<String>* getLinkedFonts(String& family)
 
     result = new Vector<String>;
     systemLinkMap.set(family, result);
-    HKEY fontLinkKey;
+    HKEY fontLinkKey = nullptr;
     if (FAILED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink", 0, KEY_READ, &fontLinkKey)))
         return result;
 
     DWORD linkedFontsBufferSize = 0;
-    RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, NULL, NULL, &linkedFontsBufferSize);
+    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
+        WTFLogAlways("The font link key %s does not exist in the registry.", family.utf8().data());
+        return result;
+    }
+
     WCHAR* linkedFonts = reinterpret_cast<WCHAR*>(malloc(linkedFontsBufferSize));
     if (SUCCEEDED(RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, NULL, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize))) {
         unsigned i = 0;
@@ -200,29 +205,29 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
         // Try MLang font linking first.
         DWORD codePages = 0;
-        langFontLink->GetCharCodePages(character, &codePages);
-
-        if (codePages && u_getIntPropertyValue(character, UCHAR_UNIFIED_IDEOGRAPH)) {
-            // The CJK character may belong to multiple code pages. We want to
-            // do font linking against a single one of them, preferring the default
-            // code page for the user's locale.
-            const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
-            unsigned numCodePages = CJKCodePageMasks.size();
-            for (unsigned i = 0; i < numCodePages && !hfont; ++i) {
-                hfont = createMLangFont(langFontLink, hdc, CJKCodePageMasks[i]);
-                if (hfont && !(codePages & CJKCodePageMasks[i])) {
-                    // We asked about a code page that is not one of the code pages
-                    // returned by MLang, so the font might not contain the character.
-                    SelectObject(hdc, hfont);
-                    if (!currentFontContainsCharacter(hdc, character)) {
-                        DeleteObject(hfont);
-                        hfont = 0;
+        if (SUCCEEDED(langFontLink->GetCharCodePages(character, &codePages))) {
+            if (codePages && u_getIntPropertyValue(character, UCHAR_UNIFIED_IDEOGRAPH)) {
+                // The CJK character may belong to multiple code pages. We want to
+                // do font linking against a single one of them, preferring the default
+                // code page for the user's locale.
+                const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
+                unsigned numCodePages = CJKCodePageMasks.size();
+                for (unsigned i = 0; i < numCodePages && !hfont; ++i) {
+                    hfont = createMLangFont(langFontLink, hdc, CJKCodePageMasks[i]);
+                    if (hfont && !(codePages & CJKCodePageMasks[i])) {
+                        // We asked about a code page that is not one of the code pages
+                        // returned by MLang, so the font might not contain the character.
+                        SelectObject(hdc, hfont);
+                        if (!currentFontContainsCharacter(hdc, character)) {
+                            DeleteObject(hfont);
+                            hfont = 0;
+                        }
+                        SelectObject(hdc, primaryFont);
                     }
-                    SelectObject(hdc, primaryFont);
                 }
-            }
-        } else
-            hfont = createMLangFont(langFontLink, hdc, codePages, character);
+            } else
+                hfont = createMLangFont(langFontLink, hdc, codePages, character);
+        }
     }
 
     // A font returned from MLang is trusted to contain the character.

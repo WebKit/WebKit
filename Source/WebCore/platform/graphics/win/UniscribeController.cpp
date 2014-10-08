@@ -196,9 +196,14 @@ void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length,
     // hanging out at the end of the array
     m_items.resize(6);
     int numItems = 0;
-    while (ScriptItemize(cp, length, m_items.size() - 1, &m_control, &m_state, m_items.data(), &numItems) == E_OUTOFMEMORY) {
+    HRESULT rc = S_OK;
+    while (rc = ::ScriptItemize(cp, length, m_items.size() - 1, &m_control, &m_state, m_items.data(), &numItems) == E_OUTOFMEMORY) {
         m_items.resize(m_items.size() * 2);
         resetControlAndState();
+    }
+    if (FAILED(rc)) {
+        WTFLogAlways("UniscribeController::itemizeShapeAndPlace: ScriptItemize failed, rc=%lx", rc);
+        return;
     }
     m_items.resize(numItems + 1);
 
@@ -378,8 +383,12 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     while (m_computingOffsetPosition && m_offsetX >= leftEdge && m_offsetX < m_runWidthSoFar) {
         // The position is somewhere inside this run.
         int trailing = 0;
-        ScriptXtoCP(m_offsetX - leftEdge, clusters.size(), glyphs.size(), clusters.data(), visualAttributes.data(),
+        HRESULT rc = ::ScriptXtoCP(m_offsetX - leftEdge, clusters.size(), glyphs.size(), clusters.data(), visualAttributes.data(),
                     advances.data(), &item.a, &m_offsetPosition, &trailing);
+        if (FAILED(rc)) {
+            WTFLogAlways("UniscribeController::shapeAndPlaceItem: ScriptXtoCP failed rc=%lx", rc);
+            return true;
+        }
         if (trailing && m_includePartialGlyphs && m_offsetPosition < len - 1) {
             m_offsetPosition += m_currentCharacter + m_items[i].iCharPos;
             m_offsetX += m_run.rtl() ? -trailing : trailing;

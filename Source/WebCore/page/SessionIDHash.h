@@ -32,18 +32,19 @@
 
 namespace WTF {
 
-// The empty value is emptySessionID(), the deleted value is (-1)
+// The empty value is emptySessionID(), the deleted value is (-2)
 struct SessionIDHash {
     static unsigned hash(const WebCore::SessionID& p) { return (unsigned)p.sessionID(); }
     static bool equal(const WebCore::SessionID& a, const WebCore::SessionID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct HashTraits<WebCore::SessionID> : GenericHashTraits<WebCore::SessionID> {
+    static const uint64_t deletedValueIdentifier = 0xFFFFFFFFFFFFFFFE;
     static const bool needsDestruction = false;
     static WebCore::SessionID emptyValue() { return WebCore::SessionID::emptySessionID(); }
 
-    static void constructDeletedValue(WebCore::SessionID& slot) { slot = WebCore::SessionID(-2); }
-    static bool isDeletedValue(const WebCore::SessionID& slot) { return slot == WebCore::SessionID(-2); }
+    static void constructDeletedValue(WebCore::SessionID& slot) { slot = WebCore::SessionID(deletedValueIdentifier); }
+    static bool isDeletedValue(const WebCore::SessionID& slot) { return slot == WebCore::SessionID(deletedValueIdentifier); }
 };
 template<> struct DefaultHash<WebCore::SessionID> {
     typedef SessionIDHash Hash;
