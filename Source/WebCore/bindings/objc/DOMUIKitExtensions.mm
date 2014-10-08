@@ -207,17 +207,17 @@ using WebCore::VisiblePosition;
 
 - (BOOL)containsOnlyInlineObjects
 {
-    RenderObject * renderer = core(self)->renderer();
-    return  (renderer &&
-             renderer->childrenInline() &&
-             (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() == nil) &&
-             !renderer->isTable());
+    RenderObject* renderer = core(self)->renderer();
+    return renderer
+        && renderer->childrenInline()
+        && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation())
+        && !renderer->isTable();
 }
 
 - (BOOL)isSelectableBlock
 {
-    RenderObject * renderer = core(self)->renderer();
-    return (renderer && (renderer->isRenderBlockFlow() || (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() != nil)));
+    RenderObject* renderer = core(self)->renderer();
+    return renderer && (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineElementContinuation() != nil));
 }
 
 - (DOMRange *)rangeOfContainingParagraph
@@ -344,12 +344,12 @@ using WebCore::VisiblePosition;
             result = INT_MAX;
         } else if (renderer->isEmpty()) {
             result = 0;
-        } else if (renderer->isRenderBlockFlow() || (renderer->isRenderBlock() && toRenderBlock(renderer)->inlineElementContinuation() != 0)) {
+        } else if (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineElementContinuation())) {
             BOOL noCost = NO;
-            if (renderer->isBox()) {
-                RenderBox &asBox = renderer->enclosingBox();
-                RenderObject *parent = asBox.parent();
-                RenderBox *parentRenderBox = (parent && parent->isBox()) ? toRenderBox(parent) : 0;
+            if (is<RenderBox>(*renderer)) {
+                RenderBox& asBox = renderer->enclosingBox();
+                RenderObject* parent = asBox.parent();
+                RenderBox* parentRenderBox = is<RenderBox>(parent) ? downcast<RenderBox>(parent) : nullptr;
                 if (parentRenderBox && asBox.width() == parentRenderBox->width()) {
                     noCost = YES;
                 }

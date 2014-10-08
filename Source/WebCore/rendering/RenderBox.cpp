@@ -2947,20 +2947,20 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
         case Calculated:
         {
             auto cb = isOutOfFlowPositioned() ? container() : containingBlock();
-            while (cb->isAnonymous() && !cb->isRenderView()) {
+            while (cb->isAnonymous() && !is<RenderView>(*cb)) {
                 cb = cb->containingBlock();
-                toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+                downcast<RenderBlock>(*cb).addPercentHeightDescendant(const_cast<RenderBox&>(*this));
             }
 
             // FIXME: This calculation is not patched for block-flow yet.
             // https://bugs.webkit.org/show_bug.cgi?id=46500
             if (cb->isOutOfFlowPositioned() && cb->style().height().isAuto() && !(cb->style().top().isAuto() || cb->style().bottom().isAuto())) {
                 ASSERT_WITH_SECURITY_IMPLICATION(cb->isRenderBlock());
-                RenderBlock* block = toRenderBlock(cb);
+                RenderBlock& block = downcast<RenderBlock>(*cb);
                 LogicalExtentComputedValues computedValues;
-                block->computeLogicalHeight(block->logicalHeight(), 0, computedValues);
-                LayoutUnit newContentHeight = computedValues.m_extent - block->borderAndPaddingLogicalHeight() - block->scrollbarLogicalHeight();
-                LayoutUnit newHeight = block->adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
+                block.computeLogicalHeight(block.logicalHeight(), 0, computedValues);
+                LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
+                LayoutUnit newHeight = block.adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
                 return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newHeight));
             }
             
@@ -2984,7 +2984,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
                         availableHeight = std::max(availableHeight, intrinsicLogicalHeight());
                         return valueForLength(logicalHeight, availableHeight - borderAndPaddingLogicalHeight());
                     }
-                    toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+                    downcast<RenderBlock>(*cb).addPercentHeightDescendant(const_cast<RenderBox&>(*this));
                     cb = cb->containingBlock();
                 }
             }
@@ -3023,11 +3023,11 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
 
     // FIXME: Check logicalTop/logicalBottom here to correctly handle vertical writing-mode.
     // https://bugs.webkit.org/show_bug.cgi?id=46500
-    if (isRenderBlock() && isOutOfFlowPositioned() && style().height().isAuto() && !(style().top().isAuto() || style().bottom().isAuto())) {
-        RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
+    if (is<RenderBlock>(*this) && isOutOfFlowPositioned() && style().height().isAuto() && !(style().top().isAuto() || style().bottom().isAuto())) {
+        RenderBlock& block = const_cast<RenderBlock&>(downcast<RenderBlock>(*this));
         LogicalExtentComputedValues computedValues;
-        block->computeLogicalHeight(block->logicalHeight(), 0, computedValues);
-        LayoutUnit newContentHeight = computedValues.m_extent - block->borderAndPaddingLogicalHeight() - block->scrollbarLogicalHeight();
+        block.computeLogicalHeight(block.logicalHeight(), 0, computedValues);
+        LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
         return adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
     }
 
@@ -3072,39 +3072,39 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
-    if (containingBlock->isBox()) {
+    if (is<RenderBox>(*containingBlock)) {
         bool isFixedPosition = style().position() == FixedPosition;
 
         RenderFlowThread* flowThread = flowThreadContainingBlock();
         if (!flowThread) {
-            if (isFixedPosition && containingBlock->isRenderView())
-                return toRenderView(containingBlock)->clientLogicalWidthForFixedPosition();
+            if (isFixedPosition && is<RenderView>(*containingBlock))
+                return downcast<RenderView>(*containingBlock).clientLogicalWidthForFixedPosition();
 
-            return toRenderBox(containingBlock)->clientLogicalWidth();
+            return downcast<RenderBox>(*containingBlock).clientLogicalWidth();
         }
 
-        if (isFixedPosition && containingBlock->isRenderNamedFlowThread())
+        if (isFixedPosition && is<RenderNamedFlowThread>(*containingBlock))
             return containingBlock->view().clientLogicalWidth();
 
-        if (!containingBlock->isRenderBlock())
-            return toRenderBox(*containingBlock).clientLogicalWidth();
+        if (!is<RenderBlock>(*containingBlock))
+            return downcast<RenderBox>(*containingBlock).clientLogicalWidth();
 
-        const RenderBlock* cb = toRenderBlock(containingBlock);
-        RenderBoxRegionInfo* boxInfo = 0;
+        const RenderBlock& cb = downcast<RenderBlock>(*containingBlock);
+        RenderBoxRegionInfo* boxInfo = nullptr;
         if (!region) {
             if (containingBlock->isRenderFlowThread() && !checkForPerpendicularWritingMode)
                 return toRenderFlowThread(containingBlock)->contentLogicalWidthOfFirstRegion();
             if (isWritingModeRoot()) {
-                LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage();
-                RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
+                LayoutUnit cbPageOffset = cb.offsetFromLogicalTopOfFirstPage();
+                RenderRegion* cbRegion = cb.regionAtBlockOffset(cbPageOffset);
                 if (cbRegion)
-                    boxInfo = cb->renderBoxRegionInfo(cbRegion);
+                    boxInfo = cb.renderBoxRegionInfo(cbRegion);
             }
         } else if (region && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
-            RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
-            boxInfo = cb->renderBoxRegionInfo(containingBlockRegion);
+            RenderRegion* containingBlockRegion = cb.clampToStartAndEndRegions(region);
+            boxInfo = cb.renderBoxRegionInfo(containingBlockRegion);
         }
-        return (boxInfo) ? std::max<LayoutUnit>(0, cb->clientLogicalWidth() - (cb->logicalWidth() - boxInfo->logicalWidth())) : cb->clientLogicalWidth();
+        return (boxInfo) ? std::max<LayoutUnit>(0, cb.clientLogicalWidth() - (cb.logicalWidth() - boxInfo->logicalWidth())) : cb.clientLogicalWidth();
     }
 
     ASSERT(containingBlock->isRenderInline() && containingBlock->isInFlowPositioned());
@@ -3133,37 +3133,37 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
 LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
-        return containingBlockLogicalWidthForPositioned(containingBlock, 0, false);
+        return containingBlockLogicalWidthForPositioned(containingBlock, nullptr, false);
 
     if (containingBlock->isBox()) {
         bool isFixedPosition = style().position() == FixedPosition;
 
-        if (isFixedPosition && containingBlock->isRenderView())
-            return toRenderView(containingBlock)->clientLogicalHeightForFixedPosition();
+        if (isFixedPosition && is<RenderView>(*containingBlock))
+            return downcast<RenderView>(*containingBlock).clientLogicalHeightForFixedPosition();
 
-        const RenderBlock* cb = containingBlock->isRenderBlock() ? toRenderBlock(containingBlock) : containingBlock->containingBlock();
+        const RenderBlock* cb = is<RenderBlock>(*containingBlock) ? downcast<RenderBlock>(containingBlock) : containingBlock->containingBlock();
         LayoutUnit result = cb->clientLogicalHeight();
         RenderFlowThread* flowThread = flowThreadContainingBlock();
-        if (flowThread && containingBlock->isRenderFlowThread() && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
-            if (containingBlock->isRenderNamedFlowThread() && isFixedPosition)
+        if (flowThread && is<RenderFlowThread>(*containingBlock) && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
+            if (is<RenderNamedFlowThread>(*containingBlock) && isFixedPosition)
                 return containingBlock->view().clientLogicalHeight();
-            return toRenderFlowThread(containingBlock)->contentLogicalHeightOfFirstRegion();
+            return downcast<RenderFlowThread>(*containingBlock).contentLogicalHeightOfFirstRegion();
         }
         return result;
     }
         
-    ASSERT(containingBlock->isRenderInline() && containingBlock->isInFlowPositioned());
+    ASSERT(is<RenderInline>(*containingBlock) && containingBlock->isInFlowPositioned());
 
-    const RenderInline* flow = toRenderInline(containingBlock);
-    InlineFlowBox* first = flow->firstLineBox();
-    InlineFlowBox* last = flow->lastLineBox();
+    const RenderInline& flow = downcast<RenderInline>(*containingBlock);
+    InlineFlowBox* first = flow.firstLineBox();
+    InlineFlowBox* last = flow.lastLineBox();
 
     // If the containing block is empty, return a height of 0.
     if (!first || !last)
         return 0;
 
     LayoutUnit heightResult;
-    LayoutRect boundingBox = flow->linesBoundingBox();
+    LayoutRect boundingBox = flow.linesBoundingBox();
     if (containingBlock->isHorizontalWritingMode())
         heightResult = boundingBox.height();
     else
@@ -3180,13 +3180,13 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
     if (child->parent()->style().direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
-        for (auto curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
-            if (curr->isBox()) {
-                staticPosition += toRenderBox(curr)->logicalLeft();
-                if (region && toRenderBox(curr)->isRenderBlock()) {
-                    const RenderBlock* cb = toRenderBlock(curr);
-                    region = cb->clampToStartAndEndRegions(region);
-                    RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region);
+        for (auto current = child->parent(); current && current != containerBlock; current = current->container()) {
+            if (is<RenderBox>(*current)) {
+                staticPosition += downcast<RenderBox>(*current).logicalLeft();
+                if (region && is<RenderBlock>(*current)) {
+                    const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
+                    region = currentBlock.clampToStartAndEndRegions(region);
+                    RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
                     if (boxInfo)
                         staticPosition += boxInfo->logicalLeft();
                 }
@@ -3196,25 +3196,25 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     } else {
         RenderBox& enclosingBox = child->parent()->enclosingBox();
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalLeft();
-        for (RenderElement* curr = &enclosingBox; curr; curr = curr->container()) {
-            if (curr->isBox()) {
-                if (curr != containerBlock)
-                    staticPosition -= toRenderBox(curr)->logicalLeft();
-                if (curr == &enclosingBox)
+        for (RenderElement* current = &enclosingBox; current; current = current->container()) {
+            if (is<RenderBox>(*current)) {
+                if (current != containerBlock)
+                    staticPosition -= downcast<RenderBox>(*current).logicalLeft();
+                if (current == &enclosingBox)
                     staticPosition -= enclosingBox.logicalWidth();
-                if (region && curr->isRenderBlock()) {
-                    const RenderBlock* cb = toRenderBlock(curr);
-                    region = cb->clampToStartAndEndRegions(region);
-                    RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region);
+                if (region && is<RenderBlock>(*current)) {
+                    const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
+                    region = currentBlock.clampToStartAndEndRegions(region);
+                    RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
                     if (boxInfo) {
-                        if (curr != containerBlock)
-                            staticPosition -= cb->logicalWidth() - (boxInfo->logicalLeft() + boxInfo->logicalWidth());
-                        if (curr == &enclosingBox)
+                        if (current != containerBlock)
+                            staticPosition -= currentBlock.logicalWidth() - (boxInfo->logicalLeft() + boxInfo->logicalWidth());
+                        if (current == &enclosingBox)
                             staticPosition += enclosingBox.logicalWidth() - boxInfo->logicalWidth();
                     }
                 }
             }
-            if (curr == containerBlock)
+            if (current == containerBlock)
                 break;
         }
         logicalRight.setValue(Fixed, staticPosition);
@@ -3338,14 +3338,14 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     // Adjust logicalLeft if we need to for the flipped version of our writing mode in regions.
     // FIXME: Add support for other types of objects as containerBlock, not only RenderBlock.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && !region && isWritingModeRoot() && isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode() && containerBlock->isRenderBlock()) {
+    if (flowThread && !region && isWritingModeRoot() && isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode() && is<RenderBlock>(*containerBlock)) {
         ASSERT(containerBlock->canHaveBoxInfoInRegion());
         LayoutUnit logicalLeftPos = computedValues.m_position;
-        const RenderBlock* cb = toRenderBlock(containerBlock);
-        LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage();
-        RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
+        const RenderBlock& renderBlock = downcast<RenderBlock>(*containerBlock);
+        LayoutUnit cbPageOffset = renderBlock.offsetFromLogicalTopOfFirstPage();
+        RenderRegion* cbRegion = renderBlock.regionAtBlockOffset(cbPageOffset);
         if (cbRegion) {
-            RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion);
+            RenderBoxRegionInfo* boxInfo = renderBlock.renderBoxRegionInfo(cbRegion);
             if (boxInfo) {
                 logicalLeftPos += boxInfo->logicalLeft();
                 computedValues.m_position = logicalLeftPos;
@@ -3655,14 +3655,14 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     // Adjust logicalTop if we need to for perpendicular writing modes in regions.
     // FIXME: Add support for other types of objects as containerBlock, not only RenderBlock.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && isHorizontalWritingMode() != containerBlock->isHorizontalWritingMode() && containerBlock->isRenderBlock()) {
+    if (flowThread && isHorizontalWritingMode() != containerBlock->isHorizontalWritingMode() && is<RenderBlock>(*containerBlock)) {
         ASSERT(containerBlock->canHaveBoxInfoInRegion());
         LayoutUnit logicalTopPos = computedValues.m_position;
-        const RenderBlock* cb = toRenderBlock(containerBlock);
-        LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage() - logicalLeft();
-        RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
+        const RenderBlock& renderBox = downcast<RenderBlock>(*containerBlock);
+        LayoutUnit cbPageOffset = renderBox.offsetFromLogicalTopOfFirstPage() - logicalLeft();
+        RenderRegion* cbRegion = renderBox.regionAtBlockOffset(cbPageOffset);
         if (cbRegion) {
-            RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion);
+            RenderBoxRegionInfo* boxInfo = renderBox.renderBoxRegionInfo(cbRegion);
             if (boxInfo) {
                 logicalTopPos += boxInfo->logicalLeft();
                 computedValues.m_position = logicalTopPos;

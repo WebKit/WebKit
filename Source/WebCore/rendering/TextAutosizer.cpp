@@ -126,7 +126,7 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     }
 
     // The layoutRoot could be neither a container nor a cluster, so walk up the tree till we find each of these.
-    RenderBlock* container = layoutRoot->isRenderBlock() ? toRenderBlock(layoutRoot) : layoutRoot->containingBlock();
+    RenderBlock* container = is<RenderBlock>(*layoutRoot) ? downcast<RenderBlock>(layoutRoot) : layoutRoot->containingBlock();
     while (container && !isAutosizingContainer(container))
         container = container->containingBlock();
 
@@ -204,14 +204,14 @@ void TextAutosizer::processContainer(float multiplier, RenderBlock* container, T
 
     RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(subtreeRoot, subtreeRoot);
     while (descendant) {
-        if (descendant->isText()) {
+        if (is<RenderText>(*descendant)) {
             if (localMultiplier != 1 && descendant->style()->textAutosizingMultiplier() == 1) {
                 setMultiplier(descendant, localMultiplier);
                 setMultiplier(descendant->parent(), localMultiplier); // Parent does line spacing.
             }
             // FIXME: Increase list marker size proportionately.
         } else if (isAutosizingContainer(descendant)) {
-            RenderBlock* descendantBlock = toRenderBlock(descendant);
+            RenderBlock* descendantBlock = downcast<RenderBlock>(descendant);
             TextAutosizingClusterInfo descendantClusterInfo(descendantBlock);
             if (isWiderDescendant(descendantBlock, clusterInfo) || isIndependentDescendant(descendantBlock))
                 processCluster(descendantClusterInfo, descendantBlock, descendantBlock, windowInfo);
@@ -496,7 +496,7 @@ void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, Tex
         if (!skipLocalText && is<RenderText>(*descendant))
             textWidth += downcast<RenderText>(*descendant).renderedTextLength() * descendant->style()->specifiedFontSize();
         else if (isAutosizingContainer(descendant)) {
-            RenderBlock* descendantBlock = toRenderBlock(descendant);
+            RenderBlock* descendantBlock = downcast<RenderBlock>(descendant);
             if (!isAutosizingCluster(descendantBlock, clusterInfo))
                 measureDescendantTextWidth(descendantBlock, clusterInfo, minTextWidth, textWidth);
         }
@@ -542,8 +542,8 @@ const RenderBlock* TextAutosizer::findDeepestBlockContainingAllText(const Render
         lastNode = lastNode->parent();
     }
 
-    if (firstNode->isRenderBlock())
-        return toRenderBlock(firstNode);
+    if (is<RenderBlock>(*firstNode))
+        return downcast<RenderBlock>(firstNode);
 
     // containingBlock() should never leave the cluster, since it only skips ancestors when finding the
     // container of position:absolute/fixed blocks, and those cannot exist between a cluster and its text
@@ -558,21 +558,20 @@ const RenderBlock* TextAutosizer::findDeepestBlockContainingAllText(const Render
 const RenderObject* TextAutosizer::findFirstTextLeafNotInCluster(const RenderObject* parent, size_t& depth, TraversalDirection direction)
 {
     if (parent->isEmpty())
-        return parent->isText() ? parent : 0;
+        return is<RenderText>(*parent) ? parent : nullptr;
 
     ++depth;
     const RenderObject* child = (direction == FirstToLast) ? parent->firstChild() : parent->lastChild();
     while (child) {
-        if (!isAutosizingContainer(child) || !isIndependentDescendant(toRenderBlock(child))) {
-            const RenderObject* leaf = findFirstTextLeafNotInCluster(child, depth, direction);
-            if (leaf)
+        if (!isAutosizingContainer(child) || !isIndependentDescendant(downcast<RenderBlock>(child))) {
+            if (const RenderObject* leaf = findFirstTextLeafNotInCluster(child, depth, direction))
                 return leaf;
         }
         child = (direction == FirstToLast) ? child->nextSibling() : child->previousSibling();
     }
     --depth;
 
-    return 0;
+    return nullptr;
 }
 
 namespace {

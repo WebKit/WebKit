@@ -762,7 +762,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (!elementChild.isAnonymous() || elementChild.style().styleType() != NOPSEUDO)
             continue;
 
-        if (propagationType == PropagateToBlockChildrenOnly && !elementChild.isRenderBlock())
+        if (propagationType == PropagateToBlockChildrenOnly && !is<RenderBlock>(elementChild))
             continue;
 
 #if ENABLE(FULLSCREEN_API)
@@ -771,7 +771,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 #endif
 
         // RenderFlowThreads are updated through the RenderView::styleDidChange function.
-        if (elementChild.isRenderFlowThread())
+        if (is<RenderFlowThread>(elementChild))
             continue;
 
         auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), elementChild.style().display());
@@ -784,7 +784,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
-        if (elementChild.isInFlowPositioned() && toRenderBlock(elementChild).isAnonymousBlockContinuation())
+        if (elementChild.isInFlowPositioned() && downcast<RenderBlock>(elementChild).isAnonymousBlockContinuation())
             newStyle.get().setPosition(elementChild.style().position());
 
         elementChild.setStyle(WTF::move(newStyle));

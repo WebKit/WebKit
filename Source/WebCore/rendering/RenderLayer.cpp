@@ -3298,8 +3298,8 @@ void RenderLayer::updateScrollbarsAfterLayout()
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
                 renderer().setNeedsLayout(MarkOnlyThis);
-                if (renderer().isRenderBlock()) {
-                    RenderBlock& block = toRenderBlock(renderer());
+                if (is<RenderBlock>(renderer())) {
+                    RenderBlock& block = downcast<RenderBlock>(renderer());
                     block.scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);
                     block.layoutBlock(true);
                 } else
@@ -5417,7 +5417,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             else
                 layerBoundsWithVisualOverflow.moveBy(LayoutPoint(flowThread->width(), 0));
         } else {
-            RenderBlock* rendererContainingBlock = boxModelObject.enclosingBox().isRenderBlock() ? toRenderBlock(&boxModelObject.enclosingBox()) : 0;
+            RenderBlock* rendererContainingBlock = is<RenderBlock>(boxModelObject.enclosingBox()) ? &downcast<RenderBlock>(boxModelObject.enclosingBox()) : nullptr;
             if (rendererContainingBlock)
                 rendererContainingBlock->flipForWritingMode(layerBoundsWithVisualOverflow);
         }

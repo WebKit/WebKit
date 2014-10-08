@@ -473,16 +473,16 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
             
             // Get the logical top coordinate of the current object.
             LayoutUnit top = 0;
-            if (boxModelObject.isRenderBlock())
-                top = toRenderBlock(boxModelObject).offsetFromLogicalTopOfFirstPage();
+            if (is<RenderBlock>(boxModelObject))
+                top = downcast<RenderBlock>(boxModelObject).offsetFromLogicalTopOfFirstPage();
             else {
                 if (boxModelObject.containingBlock())
                     top = boxModelObject.containingBlock()->offsetFromLogicalTopOfFirstPage();
                 
-                if (boxModelObject.isBox())
-                    top += toRenderBox(boxModelObject).topLeftLocation().y();
-                else if (boxModelObject.isRenderInline())
-                    top -= toRenderInline(boxModelObject).borderTop();
+                if (is<RenderBox>(boxModelObject))
+                    top += downcast<RenderBox>(boxModelObject).topLeftLocation().y();
+                else if (is<RenderInline>(boxModelObject))
+                    top -= downcast<RenderInline>(boxModelObject).borderTop();
             }
             
             // Get the logical top of the region this object starts in

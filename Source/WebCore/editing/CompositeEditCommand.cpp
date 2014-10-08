@@ -55,10 +55,10 @@
 #include "RemoveCSSPropertyCommand.h"
 #include "RemoveNodeCommand.h"
 #include "RemoveNodePreservingChildrenCommand.h"
+#include "RenderBlockFlow.h"
+#include "RenderText.h"
 #include "ReplaceNodeWithSpanCommand.h"
 #include "ReplaceSelectionCommand.h"
-#include "RenderBlock.h"
-#include "RenderText.h"
 #include "ScopedEventQueue.h"
 #include "SetNodeAttributeCommand.h"
 #include "SplitElementCommand.h"
@@ -929,21 +929,21 @@ PassRefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& po
 PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* container)
 {
     if (!container)
-        return 0;
+        return nullptr;
 
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderObject* renderer = container->renderer();
-    if (!renderer || !renderer->isRenderBlockFlow())
-        return 0;
+    if (!is<RenderBlockFlow>(renderer))
+        return nullptr;
     
     // append the placeholder to make sure it follows
     // any unrendered blocks
-    RenderBlock* block = toRenderBlock(renderer);
-    if (block->height() == 0 || (block->isListItem() && block->isEmpty()))
+    RenderBlockFlow& blockFlow = downcast<RenderBlockFlow>(*renderer);
+    if (!blockFlow.height() || (blockFlow.isListItem() && blockFlow.isEmpty()))
         return appendBlockPlaceholder(container);
 
-    return 0;
+    return nullptr;
 }
 
 // Assumes that the position is at a placeholder and does the removal without much checking.

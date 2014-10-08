@@ -399,15 +399,15 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
     return 0;
 }
 
-static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject* render)
+static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject* renderer)
 {
-    const RenderStyle& style = render->style();
+    const RenderStyle& style = renderer->style();
     if (style.height().type() == Fixed) {
-        if (render->isRenderBlock()) {
-            const RenderBlock* block = toRenderBlock(render);
+        if (is<RenderBlock>(*renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
-            if (style.overflowY() == OVISIBLE && style.height().value() < block->layoutOverflowRect().maxY())
+            if (style.overflowY() == OVISIBLE
+                && style.height().value() < downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
         return RenderObject::FixedHeight;
@@ -672,8 +672,8 @@ void RenderObject::checkBlockPositionedObjectsNeedLayout()
 {
     ASSERT(!needsLayout());
 
-    if (isRenderBlock())
-        toRenderBlock(this)->checkPositionedObjectsNeedLayout();
+    if (is<RenderBlock>(*this))
+        downcast<RenderBlock>(*this).checkPositionedObjectsNeedLayout();
 }
 #endif
 
@@ -720,22 +720,22 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    auto o = parent();
-    if (!o && isRenderScrollbarPart())
-        o = toRenderScrollbarPart(this)->rendererOwningScrollbar();
+    auto parent = this->parent();
+    if (!parent && is<RenderScrollbarPart>(*this))
+        parent = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar();
 
     const RenderStyle& style = this->style();
-    if (!isText() && style.position() == FixedPosition)
-        o = containingBlockForFixedPosition(o);
-    else if (!isText() && style.position() == AbsolutePosition)
-        o = containingBlockForAbsolutePosition(o);
+    if (!is<RenderText>(*this) && style.position() == FixedPosition)
+        parent = containingBlockForFixedPosition(parent);
+    else if (!is<RenderText>(*this) && style.position() == AbsolutePosition)
+        parent = containingBlockForAbsolutePosition(parent);
     else
-        o = containingBlockForObjectInFlow(o);
+        parent = containingBlockForObjectInFlow(parent);
 
-    if (!o || !o->isRenderBlock())
-        return 0; // This can still happen in case of an orphaned tree
+    if (!is<RenderBlock>(parent))
+        return nullptr; // This can still happen in case of an orphaned tree
 
-    return toRenderBlock(o);
+    return downcast<RenderBlock>(parent);
 }
 
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1, float y1, float x2, float y2,
@@ -1679,10 +1679,10 @@ void RenderObject::handleDynamicFloatPositionChange()
     setInline(style().isDisplayInlineType());
     if (isInline() != parent()->childrenInline()) {
         if (!isInline())
-            toRenderBoxModelObject(parent())->childBecameNonInline(this);
+            downcast<RenderBoxModelObject>(*parent()).childBecameNonInline(this);
         else {
             // An anonymous block must be made to wrap this inline.
-            RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
+            RenderBlock* block = downcast<RenderBlock>(*parent()).createAnonymousBlock();
             parent()->insertChildInternal(block, this, RenderElement::NotifyChildren);
             parent()->removeChildInternal(*this, RenderElement::NotifyChildren);
             block->insertChildInternal(this, nullptr, RenderElement::NotifyChildren);
@@ -1692,8 +1692,8 @@ void RenderObject::handleDynamicFloatPositionChange()
 
 void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
 {
-    RenderBlock* parentBlock = toRenderBlock(parent());
-    if (!parentBlock->canCollapseAnonymousBlockChild())
+    RenderBlock& parentBlock = downcast<RenderBlock>(*parent());
+    if (!parentBlock.canCollapseAnonymousBlockChild())
         return;
 
     // We have changed to floated or out-of-flow positioning so maybe all our parent's
@@ -1701,19 +1701,18 @@ void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
     // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
     // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
     // if we find a continuation.
-    RenderObject* curr = parent()->firstChild();
-    while (curr && ((curr->isAnonymousBlock() && !toRenderBlock(curr)->isAnonymousBlockContinuation()) || curr->style().isFloating() || curr->style().hasOutOfFlowPosition()))
-        curr = curr->nextSibling();
+    RenderObject* current = parent()->firstChild();
+    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isAnonymousBlockContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
+        current = current->nextSibling();
 
-    if (curr)
+    if (current)
         return;
 
-    curr = parent()->firstChild();
-    while (curr) {
-        RenderObject* next = curr->nextSibling();
-        if (curr->isAnonymousBlock())
-            parentBlock->collapseAnonymousBoxChild(parentBlock, toRenderBlock(curr));
-        curr = next;
+    RenderObject* next;
+    for (current = parent()->firstChild(); current; current = next) {
+        next = current->nextSibling();
+        if (current->isAnonymousBlock())
+            parentBlock.collapseAnonymousBoxChild(parentBlock, downcast<RenderBlock>(current));
     }
 }
 
@@ -2270,12 +2269,12 @@ static Color decorationColor(RenderStyle* style)
 void RenderObject::getTextDecorationColors(int decorations, Color& underline, Color& overline,
                                            Color& linethrough, bool quirksMode, bool firstlineStyle)
 {
-    RenderObject* curr = this;
-    RenderStyle* styleToUse = 0;
+    RenderObject* current = this;
+    RenderStyle* styleToUse = nullptr;
     TextDecoration currDecs = TextDecorationNone;
     Color resultColor;
     do {
-        styleToUse = firstlineStyle ? &curr->firstLineStyle() : &curr->style();
+        styleToUse = firstlineStyle ? &current->firstLineStyle() : &current->style();
         currDecs = styleToUse->textDecoration();
         resultColor = decorationColor(styleToUse);
         // Parameter 'decorations' is cast as an int to enable the bitwise operations below.
@@ -2293,16 +2292,16 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
                 linethrough = resultColor;
             }
         }
-        if (curr->isRubyText())
+        if (current->isRubyText())
             return;
-        curr = curr->parent();
-        if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
-            curr = toRenderBlock(curr)->continuation();
-    } while (curr && decorations && (!quirksMode || !curr->node() || (!is<HTMLAnchorElement>(*curr->node()) && !curr->node()->hasTagName(fontTag))));
+        current = current->parent();
+        if (current && current->isAnonymousBlock() && downcast<RenderBlock>(*current).continuation())
+            current = downcast<RenderBlock>(*current).continuation();
+    } while (current && decorations && (!quirksMode || !current->node() || (!is<HTMLAnchorElement>(*current->node()) && !current->node()->hasTagName(fontTag))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
-    if (decorations && curr) {
-        styleToUse = firstlineStyle ? &curr->firstLineStyle() : &curr->style();
+    if (decorations && current) {
+        styleToUse = firstlineStyle ? &current->firstLineStyle() : &current->style();
         resultColor = decorationColor(styleToUse);
         if (decorations & TextDecorationUnderline)
             underline = resultColor;

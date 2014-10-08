@@ -1821,15 +1821,15 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderObject& o, const 
     return false;
 }
 
-bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const PaintInfo& paintInfo, const IntRect&)
+bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect&)
 {
     if (paintInfo.phase != PaintPhaseBlockBackground)
         return true;
 
-    if (!o.isRenderBlock())
+    if (!is<RenderBlock>(renderer))
         return true;
 
-    const RenderBlock& renderBlock = *toRenderBlock(&o);
+    const RenderBlock& renderBlock = downcast<RenderBlock>(renderer);
 
     LayoutUnit contentWidth = renderBlock.contentWidth();
     LayoutUnit contentHeight = renderBlock.contentHeight();
@@ -1878,13 +1878,11 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
 
     // We could draw the snapshot with that coordinates, but we need to make sure there
     // isn't a composited layer between us and the plugInRenderer.
-    const RenderBox* renderBox = toRenderBox(&o);
-    while (renderBox != plugInRenderer) {
+    for (auto* renderBox = &downcast<RenderBox>(renderer); renderBox != plugInRenderer; renderBox = renderBox->parentBox()) {
         if (renderBox->hasLayer() && renderBox->layer() && renderBox->layer()->isComposited()) {
             snapshotAbsPos = -renderBox->location();
             break;
         }
-        renderBox = renderBox->parentBox();
     }
 
     LayoutSize pluginSize(plugInRenderer->contentWidth(), plugInRenderer->contentHeight());

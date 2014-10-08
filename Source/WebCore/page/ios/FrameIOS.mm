@@ -552,11 +552,11 @@ int Frame::preferredHeight() const
         return 0;
 
     RenderObject* renderer = body->renderer();
-    if (!renderer || !renderer->isRenderBlock())
+    if (!is<RenderBlock>(renderer))
         return 0;
 
-    RenderBlock* block = toRenderBlock(renderer);
-    return block->height() + block->marginTop() + block->marginBottom();
+    RenderBlock& block = downcast<RenderBlock>(*renderer);
+    return block.height() + block.marginTop() + block.marginBottom();
 }
 
 int Frame::innerLineHeight(DOMNode* domNode) const

@@ -300,7 +300,7 @@ void RenderMathMLRoot::layout()
             auto index = indexWrapper();
             float indexHeight = 0;
             if (!index->isEmpty())
-                indexHeight = toRenderBlock(index->firstChild())->logicalHeight();
+                indexHeight = downcast<RenderBlock>(*index->firstChild()).logicalHeight();
             float indexTopMargin = (1.0 - m_degreeBottomRaisePercent) * radical->stretchSize() + radicalTopMargin - indexHeight;
             if (indexTopMargin < 0) {
                 // If the index is too tall, we must add space at the top of renderer.

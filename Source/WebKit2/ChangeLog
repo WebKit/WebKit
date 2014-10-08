@@ -1,3 +1,17 @@
+2014-10-08  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBlock objects
+        https://bugs.webkit.org/show_bug.cgi?id=137512
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for RenderBlock objects and clean up the 
+        surrounding code.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::contractedRangeFromHandle):
+
 2014-10-08  Ada Chan  <adachan@apple.com>
 
         Implement WKPageIsPlayingAudio().

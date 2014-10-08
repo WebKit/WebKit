@@ -186,37 +186,35 @@ static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
     return nullptr;
 }
 
-static inline RenderObject* firstChildConsideringContinuation(RenderObject* renderer)
+static inline RenderObject* firstChildConsideringContinuation(RenderObject& renderer)
 {
-    RenderObject* firstChild = renderer->firstChildSlow();
+    RenderObject* firstChild = renderer.firstChildSlow();
 
-    if (!firstChild && isInlineWithContinuation(renderer))
-        firstChild = firstChildInContinuation(toRenderInline(*renderer));
+    if (!firstChild && isInlineWithContinuation(&renderer))
+        firstChild = firstChildInContinuation(downcast<RenderInline>(renderer));
 
     return firstChild;
 }
 
 
-static inline RenderObject* lastChildConsideringContinuation(RenderObject* renderer)
+static inline RenderObject* lastChildConsideringContinuation(RenderObject& renderer)
 {
-    RenderObject* lastChild = renderer->lastChildSlow();
-    RenderObject* prev;
-    RenderObject* cur = renderer;
+    if (!is<RenderInline>(renderer) && !is<RenderBlock>(renderer))
+        return &renderer;
 
-    if (!cur->isRenderInline() && !cur->isRenderBlock())
-        return renderer;
+    RenderObject* lastChild = downcast<RenderBoxModelObject>(renderer).lastChild();
+    RenderBoxModelObject* previous;
+    for (auto* current = &downcast<RenderBoxModelObject>(renderer); current; ) {
+        previous = current;
 
-    while (cur) {
-        prev = cur;
+        if (RenderObject* newLastChild = current->lastChild())
+            lastChild = newLastChild;
 
-        if (RenderObject* lc = cur->lastChildSlow())
-            lastChild = lc;
-
-        if (cur->isRenderInline()) {
-            cur = toRenderInline(cur)->inlineElementContinuation();
-            ASSERT_UNUSED(prev, cur || !toRenderInline(prev)->continuation());
+        if (is<RenderInline>(*current)) {
+            current = downcast<RenderInline>(*current).inlineElementContinuation();
+            ASSERT_UNUSED(previous, current || !downcast<RenderInline>(*previous).continuation());
         } else
-            cur = toRenderBlock(cur)->inlineElementContinuation();
+            current = downcast<RenderBlock>(*current).inlineElementContinuation();
     }
 
     return lastChild;
@@ -227,7 +225,7 @@ AccessibilityObject* AccessibilityRenderObject::firstChild() const
     if (!m_renderer)
         return nullptr;
     
-    RenderObject* firstChild = firstChildConsideringContinuation(m_renderer);
+    RenderObject* firstChild = firstChildConsideringContinuation(*m_renderer);
 
     // If an object can't have children, then it is using this method to help
     // calculate some internal property (like its description).
@@ -244,7 +242,7 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
     if (!m_renderer)
         return nullptr;
 
-    RenderObject* lastChild = lastChildConsideringContinuation(m_renderer);
+    RenderObject* lastChild = lastChildConsideringContinuation(*m_renderer);
 
     if (!lastChild && !canHaveChildren())
         return AccessibilityNodeObject::lastChild();
@@ -252,67 +250,61 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
     return axObjectCache()->getOrCreate(lastChild);
 }
 
-static inline RenderInline* startOfContinuations(RenderObject* r)
+static inline RenderInline* startOfContinuations(RenderObject& renderer)
 {
-    if (r->isInlineElementContinuation())
-        return toRenderInline(r->node()->renderer());
+    if (renderer.isInlineElementContinuation())
+        return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
-    if (r->isRenderBlock() && toRenderBlock(r)->inlineElementContinuation())
-        return toRenderInline(toRenderBlock(r)->inlineElementContinuation()->element()->renderer());
+    if (is<RenderBlock>(renderer) && downcast<RenderBlock>(renderer).inlineElementContinuation())
+        return downcast<RenderInline>(downcast<RenderBlock>(renderer).inlineElementContinuation()->element()->renderer());
 
     return nullptr;
 }
 
-static inline RenderObject* endOfContinuations(RenderObject* renderer)
+static inline RenderObject* endOfContinuations(RenderObject& renderer)
 {
-    RenderObject* prev = renderer;
-    RenderObject* cur = renderer;
+    if (!is<RenderInline>(renderer) && !is<RenderBlock>(renderer))
+        return &renderer;
 
-    if (!cur->isRenderInline() && !cur->isRenderBlock())
-        return renderer;
-
-    while (cur) {
-        prev = cur;
-        if (cur->isRenderInline()) {
-            cur = toRenderInline(cur)->inlineElementContinuation();
-            ASSERT(cur || !toRenderInline(prev)->continuation());
+    auto* previous = &downcast<RenderBoxModelObject>(renderer);
+    for (auto* current = previous; current; ) {
+        previous = current;
+        if (is<RenderInline>(*current)) {
+            current = downcast<RenderInline>(*current).inlineElementContinuation();
+            ASSERT(current || !downcast<RenderInline>(*previous).continuation());
         } else 
-            cur = toRenderBlock(cur)->inlineElementContinuation();
+            current = downcast<RenderBlock>(*current).inlineElementContinuation();
     }
 
-    return prev;
+    return previous;
 }
 
 
-static inline RenderObject* childBeforeConsideringContinuations(RenderInline* r, RenderObject* child)
+static inline RenderObject* childBeforeConsideringContinuations(RenderInline* renderer, RenderObject* child)
 {
-    RenderBoxModelObject* curContainer = r;
-    RenderObject* cur = nullptr;
-    RenderObject* prev = nullptr;
-
-    while (curContainer) {
-        if (curContainer->isRenderInline()) {
-            cur = curContainer->firstChild();
-            while (cur) {
-                if (cur == child)
-                    return prev;
-                prev = cur;
-                cur = cur->nextSibling();
+    RenderObject* previous = nullptr;
+    for (RenderBoxModelObject* currentContainer = renderer; currentContainer; ) {
+        if (is<RenderInline>(*currentContainer)) {
+            auto* current = currentContainer->firstChild();
+            while (current) {
+                if (current == child)
+                    return previous;
+                previous = current;
+                current = current->nextSibling();
             }
 
-            curContainer = toRenderInline(curContainer)->continuation();
-        } else if (curContainer->isRenderBlock()) {
-            if (curContainer == child)
-                return prev;
+            currentContainer = downcast<RenderInline>(*currentContainer).continuation();
+        } else if (is<RenderBlock>(*currentContainer)) {
+            if (currentContainer == child)
+                return previous;
 
-            prev = curContainer;
-            curContainer = toRenderBlock(curContainer)->inlineElementContinuation();
+            previous = currentContainer;
+            currentContainer = downcast<RenderBlock>(*currentContainer).inlineElementContinuation();
         }
     }
 
     ASSERT_NOT_REACHED();
-
     return nullptr;
 }
 
@@ -332,15 +324,15 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
     // Case 1: The node is a block and is an inline's continuation. In that case, the inline's
     // last child is our previous sibling (or further back in the continuation chain)
     RenderInline* startOfConts;
-    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
+    if (is<RenderBox>(*m_renderer) && (startOfConts = startOfContinuations(*m_renderer)))
         previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer);
 
     // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
     // the parent of the start, since everything in between will be linked up via the continuation.
     else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer)) {
-        RenderObject* firstParent = startOfContinuations(m_renderer->firstChildSlow())->parent();
+        auto* firstParent = startOfContinuations(*m_renderer->firstChildSlow())->parent();
         while (firstChildIsInlineContinuation(firstParent))
-            firstParent = startOfContinuations(firstParent->firstChildSlow())->parent();
+            firstParent = startOfContinuations(*firstParent->firstChild())->parent();
         previousSibling = firstParent->previousSibling();
     }
 
@@ -350,7 +342,7 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 
     // Case 4: This node has no previous siblings, but its parent is an inline,
     // and is another node's inline continutation. Follow the continuation chain.
-    else if (m_renderer->parent()->isRenderInline() && (startOfConts = startOfContinuations(m_renderer->parent())))
+    else if (is<RenderInline>(*m_renderer->parent()) && (startOfConts = startOfContinuations(*m_renderer->parent())))
         previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer->parent()->firstChild());
 
     if (!previousSibling)
@@ -375,15 +367,15 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     // Case 1: node is a block and has an inline continuation. Next sibling is the inline continuation's
     // first child.
     RenderInline* inlineContinuation;
-    if (m_renderer->isRenderBlock() && (inlineContinuation = toRenderBlock(m_renderer)->inlineElementContinuation()))
-        nextSibling = firstChildConsideringContinuation(inlineContinuation);
+    if (is<RenderBlock>(*m_renderer) && (inlineContinuation = downcast<RenderBlock>(*m_renderer).inlineElementContinuation()))
+        nextSibling = firstChildConsideringContinuation(*inlineContinuation);
 
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
     // after the parent of the end, since everything in between will be linked up via the continuation.
     else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer)) {
-        RenderElement* lastParent = endOfContinuations(toRenderBlock(m_renderer)->lastChild())->parent();
+        RenderElement* lastParent = endOfContinuations(*downcast<RenderBlock>(*m_renderer).lastChild())->parent();
         while (lastChildHasContinuation(lastParent))
-            lastParent = endOfContinuations(lastParent->lastChild())->parent();
+            lastParent = endOfContinuations(*lastParent->lastChild())->parent();
         nextSibling = lastParent->nextSibling();
     }
 
@@ -394,15 +386,15 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     // Case 4: node is an inline with a continuation. Next sibling is the next sibling of the end 
     // of the continuation chain.
     else if (isInlineWithContinuation(m_renderer))
-        nextSibling = endOfContinuations(m_renderer)->nextSibling();
+        nextSibling = endOfContinuations(*m_renderer)->nextSibling();
 
     // Case 5: node has no next sibling, and its parent is an inline with a continuation.
     else if (isInlineWithContinuation(m_renderer->parent())) {
-        auto continuation = toRenderInline(m_renderer->parent())->continuation();
+        auto& continuation = *downcast<RenderInline>(*m_renderer->parent()).continuation();
         
         // Case 5a: continuation is a block - in this case the block itself is the next sibling.
-        if (continuation->isRenderBlock())
-            nextSibling = continuation;
+        if (is<RenderBlock>(continuation))
+            nextSibling = &continuation;
         // Case 5b: continuation is an inline - in this case the inline's first child is the next sibling
         else
             nextSibling = firstChildConsideringContinuation(continuation);
@@ -414,13 +406,12 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     return axObjectCache()->getOrCreate(nextSibling);
 }
 
-static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
+static RenderBoxModelObject* nextContinuation(RenderObject& renderer)
 {
-    ASSERT(renderer);
-    if (renderer->isRenderInline() && !renderer->isReplaced())
-        return toRenderInline(renderer)->continuation();
-    if (renderer->isRenderBlock())
-        return toRenderBlock(renderer)->inlineElementContinuation();
+    if (is<RenderInline>(renderer) && !renderer.isReplaced())
+        return downcast<RenderInline>(renderer).continuation();
+    if (is<RenderBlock>(renderer))
+        return downcast<RenderBlock>(renderer).inlineElementContinuation();
     return nullptr;
 }
     
@@ -435,12 +426,12 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     // is the start of the continuation chain.
     RenderInline* startOfConts = nullptr;
     RenderObject* firstChild = nullptr;
-    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
+    if (is<RenderBlock>(*m_renderer) && (startOfConts = startOfContinuations(*m_renderer)))
         parent = startOfConts;
 
     // Case 2: node's parent is an inline which is some node's continuation; parent is 
     // the earliest node in the continuation chain.
-    else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
+    else if (is<RenderInline>(parent) && (startOfConts = startOfContinuations(*parent)))
         parent = startOfConts;
     
     // Case 3: The first sibling is the beginning of a continuation chain. Find the origin of that continuation.
@@ -448,7 +439,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
         // Get the node's renderer and follow that continuation chain until the first child is found
         RenderObject* nodeRenderFirstChild = firstChild->node()->renderer();
         while (nodeRenderFirstChild != firstChild) {
-            for (RenderObject* contsTest = nodeRenderFirstChild; contsTest; contsTest = nextContinuation(contsTest)) {
+            for (RenderObject* contsTest = nodeRenderFirstChild; contsTest; contsTest = nextContinuation(*contsTest)) {
                 if (contsTest == firstChild) {
                     parent = nodeRenderFirstChild->parent();
                     break;
@@ -566,25 +557,23 @@ Element* AccessibilityRenderObject::anchorElement() const
     if (!cache)
         return nullptr;
     
-    RenderObject* currRenderer;
+    RenderObject* currentRenderer;
     
     // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
-    for (currRenderer = m_renderer; currRenderer && !currRenderer->node(); currRenderer = currRenderer->parent()) {
-        if (currRenderer->isAnonymousBlock()) {
-            RenderObject* continuation = toRenderBlock(currRenderer)->continuation();
-            if (continuation)
+    for (currentRenderer = m_renderer; currentRenderer && !currentRenderer->node(); currentRenderer = currentRenderer->parent()) {
+        if (currentRenderer->isAnonymousBlock()) {
+            if (RenderObject* continuation = downcast<RenderBlock>(*currentRenderer).continuation())
                 return cache->getOrCreate(continuation)->anchorElement();
         }
     }
     
     // bail if none found
-    if (!currRenderer)
-        return 0;
+    if (!currentRenderer)
+        return nullptr;
     
     // search up the DOM tree for an anchor element
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
-    Node* node = currRenderer->node();
-    for ( ; node; node = node->parentNode()) {
+    for (Node* node = currentRenderer->node(); node; node = node->parentNode()) {
         if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
             return downcast<Element>(node);
     }
@@ -1677,14 +1666,14 @@ void AccessibilityRenderObject::setValue(const String& string)
         return;
     Element& element = downcast<Element>(*m_renderer->node());
 
-    if (!m_renderer->isBoxModelObject())
+    if (!is<RenderBoxModelObject>(*m_renderer))
         return;
-    RenderBoxModelObject* renderer = toRenderBoxModelObject(m_renderer);
+    RenderBoxModelObject& renderer = downcast<RenderBoxModelObject>(*m_renderer);
 
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer->isTextField() && is<HTMLInputElement>(element))
+    if (renderer.isTextField() && is<HTMLInputElement>(element))
         downcast<HTMLInputElement>(element).setValue(string);
-    else if (renderer->isTextArea() && is<HTMLTextAreaElement>(element))
+    else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
 }
 

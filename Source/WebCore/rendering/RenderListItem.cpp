@@ -27,8 +27,10 @@
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "HTMLUListElement.h"
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
+#include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderView.h"
@@ -227,25 +229,24 @@ static RenderBlock* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* mar
         if (currChild == marker)
             continue;
 
-        if (currChild->isInline() && (!currChild->isRenderInline() || curr->generatesLineBoxesForInlineChild(currChild)))
+        if (currChild->isInline() && (!is<RenderInline>(*currChild) || curr->generatesLineBoxesForInlineChild(currChild)))
             return curr;
 
         if (currChild->isFloating() || currChild->isOutOfFlowPositioned())
             continue;
 
-        if (currChild->isTable() || !currChild->isRenderBlock() || (currChild->isBox() && toRenderBox(currChild)->isWritingModeRoot()))
+        if (currChild->isTable() || !is<RenderBlock>(*currChild) || (is<RenderBox>(*currChild) && downcast<RenderBox>(*currChild).isWritingModeRoot()))
             break;
 
         if (curr->isListItem() && inQuirksMode && currChild->node() &&
-            (currChild->node()->hasTagName(ulTag)|| currChild->node()->hasTagName(olTag)))
+            (is<HTMLUListElement>(*currChild->node()) || is<HTMLOListElement>(*currChild->node())))
             break;
 
-        RenderBlock* lineBox = getParentOfFirstLineBox(toRenderBlock(currChild), marker);
-        if (lineBox)
+        if (RenderBlock* lineBox = getParentOfFirstLineBox(downcast<RenderBlock>(currChild), marker))
             return lineBox;
     }
 
-    return 0;
+    return nullptr;
 }
 
 void RenderListItem::updateValue()
@@ -294,7 +295,7 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
         newParent->addChild(m_marker.get(), firstNonMarkerChild(newParent));
         m_marker->updateMarginsAndContent();
         // If current parent is an anonymous block that has lost all its children, destroy it.
-        if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !toRenderBlock(currentParent)->continuation())
+        if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
             currentParent->destroy();
     }
 
@@ -406,11 +407,11 @@ void RenderListItem::positionListMarker()
                 o = o->parentBox();
                 if (o->hasOverflowClip())
                     propagateVisualOverflow = false;
-                if (o->isRenderBlock()) {
+                if (is<RenderBlock>(*o)) {
                     if (propagateVisualOverflow)
-                        toRenderBlock(o)->addVisualOverflow(markerRect);
+                        downcast<RenderBlock>(*o).addVisualOverflow(markerRect);
                     if (propagateLayoutOverflow)
-                        toRenderBlock(o)->addLayoutOverflow(markerRect);
+                        downcast<RenderBlock>(*o).addLayoutOverflow(markerRect);
                 }
                 if (o->hasOverflowClip())
                     propagateLayoutOverflow = false;

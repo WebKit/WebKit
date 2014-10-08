@@ -184,7 +184,7 @@ LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
     ASSERT(parent());
 
     const RenderStyle& styleToUse = parent()->style();
-    return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
+    return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : downcast<RenderBlock>(*parent()).computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
 }
 
 LayoutRect RenderNamedFlowFragment::flowThreadPortionRectForClipping(bool isFirstRegionInRange, bool isLastRegionInRange) const

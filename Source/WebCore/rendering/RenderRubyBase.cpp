@@ -92,7 +92,7 @@ void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* be
         // If toBase has a suitable block, we re-use it, otherwise create a new one.
         RenderObject* lastChild = toBase->lastChild();
         if (lastChild && lastChild->isAnonymousBlock() && lastChild->childrenInline())
-            toBlock = toRenderBlock(lastChild);
+            toBlock = downcast<RenderBlock>(lastChild);
         else {
             toBlock = toBase->createAnonymousBlock();
             toBase->insertChildInternal(toBlock, nullptr, NotifyChildren);
@@ -118,8 +118,8 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* bef
     RenderObject* lastChildThere = toBase->lastChild();
     if (firstChildHere->isAnonymousBlock() && firstChildHere->childrenInline() 
             && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {            
-        RenderBlock* anonBlockHere = toRenderBlock(firstChildHere);
-        RenderBlock* anonBlockThere = toRenderBlock(lastChildThere);
+        RenderBlock* anonBlockHere = downcast<RenderBlock>(firstChildHere);
+        RenderBlock* anonBlockThere = downcast<RenderBlock>(lastChildThere);
         anonBlockHere->moveAllChildrenTo(anonBlockThere, true);
         anonBlockHere->deleteLines();
         anonBlockHere->destroy();

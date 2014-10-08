@@ -121,10 +121,10 @@ RenderInline* RenderInline::inlineElementContinuation() const
     if (!continuation)
         return nullptr;
 
-    if (continuation->isRenderInline())
-        return toRenderInline(continuation);
+    if (is<RenderInline>(*continuation))
+        return downcast<RenderInline>(continuation);
 
-    return continuation->isRenderBlock() ? toRenderBlock(continuation)->inlineElementContinuation() : nullptr;
+    return is<RenderBlock>(*continuation) ? downcast<RenderBlock>(*continuation).inlineElementContinuation() : nullptr;
 }
 
 void RenderInline::updateFromStyle()
@@ -152,21 +152,21 @@ static void updateStyleOfAnonymousBlockContinuations(RenderBox* box, const Rende
         if (box->style().position() == newStyle->position())
             continue;
         
-        if (!box->isRenderBlock())
+        if (!is<RenderBlock>(*box))
             continue;
 
-        RenderBlock* block = toRenderBlock(box);
-        if (!block->isAnonymousBlockContinuation())
+        RenderBlock& block = downcast<RenderBlock>(*box);
+        if (!block.isAnonymousBlockContinuation())
             continue;
         
         // If we are no longer in-flow positioned but our descendant block(s) still have an in-flow positioned ancestor then
         // their containing anonymous block should keep its in-flow positioning. 
-        RenderInline* cont = block->inlineElementContinuation();
-        if (oldStyle->hasInFlowPosition() && inFlowPositionedInlineAncestor(cont))
+        RenderInline* continuation = block.inlineElementContinuation();
+        if (oldStyle->hasInFlowPosition() && inFlowPositionedInlineAncestor(continuation))
             continue;
-        auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(&block->style(), BLOCK);
+        auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(&block.style(), BLOCK);
         blockStyle.get().setPosition(newStyle->position());
-        block->setStyle(WTF::move(blockStyle));
+        block.setStyle(WTF::move(blockStyle));
     }
 }
 
@@ -196,7 +196,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
         RenderObject* block = containingBlock()->nextSibling();
         ASSERT(block && block->isAnonymousBlock());
-        updateStyleOfAnonymousBlockContinuations(toRenderBlock(block), &newStyle, oldStyle);
+        updateStyleOfAnonymousBlockContinuations(downcast<RenderBlock>(block), &newStyle, oldStyle);
     }
 
     if (!alwaysCreateLineBoxes()) {
@@ -277,9 +277,9 @@ void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
 static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
-    if (renderer->isInline() && !renderer->isReplaced())
-        return toRenderInline(renderer)->continuation();
-    return toRenderBlock(renderer)->inlineElementContinuation();
+    if (is<RenderInline>(*renderer) && !renderer->isReplaced())
+        return downcast<RenderInline>(*renderer).continuation();
+    return downcast<RenderBlock>(*renderer).inlineElementContinuation();
 }
 
 RenderBoxModelObject* RenderInline::continuationBefore(RenderObject* beforeChild)
@@ -443,7 +443,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                              RenderObject* newChild, RenderBoxModelObject* oldCont)
 {
-    RenderBlock* pre = 0;
+    RenderBlock* pre = nullptr;
     RenderBlock* block = containingBlock();
     
     // Delete our line boxes before we do the inline split into continuations.
@@ -453,12 +453,12 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     if (block->isAnonymousBlock() && (!block->parent() || !block->parent()->createsAnonymousWrapper())) {
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
-        pre->removePositionedObjects(0);
+        pre->removePositionedObjects(nullptr);
         // FIXME-BLOCKFLOW: The enclosing method should likely be switched over
         // to only work on RenderBlockFlow, in which case this conversion can be
         // removed.
-        if (pre->isRenderBlockFlow())
-            toRenderBlockFlow(pre)->removeFloatingObjects();
+        if (is<RenderBlockFlow>(*pre))
+            downcast<RenderBlockFlow>(*pre).removeFloatingObjects();
         block = block->containingBlock();
     } else {
         // No anonymous block available for use.  Make one.
@@ -466,13 +466,13 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         madeNewBeforeBlock = true;
     }
 
-    RenderBlock* post = toRenderBlock(pre->createAnonymousBoxWithSameTypeAs(block));
+    RenderBlock& post = downcast<RenderBlock>(*pre->createAnonymousBoxWithSameTypeAs(block));
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)
         block->insertChildInternal(pre, boxFirst, NotifyChildren);
     block->insertChildInternal(newBlockBox, boxFirst, NotifyChildren);
-    block->insertChildInternal(post, boxFirst, NotifyChildren);
+    block->insertChildInternal(&post, boxFirst, NotifyChildren);
     block->setChildrenInline(false);
     
     if (madeNewBeforeBlock) {
@@ -486,7 +486,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         }
     }
 
-    splitInlines(pre, post, newBlockBox, beforeChild, oldCont);
+    splitInlines(pre, &post, newBlockBox, beforeChild, oldCont);
 
     // We already know the newBlockBox isn't going to contain inline kids, so avoid wasting
     // time in makeChildrenNonInline by just setting this explicitly up front.
@@ -502,7 +502,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // make new line boxes instead of leaving the old line boxes around.
     pre->setNeedsLayoutAndPrefWidthsRecalc();
     block->setNeedsLayoutAndPrefWidthsRecalc();
-    post->setNeedsLayoutAndPrefWidthsRecalc();
+    post.setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
@@ -853,21 +853,21 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
 VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     // FIXME: Does not deal with relative or sticky positioned inlines (should it?)
-    RenderBlock* cb = containingBlock();
+    RenderBlock& containingBlock = *this->containingBlock();
     if (firstLineBox()) {
         // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
         // should try to find a result by asking our containing block.
-        return cb->positionForPoint(point, region);
+        return containingBlock.positionForPoint(point, region);
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
-    LayoutPoint parentBlockPoint = cb->location() + point;  
-    RenderBoxModelObject* c = continuation();
-    while (c) {
-        RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
-        if (c->isInline() || c->firstChild())
-            return c->positionForPoint(parentBlockPoint - contBlock->locationOffset(), region);
-        c = toRenderBlock(c)->inlineElementContinuation();
+    LayoutPoint parentBlockPoint = containingBlock.location() + point;
+    RenderBoxModelObject* continuation = this->continuation();
+    while (continuation) {
+        RenderBlock* currentBlock = continuation->isInline() ? continuation->containingBlock() : downcast<RenderBlock>(continuation);
+        if (continuation->isInline() || continuation->firstChild())
+            return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), region);
+        continuation = downcast<RenderBlock>(*continuation).inlineElementContinuation();
     }
     
     return RenderBoxModelObject::positionForPoint(point, region);

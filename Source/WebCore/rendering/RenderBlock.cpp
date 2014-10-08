@@ -272,17 +272,17 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newSt
         else if (oldStyle->position() == StaticPosition) {
             // Remove our absolutely positioned descendants from their current containing block.
             // They will be inserted into our positioned objects list during layout.
-            auto cb = parent();
-            while (cb && (cb->style().position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRenderView()) {
-                if (cb->style().position() == RelativePosition && cb->isInline() && !cb->isReplaced()) {
-                    cb = cb->containingBlock();
+            auto containingBlock = parent();
+            while (containingBlock && (containingBlock->style().position() == StaticPosition || (containingBlock->isInline() && !containingBlock->isReplaced())) && !containingBlock->isRenderView()) {
+                if (containingBlock->style().position() == RelativePosition && containingBlock->isInline() && !containingBlock->isReplaced()) {
+                    containingBlock = containingBlock->containingBlock();
                     break;
                 }
-                cb = cb->parent();
+                containingBlock = containingBlock->parent();
             }
             
-            if (cb->isRenderBlock())
-                toRenderBlock(cb)->removePositionedObjects(this, NewContainingBlock);
+            if (is<RenderBlock>(*containingBlock))
+                downcast<RenderBlock>(*containingBlock).removePositionedObjects(this, NewContainingBlock);
         }
     }
 
@@ -332,19 +332,17 @@ RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
     if (beforeChild && beforeChild->parent() == this)
         return this;
 
-    RenderBlock* curr = toRenderBlock(continuation());
     RenderBlock* nextToLast = this;
     RenderBlock* last = this;
-    while (curr) {
-        if (beforeChild && beforeChild->parent() == curr) {
-            if (curr->firstChild() == beforeChild)
+    for (auto* current = downcast<RenderBlock>(continuation()); current; current = downcast<RenderBlock>(current->continuation())) {
+        if (beforeChild && beforeChild->parent() == current) {
+            if (current->firstChild() == beforeChild)
                 return last;
-            return curr;
+            return current;
         }
 
         nextToLast = last;
-        last = curr;
-        curr = toRenderBlock(curr->continuation());
+        last = current;
     }
 
     if (!beforeChild && !last->firstChild())
@@ -411,77 +409,6 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
     }
     cloneBlock->setFlowThreadState(flowThreadState());
     return cloneBlock;
-}
-
-void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
-                              RenderBlock* middleBlock,
-                              RenderObject* beforeChild, RenderBoxModelObject* oldCont)
-{
-    // Create a clone of this inline.
-    RenderPtr<RenderBlock> cloneBlock = clone();
-    if (!isAnonymousBlock())
-        cloneBlock->setContinuation(oldCont);
-
-    if (!beforeChild && isAfterContent(lastChild()))
-        beforeChild = lastChild();
-
-    // If we are moving inline children from |this| to cloneBlock, then we need
-    // to clear our line box tree.
-    if (beforeChild && childrenInline())
-        deleteLines();
-
-    // Now take all of the children from beforeChild to the end and remove
-    // them from |this| and place them in the clone.
-    moveChildrenTo(cloneBlock.get(), beforeChild, 0, true);
-    
-    // Hook |clone| up as the continuation of the middle block.
-    if (!cloneBlock->isAnonymousBlock())
-        middleBlock->setContinuation(cloneBlock.get());
-
-    // We have been reparented and are now under the fromBlock.  We need
-    // to walk up our block parent chain until we hit the containing anonymous columns block.
-    // Once we hit the anonymous columns block we're done.
-    RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
-    RenderBoxModelObject* currChild = this;
-    RenderObject* currChildNextSibling = currChild->nextSibling();
-
-    while (curr && curr->isDescendantOf(fromBlock) && curr != fromBlock) {
-        RenderBlock* blockCurr = toRenderBlock(curr);
-        
-        // Create a new clone.
-        RenderPtr<RenderBlock> cloneChild = WTF::move(cloneBlock);
-        cloneBlock = blockCurr->clone();
-
-        // Insert our child clone as the first child.
-        cloneBlock->addChildIgnoringContinuation(cloneChild.leakPtr(), 0);
-
-        // Hook the clone up as a continuation of |curr|.  Note we do encounter
-        // anonymous blocks possibly as we walk up the block chain.  When we split an
-        // anonymous block, there's no need to do any continuation hookup, since we haven't
-        // actually split a real element.
-        if (!blockCurr->isAnonymousBlock()) {
-            oldCont = blockCurr->continuation();
-            blockCurr->setContinuation(cloneBlock.get());
-            cloneBlock->setContinuation(oldCont);
-        }
-
-        // Now we need to take all of the children starting from the first child
-        // *after* currChild and append them all to the clone.
-        blockCurr->moveChildrenTo(cloneBlock.get(), currChildNextSibling, 0, true);
-
-        // Keep walking up the chain.
-        currChild = curr;
-        currChildNextSibling = currChild->nextSibling();
-        curr = toRenderBoxModelObject(curr->parent());
-    }
-
-    // Now we are at the columns block level. We need to put the clone into the toBlock.
-    toBlock->insertChildInternal(cloneBlock.leakPtr(), nullptr, NotifyChildren);
-
-    // Now take all the children after currChild and remove them from the fromBlock
-    // and put them in the toBlock.
-    if (currChildNextSibling && currChildNextSibling->parent() == fromBlock)
-        fromBlock->moveChildrenTo(toBlock, currChildNextSibling, 0, true);
 }
 
 void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -559,7 +486,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObj
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
 
         if (afterChild && afterChild->isAnonymousBlock()) {
-            toRenderBlock(afterChild)->addChild(newChild);
+            downcast<RenderBlock>(*afterChild).addChild(newChild);
             return;
         }
 
@@ -576,8 +503,8 @@ void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObj
 
     RenderBox::addChild(newChild, beforeChild);
  
-    if (madeBoxesNonInline && parent() && isAnonymousBlock() && parent()->isRenderBlock())
-        toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
+    if (madeBoxesNonInline && is<RenderBlock>(parent()) && isAnonymousBlock())
+        downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);
     // this object may be dead here
 }
 
@@ -722,11 +649,11 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     child->destroy();
 }
 
-static bool canMergeAnonymousBlock(RenderBlock* anonymousBlock)
+static bool canMergeAnonymousBlock(RenderBlock& anonymousBlock)
 {
-    if (anonymousBlock->beingDestroyed() || anonymousBlock->continuation())
+    if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
         return false;
-    if (anonymousBlock->isRubyRun() || anonymousBlock->isRubyBase())
+    if (anonymousBlock.isRubyRun() || anonymousBlock.isRubyBase())
         return false;
     return true;
 }
@@ -739,24 +666,24 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObje
     if (previous) {
         if (!previous->isAnonymousBlock())
             return false;
-        RenderBlock* previousAnonymousBlock = toRenderBlock(previous);
+        RenderBlock& previousAnonymousBlock = downcast<RenderBlock>(*previous);
         if (!canMergeAnonymousBlock(previousAnonymousBlock))
             return false;
     }
     if (next) {
         if (!next->isAnonymousBlock())
             return false;
-        RenderBlock* nextAnonymousBlock = toRenderBlock(next);
+        RenderBlock& nextAnonymousBlock = downcast<RenderBlock>(*next);
         if (!canMergeAnonymousBlock(nextAnonymousBlock))
             return false;
     }
     return true;
 }
 
-void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* child)
+void RenderBlock::collapseAnonymousBoxChild(RenderBlock& parent, RenderBlock* child)
 {
-    parent->setNeedsLayoutAndPrefWidthsRecalc();
-    parent->setChildrenInline(child->childrenInline());
+    parent.setNeedsLayoutAndPrefWidthsRecalc();
+    parent.setChildrenInline(child->childrenInline());
     RenderObject* nextSibling = child->nextSibling();
 
     RenderFlowThread* childFlowThread = child->flowThreadContainingBlock();
@@ -764,8 +691,8 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     if (childFlowThread && childFlowThread->isRenderNamedFlowThread())
         toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
 
-    parent->removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
-    child->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
+    parent.removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
+    child->moveAllChildrenTo(&parent, nextSibling, child->hasLayer());
     // Delete the now-empty block's lines and nuke it.
     child->deleteLines();
     child->destroy();
@@ -786,44 +713,44 @@ RenderObject* RenderBlock::removeChild(RenderObject& oldChild)
     bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev, next);
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock* nextBlock = toRenderBlock(next);
-        RenderBlock* prevBlock = toRenderBlock(prev);
+        RenderBlock& nextBlock = downcast<RenderBlock>(*next);
+        RenderBlock& prevBlock = downcast<RenderBlock>(*prev);
        
         if (prev->childrenInline() != next->childrenInline()) {
-            RenderBlock* inlineChildrenBlock = prev->childrenInline() ? prevBlock : nextBlock;
-            RenderBlock* blockChildrenBlock = prev->childrenInline() ? nextBlock : prevBlock;
+            RenderBlock& inlineChildrenBlock = prev->childrenInline() ? prevBlock : nextBlock;
+            RenderBlock& blockChildrenBlock = prev->childrenInline() ? nextBlock : prevBlock;
             
             // Place the inline children block inside of the block children block instead of deleting it.
             // In order to reuse it, we have to reset it to just be a generic anonymous block.  Make sure
             // to clear out inherited column properties by just making a new style, and to also clear the
             // column span flag if it is set.
-            ASSERT(!inlineChildrenBlock->continuation());
+            ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
-            bool inlineChildrenBlockHasLayer = inlineChildrenBlock->hasLayer();
-            inlineChildrenBlock->setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
-            removeChildInternal(*inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
+            bool inlineChildrenBlockHasLayer = inlineChildrenBlock.hasLayer();
+            inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
+            removeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
-            RenderObject* beforeChild = prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : nullptr;
-            blockChildrenBlock->insertChildInternal(inlineChildrenBlock, beforeChild,
-                (inlineChildrenBlockHasLayer || blockChildrenBlock->hasLayer()) ? NotifyChildren : DontNotifyChildren);
+            RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
+            blockChildrenBlock.insertChildInternal(&inlineChildrenBlock, beforeChild,
+                (inlineChildrenBlockHasLayer || blockChildrenBlock.hasLayer()) ? NotifyChildren : DontNotifyChildren);
             next->setNeedsLayoutAndPrefWidthsRecalc();
             
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
             // of "this". we null out prev or next so that is not used later in the function.
-            if (inlineChildrenBlock == prevBlock)
-                prev = 0;
+            if (&inlineChildrenBlock == &prevBlock)
+                prev = nullptr;
             else
-                next = 0;
+                next = nullptr;
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock->moveAllChildrenIncludingFloatsTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());
+            nextBlock.moveAllChildrenIncludingFloatsTo(&prevBlock, nextBlock.hasLayer() || prevBlock.hasLayer());
             
             // Delete the now-empty block's lines and nuke it.
-            nextBlock->deleteLines();
-            nextBlock->destroy();
-            next = 0;
+            nextBlock.deleteLines();
+            nextBlock.destroy();
+            next = nullptr;
         }
     }
 
@@ -836,17 +763,17 @@ RenderObject* RenderBlock::removeChild(RenderObject& oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
-        collapseAnonymousBoxChild(this, toRenderBlock(child));
+        collapseAnonymousBoxChild(*this, downcast<RenderBlock>(child));
         nextSibling = nullptr;
     } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canCollapseAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
         // block with pseudo-style element siblings (e.g. first-letter). If these
         // are floating, then we need to pull the content up also.
-        RenderBlock* anonBlock = toRenderBlock((prev && prev->isAnonymousBlock()) ? prev : next);
+        RenderBlock* anonBlock = downcast<RenderBlock>((prev && prev->isAnonymousBlock()) ? prev : next);
         if ((anonBlock->previousSibling() || anonBlock->nextSibling())
             && (!anonBlock->previousSibling() || (anonBlock->previousSibling()->style().styleType() != NOPSEUDO && anonBlock->previousSibling()->isFloating() && !anonBlock->previousSibling()->previousSibling()))
             && (!anonBlock->nextSibling() || (anonBlock->nextSibling()->style().styleType() != NOPSEUDO && anonBlock->nextSibling()->isFloating() && !anonBlock->nextSibling()->nextSibling()))) {
-            collapseAnonymousBoxChild(this, anonBlock);
+            collapseAnonymousBoxChild(*this, anonBlock);
             nextSibling = nullptr;
         }
     }
@@ -864,23 +791,23 @@ RenderObject* RenderBlock::removeChild(RenderObject& oldChild)
             auto containingBlockIgnoringAnonymous = containingBlock();
             while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
                 containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
-            for (RenderObject* curr = this; curr; curr = curr->previousInPreOrder(containingBlockIgnoringAnonymous)) {
-                if (curr->virtualContinuation() != this)
+            for (RenderObject* current = this; current; current = current->previousInPreOrder(containingBlockIgnoringAnonymous)) {
+                if (current->virtualContinuation() != this)
                     continue;
 
                 // Found our previous continuation. We just need to point it to
                 // |this|'s next continuation.
                 RenderBoxModelObject* nextContinuation = continuation();
-                if (curr->isRenderInline())
-                    toRenderInline(curr)->setContinuation(nextContinuation);
-                else if (curr->isRenderBlock())
-                    toRenderBlock(curr)->setContinuation(nextContinuation);
+                if (is<RenderInline>(*current))
+                    downcast<RenderInline>(*current).setContinuation(nextContinuation);
+                else if (is<RenderBlock>(*current))
+                    downcast<RenderBlock>(*current).setContinuation(nextContinuation);
                 else
                     ASSERT_NOT_REACHED();
 
                 break;
             }
-            setContinuation(0);
+            setContinuation(nullptr);
             destroy();
         }
     }
@@ -1741,11 +1668,11 @@ RenderBlock* RenderBlock::blockElementContinuation() const
 {
     RenderBoxModelObject* currentContinuation = continuation();
     if (!currentContinuation || currentContinuation->isInline())
-        return 0;
-    RenderBlock* nextContinuation = toRenderBlock(currentContinuation);
-    if (nextContinuation->isAnonymousBlock())
-        return nextContinuation->blockElementContinuation();
-    return nextContinuation;
+        return nullptr;
+    RenderBlock& nextContinuation = downcast<RenderBlock>(*currentContinuation);
+    if (nextContinuation.isAnonymousBlock())
+        return nextContinuation.blockElementContinuation();
+    return &nextContinuation;
 }
     
 static ContinuationOutlineTableMap* continuationOutlineTable()
@@ -2042,7 +1969,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, curr->logicalBottom(), cache);
         } else if (childState != SelectionNone) {
             // We must be a block that has some selected object inside it.  Go ahead and recur.
-            result.unite(toRenderBlock(curr)->selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()), 
+            result.unite(downcast<RenderBlock>(*curr).selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()),
                 lastLogicalTop, lastLogicalLeft, lastLogicalRight, childCache, paintInfo));
         }
     }
@@ -2162,29 +2089,29 @@ LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock& rootBlock, Layo
 RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) const
 {
     if (isSelectionRoot())
-        return 0;
+        return nullptr;
 
     const RenderElement* object = this;
     RenderObject* sibling;
     do {
         sibling = object->previousSibling();
-        while (sibling && (!sibling->isRenderBlock() || toRenderBlock(sibling)->isSelectionRoot()))
+        while (sibling && (!is<RenderBlock>(*sibling) || downcast<RenderBlock>(*sibling).isSelectionRoot()))
             sibling = sibling->previousSibling();
 
-        offset -= LayoutSize(toRenderBlock(object)->logicalLeft(), toRenderBlock(object)->logicalTop());
+        offset -= LayoutSize(downcast<RenderBlock>(*object).logicalLeft(), downcast<RenderBlock>(*object).logicalTop());
         object = object->parent();
-    } while (!sibling && object && object->isRenderBlock() && !toRenderBlock(object)->isSelectionRoot());
+    } while (!sibling && is<RenderBlock>(object) && !downcast<RenderBlock>(*object).isSelectionRoot());
 
     if (!sibling)
-        return 0;
+        return nullptr;
 
-    RenderBlock* beforeBlock = toRenderBlock(sibling);
+    RenderBlock* beforeBlock = downcast<RenderBlock>(sibling);
 
     offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
 
     RenderObject* child = beforeBlock->lastChild();
-    while (child && child->isRenderBlock()) {
-        beforeBlock = toRenderBlock(child);
+    while (is<RenderBlock>(child)) {
+        beforeBlock = downcast<RenderBlock>(child);
         offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
         child = beforeBlock->lastChild();
     }
@@ -2682,7 +2609,7 @@ static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderReg
         return false;
     if (!region)
         return true;
-    const RenderBlock& block = box.isRenderBlock() ? toRenderBlock(box) : *box.containingBlock();
+    const RenderBlock& block = is<RenderBlock>(box) ? downcast<RenderBlock>(box) : *box.containingBlock();
     return block.regionAtBlockOffset(point.y()) == region;
 }
 
@@ -3042,11 +2969,11 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
             || !parentBlock || parentBlock->firstChild() != firstLineBlock || !isRenderBlockFlowOrRenderButton(*parentBlock))
             break;
-        firstLineBlock = toRenderBlock(parentBlock);
+        firstLineBlock = downcast<RenderBlock>(parentBlock);
     } 
     
     if (!hasPseudo)
-        return 0;
+        return nullptr;
     
     return firstLineBlock;
 }
@@ -3125,11 +3052,11 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
         RenderElement* parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
             || !isRenderBlockFlowOrRenderButton(*parentBlock))
-            return 0;
-        firstLetterBlock = toRenderBlock(parentBlock);
+            return nullptr;
+        firstLetterBlock = downcast<RenderBlock>(parentBlock);
     } 
 
-    return 0;
+    return nullptr;
 }
 
 void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* currentChild)
@@ -3421,8 +3348,8 @@ const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 void RenderBlock::childBecameNonInline(RenderObject*)
 {
     makeChildrenNonInline();
-    if (isAnonymousBlock() && parent() && parent()->isRenderBlock())
-        toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
+    if (isAnonymousBlock() && is<RenderBlock>(parent()))
+        downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);
     // |this| may be dead here
 }
 
@@ -3671,12 +3598,12 @@ bool RenderBlock::hasMarginBeforeQuirk(const RenderBox& child) const
     // If the child has the same directionality as we do, then we can just return its
     // margin quirk.
     if (!child.isWritingModeRoot())
-        return child.isRenderBlock() ? toRenderBlock(child).hasMarginBeforeQuirk() : child.style().hasMarginBeforeQuirk();
+        return is<RenderBlock>(child) ? downcast<RenderBlock>(child).hasMarginBeforeQuirk() : child.style().hasMarginBeforeQuirk();
     
     // The child has a different directionality. If the child is parallel, then it's just
     // flipped relative to us. We can use the opposite edge.
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return child.isRenderBlock() ? toRenderBlock(child).hasMarginAfterQuirk() : child.style().hasMarginAfterQuirk();
+        return is<RenderBlock>(child) ? downcast<RenderBlock>(child).hasMarginAfterQuirk() : child.style().hasMarginAfterQuirk();
     
     // The child is perpendicular to us and box sides are never quirky in html.css, and we don't really care about
     // whether or not authors specified quirky ems, since they're an implementation detail.
@@ -3688,12 +3615,12 @@ bool RenderBlock::hasMarginAfterQuirk(const RenderBox& child) const
     // If the child has the same directionality as we do, then we can just return its
     // margin quirk.
     if (!child.isWritingModeRoot())
-        return child.isRenderBlock() ? toRenderBlock(child).hasMarginAfterQuirk() : child.style().hasMarginAfterQuirk();
+        return is<RenderBlock>(child) ? downcast<RenderBlock>(child).hasMarginAfterQuirk() : child.style().hasMarginAfterQuirk();
     
     // The child has a different directionality. If the child is parallel, then it's just
     // flipped relative to us. We can use the opposite edge.
     if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return child.isRenderBlock() ? toRenderBlock(child).hasMarginBeforeQuirk() : child.style().hasMarginBeforeQuirk();
+        return is<RenderBlock>(child) ? downcast<RenderBlock>(child).hasMarginBeforeQuirk() : child.style().hasMarginBeforeQuirk();
     
     // The child is perpendicular to us and box sides are never quirky in html.css, and we don't really care about
     // whether or not authors specified quirky ems, since they're an implementation detail.

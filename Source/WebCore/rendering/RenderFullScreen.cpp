@@ -149,14 +149,14 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
         if (child != lastChild())
             requiresRenderTreeRebuild = true;
         else if (child && child->isAnonymousBlock()) {
-            auto& anonymousBlock = toRenderBlock(*child);
+            auto& anonymousBlock = downcast<RenderBlock>(*child);
             if (anonymousBlock.firstChild() != anonymousBlock.lastChild())
                 requiresRenderTreeRebuild = true;
         }
 
         while ((child = firstChild())) {
             if (child->isAnonymousBlock() && !requiresRenderTreeRebuild) {
-                if (auto* nonAnonymousChild = toRenderBlock(*child).firstChild())
+                if (auto* nonAnonymousChild = downcast<RenderBlock>(*child).firstChild())
                     child = nonAnonymousChild;
                 else {
                     child->removeFromParent();

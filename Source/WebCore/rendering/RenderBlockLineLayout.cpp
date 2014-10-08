@@ -1894,8 +1894,8 @@ bool RenderBlockFlow::positionNewFloatOnLine(FloatingObject* newFloat, FloatingO
 
             if (updateRegionRangeForBoxChild(floatingObject->renderer()))
                 floatBox.setNeedsLayout(MarkOnlyThis);
-            else if (floatBox.isRenderBlock())
-                toRenderBlock(floatBox).setChildNeedsLayout(MarkOnlyThis);
+            else if (is<RenderBlock>(floatBox))
+                downcast<RenderBlock>(floatBox).setChildNeedsLayout(MarkOnlyThis);
             floatBox.layoutIfNeeded();
 
             // Save the old logical top before calling removePlacedObject which will set

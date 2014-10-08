@@ -1,3 +1,129 @@
+2014-10-08  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBlock objects
+        https://bugs.webkit.org/show_bug.cgi?id=137512
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for RenderBlock objects and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::firstChildConsideringContinuation):
+        (WebCore::lastChildConsideringContinuation):
+        (WebCore::AccessibilityRenderObject::firstChild):
+        (WebCore::startOfContinuations):
+        (WebCore::endOfContinuations):
+        (WebCore::childBeforeConsideringContinuations):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::nextContinuation):
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::setValue):
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMNode containsOnlyInlineObjects]):
+        (-[DOMNode isSelectableBlock]):
+        (-[DOMHTMLElement structuralComplexityContribution]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::preferredHeight):
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::containingBlockForFixedPosition):
+        (WebCore::containingBlockForAbsolutePosition):
+        (WebCore::containingBlockForObjectInFlow):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::continuationBefore):
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+        (WebCore::canMergeAnonymousBlock):
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::blockElementContinuation):
+        (WebCore::RenderBlock::blockSelectionGaps):
+        (WebCore::RenderBlock::blockBeforeWithinSelectionRoot):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::findFirstLetterBlock):
+        (WebCore::RenderBlock::childBecameNonInline):
+        (WebCore::RenderBlock::hasMarginBeforeQuirk):
+        (WebCore::RenderBlock::hasMarginAfterQuirk):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild):
+        (WebCore::RenderBlockFlow::estimateLogicalTopPosition):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::markSiblingsWithFloatsForLayout):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::accumulateInFlowPositionOffsets):
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineElementContinuation):
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::positionForPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded):
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::maxPageLogicalHeight):
+        * rendering/RenderObject.cpp:
+        (WebCore::includeNonFixedHeight):
+        (WebCore::RenderObject::checkBlockPositionedObjectsNeedLayout):
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::removeAnonymousWrappersForInlinesIfNecessary):
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/RenderRuby.cpp:
+        (WebCore::rubyBeforeBlock):
+        (WebCore::rubyAfterBlock):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::processSubtree):
+        (WebCore::TextAutosizer::processContainer):
+        (WebCore::TextAutosizer::measureDescendantTextWidth):
+        (WebCore::TextAutosizer::findDeepestBlockContainingAllText):
+        (WebCore::TextAutosizer::findFirstTextLeafNotInCluster):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::layout):
+
 2014-10-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed follow-up fix for r174460. Do not register for KVOs if the object does not respond to the requested property.

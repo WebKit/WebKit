@@ -195,7 +195,7 @@ public:
 
     static RenderBlock* createAnonymousWithParentRendererAndDisplay(const RenderObject*, EDisplay = BLOCK);
     RenderBlock* createAnonymousBlock(EDisplay display = BLOCK) const { return createAnonymousWithParentRendererAndDisplay(this, display); }
-    static void collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* child);
+    static void collapseAnonymousBoxChild(RenderBlock& parent, RenderBlock* child);
 
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override;
 
@@ -486,10 +486,6 @@ private:
 
     bool expandsToEncloseOverhangingFloats() const;
 
-    void splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
-                     RenderObject* beforeChild, RenderBoxModelObject* oldCont);
-    void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                   RenderObject* newChild, RenderBoxModelObject* oldCont);
     RenderPtr<RenderBlock> clone() const;
     RenderBlock* continuationBefore(RenderObject* beforeChild);
 
@@ -529,8 +525,6 @@ private:
     // Used to store state between styleWillChange and styleDidChange
     static bool s_canPropagateFloatIntoSibling;
 };
-
-RENDER_OBJECT_TYPE_CASTS(RenderBlock, isRenderBlock())
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);

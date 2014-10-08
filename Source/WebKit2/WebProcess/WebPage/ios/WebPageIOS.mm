@@ -774,7 +774,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     if (!renderer || renderer->style().userSelect() == SELECT_NONE)
         return nullptr;
 
-    if (renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable()) {
+    if (renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation()) && !renderer->isTable()) {
         range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
         if (range && !range->collapsed(ASSERT_NO_EXCEPTION))
             return range;
@@ -1316,7 +1316,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
         node = node->parentElement();
 
     RenderObject* renderer = node->renderer();
-    if (renderer && renderer->childrenInline() && (renderer->isRenderBlock() && !toRenderBlock(renderer)->inlineElementContinuation()) && !renderer->isTable())
+    if (renderer && renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation()) && !renderer->isTable())
         flags = None;
 
     return bestRange;

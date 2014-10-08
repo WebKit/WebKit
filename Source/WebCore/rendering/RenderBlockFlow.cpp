@@ -1219,10 +1219,10 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
     if (grandchildBox->needsLayout()) {
         grandchildBox->computeAndSetBlockDirectionMargins(this);
-        if (grandchildBox->isRenderBlock()) {
-            RenderBlock* grandchildBlock = toRenderBlock(grandchildBox);
-            grandchildBlock->setHasMarginBeforeQuirk(grandchildBox->style().hasMarginBeforeQuirk());
-            grandchildBlock->setHasMarginAfterQuirk(grandchildBox->style().hasMarginAfterQuirk());
+        if (is<RenderBlock>(*grandchildBox)) {
+            RenderBlock& grandchildBlock = downcast<RenderBlock>(*grandchildBox);
+            grandchildBlock.setHasMarginBeforeQuirk(grandchildBox->style().hasMarginBeforeQuirk());
+            grandchildBlock.setHasMarginAfterQuirk(grandchildBox->style().hasMarginAfterQuirk());
         }
     }
 
@@ -1274,8 +1274,8 @@ LayoutUnit RenderBlockFlow::estimateLogicalTopPosition(RenderBox& child, const M
         // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
         logicalTopEstimate = adjustForUnsplittableChild(child, logicalTopEstimate);
         
-        if (!child.selfNeedsLayout() && child.isRenderBlock())
-            logicalTopEstimate += toRenderBlock(child).paginationStrut();
+        if (!child.selfNeedsLayout() && is<RenderBlock>(child))
+            logicalTopEstimate += downcast<RenderBlock>(child).paginationStrut();
     }
 
     return logicalTopEstimate;
@@ -1522,7 +1522,7 @@ LayoutUnit RenderBlockFlow::applyAfterBreak(RenderBox& child, LayoutUnit logical
 
 LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox& child, bool atBeforeSideOfBlock)
 {
-    RenderBlock* childRenderBlock = child.isRenderBlock() ? toRenderBlock(&child) : nullptr;
+    RenderBlock* childRenderBlock = is<RenderBlock>(child) ? &downcast<RenderBlock>(child) : nullptr;
 
     if (estimateWithoutPagination != logicalTopAfterClear) {
         // Our guess prior to pagination movement was wrong. Before we attempt to paginate, let's try again at the new
@@ -2457,7 +2457,7 @@ bool RenderBlockFlow::positionNewFloats()
             // See if we have a pagination strut that is making us move down further.
             // Note that an unsplittable child can't also have a pagination strut, so this is
             // exclusive with the case above.
-            RenderBlock* childBlock = childBox.isRenderBlock() ? toRenderBlock(&childBox) : nullptr;
+            RenderBlock* childBlock = is<RenderBlock>(childBox) ? &downcast<RenderBlock>(childBox) : nullptr;
             if (childBlock && childBlock->paginationStrut()) {
                 newLogicalTop += childBlock->paginationStrut();
                 childBlock->setPaginationStrut(0);
@@ -2729,16 +2729,16 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     auto end = floatingObjectSet.end();
 
     for (RenderObject* next = nextSibling(); next; next = next->nextSibling()) {
-        if (!next->isRenderBlockFlow() || next->isFloatingOrOutOfFlowPositioned() || toRenderBlock(next)->avoidsFloats())
+        if (!is<RenderBlockFlow>(*next) || next->isFloatingOrOutOfFlowPositioned() || downcast<RenderBlockFlow>(*next).avoidsFloats())
             continue;
 
-        RenderBlockFlow* nextBlock = toRenderBlockFlow(next);
+        RenderBlockFlow& nextBlock = downcast<RenderBlockFlow>(*next);
         for (auto it = floatingObjectSet.begin(); it != end; ++it) {
             RenderBox& floatingBox = (*it)->renderer();
             if (floatToRemove && &floatingBox != floatToRemove)
                 continue;
-            if (nextBlock->containsFloat(floatingBox))
-                nextBlock->markAllDescendantsWithFloatsForLayout(&floatingBox);
+            if (nextBlock.containsFloat(floatingBox))
+                nextBlock.markAllDescendantsWithFloatsForLayout(&floatingBox);
         }
     }
 }

@@ -213,11 +213,11 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    RenderElement* p = toRenderBlock(child)->inlineElementContinuation();
-    while (p && p->isRenderInline()) {
+    RenderElement* p = downcast<RenderBlock>(*child).inlineElementContinuation();
+    while (is<RenderInline>(p)) {
         if (p->isInFlowPositioned()) {
-            RenderInline* renderInline = toRenderInline(p);
-            offset += renderInline->offsetForInFlowPosition();
+            RenderInline& renderInline = downcast<RenderInline>(*p);
+            offset += renderInline.offsetForInFlowPosition();
         }
         p = p->parent();
     }
@@ -2674,7 +2674,7 @@ void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, R
 {
     // We assume that callers have cleared their positioned objects list for child moves (!fullRemoveInsert) so the
     // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
-    ASSERT(!fullRemoveInsert || !isRenderBlock() || !toRenderBlock(this)->hasPositionedObjects());
+    ASSERT(!fullRemoveInsert || !is<RenderBlock>(*this) || !downcast<RenderBlock>(*this).hasPositionedObjects());
 
     ASSERT(this == child->parent());
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());
@@ -2695,10 +2695,10 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
     // This condition is rarely hit since this function is usually called on
     // anonymous blocks which can no longer carry positioned objects (see r120761)
     // or when fullRemoveInsert is false.
-    if (fullRemoveInsert && isRenderBlock()) {
-        toRenderBlock(this)->removePositionedObjects(0);
-        if (isRenderBlockFlow())
-            toRenderBlockFlow(this)->removeFloatingObjects(); 
+    if (fullRemoveInsert && is<RenderBlock>(*this)) {
+        downcast<RenderBlock>(*this).removePositionedObjects(nullptr);
+        if (is<RenderBlockFlow>(*this))
+            downcast<RenderBlockFlow>(*this).removeFloatingObjects();
     }
 
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());

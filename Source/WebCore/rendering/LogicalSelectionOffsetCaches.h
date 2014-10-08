@@ -44,7 +44,7 @@ static inline RenderBlock* containingBlockForFixedPosition(RenderElement* parent
     while (object && !object->canContainFixedPositionObjects())
         object = object->parent();
     ASSERT(!object || !object->isAnonymousBlock());
-    return toRenderBlock(object);
+    return downcast<RenderBlock>(object);
 }
 
 static inline RenderBlock* containingBlockForAbsolutePosition(RenderElement* parent)
@@ -57,13 +57,13 @@ static inline RenderBlock* containingBlockForAbsolutePosition(RenderElement* par
     // not the inline itself, to avoid having a positioned objects list in all RenderInlines
     // and use RenderBlock* as RenderElement::containingBlock's return type.
     // Use RenderBlock::container() to obtain the inline.
-    if (object && !object->isRenderBlock())
+    if (object && !is<RenderBlock>(*object))
         object = object->containingBlock();
 
     while (object && object->isAnonymousBlock())
         object = object->containingBlock();
 
-    return toRenderBlock(object);
+    return downcast<RenderBlock>(object);
 }
 
 static inline RenderBlock* containingBlockForObjectInFlow(RenderElement* parent)
@@ -71,7 +71,7 @@ static inline RenderBlock* containingBlockForObjectInFlow(RenderElement* parent)
     RenderElement* object = parent;
     while (object && isNonRenderBlockInline(*object))
         object = object->parent();
-    return toRenderBlock(object);
+    return downcast<RenderBlock>(object);
 }
 
 class LogicalSelectionOffsetCaches {

@@ -75,13 +75,13 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
 static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
 {
     RenderObject* child = ruby->firstChild();
-    return isRubyBeforeBlock(child) ? toRenderBlock(child) : 0;
+    return isRubyBeforeBlock(child) ? downcast<RenderBlock>(child) : nullptr;
 }
 
 static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
 {
     RenderObject* child = ruby->lastChild();
-    return isRubyAfterBlock(child) ? toRenderBlock(child) : 0;
+    return isRubyAfterBlock(child) ? downcast<RenderBlock>(child) : nullptr;
 }
 
 static RenderBlock* createAnonymousRubyInlineBlock(RenderObject& ruby)
