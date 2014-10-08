@@ -558,19 +558,6 @@ add_custom_command(
     VERBATIM
 )
 
-add_custom_target(webkit2gtk-forwarding-headers
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} gtk
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} soup
-
-    # These symbolic link allows includes like #include <webkit2/WebkitWebView.h> which simulates installed headers.
-    COMMAND ln -n -s -f ${WEBKIT2_DIR}/UIProcess/API/gtk ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}/webkit2
-    COMMAND ln -n -s -f ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}/webkit2
-)
-
-set(WEBKIT2_EXTRA_DEPENDENCIES
-     webkit2gtk-forwarding-headers
-)
-
 if (ENABLE_PLUGIN_PROCESS_GTK2)
     set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcess2)
 
@@ -861,4 +848,46 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
     "            ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk\n"
     "            ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}\n"
     "headers=${WebKit2GTK_ENUM_GENERATION_HEADERS} ${WebKit2WebExtension_INSTALLED_HEADERS}\n"
+)
+
+file(GLOB_RECURSE WebKit2_HEADERS
+    *.h
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
+    DEPENDS ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
+            ${WebKit2_SOURCES}
+            ${WebProcess_SOURCES}
+            ${NetworkProcess_SOURCES}
+            ${PluginProcessGTK2_SOURCES}
+            ${PluginProcess_SOURCES}
+            ${WebKit2_HEADERS}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} gtk
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} soup
+    COMMAND touch ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
+)
+add_custom_target(WebKit2-forwarding-headers
+    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-forwarding-headers.stamp
+)
+
+# These symbolic link allows includes like #include <webkit2/WebkitWebView.h> which simulates installed headers.
+add_custom_command(
+    OUTPUT ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}/webkit2
+    DEPENDS ${WEBKIT2_DIR}/UIProcess/API/gtk
+    COMMAND ln -n -s -f ${WEBKIT2_DIR}/UIProcess/API/gtk ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}/webkit2
+)
+add_custom_command(
+    OUTPUT ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}/webkit2
+    DEPENDS ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk
+    COMMAND ln -n -s -f ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}/webkit2
+)
+add_custom_target(WebKit2-fake-api-headers
+    DEPENDS ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}/webkit2
+            ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}/webkit2
+)
+
+set(WEBKIT2_EXTRA_DEPENDENCIES
+     WebKit2-forwarding-headers
+     WebKit2-fake-api-headers
 )
