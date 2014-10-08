@@ -39,8 +39,10 @@
 #import "WebFontCache.h"
 #import <AppKit/AppKit.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
-
+#import <wtf/Threading.h>
+#import <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
@@ -86,6 +88,25 @@ static int toAppKitFontWeight(FontWeight fontWeight)
 static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
 {
     return appKitFontWeight >= 7;
+}
+
+static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
+{
+#ifndef NDEBUG
+    // This cache is not thread safe so the following assertion is there to
+    // make sure this function is always called from the same thread.
+    static ThreadIdentifier initThreadId = currentThread();
+    ASSERT(currentThread() == initThreadId);
+#endif
+
+    static NeverDestroyed<HashSet<AtomicString>> knownFamilies;
+    static const unsigned maxCacheSize = 128;
+    ASSERT(knownFamilies.get().size() <= maxCacheSize);
+    if (knownFamilies.get().size() == maxCacheSize)
+        knownFamilies.get().remove(knownFamilies.get().begin());
+
+    // Only attempt to auto-activate fonts once for performance reasons.
+    return knownFamilies.get().add(family).isNewEntry;
 }
 
 PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length)
@@ -203,7 +224,7 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     NSInteger weight = toAppKitFontWeight(fontDescription.weight());
     float size = fontDescription.computedPixelSize();
 
-    NSFont *nsFont = [WebFontCache fontWithFamily:family traits:traits weight:weight size:size];
+    NSFont *nsFont = [WebFontCache fontWithFamily:family traits:traits weight:weight size:size shouldAutoActivateIfNeeded:shouldAutoActivateFontIfNeeded(family)];
     if (!nsFont)
         return nullptr;
 
