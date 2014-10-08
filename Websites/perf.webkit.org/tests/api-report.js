@@ -111,14 +111,14 @@ describe("/api/report", function () {
 
                     var repositoryIdToName = {};
                     rows.forEach(function (row) { repositoryIdToName[row['repository_id']] = row['repository_name']; });
-                    queryAndFetchAll('SELECT * FROM build_revisions', [], function (rows) {
+                    queryAndFetchAll('SELECT * FROM build_commits, commits WHERE build_commit = commit_id', [], function (rows) {
                         var repositoryNameToRevisionRow = {};
                         rows.forEach(function (row) {
-                            repositoryNameToRevisionRow[repositoryIdToName[row['revision_repository']]] = row;
+                            repositoryNameToRevisionRow[repositoryIdToName[row['commit_repository']]] = row;
                         });
-                        assert.equal(repositoryNameToRevisionRow['OS X']['revision_value'], '10.8.2 12C60');
-                        assert.equal(repositoryNameToRevisionRow['WebKit']['revision_value'], '141977');
-                        assert.equal(repositoryNameToRevisionRow['WebKit']['revision_time'].toString(),
+                        assert.equal(repositoryNameToRevisionRow['OS X']['commit_revision'], '10.8.2 12C60');
+                        assert.equal(repositoryNameToRevisionRow['WebKit']['commit_revision'], '141977');
+                        assert.equal(repositoryNameToRevisionRow['WebKit']['commit_time'].toString(),
                             new Date('2013-02-06 08:55:20.9').toString());
                         notifyDone();
                     });

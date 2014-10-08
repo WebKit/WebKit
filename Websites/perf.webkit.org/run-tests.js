@@ -30,7 +30,7 @@ function pathToDatabseSQL(relativePath) {
 }
 
 function pathToTests(testName) {
-    return path.resolve(__dirname, 'tests', testName);
+    return testName ? path.resolve(__dirname, 'tests', testName) : path.resolve(__dirname, 'tests');
 }
 
 var configurationJSON = require('./config.json');

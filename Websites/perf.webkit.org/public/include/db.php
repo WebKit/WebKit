@@ -104,6 +104,14 @@ class Database
     }
 
     function select_or_insert_row($table, $prefix, $select_params, $insert_params = NULL, $returning = 'id') {
+        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, FALSE);
+    }
+
+    function update_or_insert_row($table, $prefix, $select_params, $insert_params = NULL, $returning = 'id') {
+        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, TRUE);
+    }
+
+    private function _select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, $should_update) {
         $values = array();
 
         $select_placeholders = array();
@@ -124,23 +132,42 @@ class Database
 
         $insert_column_names = $this->prefixed_column_names($insert_column_names, $prefix);
         $insert_placeholders = join(', ', $insert_placeholders);
-        $rows = $this->query_and_fetch_all("INSERT INTO $table ($insert_column_names) SELECT $insert_placeholders WHERE NOT EXISTS
-            ($query) RETURNING $returning_column_name", $values);
-        if (!$rows)
+
+        // http://stackoverflow.com/questions/1109061/insert-on-duplicate-update-in-postgresql
+        $rows = NULL;
+        if ($should_update) {
+            $rows = $this->query_and_fetch_all("UPDATE $table SET ($insert_column_names) = ($insert_placeholders)
+                WHERE ($select_column_names) = ($select_placeholders) RETURNING $returning_column_name", $values);
+        }
+        if (!$rows) {
+            $rows = $this->query_and_fetch_all("INSERT INTO $table ($insert_column_names) SELECT $insert_placeholders
+                WHERE NOT EXISTS ($query) RETURNING $returning_column_name", $values);            
+        }
+        if (!$should_update && !$rows)
             $rows = $this->query_and_fetch_all($query, $select_values);
 
         return $rows ? ($returning == '*' ? $rows[0] : $rows[0][$returning_column_name]) : NULL;
     }
 
     function select_first_row($table, $prefix, $params, $order_by = NULL) {
+        return $this->select_first_or_last_row($table, $prefix, $params, $order_by, FALSE);
+    }
+
+    function select_last_row($table, $prefix, $params, $order_by = NULL) {
+        return $this->select_first_or_last_row($table, $prefix, $params, $order_by, TRUE);
+    }
+
+    private function select_first_or_last_row($table, $prefix, $params, $order_by, $descending_order) {
         $placeholders = array();
         $values = array();
         $column_names = $this->prefixed_column_names($this->prepare_params($params, $placeholders, $values), $prefix);
         $placeholders = join(', ', $placeholders);
         $query = "SELECT * FROM $table WHERE ($column_names) = ($placeholders)";
         if ($order_by) {
-            assert(!ctype_alnum_underscore($order_by));
+            assert(ctype_alnum_underscore($order_by));
             $query .= ' ORDER BY ' . $this->prefixed_name($order_by, $prefix);
+            if ($descending_order)
+                $query .= ' DESC';
         }
         $rows = $this->query_and_fetch_all($query . ' LIMIT 1', $values);
 

@@ -98,13 +98,24 @@ class ReportProcessor {
             if (!$repository_id)
                 $this->exit_with_error('FailedToInsertRepository', array('name' => $repository_name));
 
-            $revision_data = array('repository' => $repository_id, 'build' => $build_id, 'value' => $revision_data['revision'],
-                'time' => array_get($revision_data, 'timestamp'));
-            $revision_row = $this->db->select_or_insert_row('build_revisions', 'revision', array('repository' => $repository_id, 'build' => $build_id), $revision_data, '*');
-            if (!$revision_row)
-                $this->exit_with_error('FailedToInsertRevision', $revision_data);
-            if ($revision_row['revision_value'] != $revision_data['value'])
-                $this->exit_with_error('MismatchingRevisionData', array('existing' => $revision_row, 'new' => $revision_data));
+            $commit_data = array('repository' => $repository_id, 'revision' => $revision_data['revision'], 'time' => array_get($revision_data, 'timestamp'));
+
+            $mismatching_commit = $this->db->query_and_fetch_all('SELECT * FROM build_commits, commits
+                WHERE build_commit = commit_id AND commit_build = $1 AND commit_repository = $2 AND commit_revision != $3 LIMIT 1',
+                array($build_id, $repository_id, $revision_data['revision']));
+            if ($mismatching_commit)
+                $this->exit_with_error('MismatchingCommitRevision', array('build' => $build_id, 'existing' => $mismatching_commit, 'new' => $commit_data));
+
+            $commit_row = $this->db->select_or_insert_row('commits', 'commit',
+                array('repository' => $repository_id, 'revision' => $revision_data['revision']), $commit_data, '*');
+            if (!$commit_row)
+                $this->exit_with_error('FailedToRecordCommit', $commit_data);
+            if (abs($commit_row['commit_time'] - $commit_data['time']) > 1.0)
+                $this->exit_with_error('MismatchingCommitTime', array('existing' => $commit_row, 'new' => $commit_data));
+
+            if (!$this->db->insert_row('build_commits', null,
+                array('commit_build' => $build_id, 'build_commit' => $commit_row['commit_id']), null))
+                $this->exit_with_error('FailedToRelateCommitToBuild', array('commit' => $commit_row, 'build' => $build_id));
         }
 
         return $build_id;

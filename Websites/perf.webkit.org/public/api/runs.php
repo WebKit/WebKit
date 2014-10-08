@@ -30,12 +30,10 @@ if ($repository_table = $db->fetch_table('repositories')) {
 
 function fetch_runs_for_config($db, $config) {
     $raw_runs = $db->query_and_fetch_all('
-    SELECT test_runs.*, builds.*, array_agg((revision_repository, revision_value, revision_time)) AS revisions
-        FROM builds LEFT OUTER JOIN build_revisions ON revision_build = build_id, test_runs
-        WHERE run_build = build_id AND run_config = $1
-        GROUP BY build_id, build_builder, build_number, build_time, build_latest_revision,
-            run_id, run_config, run_build, run_iteration_count_cache,
-            run_mean_cache, run_sum_cache, run_square_sum_cache', array($config['config_id']));
+    SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
+        FROM builds LEFT OUTER JOIN build_commits ON commit_build = build_id, test_runs, commits
+        WHERE run_build = build_id AND run_config = $1 AND build_commit = commit_id
+        GROUP BY build_id, run_id', array($config['config_id']));
 
     $formatted_runs = array();
     if (!$raw_runs)

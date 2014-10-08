@@ -3,8 +3,9 @@ DROP TABLE test_runs CASCADE;
 DROP TABLE test_configurations CASCADE;
 DROP TYPE test_configuration_type CASCADE;
 DROP TABLE aggregators CASCADE;
-DROP TABLE build_revisions CASCADE;
 DROP TABLE builds CASCADE;
+DROP TABLE commits CASCADE;
+DROP TABLE build_commits CASCADE;
 DROP TABLE builders CASCADE;
 DROP TABLE repositories CASCADE;
 DROP TABLE platforms CASCADE;
@@ -50,14 +51,26 @@ CREATE TABLE builds (
     CONSTRAINT builder_build_time_tuple_must_be_unique UNIQUE(build_builder, build_number, build_time));
 CREATE INDEX build_builder_index ON builds(build_builder);
 
-CREATE TABLE build_revisions (
-    revision_build integer NOT NULL REFERENCES builds ON DELETE CASCADE,
-    revision_repository integer NOT NULL REFERENCES repositories ON DELETE CASCADE,
-    revision_value varchar(64) NOT NULL,
-    revision_time timestamp,
-    PRIMARY KEY (revision_repository, revision_build));
-CREATE INDEX revision_build_index ON build_revisions(revision_build);
-CREATE INDEX revision_repository_index ON build_revisions(revision_repository);
+CREATE TABLE commits (
+    commit_id serial PRIMARY KEY,
+    commit_repository integer NOT NULL REFERENCES repositories ON DELETE CASCADE,
+    commit_revision varchar(64) NOT NULL,
+    commit_parent integer REFERENCES commits ON DELETE CASCADE,
+    commit_time timestamp,
+    commit_author_name varchar(128),
+    commit_author_email varchar(320),
+    commit_message text,
+    commit_reported boolean NOT NULL DEFAULT FALSE,
+    CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision));
+CREATE INDEX commit_time_index ON commits(commit_time);
+CREATE INDEX commit_author_name_index ON commits(commit_author_name);
+CREATE INDEX commit_author_email_index ON commits(commit_author_email);
+
+CREATE TABLE build_commits (
+    commit_build integer NOT NULL REFERENCES builds ON DELETE CASCADE,
+    build_commit integer NOT NULL REFERENCES commits ON DELETE CASCADE
+    PRIMARY KEY (commit_build, build_commit));
+CREATE INDEX build_commits_index ON build_commits(commit_build, build_commit);
 
 CREATE TABLE aggregators (
     aggregator_id serial PRIMARY KEY,

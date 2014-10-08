@@ -1,3 +1,110 @@
+2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should store commit logs
+        https://bugs.webkit.org/show_bug.cgi?id=137510
+
+        Reviewed by Darin Adler.
+
+        For the v2 version of the perf dashboard, we would like to be able to see commit logs in the dashboard itself.
+
+        This patch replaces "build_revisions" table with "commits" and "build_commits" relations to store commit logs,
+        and add JSON APIs to report and retrieve them. It also adds a tools/pull-svn.py to pull commit logs from
+        a subversion directory. The git version of this script will be added in a follow up patch.
+
+
+        In the new database schema, each revision in each repository is represented by exactly one row in "commits"
+        instead of one row for each build in "build_revisions". "commits" and "builds" now have a proper many-to-many
+        relationship via "build_commits" relations.
+
+        In order to migrate an existing instance of this application, run the following SQL commands:
+
+        BEGIN;
+
+        INSERT INTO commits (commit_repository, commit_revision, commit_time)
+            (SELECT DISTINCT ON (revision_repository, revision_value)
+                revision_repository, revision_value, revision_time FROM build_revisions);
+
+        INSERT INTO build_commits (commit_build, build_commit) SELECT revision_build, commit_id
+            FROM commits, build_revisions
+            WHERE commit_repository = revision_repository AND commit_revision = revision_value;
+
+        DROP TABLE build_revisions;
+
+        COMMIT;
+
+
+        The helper script to submit commit logs can be used as follows:
+
+        python ./tools/pull-svn.py "WebKit" https://svn.webkit.org/repository/webkit/ https://perf.webkit.org
+            feeder-slave feeder-slave-password 60 "webkit-patch find-users"
+
+        The above command will pull the subversion server at https://svn.webkit.org/repository/webkit/ every 60 seconds
+        to retrieve at most 10 commits, and submits the results to https://perf.webkit.org using "feeder-slave" and
+        "feeder-slave-password" as the builder name and the builder password respectively.
+
+        The last, optional, argument is the shell command to convert a subversion account to the corresponding username.
+        e.g. "webkit-patch find-users rniwa@webkit.org" yields "Ryosuke Niwa" <rniwa@webkit.org> in the stdout.
+
+
+        * init-database.sql: Replaced "build_revisions" relation with "commits" and "build_commits" relations.
+
+        * public/api/commits.php: Added. Retrieves a list of commits based on arguments in its path of the form
+            /api/commits/<repository-name>/<filter>. The behavior of this API depends on <filter> as follows:
+
+            - Not specified - It returns every single commit for a given repository.
+            - Matches "oldest" - It returns the commit with the oldest timestamp.
+            - Matches "latest" - It returns the commit with the latest timestamp.
+            - Matches "last-reported" - It returns the commit with the latest timestamp added via report-commits.php.
+            - Is entirely alphanumeric - It returns the commit whose revision matches the filter.
+            - Is of the form <alphanumeric>:<alphanumeric> or <alphanumeric>-<alphanumeric> - It retrieves the list
+            of commits added via report-commits.php between two timestamps retrieved from commits whose revisions
+            match the two alphanumeric values specified. Because it retrieves commits based on their timestamps,
+            the list may contain commits that do not appear as neither hash's ancestor in git/mercurial.
+        (main):
+        (commit_from_revision):
+        (fetch_commits_between):
+        (format_commits):
+
+        * public/api/report-commits.php: Added. A JSON API to report new subversion, git, or mercurial commits.
+        See tests/api-report-commits.js for examples on how to use this API.
+
+        * public/api/runs.php: Updated the query to use "commit_builds" and "commits" relations instead of
+        "build_revisions". Regrettably, the new query is 20% slower but I'm going to wait until the new UI is ready
+        to optimize this and other JSON APIs.
+
+        * public/include/db.php:
+        (Database::select_or_insert_row):
+        (Database::update_or_insert_row): Added.
+        (Database::_select_update_or_insert_row): Extracted from select_or_insert_row. Try to update first and then
+        insert if the update fails for update_or_insert_row. Preserves the old behavior when $should_update is false.
+
+        (Database::select_first_row):
+        (Database::select_last_row): Added.
+        (Database::select_first_or_last_row): Extracted from select_first_row. Fixed a bug that we were asserting
+        $order_by to be not alphanumeric/underscore. Retrieve the last row instead of the first if $descending_order.
+
+        * public/include/report-processor.php:
+        (ReportProcessor::resolve_build_id): Store commits instead of build_revisions. We don't worry about the race
+        condition for adding "build_commits" rows since we shouldn't have a single tester submitting the same result
+        concurrently. Even if it happened, it will only result in a PHP error and the database will stay consistent.
+
+        * run-tests.js:
+        (pathToTests): Don't call path.resolve with "undefined" testName; It throws an exception in the latest node.js.
+
+        * tests/api-report-commits.js: Added.
+        * tests/api-report.js: Fixed a test per build_revisions to build_commits/commits replacement.
+
+        * tools: Added.
+        * tools/pull-svn.py: Added. See above for how to use this script.
+        (main):
+        (determine_first_revision_to_fetch):
+        (fetch_revision_from_dasbhoard):
+        (fetch_commit_and_resolve_author):
+        (fetch_commit):
+        (textContent):
+        (resolve_author_name_from_email):
+        (submit_commits):
+
 2014-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Install.md for Mavericks and fix typos
