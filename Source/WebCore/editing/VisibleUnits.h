@@ -62,6 +62,7 @@ WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition &);
 WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition &);
 VisiblePosition logicalStartOfLine(const VisiblePosition &);
 VisiblePosition logicalEndOfLine(const VisiblePosition &);
+bool isLogicalEndOfLine(const VisiblePosition &);
 VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection);
 VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection);
 

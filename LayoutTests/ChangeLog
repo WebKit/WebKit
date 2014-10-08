@@ -1,3 +1,15 @@
+2014-08-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Caret not shown at the end of line in overtype mode
+        https://bugs.webkit.org/show_bug.cgi?id=135508
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/block-cursor-overtype-mode-end-of-line-expected.html: Added.
+        * editing/selection/block-cursor-overtype-mode-end-of-line-rtl-expected.html: Added.
+        * editing/selection/block-cursor-overtype-mode-end-of-line-rtl.html: Added.
+        * editing/selection/block-cursor-overtype-mode-end-of-line.html: Added.
+
 2014-09-29  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): Confused column spans when combined with dynamic animations

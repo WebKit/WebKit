@@ -1,3 +1,30 @@
+2014-08-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Caret not shown at the end of line in overtype mode
+        https://bugs.webkit.org/show_bug.cgi?id=135508
+
+        Reviewed by Ryosuke Niwa.
+
+        When overtype mode is enabled we usually replace the 'normal'
+        blinking caret shown in contenteditable elements by a block cursor
+        that covers the next character to be replaced. The exception is the
+        end of line where we fallback to the blinking caret even in overtype
+        mode (as there is no next character to replace).
+
+        We were not showing anything at the end of lines in overtype mode
+        because the detection of the end of line was incorrect and not very
+        understandable. Replaced the old code with a proper and clean end of
+        line detection mechanism compatible with bidi text.
+
+        Tests: editing/selection/block-cursor-overtype-mode-end-of-line-rtl.html
+               editing/selection/block-cursor-overtype-mode-end-of-line.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * editing/VisibleUnits.cpp:
+        (WebCore::isLogicalEndOfLine):
+        * editing/VisibleUnits.h:
+
 2014-09-29  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r168046): Confused column spans when combined with dynamic animations
