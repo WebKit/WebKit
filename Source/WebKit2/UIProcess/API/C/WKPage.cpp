@@ -1887,10 +1887,9 @@ void WKPageSetAddsVisitedLinks(WKPageRef page, bool addsVisitedLinks)
     toImpl(page)->setAddsVisitedLinks(addsVisitedLinks);
 }
 
-bool WKPageIsPlayingAudio(WKPageRef)
+bool WKPageIsPlayingAudio(WKPageRef page)
 {
-    // FIXME: To be implemented (https://bugs.webkit.org/show_bug.cgi?id=137048).
-    return false;
+    return toImpl(page)->isPlayingAudio();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

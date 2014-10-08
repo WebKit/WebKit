@@ -1,3 +1,26 @@
+2014-10-08  Ada Chan  <adachan@apple.com>
+
+        Add a test for WKPageIsPlayingAudio().
+        https://bugs.webkit.org/show_bug.cgi?id=137048
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add file-with-video.html, test.mp4, and WKPageIsPlayingAudio.cpp to the project.
+        * TestWebKitAPI/Tests/WebKit2/WKPageIsPlayingAudio.cpp: Added.
+        (TestWebKitAPI::nullJavaScriptCallback):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::isPlayingAudioDidChangeCallback):
+        (TestWebKitAPI::setUpClients):
+        (TestWebKitAPI::TEST):
+        This test loads a page with a video in it. When the page is loaded, we first check that
+        WKPageIsPlayingAudio() returns false for the page. Then we call a method to start the video.
+        When the WKPageUIClient::isPlayingAudioDidChange callback gets called, check that WKPageIsPlayingAudio()
+        now returns true for the page.
+        * TestWebKitAPI/Tests/WebKit2/file-with-video.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/test.mp4: Added.
+        This is a video copied from LayoutTests/media/content.
+
 2014-10-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [webkitpy] Use python-irclib-0.4.8.tar.gz instead of zip in AutoInstaller
