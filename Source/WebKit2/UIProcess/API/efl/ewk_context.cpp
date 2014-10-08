@@ -62,7 +62,7 @@ static inline ContextMap& contextMap()
     return map;
 }
 
-EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
+EwkContext::EwkContext(WKContextRef context)
     : m_context(context)
     , m_databaseManager(std::make_unique<EwkDatabaseManager>(WKContextGetDatabaseManager(context)))
     , m_storageManager(std::make_unique<EwkStorageManager>(WKContextGetKeyValueStorageManager(context)))
@@ -73,7 +73,6 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     , m_requestManagerClient(std::make_unique<RequestManagerClientEfl>(context))
     , m_historyClient(std::make_unique<ContextHistoryClientEfl>(context))
     , m_jsGlobalContext(nullptr)
-    , m_extensionsPath(extensionsPath)
 {
     ContextMap::AddResult result = contextMap().add(context, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -96,17 +95,6 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
 
     m_callbackForMessageFromInjectedBundle.callback = nullptr;
     m_callbackForMessageFromInjectedBundle.userData = nullptr;
-
-    WKContextInjectedBundleClientV1 client;
-    memset(&client, 0, sizeof(client));
-
-    client.base.version = 1;
-    client.base.clientInfo = this;
-    client.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
-    client.didReceiveSynchronousMessageFromInjectedBundle = didReceiveSynchronousMessageFromInjectedBundle;
-    client.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
-
-    WKContextSetInjectedBundleClient(m_context.get(), &client.base);
 }
 
 EwkContext::~EwkContext()
@@ -132,28 +120,14 @@ PassRefPtr<EwkContext> EwkContext::create()
     return adoptRef(new EwkContext(adoptWK(WKContextCreate()).get()));
 }
 
-static String bundlePathForExtension()
-{
-    String bundlePathForExtension = WebCore::pathByAppendingComponent(String::fromUTF8(TEST_LIB_DIR), EXTENSIONMANAGERNAME);
-    if (WebCore::fileExists(bundlePathForExtension))
-        return bundlePathForExtension;
-
-    bundlePathForExtension = WebCore::pathByAppendingComponent(String::fromUTF8(EXTENSIONMANAGERDIR), EXTENSIONMANAGERNAME);
-    if (WebCore::fileExists(bundlePathForExtension))
-        return bundlePathForExtension;
-
-    return emptyString();
-}
-
-PassRefPtr<EwkContext> EwkContext::create(const String& extensionsPath)
+PassRefPtr<EwkContext> EwkContext::create(const String& injectedBundlePath)
 {   
-    String bundlePath = bundlePathForExtension();
-    if (bundlePath.isEmpty())
+    if (!fileExists(injectedBundlePath))
         return 0;
 
-    WKRetainPtr<WKStringRef> path = adoptWK(toCopiedAPI(bundlePath));
+    WKRetainPtr<WKStringRef> path = adoptWK(toCopiedAPI(injectedBundlePath));
 
-    return adoptRef(new EwkContext(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get(), extensionsPath));
+    return adoptRef(new EwkContext(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get()));
 }
 
 EwkContext* EwkContext::defaultContext()
@@ -390,17 +364,25 @@ void EwkContext::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef, WK
     toEwkContext(clientInfo)->processReceivedMessageFromInjectedBundle(messageName, messageBody, returnData);
 }
 
-WKTypeRef EwkContext::getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
-{
-    return static_cast<WKTypeRef>(toCopiedAPI(toEwkContext(clientInfo)->extensionsPath()));
-}
-
 void EwkContext::setMessageFromInjectedBundleCallback(Ewk_Context_Message_From_Injected_Bundle_Cb callback, void* userData)
 {
     m_callbackForMessageFromInjectedBundle.userData = userData;
 
     if (m_callbackForMessageFromInjectedBundle.callback == callback)
         return;
+
+    if (!m_callbackForMessageFromInjectedBundle.callback) {
+        WKContextInjectedBundleClientV1 client;
+        memset(&client, 0, sizeof(client));
+
+        client.base.version = 1;
+        client.base.clientInfo = this;
+        client.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+        client.didReceiveSynchronousMessageFromInjectedBundle = didReceiveSynchronousMessageFromInjectedBundle;
+
+        WKContextSetInjectedBundleClient(m_context.get(), &client.base);
+    } else if (!callback)
+        WKContextSetInjectedBundleClient(m_context.get(), nullptr);
 
     m_callbackForMessageFromInjectedBundle.callback = callback;
 }
@@ -451,7 +433,7 @@ Ewk_Context* ewk_context_new()
     return EwkContext::create().leakRef();
 }
 
-Ewk_Context* ewk_context_new_with_extensions_path(const char* path)
+Ewk_Context* ewk_context_new_with_injected_bundle_path(const char* path)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(path, nullptr);
 

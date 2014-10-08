@@ -30,7 +30,7 @@ public:
 
     const char* defaultTestPageUrl() const;
     const char* defaultTheme() const;
-    const char* extensionSample() const;
+    const char* injectedBundleSample() const;
     CString urlForResource(const char* resource);
     CString pathForResource(const char* resource);
     CString pathForTheme(const char* theme);

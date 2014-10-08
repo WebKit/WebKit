@@ -43,9 +43,9 @@ const char* EWK2UnitTestEnvironment::defaultTheme() const
     return DEFAULT_THEME_DIR "/default.edj";
 }
 
-const char* EWK2UnitTestEnvironment::extensionSample() const
+const char* EWK2UnitTestEnvironment::injectedBundleSample() const
 {
-    return TEST_LIB_DIR "/libewk2UnitTestExtensionSample.so";
+    return TEST_LIB_DIR "/libewk2UnitTestInjectedBundleSample.so";
 }
 
 CString EWK2UnitTestEnvironment::urlForResource(const char* resource)

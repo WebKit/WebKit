@@ -107,8 +107,7 @@
                         r"|LayoutTests/platform/efl/",
         },
         "EFLWebKit2PublicAPI": {
-            "filename": r"Source/WebKit2/WebProcess/InjectedBundle/API/efl/"
-                        r"|Source/WebKit2/UIProcess/API/efl/"
+            "filename": r"Source/WebKit2/UIProcess/API/efl/"
                         r"|Source/WebKit2/UIProcess/API/C/efl/",
         },
         "EFLWebKit2PlatformSpecific": {

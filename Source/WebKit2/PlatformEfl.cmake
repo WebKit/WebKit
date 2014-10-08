@@ -179,8 +179,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
-    WebProcess/InjectedBundle/API/efl/ewk_extension.cpp
-
     WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp
 
     WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
@@ -203,7 +201,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebPage/efl/WebInspectorUIEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
-    WebProcess/efl/ExtensionManagerEfl.cpp
     WebProcess/efl/SeccompFiltersWebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
 
@@ -248,7 +245,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/unix"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
@@ -362,7 +358,6 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 )
 
 configure_file(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
-configure_file(efl/ewebkit2-extension.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2-extension.pc @ONLY)
 configure_file(efl/EWebKit2Config.cmake.in ${CMAKE_BINARY_DIR}/WebKit2/efl/EWebKit2Config.cmake @ONLY)
 configure_file(efl/EWebKit2ConfigVersion.cmake.in ${CMAKE_BINARY_DIR}/WebKit2/efl/EWebKit2ConfigVersion.cmake @ONLY)
 configure_file(UIProcess/API/efl/EWebKit2.h.in ${DERIVED_SOURCES_WEBKIT2_DIR}/include/EWebKit2.h)
@@ -404,27 +399,13 @@ set(EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_window_features.h"
 )
 
-set(EWebKit2_Extension_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/WebProcess/InjectedBundle/API/efl/EWebKit_Extension.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/WebProcess/InjectedBundle/API/efl/ewk_extension.h"
-)
-
-install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR})
-install(FILES ${EWebKit2_Extension_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR}/extension)
-
 install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
-install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2-extension.pc DESTINATION lib/pkgconfig)
 install(FILES
         ${CMAKE_BINARY_DIR}/WebKit2/efl/EWebKit2Config.cmake
         ${CMAKE_BINARY_DIR}/WebKit2/efl/EWebKit2ConfigVersion.cmake
         DESTINATION lib/cmake/EWebKit2)
 
-set(EWEBKIT_EXTENSION_MANAGER_INSTALL_DIR "${LIB_INSTALL_DIR}/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR}/" CACHE PATH "Absolute path to install injected bundle which controls the extension library")
-
-add_library(ewebkit_extension_manager SHARED "${WEBKIT2_DIR}/WebProcess/efl/WebInjectedBundleMainEfl.cpp")
-target_link_libraries(ewebkit_extension_manager WebKit2)
-
-install(TARGETS ewebkit_extension_manager DESTINATION "${EWEBKIT_EXTENSION_MANAGER_INSTALL_DIR}")
+install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR})
 
 if (ENABLE_PLUGIN_PROCESS)
     list(APPEND PluginProcess_INCLUDE_DIRECTORIES
@@ -465,18 +446,16 @@ set(EWK2UnitTests_LIBRARIES
 
 set(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
 set(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
-set(TEST_EXTENSIONS_DIR ${WEBKIT2_EFL_TEST_DIR}/extensions)
+set(TEST_INJECTED_BUNDLE_DIR ${WEBKIT2_EFL_TEST_DIR}/InjectedBundle)
 set(WEBKIT2_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/EWebKit2)
 
 add_definitions(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DTEST_LIB_DIR=\"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"
     -DGTEST_LINKED_AS_SHARED_LIBRARY=1
     -DLIBEXECDIR=\"${EXEC_INSTALL_DIR}\"
-    -DEXTENSIONMANAGERDIR=\"${CMAKE_INSTALL_PREFIX}/${EWEBKIT_EXTENSION_MANAGER_INSTALL_DIR}\"
     -DWEBPROCESSNAME=\"WebProcess\"
     -DPLUGINPROCESSNAME=\"PluginProcess\"
     -DNETWORKPROCESSNAME=\"NetworkProcess\"
-    -DEXTENSIONMANAGERNAME=\"libewebkit_extension_manager.so\"
     -DGTEST_HAS_RTTI=0
 )
 
@@ -529,7 +508,8 @@ if (ENABLE_API_TESTS)
         target_link_libraries(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
     endforeach ()
 
-    add_library(ewk2UnitTestExtensionSample SHARED ${TEST_EXTENSIONS_DIR}/extension_sample.cpp)
+    add_library(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
+    target_link_libraries(ewk2UnitTestInjectedBundleSample WebKit2)
 endif ()
 
 if (ENABLE_SPELLCHECK)

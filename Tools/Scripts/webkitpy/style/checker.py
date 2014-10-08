@@ -190,8 +190,7 @@ _PATH_RULES_SPECIFIER = [
     ([# The EFL APIs use EFL naming style, which includes
       # both lower-cased and camel-cased, underscore-sparated
       # values.
-      "Source/WebKit2/UIProcess/API/efl/",
-      "Source/WebKit2/WebProcess/InjectedBundle/API/efl/"],
+      "Source/WebKit2/UIProcess/API/efl/"],
      ["-readability/naming",
       "-readability/parameter_name"]),
     ([# MiniBrowser/efl are EFL simple application.
