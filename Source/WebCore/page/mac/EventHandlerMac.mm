@@ -47,6 +47,7 @@
 #include "RenderListBox.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
+#include "ScrollLatchingState.h"
 #include "ScrollableArea.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -815,6 +816,18 @@ static bool eventTargetIsPlatformWidget(Element* eventTarget)
     return widget->platformWidget();
 }
 
+static bool latchingIsLockedToPlatformFrame(const Frame& frame)
+{
+    ScrollLatchingState* latchedState = frame.mainFrame().latchingState();
+    if (!latchedState)
+        return false;
+
+    if (frameHasPlatformWidget(frame) && &frame != latchedState->frame())
+        return true;
+
+    return false;
+}
+    
 void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, RefPtr<Element>& wheelEventTarget, RefPtr<ContainerNode>& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
 {
     FrameView* view = m_frame.view();
@@ -841,25 +854,29 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         }
     }
     
+    ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
+    ASSERT(latchingState);
     if (wheelEvent.shouldConsiderLatching()) {
         if (scrollableArea && scrollableContainer)
-            m_startedGestureAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea, wheelEvent.deltaX(), wheelEvent.deltaY());
+            latchingState->setStartedGestureAtScrollLimit(scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea, wheelEvent.deltaX(), wheelEvent.deltaY()));
         else
-            m_startedGestureAtScrollLimit = false;
-        m_latchedWheelEventElement = wheelEventTarget;
+            latchingState->setStartedGestureAtScrollLimit(false);
+        latchingState->setWheelEventElement(wheelEventTarget);
+        latchingState->setFrame(&m_frame);
         // FIXME: What prevents us from deleting this scrollable container while still holding a pointer to it?
-        m_latchedScrollableContainer = scrollableContainer;
-        m_widgetIsLatched = result.isOverWidget();
-        isOverWidget = m_widgetIsLatched;
-        m_recentWheelEventDeltaTracker->beginTrackingDeltas();
-    } else if (wheelEvent.shouldResetLatching()) {
+        latchingState->setScrollableContainer(scrollableContainer);
+        latchingState->setWidgetIsLatched(result.isOverWidget());
+        isOverWidget = latchingState->widgetIsLatched();
+        m_frame.mainFrame().wheelEventDeltaTracker()->beginTrackingDeltas();
+    } else if (wheelEvent.shouldResetLatching())
         clearLatchedState();
-        m_recentWheelEventDeltaTracker->endTrackingDeltas();
-    }
-    
-    if (!wheelEvent.shouldResetLatching() && m_latchedWheelEventElement) {
-        wheelEventTarget = m_latchedWheelEventElement.get();
-        isOverWidget = m_widgetIsLatched;
+
+    if (!wheelEvent.shouldResetLatching() && latchingState->wheelEventElement()) {
+        if (latchingIsLockedToPlatformFrame(m_frame))
+            return;
+
+        wheelEventTarget = latchingState->wheelEventElement();
+        isOverWidget = latchingState->widgetIsLatched();
     }
 }
 
@@ -867,16 +884,24 @@ void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& wheelEvent
 {
     switch (wheelEvent.phase()) {
         case PlatformWheelEventPhaseBegan:
-            m_recentWheelEventDeltaTracker->beginTrackingDeltas();
+            m_frame.mainFrame().wheelEventDeltaTracker()->beginTrackingDeltas();
             break;
         case PlatformWheelEventPhaseEnded:
-            m_recentWheelEventDeltaTracker->endTrackingDeltas();
+            m_frame.mainFrame().wheelEventDeltaTracker()->endTrackingDeltas();
             break;
         default:
             break;
     }
 
-    m_recentWheelEventDeltaTracker->recordWheelEventDelta(wheelEvent);
+    m_frame.mainFrame().wheelEventDeltaTracker()->recordWheelEventDelta(wheelEvent);
+}
+
+static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* latchingState)
+{
+    if (latchingIsLockedToPlatformFrame(frame))
+        return frame.view();
+
+    return latchingState->frame() ? latchingState->frame()->view() : frame.view();
 }
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, Element* wheelEventTarget, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
@@ -884,13 +909,18 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
 
-    if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer) {
+    ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
+    ASSERT(latchingState);
+    if (wheelEvent.useLatchedEventElement() && latchingState->scrollableContainer()) {
+        view = frameViewForLatchingState(m_frame, latchingState);
         if (!view || !view->frame().isMainFrame()) {
             bool didHandleWheelEvent = view && view->wheelEvent(wheelEvent);
-            if (!didHandleWheelEvent && scrollableContainer == m_latchedScrollableContainer) {
+            if (!didHandleWheelEvent && scrollableContainer == latchingState->scrollableContainer()) {
                 // If we are just starting a scroll event, and have nowhere left to scroll, allow
                 // the enclosing frame to handle the scroll.
-                didHandleWheelEvent = !m_startedGestureAtScrollLimit;
+                didHandleWheelEvent = !latchingState->startedGestureAtScrollLimit();
+                if (!didHandleWheelEvent)
+                    latchingState->setFrame(nullptr);
             }
 
             // If the platform widget is handling the event, we always want to return false
@@ -901,11 +931,11 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
             return didHandleWheelEvent;
         }
         
-        if (scrollableArea && !m_startedGestureAtScrollLimit && scrollableContainer == m_latchedScrollableContainer) {
+        if (scrollableArea && !latchingState->startedGestureAtScrollLimit() && scrollableContainer == latchingState->scrollableContainer()) {
             m_isHandlingWheelEvent = false;
 
             if (eventTargetIsPlatformWidget(wheelEventTarget))
-                return !m_startedGestureAtScrollLimit;
+                return !latchingState->startedGestureAtScrollLimit();
 
             return true;
         }
@@ -922,8 +952,10 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     if (frameHasPlatformWidget(m_frame) && widget.isFrameView())
         return true;
 
-    if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer && scrollableContainer == m_latchedScrollableContainer)
-        return !m_startedGestureAtScrollLimit;
+    ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
+    ASSERT(latchingState);
+    if (wheelEvent.useLatchedEventElement() && latchingState->scrollableContainer() && scrollableContainer == latchingState->scrollableContainer())
+        return !latchingState->startedGestureAtScrollLimit();
 
     return false;
 }

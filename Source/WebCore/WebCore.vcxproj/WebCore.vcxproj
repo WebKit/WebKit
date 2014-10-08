@@ -7191,6 +7191,7 @@
     <ClCompile Include="..\page\PerformanceTiming.cpp" />
     <ClCompile Include="..\page\PrintContext.cpp" />
     <ClCompile Include="..\page\Screen.cpp" />
+    <ClCompile Include="..\page\scrolling\ScrollLatchingState.cpp" />
     <ClCompile Include="..\page\scrolling\ScrollingConstraints.cpp" />
     <ClCompile Include="..\page\scrolling\ScrollingCoordinator.cpp" />
     <ClCompile Include="..\page\SecurityOrigin.cpp" />
@@ -19173,6 +19174,7 @@
     <ClInclude Include="..\page\PrintContext.h" />
     <ClInclude Include="..\page\Screen.h" />
     <ClInclude Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.h" />
+    <ClInclude Include="..\page\scrolling\ScrollLatchingState.h" />
     <ClInclude Include="..\page\scrolling\ScrollingConstraints.h" />
     <ClInclude Include="..\page\scrolling\ScrollingCoordinator.h" />
     <ClInclude Include="..\page\scrolling\ScrollingStateFixedNode.h" />

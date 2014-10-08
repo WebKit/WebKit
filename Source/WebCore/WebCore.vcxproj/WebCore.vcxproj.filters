@@ -789,6 +789,9 @@
     <ClCompile Include="..\page\Screen.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollLatchingState.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\scrolling\ScrollingConstraints.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7771,6 +7774,9 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\Screen.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollLatchingState.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\scrolling\ScrollingConstraints.h">

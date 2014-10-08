@@ -535,15 +535,8 @@ private:
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
 
-    std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
-    RefPtr<Element> m_latchedWheelEventElement;
-    bool m_widgetIsLatched;
-
-    RefPtr<Element> m_previousWheelScrolledElement;
-
 #if PLATFORM(COCOA)
     NSView *m_mouseDownView;
-    RefPtr<ContainerNode> m_latchedScrollableContainer;
     bool m_sendingEventToSubview;
     bool m_startedGestureAtScrollLimit;
 #if !PLATFORM(IOS)
