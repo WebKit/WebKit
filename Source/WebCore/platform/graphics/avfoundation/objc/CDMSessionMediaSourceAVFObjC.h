@@ -34,6 +34,7 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVStreamSession;
+OBJC_CLASS CDMSessionMediaSourceAVFObjCObserver;
 
 namespace WebCore {
 
@@ -55,6 +56,8 @@ public:
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);
 
+    void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
+
 protected:
     PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode);
 
@@ -64,6 +67,7 @@ protected:
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;
     RetainPtr<NSData> m_expiredSession;
+    RetainPtr<CDMSessionMediaSourceAVFObjCObserver> m_dataParserObserver;
     String m_sessionId;
     enum { Normal, KeyRelease } m_mode;
 };
