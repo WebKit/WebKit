@@ -1,3 +1,22 @@
+2014-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: Text with a zero offset, zero blur shadow vanishes
+        https://bugs.webkit.org/show_bug.cgi?id=136801
+
+        Reviewed by Darin Adler.
+
+        This test should be a comprehensive test of empty shadows. It tests every
+        combination of one and two shadows being empty, as well as transparent and
+        opaque text.
+
+        After updating fast/text/empty-shadow.html, fast/text/empty-shadow-with-color.html
+        is no longer necessary.
+
+        * fast/text/empty-shadow-expected.html:
+        * fast/text/empty-shadow-with-color-expected.html: Removed.
+        * fast/text/empty-shadow-with-color.html: Removed.
+        * fast/text/empty-shadow.html:
+
 2014-09-23  Benjamin Poulain  <bpoulain@apple.com>
 
         The style resolution cache applies properties incorrectly whenever direction != ltr

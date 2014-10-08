@@ -25,6 +25,7 @@
 
 #include "AffineTransform.h"
 #include "DashArray.h"
+#include "FontOrientation.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -71,6 +72,34 @@ private:
     FloatPoint m_textOrigin;
     int m_emphasisMarkOffset;
     bool m_textBoxIsHorizontal;
+};
+
+class ShadowApplier {
+public:
+    ShadowApplier(GraphicsContext&, const ShadowData*, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = Horizontal);
+    FloatSize extraOffset() const { return m_extraOffset; }
+    bool nothingToDraw() const { return m_nothingToDraw; }
+    bool didSaveContext() const { return m_didSaveContext; }
+    ~ShadowApplier();
+
+private:
+    bool isLastShadowIteration()
+    {
+        return m_shadow && !m_shadow->next();
+    }
+
+    bool shadowIsCompletelyCoveredByText(bool textIsOpaque)
+    {
+        return textIsOpaque && m_shadow && m_shadow->location() == IntPoint() && !m_shadow->radius();
+    }
+
+    FloatSize m_extraOffset;
+    GraphicsContext& m_context;
+    const ShadowData* m_shadow;
+    bool m_onlyDrawsShadow : 1;
+    bool m_avoidDrawingShadow : 1;
+    bool m_nothingToDraw : 1;
+    bool m_didSaveContext : 1;
 };
 
 } // namespace WebCore

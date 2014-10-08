@@ -1,3 +1,47 @@
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r173941.
+
+        Rename shadow to m_shadow.
+
+        * rendering/TextPainter.h:
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText):
+
+2014-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: Text with a zero offset, zero blur shadow vanishes
+        https://bugs.webkit.org/show_bug.cgi?id=136801
+
+        Reviewed by Darin Adler.
+
+        This patch performs some cleanup regarding TextPainter's shadow logic and handles an
+        additional case of empty shadows. Previously, there was tight coupling between
+        applyShadowToGraphicalContext() and paintTextWithShadows(), as they both used a
+        collection of variables to determine how shadows are to be drawn. This complexity has
+        been moved into a helper class, ShadowApplier, which performs what
+        applyShadowToGraphicsContext() used to do, and cleans up correctly in its destructor.
+        This removes the tight coupling mentioned earlier.
+
+        Test: fast/text/empty-shadow.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::applyShadowToGraphicsContext): Moved to ShadowApplier.
+        * rendering/InlineTextBox.h: Deleted applyShadowToGraphicsContext signature.
+        * rendering/TextPainter.cpp:
+        (WebCore::ShadowApplier::ShadowApplier): Perform the contents of applyShadowToGraphicsContext()
+        (WebCore::ShadowApplier::~ShadowApplier): Undo the work done previously
+        (WebCore::paintTextWithShadows): Create a ShadowApplier to do the relevant shadow work. In addition,
+        refactor some boolean flags to more meaningful ones with relation to the computation at hand.
+        (WebCore::isEmptyShadow): Moved to TextPainter.h, named shadowIsCompletelyCoveredByText()
+        * rendering/TextPainter.h:
+        (WebCore::ShadowApplier::ShadowApplier): Moved from InlineTextBox::applyShadowToGraphicsContext().
+        (WebCore::ShadowApplier::extraOffset): Getter.
+        (WebCore::ShadowApplier::~ShadowApplier): Moved from TextPainter::paintTextWithShadows().
+        (WebCore::isLastShadowIteration): Helper function.
+        (WebCore::shadowIsCompletelyCoveredByText): Determines whether or not we should not draw the shadow.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows): Update to use ShadowApplier.
+
 2014-09-23  Benjamin Poulain  <bpoulain@apple.com>
 
         The style resolution cache applies properties incorrectly whenever direction != ltr

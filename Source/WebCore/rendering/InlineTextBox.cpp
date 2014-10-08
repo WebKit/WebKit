@@ -424,34 +424,6 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext& context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal, bool& didSaveContext)
-{
-    if (!shadow)
-        return FloatSize();
-
-    FloatSize extraOffset;
-    int shadowX = horizontal ? shadow->x() : shadow->y();
-    int shadowY = horizontal ? shadow->y() : -shadow->x();
-    FloatSize shadowOffset(shadowX, shadowY);
-    int shadowRadius = shadow->radius();
-    const Color& shadowColor = shadow->color();
-
-    if (shadow->next() || stroked || !opaque) {
-        FloatRect shadowRect(textRect);
-        shadowRect.inflate(shadow->paintingExtent());
-        shadowRect.move(shadowOffset);
-        context.save();
-        context.clip(shadowRect);
-
-        extraOffset = FloatSize(0, 2 * textRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
-        shadowOffset -= extraOffset;
-        didSaveContext = true;
-    }
-
-    context.setShadow(shadowOffset, shadowRadius, shadowColor, context.fillColorSpace());
-    return extraOffset;
-}
-
 static inline bool emphasisPositionHasNeitherLeftNorRight(TextEmphasisPosition emphasisPosition)
 {
     return !(emphasisPosition & TextEmphasisPositionLeft) && !(emphasisPosition & TextEmphasisPositionRight);
