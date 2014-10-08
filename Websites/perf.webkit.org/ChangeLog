@@ -1,5 +1,9 @@
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove superfluously duplicated code in public/api/report-commits.php.
+
+2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should store commit logs
         https://bugs.webkit.org/show_bug.cgi?id=137510
 
