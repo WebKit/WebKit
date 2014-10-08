@@ -67,6 +67,16 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
 
+void WebInspectorProxy::dockButtonClicked(GtkWidget* button, WebInspectorProxy* inspector)
+{
+    if (button == inspector->m_dockBottomButton)
+        inspector->attach(AttachmentSideBottom);
+    else if (button == inspector->m_dockRightButton)
+        inspector->attach(AttachmentSideRight);
+    else
+        ASSERT_NOT_REACHED();
+}
+
 void WebInspectorProxy::createInspectorWindow()
 {
     if (m_client.openWindow(this))
@@ -79,7 +89,33 @@ void WebInspectorProxy::createInspectorWindow()
     if (WebCore::widgetIsOnscreenToplevelWindow(inspectedViewParent))
         gtk_window_set_transient_for(GTK_WINDOW(m_inspectorWindow), GTK_WINDOW(inspectedViewParent));
 
-    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
+#if GTK_CHECK_VERSION(3, 10, 0)
+    m_headerBar = gtk_header_bar_new();
+    gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(m_headerBar), TRUE);
+
+    m_dockBottomButton = gtk_button_new();
+    g_object_add_weak_pointer(G_OBJECT(m_dockBottomButton), reinterpret_cast<void**>(&m_dockBottomButton));
+    g_signal_connect(m_dockBottomButton, "clicked", G_CALLBACK(dockButtonClicked), this);
+    gtk_widget_set_sensitive(m_dockBottomButton, canAttach());
+    gtk_button_set_relief(GTK_BUTTON(m_dockBottomButton), GTK_RELIEF_NONE);
+    gtk_button_set_image(GTK_BUTTON(m_dockBottomButton), gtk_image_new_from_resource("/org/webkitgtk/inspector/UserInterface/Images/DockBottom.svg"));
+    gtk_header_bar_pack_start(GTK_HEADER_BAR(m_headerBar), m_dockBottomButton);
+    gtk_widget_show(m_dockBottomButton);
+
+    m_dockRightButton = gtk_button_new();
+    g_object_add_weak_pointer(G_OBJECT(m_dockRightButton), reinterpret_cast<void**>(&m_dockRightButton));
+    g_signal_connect(m_dockRightButton, "clicked", G_CALLBACK(dockButtonClicked), this);
+    gtk_widget_set_sensitive(m_dockRightButton, canAttach());
+    gtk_button_set_relief(GTK_BUTTON(m_dockRightButton), GTK_RELIEF_NONE);
+    gtk_button_set_image(GTK_BUTTON(m_dockRightButton), gtk_image_new_from_resource("/org/webkitgtk/inspector/UserInterface/Images/DockRight.svg"));
+    gtk_header_bar_pack_start(GTK_HEADER_BAR(m_headerBar), m_dockRightButton);
+    gtk_widget_show(m_dockRightButton);
+
+    gtk_window_set_titlebar(GTK_WINDOW(m_inspectorWindow), m_headerBar);
+    gtk_widget_show(m_headerBar);
+#endif
+
+    updateInspectorWindowTitle();
     gtk_window_set_default_size(GTK_WINDOW(m_inspectorWindow), initialWindowWidth, initialWindowHeight);
 
     gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
@@ -87,6 +123,23 @@ void WebInspectorProxy::createInspectorWindow()
 
     g_object_add_weak_pointer(G_OBJECT(m_inspectorWindow), reinterpret_cast<void**>(&m_inspectorWindow));
     gtk_window_present(GTK_WINDOW(m_inspectorWindow));
+}
+
+void WebInspectorProxy::updateInspectorWindowTitle() const
+{
+    ASSERT(m_inspectorWindow);
+    if (m_inspectedURLString.isEmpty()) {
+        gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
+        return;
+    }
+
+#if GTK_CHECK_VERSION(3, 10, 0)
+    gtk_header_bar_set_title(GTK_HEADER_BAR(m_headerBar), _("Web Inspector"));
+    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(m_headerBar), m_inspectedURLString.utf8().data());
+#else
+    GUniquePtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), m_inspectedURLString.utf8().data()));
+    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
+#endif
 }
 
 void WebInspectorProxy::platformOpen()
@@ -140,12 +193,11 @@ bool WebInspectorProxy::platformIsFront()
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
+    m_inspectedURLString = url;
     m_client.inspectedURLChanged(this, url);
 
-    if (!m_inspectorWindow)
-        return;
-    GUniquePtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), url.utf8().data()));
-    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
+    if (m_inspectorWindow)
+        updateInspectorWindowTitle();
 }
 
 String WebInspectorProxy::inspectorPageURL() const
@@ -250,9 +302,12 @@ void WebInspectorProxy::platformAppend(const String&, const String&)
     notImplemented();
 }
 
-void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 {
-    notImplemented();
+    if (m_dockBottomButton && m_dockRightButton) {
+        gtk_widget_set_sensitive(m_dockBottomButton, available);
+        gtk_widget_set_sensitive(m_dockRightButton, available);
+    }
 }
 
 } // namespace WebKit

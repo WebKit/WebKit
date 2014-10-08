@@ -1,3 +1,23 @@
+2014-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] The new web inspector can't be docked again once undocked
+        https://bugs.webkit.org/show_bug.cgi?id=121544
+
+        Reviewed by Martin Robinson.
+
+        Use a GtkHeaderBar for the inspector window to add dock buttons
+        when building with GTK+ >= 3.10.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::dockButtonClicked):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+
 2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Add missing inspector files to compilation.
