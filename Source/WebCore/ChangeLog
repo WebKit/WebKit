@@ -1,3 +1,20 @@
+2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] TLS errors should take precedence over HTTP authentication
+        https://bugs.webkit.org/show_bug.cgi?id=137300
+
+        Reviewed by Sergio Villar Senin.
+
+        Handle TLS errors in got-headers callback to make sure it happens
+        before starting the authentication process.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::handleUnignoredTLSErrors): Refactored to receive the
+        soup message.
+        (WebCore::gotHeadersCallback): Return early and cancel the request in case of TLS errors.
+        (WebCore::sendRequestCallback): Do not handle TLS errors here, the request should have already been
+        cancelled at this point in case of TLS errors.
+
 2014-09-19  Dean Jackson  <dino@apple.com>
 
         Multithreaded WebGL is a bad idea - remove it

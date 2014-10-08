@@ -1,3 +1,19 @@
+2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] TLS errors should take precedence over HTTP authentication
+        https://bugs.webkit.org/show_bug.cgi?id=137300
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a test case to check that authenticate signal is not emitted
+        in case of TLS errors, and the load fails instead.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (webViewAuthenticationCallback):
+        (testTLSErrorsHTTPAuth):
+        (httpsServerCallback):
+        (beforeAll):
+
 2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Gtk] build.sh needs a -- before make options when the build command is cmake --build
