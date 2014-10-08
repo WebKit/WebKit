@@ -1045,6 +1045,8 @@ webkit.org/b/132515 [ MountainLion ] fast/forms/hidpi-textarea-on-subpixel-posit
 # Some CSS region expected tests do not properly match CSS region's behavior.
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 
+webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
+
 # These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
 [ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
 [ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
