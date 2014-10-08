@@ -146,10 +146,10 @@ class AutoinstallImportHook(object):
         # organization purposes.
         irc_dir = self._fs.join(_AUTOINSTALLED_DIR, "irc")
         installer = AutoInstaller(target_dir=irc_dir)
-        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
-                                                url_subpath="irclib.py")
-        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
-                          url_subpath="ircbot.py")
+        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.tar.gz",
+                                                url_subpath="python-irclib-0.4.8/irclib.py")
+        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.tar.gz",
+                          url_subpath="python-irclib-0.4.8/ircbot.py")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
