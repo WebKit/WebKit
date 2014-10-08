@@ -294,4 +294,8 @@
 #define WARN_UNUSED_RETURN
 #endif
 
+#if !defined(__has_include) && COMPILER(MSVC)
+#define __has_include(path) 0
+#endif
+
 #endif /* WTF_Compiler_h */
