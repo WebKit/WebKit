@@ -1,3 +1,28 @@
+2014-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Resolve various static analyzer warnings in WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=137531
+
+        Reviewed by Dean Jackson.
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::safeArrayToIntArray): Handle possible failure of
+        SafeArrayGetElement call.
+        (MarshallingHelpers::safeArrayToIUnknownArray): Ditto.
+        * MemoryStream.cpp:
+        (MemoryStream::CopyTo): Zero-initialize 'written' to silence warning. 
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota): Handle possible failure of
+        GetModuleFileName.
+        * WebHistory.cpp:
+        (getDayBoundaries): Handle possible failure of TzSpecificLocalTimeToSystemTime
+        * WebView.cpp:
+        (WebView::shouldInitializeTrackPointHack): Zero initialize return value.
+        (WebView::dispatchDidReceiveIconFromWebFrame): Avoid possible DeleteObject
+        call on a null bitmap handle.
+        (WebView::standardUserAgentWithApplicationName): Get rid of spurious
+        pointer dereference.
+
 2014-10-02  Tim Horton  <timothy_horton@apple.com>
 
         Move PageOverlay[Controller] to WebCore

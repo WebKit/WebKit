@@ -192,7 +192,7 @@ HRESULT STDMETHODCALLTYPE MemoryStream::CopyTo(
         cb.LowPart = (DWORD)-1;
     }
 
-    ULONG written;
+    ULONG written = 0;
     ULONG read = min(cb.LowPart, (ULONG)(m_buffer->size()-m_pos));
     HRESULT hr = pstm->Write(m_buffer->data()+m_pos, read, &written);
     if (pcbWritten) {

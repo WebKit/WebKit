@@ -237,9 +237,9 @@ CFArrayRef MarshallingHelpers::safeArrayToIntArray(SAFEARRAY* inArray)
     if (len > 0) {
         items = new CFNumberRef[len];
         for (; lBound <= uBound; lBound++) {
-            int num;
+            int num = 0;
             hr = ::SafeArrayGetElement(inArray, &lBound, &num);
-            items[lBound] = intToCFNumberRef(num);
+            items[lBound] = SUCCEEDED(hr) ? intToCFNumberRef(num) : kCFNumberNaN;
         }
     }
     CFArrayRef result = CFArrayCreate(0, (const void**) items, len, &kCFTypeArrayCallBacks);
@@ -255,9 +255,9 @@ CFArrayRef MarshallingHelpers::safeArrayToIUnknownArray(SAFEARRAY* inArray)
     if (SUCCEEDED(hr))
         hr = ::SafeArrayGetUBound(inArray, 1, &uBound);
     long len = (SUCCEEDED(hr)) ? (uBound-lBound+1) : 0;
-    void* items;
+    void* items = nullptr;
     hr = ::SafeArrayAccessData(inArray, &items);
-    CFArrayRef result = CFArrayCreate(0, (const void**) items, len, &kIUnknownArrayCallBacks);
+    CFArrayRef result = SUCCEEDED(hr) ? CFArrayCreate(0, (const void**) items, len, &kIUnknownArrayCallBacks) : nullptr;
     hr = ::SafeArrayUnaccessData(inArray);
     return result;
 }

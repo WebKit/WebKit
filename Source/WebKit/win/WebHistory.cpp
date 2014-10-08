@@ -126,12 +126,12 @@ static void getDayBoundaries(DATE day, DATE& beginningOfDay, DATE& beginningOfNe
     addDayToSystemTime(beginningOfNextDayLocalTime);
 
     SYSTEMTIME beginningSystemTime;
-    ::TzSpecificLocalTimeToSystemTime(0, &beginningLocalTime, &beginningSystemTime);
-    ::SystemTimeToVariantTime(&beginningSystemTime, &beginningOfDay);
+    if (::TzSpecificLocalTimeToSystemTime(0, &beginningLocalTime, &beginningSystemTime))
+        ::SystemTimeToVariantTime(&beginningSystemTime, &beginningOfDay);
 
     SYSTEMTIME beginningOfNextDaySystemTime;
-    ::TzSpecificLocalTimeToSystemTime(0, &beginningOfNextDayLocalTime, &beginningOfNextDaySystemTime);
-    ::SystemTimeToVariantTime(&beginningOfNextDaySystemTime, &beginningOfNextDay);
+    if (::TzSpecificLocalTimeToSystemTime(0, &beginningOfNextDayLocalTime, &beginningOfNextDaySystemTime))
+        ::SystemTimeToVariantTime(&beginningOfNextDaySystemTime, &beginningOfNextDay);
 }
 
 static inline DATE beginningOfDay(DATE date)

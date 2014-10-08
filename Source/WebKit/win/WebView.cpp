@@ -2692,8 +2692,8 @@ bool WebView::shouldInitializeTrackPointHack()
         L"Software\\Synaptics\\SynTPEnh\\UltraNavPS2" };
 
     for (int i = 0; i < 5; ++i) {
-        HKEY trackPointKey;
-        int readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
+        HKEY trackPointKey = nullptr;
+        LSTATUS readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
         ::RegCloseKey(trackPointKey);
         if (readKeyResult == ERROR_SUCCESS) {
             shouldCreateScrollbars = true;
@@ -2928,7 +2928,7 @@ void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
 
         BitmapInfo bmInfo = BitmapInfo::create(sz);
 
-        HBITMAP hBitmap = 0;
+        HBITMAP hBitmap = nullptr;
 
         Image* icon = iconDatabase().synchronousIconForPageURL(str, sz);
 
@@ -2939,7 +2939,7 @@ void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
         }
 
         HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, hBitmap, frame);
-        if (hr == E_NOTIMPL)
+        if ((hr == E_NOTIMPL) && hBitmap)
             DeleteObject(hBitmap);
     }
 }
@@ -5330,16 +5330,12 @@ HRESULT STDMETHODCALLTYPE WebView::canHandleRequest(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::standardUserAgentWithApplicationName( 
-    BSTR applicationName,
-    BSTR* groupName)
+HRESULT WebView::standardUserAgentWithApplicationName(BSTR applicationName, BSTR* groupName)
 {
     if (!groupName) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
     }
-
-    *groupName;
 
     if (!applicationName) {
         ASSERT_NOT_REACHED();

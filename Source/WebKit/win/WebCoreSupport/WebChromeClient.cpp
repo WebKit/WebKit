@@ -598,8 +598,9 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             HMODULE safariHandle = GetModuleHandleW(L"Safari.exe");
             if (!safariHandle)
                 return;
-            GetModuleFileName(safariHandle, path, WTF_ARRAY_LENGTH(path));
-            DWORD handle;
+            if (!::GetModuleFileName(safariHandle, path, WTF_ARRAY_LENGTH(path)))
+                return;
+            DWORD handle = 0;
             DWORD versionSize = GetFileVersionInfoSize(path, &handle);
             if (!versionSize)
                 return;
