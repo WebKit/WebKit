@@ -26,6 +26,7 @@
 #ifndef MarkupAccumulator_h
 #define MarkupAccumulator_h
 
+#include "Element.h"
 #include "markup.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
@@ -72,8 +73,14 @@ protected:
 
     void concatenateMarkup(StringBuilder&);
 
-    virtual void appendString(const String&);
-    virtual void appendEndTag(const Node&);
+    void appendString(const String&);
+    void appendEndTag(const Node& node)
+    {
+        if (node.isElementNode())
+            appendEndTag(toElement(node));
+    }
+
+    virtual void appendEndTag(const Element&);
     virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*);
     virtual void appendText(StringBuilder&, const Text&);
     virtual void appendElement(StringBuilder&, const Element&, Namespaces*);
@@ -84,7 +91,7 @@ protected:
     void appendCloseTag(StringBuilder&, const Element&);
 
     void appendStartMarkup(StringBuilder&, const Node&, Namespaces*);
-    void appendEndMarkup(StringBuilder&, const Node&);
+    void appendEndMarkup(StringBuilder&, const Element&);
 
     void appendAttributeValue(StringBuilder&, const String&, bool);
     void appendNodeValue(StringBuilder&, const Node&, const Range*, EntityMask);
@@ -97,7 +104,7 @@ protected:
 
     bool shouldAddNamespaceElement(const Element&);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
-    bool shouldSelfClose(const Node&);
+    bool shouldSelfClose(const Element&);
     bool elementCannotHaveEndTag(const Node&);
     EntityMask entityMaskForText(const Text&) const;
 

@@ -201,9 +201,9 @@ void MarkupAccumulator::appendStartTag(const Node& node, Namespaces* namespaces)
         m_nodes->append(const_cast<Node*>(&node));
 }
 
-void MarkupAccumulator::appendEndTag(const Node& node)
+void MarkupAccumulator::appendEndTag(const Element& element)
 {
-    appendEndMarkup(m_markup, node);
+    appendEndMarkup(m_markup, element);
 }
 
 size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
@@ -595,13 +595,13 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
 // 2. Elements w/ children never self-close because they use a separate end tag.
 // 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
 // 4. Other elements self-close.
-bool MarkupAccumulator::shouldSelfClose(const Node& node)
+bool MarkupAccumulator::shouldSelfClose(const Element& element)
 {
-    if (!inXMLFragmentSerialization() && node.document().isHTMLDocument())
+    if (!inXMLFragmentSerialization() && element.document().isHTMLDocument())
         return false;
-    if (node.hasChildNodes())
+    if (element.hasChildNodes())
         return false;
-    if (node.isHTMLElement() && !elementCannotHaveEndTag(node))
+    if (element.isHTMLElement() && !elementCannotHaveEndTag(element))
         return false;
     return true;
 }
@@ -618,14 +618,14 @@ bool MarkupAccumulator::elementCannotHaveEndTag(const Node& node)
     return toHTMLElement(node).ieForbidsInsertHTML();
 }
 
-void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Node& node)
+void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Element& element)
 {
-    if (!node.isElementNode() || shouldSelfClose(node) || (!node.hasChildNodes() && elementCannotHaveEndTag(node)))
+    if (shouldSelfClose(element) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
         return;
 
     result.append('<');
     result.append('/');
-    result.append(toElement(node).nodeNamePreservingCase());
+    result.append(element.nodeNamePreservingCase());
     result.append('>');
 }
 

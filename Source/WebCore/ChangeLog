@@ -1,3 +1,31 @@
+2014-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Minimize virtual function calls in MarkupAccumulator
+        https://bugs.webkit.org/show_bug.cgi?id=136957
+
+        Reviewed by Benjamin Poulain.
+
+        This patch minimizes the number of virtual function calls in
+        MarkupAccumulator by:
+        - De-virtualizing MarkupAccumulator::appendString(), which is never
+          overridden
+        - Having MarkupAccumulator::appendEndTag() virtual function take an
+          Element in argument instead of a Node, as it only applies to Element.
+          Also add a non-virtual overload that takes a Node in argument and
+          that does the isElementNode() check so that we don't need to explicitly
+          do the check at each call site.
+
+        No new tests, no behavior change.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendEndTag):
+        (WebCore::MarkupAccumulator::shouldSelfClose):
+        (WebCore::MarkupAccumulator::appendEndMarkup):
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::appendEndTag):
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::appendEndTag):
+
 2014-09-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Add a size check for CSSSelector
