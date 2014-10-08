@@ -393,7 +393,6 @@ webkit.org/b/82982 fast/dom/jsDevicePixelRatio.html [ Pass Failure ]
 
 # Failing subpixel reference tests
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
-webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
@@ -611,7 +610,6 @@ http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
 # Needs ENABLE_SHADOW_DOM
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
-webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-outside-shadow.html [ Failure ]
 
 # ENABLE(CUSTOM_ELEMENTS) is disabled.
 fast/dom/custom
@@ -688,9 +686,6 @@ webkit.org/b/84771 ietestcenter/css3/multicolumn/column-width-applies-to-009.htm
 webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
-
-webkit.org/b/60731 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-webkit.org/b/60731 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 
 webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
@@ -827,8 +822,6 @@ webkit.org/b/104962 platform/mac/fast/loader/file-url-mimetypes-2.html [ Failure
 
 webkit.org/b/105777 platform/mac/editing/spelling/autocorrection-in-textarea.html [ Failure Pass ]
 
-webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
-
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
@@ -837,7 +830,6 @@ webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
 webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
-webkit.org/b/119375 fast/workers/worker-call.html [ Failure ]
 
 webkit.org/b/110186 inspector-protocol/page/javascriptDialogEvents.html [ Skip ]
 
@@ -933,16 +925,11 @@ webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ P
 
 webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/118900 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
-
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Pass Failure ]
 
 webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
-
-webkit.org/b/120922 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
-webkit.org/b/120922 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 
 webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
@@ -983,8 +970,6 @@ webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass ]
 webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
-webkit.org/b/123369 [ Mavericks ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
-webkit.org/b/123369 [ Mavericks ] svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Skip ]
 webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-strict.html [ Skip ]
@@ -1025,23 +1010,13 @@ webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-sci
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 
 # Subpixel failures
-# Subpixel: position dependent size: snapSizeToPixel()
-webkit.org/b/126889 fast/forms/input-widths.html [ Failure ]
-webkit.org/b/126889 fast/forms/number/number-size.html [ Failure ]
-
-# Subpixel: off-by-1 pixel rendering on mathml
-webkit.org/b/126897 mathml/presentation/bug95015.html [ ImageOnlyFailure ]
 
 # Subpixel: -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
-# Subpixel: misplaced zoomed svg content.
-webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
-
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
-webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]
@@ -1052,24 +1027,24 @@ webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-two-
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003.htm [ Failure ]
 webkit.org/b/128061 media/video-zoom.html [ Failure ]
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
+
 # debug assert on empty drawRect
 webkit.org/b/128283 [ Debug ] transitions/shorthand-border-transitions.html [ Skip ]
+
 # Non-uniform scaling context.
 webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
+
 # repaintRectsAsText reports different repaintrects on ML
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
+
 # cliprect fails to cover textarea.
-webkit.org/b/132515 fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/132515 [ MountainLion ] fast/forms/hidpi-textarea-on-subpixel-position.html [ Pass ImageOnlyFailure ]
+
 # Some CSS region expected tests do not properly match CSS region's behavior.
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
-webkit.org/b/132990 fast/regions/overflow/overflow-size-change-in-variable-width-regions.html [ ImageOnlyFailure ]
-webkit.org/b/132990 fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
+
 # These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
 [ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
 [ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
@@ -1086,9 +1061,6 @@ webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failu
 webkit.org/b/128379 animations/suspend-resume-animation.html [ Pass Failure ]
 
 # Regressions in svg/clip-path
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
-webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
@@ -1096,8 +1068,6 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
 # This test fails because the structure of mfenced/mo operators was changed in bug 124838.
 webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
-
-webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
 
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
@@ -1400,11 +1370,6 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Failure ]
 
 # Some inspector tests failing after r173992
-webkit.org/b/137157 inspector/css/matched-style-properties.html [ Failure Crash ]
-webkit.org/b/137157 inspector/event-listener-set.html [ Failure Crash ]
-webkit.org/b/137157 inspector/event-listener.html [ Failure Crash ]
-webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure Crash ]
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure Crash ]
-webkit.org/b/137157 inspector/protocol-promise-result.html [ Failure Crash ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Pass Failure Crash ]
 
 webkit.org/b/137319 [ MountainLion ] fast/css/test-setting-canvas-color.html [ Pass Crash Timeout ]

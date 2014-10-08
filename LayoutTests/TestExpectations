@@ -2,9 +2,6 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-# Incomplete implementation of eventSender causes this test to fail
-webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
-
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
 
@@ -36,7 +33,6 @@ webkit.org/b/112521 [ Release ] webaudio/audioprocessingevent.html [ Pass Failur
 webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
 webkit.org/b/137359 webaudio/distance-linear.html [ Pass Failure ]
 
-webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailure ]
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ ImageOnlyFailure ]
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ ImageOnlyFailure ]
@@ -82,9 +78,6 @@ webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
 
 #subpixel failure on non-retina displays.
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
-#subpixel rotation
-webkit.org/b/130556 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
 
 webkit.org/b/133761 inspector-protocol/debugger/breakpoint-action-detach.html [ Skip ]
 webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
@@ -113,9 +106,6 @@ webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
-
-# Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
-webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Crash Pass ]
 
@@ -160,7 +150,6 @@ webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-014.html [ ImageOnly
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-015.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-016.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-017.html [ ImageOnlyFailure ]
-webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-018.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-019.html [ ImageOnlyFailure ]
 
 # border painting diff (Path vs. drawLine)
