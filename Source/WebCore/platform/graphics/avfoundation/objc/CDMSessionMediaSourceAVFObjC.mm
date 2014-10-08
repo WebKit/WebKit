@@ -87,21 +87,25 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 {
     ASSERT(!m_parsers.contains(parser));
     m_parsers.add(parser);
-    [parser addObserver:self forKeyPath:@"sessionIdentifier" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial) context:nullptr];
+    if ([parser respondsToSelector:@selector(sessionIdentifier)])
+        [parser addObserver:self forKeyPath:@"sessionIdentifier" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial) context:nullptr];
 }
 
 - (void)stopObserving:(AVStreamDataParser *)parser
 {
     ASSERT(m_parsers.contains(parser));
     m_parsers.remove(parser);
-    [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
+    if ([parser respondsToSelector:@selector(sessionIdentifier)])
+        [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
 }
 
 - (void)invalidate
 {
     m_parent = nullptr;
-    for (auto& parser : m_parsers)
-        [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
+    for (auto& parser : m_parsers) {
+        if ([parser respondsToSelector:@selector(sessionIdentifier)])
+            [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
+    }
     m_parsers.clear();
 }
 

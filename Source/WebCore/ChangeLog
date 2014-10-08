@@ -1,3 +1,12 @@
+2014-10-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed follow-up fix for r174460. Do not register for KVOs if the object does not respond to the requested property.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (-[CDMSessionMediaSourceAVFObjCObserver beginObserving:]):
+        (-[CDMSessionMediaSourceAVFObjCObserver stopObserving:]):
+        (-[CDMSessionMediaSourceAVFObjCObserver invalidate]):
+
 2014-10-08  Dean Jackson  <dino@apple.com>
 
         Add deprecation warning for CSSKeyframesRule::appendRule
