@@ -1776,11 +1776,6 @@ void WKPageEndPrinting(WKPageRef page)
 }
 #endif
 
-WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef)
-{
-    return 0;
-}
-
 void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
 {
     toImpl(page)->setShouldSendEventsSynchronously(sync);

@@ -1,5 +1,21 @@
 2014-10-07  Sungmann Cho  <sungmann.cho@navercorp.com>
 
+        Remove WKPageCreateSnapshotOfVisibleContent API.
+        https://bugs.webkit.org/show_bug.cgi?id=66979
+
+        Reviewed by Darin Adler.
+
+        After the landing of the first patch of webkit.org/b/66979,
+        WKPageCreateSnapshotOfVisibleContent API has been neglected for years.
+        Currently, this is not used anywhere and does not break the nightlies.
+        So we can remove this.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCreateSnapshotOfVisibleContent): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+
+2014-10-07  Sungmann Cho  <sungmann.cho@navercorp.com>
+
         Remove WKPageSetInvalidMessageFunction.
         https://bugs.webkit.org/show_bug.cgi?id=137509
 
