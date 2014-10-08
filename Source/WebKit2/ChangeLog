@@ -1,3 +1,18 @@
+2014-09-25  Tim Horton  <timothy_horton@apple.com>
+
+        CommitLayerTree decode fails in 32-bit apps on 64-bit devices (TransformationMatrix alignment differs)
+        https://bugs.webkit.org/show_bug.cgi?id=136444
+        <rdar://problem/17952526>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TransformationMatrix>::encode):
+        (IPC::ArgumentCoder<TransformationMatrix>::decode):
+        Stop using SimpleArgumentCoder to encode/decode TransformationMatrix,
+        because the alignment of TransformationMatrix differs between architectures,
+        and there's no guarantee that both sides of a connection are the same architecture.
+
 2014-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         Provide a default argument for the most commonly used HitTestRequest variant
