@@ -2396,7 +2396,7 @@ void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoin
 {
     newTargetScale = pageScaleFactor();
     newScrollPosition = m_page->mainFrame().view()->scrollPosition();
-    nextValidLayerTreeTransactionID = toRemoteLayerTreeDrawingArea(*m_drawingArea).nextTransactionID();
+    nextValidLayerTreeTransactionID = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID();
 }
 
 void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)

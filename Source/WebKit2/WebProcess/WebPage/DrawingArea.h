@@ -37,6 +37,7 @@
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TypeCasts.h>
 
 namespace IPC {
 class Connection;
@@ -152,9 +153,11 @@ private:
 #endif
 };
 
-#define DRAWING_AREA_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, DrawingArea, value, value->predicate, value.predicate)
-
 } // namespace WebKit
+
+#define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(ToValueTypeName, AreaType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+    static bool isType(const WebKit::DrawingArea& area) { return area.type() == WebKit::AreaType; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // DrawingArea_h

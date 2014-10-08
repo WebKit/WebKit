@@ -145,9 +145,9 @@ private:
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 
-DRAWING_AREA_TYPE_CASTS(TiledCoreAnimationDrawingArea, type() == DrawingAreaTypeTiledCoreAnimation);
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaTypeTiledCoreAnimation)
 
 #endif // !PLATFORM(IOS)
 

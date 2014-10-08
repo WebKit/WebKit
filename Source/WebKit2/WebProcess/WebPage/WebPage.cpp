@@ -4455,7 +4455,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if PLATFORM(IOS)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_scaleWasSetByUIProcess = false;
-    m_firstLayerTreeTransactionIDAfterDidCommitLoad = toRemoteLayerTreeDrawingArea(*m_drawingArea).nextTransactionID();
+    m_firstLayerTreeTransactionIDAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID();
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = std::chrono::milliseconds(1000 / 60);
 

@@ -167,8 +167,8 @@ private:
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 
-DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(RemoteLayerTreeDrawingArea, DrawingAreaTypeRemoteLayerTree)
 
 #endif // RemoteLayerTreeDrawingArea_h
