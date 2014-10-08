@@ -1,3 +1,17 @@
+2014-09-23  Jer Noble  <jer.noble@apple.com>
+
+        [Tools] git-commit uses wrong ChangeLog when run from a subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=137031
+
+        Reviewed by Joseph Pecoraro.
+
+        commit-log-editor is run from the top of the Git checkout, even when git-commit is invoked
+        from a subdirectory, making the parsed locations of ChangeLog files incorrect. Git provides
+        a mapping prefix in the GIT_PREFIX environment variable, so apply this prefix to the parsed
+        ChangeLog locations before passing them to createCommitMessage().
+
+        * Scripts/commit-log-editor:
+
 2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] generate-gtkdoc crashes when generating HTML due to encoding issues
