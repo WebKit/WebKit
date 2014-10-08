@@ -113,7 +113,9 @@ int AccessibilityUIElement::childrenCount()
         return 0;
 
     long childCount;
-    m_element->get_accChildCount(&childCount);
+    if (FAILED(m_element->get_accChildCount(&childCount)))
+        return 0;
+
     return childCount;
 }
 
@@ -398,7 +400,8 @@ JSStringRef AccessibilityUIElement::valueDescription()
 static DWORD accessibilityState(COMPtr<IAccessible> element)
 {
     VARIANT state;
-    element->get_accState(self(), &state);
+    if (FAILED(element->get_accState(self(), &state)))
+        return 0;
 
     ASSERT(V_VT(&state) == VT_I4);
 

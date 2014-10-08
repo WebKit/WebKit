@@ -696,6 +696,9 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     hDropMedium.tymed = TYMED_HGLOBAL;
     SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * files.size());
     hDropMedium.hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, dropFilesSize);
+    if (!hDropMedium.hGlobal)
+        return JSValueMakeUndefined(context);
+
     DROPFILES* dropFiles = reinterpret_cast<DROPFILES*>(GlobalLock(hDropMedium.hGlobal));
     memset(dropFiles, 0, sizeof(DROPFILES));
     dropFiles->pFiles = sizeof(DROPFILES);
@@ -710,6 +713,9 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     hFileNameMedium.tymed = TYMED_HGLOBAL;
     SIZE_T hFileNameSize = sizeof(WCHAR) * files.size();
     hFileNameMedium.hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, hFileNameSize);
+    if (!hFileNameMedium.hGlobal)
+        return JSValueMakeUndefined(context);
+
     WCHAR* hFileName = static_cast<WCHAR*>(GlobalLock(hFileNameMedium.hGlobal));
     for (size_t i = 0; i < files.size(); i++)
         hFileName[i] = files[i];

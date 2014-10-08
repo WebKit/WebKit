@@ -58,7 +58,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
 {
     RECT frame;
     if (!GetWindowRect(webViewWindow, &frame))
-        return 0;
+        return nullptr;
 
     BITMAPINFO bmp = {0};
     bmp.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -69,7 +69,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     bmp.bmiHeader.biCompression = BI_RGB;
 
     void* bits = 0;
-    HBITMAP bitmap = CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0);
+    HBITMAP bitmap = ::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0);
+    if (!bitmap)
+        return nullptr;
 
     auto memoryDC = adoptGDIObject(::CreateCompatibleDC(0));
     ::SelectObject(memoryDC.get(), bitmap);

@@ -215,7 +215,7 @@ void WinLauncher::showLastVisitedSites(IWebView& webView)
     if (FAILED(hr))
         return;
 
-    UINT backSetting = MF_BYCOMMAND | (backCount) ? MF_ENABLED : MF_DISABLED;
+    UINT backSetting = MF_BYCOMMAND | ((backCount) ? MF_ENABLED : MF_DISABLED);
     ::EnableMenuItem(menu, IDM_HISTORY_BACKWARD, backSetting);
 
     int forwardCount = 0;
@@ -223,7 +223,7 @@ void WinLauncher::showLastVisitedSites(IWebView& webView)
     if (FAILED(hr))
         return;
 
-    UINT forwardSetting = MF_BYCOMMAND | (forwardCount) ? MF_ENABLED : MF_DISABLED;
+    UINT forwardSetting = MF_BYCOMMAND | ((forwardCount) ? MF_ENABLED : MF_DISABLED);
     ::EnableMenuItem(menu, IDM_HISTORY_FORWARD, forwardSetting);
 
     IWebHistoryItemPtr currentItem;

@@ -33,17 +33,6 @@
 
 using namespace std;
 
-#if COMPILER(MSVC)
-// Work around Visual Studio 2008's lack of an INFINITY or NAN definition.
-#include <limits>
-#if !defined(INFINITY)
-#define INFINITY (numeric_limits<double>::infinity())
-#endif
-#if !defined(NAN)
-#define NAN (numeric_limits<double>::quiet_NaN())
-#endif
-#endif
-
 namespace WTF {
 
 std::ostream& operator<<(std::ostream& out, const MediaTime& val)

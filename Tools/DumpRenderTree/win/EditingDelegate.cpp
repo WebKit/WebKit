@@ -114,7 +114,7 @@ static wstring dump(IDOMRange* range)
         return 0;
 
     wchar_t buffer[1024];
-    _snwprintf(buffer, ARRAYSIZE(buffer), L"range from %ld of %s to %ld of %s", startOffset, dumpPath(startContainer.get()), endOffset, dumpPath(endContainer.get()));
+    _snwprintf(buffer, ARRAYSIZE(buffer), L"range from %ld of %s to %ld of %s", startOffset, dumpPath(startContainer.get()).c_str(), endOffset, dumpPath(endContainer.get()).c_str());
     return buffer;
 }
 
@@ -126,7 +126,7 @@ HRESULT EditingDelegate::shouldBeginEditingInDOMRange(IWebView* /*webView*/, IDO
     }
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n"), dump(range));
+        _tprintf(TEXT("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n"), dump(range).c_str());
 
     *result = m_acceptsEditing;
     return S_OK;
@@ -140,7 +140,7 @@ HRESULT EditingDelegate::shouldEndEditingInDOMRange(IWebView* /*webView*/, IDOMR
     }
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n"), dump(range));
+        _tprintf(TEXT("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n"), dump(range).c_str());
 
     *result = m_acceptsEditing;
     return S_OK;
@@ -155,7 +155,7 @@ HRESULT EditingDelegate::shouldInsertNode(IWebView* /*webView*/, IDOMNode* node,
     };
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n"), dumpPath(node), dump(range), insertactionstring[action]);
+        _tprintf(TEXT("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n"), dumpPath(node).c_str(), dump(range).c_str(), insertactionstring[action]);
 
     return S_OK;
 }
@@ -174,7 +174,7 @@ HRESULT EditingDelegate::shouldInsertText(IWebView* /*webView*/, BSTR text, IDOM
     };
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n"), text ? text : TEXT(""), dump(range), insertactionstring[action]);
+        _tprintf(TEXT("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n"), text ? text : TEXT(""), dump(range).c_str(), insertactionstring[action]);
 
     *result = m_acceptsEditing;
     return S_OK;
@@ -188,7 +188,7 @@ HRESULT EditingDelegate::shouldDeleteDOMRange(IWebView* /*webView*/, IDOMRange* 
     }
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldDeleteDOMRange:%s\n"), dump(range));
+        _tprintf(TEXT("EDITING DELEGATE: shouldDeleteDOMRange:%s\n"), dump(range).c_str());
 
     *result = m_acceptsEditing;
     return S_OK;
@@ -212,7 +212,7 @@ HRESULT EditingDelegate::shouldChangeSelectedDOMRange(IWebView* /*webView*/, IDO
     };
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n"), dump(currentRange), dump(proposedRange), affinitystring[selectionAffinity], boolstring[stillSelecting]);
+        _tprintf(TEXT("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n"), dump(currentRange).c_str(), dump(proposedRange).c_str(), affinitystring[selectionAffinity], boolstring[stillSelecting]);
 
     *result = m_acceptsEditing;
     return S_OK;
@@ -226,7 +226,7 @@ HRESULT EditingDelegate::shouldApplyStyle(IWebView* /*webView*/, IDOMCSSStyleDec
     }
 
     if (::gTestRunner->dumpEditingCallbacks() && !done)
-        _tprintf(TEXT("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n"), TEXT("'style description'")/*[[style description] UTF8String]*/, dump(range));
+        _tprintf(TEXT("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n"), TEXT("'style description'")/*[[style description] UTF8String]*/, dump(range).c_str());
 
     *result = m_acceptsEditing;
     return S_OK;

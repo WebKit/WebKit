@@ -241,7 +241,7 @@ static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam
 {
     switch (msg) {
         case WM_DESTROY:
-            for (unsigned i = openWindows().size() - 1; i >= 0; --i) {
+            for (long i = openWindows().size() - 1; i >= 0; --i) {
                 if (openWindows()[i] == hWnd) {
                     openWindows().remove(i);
                     windowToWebViewMap().remove(hWnd);

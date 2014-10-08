@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 
 TestsController& TestsController::shared()
 {
-    static TestsController& shared = *new TestsController;
+    static NeverDestroyed<TestsController> shared;
     return shared;
 }
 

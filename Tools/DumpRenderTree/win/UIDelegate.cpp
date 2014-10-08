@@ -487,7 +487,7 @@ HRESULT UIDelegate::exceededDatabaseQuota(IWebView* sender, IWebFrame* frame, IW
     origin->port(&port);
 
     if (!done && gTestRunner->dumpDatabaseCallbacks())
-        printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%S, %S, %i} database:%S\n", protocol, host, port, databaseIdentifier);
+        printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%S\n", static_cast<const char*>(protocol), static_cast<const char*>(host), port, databaseIdentifier);
 
     unsigned long long defaultQuota = 5 * 1024 * 1024;
     double testDefaultQuota = gTestRunner->databaseDefaultQuota();

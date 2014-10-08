@@ -75,7 +75,7 @@ HRESULT DRTDesktopNotificationPresenter::showDesktopNotification(IWebDesktopNoti
     _bstr_t title, text, url;
     BOOL html;
 
-    if (!notification->isHTML(&html) && html) {
+    if (SUCCEEDED(notification->isHTML(&html)) && html) {
         notification->contentsURL(&url.GetBSTR());    
         printf("DESKTOP NOTIFICATION: contents at %S\n", static_cast<wchar_t*>(url));
     } else {

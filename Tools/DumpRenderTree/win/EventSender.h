@@ -31,7 +31,13 @@
 
 class DraggingInfo;
 
-typedef long HRESULT;
+#ifdef __midl
+typedef LONG HRESULT;
+#else
+#include <sal.h>
+typedef _Return_type_success_(return >= 0) long HRESULT;
+#endif // __midl
+
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 

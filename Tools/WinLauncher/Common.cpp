@@ -150,7 +150,9 @@ static bool getAppDataFolder(_bstr_t& directory)
         return false;
 
     wchar_t executablePath[MAX_PATH];
-    ::GetModuleFileNameW(0, executablePath, MAX_PATH);
+    if (!::GetModuleFileNameW(0, executablePath, MAX_PATH))
+        return false;
+
     ::PathRemoveExtensionW(executablePath);
 
     directory = _bstr_t(appDataDirectory) + L"\\" + ::PathFindFileNameW(executablePath);

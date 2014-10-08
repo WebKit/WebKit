@@ -26,6 +26,8 @@
 #ifndef TestsController_h
 #define TestsController_h
 
+#include <wtf/NeverDestroyed.h>
+
 namespace TestWebKitAPI {
 
 class TestsController {
@@ -37,6 +39,8 @@ public:
 private:
     TestsController();
     ~TestsController();
+
+    friend class WTF::NeverDestroyed<TestsController>;
 };
 
 } // namespace TestWebKitAPI
