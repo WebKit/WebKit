@@ -1,3 +1,10 @@
+2014-10-08  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r174403): media/track/track-forced-subtitles-in-band.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=137525
+
+        * TestExpectations: Marked media/track/track-forced-subtitles-in-band.html as an expected failure.
+
 2014-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         Roll-over Changelogs.

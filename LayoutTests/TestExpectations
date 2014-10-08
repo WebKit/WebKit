@@ -228,3 +228,5 @@ webkit.org/b/137167 js/kde/function_arguments.html [ Failure ]
 
 # Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit.
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
+
+webkit.org/b/137525 media/track/track-forced-subtitles-in-band.html [ Failure ]
