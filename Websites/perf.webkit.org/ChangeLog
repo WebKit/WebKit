@@ -1,5 +1,31 @@
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add v2 UI for the perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=137537
+
+        Rubber-stamped by Andreas Kling.
+
+        * public/v2: Added.
+        * public/v2/app.css: Added.
+        * public/v2/app.js: Added.
+        * public/v2/chart-pane.css: Added.
+        * public/v2/data.js: Added.
+        * public/v2/index.html: Added.
+        * public/v2/js: Added.
+        * public/v2/js/d3: Added.
+        * public/v2/js/d3/LICENSE: Added.
+        * public/v2/js/d3/d3.js: Added.
+        * public/v2/js/d3/d3.min.js: Added.
+        * public/v2/js/ember-data.js: Added.
+        * public/v2/js/ember.js: Added.
+        * public/v2/js/handlebars.js: Added.
+        * public/v2/js/jquery.min.js: Added.
+        * public/v2/js/statistics.js: Added.
+        * public/v2/manifest.js: Added.
+        * public/v2/popup.js: Added.
+
+2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove superfluously duplicated code in public/api/report-commits.php.
 
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
