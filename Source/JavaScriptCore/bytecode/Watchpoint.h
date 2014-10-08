@@ -289,7 +289,7 @@ private:
     
     static uintptr_t encodeState(WatchpointState state)
     {
-        return (state << StateShift) | IsThinFlag;
+        return (static_cast<uintptr_t>(state) << StateShift) | IsThinFlag;
     }
     
     bool isThin() const { return isThin(m_data); }

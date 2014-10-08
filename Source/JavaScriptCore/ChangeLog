@@ -1,3 +1,27 @@
+2014-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Resolve some static analysis warnings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=137508
+
+        Reviewed by Geoffrey Garen.
+
+        * API/tests/testapi.c:
+        (assertEqualsAsCharactersPtr): MSVC insists on using %Iu as its format specifier
+        for size_t. Make the format string conditional on Windows.
+        * bytecode/Watchpoint.h:
+        (JSC::InlineWatchpointSet::encodeState): Silence warning about left-shifting 'state'
+        as a 32-bit value before OR-ing it with a 64-bit value.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Silence warning about operator prescedence
+        causing the || operation to take place before the >= test.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock): Ditto (|| before !=)
+        * testRegExp.cpp:
+        (testOneRegExp): Ditto %Iu format specifier.
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext): Silence warning about
+        using a 32-bit value as part of a 64-bit calculation.
+
 2014-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         Roll-over Changelogs.

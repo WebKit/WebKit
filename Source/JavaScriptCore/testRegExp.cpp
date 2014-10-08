@@ -206,12 +206,22 @@ static bool testOneRegExp(VM& vm, RegExp* regexp, RegExpTest* regExpTest, bool v
     } else if (matchResult != -1) {
         if (outVector.size() != regExpTest->expectVector.size()) {
             result = false;
-            if (verbose)
-                printf("Line %d: output vector size mismatch - expected %lu got %lu\n", lineNumber, regExpTest->expectVector.size(), outVector.size());
+            if (verbose) {
+#if OS(WINDOWS)
+                printf("Line %d: output vector size mismatch - expected %Iu got %Iu\n", lineNumber, regExpTest->expectVector.size(), outVector.size());
+#else
+                printf("Line %d: output vector size mismatch - expected %zu got %zu\n", lineNumber, regExpTest->expectVector.size(), outVector.size());
+#endif
+            }
         } else if (outVector.size() % 2) {
             result = false;
-            if (verbose)
-                printf("Line %d: output vector size is odd (%lu), should be even\n", lineNumber, outVector.size());
+            if (verbose) {
+#if OS(WINDOWS)
+                printf("Line %d: output vector size is odd (%Iu), should be even\n", lineNumber, outVector.size());
+#else
+                printf("Line %d: output vector size is odd (%zu), should be even\n", lineNumber, outVector.size());
+#endif
+            }
         } else {
             // Check in pairs since the first value of the pair could be -1 in which case the second doesn't matter.
             size_t pairCount = outVector.size() / 2;
@@ -219,13 +229,23 @@ static bool testOneRegExp(VM& vm, RegExp* regexp, RegExpTest* regExpTest, bool v
                 size_t startIndex = i*2;
                 if (outVector[startIndex] != regExpTest->expectVector[startIndex]) {
                     result = false;
-                    if (verbose)
-                        printf("Line %d: output vector mismatch at index %lu - expected %d got %d\n", lineNumber, startIndex, regExpTest->expectVector[startIndex], outVector[startIndex]);
+                    if (verbose) {
+#if OS(WINDOWS)
+                        printf("Line %d: output vector mismatch at index %Iu - expected %d got %d\n", lineNumber, startIndex, regExpTest->expectVector[startIndex], outVector[startIndex]);
+#else
+                        printf("Line %d: output vector mismatch at index %zu - expected %d got %d\n", lineNumber, startIndex, regExpTest->expectVector[startIndex], outVector[startIndex]);
+#endif
+                    }
                 }
                 if ((i > 0) && (regExpTest->expectVector[startIndex] != -1) && (outVector[startIndex+1] != regExpTest->expectVector[startIndex+1])) {
                     result = false;
-                    if (verbose)
-                        printf("Line %d: output vector mismatch at index %lu - expected %d got %d\n", lineNumber, startIndex+1, regExpTest->expectVector[startIndex+1], outVector[startIndex+1]);
+                    if (verbose) {
+#if OS(WINDOWS)
+                        printf("Line %d: output vector mismatch at index %Iu - expected %d got %d\n", lineNumber, startIndex + 1, regExpTest->expectVector[startIndex + 1], outVector[startIndex + 1]);
+#else
+                        printf("Line %d: output vector mismatch at index %zu - expected %d got %d\n", lineNumber, startIndex + 1, regExpTest->expectVector[startIndex + 1], outVector[startIndex + 1]);
+#endif
+                    }
                 }
             }
         }

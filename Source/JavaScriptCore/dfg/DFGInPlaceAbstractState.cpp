@@ -194,7 +194,7 @@ bool InPlaceAbstractState::endBasicBlock(MergeMode mergeMode)
     
     bool changed = false;
     
-    if (mergeMode != DontMerge || !ASSERT_DISABLED) {
+    if ((mergeMode != DontMerge) || !ASSERT_DISABLED) {
         changed |= checkAndSet(block->cfaStructureClobberStateAtTail, m_structureClobberState);
     
         switch (m_graph.m_form) {
