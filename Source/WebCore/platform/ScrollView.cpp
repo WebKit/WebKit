@@ -469,7 +469,7 @@ void ScrollView::scrollTo(const IntSize& newOffset)
 
 #if USE(TILED_BACKING_STORE)
     if (delegatesScrolling()) {
-        hostWindow()->delegatedScrollRequested(IntPoint(newOffset));
+        requestScrollPositionUpdate(IntPoint(newOffset));
         return;
     }
 #endif
