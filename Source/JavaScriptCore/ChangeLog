@@ -1,3 +1,19 @@
+2014-10-08  Oliver Hunt  <oliver@apple.com>
+
+        Make sure arguments tearoff is performed through the environment record if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=137538
+
+        Reviewed by Michael Saboff.
+
+        Fairly simple change.  If we have a lexical record we need to pull the unmodified
+        arguments object from the record and then use the standard op_tear_off_arguments
+        instruction on the temporary.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetOwnScope):
+        (JSC::BytecodeGenerator::emitReturn):
+        * bytecompiler/BytecodeGenerator.h:
+
 2014-10-08  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Enable JIT on 32-bit.

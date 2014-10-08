@@ -659,6 +659,13 @@ namespace JSC {
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* initializeCapturedVariable(RegisterID* dst, const Identifier&, RegisterID*);
 
+        // We'll may want a non-return mode in future, but currently
+        // this is only used during emitReturn(). emitReturn() occurs
+        // with the novel state of having popped off all the local scope
+        // nodes, but not actually modify any internal stack depth tracking.
+        enum OwnScopeLookupRules { OwnScopeForReturn };
+        RegisterID* emitGetOwnScope(RegisterID* dst, const Identifier&, OwnScopeLookupRules);
+
     public:
         JSString* addStringConstant(const Identifier&);
 

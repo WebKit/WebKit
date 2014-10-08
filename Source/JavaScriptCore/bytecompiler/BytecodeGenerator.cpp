@@ -1299,6 +1299,20 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
     return dst;
 }
 
+
+RegisterID* BytecodeGenerator::emitGetOwnScope(RegisterID* dst, const Identifier& identifier, OwnScopeLookupRules)
+{
+    emitOpcode(op_resolve_scope);
+    instructions().append(kill(dst));
+    instructions().append(addConstant(identifier));
+    instructions().append(LocalClosureVar);
+    // This should be m_localScopeDepth if we aren't doing
+    // resolution during emitReturn()
+    instructions().append(0);
+    instructions().append(0);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitResolveConstantLocal(RegisterID* dst, const Identifier& identifier, ResolveScopeInfo& info)
 {
     if (!m_symbolTable || m_codeType != FunctionCode)
@@ -1906,8 +1920,17 @@ RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst,
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
     if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
+        RefPtr<RegisterID> scratchRegister;
+        int argumentsIndex = unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset();
+        if (m_lexicalEnvironmentRegister && m_codeType == FunctionCode) {
+            scratchRegister = newTemporary();
+            emitGetOwnScope(scratchRegister.get(), propertyNames().arguments, OwnScopeForReturn);
+            ResolveScopeInfo scopeInfo(unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
+            emitGetFromScope(scratchRegister.get(), scratchRegister.get(), propertyNames().arguments, ThrowIfNotFound, scopeInfo);
+            argumentsIndex = scratchRegister->index();
+        }
         emitOpcode(op_tear_off_arguments);
-        instructions().append(unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
+        instructions().append(argumentsIndex);
         instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 
