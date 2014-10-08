@@ -132,7 +132,7 @@ WebInspector.TypeTokenView.prototype = {
         if (this._types.primitiveTypeNames && this._types.primitiveTypeNames.length > 1)
             return true;
 
-        if (this._types.structures && this._types.structures)
+        if (this._types.structures && this._types.structures.length)
             return true;
 
         return false;
