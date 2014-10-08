@@ -1,3 +1,21 @@
+2014-10-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] Add back the workaround to replace ZipFile.extractall()
+        https://bugs.webkit.org/show_bug.cgi?id=137519
+
+        Reviewed by Csaba Osztrogonác.
+
+        It was removed by <http://trac.webkit.org/changeset/174266>,
+        because the comment stated it is a workaround for buggy python
+        2.6.1 which shipped on Snow Leopard. But it turned out the bug
+        is still valid with python 2.7 shipped on the latest Ubuntu
+        (12.04 and 14.04) and OS X 10.9.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller):
+        (AutoInstaller._extract_all):
+        (AutoInstaller._unzip):
+
 2014-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174335.
