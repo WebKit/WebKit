@@ -1,3 +1,16 @@
+2014-10-08  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Enable JIT on 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=137521
+
+        Reviewed by Mark Lam.
+
+        Enable JIT on Windows 32-bit, but disable it at runtime if SSE2 is not present.
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.pl:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2014-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Resolve some static analysis warnings in JavaScriptCore

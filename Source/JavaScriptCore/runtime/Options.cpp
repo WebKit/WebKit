@@ -41,6 +41,10 @@
 #include <sys/sysctl.h>
 #endif
 
+#if OS(WINDOWS)
+#include "MacroAssemblerX86.h"
+#endif
+
 namespace JSC {
 
 static bool parse(const char* string, bool& value)
@@ -227,7 +231,11 @@ static void recomputeDependentOptions()
 #if !ENABLE(FTL_JIT)
     Options::useFTLJIT() = false;
 #endif
-
+#if OS(WINDOWS) && CPU(X86) 
+    // Disable JIT on Windows if SSE2 is not present 
+    if (!MacroAssemblerX86::supportsFloatingPoint())
+        Options::useJIT() = false;
+#endif
     if (Options::showDisassembly()
         || Options::showDFGDisassembly()
         || Options::showFTLDisassembly()

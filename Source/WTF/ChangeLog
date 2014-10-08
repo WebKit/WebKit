@@ -1,3 +1,14 @@
+2014-10-08  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Enable JIT on 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=137521
+
+        Reviewed by Mark Lam.
+
+        Enable JIT on Windows 32-bit, but disable it at runtime if SSE2 is not present.
+
+        * wtf/Platform.h:
+
 2014-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Resolve warnings about missing __has_include macro under MSVC
