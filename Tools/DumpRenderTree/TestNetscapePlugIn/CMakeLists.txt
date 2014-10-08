@@ -44,3 +44,4 @@ set(WebKitTestNetscapePlugin_LIBRARIES
 
 add_library(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})
 target_link_libraries(TestNetscapePlugin ${WebKitTestNetscapePlugin_LIBRARIES})
+set_target_properties(TestNetscapePlugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)

@@ -1,3 +1,22 @@
+2014-09-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [EFL] Install TestNetscapePlugin apart from the other libs.
+        https://bugs.webkit.org/show_bug.cgi?id=137212
+
+        This moves TestNetscapePlugin to a new folder (lib/plugins).
+        We should not use the same directory for TestNetscapePlugin and
+        the other libraries, because we end up scanning all the .so in the
+        lib dir for every test.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt: Set LIBRARY_OUTPUT_DIRECTORY to lib/plugins.
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.setup_environ_for_server): Update plugin path.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Update plugin path.
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Update plugin path.
+
 2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLS errors should take precedence over HTTP authentication
