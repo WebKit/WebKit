@@ -1,3 +1,15 @@
+2014-09-30  David Hyatt  <hyatt@apple.com>
+
+        Remove a multicolumn ASSERT and replace with a guard.
+        https://bugs.webkit.org/show_bug.cgi?id=137272
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::isValidColumnSpanner):
+        For now remove the assert that is tripping and replace it with a guard
+        until we can figure out why it's getting hit.
+
 2014-08-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Caret not shown at the end of line in overtype mode

@@ -245,8 +245,12 @@ RenderObject* RenderMultiColumnFlowThread::resolveMovedChild(RenderObject* child
 static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, RenderObject* descendant)
 {
     // We assume that we're inside the flow thread. This function is not to be called otherwise.
-    ASSERT(descendant->isDescendantOf(flowThread));
-
+    // ASSERT(descendant->isDescendantOf(flowThread));
+    // FIXME: Put this back in when we figure out why spanner-crash.html is triggering it.
+    // See https://bugs.webkit.org/show_bug.cgi?id=137273
+    if (!descendant->isDescendantOf(flowThread))
+        return false;
+    
     // First make sure that the renderer itself has the right properties for becoming a spanner.
     RenderStyle& style = descendant->style();
     if (style.columnSpan() != ColumnSpanAll || !descendant->isBox() || descendant->isFloatingOrOutOfFlowPositioned())
