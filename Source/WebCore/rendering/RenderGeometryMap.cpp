@@ -155,9 +155,9 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, con
     ASSERT(m_mapping.isEmpty() || m_mapping[0].m_renderer->isRenderView());
 }
 
-static bool canMapBetweenRenderers(const RenderObject& renderer, const RenderObject& ancestor)
+static bool canMapBetweenRenderers(const RenderLayerModelObject& renderer, const RenderLayerModelObject& ancestor)
 {
-    for (const RenderObject* current = &renderer; ; current = current->parent()) {
+    for (const RenderElement* current = &renderer; ; current = current->parent()) {
         const RenderStyle& style = current->style();
         if (style.position() == FixedPosition || style.isFlippedBlocksWritingMode())
             return false;
@@ -177,7 +177,7 @@ static bool canMapBetweenRenderers(const RenderObject& renderer, const RenderObj
 
 void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer)
 {
-    const RenderObject& renderer = layer->renderer();
+    const RenderLayerModelObject& renderer = layer->renderer();
 
     // We have to visit all the renderers to detect flipped blocks. This might defeat the gains
     // from mapping via layers.
@@ -189,14 +189,14 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
         // The RenderView must be pushed first.
         if (!m_mapping.size()) {
             ASSERT(ancestorLayer->renderer().isRenderView());
-            pushMappingsToAncestor(&ancestorLayer->renderer(), 0);
+            pushMappingsToAncestor(&ancestorLayer->renderer(), nullptr);
         }
 
         TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
         push(&renderer, layerOffset, /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }
-    const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? &ancestorLayer->renderer() : 0;
+    const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? &ancestorLayer->renderer() : nullptr;
     pushMappingsToAncestor(&renderer, ancestorRenderer);
 }
 

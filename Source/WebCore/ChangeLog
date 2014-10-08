@@ -1,3 +1,23 @@
+2014-09-24  Christophe Dumez  <cdumez@apple.com>
+
+        Use tighter typing for render objects in RenderGeometryMap
+        https://bugs.webkit.org/show_bug.cgi?id=137102
+
+        Reviewed by Ryosuke Niwa.
+
+        Use tighter typing for render objects in RenderGeometryMap for clarity
+        and efficiency.
+
+        In particular, using RenderElement type instead of RenderObject
+        in canMapBetweenRenderers() allows us to call the faster
+        RenderElement::style() instead of RenderObject::style().
+
+        No new tests, no behavior change.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapBetweenRenderers):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+
 2014-09-24  Darin Adler  <darin@apple.com>
 
         Old Turkic characters behave as left-to-right instead of right-to-left, because they are encoded as surrogate pairs.
