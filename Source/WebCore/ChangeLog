@@ -1,3 +1,18 @@
+2014-09-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow
+        https://bugs.webkit.org/show_bug.cgi?id=136945
+
+        Reviewed by Sergio Villar Senin.
+
+        Checking out whether the grid-template-areas value contains a white-space only
+        string, which is not valid as it does not produce a cell token.
+
+        Test: fast/css-grid-layout/grid-template-areas-empty-string-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+
 2014-09-24  Christophe Dumez  <cdumez@apple.com>
 
         Use tighter typing for render objects in RenderGeometryMap

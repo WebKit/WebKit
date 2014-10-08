@@ -1,3 +1,16 @@
+2014-09-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow
+        https://bugs.webkit.org/show_bug.cgi?id=136945
+
+        Reviewed by Sergio Villar Senin.
+
+        Testing the different types of white-space only strings for the grid-template-areas
+        property, which is not valid as it does not produce a cell token.
+
+        * fast/css-grid-layout/grid-template-areas-empty-string-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-template-areas-empty-string-crash.html: Added.
+
 2014-09-24  Darin Adler  <darin@apple.com>
 
         Old Turkic characters behave as left-to-right instead of right-to-left, because they are encoded as surrogate pairs.
