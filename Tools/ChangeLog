@@ -1,3 +1,16 @@
+2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] generate-gtkdoc crashes when generating HTML due to encoding issues
+        https://bugs.webkit.org/show_bug.cgi?id=135502
+
+        Reviewed by Martin Robinson.
+
+        When writing to stdout/stderr fails due to a UnicodeDecodeError
+        exception, try again without encoding the output.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_command):
+
 2014-09-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [EFL] Install TestNetscapePlugin apart from the other libs.
