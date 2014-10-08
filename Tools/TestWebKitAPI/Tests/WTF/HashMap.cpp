@@ -447,7 +447,7 @@ TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.add(ptr2, 0);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -469,7 +469,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.add(ptr2.release(), 0);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -491,7 +491,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.add(WTF::move(ptr2), 0);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -556,7 +556,7 @@ TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.set(ptr2, 1);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
         EXPECT_EQ(1, map.get(ptr.get()));
     }
 
@@ -577,7 +577,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.set(ptr2.release(), 1);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
         EXPECT_EQ(1, map.get(ptr.get()));
     }
 
@@ -598,7 +598,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
     {
         RefPtr<RefLogger> ptr2(&a);
         auto addResult = map.set(WTF::move(ptr2), 1);
-        EXPECT_EQ(false, addResult.isNewEntry);
+        EXPECT_FALSE(addResult.isNewEntry);
         EXPECT_EQ(1, map.get(ptr.get()));
     }
 

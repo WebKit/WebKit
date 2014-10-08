@@ -1,3 +1,13 @@
+2014-10-07  Tanay C  <tanay.c@samsung.com>
+
+        Remove build warnings in Hashmap API tests
+        https://bugs.webkit.org/show_bug.cgi?id=137484
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST): Changed EXPECT_EQ(false, addResult.isNewEntry) to EXPECT_FALSE(addResult.isNewEntry) 
+
 2014-10-07  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Commit queue doesn't drop obsolete patches sometimes
