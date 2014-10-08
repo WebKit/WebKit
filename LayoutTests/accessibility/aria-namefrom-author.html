@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<div id="test1" class="test" role="alert">alert</div>
+<div id="test2" class="test" role="alertdialog">alertdialog</div>
+<div id="test3" class="test" role="dialog">dialog</div>
+<div id="test4" class="test" role="log">log</div>
+<div id="test5" class="test" role="marquee">marquee</div>
+<div id="test6" class="test" role="status">status</div>
+<div id="test7" class="test" role="timer">timer</div>
+<div id="test8" class="test" role="combobox">combobox</div>
+<div id="test9" class="test" role="definition">definition</div>
+<div id="test10" class="test" role="document">document</div>
+<div id="test11" class="test" role="article">article</div>
+<div id="test12" class="test" role="math">math</div>
+<div id="test13" class="test" role="note">note</div>
+<div id="test14" class="test" role="region">region</div>
+<div id="test15" class="test" role="form">form</div>
+<div id="test16" class="test" role="grid">grid</div>
+<div id="test17" class="test" role="group">group</div>
+<div id="test18" class="test" role="img">img</div>
+<div id="test19" class="test" role="list">list</div>
+<div id="test20" class="test" role="listbox">listbox</div>
+<div id="test21" class="test" role="application">application</div>
+<div id="test22" class="test" role="banner">banner</div>
+<div id="test23" class="test" role="complementary">complementary</div>
+<div id="test24" class="test" role="contentinfo">contentinfo</div>
+<div id="test25" class="test" role="navigation">navigation</div>
+<div id="test26" class="test" role="main">main</div>
+<div id="test27" class="test" role="search">search</div>
+<div id="test28" class="test" role="menu">menu</div>
+<div id="test29" class="test" role="menubar">menubar</div>
+<div id="test30" class="test" role="progressbar">progressbar</div>
+<div id="test31" class="test" role="radiogroup">radiogroup</div>
+<div id="test32" class="test" role="scrollbar">scrollbar</div>
+<div id="test33" class="test" role="slider">slider</div>
+<div id="test34" class="test" role="spinbutton">spinbutton</div>
+<div id="test35" class="test" role="separator">separator</div>
+<div id="test36" class="test" role="tablist">tablist</div>
+<div id="test37" class="test" role="tabpanel">tabpanel</div>
+<div id="test38" class="test" role="textbox">textbox</div>
+<div id="test39" class="test" role="toolbar">toolbar</div>
+<div id="test40" class="test" role="treegrid">treegrid</div>
+<div id="test41" class="test" role="tree">tree</div>
+
+
+<div role="button" id="button" aria-label="text">button text</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests all the cases where nameFrom: author is used instead of nameFrom: contents. This means that if these elements are used in aria-labelledby they should not return their inner text. The button should retain its aria-label as the description.");
+
+    var labelledby = "";
+    for (var k = 1; k < 42; k++) {
+        labelledby += "test" + k + " ";
+    }
+    document.getElementById("button").setAttribute("aria-labelledby", labelledby);
+
+    if (window.accessibilityController) {
+        debug("Button description: " + accessibilityController.accessibleElementById("button").description);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

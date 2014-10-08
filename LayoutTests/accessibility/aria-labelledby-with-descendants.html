@@ -7,18 +7,35 @@
 
 <div id="content">
 
-<div aria-labelledby="a b" id="group" role="group">
-group text
-</div>
+<div class="ex" data-label="hello link use world test1 test2 test3" aria-labelledby="a1 b1" id="test1" role="group">group text</div>
+<div id="a1">hello <a href="#">link</a> <div role="group">skip</div> <div role="group" aria-label="use">skip</div> world</div>
+<!-- paragraph role is ambiguous so okay to leave next example as it -->
+<div id="b1"><button>test1</button><p tabindex=0>test2 <span aria-hidden="true">hidden</span> test3</p></div>
 
-<div id="a">
-hello <a href="#">link</a> world
-</div>
+<input type="checkbox" aria-labelledby="reverselabelfor" id="test2" class="ex" data-label="foo bar" data-note="labelled by label element">
+<label id="reverselabelfor">foo <span role="text" aria-label="bar">skip</span></label>
+<br>
 
-<div id="b">
-<button>test1</button> 
-<p tabindex=0>test2 <span aria-hidden="true">hidden</span> test3</p>
-</div>
+<input type="checkbox" aria-labelledby="reverselabelforwithdiv" id="test3" class="ex" data-label="foo bar" data-note="labelled by div element">
+<div id="reverselabelforwithdiv">foo <span role="text" aria-label="bar">skip</span></div>
+<br>
+
+<!-- would be "bar" natively, but label explicitly overridden to "foo" by labelledby -->
+<div id="overridesnativelabel">foo</div><label for="nativelabeloverridden">bar</label>
+<input class="ex" data-label="foo" id="test4" type="text" aria-labelledby="overridesnativelabel" data-note="overrides native label">
+
+<!-- self-referencing labelledby in combination with external reference -->
+<div id="productname1"><nav role="navigation"><!-- nav does not get nameFrom:contents -->product name</nav></div>
+<button class="ex" data-label="Delete" aria-label="Delete" aria-labelledby="test5 productname1" id="test5" data-note="self-referencial labelledby includes nav">x</button>
+
+<!-- self-referencing labelledby in combination with external reference -->
+<div id="productname2"><nav role="heading"><!-- nav does not get nameFrom:contents, but heading does. -->product name</nav></div>
+<button class="ex" data-label="Delete product name" aria-label="Delete" aria-labelledby="test6 productname2" id="test6" data-note="self-referencial labelledby includes heading">x</button>
+
+<div class="ex" data-label="foo bar baz bop bap boom" aria-labelledby="a3 b3" id="test7" role="group" data-note="includes form elements">foo</div>
+<button id="a3"> foo <img src="#" alt="bar"> baz</button>
+<div id="b3">bop <input value="bap"> <input type="range" aria-valuetext="boom"></div>
+
 
 </div>
 
@@ -30,8 +47,11 @@ hello <a href="#">link</a> world
     description("This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.");
 
     if (window.accessibilityController) {
-          var group = accessibilityController.accessibleElementById("group");
-          debug("aria-labelledby description: " + group.description);
+          for (var k = 1; k < 8; k++) {
+              var test = accessibilityController.accessibleElementById("test" + k);
+              debug("test " + k + ": aria-labelledby description: " + test.description);
+              debug("test " + k + ": expected description: " + document.getElementById("test" + k).getAttribute("data-label") + "\n");
+          }
           document.getElementById("content").style.visibility = "hidden";
     }
 

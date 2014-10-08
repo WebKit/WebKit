@@ -248,6 +248,7 @@ struct AccessibilityTextUnderElementMode {
     enum ChildrenInclusion {
         TextUnderElementModeSkipIgnoredChildren,
         TextUnderElementModeIncludeAllChildren,
+        TextUnderElementModeIncludeNameFromContentsChildren, // This corresponds to ARIA concept: nameFrom
     };
     
     ChildrenInclusion childrenInclusion;
@@ -667,6 +668,7 @@ public:
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
     const AtomicString& placeholderValue() const;
+    bool accessibleNameDerivesFromContent() const;
     
     // Abbreviations
     virtual String expandedTextValue() const { return String(); }

@@ -1,3 +1,28 @@
+2014-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: in an aria-labelledby computation, do not traverse into elements whose nameFrom value does not include 'contents'
+        https://bugs.webkit.org/show_bug.cgi?id=136714
+
+        Reviewed by Darin Adler.
+
+        There are certain ARIA elements that tell us we should not query their children when determining the name of the object.
+        Those ones have the "nameFrom" property set to "author" instead of "contents." WebKit needs to honor that status.
+
+        Test: accessibility/aria-namefrom-author.html
+              Modified: accessibility/aria-labelledby-with-descendants.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::shouldUseAccessiblityObjectInnerText):
+        (WebCore::shouldAddSpaceBeforeAppendingNextElement):
+        (WebCore::appendNameToStringBuilder):
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        (WebCore::accessibleNameForNode):
+        (WebCore::AccessibilityNodeObject::accessibilityDescriptionForElements):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent):
+        (WebCore::initializeRoleMap):
+        * accessibility/AccessibilityObject.h:
+
 2014-09-27  Chris Dumez  <cdumez@apple.com>
 
         HTMLPlugInElement::isUserObservable() is causing layout

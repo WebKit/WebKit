@@ -287,6 +287,70 @@ bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
         || accessibilityDescription().contains(*text, false)
         || stringValue().contains(*text, false);
 }
+
+// ARIA marks elements as having their accessible name derive from either their contents, or their author provide name.
+bool AccessibilityObject::accessibleNameDerivesFromContent() const
+{
+    // First check for objects specifically identified by ARIA.
+    switch (ariaRoleAttribute()) {
+    case ApplicationAlertRole:
+    case ApplicationAlertDialogRole:
+    case ApplicationDialogRole:
+    case ApplicationLogRole:
+    case ApplicationMarqueeRole:
+    case ApplicationStatusRole:
+    case ApplicationTimerRole:
+    case ComboBoxRole:
+    case DefinitionRole:
+    case DocumentRole:
+    case DocumentArticleRole:
+    case DocumentMathRole:
+    case DocumentNoteRole:
+    case DocumentRegionRole:
+    case FormRole:
+    case GridRole:
+    case GroupRole:
+    case ImageRole:
+    case ListRole:
+    case ListBoxRole:
+    case LandmarkApplicationRole:
+    case LandmarkBannerRole:
+    case LandmarkComplementaryRole:
+    case LandmarkContentInfoRole:
+    case LandmarkNavigationRole:
+    case LandmarkMainRole:
+    case LandmarkSearchRole:
+    case MenuRole:
+    case MenuBarRole:
+    case ProgressIndicatorRole:
+    case RadioGroupRole:
+    case ScrollBarRole:
+    case SliderRole:
+    case SpinButtonRole:
+    case SplitterRole:
+    case TableRole:
+    case TabListRole:
+    case TabPanelRole:
+    case TextAreaRole:
+    case TextFieldRole:
+    case ToolbarRole:
+    case TreeGridRole:
+    case TreeRole:
+        return false;
+    default:
+        break;
+    }
+    
+    // Now check for generically derived elements now that we know the element does not match a specific ARIA role.
+    switch (roleValue()) {
+    case SliderRole:
+        return false;
+    default:
+        break;
+    }
+    
+    return true;
+}
     
 String AccessibilityObject::computedLabel()
 {
@@ -1795,6 +1859,7 @@ static void initializeRoleMap()
         { "combobox", ComboBoxRole },
         { "definition", DefinitionRole },
         { "document", DocumentRole },
+        { "form", FormRole },
         { "rowheader", RowHeaderRole },
         { "group", GroupRole },
         { "heading", HeadingRole },

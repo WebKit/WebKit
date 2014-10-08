@@ -1,3 +1,15 @@
+2014-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: in an aria-labelledby computation, do not traverse into elements whose nameFrom value does not include 'contents'
+        https://bugs.webkit.org/show_bug.cgi?id=136714
+
+        Reviewed by Darin Adler.
+
+        * accessibility/aria-labelledby-with-descendants-expected.txt:
+        * accessibility/aria-labelledby-with-descendants.html:
+        * accessibility/aria-namefrom-author-expected.txt: Added.
+        * accessibility/aria-namefrom-author.html: Added.
+
 2014-09-25  Brian J. Burg  <burg@cs.washington.edu>
 
         StorageTracker::deleteOrigin being called off the main thread (ASSERTs in inspector/test-harness-trivially-works.html test)
