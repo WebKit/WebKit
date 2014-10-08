@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.blackbox {
+    display: inline-block;
+    width: 14px;
+    height: 21px;
+    background: black;
+}
+.whitebox {
+    display: inline-block;
+    width: 14px;
+    height: 21px;
+    background: white;
+}
+</style>
+</head>
+<body>
+This test makes sure that text drawn with an SVG font with word-wrapping hacks has spaces.
+The test is successful if the space between the two boxes below is the same as the width of each of the boxes.
+<div><div class="blackbox"></div><div class="whitebox"></div><div class="blackbox"></div></div>
+</body>
+</html>
