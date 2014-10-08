@@ -25,7 +25,7 @@
 
             function testMenu()
             {
-                trackListItems = trackMenuList();
+                trackListItems = audioTrackMenuList();
                 var expectedItemCount = video.audioTracks.length;
                 consoleWrite("There should be " + expectedItemCount + " items in the menu.");
                 testExpected("trackListItems.length", expectedItemCount);
@@ -33,7 +33,7 @@
 
             function testAudioTrackEnabled()
             {
-                trackListItems = trackMenuList();
+                trackListItems = audioTrackMenuList();
                 consoleWrite("*** Menu item 0 should be selected");
 
                 testExpected("trackListItems.length", 3);
@@ -47,7 +47,7 @@
             function selectDifferentAudioTrack()
             {
                 consoleWrite("*** Selecting French Track");
-                selectCaptionMenuItem("French");
+                selectAudioTrackMenuItem("French");
                 setTimeout(testAudioTrackDisabled, 100);
             }
 

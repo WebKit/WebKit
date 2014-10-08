@@ -18,9 +18,9 @@ EXPECTED (event.target.readyState == '2') OK
 
 Test 3: select 'fr' track from menu
 - show captions menu.
-EXPECTED (trackMenuItems[indexOfMenuItemBeginningWith('French')].className == '') OK
-EXPECTED (trackMenuItems[indexOfMenuItemBeginningWith('English')].className == '') OK
-EXPECTED (trackMenuItems[indexOfMenuItemBeginningWith('Norwegian')].className == 'selected') OK
+EXPECTED (trackMenuItems[indexOfCaptionMenuItemBeginningWith('French')].className == '') OK
+EXPECTED (trackMenuItems[indexOfCaptionMenuItemBeginningWith('English')].className == '') OK
+EXPECTED (trackMenuItems[indexOfCaptionMenuItemBeginningWith('Norwegian')].className == 'selected') OK
 - click on 'French' menu item.
 EVENT(load)
 EXPECTED (event.target.srclang == 'fr') OK

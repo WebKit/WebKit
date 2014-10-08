@@ -24,7 +24,7 @@
                 consoleWrite("");
             }
 
-            function trackMenuList()
+            function captionTrackMenuList()
             {
                 var trackListElement = getTrackListElement();
                 if (!trackListElement)
@@ -46,7 +46,7 @@
 
             function testMenu()
             {
-                trackListItems = trackMenuList();
+                trackListItems = captionTrackMenuList();
                 var expectedItemCount = video.textTracks.length + 2;
                 consoleWrite("There should be " + expectedItemCount + " items in the menu.");
                 testExpected("trackListItems.length", expectedItemCount);
@@ -55,7 +55,7 @@
             function selectCaptionMenuItem(index, nextStep)
             {
                 // Click on the selected item
-                var trackListItems = trackMenuList();
+                var trackListItems = captionTrackMenuList();
                 var selectedTrackItem = trackListItems[index];
                 var boundingRect = selectedTrackItem.getBoundingClientRect();
                 var x = boundingRect.left + boundingRect.width / 2;

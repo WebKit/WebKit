@@ -42,7 +42,7 @@ function getTrackListElement()
   return trackListElement;
 }
 
-function trackMenuList()
+function trackMenuListByLabel(label)
 {
     trackListElement = getTrackListElement();
     if (!trackListElement){
@@ -50,8 +50,13 @@ function trackMenuList()
         return;
     }
 
+    var trackLists = trackListElement.querySelectorAll("ul");
+    var trackList = Array.prototype.find.call(trackLists, function(item) {
+        return item.getAttribute('aria-labelledby') === label;
+    });
+
+
     // Track list should have a <ul> with <li> children.
-    var trackList = trackListElement.querySelector("ul");
     if (!trackList) {
         failTest("Could not find a child ul element in track list menu");
         return;
@@ -65,9 +70,18 @@ function trackMenuList()
     return trackListItems;
 }
 
-function indexOfMenuItemBeginningWith(title)
+function captionTrackMenuList()
 {
-    var trackMenuItems = trackMenuList();
+    return trackMenuListByLabel('webkitMediaControlsClosedCaptionsHeading');
+}
+
+function audioTrackMenuList()
+{
+    return trackMenuListByLabel('webkitMediaControlsAudioTrackHeading');
+}
+
+function indexOfMenuItemBeginningWith(title, trackMenuItems)
+{
     for (i = 0; i < trackMenuItems.length; ++i) {
         if (trackMenuItems[i].textContent.indexOf(title) == 0)
             break;
@@ -75,15 +89,18 @@ function indexOfMenuItemBeginningWith(title)
     return (i < trackMenuItems.length) ? i : -1;
 }
 
-function selectCaptionMenuItem(title)
+function indexOfCaptionMenuItemBeginningWith(title)
 {
-    var trackMenuItems = trackMenuList();
-    var index = indexOfMenuItemBeginningWith(title);
-    if (index < 0) {
-        failTest("Menu item " + title + " not found in track list menu.");
-        return;
-    }
+    return indexOfMenuItemBeginningWith(title, captionTrackMenuList());
+}
 
+function indexOfAudioTrackMenuItemBeginningWith(title)
+{
+    return indexOfMenuItemBeginningWith(title, audioTrackMenuList());
+}
+
+function selectMenuItemFromList(title, trackMenuItems, index)
+{
     consoleWrite("- click on '" + title + "' menu item.");
     var selectedTrackItem = trackMenuItems[index];
     var boundingRect = selectedTrackItem.getBoundingClientRect();
@@ -92,6 +109,28 @@ function selectCaptionMenuItem(title)
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();
+}
+
+function selectCaptionMenuItem(title)
+{
+    var index = indexOfCaptionMenuItemBeginningWith(title);
+    if (index < 0) {
+        failTest("Menu item " + title + " not found in track list menu.");
+        return;
+    }
+
+    selectMenuItemFromList(title, captionTrackMenuList(), index);
+}
+
+function selectAudioTrackMenuItem(title)
+{
+    var index = indexOfAudioTrackMenuItemBeginningWith(title);
+    if (index < 0) {
+        failTest("Menu item " + title + " not found in track list menu.");
+        return;
+    }
+
+    selectMenuItemFromList(title, audioTrackMenuList(), index);
 }
 
 function showTrackMenu()
@@ -111,7 +150,7 @@ function hideTrackMenu()
 
 function listTrackMenu()
 {
-    var trackListItems = trackMenuList();
+    var trackListItems = captionTrackMenuList();
     consoleWrite("Track menu:");
     for (i = 0; i < trackListItems.length; i++) {
         var logString = i + ": \"" + trackListItems[i].textContent + "\"";

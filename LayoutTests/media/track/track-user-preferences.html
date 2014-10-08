@@ -83,10 +83,10 @@
                     break;
 
                 case 4:
-                    trackMenuItems = trackMenuList();
-                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('French')].className", "");
-                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('English')].className", "");
-                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('Norwegian')].className", "selected");
+                    trackMenuItems = captionTrackMenuList();
+                    testExpected("trackMenuItems[indexOfCaptionMenuItemBeginningWith('French')].className", "");
+                    testExpected("trackMenuItems[indexOfCaptionMenuItemBeginningWith('English')].className", "");
+                    testExpected("trackMenuItems[indexOfCaptionMenuItemBeginningWith('Norwegian')].className", "selected");
 
                     selectCaptionMenuItem("French");
                     expectedLanguage = 'fr';
