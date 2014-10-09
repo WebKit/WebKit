@@ -95,6 +95,7 @@ void TileController::setNeedsDisplayInRect(const IntRect& rect)
     tileGrid().setNeedsDisplayInRect(rect);
     if (m_zoomedOutTileGrid)
         m_zoomedOutTileGrid->dropTilesInRect(rect);
+    updateTileCoverageMap();
 }
 
 void TileController::setContentsScale(float scale)

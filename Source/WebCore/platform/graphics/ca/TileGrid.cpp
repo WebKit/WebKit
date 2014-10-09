@@ -31,6 +31,7 @@
 #include "PlatformCALayer.h"
 #include "TileController.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
 #include "TileControllerMemoryHandlerIOS.h"
@@ -633,6 +634,21 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
         CGRect frame = CGRectMake(tileLayer->position().x(), tileLayer->position().y(), tileLayer->bounds().size().width(), tileLayer->bounds().size().height());
         CGContextFillRect(context, frame);
         CGContextStrokeRect(context, frame);
+
+        CGContextSetRGBFillColor(context, 0, 0, 0, 0.5);
+
+        String repaintCount = String::number(m_tileRepaintCounts.get(tileLayer));
+
+        CGContextSaveGState(context);
+        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(3, -3));
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        CGContextSelectFont(context, "Helvetica", 58, kCGEncodingMacRoman);
+        CGContextShowTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, repaintCount.ascii().data(), repaintCount.length());
+#pragma clang diagnostic pop
+
+        CGContextRestoreGState(context);
     }
 }
 

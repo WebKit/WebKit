@@ -1,3 +1,19 @@
+2014-10-08  Andreas Kling  <akling@apple.com>
+
+        [Mac] Show repaint counters in tile coverage map.
+        <https://webkit.org/b/137544>
+
+        Reviewed by Simon Fraser.
+
+        Add repaint counters to the tile layers in the "tiled scrolling
+        indicator" display. This will be helpful for diagnosing issues with
+        excessive tile repaints outside the visible viewport.
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setNeedsDisplayInRect):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::drawTileMapContents):
+
 2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed build fix after r174480. Broke iOS build.
