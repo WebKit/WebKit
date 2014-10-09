@@ -77,3 +77,14 @@ webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Fa
 webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollevent-iframe-no-scrolling.html [ Failure ]
+
+# Quota API is not supported on iOS.
+storage/domstorage/quota.html [ Skip ]
+storage/storageinfo-missing-arguments.html [ Skip ]
+storage/storageinfo-no-callbacks.html [ Skip ]
+storage/storageinfo-query-usage.html [ Skip ]
+storage/storageinfo-request-quota.html [ Skip ]
+storage/storagequota-query-usage.html [ Skip ]
+storage/storagequota-request-quota.html [ Skip ]
+storage/websql/quota-tracking.html [ Skip ]
+

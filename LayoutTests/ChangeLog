@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Skip some storage tests for iOS Simulator.
+
+        * platform/ios-simulator/TestExpectations:
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for sputnkik tests.
 
         * platform/ios-simulator/sputnkik/*: Added
