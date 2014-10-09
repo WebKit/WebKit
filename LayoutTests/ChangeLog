@@ -1,5 +1,19 @@
 2014-10-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Some animation test results for the iOS Simulator build.
+
+        * platform/ios-simulator/animations/3d/change-transform-in-end-event-expected.txt: Added.
+        * platform/ios-simulator/animations/3d/matrix-transform-type-animation-expected.txt: Added.
+        * platform/ios-simulator/animations/3d/state-at-end-event-transform-expected.txt: Added.
+        * platform/ios-simulator/animations/additive-transform-animations-expected.txt: Added.
+        * platform/ios-simulator/animations/cross-fade-border-image-source-expected.txt: Added.
+        * platform/ios-simulator/animations/cross-fade-list-style-image-expected.txt: Added.
+        * platform/ios-simulator/animations/cross-fade-webkit-mask-box-image-expected.txt: Added.
+        * platform/ios-simulator/animations/cross-fade-webkit-mask-image-expected.txt: Added.
+        * platform/ios-simulator/animations/state-at-end-event-expected.txt: Added.
+
+2014-10-08  Simon Fraser  <simon.fraser@apple.com>
+
         Re-marking fast/hidpi/image-srcset-svg-canvas.html as an expected image failure.
 
         * platform/mac/TestExpectations:
