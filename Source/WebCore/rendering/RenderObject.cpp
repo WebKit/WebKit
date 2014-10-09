@@ -407,7 +407,7 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
             if (style.overflowY() == OVISIBLE
-                && style.height().value() < downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
+                && style.height().value() < downcast<RenderBlock>(renderer)->layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
         return RenderObject::FixedHeight;
