@@ -1,3 +1,13 @@
+2014-10-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix: Revert r174378
+
+        Roll back this change, as it didn't fix the EWS builders, and has only
+        served to make Windows builds take forever.
+
+        * WebCore.vcxproj/WebCoreGenerated.make: Don't delete all generated content
+        every time we build.
+
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed GTK build fix after r174504.
