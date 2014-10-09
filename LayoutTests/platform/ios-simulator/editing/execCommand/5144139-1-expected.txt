@@ -1,0 +1,4 @@
+This tests for a bug when creating a list from a table. The table should be inside a list item.
+
+foo
+<table border="1"><tbody><tr><td>foo</td></tr></tbody></table>

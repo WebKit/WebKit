@@ -1,0 +1,6 @@
+
+"world" should be red:
+| "hello world"
+
+there should be no span or font elements:
+| "hello world"

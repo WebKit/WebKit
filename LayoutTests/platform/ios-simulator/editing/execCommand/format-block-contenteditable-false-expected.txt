@@ -1,0 +1,12 @@
+formatblock on selection with a contenteditable="false" child.
+| "
+        Will select from here
+        "
+| <div>
+|   contenteditable="false"
+|   "
+            over this contenteditable=false div
+        "
+| "
+        until here.
+    "

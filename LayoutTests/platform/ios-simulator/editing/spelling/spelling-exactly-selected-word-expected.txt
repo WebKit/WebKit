@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+Spelling marker should remain when the user selects the misspelled word exactly. To test manually, type 'wellcome home.', select 'wellcome'. The test succeeds when 'wellcome' has spelling marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+wellcome home.

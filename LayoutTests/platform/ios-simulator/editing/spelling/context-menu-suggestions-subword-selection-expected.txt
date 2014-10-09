@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+Spell check suggestions should not be populated when user selects a part of misspelling. To test manually, type 'wellcome home.' select 'llco', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+wellcome home.

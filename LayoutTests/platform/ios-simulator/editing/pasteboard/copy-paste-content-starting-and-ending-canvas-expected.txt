@@ -1,0 +1,50 @@
+This tests selecting all, copying, and pasting a content that starts and ends with canvas elements.
+To manually test, copy and paste the content below:
+
+Before paste:
+| "
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+some text
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+some more text
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+"
+
+After paste:
+| "
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+some text
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+some more text
+"
+| <canvas>
+|   height="100"
+|   style="border: 1px solid black"
+|   width="100"
+| "
+"

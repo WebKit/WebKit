@@ -1,0 +1,12 @@
+Unit tests for WebCore text iterator with shadow tree support enabled
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL addShadowTreeWithDivElement(div); range.selectNodeContents(internals.oldestShadowRoot(div)); internals.rangeAsText(range) should be b. Threw exception TypeError: undefined is not a function (evaluating 'node.webkitCreateShadowRoot()')
+FAIL appendBrElement(internals.oldestShadowRoot(div).childNodes[0]); range.selectNodeContents(internals.oldestShadowRoot(div)); internals.rangeAsText(range) should be b
+. Threw exception TypeError: undefined is not a function (evaluating 'internals.oldestShadowRoot(div)')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

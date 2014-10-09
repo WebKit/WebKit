@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+Nodes of the selection for an orphan shadow root should return null.
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

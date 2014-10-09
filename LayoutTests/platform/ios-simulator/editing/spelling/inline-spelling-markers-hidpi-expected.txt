@@ -1,0 +1,12 @@
+FAIL: Timed out waiting for notifyDone to be called
+This tests the correct placement of inline spelling and grammar markers in the following text: 'the the adlj adaasj sdklj. there there'. Spelling markers should line up exactly under misspelled words in all cases.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+LTR
+the the adlj adaasj sdklj. there there 
+RTL
+LTR (text-overflow:ellipses):
+RTL (text-overflow:ellipses):
+

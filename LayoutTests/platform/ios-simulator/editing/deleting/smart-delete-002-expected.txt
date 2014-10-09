@@ -1,0 +1,36 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x60
+          RenderText {#text} at (0,1) size 66x28
+            text run at (0,1) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 516x28
+            text run at (0,31) width 516: "Smart delete when deleting the second word of a line."
+        RenderBlock {DIV} at (14,90) size 756x120
+          RenderText {#text} at (0,1) size 190x28
+            text run at (0,1) width 190: "Expected Results: "
+          RenderBR {BR} at (189,23) size 1x0
+          RenderText {#text} at (0,31) size 732x58
+            text run at (0,31) width 732: "The second word and the space before the second word should be deleted. It"
+            text run at (0,61) width 201: "should like this this: "
+          RenderBR {BR} at (200,83) size 1x0
+          RenderText {#text} at (0,91) size 72x28
+            text run at (0,91) width 72: "foo baz"
+      RenderBlock {DIV} at (0,248) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,3) size 96x28
+            text run at (2,3) width 96: "foo ar baz"
+caret: position 5 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

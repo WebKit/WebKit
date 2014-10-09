@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 20: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(files)')
+FAIL: Timed out waiting for notifyDone to be called
+Tests that dragging a file into an editable area does not insert a filename.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

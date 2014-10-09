@@ -1,0 +1,2 @@
+This tests copy.  Non-inheritable styles should be brought down from stylesheets.
+| 

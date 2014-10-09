@@ -1,0 +1,226 @@
+This tests ensures formatBlock do not make multiple elements when formatting multiple paragraphs.
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+| <div>
+|   "world"
+| <div>
+|   "WebKit"
+| "
+"
+
+by p yields:
+| "
+"
+| <div>
+|   "hello"
+| <div>
+|   "world"
+| <div>
+|   "WebKit"
+| "
+"
+
+Formatting:
+| "
+"
+| <p>
+|   "hello"
+| <p>
+|   "world"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <p>
+|   "hello"
+| <p>
+|   "world"
+| "
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+|   <pre>
+|     "world"
+| "
+"
+
+by p yields:
+| "
+"
+| <div>
+|   "hello"
+|   <pre>
+|     "world"
+| "
+"
+
+Formatting:
+| "
+"
+| <h1>
+|   "hello"
+| <div>
+|   <h2>
+|     "world"
+|   <h3>
+|     "WebKit"
+| "
+"
+
+by pre yields:
+| "
+"
+| <h1>
+|   "hello"
+| <div>
+|   <h2>
+|     "world"
+|   <h3>
+|     "WebKit"
+| "
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+|   <p>
+|     "world"
+|   "webkit"
+| "
+"
+
+by h1 yields:
+| "
+"
+| <div>
+|   "hello"
+|   <p>
+|     "world"
+|   "webkit"
+| "
+"
+
+Formatting:
+| "
+"
+| <pre>
+|   "hello
+world
+webkit
+"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <pre>
+|   "hello
+world
+webkit
+"
+| "
+"
+
+Formatting:
+| "
+"
+| <pre>
+|   "hello
+world
+webkit
+"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <pre>
+|   "hello
+world
+webkit
+"
+| "
+"
+
+Formatting:
+| "
+<#selection-anchor>hello"
+| <p>
+|   "world<#selection-focus>"
+| <p>
+|   "webkit"
+| "
+
+"
+
+by pre yields:
+| <pre>
+|   "
+hello"
+|   <br>
+|   "world"
+| <p>
+|   "webkit"
+| "
+
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+| <div>
+|   "world"
+| <div>
+|   "webkit"
+| "
+"
+
+by pre yields:
+| "
+"
+| <div>
+|   "hello"
+| <div>
+|   "world"
+| <div>
+|   "webkit"
+| "
+"
+
+Formatting:
+| "
+"
+| <ul>
+|   <li>
+|     "hello"
+|   <li>
+|     "world"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <ul>
+|   <li>
+|     "hello"
+|   <li>
+|     "world"
+| "
+"

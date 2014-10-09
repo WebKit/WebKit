@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 27: absolute font size is wrong
+Copy this 16px text.
+Paste Copy this 16px text.it here.
+The pasted text should have a font size of 16px.
+
+
+Copy this x-small text.
+Paste it here.
+The pasted text should have a font size of x-small.
+
+
+FAIL (this test requires DRT)
+

@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+Spelling should ignore whitespace. To test manually, type 'hello, wellcome home.', select ' wellcome '. The test succeeds when 'wellcome' has spelling marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+hello, wellcome home.

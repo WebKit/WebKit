@@ -1,0 +1,135 @@
+This tests applying inline style to a text node, which is a child of the editable root. Style should be applied properly and the test should not crash. (See the bug 39989).
+
+bold first:
+| <b>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+bold middle:
+| "hello, "
+| <b>
+|   "world"
+| " WebKit"
+
+bold last:
+| "hello, world"
+| <b>
+|   "<#selection-anchor> WebKit<#selection-focus>"
+
+bold all:
+| <b>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+italic first:
+| <i>
+|   "hello, "
+| "world WebKit"
+
+italic middle:
+| "hello, "
+| <i>
+|   "world"
+| " WebKit"
+
+italic last:
+| "hello, world"
+| <i>
+|   "<#selection-anchor> WebKit<#selection-focus>"
+
+italic all:
+| <i>
+|   "hello, world WebKit"
+
+underline first:
+| <u>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+underline middle:
+| "hello, "
+| <u>
+|   "world"
+| " WebKit"
+
+underline last:
+| "hello, world"
+| <u>
+|   "<#selection-anchor> WebKit<#selection-focus>"
+
+underline all:
+| <u>
+|   "hello, world WebKit"
+
+strikeThrough first:
+| <strike>
+|   "hello, "
+| "world WebKit"
+
+strikeThrough middle:
+| "hello, world WebKit"
+
+strikeThrough last:
+| "hello, world WebKit"
+
+strikeThrough all:
+| "hello, world WebKit"
+
+foreColor first:
+| "hello, world WebKit"
+
+foreColor middle:
+| "hello, world WebKit"
+
+foreColor last:
+| "hello, world WebKit"
+
+foreColor all:
+| "hello, world WebKit"
+
+hiliteColor first:
+| "hello, world WebKit"
+
+hiliteColor middle:
+| "hello, world WebKit"
+
+hiliteColor last:
+| "hello, world WebKit"
+
+hiliteColor all:
+| "hello, world WebKit"
+
+subscript first:
+| "hello, world WebKit"
+
+subscript middle:
+| "hello, world WebKit"
+
+subscript last:
+| "hello, world WebKit"
+
+subscript all:
+| "hello, world WebKit"
+
+superscript first:
+| "hello, world WebKit"
+
+superscript middle:
+| "hello, world WebKit"
+
+superscript last:
+| "hello, world WebKit"
+
+superscript all:
+| "hello, world WebKit"
+
+createLink first:
+| "hello, world WebKit"
+
+createLink middle:
+| "hello, world WebKit"
+
+createLink last:
+| "hello, world WebKit"
+
+createLink all:
+| "hello, world WebKit"

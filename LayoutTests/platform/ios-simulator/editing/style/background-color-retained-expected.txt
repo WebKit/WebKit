@@ -1,0 +1,8 @@
+Tests whether the background color is retained when all the text is deleted and new text is typed in.
+| "
+"
+| <span>
+|   style="background-color:green;"
+|   "Delete this text and type in new text. Background color should be retained."
+| "
+"

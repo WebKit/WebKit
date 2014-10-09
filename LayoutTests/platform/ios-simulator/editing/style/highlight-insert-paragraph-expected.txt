@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 40: NotFoundError: DOM Exception 8: An attempt was made to reference a Node in a context where it does not exist.
+This tests inserting a new paragraph preserves the background color.
+
+test
+

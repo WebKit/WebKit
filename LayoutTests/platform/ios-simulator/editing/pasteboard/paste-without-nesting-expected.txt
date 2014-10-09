@@ -1,0 +1,12 @@
+This test checks that copy a selection and paste over the same selection does not create nested divs.
+
+FAIL confirmedMarkup should be Hello. Was <span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">Hello</span>.
+FAIL confirmedMarkup should be Hello<br>world. Was <span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">Hello<br>world</span>.
+FAIL confirmedMarkup should be <div>Hello</div><div>world</div>. Was <div><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">Hello</span></div><div><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">world</span></div>.
+FAIL confirmedMarkup should be <div>Hello</div><div>world</div>. Was <div><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">Hello</span></div><div><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">world</span></div>.
+FAIL confirmedMarkup should be <div><b><i>Hello</i></b></div><div><b><i>world</i></b></div>. Was <div><b><i style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">Hello</i></b></div><div><b><i style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">world</i></b></div>.
+FAIL confirmedMarkup should be <div style="text-align: center;"><div><font color="#ff0000"><b><i>hello</i></b></font></div><div><font color="#ff0000"><b><i>world</i></b></font></div></div>. Was <div style="text-align: center;"><div style="text-align: start;"><b><i style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">hello</i></b></div><div style="text-align: start;"><b><i style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">world</i></b></div></div>.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+FAIL: Timed out waiting for notifyDone to be called
+OK
+OK zz OK
+Spelling markers should remain while merging two lines.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstLineText('target1') is "OK"
+PASS sel.anchorNode.data is "OK zz OK"
+

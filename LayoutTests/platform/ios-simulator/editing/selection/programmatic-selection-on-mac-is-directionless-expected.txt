@@ -1,0 +1,43 @@
+CONSOLE MESSAGE: line 42: IndexSizeError: DOM Exception 1: Index or size was negative, or greater than the allowed value.
+This test ensures that programmatically set selections are directionless on mac, and that they are not on other platforms.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mac:
+PASS left by character in regular-div
+PASS left by character in regular-div, after undoing delete
+PASS left by character in regular-div, after undoing forwardDelete
+PASS left by character in regular-div, after undoing cut
+PASS left by character in regular-div, after undoing bold
+PASS left by character in regular-div, after undoing insertText
+PASS right by character in regular-div
+PASS right by character in regular-div, after undoing delete
+PASS right by character in regular-div, after undoing forwardDelete
+PASS right by character in regular-div, after undoing cut
+PASS right by character in regular-div, after undoing bold
+PASS right by character in regular-div, after undoing insertText
+PASS left by line in regular-div
+PASS left by line in regular-div, after undoing delete
+PASS left by line in regular-div, after undoing forwardDelete
+PASS left by line in regular-div, after undoing cut
+PASS left by line in regular-div, after undoing bold
+PASS left by line in regular-div, after undoing insertText
+PASS right by line in regular-div
+PASS right by line in regular-div, after undoing delete
+PASS right by line in regular-div, after undoing forwardDelete
+PASS right by line in regular-div, after undoing cut
+PASS right by line in regular-div, after undoing bold
+PASS right by line in regular-div, after undoing insertText
+PASS left by character in editable-div
+FAIL left by character in editable-div, after undoing delete, expected "lin" but got "l"
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+line 1
+line 2
+line 3
+line 1
+le 2
+line 3
+  

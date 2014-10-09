@@ -1,0 +1,39 @@
+Tests to ensure MakeTextWritingDirection* modifies the direction of text and embed texts properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Natural on first word of "hello world"
+FAIL LeftToRight on first word of "hello world" yielded hello world but expected <span style="unicode-bidi: embed;">hello</span> world
+FAIL RightToLeft on first word of "hello world" yielded <span style="unicode-bidi: embed; direction: rtl;">hello </span>world but expected <span style="unicode-bidi: embed; direction: rtl;">hello</span> world
+PASS Natural on second and third words of "<b>hello world</b> webkit"
+FAIL LeftToRight on second and third words of "<b>hello world</b> webkit" yielded <b>hello <span style="unicode-bidi: embed;">world</span></b><span style="unicode-bidi: embed;"> webkit</span> but expected <b>hello<span style="unicode-bidi: embed;"> world</span></b><span style="unicode-bidi: embed;"> webkit</span>
+FAIL RightToLeft on second and third words of "<b>hello world</b> webkit" yielded <b>hello <span style="unicode-bidi: embed; direction: rtl;">world</span></b><span style="unicode-bidi: embed; direction: rtl;"> webkit</span> but expected <b>hello<span style="unicode-bidi: embed; direction: rtl;"> world</span></b><span style="unicode-bidi: embed; direction: rtl;"> webkit</span>
+FAIL Natural on third word of "<span dir="rtl">hello <span dir="ltr">world webkit rocks</span></span>" yielded <span dir="rtl">hello <span dir="ltr">world </span></span><span><span>webkit </span></span><span dir="rtl"><span dir="ltr">rocks</span></span> but expected <span dir="rtl">hello <span dir="ltr">world</span></span> webkit<span dir="rtl"><span dir="ltr"> rocks</span></span>
+FAIL LeftToRight on third word of "<span dir="rtl">hello <span dir="ltr">world webkit rocks</span></span>" yielded <span dir="rtl">hello <span dir="ltr">world webkit rocks</span></span> but expected <span dir="rtl">hello <span dir="ltr">world</span></span><span style="unicode-bidi: embed;"> webkit</span><span dir="rtl"><span dir="ltr"> rocks</span></span>
+FAIL RightToLeft on third word of "<span dir="rtl">hello <span dir="ltr">world webkit rocks</span></span>" yielded <span dir="rtl">hello <span dir="ltr">world webkit rocks</span></span> but expected <span dir="rtl">hello <span dir="ltr">world</span> webkit<span dir="ltr"> rocks</span></span>
+PASS Natural on first word of "هنا يكتب النص العربي"
+FAIL LeftToRight on first word of "هنا يكتب النص العربي" yielded <span style="unicode-bidi: embed;">هنا </span>يكتب النص العربي but expected <span style="unicode-bidi: embed;">هنا</span> يكتب النص العربي
+FAIL RightToLeft on first word of "هنا يكتب النص العربي" yielded <span style="unicode-bidi: embed; direction: rtl;">هنا </span>يكتب النص العربي but expected <span style="unicode-bidi: embed; direction: rtl;">هنا</span> يكتب النص العربي
+PASS Natural on second and third words of "<b>هنا يكتب</b> النص العربي"
+FAIL LeftToRight on second and third words of "<b>هنا يكتب</b> النص العربي" yielded <b>هنا <span style="unicode-bidi: embed;">يكتب</span></b><span style="unicode-bidi: embed;"> النص </span>العربي but expected <b>هنا<span style="unicode-bidi: embed;"> يكتب</span></b><span style="unicode-bidi: embed;"> النص</span> العربي
+FAIL RightToLeft on second and third words of "<b>هنا يكتب</b> النص العربي" yielded <b>هنا <span style="unicode-bidi: embed; direction: rtl;">يكتب</span></b><span style="unicode-bidi: embed; direction: rtl;"> النص </span>العربي but expected <b>هنا<span style="unicode-bidi: embed; direction: rtl;"> يكتب</span></b><span style="unicode-bidi: embed; direction: rtl;"> النص</span> العربي
+PASS Natural on first word of "<div dir="rtl">هنا يكتب النص العربي</div>"
+FAIL LeftToRight on first word of "<div dir="rtl">هنا يكتب النص العربي</div>" yielded <div dir="rtl">هنا يكتب النص العربي</div> but expected <div dir="rtl"><span style="unicode-bidi: embed; direction: ltr;">هنا</span> يكتب النص العربي</div>
+FAIL RightToLeft on first word of "<div dir="rtl">هنا يكتب النص العربي</div>" yielded <div dir="rtl">هنا يكتب النص العربي</div> but expected <div dir="rtl"><span style="unicode-bidi: embed;">هنا</span> يكتب النص العربي</div>
+PASS Natural on second and third words of "<div dir="rtl"><b>هنا يكتب</b> النص العربي</div>"
+FAIL LeftToRight on second and third words of "<div dir="rtl"><b>هنا يكتب</b> النص العربي</div>" yielded <div dir="rtl"><b>هنا يكتب</b> النص العربي</div> but expected <div dir="rtl"><b>هنا<span style="unicode-bidi: embed; direction: ltr;"> يكتب</span></b><span style="unicode-bidi: embed; direction: ltr;"> النص</span> العربي</div>
+FAIL RightToLeft on second and third words of "<div dir="rtl"><b>هنا يكتب</b> النص العربي</div>" yielded <div dir="rtl"><b>هنا يكتب</b> النص العربي</div> but expected <div dir="rtl"><b>هنا<span style="unicode-bidi: embed;"> يكتب</span></b><span style="unicode-bidi: embed;"> النص</span> العربي</div>
+FAIL Natural on third word of "<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>" yielded <div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div> but expected <div dir="rtl">هنا <span dir="ltr">يكتب</span> النص<span dir="ltr"> العربي</span></div>
+FAIL LeftToRight on third word of "<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>" yielded <div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div> but expected <div dir="rtl"><span style="unicode-bidi: embed; direction: ltr;">هنا يكتب النص العربي</span></div>
+FAIL RightToLeft on third word of "<div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div>" yielded <div dir="rtl">هنا <span dir="ltr">يكتب النص العربي</span></div> but expected <div dir="rtl">هنا <span dir="ltr">يكتب</span><span style="unicode-bidi: embed;"> النص</span><span dir="ltr"> العربي</span></div>
+PASS Natural on first word of "写中文"
+FAIL LeftToRight on first word of "写中文" yielded 写中文 but expected <span style="unicode-bidi: embed;">写</span>中文
+FAIL RightToLeft on first word of "写中文" yielded 写中文 but expected <span style="unicode-bidi: embed; direction: rtl;">写</span>中文
+PASS Natural on first word of "<div dir="rtl">写中文</div>"
+FAIL LeftToRight on first word of "<div dir="rtl">写中文</div>" yielded <div dir="rtl">写中文</div> but expected <div dir="rtl"><span style="unicode-bidi: embed; direction: ltr;">写</span>中文</div>
+FAIL RightToLeft on first word of "<div dir="rtl">写中文</div>" yielded <div dir="rtl">写中文</div> but expected <div dir="rtl"><span style="unicode-bidi: embed;">写</span>中文</div>
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,15) size 732x58
+          text run at (14,15) width 726: "Should see \"XX\" in a top red box, and another \"XX\" in a red box inside the"
+          text run at (739,15) width 7: " "
+          text run at (14,45) width 45: "first."
+      RenderBlock {DIV} at (0,112) size 784x176
+        RenderBlock {DIV} at (0,0) size 784x176 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x30
+            RenderText {#text} at (0,1) size 18x28
+              text run at (0,1) width 18: "X"
+          RenderBlock {DIV} at (14,44) size 756x118 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,15) size 255x28
+              text run at (14,15) width 255: "should not see this content"
+            RenderBR {BR} at (268,37) size 1x0
+            RenderText {#text} at (14,45) size 35x28
+              text run at (14,45) width 35: "XX"
+            RenderBR {BR} at (48,67) size 1x0
+            RenderText {#text} at (14,75) size 35x28
+              text run at (14,75) width 35: "XX"

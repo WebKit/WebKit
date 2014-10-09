@@ -1,0 +1,165 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+rdar://problems/4038408&4154187&4125087&4125381, This tests deletion from underneath quoted text:
+
+before deletion:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|   "
+
+
+"
+|   <div>
+|     <br>
+|       class="khtml-block-placeholder"
+|   "
+"
+| "
+
+"
+
+after deletion:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|   "
+
+
+"
+|   <div>
+|     <br>
+|       class="khtml-block-placeholder"
+|   "
+"
+| "
+
+"
+
+after insert text:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|   "
+
+
+"
+|   <div>
+|     <br>
+|       class="khtml-block-placeholder"
+|   "
+"
+| "
+
+"

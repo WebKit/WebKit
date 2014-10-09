@@ -1,0 +1,21 @@
+Test to check if last and first word can be selected when they double-clicked (Bug 36359)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.getSelection().toString() should be selectme1. Was .
+FAIL window.selectedByModify should be selectme1. Was .
+FAIL window.getSelection().toString() should be selectme2. Was .
+PASS window.selectedByModify is 'selectme2'
+FAIL window.getSelection().toString() should be selectme3. Was .
+PASS window.selectedByModify is 'selectme3'
+FAIL window.getSelection().toString() should be selectme4. Was .
+PASS window.selectedByModify is 'selectme4'
+FAIL window.getSelection().toString() should be selectme5. Was .
+PASS window.selectedByModify is 'selectme5'
+FAIL window.getSelection().toString() should be selectme6. Was .
+PASS window.selectedByModify is 'selectme6'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

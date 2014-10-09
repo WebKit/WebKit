@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+Elements distributed to Shadow DOM should be deleted correctly when pressing delete key.
+
+To test manually, select somewhere in ABCDE from somehwere in 12345, and press delete, and check the selected text is deleted correctly.
+
+ABCDE
+abcde
+12345
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

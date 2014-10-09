@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 100: InvalidAccessError: DOM Exception 15: A parameter or an operation was not supported by the underlying object.
+FAIL: Timed out waiting for notifyDone to be called
+Test for Unified Spell Checker & Async Spell Checker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL text : "zz" should have markers: [zz]
+FAIL text : "apple,zz,orange" should have markers: [zz]
+FAIL text : "zz,zz" should have markers: [zz,zz]
+FAIL text : "zz zz zz" should have markers: [zz,zz,zz]
+FAIL text : " zz zz zz " should have markers: [zz,zz,zz]
+

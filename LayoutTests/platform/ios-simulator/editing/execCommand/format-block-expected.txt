@@ -1,0 +1,76 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This test uses FormatBlock to modify three of the paragraphs below
+
+Before FormatBlock:
+| "
+"
+| <p>
+|   id="item1"
+|   "Make Pre"
+| "
+"
+| <br>
+| "
+"
+| <div>
+|   "Foo"
+|   <br>
+|   <span>
+|     id="item2"
+|     "Make h1"
+|   <br>
+|   "baz"
+| "
+"
+| <br>
+| "
+"
+| <address>
+|   id="item3"
+|   "Attempt to apply the current formatting here"
+| "
+"
+
+After FormatBlock:
+| "
+"
+| <p>
+|   id="item1"
+|   "Make Pre"
+| "
+"
+| <br>
+| "
+"
+| <div>
+|   "Foo"
+|   <br>
+|   <span>
+|     id="item2"
+|     "Make h1"
+|   <br>
+|   "baz"
+| "
+"
+| <br>
+| "
+"
+| <address>
+|   id="item3"
+|   "Attempt to apply the current formatting here"
+| "
+"

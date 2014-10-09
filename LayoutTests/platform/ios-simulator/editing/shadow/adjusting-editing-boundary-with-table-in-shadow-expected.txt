@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+host 1
+host 2
+Selecting around a table which is distributed from shadow subtree to nested shadow subtree will trigger an assertion. To try manually, select from "shadow 2" to around "after" and confirm a crash does not occur.

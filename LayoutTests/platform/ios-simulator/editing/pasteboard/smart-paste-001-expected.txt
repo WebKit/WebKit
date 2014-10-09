@@ -1,0 +1,24 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldApplyStyle:<DOMCSSStyleDeclaration: 0x7fc61c961570> toElementsInDOMRange:range from 0 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 6 of #text > SPAN > FONT > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > FONT > DIV > DIV > BODY > HTML > #document to 6 of #text > SPAN > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Tests: 
+Smart paste when pasting after a word at the end of a line.
+Expected Results: 
+A space should be added between the preexisting word and the word that's pasted. It should like this: 
+test test
+thello 
+world
+WebKitest
+execCopyCommand: <div id="test" class="editing"> test </div>
+execPasteCommand: <div id="test" class="editing"> t<font size="3"><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">hello&nbsp;</span></font></div><div style="-webkit-line-break: after-white-space;"><div><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">world</span></div></div><div id="test" class="editing"><font size="3"><span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">WebKit</span></font>est </div>

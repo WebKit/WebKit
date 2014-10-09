@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+The spellchecker should store replacement text in each marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+wellcome.

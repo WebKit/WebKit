@@ -1,0 +1,17 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 9 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 9 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests indenting "three" then undoing the indent. You should see one, two and three numbered 1 through 3 then four as a sublist with number 1.
+Bugzilla bug 
+Radar bug
+
+one
+two
+three
+four
+Before indent: <li>one</li> <li>two</li> <li id="test">three</li> <ol><li>four</li></ol>
+After indent: <li>one</li> <li>two</li> <li id="test">three</li> <ol><li>four</li></ol>
+After undoing: <li>one</li> <li>two</li> <li id="test">three</li> <ol><li>four</li></ol>
+The test passed

@@ -1,0 +1,7 @@
+This tests indenting a div inside a list item. By indenting "world", we should be inserting a blockquote around world inside the list item.
+
+a
+hello
+world
+b
+a <ul> <li>hello<div id="test"> world </div></li> </ul> b

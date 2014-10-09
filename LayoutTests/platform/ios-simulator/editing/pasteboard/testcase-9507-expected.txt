@@ -1,0 +1,49 @@
+When copying some text, under certain circumstances, empty style (or font) tags are created. This test checks that there is no empty <font> tag after 'foo' and before 'bar'.
+
+After copy:
+| "
+"
+| <div>
+|   class="editing"
+|   id="test"
+|   "
+<#selection-anchor>foo
+"
+|   <div>
+|     style="color: rgb(255, 0, 0);"
+|     "
+"
+|     <div>
+|       "bar<#selection-focus>"
+|     "
+"
+|   "
+"
+| "
+"
+
+After paste:
+| "
+"
+| <div>
+|   class="editing"
+|   id="test"
+|   <font>
+|     size="3"
+|     <span>
+|       style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|       "foo"
+|   <div>
+|     <font>
+|       size="3"
+|       <span>
+|         style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|         "bar<#selection-caret>"
+|   <div>
+|     style="color: rgb(255, 0, 0);"
+|     "
+"
+|   "
+"
+| "
+"

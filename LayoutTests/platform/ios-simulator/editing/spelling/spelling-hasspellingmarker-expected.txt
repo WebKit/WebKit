@@ -1,0 +1,8 @@
+FAIL: Timed out waiting for notifyDone to be called
+
+This tests if internals.hasSpellingMarker works for differnt type of elements. This test succeds when there are four elements having "zz ". However, only the last one should not contatin spelling marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

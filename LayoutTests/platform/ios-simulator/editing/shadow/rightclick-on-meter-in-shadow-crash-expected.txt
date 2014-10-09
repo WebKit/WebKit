@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+This test ensures context click around meter won't crash.
+
+PASS

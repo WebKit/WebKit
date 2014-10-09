@@ -1,0 +1,34 @@
+This test ensures WebKit takes paddings and borders into account when moving vertically.
+
+test 1
+FAIL selectWord() should be left2. Was .
+FAIL selectWord() should be right2. Was .
+FAIL selectWord() should be left1. Was .
+FAIL selectWord() should be right1. Was .
+
+test 2
+FAIL selectWord() should be left2. Was .
+FAIL selectWord() should be right2. Was .
+FAIL selectWord() should be left1. Was .
+FAIL selectWord() should be right1. Was .
+
+test 3
+PASS selectWord() is "left2"
+PASS selectWord() is "right2"
+FAIL selectWord() should be left1. Was .
+FAIL selectWord() should be right1. Was .
+
+test 4
+FAIL selectWord() should be left2. Was .
+FAIL selectWord() should be right2. Was .
+FAIL selectWord() should be left1. Was .
+FAIL selectWord() should be right1. Was .
+FAIL selectWord() should be left3. Was .
+FAIL selectWord() should be right3. Was .
+FAIL selectWord() should be left2. Was .
+FAIL selectWord() should be right2. Was .
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

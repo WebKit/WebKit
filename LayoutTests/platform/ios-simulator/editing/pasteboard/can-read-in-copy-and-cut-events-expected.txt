@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 13: TypeError: null is not an object (evaluating 'event.clipboardData.types.indexOf')
+CONSOLE MESSAGE: line 22: TypeError: null is not an object (evaluating 'event.clipboardData.types.indexOf')
+Simple test that data set during a copy/cut event can be read back. To run the test manually, simply select any text and initiate a copy/cut operation.
+
+

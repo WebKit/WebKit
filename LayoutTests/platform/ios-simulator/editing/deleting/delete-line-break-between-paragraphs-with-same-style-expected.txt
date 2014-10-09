@@ -1,0 +1,15 @@
+This tests deleting a line break between paragraphs with the same inline style. Inline style should be preserved after the merge.
+| "
+"
+| <div>
+|   <font>
+|     class="Apple-style-span"
+|     face="monospace"
+|     "hello world"
+| <div>
+|   <font>
+|     class="Apple-style-span"
+|     face="monospace"
+|     "WebKit"
+| "
+"

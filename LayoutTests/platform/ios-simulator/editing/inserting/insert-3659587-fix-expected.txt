@@ -1,0 +1,14 @@
+Test that inserting a line break will preserve bolding. All of the text below should be bold.
+
+test
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execBoldCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execInsertLineBreakCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>
+execTypeCharacterCommand: <span id="test">test</span>

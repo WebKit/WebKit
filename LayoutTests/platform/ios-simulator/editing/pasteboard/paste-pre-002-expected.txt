@@ -1,0 +1,4 @@
+This is a layout test for rdar://problem/4370209 "Reproducible crash when pasting over whitespace:pre text". The text below is selected, copied, and pasted over itself. You'll see foo/nbar if successful.
+foo bar
+execCopyCommand: <div id="test" class="editing"> <pre>foo bar</pre> </div>
+execPasteCommand: <div id="test" class="editing"> <pre><font face="Times"><span style="white-space: normal; -webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">foo bar</span></font></pre> </div>

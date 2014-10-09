@@ -1,0 +1,23 @@
+This tests dragging a selected table by mousing down on the contents of one of its cells. It should be in the red bordered area.
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="source"
+|   style="border: 1px solid blue;"
+|   <table>
+|     border="1"
+|     <tbody>
+|       <tr>
+|         <td>
+|           id="cell"
+|           "fo<#selection-caret>o"
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="destination"
+|   style="border: 1px solid red;"
+|   <br>
+| "
+"

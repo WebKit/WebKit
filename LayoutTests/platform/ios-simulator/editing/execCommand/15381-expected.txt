@@ -1,0 +1,3 @@
+This tests to make sure that centering content whose enclosing block is the root editable element doesn't modify the root editable element.
+
+Failure. Expected: <div id="edit" contenteditable="true"><div style="text-align: center;">centered text</div></div>, found: <div id="edit" contenteditable="true">centered text</div>

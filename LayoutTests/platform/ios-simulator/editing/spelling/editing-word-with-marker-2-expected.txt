@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+The test verifies if the spelling markers remain if a whitespace is added before or after the misspelled word. The test succeeds if the word 'meagesga' has red underline.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

@@ -1,0 +1,3 @@
+
+FAIL selectFirstLineIncludingLineBreak(); copyPaste(); textarea.selectionEnd should be 6. Was 0.
+

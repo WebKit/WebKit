@@ -1,0 +1,50 @@
+CONSOLE MESSAGE: line 16: TypeError: null is not an object (evaluating 'positions[i].node.tagName')
+abc def hij opq rst
+abc def hij opq rst
+ששש נננ בבב גגג קקק
+ששש נננ בבב גגג קקק
+abc def hij אאא בבב צצצ opr uvw xyz
+abc def hij אאא בבב צצצ opr uvw xyz
+abc def שנב סטז uvw xyz
+abc def שנב סטז uvw xyz
+aaa אאא bbb
+aaa אאא bbb
+אאא בבב צצצ aaa bbb ccc דדד עעע פפפ
+אאא בבב צצצ aaa bbb ccc דדד עעע פפפ
+אאא בבב aaa bbb צצצ דדד
+אאא בבב aaa bbb צצצ דדד
+שנב abc סטז
+שנב abc סטז
+abc ‫באד def‬ xyz
+abc def hij  opq rst
+abc def thisisonewordend opq rst
+
+======== Move By Word ====
+Test 1, LTR:
+Move right by one word
+"abc def hij opq rst"[0, 4, 8, 12, 16, 19]
+Move left by one word
+"abc def hij opq rst"[19, 16, 12, 8, 4, 0]
+Test 2, RTL:
+Move left by one word
+"abc def hij opq rst"[0, 15, 11, 7, 3, 19]
+Move right by one word
+"abc def hij opq rst"[19, 3, 7, 11, 15, 0]
+Test 3, LTR:
+Move right by one word
+"ZZZ QQQ BBB CCC XXX"[0, 15, 11, 7, 3, 19]
+Move left by one word
+"ZZZ QQQ BBB CCC XXX"[19, 3, 7, 11, 15, 0]
+Test 4, RTL:
+Move left by one word
+"ZZZ QQQ BBB CCC XXX"[0, 4, 8, 12, 16, 19]
+Move right by one word
+"ZZZ QQQ BBB CCC XXX"[19, 16, 12, 8, 4, 0]
+Test 5, LTR:
+Move right by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[0, 4, 8, 12, 19, 15, 24, 28, 32, 35]
+Move left by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[35, 32, 28, 24, 15, 19, 12, 8, 4, 0]
+Test 6, RTL:
+Move left by one word
+

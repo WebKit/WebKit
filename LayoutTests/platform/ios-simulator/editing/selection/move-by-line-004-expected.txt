@@ -1,0 +1,6 @@
+Test that moving the caret with line granularity within the highest editable root works across non-editable content.
+
+FAIL: Did not move to the previous line
+apple pie
+pineapple
+apple juice

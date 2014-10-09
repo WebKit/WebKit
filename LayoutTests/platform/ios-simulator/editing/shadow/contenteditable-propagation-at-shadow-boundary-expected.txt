@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+This test checks that content-editable is not propagated from shadow host to a shadow subtree.
+
+This p is required to produce the issue.
+
+This div and parent div are required to produce the issue.
+shadow host 1
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

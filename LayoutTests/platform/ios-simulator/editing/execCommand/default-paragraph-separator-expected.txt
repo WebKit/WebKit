@@ -1,0 +1,65 @@
+PASS document.queryCommandEnabled('DefaultParagraphSeparator') is true
+PASS document.queryCommandValue('DefaultParagraphSeparator') is "div"
+document.execCommand('DefaultParagraphSeparator', false, 'p')
+PASS document.queryCommandValue('DefaultParagraphSeparator') is "p"
+document.execCommand('DefaultParagraphSeparator', false, 'br')
+PASS document.queryCommandValue('DefaultParagraphSeparator') is "p"
+document.execCommand('DefaultParagraphSeparator', false, 'invalid')
+PASS document.queryCommandValue('DefaultParagraphSeparator') is "p"
+
+Creating paragraphs in the normal way.
+document.execCommand('InsertText', false, 'a')
+FAIL div.innerHTML should be a. Was .
+document.execCommand('InsertText', false, '\n')
+FAIL div.innerHTML should be a<p><br></p>. Was .
+document.execCommand('InsertText', false, 'b')
+FAIL div.innerHTML should be a<p>b</p>. Was .
+document.execCommand('InsertText', false, '\n')
+FAIL div.innerHTML should be a<p>b</p><p><br></p>. Was .
+document.execCommand('Delete')
+FAIL div.innerHTML should be a<p>b</p>. Was .
+document.execCommand('Delete')
+FAIL div.innerHTML should be a<p><br></p>. Was .
+document.execCommand('Delete')
+FAIL div.innerHTML should be a. Was .
+document.execCommand('DefaultParagraphSeparator', false, 'div')
+document.execCommand('InsertParagraph')
+FAIL div.innerHTML should be a<div><br></div>. Was .
+div.innerHTML = ''
+
+Using the previous block as template for the new one.
+document.execCommand('DefaultParagraphSeparator', false, 'p')
+document.execCommand("InsertHTML", false, "<pre>a</pre>");
+FAIL div.innerHTML should be <pre>a</pre>. Was .
+document.execCommand('InsertText', false, 'b')
+FAIL div.innerHTML should be <pre>ab</pre>. Was .
+document.execCommand('InsertText', false, '\n')
+FAIL div.innerHTML should be <pre>ab</pre><pre><br></pre>. Was .
+document.execCommand('InsertText', false, 'c')
+FAIL div.innerHTML should be <pre>ab</pre><pre>c</pre>. Was .
+document.execCommand('DefaultParagraphSeparator', false, 'div')
+document.execCommand('InsertText', false, '\n')
+FAIL div.innerHTML should be <pre>ab</pre><pre>c</pre><pre><br></pre>. Was .
+document.execCommand('Delete')
+document.execCommand('InsertParagraph')
+FAIL div.innerHTML should be <pre>ab</pre><pre>c</pre><pre><br></pre>. Was .
+
+Breaking out of lists.
+div.innerHTML = ''
+document.execCommand('DefaultParagraphSeparator', false, 'p')
+document.execCommand("InsertHTML", false, "<ul><li>a</li></ul>")
+FAIL div.innerHTML should be <ul><li>a</li></ul>. Was .
+document.execCommand('InsertParagraph')
+document.execCommand('InsertParagraph')
+FAIL div.innerHTML should be <ul><li>a</li></ul><p><br></p>. Was .
+
+Breaking up nested elements.
+div.innerHTML = ''
+document.execCommand("InsertHTML", false, "<cite>a<cite>bc</cite></cite>")
+window.getSelection().modify("move", "backward", "character")
+document.execCommand('InsertParagraph')
+FAIL div.innerHTML should be <cite>a<cite>b</cite></cite><p><cite><cite>c</cite></cite></p>. Was .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

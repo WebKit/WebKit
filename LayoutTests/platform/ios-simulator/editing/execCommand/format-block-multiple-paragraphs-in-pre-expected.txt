@@ -1,0 +1,75 @@
+This tests ensures formatBlock removes a pre when formatting multiple paragraphs inside the pre.
+
+Formatting all paragraphs by h3 yields:
+| "
+"
+| <pre>
+|   "hello
+
+world
+
+webkit
+"
+| "
+"
+
+Undo yields:
+| "
+"
+| <pre>
+|   "hello
+
+world
+
+webkit
+"
+| "
+"
+
+Formatting all but the last paragraph by h3 yields:
+| "
+"
+| <pre>
+|   <h3>
+|     "hello"
+|     "
+"
+|     "world"
+|     "
+"
+|   "webkit
+"
+| "
+"
+
+Undo yields:
+| "
+"
+| <pre>
+|   <h3>
+|     "hello"
+|     "
+"
+|     "world"
+|     "
+"
+|   "webkit
+"
+| "
+"
+
+Formatting all but the first paragraph by h3 yields:
+| "
+"
+| <pre>
+|   <h3>
+|     "hello"
+|     "
+"
+|     "world"
+|     "
+"
+|   "webkit
+"
+| "
+"

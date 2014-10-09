@@ -1,0 +1,2 @@
+Success. execCommand("styleWithCSS", ...) is supported.
+Failure. Expected: The <b>second</b> and last words in this sentence should be <span style="font-weight: bold;">bold</span>.

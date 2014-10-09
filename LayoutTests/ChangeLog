@@ -1,3 +1,9 @@
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS Simulator results for editing tests.
+
+        * platform/ios-simulator/editing/*: Added
+
 2014-10-09  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
 
         Re-add tests for :enabled with Anchor, Area & Link elements

@@ -1,0 +1,5 @@
+This tests querying BackColor and FontSize of the typing style. WebKit should not modify the typing style and should return the correct values.
+
+FAIL: background color; expected rgb(255, 0, 0) but got 
+FAIL: font size; expected 5 but got 
+

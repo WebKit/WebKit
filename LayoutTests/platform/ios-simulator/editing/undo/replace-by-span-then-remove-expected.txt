@@ -1,0 +1,7 @@
+initial:<b style="font-style: italic;">world</b>
+after removing bold:<b style="font-style: italic;">world</b>
+after removing italic:<b style="font-style: italic;">world</b>
+after undo:<b style="font-style: italic;">world</b>
+after redo:<b style="font-style: italic;">world</b>
+PASS
+

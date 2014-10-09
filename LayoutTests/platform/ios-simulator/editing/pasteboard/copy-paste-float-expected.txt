@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 18: TypeError: undefined is not an object (evaluating 'pasteSection.firstChild.style.getPropertyValue')
+This test is to see if text within a floating block is put onto the paste board wihtout the float style.
+
+First LI
+Second LI
+
+---
+---

@@ -1,0 +1,22 @@
+This tests that double-clicking on Japanese text.
+
+例えばオーストラリア
+Failed for offset 55
+  Expected: オーストラリア
+  Actual: 
+Failed for offset 70
+  Expected: オーストラリア
+  Actual: 
+Failed for offset 85
+  Expected: オーストラリア
+  Actual: 
+Failed for offset 100
+  Expected: オーストラリア
+  Actual: 
+Failed for offset 115
+  Expected: オーストラリア
+  Actual: 
+Failed for offset 130
+  Expected: オーストラリア
+  Actual: 
+

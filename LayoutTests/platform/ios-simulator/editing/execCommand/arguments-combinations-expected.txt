@@ -1,0 +1,14 @@
+These are tests for testing the how execCommand() works with different combinations of arguments. The "InsertHorizontalRule" command was chosen arbitrarily because it was what I was working on at the time, but the results should be paralleled in the other commands as well.
+
+CONSOLE
+
+FAIL expected output was  should have been <hr>
+FAIL expected output was  should have been <hr>
+FAIL expected output was  should have been <hr id="foo">
+FAIL expected output was  should have been <hr id="foo">
+FAIL expected output was  should have been <hr>
+FAIL expected output was  should have been <hr>
+FAIL expected output was  should have been <hr>
+FAIL expected output was  should have been <hr id="0">
+FAIL expected output was  should have been <hr>
+

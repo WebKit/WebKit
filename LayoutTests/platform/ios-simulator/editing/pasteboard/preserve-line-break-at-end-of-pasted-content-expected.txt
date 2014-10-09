@@ -1,0 +1,20 @@
+This tests for a bug where newlines would not be preserved during copy/paste. Below you should see two paragraphs containing "Hello World!" and an empty third paragraph with the caret in it.
+
+Before copy and paste:
+| "<#selection-anchor>Hello World!"
+| <div>
+|   id="div"
+|   <#selection-focus>
+|   <br>
+
+After copy and paste:
+| "Hello World!"
+| <div>
+|   id="div"
+|   <span>
+|     style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|     "Hello World!"
+|     <br>
+| <div>
+|   <#selection-caret>
+|   <br>

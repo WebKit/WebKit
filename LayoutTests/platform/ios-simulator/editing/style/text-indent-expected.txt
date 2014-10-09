@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 14: ReferenceError: Can't find variable: textInputController
+

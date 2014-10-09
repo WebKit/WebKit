@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+On the second time selecting <span>, it should not become non-contenteditable. If it becomes non-contenteditable, the selection from <span> to <table> will break editing boundaries and contain "a". This test checks the <span> does not changed to non-contenteditable element.
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

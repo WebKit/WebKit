@@ -1,0 +1,10 @@
+This test passes if it doesn't crash and the context menu is shown for the search input
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL clicked should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,53 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldApplyStyle:<DOMCSSStyleDeclaration: 0x7fc61c982580> toElementsInDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of I > B > DIV > BODY > HTML > #document to 9 of #text > SPAN > FONT > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > FONT > I > B > DIV > BODY > HTML > #document to 9 of #text > SPAN > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+Markup before:
+| "
+"
+| <b>
+|   <i>
+|     "<#selection-caret>hello bold and italic"
+| <div>
+|   <i>
+|     "hello italic"
+| <div>
+|   <font>
+|     color="#ff0000"
+|     "hello red"
+| "
+"
+
+Markup after:
+| <b>
+|   <i>
+|     style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|     <font>
+|       size="3"
+|       "hello bold and italic"
+| <div>
+|   <i>
+|     style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|     <font>
+|       size="3"
+|       "hello italic"
+| <div>
+|   <font>
+|     size="3"
+|     <span>
+|       style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|       "hello red<#selection-caret>"
+| "
+"

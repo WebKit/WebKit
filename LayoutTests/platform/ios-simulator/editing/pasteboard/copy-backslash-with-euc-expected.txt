@@ -1,0 +1,37 @@
+
+Original texts which will be copied
+
+\ from UTF8 page
+\ FROM UTF8 PAGE (TRANSFORMED)
+●●●●●●●●●●●●●●●●●●●●●●●●●
+
+Texts in the EUC frame will be pasted here
+
+from EUC div to UTF8 text-control: 
+from EUC div to UTF8 content-editable: FAIL
+from EUC transform to UTF8 text-control: 
+from EUC transform to UTF8 content-editable: FAIL
+from EUC secure to UTF8 text-control: 
+from EUC secure to UTF8 content-editable: FAIL
+from EUC control to UTF8 text-control: 
+from EUC control to UTF8 content-editable: FAIL
+
+Results
+
+from EUC div to UTF8 text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC div to UTF8 content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC transform to UTF8 text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC transform to UTF8 content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC secure to UTF8 text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC secure to UTF8 content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC control to UTF8 text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from EUC control to UTF8 content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 div to EUC text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 div to EUC content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 transform to EUC text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 transform to EUC content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 secure to EUC text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 secure to EUC content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 control to EUC text-control: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+from UTF8 control to EUC content-editable: FAIL: the actual text was 'FAIL' (char code of the first character was 70)
+

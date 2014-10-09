@@ -1,0 +1,35 @@
+This tests that Paste commands fires textInput events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL event.data should be PlainHello. Was a.
+FAIL testTargetTextarea.value should be PlainHello. Was a.
+FAIL event.data should be PlainHello. Was a.
+FAIL testTargetInput.value should be PlainHello. Was a.
+PASS event.data is ''
+FAIL testTargetEditable.innerHTML should be PlainHello. Was <span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">a</span>.
+PASS event.data is 'RichHello'
+PASS testTargetTextarea.value is 'RichHello'
+PASS event.data is 'RichHello'
+PASS testTargetInput.value is 'RichHello'
+PASS event.data is ''
+FAIL testTargetEditable.innerHTML should be <b>Rich</b>Hello. Was <span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"><b>Rich</b>Hello</span>.
+PASS textInputCount is proceedingTestCases.length
+FAIL event.data should be PlainHello. Was RichHello.
+PASS testTargetTextarea.value is ''
+FAIL event.data should be PlainHello. Was RichHello.
+PASS testTargetInput.value is ''
+PASS event.data is ''
+PASS testTargetEditable.innerHTML is ''
+PASS event.data is 'RichHello'
+PASS testTargetTextarea.value is ''
+PASS event.data is 'RichHello'
+PASS testTargetInput.value is ''
+PASS event.data is ''
+PASS testTargetEditable.innerHTML is ''
+PASS textInputCount is cancelingTestCases.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

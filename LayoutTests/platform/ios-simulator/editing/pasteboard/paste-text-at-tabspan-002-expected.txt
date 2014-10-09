@@ -1,0 +1,42 @@
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > SPAN > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldApplyStyle:<DOMCSSStyleDeclaration: 0x7fc61cf387e0> toElementsInDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+You should see a\tax\t\tz below:
+| "
+"
+| <span>
+|   id="test"
+|   "a"
+|   <span>
+|     class="Apple-tab-span"
+|     style="white-space:pre"
+|     "	"
+|   <font>
+|     size="3"
+|     <span>
+|       style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
+|       "ax<#selection-caret>"
+|   <span>
+|     class="Apple-tab-span"
+|     style="white-space:pre"
+|     "		"
+|   "z"
+| "
+"
