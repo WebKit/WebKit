@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for scrollingcoordinator tests.
+
+        * platform/ios-simulator/scrollingcoordinator/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for scrollbars tests.
 
         * platform/ios-simulator/scrollbars/*: Added
