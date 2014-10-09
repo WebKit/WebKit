@@ -23,8 +23,10 @@
 #include "SVGTextPositioningElement.h"
 
 #include "Attribute.h"
+#include "RenderSVGInline.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
+#include "SVGAltGlyphElement.h"
 #include "SVGElementInstance.h"
 #include "SVGLengthList.h"
 #include "SVGNames.h"
@@ -163,27 +165,24 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
     ASSERT_NOT_REACHED();
 }
 
-SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderObject* renderer)
+SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderBoxModelObject& renderer)
 {
-    if (!renderer)
-        return 0;
+    if (!is<RenderSVGText>(renderer) && !is<RenderSVGInline>(renderer))
+        return nullptr;
 
-    if (!renderer->isSVGText() && !renderer->isSVGInline())
-        return 0;
+    ASSERT(renderer.element());
+    SVGElement& element = downcast<SVGElement>(*renderer.element());
 
-    Node* node = renderer->node();
-    ASSERT(node);
-    ASSERT(node->isSVGElement());
-
-    if (!node->hasTagName(SVGNames::textTag)
-        && !node->hasTagName(SVGNames::tspanTag)
+    if (!is<SVGTextElement>(element)
+        && !is<SVGTSpanElement>(element)
 #if ENABLE(SVG_FONTS)
-        && !node->hasTagName(SVGNames::altGlyphTag)
+        && !is<SVGAltGlyphElement>(element)
 #endif
-        && !node->hasTagName(SVGNames::trefTag))
-        return 0;
+        && !is<SVGTRefElement>(element))
+        return nullptr;
 
-    return static_cast<SVGTextPositioningElement*>(node);
+    // FIXME: This should use downcast<>().
+    return &static_cast<SVGTextPositioningElement&>(element);
 }
 
 }

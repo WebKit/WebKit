@@ -24,6 +24,7 @@
 
 namespace WebCore {
 
+class RenderBoxModelObject;
 class RenderObject;
 class RenderSVGInlineText;
 class RenderSVGText;
@@ -41,7 +42,7 @@ class SVGTextLayoutAttributesBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributesBuilder);
 public:
     SVGTextLayoutAttributesBuilder();
-    bool buildLayoutAttributesForForSubtree(RenderSVGText*);
+    bool buildLayoutAttributesForForSubtree(RenderSVGText&);
     void buildLayoutAttributesForTextRenderer(RenderSVGInlineText&);
 
     void rebuildMetricsForTextRenderer(RenderSVGInlineText*);
@@ -64,8 +65,8 @@ private:
         unsigned length;
     };
 
-    void buildCharacterDataMap(RenderSVGText*);
-    void collectTextPositioningElements(RenderObject*, bool& lastCharacterWasSpace);
+    void buildCharacterDataMap(RenderSVGText&);
+    void collectTextPositioningElements(RenderBoxModelObject&, bool& lastCharacterWasSpace);
     void fillCharacterDataMap(const TextPosition&);
 
 private:

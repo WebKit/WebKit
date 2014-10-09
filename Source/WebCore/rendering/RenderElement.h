@@ -55,6 +55,8 @@ public:
     RenderObject* firstChild() const { return m_firstChild; }
     RenderObject* lastChild() const { return m_lastChild; }
 
+    virtual bool isEmpty() const override { return !firstChild(); }
+
     // FIXME: Make these standalone and move to relevant files.
     bool isRenderLayerModelObject() const;
     bool isBoxModelObject() const;

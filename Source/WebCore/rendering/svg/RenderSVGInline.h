@@ -65,6 +65,8 @@ private:
     virtual RenderObject* removeChild(RenderObject&) override final;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInline, isSVGInline())
 
 #endif // !RenderSVGTSpan_H

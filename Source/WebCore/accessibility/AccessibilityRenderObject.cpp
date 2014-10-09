@@ -308,9 +308,9 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* re
     return nullptr;
 }
 
-static inline bool firstChildIsInlineContinuation(RenderObject* renderer)
+static inline bool firstChildIsInlineContinuation(RenderElement& renderer)
 {
-    RenderObject* child = renderer->firstChildSlow();
+    RenderObject* child = renderer.firstChild();
     return child && child->isInlineElementContinuation();
 }
 
@@ -329,9 +329,11 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 
     // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
     // the parent of the start, since everything in between will be linked up via the continuation.
-    else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer)) {
-        auto* firstParent = startOfContinuations(*m_renderer->firstChildSlow())->parent();
-        while (firstChildIsInlineContinuation(firstParent))
+    else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(downcast<RenderBlock>(*m_renderer))) {
+        RenderBlock& renderBlock = downcast<RenderBlock>(*m_renderer);
+        auto* firstParent = startOfContinuations(*renderBlock.firstChild())->parent();
+        ASSERT(firstParent);
+        while (firstChildIsInlineContinuation(*firstParent))
             firstParent = startOfContinuations(*firstParent->firstChild())->parent();
         previousSibling = firstParent->previousSibling();
     }
@@ -351,9 +353,9 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
     return axObjectCache()->getOrCreate(previousSibling);
 }
 
-static inline bool lastChildHasContinuation(RenderObject* renderer)
+static inline bool lastChildHasContinuation(RenderElement& renderer)
 {
-    RenderObject* child = renderer->lastChildSlow();
+    RenderObject* child = renderer.lastChild();
     return child && isInlineWithContinuation(child);
 }
 
@@ -372,9 +374,10 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
     // after the parent of the end, since everything in between will be linked up via the continuation.
-    else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer)) {
+    else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(downcast<RenderBlock>(*m_renderer))) {
         RenderElement* lastParent = endOfContinuations(*downcast<RenderBlock>(*m_renderer).lastChild())->parent();
-        while (lastChildHasContinuation(lastParent))
+        ASSERT(lastParent);
+        while (lastChildHasContinuation(*lastParent))
             lastParent = endOfContinuations(*lastParent->lastChild())->parent();
         nextSibling = lastParent->nextSibling();
     }

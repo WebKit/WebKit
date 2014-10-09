@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutAttributesBuilder.h"
 
+#include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGTextPositioningElement.h"
@@ -42,21 +43,19 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer(Render
 
         m_textLength = 0;
         bool lastCharacterWasSpace = true;
-        collectTextPositioningElements(textRoot, lastCharacterWasSpace);
+        collectTextPositioningElements(*textRoot, lastCharacterWasSpace);
 
         if (!m_textLength)
             return;
 
-        buildCharacterDataMap(textRoot);
+        buildCharacterDataMap(*textRoot);
     }
 
     m_metricsBuilder.buildMetricsAndLayoutAttributes(textRoot, &text, m_characterDataMap);
 }
 
-bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree(RenderSVGText* textRoot)
+bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree(RenderSVGText& textRoot)
 {
-    ASSERT(textRoot);
-
     m_characterDataMap.clear();
 
     if (m_textPositions.isEmpty()) {
@@ -69,7 +68,7 @@ bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree(RenderSV
         return false;
 
     buildCharacterDataMap(textRoot);
-    m_metricsBuilder.buildMetricsAndLayoutAttributes(textRoot, 0, m_characterDataMap);
+    m_metricsBuilder.buildMetricsAndLayoutAttributes(&textRoot, nullptr, m_characterDataMap);
     return true;
 }
 
@@ -96,25 +95,27 @@ static inline void processRenderSVGInlineText(const RenderSVGInlineText& text, u
     }
 }
 
-void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderObject* start, bool& lastCharacterWasSpace)
+void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxModelObject& start, bool& lastCharacterWasSpace)
 {
-    ASSERT(!start->isSVGText() || m_textPositions.isEmpty());
+    ASSERT(!is<RenderSVGText>(start) || m_textPositions.isEmpty());
 
-    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
-        if (child->isSVGInlineText()) {
-            processRenderSVGInlineText(*toRenderSVGInlineText(child), m_textLength, lastCharacterWasSpace);
+    for (RenderObject* child = start.firstChild(); child; child = child->nextSibling()) {
+        if (is<RenderSVGInlineText>(*child)) {
+            processRenderSVGInlineText(downcast<RenderSVGInlineText>(*child), m_textLength, lastCharacterWasSpace);
             continue;
         }
 
-        if (!child->isSVGInline())
+        if (!is<RenderSVGInline>(*child))
             continue;
 
-        SVGTextPositioningElement* element = SVGTextPositioningElement::elementFromRenderer(child);
+        RenderSVGInline& inlineChild = downcast<RenderSVGInline>(*child);
+        SVGTextPositioningElement* element = SVGTextPositioningElement::elementFromRenderer(inlineChild);
+
         unsigned atPosition = m_textPositions.size();
         if (element)
             m_textPositions.append(TextPosition(element, m_textLength));
 
-        collectTextPositioningElements(child, lastCharacterWasSpace);
+        collectTextPositioningElements(inlineChild, lastCharacterWasSpace);
 
         if (!element)
             continue;
@@ -126,7 +127,7 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderObject
     }
 }
 
-void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText* textRoot)
+void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRoot)
 {
     SVGTextPositioningElement* outermostTextElement = SVGTextPositioningElement::elementFromRenderer(textRoot);
     ASSERT(outermostTextElement);

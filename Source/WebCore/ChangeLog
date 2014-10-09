@@ -1,3 +1,44 @@
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Use RenderObject::firstChildSlow() / lastChildSlow() less
+        https://bugs.webkit.org/show_bug.cgi?id=137573
+
+        Reviewed by Andreas Kling.
+
+        Use RenderObject::firstChildSlow() / lastChildSlow() less by using
+        tighter typing at call sites whenever possible to be able to call the
+        faster RenderElement::firstChild() / lastChild() instead.
+
+        This patch also uses more references instead of pointers when possible.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::firstChildIsInlineContinuation):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::lastChildHasContinuation):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        * page/FrameView.cpp:
+        (WebCore::countRenderedCharactersInRenderObjectWithThreshold):
+        (WebCore::FrameView::renderedCharactersExceed):
+        * rendering/RenderElement.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        (WebCore::isRubyBeforeBlock):
+        (WebCore::isRubyAfterBlock):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree):
+        (WebCore::SVGTextLayoutAttributesBuilder::collectTextPositioningElements):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildCharacterDataMap):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::elementFromRenderer):
+        * svg/SVGTextPositioningElement.h:
+
 2014-10-09  Roger Fong  <roger_fong@apple.com>
 
         Build fix for Win EWS bots.

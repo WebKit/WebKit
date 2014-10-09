@@ -2234,25 +2234,24 @@ void FrameView::repaintContentRectangle(const IntRect& r)
     ScrollView::repaintContentRectangle(r);
 }
 
-static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderObject& renderer, unsigned countSoFar, unsigned threshold)
+static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderElement& renderer, unsigned threshold)
 {
-    // FIXME: Consider writing this using RenderObject::nextInPreOrder() instead of using recursion.
-    if (is<RenderText>(renderer))
-        countSoFar += downcast<RenderText>(renderer).text()->length();
-
-    for (RenderObject* child = renderer.firstChildSlow(); child; child = child->nextSibling()) {
-        if (countSoFar >= threshold)
-            break;
-        countSoFar = countRenderedCharactersInRenderObjectWithThreshold(*child, countSoFar, threshold);
+    unsigned count = 0;
+    for (const RenderObject* descendant = &renderer; descendant; descendant = descendant->nextInPreOrder()) {
+        if (is<RenderText>(*descendant)) {
+            count += downcast<RenderText>(*descendant).text()->length();
+            if (count >= threshold)
+                break;
+        }
     }
-    return countSoFar;
+    return count;
 }
 
 bool FrameView::renderedCharactersExceed(unsigned threshold)
 {
     if (!m_frame->contentRenderer())
         return false;
-    return countRenderedCharactersInRenderObjectWithThreshold(*m_frame->contentRenderer(), 0, threshold) >= threshold;
+    return countRenderedCharactersInRenderObjectWithThreshold(*m_frame->contentRenderer(), threshold) >= threshold;
 }
 
 void FrameView::contentsResized()

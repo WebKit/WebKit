@@ -46,30 +46,30 @@ static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
 {
     ASSERT(!object
         || !object->parent()->isRuby()
-        || object->isRubyRun()
+        || is<RenderRubyRun>(*object)
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && object->isRenderBlock() && object->style().display() == INLINE_BLOCK));
+        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == INLINE_BLOCK));
 
     return object
         && object->parent()->isRuby()
-        && object->isRenderBlock()
-        && !object->isRubyRun();
+        && is<RenderBlock>(*object)
+        && !is<RenderRubyRun>(*object);
 }
 
 static inline bool isRubyBeforeBlock(const RenderObject* object)
 {
     return isAnonymousRubyInlineBlock(object)
         && !object->previousSibling()
-        && object->firstChildSlow()
-        && object->firstChildSlow()->style().styleType() == BEFORE;
+        && downcast<RenderBlock>(*object).firstChild()
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == BEFORE;
 }
 
 static inline bool isRubyAfterBlock(const RenderObject* object)
 {
     return isAnonymousRubyInlineBlock(object)
         && !object->nextSibling()
-        && object->firstChildSlow()
-        && object->firstChildSlow()->style().styleType() == AFTER;
+        && downcast<RenderBlock>(*object).firstChild()
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == AFTER;
 }
 
 static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
