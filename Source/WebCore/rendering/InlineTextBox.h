@@ -133,13 +133,6 @@ private:
 public:
     virtual bool isLineBreak() const override final;
 
-    void setExpansion(float newExpansion)
-    {
-        m_logicalWidth -= expansion();
-        InlineBox::setExpansion(newExpansion);
-        m_logicalWidth += newExpansion;
-    }
-
 private:
     virtual bool isInlineTextBox() const override final { return true; }
 

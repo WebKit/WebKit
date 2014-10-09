@@ -143,7 +143,7 @@ ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) co
 
 void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
-    int maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();
+    LayoutUnit maxPreferredLogicalWidth = rubyRun() && rubyRun()->hasOverrideWidth() ? rubyRun()->overrideLogicalContentWidth() : this->maxPreferredLogicalWidth();
     if (maxPreferredLogicalWidth >= logicalWidth)
         return;
 
