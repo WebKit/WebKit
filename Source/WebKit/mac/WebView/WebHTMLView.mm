@@ -90,6 +90,7 @@
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
@@ -4894,13 +4895,16 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         // the Postscript name.
         
         // Find the font the same way the rendering code would later if it encountered this CSS.
-        NSFontTraitMask traits = aIsItalic ? NSFontItalicTrait : 0;
-        int weight = aIsBold ? STANDARD_BOLD_WEIGHT : STANDARD_WEIGHT;
-        NSFont *foundFont = [WebFontCache fontWithFamily:aFamilyName traits:traits weight:weight size:aPointSize];
+        FontDescription fontDescription;
+        fontDescription.setItalic(aIsItalic);
+        fontDescription.setWeight(aIsBold ? FontWeight900 : FontWeight500);
+        fontDescription.setSpecifiedSize(aPointSize);
+        FontCachePurgePreventer purgePreventer;
+        RefPtr<SimpleFontData> simpleFontData = fontCache().getCachedFontData(fontDescription, aFamilyName, false, WebCore::FontCache::DoNotRetain);
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
-        if (![[foundFont fontName] isEqualToString:[a fontName]])
+        if (![[simpleFontData->platformData().font() fontName] isEqualToString:[a fontName]])
             familyNameForCSS = [a fontName];
 
         // FIXME: Need more sophisticated escaping code if we want to handle family names

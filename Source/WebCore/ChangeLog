@@ -1,3 +1,15 @@
+2014-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove second-to-last client of WebFontCache
+        https://bugs.webkit.org/show_bug.cgi?id=137550
+
+        Reviewed by Darin Adler.
+
+        No new tests because no behavior change.
+
+        * WebCore.exp.in:
+        * platform/graphics/FontCache.h: Allow migration of client to getCachedFontData()
+
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Spending too much time mapping desired font families to available ones

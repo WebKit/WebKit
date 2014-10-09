@@ -1,3 +1,15 @@
+2014-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove second-to-last client of WebFontCache
+        https://bugs.webkit.org/show_bug.cgi?id=137550
+
+        Reviewed by Darin Adler.
+
+        Use FontCache::getCachedFontData() instead of WebFontCache.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _addToStyle:fontA:fontB:]):
+
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Widget subclasses
