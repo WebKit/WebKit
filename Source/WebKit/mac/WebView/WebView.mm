@@ -2345,6 +2345,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if ENABLE(SERVICE_CONTROLS)
     settings.setImageControlsEnabled([preferences imageControlsEnabled]);
+    settings.setServiceControlsEnabled([preferences serviceControlsEnabled]);
 #endif
 
 #if ENABLE(VIDEO_TRACK)

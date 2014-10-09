@@ -50,6 +50,8 @@
 
     [[WebPreferences standardPreferences] setFullScreenEnabled:YES];
     [[WebPreferences standardPreferences] setDeveloperExtrasEnabled:YES];
+    [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
+    [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
 
     [self didChangeSettings];
 

@@ -577,6 +577,7 @@ public:
 #endif
 #if ENABLE(SERVICE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitServiceControlsEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitEnableInheritURIQueryComponentPreferenceKey,
         nil];
@@ -2432,6 +2433,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setImageControlsEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitImageControlsEnabledPreferenceKey];
+}
+
+- (BOOL)serviceControlsEnabled
+{
+    return [self _boolValueForKey:WebKitServiceControlsEnabledPreferenceKey];
+}
+
+- (void)setServiceControlsEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitServiceControlsEnabledPreferenceKey];
 }
 
 - (BOOL)gamepadsEnabled
