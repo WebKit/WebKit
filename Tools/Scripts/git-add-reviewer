@@ -29,6 +29,7 @@ use File::Basename;
 use File::Temp ();
 use Getopt::Long;
 use POSIX;
+use IPC::Open2;
 
 my $defaultReviewer = "NOBODY";
 
@@ -95,7 +96,7 @@ sub interactive()
 
     isAncestor($upstream, $head) or die "$ARGV[0] is not an ancestor of HEAD.";
 
-    my @revlist = `git rev-list --reverse --pretty=oneline $upstream..`;
+    my @revlist = runCommandWithOutput('git', 'rev-list', '--reverse', '--pretty=oneline', "$upstream..");
     @revlist or die "Couldn't determine revisions";
 
     my $tempFile = new File::Temp(UNLINK => 1);
@@ -119,7 +120,7 @@ EOF
 
     my $editor = $ENV{GIT_EDITOR} || getConfigValue("core.editor") || $ENV{VISUAL} || $ENV{EDITOR} || "vi";
     my $result = system "$editor \"" . $tempFile->filename . "\"";
-    !$result or die "Error spawning editor.";
+    !($result >> 8) or die "Error spawning editor.";
 
     my @todo = ();
     open TEMPFILE, '<', $tempFile->filename or die "Error opening temp file.";
@@ -136,7 +137,7 @@ EOF
     }
 
     $result = system "git", "checkout", $upstream;
-    !$result or die "Error checking out $ARGV[0].";
+    !($result >> 8) or die "Error checking out $ARGV[0].";
 
     my $success = 1;
     foreach my $item (@todo) {
@@ -154,9 +155,9 @@ EOF
     }
 
     $result = system "git", "branch", "-f", $head;
-    !$result or die "Error updating $head.";
+    !($result >> 8) or die "Error updating $head.";
     $result = system "git", "checkout", $head;
-    exit WEXITSTATUS($result);
+    exit WEXITSTATUS($result >> 8);
 }
 
 sub nonInteractive()
@@ -168,7 +169,7 @@ sub nonInteractive()
     my $head = head();
     my $headCommit = toCommit($head);
 
-    isAncestor($commit, $head) or die "$ARGV[1] is not an ancestor of HEAD.";
+    isAncestor($commit, $head) or die "$ARGV[0] is not an ancestor of HEAD.";
 
     my %item = (
         reviewer => $reviewer,
@@ -197,10 +198,10 @@ sub usage()
 
 sub requireCleanWorkTree()
 {
-    my $result = system "git rev-parse --verify HEAD > /dev/null";
-    $result ||= system qw(git update-index --refresh);
-    $result ||= system qw(git diff-files --quiet);
-    $result ||= system qw(git diff-index --cached --quiet HEAD --);
+    my $result = system("git rev-parse --verify HEAD > /dev/null") >> 8;
+    $result ||= system(qw(git update-index --refresh)) >> 8;
+    $result ||= system(qw(git diff-files --quiet)) >> 8;
+    $result ||= system(qw(git diff-index --cached --quiet HEAD --)) >> 8;
     !$result or die "Working tree is dirty"
 }
 
@@ -216,7 +217,7 @@ sub cherryPick(\%)
     my ($item) = @_;
 
     my $result = system "git cherry-pick -n $item->{commit} > /dev/null";
-    !$result or return fail("Failed to cherry-pick $item->{commit}");
+    !($result >> 8) or return fail("Failed to cherry-pick $item->{commit}");
 
     return 1;
 }
@@ -243,7 +244,7 @@ sub commit(;$)
     my @command = qw(git commit -F .git/MERGE_MSG);
     push @command, "--amend" if $amend;
     my $result = system @command;
-    !$result or return fail("Failed to commit revision");
+    !($result >> 8) or return fail("Failed to commit revision");
 
     return 1;
 }
@@ -285,11 +286,11 @@ sub addReviewerToFile
     close LOG or return fail("Couldn't close $log");
 
     my $result = system "mv", $tempFile->filename, $log;
-    !$result or return fail("Failed to rename $tempFile to $log");
+    !($result >> 8) or return fail("Failed to rename $tempFile to $log");
 
     unless ($isCommitMessage) {
         my $result = system "git", "add", $log;
-        !$result or return fail("Failed to git add");
+        !($result >> 8) or return fail("Failed to git add");
     }
 
     return 1;
@@ -297,7 +298,7 @@ sub addReviewerToFile
 
 sub head()
 {
-    my $head = `git symbolic-ref HEAD`;
+    my $head = runCommandWithOutput('git', 'symbolic-ref', 'HEAD');
     $head =~ /^refs\/heads\/(.*)$/ or die "Couldn't determine current branch.";
     $head = $1;
 
@@ -308,7 +309,7 @@ sub isAncestor($$)
 {
     my ($ancestor, $descendant) = @_;
 
-    chomp(my $mergeBase = `git merge-base $ancestor $descendant`);
+    chomp(my $mergeBase = runCommandWithOutput('git', 'merge-base', $ancestor, $descendant));
     return $mergeBase eq $ancestor;
 }
 
@@ -316,7 +317,7 @@ sub toCommit($)
 {
     my ($arg) = @_;
 
-    chomp(my $commit = `git rev-parse $arg`);
+    chomp(my $commit = runCommandWithOutput('git', 'rev-parse', $arg));
     return $commit;
 }
 
@@ -324,7 +325,7 @@ sub changeLogsForCommit($)
 {
     my ($commit) = @_;
 
-    my @files = `git diff -r --name-status $commit^ $commit`;
+    my @files = runCommandWithOutput('git', 'diff', '-r', '--name-status', "$commit^", "$commit");
     @files or return fail("Couldn't determine changed files for $commit.");
 
     my @changeLogs = map { /^[ACMR]\s*(.*)/; $1 } grep { /^[ACMR].*[^-]ChangeLog/ } @files;
@@ -336,7 +337,7 @@ sub resetToCommit($)
     my ($commit) = @_;
 
     my $result = system "git", "checkout", "-f", $commit;
-    !$result or return fail("Error checking out $commit.");
+    !($result >> 8) or return fail("Error checking out $commit.");
 
     return 1;
 }
@@ -381,7 +382,17 @@ sub getConfigValue($)
 {
     my ($variable) = @_;
 
-    chomp(my $value = `git config --get "$variable"`);
+    chomp(my $value = runCommmandWithOutput('git', 'config', '--get', $variable));
 
     return $value;
+}
+
+sub runCommandWithOutput {
+    my ($output, $input);
+
+    my $pid = open2($output, $input, @_);
+
+    waitpid($pid, 0);
+
+    return <$output>;
 }
