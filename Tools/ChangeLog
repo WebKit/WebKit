@@ -1,3 +1,16 @@
+2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Babak to contributors.json and add historical email addresses for some contributors
+        https://bugs.webkit.org/show_bug.cgi?id=137546
+
+        Reviewed by Christophe Dumez.
+
+        contributors.json is used to analyze historical commit data and change logs.
+
+        Add back historical email addresses for some contributors and also add Babak (Shafiei).
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-10-09  Lucas Forschler  <lforschler@apple.com>
 
         Add Mac OS Yosemite webkit build infrastructure.

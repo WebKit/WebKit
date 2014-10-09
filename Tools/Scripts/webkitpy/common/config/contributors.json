@@ -325,6 +325,11 @@
             "anilsson"
          ]
       },
+      "Babak Shafiei": {
+          "emails" : [
+            "bshafiei@apple.com"
+          ]
+      },
       "Balazs Kelemen" : {
          "emails" : [
             "kbalazs@webkit.org",
@@ -2311,7 +2316,8 @@
          "emails" : [
             "ryuan.choi@gmail.com",
             "ryuan.choi@navercorp.com",
-            "ryuan.choi@webkit.org"
+            "ryuan.choi@webkit.org",
+            "ryuan.choi@samsung.com"
          ],
          "expertise" : "The EFLWebKit Port",
          "nicks" : [
@@ -3642,7 +3648,8 @@
       },
       "Brian Burg" : {
          "emails" : [
-            "burg@cs.washington.edu"
+            "burg@cs.washington.edu",
+            "bburg@apple.com"
          ],
          "expertise" : "Developer Tools, Web Inspector",
          "nicks" : [
@@ -4293,7 +4300,8 @@
       },
       "Mark Hahnenberg" : {
          "emails" : [
-            "mhahnenb@gmail.com"
+            "mhahnenb@gmail.com",
+            "mhahnenberg@apple.com"
          ],
          "expertise" : "JavaScript/ECMAScript",
          "nicks" : [
