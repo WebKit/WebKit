@@ -50,6 +50,7 @@ var validSelectors = [
     // Functional pseudo classes.
     ":-webkit-any(.selector,#tama,#hanayo,#midoriko)",
     ":not(:link)",
+    ":not(:matches(cocoa, cappuccino))",
     ":nth-child(even of a, b, c)",
 ];
 
@@ -58,9 +59,6 @@ var invalidSelectors = [
     "",
     "    ",
     ",",
-
-    // Currently not allows functional pseudo classes inside :not.
-    ":not(:matches(cocoa, cappuccino))",
 
     ".123class",
     "#123id",

@@ -1,3 +1,66 @@
+2014-10-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the baseline implementation of :not(selectorList)
+        https://bugs.webkit.org/show_bug.cgi?id=137548
+
+        Reviewed by Andreas Kling.
+
+        This patch extend the pseudo class :not() to support the new definition
+        in CSS Selectors level 4.
+
+        Instead of supporting a single simple selector, :not() now support
+        an arbitrary selector list, excepted pseudo elements.
+
+        One side effect of this change is :visited and :link are no longer supported
+        inside :not(). The reason has to do with complexity and performance.
+        Since :not() and :matches() can have arbitrary selector list, keeping track of
+        :visited and :link can have many combination superposing, some valid, some invalid.
+
+        Supporting :visited and :link should be possible by chaning the way we handle
+        them for style resolution, but given the limited use cases for such features
+        I'll wait to see if there is any interest before changing everything.
+
+        This patch only covers SelectorChecker to keep things simple. The CSS JIT
+        will come later.
+
+        Tests: fast/css/not-basics.html
+               fast/css/parsing-css-not-1.html
+               fast/css/parsing-css-not-2.html
+               fast/css/parsing-css-not-3.html
+               fast/css/parsing-css-not-4.html
+               fast/css/parsing-css-not-5.html
+               fast/css/parsing-css-not-6.html
+               fast/css/parsing-css-not-7.html
+               fast/css/parsing-css-not-8.html
+               fast/css/parsing-css-not-9.html
+               fast/css/parsing-css-nth-child-of-4.html
+               fast/selectors/not-basics.html
+               fast/selectors/not-nested.html
+               fast/selectors/not-selector-list.html
+
+        * css/CSSGrammar.y.in:
+        Rename selectorListDoesNotMatchAnyPseudoElement() to selectorListDoesNotMatchAnyPseudoElement()
+        since both :not() and :nth-child(An+B of selectorList) have the same requirements at the moment. 
+
+        * css/CSSParserValues.cpp:
+        (WebCore::selectorListMatchesPseudoElement):
+        The patch adding :matches() introduced the possibility of putting pseudo element
+        arbitrary deep in a sequence of nested :matches(). Since this case is forbidded
+        by :not() and :nth-child(An+B of selectorList), selectorListMatchesPseudoElement()
+        now becomes recursive to find those pseudo elements.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        CSSOM for the extended :not().
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * cssjit/SelectorCompiler.cpp:
+
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        Disable the new capabilities from the JIT for now.
+
 2014-10-09  Tim Horton  <timothy_horton@apple.com>
 
         Move ServicesOverlayController to WebCore

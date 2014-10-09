@@ -521,26 +521,41 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
         if (selector->pseudoClassType() == CSSSelector::PseudoClassNot) {
             const CSSSelectorList* selectorList = selector->selectorList();
 
+#if !ENABLE(CSS_SELECTORS_LEVEL4)
             // FIXME: We probably should fix the parser and make it never produce :not rules with missing selector list.
             if (!selectorList)
                 return false;
+#endif
 
-            CheckingContextWithStatus subContext(context);
-            subContext.inFunctionalPseudoClass = true;
-            subContext.firstSelectorOfTheFragment = selectorList->first();
-            for (subContext.selector = selectorList->first(); subContext.selector; subContext.selector = subContext.selector->tagHistory()) {
-                if (subContext.selector->match() == CSSSelector::PseudoClass) {
+            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+                CheckingContextWithStatus subcontext(context);
+                subcontext.inFunctionalPseudoClass = true;
+                subcontext.selector = subselector;
+                subcontext.firstSelectorOfTheFragment = selectorList->first();
+
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                PseudoId ignoreDynamicPseudo = NOPSEUDO;
+                if (matchRecursively(subcontext, ignoreDynamicPseudo) == SelectorMatches) {
+                    ASSERT(ignoreDynamicPseudo == NOPSEUDO);
+                    return false;
+                }
+#else
+                if (subcontext.selector->match() == CSSSelector::PseudoClass) {
                     // :not cannot nest. I don't really know why this is a
                     // restriction in CSS3, but it is, so let's honor it.
                     // the parser enforces that this never occurs
-                    ASSERT(subContext.selector->pseudoClassType() != CSSSelector::PseudoClassNot);
+                    ASSERT(subcontext.selector->pseudoClassType() != CSSSelector::PseudoClassNot);
                     // We select between :visited and :link when applying. We don't know which one applied (or not) yet.
-                    if (subContext.selector->pseudoClassType() == CSSSelector::PseudoClassVisited || (subContext.selector->pseudoClassType() == CSSSelector::PseudoClassLink && subContext.visitedMatchType == VisitedMatchType::Enabled))
+                    if (subcontext.selector->pseudoClassType() == CSSSelector::PseudoClassVisited || (subcontext.selector->pseudoClassType() == CSSSelector::PseudoClassLink && subcontext.visitedMatchType == VisitedMatchType::Enabled))
                         return true;
                 }
-                if (!checkOne(subContext))
+                if (!checkOne(subcontext))
                     return true;
+#endif
             }
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            return true;
+#endif
         } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved except with window-inactive).
@@ -960,6 +975,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
     for (; selector; selector = selector->tagHistory()) {
         if (selector->match() == CSSSelector::PseudoClass) {
             switch (selector->pseudoClassType()) {
+#if! ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassNot:
                 {
                     // :not(:visited) is equivalent to :link. Parser enforces that :not can't nest.
@@ -978,6 +994,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
                     }
                 }
                 break;
+#endif
             case CSSSelector::PseudoClassLink:
                 linkMatchType &= ~SelectorChecker::MatchVisited;
                 break;

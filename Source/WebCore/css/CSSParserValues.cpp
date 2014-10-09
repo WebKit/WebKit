@@ -295,6 +295,10 @@ static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList
         for (const CSSSelector* selector = subSelector; selector; selector = selector->tagHistory()) {
             if (selector->matchesPseudoElement())
                 return true;
+            if (const CSSSelectorList* subselectorList = selector->selectorList()) {
+                if (selectorListMatchesPseudoElement(subselectorList))
+                    return true;
+            }
         }
     }
     return false;

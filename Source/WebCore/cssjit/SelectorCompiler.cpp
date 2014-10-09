@@ -625,6 +625,11 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             if (!selectorList)
                 return FunctionType::CannotMatchAnything;
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            if (selectorList->first()->tagHistory() || CSSSelectorList::next(selectorList->first()))
+                return FunctionType::CannotCompile;
+#endif
+
             SelectorFragmentList notFragments;
             FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments);
 

@@ -8,13 +8,13 @@
 <body>
 </body>
 <script>
-description('Test the parsing of :matches(selectorList) for querySelector and style.');
+description('Test the parsing of :not(selectorList) for querySelector and style.');
 
 function testInvalidSelector(selectorString) {
-    shouldThrow('document.querySelector(":matches(' + selectorString + ')")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldThrow('document.querySelector(":not(' + selectorString + ')")', '"Error: SyntaxError: DOM Exception 12"');
 
     var styleContainer = document.getElementById('style-container');
-    styleContainer.innerHTML = ':matches(' + selectorString + ') { }';
+    styleContainer.innerHTML = ':not(' + selectorString + ') { }';
     shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
     styleContainer.innerHTML = '';
 }
@@ -24,10 +24,6 @@ var validSelectorsPart2 = [
     "foobar",
     ".class",
     ":last-child",
-
-    // Pseudo elements.
-    "::first-letter",
-    "::before",
 
     // Compound selectors.
     "foobar#id.class",
@@ -44,6 +40,12 @@ var validSelectorsPart2 = [
 ];
 
 var invalidSelectors = [
+    // Pseudo elements.
+    "::first-letter",
+    "::first-line",
+    "::before",
+    "::after",
+
     // Not selectors.
     "",
     "    ",
@@ -63,7 +65,7 @@ var invalidSelectors = [
     ":nth-child(2n+1 of",
 ];
 
-debug("3 :matches(valid, valid, invalid) selectors");
+debug("3 :not(valid, valid, invalid) selectors");
 for (var i = 0; i < validSelectorsPart2.length; ++i) {
     for (var j = i; j < validSelectorsPart2.length; ++j) {
         for (var k = 0; k < invalidSelectors.length; ++k) {

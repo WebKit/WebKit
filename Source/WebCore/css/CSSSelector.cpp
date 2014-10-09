@@ -406,8 +406,12 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassNot:
                 str.appendLiteral(":not(");
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                appendSelectorList(str, cs->selectorList());
+#else
                 if (const CSSSelectorList* selectorList = cs->selectorList())
                     str.append(selectorList->first()->selectorText());
+#endif
                 str.append(')');
                 break;
             case CSSSelector::PseudoClassNthChild:

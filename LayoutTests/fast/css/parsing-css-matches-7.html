@@ -40,6 +40,7 @@ var validSelectorsPart1 = [
 
     // Functional pseudo classes.
     ":not(:link)",
+    ":not(:matches(cocoa, cappuccino))",
 ];
 
 var invalidSelectors = [
@@ -47,9 +48,6 @@ var invalidSelectors = [
     "",
     "    ",
     ",",
-
-    // Currently not allows functional pseudo classes inside :not.
-    ":not(:matches(cocoa, cappuccino))",
 
     ".123class",
     "#123id",

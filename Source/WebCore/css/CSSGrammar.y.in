@@ -84,7 +84,7 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 
 auto invalidSelectorVector = reinterpret_cast<Vector<std::unique_ptr<CSSParserSelector>>*>(-1);
 
-static bool isValidNthSelectorList(const Vector<std::unique_ptr<CSSParserSelector>>* selectorVector)
+static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_ptr<CSSParserSelector>>* selectorVector)
 {
     if (!selectorVector)
         return true;
@@ -1364,7 +1364,7 @@ pseudo:
     // Definition of :nth-child().
     | ':' NTHCHILDFUNCTION maybe_space NTH nth_selector_ending {
         $$ = nullptr;
-        if (isValidNthSelectorList($5)) {
+        if (selectorListDoesNotMatchAnyPseudoElement($5)) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
             selector->setArgument($4);
@@ -1377,7 +1377,7 @@ pseudo:
     }
     | ':' NTHCHILDFUNCTION maybe_space maybe_unary_operator INTEGER nth_selector_ending {
         $$ = nullptr;
-        if (isValidNthSelectorList($6)) {
+        if (selectorListDoesNotMatchAnyPseudoElement($6)) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
             selector->setArgument(AtomicString::number($4 * $5));
@@ -1390,7 +1390,7 @@ pseudo:
     }
     | ':' NTHCHILDFUNCTION maybe_space IDENT nth_selector_ending {
         $$ = nullptr;
-        if (isValidNthToken($4) && isValidNthSelectorList($5)) {
+        if (isValidNthToken($4) && selectorListDoesNotMatchAnyPseudoElement($5)) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
             selector->setArgument($4);
@@ -1441,7 +1441,20 @@ pseudo:
         $$ = selector.release();
     }
 
-    // used by :not
+    // Definition of :not().
+#if ENABLE_CSS_SELECTORS_LEVEL4
+    | ':' NOTFUNCTION maybe_space nested_selector_list maybe_space ')' {
+        $$ = nullptr;
+        if ($4 && selectorListDoesNotMatchAnyPseudoElement($4)) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setPseudoClassValue($2);
+            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassNot)
+                $$ = selector.release();
+        }
+    }
+#else
     | ':' NOTFUNCTION maybe_space compound_selector maybe_space ')' {
         std::unique_ptr<CSSParserSelector> selector($4);
         $$ = nullptr;
@@ -1455,6 +1468,7 @@ pseudo:
             $$->setPseudoClassValue($2);
         }
     }
+#endif
   ;
 
 declaration_list:

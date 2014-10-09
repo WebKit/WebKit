@@ -10,8 +10,6 @@ PASS document.querySelector(":matches(    )") threw exception Error: SyntaxError
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#123id)") threw exception Error: SyntaxError: DOM Exception 12.

@@ -8,18 +8,28 @@
 <body>
 </body>
 <script>
-description('Test the parsing of :matches(selectorList) for querySelector and style.');
+description('Test the parsing of :not(selectorList) for querySelector and style.');
 
 function testInvalidSelector(selectorString) {
-    shouldThrow('document.querySelector(":matches(' + selectorString + ')")', '"Error: SyntaxError: DOM Exception 12"');
+    shouldThrow('document.querySelector(":not(' + selectorString + ')")', '"Error: SyntaxError: DOM Exception 12"');
 
     var styleContainer = document.getElementById('style-container');
-    styleContainer.innerHTML = ':matches(' + selectorString + ') { }';
+    styleContainer.innerHTML = ':not(' + selectorString + ') { }';
     shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
     styleContainer.innerHTML = '';
 }
 
 var invalidSelectors = [
+    // Pseudo elements.
+    "::first-letter",
+    "::first-line",
+    "::before",
+    "::after",
+    ":first-letter",
+    ":first-line",
+    ":before",
+    ":after",
+
     // Not selectors.
     "",
     "    ",
@@ -32,6 +42,12 @@ var invalidSelectors = [
     ")",
     "{}",
     "}",
+
+    // Empty functional pseudo classes.
+    ":not()",
+    ":matches()",
+    ":nth-child()",
+    ":nth-child(2n of)",
 
     // Unbalanced parenthesized functional pseudo classes.
     ":not(",

@@ -1,3 +1,95 @@
+2014-10-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the baseline implementation of :not(selectorList)
+        https://bugs.webkit.org/show_bug.cgi?id=137548
+
+        Reviewed by Andreas Kling.
+
+        There are 3 big kind of changes to the tests:
+        1) The new implementation intentionally breaks :not() of :visited and :link.
+           Some test for the basic :not(:link) and :not(:visited) are consequently failing.
+        2) Some tests were ensuring that :not() only support simple selectors, those are
+           becoming irrelevant.
+        3) New test for the feature.
+
+        * TestExpectations:
+        This patch intentionally breaks :not(:link). The test fast/history/link-inside-not.html
+        time out since it is waiting for the link to match.
+
+        * fast/css/invalid-not-with-simple-selector-sequence-expected.txt: Removed.
+        * fast/css/invalid-not-with-simple-selector-sequence.html: Removed.
+        This test originally came from IEtestcenter. None of it is useful, all the "invalid"
+        cases are now fully functional selectors.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        Parsing and CSS OM tests for the new :not().
+
+        * fast/css/parsing-css-matches-5-expected.txt:
+        * fast/css/parsing-css-matches-5.html:
+        * fast/css/parsing-css-matches-6-expected.txt:
+        * fast/css/parsing-css-matches-6.html:
+        * fast/css/parsing-css-matches-7-expected.txt:
+        * fast/css/parsing-css-matches-7.html:
+        * fast/css/parsing-css-matches-8-expected.txt:
+        * fast/css/parsing-css-matches-8.html:
+        Update the tests of :matches() to account for the extended :not().
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt:
+        Some cases covered by this test are now valid. The test is kept as is for
+        its historical value, but all the FAIL cover valid use cases in Level 4.
+
+        * platform/mac/css3/selectors3/html/css3-modsel-61-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-83-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-61-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-83-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-61-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-83-expected.txt:
+        * platform/mac/fast/selectors/061-expected.txt:
+        * platform/mac/fast/selectors/083-expected.txt:
+        Those tests are changing because of the breakage of :link and :visited.
+
+        * fast/css/not-basics-expected.html: Added.
+        * fast/css/not-basics.html: Added.
+        Basic use cases of the extended :not() that should always style correctly.
+
+        * fast/css/parsing-css-not-1-expected.txt: Added.
+        * fast/css/parsing-css-not-1.html: Added.
+        * fast/css/parsing-css-not-2-expected.txt: Added.
+        * fast/css/parsing-css-not-2.html: Added.
+        * fast/css/parsing-css-not-3-expected.txt: Added.
+        * fast/css/parsing-css-not-3.html: Added.
+        * fast/css/parsing-css-not-4-expected.txt: Added.
+        * fast/css/parsing-css-not-4.html: Added.
+        * fast/css/parsing-css-not-5-expected.txt: Added.
+        * fast/css/parsing-css-not-5.html: Copied from LayoutTests/fast/css/parsing-css-matches-5.html.
+        * fast/css/parsing-css-not-6-expected.txt: Added.
+        * fast/css/parsing-css-not-6.html: Copied from LayoutTests/fast/css/parsing-css-matches-6.html.
+        * fast/css/parsing-css-not-7-expected.txt: Copied from LayoutTests/fast/css/parsing-css-matches-7-expected.txt.
+        * fast/css/parsing-css-not-7.html: Copied from LayoutTests/fast/css/parsing-css-matches-7.html.
+        * fast/css/parsing-css-not-8-expected.txt: Copied from LayoutTests/fast/css/parsing-css-matches-8-expected.txt.
+        * fast/css/parsing-css-not-8.html: Copied from LayoutTests/fast/css/parsing-css-matches-8.html.
+        * fast/css/parsing-css-not-9-expected.txt: Added.
+        * fast/css/parsing-css-not-9.html: Copied from LayoutTests/fast/css/parsing-css-matches-8.html.
+        Parsing of :not(). A lot of them were inspired by Yusuke Suzuki's test suite
+        for :matches(). A lot of test case apply to :not(), the main difference is that
+        pseudo elements must fail inside :not().
+
+        * fast/css/parsing-css-nth-child-of-4-expected.txt: Added.
+        * fast/css/parsing-css-nth-child-of-4.html: Added.
+        With the introduction of :matches(), it is possible to have arbitrarily deep pseudo elements.
+        The tests for :not() cover the case fixed with this patch, this addition covers :nth-child(of).
+
+        * fast/selectors/not-basics-expected.txt: Added.
+        * fast/selectors/not-basics.html: Added.
+        * fast/selectors/not-nested-expected.txt: Added.
+        * fast/selectors/not-nested.html: Added.
+        * fast/selectors/not-selector-list-expected.txt: Added.
+        * fast/selectors/not-selector-list.html: Added.
+        Test coverage for the new features.
+
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         iOS Simulator results for svg tests.

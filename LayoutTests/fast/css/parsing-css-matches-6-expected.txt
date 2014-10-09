@@ -10,8 +10,6 @@ PASS document.querySelector(":matches(*,    )") threw exception Error: SyntaxErr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(*,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(*,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(*,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(*,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -37,8 +35,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(foobar,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -66,8 +62,6 @@ PASS document.querySelector(":matches(#id,    )") threw exception Error: SyntaxE
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(#id,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -93,8 +87,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(.class,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -122,8 +114,6 @@ PASS document.querySelector(":matches(:first-child,    )") threw exception Error
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:first-child,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:first-child,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:first-child,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:first-child,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -149,8 +139,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:last-child,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:last-child,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:last-child,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:last-child,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -178,8 +166,6 @@ PASS document.querySelector(":matches(:visited,    )") threw exception Error: Sy
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:visited,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:visited,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:visited,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:visited,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -205,8 +191,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-letter,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-letter,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(::first-letter,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-letter,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -234,8 +218,6 @@ PASS document.querySelector(":matches(::first-line,    )") threw exception Error
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-line,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(::first-line,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-line,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::first-line,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -261,8 +243,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::before,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::before,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(::before,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::before,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -290,8 +270,6 @@ PASS document.querySelector(":matches(::after,    )") threw exception Error: Syn
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::after,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(::after,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::after,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(::after,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -317,8 +295,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar#id.class,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar#id.class,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(foobar#id.class,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(foobar#id.class,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -346,8 +322,6 @@ PASS document.querySelector(":matches(.class:not(.notclass),    )") threw except
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class:not(.notclass),,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(.class:not(.notclass),:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class:not(.notclass),.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(.class:not(.notclass),#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -373,8 +347,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id:empty,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id:empty,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(#id:empty,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(#id:empty,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -402,8 +374,6 @@ PASS document.querySelector(":matches(a > b,    )") threw exception Error: Synta
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a > b,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(a > b,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a > b,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a > b,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -429,8 +399,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a b,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a b,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(a b,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a b,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -458,8 +426,6 @@ PASS document.querySelector(":matches(a + b,    )") threw exception Error: Synta
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(a + b,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -485,8 +451,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a ~ b,    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a ~ b,,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(a ~ b,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a ~ b,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -514,8 +478,6 @@ PASS document.querySelector(":matches(a + b > c ~ d e + g,    )") threw exceptio
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b > c ~ d e + g,,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(a + b > c ~ d e + g,:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b > c ~ d e + g,.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(a + b > c ~ d e + g,#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -541,8 +503,6 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko),    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko),,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -570,8 +530,6 @@ PASS document.querySelector(":matches(:not(:link),    )") threw exception Error:
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:not(:link),,)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:not(:link),:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:not(:link),.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:not(:link),#123id)") threw exception Error: SyntaxError: DOM Exception 12.
@@ -592,13 +550,37 @@ PASS document.querySelector(":matches(:not(:link),:matches()") threw exception E
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:not(:link),:nth-child(2n+1 of)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),    )") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),,)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),.123class)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),#123id)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),[])") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),())") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),{})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),})") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),:not()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),:matches()") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:nth-child(even of a, b, c),)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:nth-child(even of a, b, c),    )") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:nth-child(even of a, b, c),,)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":matches(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)))") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":matches(:nth-child(even of a, b, c),.123class)") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

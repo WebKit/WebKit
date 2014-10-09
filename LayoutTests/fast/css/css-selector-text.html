@@ -172,6 +172,33 @@ testSelectorRoundTrip(':-webkit-any(:matches(.ok a > .ok ::first-letter, .ok b ~
 
 debug('');
 
+testSelectorRoundTrip(':not(div)');
+testSelectorRoundTrip(':not(.div)');
+testSelectorRoundTrip(':not(#div)');
+testSelectorRoundTrip(':not([div])');
+testSelectorRoundTrip(':not(:empty)');
+testSelectorRoundTrip(':not(div.div#div[div]:empty)');
+testSelectorRoundTrip(':not(div.div:empty[div]#div)');
+testSelectorRoundTrip(':not(div.div, #div[div], :empty)');
+testSelectorRoundTrip(':not(div, .div, #div, [div], :empty)');
+
+testSelectorRoundTrip(':not(:not(div))');
+testSelectorRoundTrip(':not(:not(div)):not(:not(foo)):not(:not(bar))');
+testSelectorRoundTrip(':not(:not(div, :not(foo, bar))):not(:not(foo)):not(:not(bar, baz))');
+
+testSelectorRoundTrip(':not(:matches(*))');
+testSelectorRoundTrip(':not(:matches(foo, bar))');
+testSelectorRoundTrip(':not(:matches(foo, bar), :matches(.foo, .bar), :matches(#foo, #bar), :matches([foo], [bar]))');
+testSelectorRoundTrip(':not(:matches(foo, bar:not(:empty)), :matches(.foo, .bar:not(:not(.mosaic))), :matches(#foo, #bar), :matches([foo], [bar]))');
+
+testSelectorRoundTrip(':nth-child(2n of :not(a.b, c#d.e))');
+testSelectorRoundTrip(':not(:nth-child(2n of :not(a.b, c#d.e)))');
+
+testSelectorRoundTrip(':not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)');
+testSelectorRoundTrip('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b + c:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) ~ d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) > d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)');
+
+debug('');
+
 shouldBe("parseThenSerializeRule('::-webkit-file-upload-button { }')", "'*::-webkit-file-upload-button { }'");
 shouldBe("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "'*::-webkit-search-cancel-button { }'");
 shouldBe("parseThenSerializeRule('::-webkit-search-decoration { }')", "'*::-webkit-search-decoration { }'");
@@ -256,6 +283,28 @@ shouldBe("parseThenSerializeRule(':matches(:first-letter,::first-line) { }')", "
 shouldBe("parseThenSerializeRule(':matches(a>:first-letter,b   ~ ::first-line, c :after, d+ :before) { }')", "':matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before) { }'");
 shouldBe("parseThenSerializeRule(':matches(.ok a >    ::first-letter, .ok b~ ::first-line, .ok c :after, .ok d +:before) { }')", "':matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before) { }'");
 shouldBe("parseThenSerializeRule(':matches(.ok a> .ok ::first-letter, .ok b   ~.ok :first-line, .ok c .ok    ::after, .ok d + .ok ::before) { }')", "':matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':not(single    ) { }')", "':not(single) { }'");
+shouldBe("parseThenSerializeRule(':not(a,b    ,p) { }')", "':not(a, b, p) { }'");
+shouldBe("parseThenSerializeRule(':not(#alice,                   #bob,#chris) { }')", "':not(#alice, #bob, #chris) { }'");
+shouldBe("parseThenSerializeRule(':not(  .selector,#tama,                #hanayo,#midoriko) { }')", "':not(.selector, #tama, #hanayo, #midoriko) { }'");
+shouldBe("parseThenSerializeRule(':not(    .name,#ok,:visited   ) { }')", "':not(.name, #ok, :visited) { }'");
+shouldBe("parseThenSerializeRule(':not(    .name,#ok,    :visited, :link) { }')", "':not(.name, #ok, :visited, :link) { }'");
+shouldBe("parseThenSerializeRule(':not(    .name,#ok,    :not(:visited    )) { }')", "':not(.name, #ok, :not(:visited)) { }'");
+shouldBe("parseThenSerializeRule(':not(.name,  #ok,:not(:link)) { }')", "':not(.name, #ok, :not(:link)) { }'");
+shouldBe("parseThenSerializeRule(':not(.name,#ok,:not(:link)) { }')", "':not(.name, #ok, :not(:link)) { }'");
+shouldBe("parseThenSerializeRule(':not(    .name,#ok,:-webkit-any(   hello)) { }')", "':not(.name, #ok, :-webkit-any(hello)) { }'");
+shouldBe("parseThenSerializeRule(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko)) { }')", "':not(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko)) { }'");
+shouldBe("parseThenSerializeRule(':not(       [type=\"file\"]) { }')", "':not([type=\"file\"]) { }'");
+shouldBe("parseThenSerializeRule(':not(  :hover    ) { }')", "':not(:hover) { }'");
+shouldBe("parseThenSerializeRule('input:not([type=\"file\"],:hover,:focus):enabled { }')", "'input:not([type=\"file\"], :hover, :focus):enabled { }'");
+shouldBe("parseThenSerializeRule(':not(input[type=\"file\"], a:hover, button:focus) { }')", "':not(input[type=\"file\"], a:hover, button:focus) { }'");
+shouldBe("parseThenSerializeRule(':not( .class1.class2.class3   ) { }')", "':not(.class1.class2.class3) { }'");
+shouldBe("parseThenSerializeRule(':not(.class1:hover   ) { }')", "':not(.class1:hover) { }'");
+shouldBe("parseThenSerializeRule(':not(a.class1.class2.class3:hover   ) { }')", "':not(a.class1.class2.class3:hover) { }'");
+shouldBe("parseThenSerializeRule(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris)) { }')", "':not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris)) { }'");
 
 debug('');
 
