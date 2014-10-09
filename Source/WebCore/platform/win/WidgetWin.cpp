@@ -70,7 +70,7 @@ void Widget::setCursor(const Cursor& cursor)
         return;
     }
 
-    ScrollView* view = root();
+    FrameView* view = root();
     if (!view)
         return;
     view->hostWindow()->setCursor(cursor);

@@ -1,3 +1,16 @@
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Widget subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137549
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Widget subclasses and clean up the
+        surrounding code.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use the PageLoadState observer also to monitor title and estimated load progress

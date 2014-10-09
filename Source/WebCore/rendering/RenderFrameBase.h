@@ -39,7 +39,7 @@ protected:
     RenderFrameBase(HTMLFrameElementBase&, PassRef<RenderStyle>);
 
 public:
-    FrameView* childView() const { return toFrameView(RenderWidget::widget()); }
+    FrameView* childView() const { return downcast<FrameView>(RenderWidget::widget()); }
 
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 

@@ -342,11 +342,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     if (AccessibilityObject* obj = get(widget))
         return obj;
     
-    RefPtr<AccessibilityObject> newObj = nullptr;
-    if (widget->isFrameView())
-        newObj = AccessibilityScrollView::create(toScrollView(widget));
-    else if (widget->isScrollbar())
-        newObj = AccessibilityScrollbar::create(toScrollbar(widget));
+    RefPtr<AccessibilityObject> newObj;
+    if (is<ScrollView>(*widget))
+        newObj = AccessibilityScrollView::create(downcast<ScrollView>(widget));
+    else if (is<Scrollbar>(*widget))
+        newObj = AccessibilityScrollbar::create(downcast<Scrollbar>(widget));
 
     // Will crash later if we have two objects for the same widget.
     ASSERT(!get(widget));

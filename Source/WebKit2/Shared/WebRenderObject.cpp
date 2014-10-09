@@ -106,11 +106,11 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         children.append(WTF::move(child));
     }
 
-    if (renderer->isWidget()) {
-        if (Widget* widget = toRenderWidget(renderer)->widget()) {
-            if (widget->isFrameView()) {
-                FrameView* frameView = toFrameView(widget);
-                if (RenderView* coreContentRenderer = frameView->frame().contentRenderer()) {
+    if (is<RenderWidget>(*renderer)) {
+        if (Widget* widget = downcast<RenderWidget>(*renderer).widget()) {
+            if (is<FrameView>(*widget)) {
+                FrameView& frameView = downcast<FrameView>(*widget);
+                if (RenderView* coreContentRenderer = frameView.frame().contentRenderer()) {
                     RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer, shouldIncludeDescendants));
 
                     children.append(WTF::move(contentRenderer));

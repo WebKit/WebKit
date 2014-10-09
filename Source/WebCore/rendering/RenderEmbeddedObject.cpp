@@ -131,9 +131,9 @@ bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
 {
 #if PLATFORM(IOS)
     // The timing of layer creation is different on the phone, since the plugin can only be manipulated from the main thread.
-    return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->willProvidePluginLayer();
+    return is<PluginViewBase>(widget()) && downcast<PluginViewBase>(*widget()).willProvidePluginLayer();
 #else
-    return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer();
+    return is<PluginViewBase>(widget()) && downcast<PluginViewBase>(*widget()).platformLayer();
 #endif
 }
 
@@ -539,20 +539,20 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
     if (!RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
 
-    if (!widget() || !widget()->isPluginViewBase())
+    if (!is<PluginViewBase>(widget()))
         return true;
 
-    PluginViewBase* view = toPluginViewBase(widget());
+    PluginViewBase& view = downcast<PluginViewBase>(*widget());
     IntPoint roundedPoint = locationInContainer.roundedPoint();
 
-    if (Scrollbar* horizontalScrollbar = view->horizontalScrollbar()) {
+    if (Scrollbar* horizontalScrollbar = view.horizontalScrollbar()) {
         if (horizontalScrollbar->shouldParticipateInHitTesting() && horizontalScrollbar->frameRect().contains(roundedPoint)) {
             result.setScrollbar(horizontalScrollbar);
             return true;
         }
     }
 
-    if (Scrollbar* verticalScrollbar = view->verticalScrollbar()) {
+    if (Scrollbar* verticalScrollbar = view.verticalScrollbar()) {
         if (verticalScrollbar->shouldParticipateInHitTesting() && verticalScrollbar->frameRect().contains(roundedPoint)) {
             result.setScrollbar(verticalScrollbar);
             return true;
@@ -564,10 +564,10 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
 
 bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float, Element**, RenderBox*, const IntPoint&)
 {
-    if (!widget() || !widget()->isPluginViewBase())
+    if (!is<PluginViewBase>(widget()))
         return false;
 
-    return toPluginViewBase(widget())->scroll(direction, granularity);
+    return downcast<PluginViewBase>(*widget()).scroll(direction, granularity);
 }
 
 bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)

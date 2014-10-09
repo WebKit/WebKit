@@ -90,7 +90,7 @@ public:
     // Functions for child manipulation and inspection.
     const HashSet<RefPtr<Widget>>& children() const { return m_children; }
     WEBCORE_EXPORT virtual void addChild(PassRefPtr<Widget>);
-    virtual void removeChild(Widget*);
+    virtual void removeChild(Widget&);
 
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars. These functions
     // can be used to obtain those scrollbars.
@@ -507,8 +507,8 @@ private:
 #endif
 }; // class ScrollView
 
-WIDGET_TYPE_CASTS(ScrollView, isScrollView());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WIDGET(ScrollView, isScrollView())
 
 #endif // ScrollView_h

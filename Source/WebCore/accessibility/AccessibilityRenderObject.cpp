@@ -2007,12 +2007,12 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
         Widget* widget = toRenderWidget(renderer)->widget();
-        if (!widget || !widget->isFrameView())
+        if (!is<FrameView>(widget))
             break;
-        Frame& frame = toFrameView(widget)->frame();
+        Frame& frame = downcast<FrameView>(*widget).frame();
         renderView = frame.document()->renderView();
 #if PLATFORM(COCOA)
-        frameView = toFrameView(widget);
+        frameView = downcast<FrameView>(widget);
 #endif
     }
     

@@ -500,10 +500,10 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
         return false;
 
     Widget* widget = pluginWidget();
-    if (!widget || !widget->isPluginViewBase())
+    if (!is<PluginViewBase>(widget))
         return false;
     String value;
-    if (!toPluginViewBase(widget)->getFormValue(value))
+    if (!downcast<PluginViewBase>(*widget).getFormValue(value))
         return false;
     encoding.appendData(name(), value);
     return true;

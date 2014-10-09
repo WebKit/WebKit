@@ -1251,17 +1251,17 @@ Frame* EventHandler::subframeForHitTestResult(const MouseEventWithHitTestResults
 Frame* EventHandler::subframeForTargetNode(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
 
     auto renderer = node->renderer();
-    if (!renderer || !renderer->isWidget())
-        return 0;
+    if (!is<RenderWidget>(renderer))
+        return nullptr;
 
-    Widget* widget = toRenderWidget(renderer)->widget();
-    if (!widget || !widget->isFrameView())
-        return 0;
+    Widget* widget = downcast<RenderWidget>(*renderer).widget();
+    if (!is<FrameView>(widget))
+        return nullptr;
 
-    return &toFrameView(widget)->frame();
+    return &downcast<FrameView>(*widget).frame();
 }
 
 #if ENABLE(CURSOR_SUPPORT)
@@ -2704,9 +2704,9 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (element) {
         if (isOverWidget) {
             RenderElement* target = element->renderer();
-            if (target && target->isWidget()) {
-                Widget* widget = toRenderWidget(target)->widget();
-                if (widget && passWheelEventToWidget(event, widget)) {
+            if (is<RenderWidget>(target)) {
+                Widget* widget = downcast<RenderWidget>(*target).widget();
+                if (widget && passWheelEventToWidget(event, *widget)) {
                     m_isHandlingWheelEvent = false;
                     if (scrollableArea)
                         scrollableArea->setScrolledProgrammatically(false);

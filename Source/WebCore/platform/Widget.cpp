@@ -26,9 +26,8 @@
 #include "config.h"
 #include "Widget.h"
 
+#include "FrameView.h"
 #include "IntRect.h"
-#include "ScrollView.h"
-
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -53,20 +52,20 @@ void Widget::setParent(ScrollView* view)
         setParentVisible(true);
 }
 
-ScrollView* Widget::root() const
+FrameView* Widget::root() const
 {
     const Widget* top = this;
     while (top->parent())
         top = top->parent();
-    if (top->isFrameView())
-        return const_cast<ScrollView*>(toScrollView(top));
+    if (is<FrameView>(*top))
+        return const_cast<FrameView*>(downcast<FrameView>(top));
     return nullptr;
 }
     
 void Widget::removeFromParent()
 {
     if (parent())
-        parent()->removeChild(this);
+        parent()->removeChild(*this);
 }
 
 IntRect Widget::convertFromRootView(const IntRect& rootRect) const

@@ -95,9 +95,9 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
 
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : nullptr;
+    RenderWidget* renderWidget = is<RenderWidget>(*node) ? downcast<RenderWidget>(node) : nullptr;
     Widget* widget = renderWidget ? renderWidget->widget() : nullptr;
-    FrameView* frameView = widget && widget->isFrameView() ? toFrameView(widget) : nullptr;
+    FrameView* frameView = is<FrameView>(widget) ? downcast<FrameView>(widget) : nullptr;
     Frame* frame = frameView ? &frameView->frame() : nullptr;
 
     // FIXME: broken with transforms

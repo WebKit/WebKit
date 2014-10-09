@@ -58,7 +58,7 @@ public:
     virtual IntPoint location() const override { return Widget::location(); }
 
     virtual ScrollView* parent() const override { return Widget::parent(); }
-    virtual ScrollView* root() const override { return Widget::root(); }
+    virtual ScrollView* root() const override;
 
     virtual void setFrameRect(const IntRect&) override;
     virtual IntRect frameRect() const override { return Widget::frameRect(); }
@@ -207,8 +207,8 @@ private:
     virtual bool isScrollbar() const override { return true; }
 };
 
-WIDGET_TYPE_CASTS(Scrollbar, isScrollbar());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WIDGET(Scrollbar, isScrollbar())
 
 #endif // Scrollbar_h

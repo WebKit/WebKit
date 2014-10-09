@@ -434,7 +434,7 @@ public:
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
 
-    virtual void removeChild(Widget*) override;
+    virtual void removeChild(Widget&) override;
 
     // This function exists for ports that need to handle wheel events manually.
     // On Mac WebKit1 the underlying NSScrollView just does the scrolling, but on most other platforms
@@ -788,8 +788,8 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
     updateIsVisuallyNonEmpty();
 }
 
-WIDGET_TYPE_CASTS(FrameView, isFrameView());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WIDGET(FrameView, isFrameView())
 
 #endif // FrameView_h

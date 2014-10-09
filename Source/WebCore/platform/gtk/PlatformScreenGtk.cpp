@@ -32,10 +32,10 @@
 #include "PlatformScreen.h"
 
 #include "FloatRect.h"
+#include "FrameView.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
-#include "ScrollView.h"
 #include "Widget.h"
 
 #include <gtk/gtk.h>

@@ -49,14 +49,10 @@ Instance* pluginInstance(HTMLElement& element)
 static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginElement, JSGlobalObject* globalObject)
 {
     Widget* pluginWidget = pluginElement.pluginWidget();
-    if (!pluginWidget)
-        return nullptr;
-    
-    if (!pluginWidget->isPluginViewBase())
+    if (!is<PluginViewBase>(pluginWidget))
         return nullptr;
 
-    PluginViewBase* pluginViewBase = toPluginViewBase(pluginWidget);
-    return pluginViewBase->scriptObject(globalObject);
+    return downcast<PluginViewBase>(*pluginWidget).scriptObject(globalObject);
 }
 
 static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)

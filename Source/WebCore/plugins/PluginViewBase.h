@@ -81,8 +81,8 @@ protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 };
 
-WIDGET_TYPE_CASTS(PluginViewBase, isPluginViewBase());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WIDGET(PluginViewBase, isPluginViewBase())
 
 #endif // PluginWidget_h

@@ -1,3 +1,16 @@
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Widget subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137549
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Widget subclasses and clean up the
+        surrounding code.
+
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::frameRectsChanged):
+
 2014-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Resolve various static analyzer warnings in WebKit.

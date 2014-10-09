@@ -2068,7 +2068,6 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     // is to have the parent document become composited too. However, this can cause problems on platforms that
     // use native views for frames (like Mac), so disable that behavior on those platforms for now.
     HTMLFrameOwnerElement* ownerElement = m_renderView.document().ownerElement();
-    RenderElement* renderer = ownerElement ? ownerElement->renderer() : 0;
 
     // If we are the top-level frame, don't propagate.
     if (!ownerElement)
@@ -2077,7 +2076,8 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     if (!allowsIndependentlyCompositedFrames(&m_renderView.frameView()))
         return true;
 
-    if (!renderer || !renderer->isWidget())
+    RenderElement* renderer = ownerElement->renderer();
+    if (!is<RenderWidget>(renderer))
         return false;
 
     // On Mac, only propagate compositing if the frame is overlapped in the parent
@@ -2086,11 +2086,10 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     if (page && page->pageScaleFactor() != 1)
         return true;
     
-    RenderWidget* frameRenderer = toRenderWidget(renderer);
-    if (frameRenderer->widget()) {
-        ASSERT(frameRenderer->widget()->isFrameView());
-        FrameView* view = toFrameView(frameRenderer->widget());
-        if (view->isOverlappedIncludingAncestors() || view->hasCompositingAncestor())
+    RenderWidget& frameRenderer = downcast<RenderWidget>(*renderer);
+    if (frameRenderer.widget()) {
+        FrameView& view = downcast<FrameView>(*frameRenderer.widget());
+        if (view.isOverlappedIncludingAncestors() || view.hasCompositingAncestor())
             return true;
     }
 

@@ -1,3 +1,128 @@
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Widget subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137549
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Widget subclasses and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendAccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::documentFrameView):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginScriptObjectFromPluginViewBase):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::appendFormData):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::canProcessDrag):
+        (WebCore::HTMLPlugInElement::isKeyboardFocusable):
+        (WebCore::HTMLPlugInElement::isUserObservable):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::checkSizeChangeForSnapshotting):
+        (WebCore::HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn):
+        * html/HTMLPlugInImageElement.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        * page/DragController.cpp:
+        (WebCore::DragController::operationForLoad):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::subframeForTargetNode):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::frameForWidget):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hasCustomScrollbars):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        (WebCore::FrameView::convertToContainingView):
+        (WebCore::FrameView::convertFromContainingView):
+        (WebCore::FrameView::removeChild):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::pluginViews):
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::root):
+        Uninline as root() because Widget::root() returns a FrameView now and
+        it is impossible to include FrameView.h in Scrollbar.h without causing
+        a cycle.
+
+        * platform/Scrollbar.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::root):
+        Use tighter typing and return a FrameView instead of a ScrollView.
+
+        (WebCore::Widget::removeFromParent):
+        * platform/Widget.h:
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::setCursor):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setCursor):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayFromWidget):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setCursor):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::setCursor):
+        * plugins/PluginViewBase.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paintIntoTransformedContext):
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::snapshot):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing):
+        (WebCore::RenderEmbeddedObject::nodeAtPoint):
+        (WebCore::RenderEmbeddedObject::scroll):
+        * rendering/RenderFrameBase.h:
+        (WebCore::RenderFrameBase::childView):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::layerWillBeDestroyed):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::moveWidgets):
+        (WebCore::RenderWidget::paintContents):
+        (WebCore::RenderWidget::setOverlapTestResult):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        (WebCore::RenderWidget::nodeAtPoint):
+        (WebCore::RenderWidget::embeddedContentBox):
+
 2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Layering violation: MediaPlayer should not reference/use FrameView

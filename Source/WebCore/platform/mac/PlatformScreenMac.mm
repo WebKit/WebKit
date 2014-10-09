@@ -27,8 +27,8 @@
 #import "PlatformScreen.h"
 
 #import "FloatRect.h"
+#import "FrameView.h"
 #import "HostWindow.h"
-#import "ScrollView.h"
 
 namespace WebCore {
 
@@ -69,7 +69,7 @@ static PlatformDisplayID displayFromWidget(Widget* widget)
     if (!widget)
         return 0;
     
-    ScrollView* view = widget->root();
+    FrameView* view = widget->root();
     if (!view)
         return 0;
 

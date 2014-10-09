@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Scrollbar.h"
 
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimator.h"
@@ -556,6 +557,11 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
 #else
     return false;
 #endif
+}
+
+ScrollView* Scrollbar::root() const
+{
+    return Widget::root();
 }
 
 } // namespace WebCore

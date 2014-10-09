@@ -396,13 +396,12 @@ void PluginView::updatePluginWidget()
     if (!parent())
         return;
 
-    ASSERT(parent()->isFrameView());
-    FrameView* frameView = toFrameView(parent());
+    FrameView& frameView = downcast<FrameView>(*parent());
 
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
+    m_windowRect = IntRect(frameView.contentsToWindow(frameRect().location()), frameRect().size());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -511,7 +510,7 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
 
     WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
-    IntRect r = contentsToNativeWindow(toFrameView(parent()), frameRect());
+    IntRect r = contentsToNativeWindow(downcast<FrameView>(parent()), frameRect());
 
     windowpos.x = r.x();
     windowpos.y = r.y();
@@ -543,8 +542,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     ASSERT(m_isWindowed);
     ASSERT(context->shouldIncludeChildWindows());
 
-    ASSERT(parent()->isFrameView());
-    IntPoint locationInWindow = toFrameView(parent())->convertToContainingWindow(frameRect().location());
+    IntPoint locationInWindow = downcast<FrameView>(*parent()).convertToContainingWindow(frameRect().location());
 
     LocalWindowsContext windowsContext(context, frameRect(), false);
 
@@ -596,15 +594,13 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    ASSERT(parent()->isFrameView());
-
     // In the GTK and Qt ports we draw in an offscreen buffer and don't want to use the window
     // coordinates.
 #if PLATFORM(GTK)
     IntRect rectInWindow(rect);
     rectInWindow.intersect(frameRect());
 #else
-    IntRect rectInWindow = toFrameView(parent())->contentsToWindow(frameRect());
+    IntRect rectInWindow = downcast<FrameView>(*parent()).contentsToWindow(frameRect());
 #endif
     LocalWindowsContext windowsContext(context, rectInWindow, m_isTransparent);
 
@@ -658,7 +654,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
     NPEvent npEvent;
 
-    IntPoint p = contentsToNativeWindow(toFrameView(parent()), IntPoint(event->pageX(), event->pageY()));
+    IntPoint p = contentsToNativeWindow(downcast<FrameView>(parent()), IntPoint(event->pageX(), event->pageY()));
 
     npEvent.lParam = MAKELPARAM(p.x(), p.y());
     npEvent.wParam = 0;
@@ -771,7 +767,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
 # if PLATFORM(GTK)
     IntPoint p = rect.location();
 # else
-    IntPoint p = toFrameView(parent())->contentsToWindow(rect.location());
+    IntPoint p = downcast<FrameView>(*parent()).contentsToWindow(rect.location());
 # endif
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
@@ -990,8 +986,7 @@ PassRefPtr<Image> PluginView::snapshot()
 
         // Windowless plug-ins assume that they're drawing onto the view's DC.
         // Translate the context so that the plug-in draws at (0, 0).
-        ASSERT(parent()->isFrameView());
-        IntPoint position = toFrameView(parent())->contentsToWindow(frameRect()).location();
+        IntPoint position = downcast<FrameView>(*parent()).contentsToWindow(frameRect()).location();
         transform.eDx = -position.x();
         transform.eDy = -position.y();
         SetWorldTransform(hdc.get(), &transform);

@@ -409,7 +409,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
         return false;
     }
 
-    pluginElement.subframeLoaderDidCreatePlugIn(widget.get());
+    pluginElement.subframeLoaderDidCreatePlugIn(*widget);
     renderer->setWidget(widget);
     m_containsPlugins = true;
     return true;

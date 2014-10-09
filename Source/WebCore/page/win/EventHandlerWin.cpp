@@ -73,12 +73,12 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
     return true;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget* widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget)
 {
-    if (!widget->isFrameView())
+    if (!is<FrameView>(widget))
         return false;
 
-    return toFrameView(widget)->frame().eventHandler().handleWheelEvent(wheelEvent);
+    return downcast<FrameView>(*widget).frame().eventHandler().handleWheelEvent(wheelEvent);
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const

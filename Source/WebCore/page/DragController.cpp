@@ -393,19 +393,19 @@ DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootVi
 
 DragOperation DragController::operationForLoad(DragData& dragData)
 {
-    Document* doc = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
+    Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
     bool pluginDocumentAcceptsDrags = false;
 
-    if (is<PluginDocument>(doc)) {
-        const Widget* widget = downcast<PluginDocument>(*doc).pluginWidget();
-        const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? toPluginViewBase(widget) : nullptr;
+    if (is<PluginDocument>(document)) {
+        const Widget* widget = downcast<PluginDocument>(*document).pluginWidget();
+        const PluginViewBase* pluginView = is<PluginViewBase>(widget) ? downcast<PluginViewBase>(widget) : nullptr;
 
         if (pluginView)
             pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();
     }
 
-    if (doc && (m_didInitiateDrag || (doc->isPluginDocument() && !pluginDocumentAcceptsDrags) || doc->hasEditableStyle()))
+    if (document && (m_didInitiateDrag || (is<PluginDocument>(*document) && !pluginDocumentAcceptsDrags) || document->hasEditableStyle()))
         return DragOperationNone;
     return dragOperation(dragData);
 }

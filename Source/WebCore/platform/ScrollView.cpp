@@ -71,13 +71,13 @@ void ScrollView::addChild(PassRefPtr<Widget> prpChild)
         platformAddChild(child);
 }
 
-void ScrollView::removeChild(Widget* child)
+void ScrollView::removeChild(Widget& child)
 {
-    ASSERT(child->parent() == this);
-    child->setParent(0);
-    m_children.remove(child);
-    if (child->platformWidget())
-        platformRemoveChild(child);
+    ASSERT(child.parent() == this);
+    child.setParent(nullptr);
+    m_children.remove(&child);
+    if (child.platformWidget())
+        platformRemoveChild(&child);
 }
 
 bool ScrollView::setHasHorizontalScrollbar(bool hasBar, bool* contentSizeAffected)
@@ -96,8 +96,8 @@ bool ScrollView::setHasHorizontalScrollbar(bool hasBar, bool* contentSizeAffecte
     if (!hasBar && m_horizontalScrollbar) {
         bool wasOverlayScrollbar = m_horizontalScrollbar->isOverlayScrollbar();
         willRemoveScrollbar(m_horizontalScrollbar.get(), HorizontalScrollbar);
-        removeChild(m_horizontalScrollbar.get());
-        m_horizontalScrollbar = 0;
+        removeChild(*m_horizontalScrollbar);
+        m_horizontalScrollbar = nullptr;
         if (contentSizeAffected)
             *contentSizeAffected = !wasOverlayScrollbar;
         return true;
@@ -122,8 +122,8 @@ bool ScrollView::setHasVerticalScrollbar(bool hasBar, bool* contentSizeAffected)
     if (!hasBar && m_verticalScrollbar) {
         bool wasOverlayScrollbar = m_verticalScrollbar->isOverlayScrollbar();
         willRemoveScrollbar(m_verticalScrollbar.get(), VerticalScrollbar);
-        removeChild(m_verticalScrollbar.get());
-        m_verticalScrollbar = 0;
+        removeChild(*m_verticalScrollbar);
+        m_verticalScrollbar = nullptr;
         if (contentSizeAffected)
             *contentSizeAffected = !wasOverlayScrollbar;
         return true;

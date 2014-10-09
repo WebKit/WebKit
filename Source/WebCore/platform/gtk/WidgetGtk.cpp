@@ -29,11 +29,11 @@
 #include "Widget.h"
 
 #include "Cursor.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "ScrollView.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -58,7 +58,7 @@ void Widget::setFocus(bool)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    ScrollView* view = root();
+    FrameView* view = root();
     if (!view)
         return;
     view->hostWindow()->setCursor(cursor);

@@ -189,15 +189,15 @@ void AccessibilityScrollView::addChildren()
 
 AccessibilityObject* AccessibilityScrollView::webAreaObject() const
 {
-    if (!m_scrollView || !m_scrollView->isFrameView())
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
     
-    Document* doc = toFrameView(m_scrollView)->frame().document();
-    if (!doc || !doc->hasLivingRenderTree())
+    Document* document = downcast<FrameView>(*m_scrollView).frame().document();
+    if (!document || !document->hasLivingRenderTree())
         return nullptr;
 
     if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(doc);
+        return cache->getOrCreate(document);
     
     return nullptr;
 }
@@ -231,22 +231,22 @@ LayoutRect AccessibilityScrollView::elementRect() const
 
 FrameView* AccessibilityScrollView::documentFrameView() const
 {
-    if (!m_scrollView || !m_scrollView->isFrameView())
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
     
-    return toFrameView(m_scrollView);
+    return downcast<FrameView>(m_scrollView);
 }    
 
 AccessibilityObject* AccessibilityScrollView::parentObject() const
 {
-    if (!m_scrollView || !m_scrollView->isFrameView())
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
 
     AXObjectCache* cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
+    HTMLFrameOwnerElement* owner = downcast<FrameView>(*m_scrollView).frame().ownerElement();
     if (owner && owner->renderer())
         return cache->getOrCreate(owner);
 
@@ -255,14 +255,14 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
     
 AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
 {
-    if (!m_scrollView || !m_scrollView->isFrameView())
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
     
     AXObjectCache* cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
+    HTMLFrameOwnerElement* owner = downcast<FrameView>(m_scrollView)->frame().ownerElement();
     if (owner && owner->renderer())
         return cache->get(owner);
     

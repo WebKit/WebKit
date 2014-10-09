@@ -484,14 +484,14 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
     // Find the next descendant of this attachment object so search can continue through frames.
     if (object->isAttachment()) {
         Widget* widget = object->widgetForAttachmentView();
-        if (!widget || !widget->isFrameView())
+        if (!is<FrameView>(widget))
             return;
         
-        Document* doc = toFrameView(widget)->frame().document();
-        if (!doc || !doc->hasLivingRenderTree())
+        Document* document = downcast<FrameView>(*widget).frame().document();
+        if (!document || !document->hasLivingRenderTree())
             return;
         
-        object = object->axObjectCache()->getOrCreate(doc);
+        object = object->axObjectCache()->getOrCreate(document);
     }
 
     if (object)

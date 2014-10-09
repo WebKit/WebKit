@@ -551,8 +551,8 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
     setDisplayState(WaitingForSnapshot);
     m_snapshotDecision = Snapshotted;
     Widget* widget = pluginWidget();
-    if (widget && widget->isPluginViewBase())
-        toPluginViewBase(widget)->beginSnapshottingRunningPlugin();
+    if (is<PluginViewBase>(widget))
+        downcast<PluginViewBase>(*widget).beginSnapshottingRunningPlugin();
 }
 
 static inline bool is100Percent(Length length)
@@ -725,11 +725,11 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
     setDisplayState(WaitingForSnapshot);
 }
 
-void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)
+void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget& widget)
 {
     m_plugInWasCreated = true;
 
-    if (widget->isPluginViewBase() && toPluginViewBase(widget)->shouldAlwaysAutoStart()) {
+    if (is<PluginViewBase>(widget) && downcast<PluginViewBase>(widget).shouldAlwaysAutoStart()) {
         LOG(Plugins, "%p Plug-in should auto-start, set to play", this);
         m_snapshotDecision = NeverSnapshot;
         setDisplayState(Playing);

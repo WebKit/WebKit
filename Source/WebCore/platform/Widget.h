@@ -37,6 +37,7 @@
 #include "PlatformScreen.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
@@ -70,6 +71,7 @@ namespace WebCore {
 class Cursor;
 class Event;
 class Font;
+class FrameView;
 class GraphicsContext;
 class PlatformMouseEvent;
 class ScrollView;
@@ -143,7 +145,7 @@ public:
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
     ScrollView* parent() const { return m_parent; }
-    ScrollView* root() const;
+    FrameView* root() const;
 
     virtual void handleEvent(Event*) { }
 
@@ -216,9 +218,6 @@ private:
     IntRect m_frame; // Not used when a native widget exists.
 };
 
-#define WIDGET_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, Widget, object, object->predicate, object.predicate)
-
 #if !PLATFORM(COCOA)
 
 inline PlatformWidget Widget::platformWidget() const
@@ -250,5 +249,10 @@ inline void Widget::retainPlatformWidget()
 #endif
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_WIDGET(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::Widget& widget) { return widget.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // Widget_h

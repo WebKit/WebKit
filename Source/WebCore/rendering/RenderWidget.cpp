@@ -61,7 +61,7 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
         FrameView* newParent = it->value;
         if (newParent != currentParent) {
             if (currentParent)
-                currentParent->removeChild(child);
+                currentParent->removeChild(*child);
             if (newParent)
                 newParent->addChild(child);
         }
@@ -238,9 +238,9 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!widgetPaintOffset.isZero())
         paintInfo.context->translate(-widgetPaintOffset);
 
-    if (m_widget->isFrameView()) {
-        FrameView* frameView = toFrameView(m_widget.get());
-        bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContentIncludingDescendants();
+    if (is<FrameView>(*m_widget)) {
+        FrameView& frameView = downcast<FrameView>(*m_widget);
+        bool runOverlapTests = !frameView.useSlowRepaintsIfNotOverlapped() || frameView.hasCompositedContentIncludingDescendants();
         if (paintInfo.overlapTestRequests && runOverlapTests) {
             ASSERT(!paintInfo.overlapTestRequests->contains(this));
             paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
@@ -301,8 +301,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderWidget::setOverlapTestResult(bool isOverlapped)
 {
     ASSERT(m_widget);
-    ASSERT(m_widget->isFrameView());
-    toFrameView(m_widget.get())->setIsOverlapped(isOverlapped);
+    downcast<FrameView>(*m_widget).setIsOverlapped(isOverlapped);
 }
 
 void RenderWidget::updateWidgetPosition()
@@ -317,11 +316,11 @@ void RenderWidget::updateWidgetPosition()
 
     // if the frame size got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size.
-    if (m_widget->isFrameView()) {
-        FrameView* frameView = toFrameView(m_widget.get());
+    if (is<FrameView>(*m_widget)) {
+        FrameView& frameView = downcast<FrameView>(*m_widget);
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
-        if ((widgetSizeChanged || frameView->needsLayout()) && frameView->frame().page())
-            frameView->layout();
+        if ((widgetSizeChanged || frameView.needsLayout()) && frameView.frame().page())
+            frameView.layout();
     }
 }
 
@@ -346,17 +345,17 @@ RenderWidget* RenderWidget::find(const Widget* widget)
 
 bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
-    if (request.allowsChildFrameContent() && widget() && widget()->isFrameView() && toFrameView(widget())->renderView()) {
-        FrameView* childFrameView = toFrameView(widget());
-        RenderView* childRoot = childFrameView->renderView();
+    if (request.allowsChildFrameContent() && is<FrameView>(widget()) && downcast<FrameView>(*widget()).renderView()) {
+        FrameView& childFrameView = downcast<FrameView>(*widget());
+        RenderView& childRoot = *childFrameView.renderView();
 
         LayoutPoint adjustedLocation = accumulatedOffset + location();
-        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - childFrameView->scrollOffset();
+        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - childFrameView.scrollOffset();
         HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
         HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
         HitTestResult childFrameResult(newHitTestLocation);
 
-        bool isInsideChildFrame = childRoot->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
+        bool isInsideChildFrame = childRoot.hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
 
         if (newHitTestLocation.isRectBasedTest())
             result.append(childFrameResult);
@@ -401,9 +400,9 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!widget() || !widget()->isFrameView())
-        return 0;
-    return toFrameView(widget())->embeddedContentBox();
+    if (!is<FrameView>(widget()))
+        return nullptr;
+    return downcast<FrameView>(*widget()).embeddedContentBox();
 }
 
 } // namespace WebCore

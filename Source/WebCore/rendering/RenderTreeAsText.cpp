@@ -563,16 +563,15 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         }
     }
 
-    if (o.isWidget()) {
-        Widget* widget = toRenderWidget(&o)->widget();
-        if (widget && widget->isFrameView()) {
-            FrameView* view = toFrameView(widget);
-            if (RenderView* root = view->frame().contentRenderer()) {
+    if (is<RenderWidget>(o)) {
+        Widget* widget = downcast<RenderWidget>(o).widget();
+        if (is<FrameView>(widget)) {
+            FrameView& view = downcast<FrameView>(*widget);
+            if (RenderView* root = view.frame().contentRenderer()) {
                 if (!(behavior & RenderAsTextDontUpdateLayout))
-                    view->layout();
-                RenderLayer* l = root->layer();
-                if (l)
-                    writeLayers(ts, l, l, l->rect(), indent + 1, behavior);
+                    view.layout();
+                if (RenderLayer* layer = root->layer())
+                    writeLayers(ts, layer, layer, layer->rect(), indent + 1, behavior);
             }
         }
     }

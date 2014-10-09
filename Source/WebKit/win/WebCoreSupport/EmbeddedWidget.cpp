@@ -93,13 +93,12 @@ void EmbeddedWidget::frameRectsChanged()
     if (!parent())
         return;
 
-    ASSERT(parent()->isFrameView());
-    FrameView* frameView = toFrameView(parent());
+    FrameView& frameView = downcast<FrameView>(*parent());
 
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
+    m_windowRect = IntRect(frameView.contentsToWindow(frameRect().location()), frameRect().size());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 

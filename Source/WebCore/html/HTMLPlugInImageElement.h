@@ -74,7 +74,7 @@ public:
 
     // Plug-in URL might not be the same as url() with overriding parameters.
     void subframeLoaderWillCreatePlugIn(const URL& plugInURL);
-    void subframeLoaderDidCreatePlugIn(const Widget*);
+    void subframeLoaderDidCreatePlugIn(const Widget&);
 
     WEBCORE_EXPORT void setIsPrimarySnapshottedPlugIn(bool);
     bool partOfSnapshotOverlay(Node*);

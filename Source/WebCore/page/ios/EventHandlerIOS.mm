@@ -397,20 +397,17 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget* widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!widget)
-        return false;
-
-    NSView* nodeView = widget->platformWidget();
+    NSView* nodeView = widget.platformWidget();
     if (!nodeView) {
         // WK2 code path. No wheel events on iOS anyway.
         return false;
     }
 
-    if (currentEvent().type != WebEventScrollWheel || m_sendingEventToSubview || !widget)
+    if (currentEvent().type != WebEventScrollWheel || m_sendingEventToSubview)
         return false;
 
     ASSERT(nodeView);
