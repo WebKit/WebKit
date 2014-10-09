@@ -1308,6 +1308,15 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
     updateStyle();
 }
 
+void RenderMathMLOperator::resetStretchSize()
+{
+    if (m_isVertical) {
+        m_stretchHeightAboveBaseline = 0;
+        m_stretchDepthBelowBaseline = 0;
+    } else
+        m_stretchWidth = 0;
+}
+
 FloatRect RenderMathMLOperator::boundsForGlyph(const GlyphData& data) const
 {
     return data.fontData->boundsForGlyph(data.glyph);
