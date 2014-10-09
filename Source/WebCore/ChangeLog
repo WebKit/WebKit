@@ -1,3 +1,9 @@
+2014-10-09  Roger Fong  <roger_fong@apple.com>
+
+        Build fix for Win EWS bots.
+
+        * testing/Internals.idl: Move enum declaration to the top of the file.
+
 2014-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderMathMLUnderOver adds spacing to the child operator indefinitely when resizing the window.
