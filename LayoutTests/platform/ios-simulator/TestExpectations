@@ -14,10 +14,38 @@ compositing/plugins
 
 # no fullscreen API on iOS
 fullscreen
+http/tests/fullscreen
 
 # no gamepad on iOS
 gamepad
 
+# Java is not available on iOS
+java
+
+# iOS doesn't support Notifications.
+fast/notifications
+http/tests/notifications
+
+# Pointer Lock is not implemented in iOS.
+pointer-lock/
+http/tests/pointer-lock/
+
+# FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iPhone OS
+printing
+
+# Proximity Events not supported on iOS
+proximity
+fast/events/constructors/device-proximity-event-constructor.html
+
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
+# Touch adjustment not supported on iOS
+touchadjustment
+
+# ENABLE_VIBRATION - Vibration API is not enabled.
+vibration
 
 
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]

@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Disable tests for more unsupported features in iOS Simulator.
+
+        * platform/ios-simulator/TestExpectations:
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for ietestcenter tests.
         Skip fullscreen and gamepad tests.
 
