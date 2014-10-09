@@ -400,7 +400,7 @@ CodeMirror.extendMode("css", {
         // In order insert newlines in selector lists we need keep track of the length of the current line.
         // This isn't exact line length, only the builder knows that, but it is good enough to get an idea.
         // If we are at a top level, keep track of the current line length, otherwise we reset to 0.
-        if (state.state === "top" || state.state === "media")
+        if (!isComment && (state.state === "top" || state.state === "media" || state.state === "pseudo"))
             state._cssPrettyPrint.lineLength += content.length;
         else
             state._cssPrettyPrint.lineLength = 0;

@@ -1,8 +1,8 @@
 /* RESET */
-html, body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6,
-pre, form, p, blockquote, fieldset, input, abbr, article, aside, command,
-details, figcaption, figure, footer, header, hgroup, mark, meter, nav,
-output, progress, section, summary, time {
+html, body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, p,
+blockquote, fieldset, input, abbr, article, aside, command, details,
+figcaption, figure, footer, header, hgroup, mark, meter, nav, output,
+progress, section, summary, time {
     margin: 0;
     padding: 0;
 }

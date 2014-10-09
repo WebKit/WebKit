@@ -1,0 +1,21 @@
+/* LONG LISTS SHOULD WRAP */
+a.browsewebappss, a.businessstores, a.buyiphones, a.buynows, a.buynows-arrow,
+a.comingsoons, p::before, a.descargarahoras, a.downloadituness, a.downloadnows,
+a.finds, a.freetrials, a.getstarteds, a.gos, a.howtoapplys, a.howtobuys,
+a.joinnows, a.learnmores, a.nikebuynows, a.notifymes, a.ordernows,
+a.preordernows, a.preorders, a.reserves, a.startyoursearchs, a.submits,
+a.tryamacs, a.upgradenows {
+    color: red
+}
+
+a.browsewebappss:hover, a.businessstores:hover, a.buyiphones:hover,
+a.buynows:hover, a.buynows-arrow:hover, a.comingsoons:hover, p::before,
+a.descargarahoras:hover, a.downloadituness:hover, a.downloadnows:hover,
+a.finds:hover, a.freetrials:hover, a.getstarteds:hover, a.gos:hover,
+a.howtoapplys:hover, a.howtobuys:hover, a.joinnows:hover, a.learnmores:hover,
+a.nikebuynows:hover, a.notifymes:hover, a.ordernows:hover, a.preordernows:hover,
+a.preorders:hover, a.reserves:hover, a.startyoursearchs:hover, a.submits:hover,
+a.tryamacs:hover, a.upgradenows:hover {
+    color: red
+}
+

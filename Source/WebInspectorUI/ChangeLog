@@ -1,3 +1,26 @@
+2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS Pretty Printing fails to wrap long lines of selectors with pseudo classes/elements
+        https://bugs.webkit.org/show_bug.cgi?id=137413
+
+        Reviewed by Timothy Hatcher.
+
+        Long line wrapping was breaking as soon as there was a ':' for a psuedo
+        class or element. Likewise it was counting comment strings as part of
+        the length of the line even though it would get a newline after it.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/css-tests/basic-expected.css:
+        (progress, section, summary, time):
+        * Tools/PrettyPrinting/css-tests/wrapping-expected.css: Added.
+        (a.tryamacs, a.upgradenows):
+        (a.tryamacs:hover, a.upgradenows:hover):
+        * Tools/PrettyPrinting/css-tests/wrapping.css: Added.
+        (a.browsewebappss,a.businessstores,a.buyiphones,a.buynows,a.buynows-arrow,a.comingsoons,p::before,a.descargarahoras,a.downloadituness,a.downloadnows,a.finds,a.freetrials,a.getstarteds,a.gos,a.howtoapplys,a.howtobuys,a.joinnows,a.learnmores,a.nikebuynows,a.notifymes,a.ordernows,a.preordernows,a.preorders,a.reserves,a.startyoursearchs,a.submits,a.tryamacs,a.upgradenows):
+        (a.browsewebappss:hover,a.businessstores:hover,a.buyiphones:hover,a.buynows:hover,a.buynows-arrow:hover,a.comingsoons:hover,p::before,a.descargarahoras:hover,a.downloadituness:hover,a.downloadnows:hover,a.finds:hover,a.freetrials:hover,a.getstarteds:hover,a.gos:hover,a.howtoapplys:hover,a.howtobuys:hover,a.joinnows:hover,a.learnmores:hover,a.nikebuynows:hover,a.notifymes:hover,a.ordernows:hover,a.preordernows:hover,a.preorders:hover,a.reserves:hover,a.startyoursearchs:hover,a.submits:hover,a.tryamacs:hover,a.upgradenows:hover):
+        * Tools/PrettyPrinting/index.html:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+
 2014-10-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add PrettyPrinter CSS tests
