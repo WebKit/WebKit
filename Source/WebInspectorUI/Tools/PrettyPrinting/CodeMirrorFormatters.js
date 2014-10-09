@@ -322,8 +322,11 @@ CodeMirror.extendMode("css", {
                 return true;
             if (lastContent === ":") // Space in "prop: value" but not in a selectors "a:link" or "div::after" or media queries "(max-device-width:480px)".
                 return state.state === "prop";
-            if (lastContent === ")" && (content !== ")" && content !== ",")) // Space in "not(foo)and" but not at the end of "not(not(foo))"
-                return state.state === "media" || state.state === "media_parens";
+            if (lastContent === ")" && (content !== ")" && content !== ",")) {
+                if (token === "number") // linear-gradient(rgb(...)0%,rgb(...)100%)
+                    return true;
+                return state.state === "media" || state.state === "media_parens"; // Space in "not(foo)and" but not at the end of "not(not(foo))" 
+            }
             return ">+~-*/".indexOf(lastContent) >= 0; // calc() expression or child/sibling selectors
         }
 

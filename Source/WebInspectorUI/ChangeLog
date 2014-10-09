@@ -1,5 +1,23 @@
 2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CSS Pretty Printing fails to put space between rgb(...) and numbers in minified gradients
+        https://bugs.webkit.org/show_bug.cgi?id=137414
+
+        Reviewed by Timothy Hatcher.
+
+        Add whitespace between rgb(...) and a number, possible in gradient
+        syntax like "linear-gradient(rgb(...)0%,rgb(...)100%)".
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/css-tests/gradient-expected.css: Added.
+        (.dot-nav:nth-child(1n) li a.active):
+        * Tools/PrettyPrinting/css-tests/gradient.css: Added.
+        (.dot-nav:nth-child(1n) li a.active):
+        * Tools/PrettyPrinting/index.html:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+
+2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CSS Pretty Printing fails to wrap long lines of selectors with pseudo classes/elements
         https://bugs.webkit.org/show_bug.cgi?id=137413
 
