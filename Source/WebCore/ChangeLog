@@ -1,5 +1,15 @@
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed Windows build fix after r174506.
+
+        We no longer needed to dereference as it is a reference instead of a
+        pointer now.
+
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for Widget subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137549
 
