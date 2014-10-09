@@ -1,52 +1,68 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "apple-mac-121",  "platform": "mac-mountainlion"},
-                    { "name": "apple-mac-122",  "platform": "mac-mountainlion"},
-                    { "name": "apple-mac-123",  "platform": "mac-mountainlion"},
-                    { "name": "apple-mac-127",  "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-201", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-202", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-203", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-204", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-205", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-206", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-207", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-208", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-209", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-210", "platform": "mac-mountainlion"},
-                    { "name": "apple-mini-218", "platform": "mac-mountainlion"},
+                    { "name": "apple-mac-121",  "platform": "mac-mountainlion" },
+                    { "name": "apple-mac-122",  "platform": "mac-mountainlion" },
+                    { "name": "apple-mac-123",  "platform": "mac-mountainlion" },
+                    { "name": "apple-mac-127",  "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-201", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-202", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-203", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-204", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-205", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-206", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-207", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-208", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-209", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-210", "platform": "mac-mountainlion" },
+                    { "name": "apple-mini-218", "platform": "mac-mountainlion" },
                     
-                    { "name": "apple-mac-114",  "platform": "mac-mavericks"},
+                    { "name": "apple-mac-114",  "platform": "mac-mavericks" },
                     { "name": "apple-mac-124",  "platform": "mac-mavericks" },
                     { "name": "apple-mac-125",  "platform": "mac-mavericks" },
                     { "name": "apple-mac-126",  "platform": "mac-mavericks" },
-                    { "name": "apple-mini-129", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-130", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-137", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-138", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-142", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-178", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-179", "platform": "mac-mavericks"},
-                    { "name": "apple-mini-180", "platform": "mac-mavericks"},
+                    { "name": "apple-mini-129", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-130", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-137", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-138", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-142", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-178", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-179", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-180", "platform": "mac-mavericks" },
                     { "name": "apple-mini-211", "platform": "mac-mavericks" },
                     { "name": "apple-mini-212", "platform": "mac-mavericks" },
                     { "name": "apple-mini-213", "platform": "mac-mavericks" },
-                    
-                    { "name": "apple-windows-1", "platform": "win"},
-                    { "name": "apple-windows-2", "platform": "win"},
-                    { "name": "apple-windows-3", "platform": "win"},
-                    { "name": "apple-windows-4", "platform": "win"},
-                    { "name": "apple-windows-5", "platform": "win"},
-                    { "name": "apple-windows-6", "platform": "win"},
 
-                    { "name": "gtk-linux-slave-1", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-2", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-3", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-5", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-6", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-7", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-8", "platform": "gtk"},
+                    { "name": "apple-bot-133", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-134", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-135", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-136", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-137", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-138", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-139", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-140", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-141", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-142", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-143", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-144", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-145", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-146", "platform": "mac-yosemite" },
+                    { "name": "apple-bot-147", "platform": "mac-yosemite" },
+
+                    { "name": "apple-windows-1", "platform": "win" },
+                    { "name": "apple-windows-2", "platform": "win" },
+                    { "name": "apple-windows-3", "platform": "win" },
+                    { "name": "apple-windows-4", "platform": "win" },
+                    { "name": "apple-windows-5", "platform": "win" },
+                    { "name": "apple-windows-6", "platform": "win" },
+
+                    { "name": "gtk-linux-slave-1", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-2", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-3", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-5", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-6", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-7", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-8", "platform": "gtk" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -92,6 +108,11 @@
                       "platform": "mac-mountainlion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-mac-123", "apple-mini-209"]
                     },
+                    {
+                      "name": "Apple MountainLion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mountainlion-release-perf-tests",
+                      "platform": "mac-mountainlion", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-mini-210"]
+                    },
                     { "name": "Apple Mavericks Debug (Build)", "type": "Build", "builddir": "mavericks-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
@@ -132,10 +153,45 @@
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-213"]
                     },
+                    { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2"],
+                      "slavenames": ["apple-bot-133", "apple-bot-134"]
+                    },
+                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "Test", "builddir": "yosemite-debug-tests-wk1",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-135", "apple-bot-136"]
+                    },
+                    { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-debug-tests-wk2",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-137", "apple-bot-138"]
+                    },
+                    { "name": "Apple Yosemite LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "yosemite-cloop-debug",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-139"]
+                    },
+                    { "name": "Apple Yosemite 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "yosemite-32bitJSC-debug",
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-140"]
+                    },
+                    { "name": "Apple Yosemite Release (Build)", "type": "Build", "builddir": "yosemite-release",
+                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["yosemite-release-tests-wk1", "yosemite-release-tests-wk2", "yosemite-release-perf"],
+                      "slavenames": ["apple-bot-141", "apple-bot-142"]
+                    },
+                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "Test", "builddir": "yosemite-release-tests-wk1",
+                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["apple-bot-143", "apple-bot-144"]
+                    },
+                    { "name": "Apple Yosemite Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-release-tests-wk2",
+                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-145", "apple-bot-146"]
+                    },
                     {
-                      "name": "Apple MountainLion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mountainlion-release-perf-tests",
-                      "platform": "mac-mountainlion", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-mini-210"]
+                      "name": "Apple Yosemite Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
+                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-bot-147"]
                     },
                     {
                       "name": "Apple Win Release (Build)", "type": "Build", "builddir": "win-release",
@@ -238,6 +294,9 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mavericks", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks LLINT CLoop (BuildAndTest)", "Apple Mavericks 32-bit JSC (BuildAndTest)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-yosemite", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple Yosemite Release (Build)", "Apple Yosemite Debug (Build)", "Apple Yosemite LLINT CLoop (BuildAndTest)", "Apple Yosemite 32-bit JSC (BuildAndTest)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
                     },
@@ -273,6 +332,21 @@
                     },
                     { "type": "Triggerable", "name": "mavericks-release-perf",
                       "builderNames": ["Apple Mavericks Release (Perf)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-release-tests-wk1",
+                      "builderNames": ["Apple Yosemite Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-release-tests-wk2",
+                      "builderNames": ["Apple Yosemite Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-debug-tests-wk1",
+                      "builderNames": ["Apple Yosemite Debug WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-debug-tests-wk2",
+                      "builderNames": ["Apple Yosemite Debug WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "yosemite-release-perf",
+                      "builderNames": ["Apple Yosemite Release (Perf)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]

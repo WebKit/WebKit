@@ -1,3 +1,16 @@
+2014-10-09  Lucas Forschler  <lforschler@apple.com>
+
+        Add Mac OS Yosemite webkit build infrastructure.
+        
+        This patch adds 15 bots to our build.webkit.org configuration.
+        We are matching the current Mavericks machines 1:1.
+        
+        This patch includes some minor spacing changes to the buildslaves section to make everything similar.
+        
+        Reviewed by Matt Hanson.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-10-09  Dana Burkart  <dburkart@apple.com>
 
         Don't use backticks when running commands, as we run into sh-related
