@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, UnableToApplyPatch
+from webkitpy.tool.bot.patchanalysistask import PatchAnalysisTask, PatchAnalysisTaskDelegate, UnableToApplyPatch, PatchIsNotValid
 
 
 class StyleQueueTaskDelegate(PatchAnalysisTaskDelegate):
@@ -63,6 +63,8 @@ class StyleQueueTask(PatchAnalysisTask):
         "Unabled to apply watchlist")
 
     def run(self):
+        if not self.validate():
+            raise PatchIsNotValid(self._patch)
         if not self._clean():
             return False
         if not self._update():

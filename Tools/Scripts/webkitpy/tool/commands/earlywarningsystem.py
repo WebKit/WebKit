@@ -91,6 +91,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             return succeeded
         except PatchIsNotValid:
             self._did_error(patch, "%s did not process patch." % self.name)
+            return False
         except UnableToApplyPatch, e:
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False

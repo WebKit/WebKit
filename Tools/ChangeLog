@@ -1,3 +1,24 @@
+2014-10-08  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        StyleQueue should throw a PatchIsNotValid exception to achieve
+        consistency with CommitQueue and EWS
+        https://bugs.webkit.org/show_bug.cgi?id=137500
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        Adds a call to validate() in run().
+        (StyleQueueTask.run):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Adds a return False in the patch is not valid exception statement.
+        (AbstractEarlyWarningSystem.review_patch):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Adds a return False in the patch is not valid exception statement in
+        commit queue, and adds an except statement to catch PatchIsNotValid
+        exceptions in style queue.
+        (CommitQueue.process_work_item):
+        (StyleQueue.review_patch):
+
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Race condition with WebKitWebView:is-loading after starting page load
