@@ -113,8 +113,8 @@ class ReportProcessor {
             if (abs($commit_row['commit_time'] - $commit_data['time']) > 1.0)
                 $this->exit_with_error('MismatchingCommitTime', array('existing' => $commit_row, 'new' => $commit_data));
 
-            if (!$this->db->insert_row('build_commits', null,
-                array('commit_build' => $build_id, 'build_commit' => $commit_row['commit_id']), null))
+            if (!$this->db->select_or_insert_row('build_commits', null,
+                array('commit_build' => $build_id, 'build_commit' => $commit_row['commit_id']), null, '*'))
                 $this->exit_with_error('FailedToRelateCommitToBuild', array('commit' => $commit_row, 'build' => $build_id));
         }
 

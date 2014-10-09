@@ -1,5 +1,15 @@
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another unreviewed build fix after r174477.
+
+        Don't try to insert a duplicated row into build_commits as it results in a database constraint error.
+
+        This has been caught by a test in /api/report. I don't know why I thought all tests were passing.
+
+        * public/include/report-processor.php:
+
+2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix after r174477.
 
         * init-database.sql: Removed build_commits_index since it's redundant with build_commit's primary key.
