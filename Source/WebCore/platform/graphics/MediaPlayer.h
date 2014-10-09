@@ -129,7 +129,6 @@ extern const PlatformMedia NoPlatformMedia;
 
 class CachedResourceLoader;
 class ContentType;
-class FrameView;
 class GraphicsContext;
 class GraphicsContext3D;
 class IntRect;
@@ -264,6 +263,8 @@ public:
     virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType) { }
 
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
+
+    virtual bool mediaPlayerIsInMediaDocument() const { return false; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -316,9 +317,7 @@ public:
     bool hasVideo() const;
     bool hasAudio() const;
 
-    void setFrameView(FrameView* frameView) { m_frameView = frameView; }
-    FrameView* frameView() { return m_frameView; }
-    bool inMediaDocument();
+    bool inMediaDocument() const;
 
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
@@ -594,7 +593,6 @@ private:
     String m_contentMIMEType;
     String m_contentTypeCodecs;
     String m_keySystem;
-    FrameView* m_frameView;
     IntSize m_size;
     Preload m_preload;
     bool m_visible;
