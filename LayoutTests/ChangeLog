@@ -1,3 +1,17 @@
+2014-10-09  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        Re-add tests for :enabled with Anchor, Area & Link elements
+        https://bugs.webkit.org/show_bug.cgi?id=137557
+
+        Reviewed by Darin Adler.
+
+        The CSS selector :enabled should not match Anchor, Area & Link elements
+        with 'href' attribute set. This re-adds the related layout tests with
+        updated results.
+
+        * fast/css/css-selector-enabled-links-expected.txt: Added.
+        * fast/css/css-selector-enabled-links.html: Added.
+
 2014-10-08  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some more passing tests from TestExpectations.
