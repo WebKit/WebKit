@@ -1,3 +1,32 @@
+2014-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOM Storage Editing is broken in many ways, frustrating
+        https://bugs.webkit.org/show_bug.cgi?id=137547
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMStorageObject.js:
+        (WebInspector.DOMStorageObject.prototype.getEntries): Deleted.
+        When getting entires, populate the model object with these keys/values
+        so we can accurately detect duplicates in editing.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.determineNextCell):
+        (WebInspector.DataGrid.prototype.moveToNextCell):
+        When the users uses "Enter" to commit, stop editing.
+
+        (WebInspector.DataGrid.prototype._editingCommitted):
+        Fix title property accessor. This is not a map. This fixes an exception
+        when showing context menus on editable data grid rows.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.cleanup):
+        (WebInspector.DOMStorageContentView.prototype.restoreOriginalValues):
+        (WebInspector.DOMStorageContentView.prototype._editingCallback):
+        Completely rewrite editing here. As soon as an edit is made, enter
+        an uncommitted state with the original key/value. When a commit is
+        allowed, update as appropriate based on the original values.
+
 2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS Pretty Printing fails to put space between value functions around ending parenthesis

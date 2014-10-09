@@ -74,11 +74,25 @@ WebInspector.DOMStorageObject.prototype = {
 
     getEntries: function(callback)
     {
+        function innerCallback(error, entries)
+        {
+            if (error)
+                return;
+
+            for (var entry of entries) {
+                if (!entry[0] || !entry[1])
+                    continue;
+                this._entries.set(entry[0], entry[1]);
+            }
+
+            callback(error, entries);
+        }
+
         // COMPATIBILITY (iOS 6): The getDOMStorageItems function was later renamed to getDOMStorageItems.
         if (DOMStorageAgent.getDOMStorageEntries)
-            DOMStorageAgent.getDOMStorageEntries(this._id, callback);
+            DOMStorageAgent.getDOMStorageEntries(this._id, innerCallback.bind(this));
         else
-            DOMStorageAgent.getDOMStorageItems(this._id, callback);
+            DOMStorageAgent.getDOMStorageItems(this._id, innerCallback.bind(this));
     },
 
     removeItem: function(key)

@@ -185,58 +185,95 @@ WebInspector.DOMStorageContentView.prototype = {
 
     _editingCallback: function(editingNode, columnIdentifier, oldText, newText, moveDirection)
     {
-        var key = editingNode.data["key"].trim();
-        var value = editingNode.data["value"].trim();
-        var previousValue = oldText.trim();
-        var enteredValue = newText.trim();
+        var key = editingNode.data["key"].trim().removeWordBreakCharacters();
+        var value = editingNode.data["value"].trim().removeWordBreakCharacters();
+        var previousValue = oldText.trim().removeWordBreakCharacters();
+        var enteredValue = newText.trim().removeWordBreakCharacters();
+        var hasUncommittedEdits = editingNode.__hasUncommittedEdits;
+        var hasChange = previousValue !== enteredValue;
+        var isEditingKey = columnIdentifier === "key";
+        var isEditingValue = !isEditingKey;
+        var domStorage = this.representedObject;
+
+        // Nothing changed, just bail.
+        if (!hasChange && !hasUncommittedEdits)
+            return;
+
+        // Something changed, save the original key/value and enter uncommitted state.
+        if (hasChange && !editingNode.__hasUncommittedEdits) {
+            editingNode.__hasUncommittedEdits = true;
+            editingNode.__originalKey = isEditingKey ? previousValue : key;
+            editingNode.__originalValue = isEditingValue ? previousValue : value;
+        }
+
+        function cleanup()
+        {
+            editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
+            editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
+            editingNode.element.classList.remove(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
+            delete editingNode.__hasUncommittedEdits;
+            delete editingNode.__originalKey;
+            delete editingNode.__originalValue;
+        }
+
+        function restoreOriginalValues()
+        {
+            editingNode.data.key = editingNode.__originalKey;
+            editingNode.data.value = editingNode.__originalValue;
+            editingNode.refresh();
+            cleanup();
+        }
+
+        // If the key/value field was cleared, add "missing" style.
+        if (isEditingKey) {
+            if (key.length)
+                editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
+            else
+                editingNode.element.classList.add(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
+        } else if (isEditingValue) {
+            if (value.length)
+                editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
+            else
+                editingNode.element.classList.add(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
+        }
+
+        // Check for key duplicates. If this is a new row, or an existing row that changed key.
+        var keyChanged = key !== editingNode.__originalKey;
+        if (keyChanged) {
+            if (domStorage.entries.has(key))
+                editingNode.element.classList.add(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
+            else
+                editingNode.element.classList.remove(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
+        }
+
+        // See if we are done editing this row or not.
         var columnIndex = this._dataGrid.orderedColumns.indexOf(columnIdentifier);
         var mayMoveToNextRow = moveDirection === "forward" && columnIndex === this._dataGrid.orderedColumns.length - 1;
         var mayMoveToPreviousRow = moveDirection === "backward" && columnIndex === 0;
-        var willMoveRow = mayMoveToNextRow || mayMoveToPreviousRow;
-        var shouldCommitRow = willMoveRow && key.length && value.length;
+        var doneEditing = mayMoveToNextRow || mayMoveToPreviousRow || !moveDirection;
 
-        // Remove the row if its values are newly cleared, and it's not a placeholder.
-        if (!key.length && !value.length && willMoveRow) {
-            if (previousValue.length && !editingNode.isPlaceholderNode)
-                this._dataGrid.removeChild(editingNode);
+        // Expecting more edits on this row.
+        if (!doneEditing)
             return;
+
+        // Key and value were cleared, remove the row.
+        if (!key.length && !value.length && !editingNode.isPlaceholderNode) {
+            this._dataGrid.removeChild(editingNode);
+            domStorage.removeItem(editingNode.__originalKey);
+            return;                
         }
 
-        // If the key field was deleted, restore it when committing the row.
-        if (key === enteredValue && !key.length) {
-            if (willMoveRow && !editingNode.isPlaceholderNode) {
-                editingNode.data.key = previousValue;
-                editingNode.refresh();
-            } else
-                editingNode.element.classList.add(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
-        } else if (key.length) {
-            editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
-            editingNode.__previousKeyValue = previousValue;
-        }
+        // Done editing but leaving the row in an invalid state. Leave in uncommitted state.
+        var isDuplicate = editingNode.element.classList.contains(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
+        if (!key.length || !value.length || isDuplicate)
+            return;
 
-        if (value === enteredValue && !value.length)
-            editingNode.element.classList.add(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
-        else
-            editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
-
-        if (editingNode.isPlaceholderNode && previousValue !== enteredValue)
+        // Commit.
+        if (keyChanged && !editingNode.isPlaceholderNode)
+            domStorage.removeItem(editingNode.__originalKey);
+        if (editingNode.isPlaceholderNode)
             this._dataGrid.addPlaceholderNode();
-
-        if (!shouldCommitRow)
-            return; // One of the inputs is missing, or we aren't moving between rows.
-
-        var domStorage = this.representedObject;
-        if (domStorage.entries.has(key)) {
-            editingNode.element.classList.add(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
-            return;
-        }
-
-        editingNode.element.classList.remove(WebInspector.DOMStorageContentView.DuplicateKeySyleClassName);
-
-        if (editingNode.__previousKeyValue !== key)
-            domStorage.removeItem(editingNode.__previousKeyValue);
-
+        cleanup();
         domStorage.setItem(key, value);
-        // The table will be re-sorted when the backend fires the itemUpdated event.
     }
 };

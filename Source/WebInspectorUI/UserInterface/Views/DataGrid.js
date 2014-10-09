@@ -316,8 +316,8 @@ WebInspector.DataGrid.prototype = {
                 return {shouldSort: true, editingNode: previousDataGridNode || currentEditingNode, columnIndex: this.orderedColumns.length - 1};
             }
 
-            // If we are not moving in any direction, then sort but don't move.
-            return {shouldSort: true, editingNode: currentEditingNode, columnIndex: columnIndex};
+            // If we are not moving in any direction, then sort and stop.
+            return {shouldSort: true};
         }
 
         function moveToNextCell(valueDidChange) {
@@ -326,7 +326,8 @@ WebInspector.DataGrid.prototype = {
                 this._sortAfterEditingCallback();
                 delete this._sortAfterEditingCallback;
             }
-            this._startEditingNodeAtColumnIndex(moveCommand.editingNode, moveCommand.columnIndex);
+            if (moveCommand.editingNode)
+                this._startEditingNodeAtColumnIndex(moveCommand.editingNode, moveCommand.columnIndex);
         }
 
         this._editingCancelled(element);
@@ -1145,7 +1146,7 @@ WebInspector.DataGrid.prototype = {
                 else {
                     var element = event.target.enclosingNodeOrSelfWithNodeName("td");
                     var columnIdentifier = element.__columnIdentifier;
-                    var columnTitle = this.dataGrid.columns.get(columnIdentifier).get("title");
+                    var columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
                     contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
                 }
             }
