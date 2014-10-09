@@ -95,6 +95,8 @@ void LoadFontCallback::notifyLoaded()
     if (m_numLoading)
         return;
 
+    m_fontLoader.loadFontDone(*this);
+
     if (m_errorOccured) {
         if (m_errorCallback)
             m_errorCallback->handleEvent();
@@ -102,7 +104,6 @@ void LoadFontCallback::notifyLoaded()
         if (m_loadCallback)
             m_loadCallback->handleEvent();
     }
-    m_fontLoader.loadFontDone(*this);
 }
 
 void LoadFontCallback::notifyError() 
