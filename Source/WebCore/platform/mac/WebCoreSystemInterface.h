@@ -187,7 +187,7 @@ extern void (*wkWindowSetAlpha)(NSWindow *, float);
 extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 
 #if defined(__OBJC__)
-extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
+extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 #endif
 
 extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);

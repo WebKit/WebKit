@@ -62,7 +62,7 @@ NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
-void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
+void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 void (*wkQTMovieDisableComponent)(uint32_t[5]);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);

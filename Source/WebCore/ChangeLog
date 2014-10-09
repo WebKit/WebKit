@@ -1,3 +1,23 @@
+2014-10-08  Dean Jackson  <dino@apple.com>
+
+        PopupMenus should indicate if they are using a custom rendering
+        https://bugs.webkit.org/show_bug.cgi?id=137543
+        <rdar://problem/18544212>
+
+        Reviewed by Beth Dakin.
+
+        On Yosemite there is an animation as a popup menu closes. We can't use
+        this when there is a custom rendering, since the animation doesn't match
+        the final result. Implement this by hooking into the existing code
+        for hiding the arrows during animation - a WebKitSystemInterface update
+        will implement the other side.
+
+        * platform/mac/WebCoreSystemInterface.h: Rename parameter to be more clear.
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::menuStyle): We need to check that we are a native-looking
+        button, not just something with appearance.
+
 2014-10-08  Christophe Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderBlock objects
