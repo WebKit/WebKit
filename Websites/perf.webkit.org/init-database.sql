@@ -68,9 +68,8 @@ CREATE INDEX commit_author_email_index ON commits(commit_author_email);
 
 CREATE TABLE build_commits (
     commit_build integer NOT NULL REFERENCES builds ON DELETE CASCADE,
-    build_commit integer NOT NULL REFERENCES commits ON DELETE CASCADE
+    build_commit integer NOT NULL REFERENCES commits ON DELETE CASCADE,
     PRIMARY KEY (commit_build, build_commit));
-CREATE INDEX build_commits_index ON build_commits(commit_build, build_commit);
 
 CREATE TABLE aggregators (
     aggregator_id serial PRIMARY KEY,
