@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for sputnkik tests.
+
+        * platform/ios-simulator/sputnkik/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for security tests.
 
         * platform/ios-simulator/security/*: Added
