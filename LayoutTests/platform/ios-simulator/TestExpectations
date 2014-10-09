@@ -12,6 +12,14 @@ batterystatus
 # no plug-ins on iOS
 compositing/plugins
 
+# no fullscreen API on iOS
+fullscreen
+
+# no gamepad on iOS
+gamepad
+
+
+
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]

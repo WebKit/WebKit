@@ -1,5 +1,12 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for ietestcenter tests.
+        Skip fullscreen and gamepad tests.
+
+        * platform/ios-simulator/ietestcenter/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for fonts tests.
 
         * platform/ios-simulator/fonts/*: Added
