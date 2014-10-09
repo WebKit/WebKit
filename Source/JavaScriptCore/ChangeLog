@@ -1,3 +1,16 @@
+2014-10-09  Adrien Destugues  <pulkomandy@gmail.com>
+
+        Fix compiler warning on noreturn function
+        https://bugs.webkit.org/show_bug.cgi?id=137558
+
+        Reviewed by Darin Adler.
+
+        The function is marked "noreturn", but the stub implementation does
+        return. No new tests: function is never called. Only fixes a warning.
+
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::exitWithFailure):
+
 2014-10-09  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Ensure that inline assembly Thunk functions don't conflict with the section designations of the compiler

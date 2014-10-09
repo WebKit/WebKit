@@ -28,8 +28,8 @@
 
 #include "Heap.h"
 #include "HeapIterationScope.h"
-#include "JSObject.h"
 #include "JSCInlines.h"
+#include "JSObject.h"
 #include "Options.h"
 #include <stdlib.h>
 #if OS(UNIX)
@@ -132,6 +132,7 @@ void HeapStatistics::logStatistics()
 
 void HeapStatistics::exitWithFailure()
 {
+    exit(-1);
 }
 
 void HeapStatistics::reportSuccess()
