@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for mathml tests.
+
+        * platform/ios-simulator/mathml/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Disable tests for more unsupported features in iOS Simulator.
 
         * platform/ios-simulator/TestExpectations:
