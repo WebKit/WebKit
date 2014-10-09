@@ -54,6 +54,7 @@ static void invalidateFontCache(void*)
         return;
     }
     fontCache().invalidate();
+    [WebFontCache invalidate];
 }
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)

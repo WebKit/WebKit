@@ -35,6 +35,7 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import <math.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -115,6 +116,30 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
                                    FontWeight900Mask));
 }
 
+// Keep a cache for mapping desired font families to font families actually
+// available on the system for performance.
+static NSMutableDictionary* desiredFamilyToAvailableFamilyDictionary()
+{
+    ASSERT(isMainThread());
+    static NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    return dictionary;
+}
+
+static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desiredFamily, NSString* availableFamily)
+{
+    static const NSUInteger maxCacheSize = 128;
+    NSMutableDictionary *familyMapping = desiredFamilyToAvailableFamilyDictionary();
+    ASSERT([familyMapping count] <= maxCacheSize);
+    if ([familyMapping count] == maxCacheSize) {
+        for (NSString *key in familyMapping) {
+            [familyMapping removeObjectForKey:key];
+            break;
+        }
+    }
+    id value = availableFamily ? availableFamily : [NSNull null];
+    [familyMapping setObject:value forKey:desiredFamily];
+}
+
 @implementation WebFontCache
 
 + (void)getTraits:(Vector<unsigned>&)traitsMasks inFamily:(NSString *)desiredFamily
@@ -160,48 +185,55 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
 // we then do a search based on the family names of the installed fonts.
 + (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
-
     if (stringIsCaseInsensitiveEqualToString(desiredFamily, @"-webkit-system-font")
         || stringIsCaseInsensitiveEqualToString(desiredFamily, @"-apple-system-font")) {
         // We ignore italic for system font.
         return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
     }
 
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-
-    // Do a simple case insensitive search for a matching font family.
-    // NSFontManager requires exact name matches.
-    // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
-    NSEnumerator *e = [[fontManager availableFontFamilies] objectEnumerator];
-    NSString *availableFamily;
-    while ((availableFamily = [e nextObject])) {
-        if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
-            break;
+    id cachedAvailableFamily = [desiredFamilyToAvailableFamilyDictionary() objectForKey:desiredFamily];
+    if (cachedAvailableFamily == [NSNull null]) {
+        // We already know this font is not available.
+        return nil;
     }
 
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSString *availableFamily = cachedAvailableFamily;
     if (!availableFamily) {
-        // Match by PostScript name.
-        NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
-        NSString *availableFont;
-        NSFont *nameMatchedFont = nil;
-        NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (desiredWeight >= 7 ? NSBoldFontMask : 0);
-        while ((availableFont = [availableFonts nextObject])) {
-            if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-                nameMatchedFont = [NSFont fontWithName:availableFont size:size];
-
-                // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
-                // treat Osaka-Mono as fixed pitch.
-                if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraitsForNameMatch == 0)
-                    return nameMatchedFont;
-
-                NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
-                if ((traits & desiredTraitsForNameMatch) == desiredTraitsForNameMatch)
-                    return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraitsForNameMatch];
-
-                availableFamily = [nameMatchedFont familyName];
+        // Do a simple case insensitive search for a matching font family.
+        // NSFontManager requires exact name matches.
+        // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
+        for (availableFamily in [fontManager availableFontFamilies]) {
+            if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
                 break;
+        }
+
+        if (!availableFamily) {
+            // Match by PostScript name.
+            NSFont *nameMatchedFont = nil;
+            NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (desiredWeight >= 7 ? NSBoldFontMask : 0);
+            for (NSString *availableFont in [fontManager availableFonts]) {
+                if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
+                    nameMatchedFont = [NSFont fontWithName:availableFont size:size];
+
+                    // Special case Osaka-Mono. According to <rdar://problem/3999467>, we need to
+                    // treat Osaka-Mono as fixed pitch.
+                    if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && !desiredTraitsForNameMatch)
+                        return nameMatchedFont;
+
+                    NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
+                    if ((traits & desiredTraitsForNameMatch) == desiredTraitsForNameMatch)
+                        return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraitsForNameMatch];
+
+                    availableFamily = [nameMatchedFont familyName];
+                    break;
+                }
             }
         }
+
+        rememberDesiredFamilyToAvailableFamilyMapping(desiredFamily, availableFamily);
+        if (!availableFamily)
+            return nil;
     }
 
     // Found a family, now figure out what weight and traits to use.
@@ -300,4 +332,8 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     return [self fontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size shouldAutoActivateIfNeeded:YES];
 }
 
++ (void)invalidate
+{
+    [desiredFamilyToAvailableFamilyDictionary() removeAllObjects];
+}
 @end
