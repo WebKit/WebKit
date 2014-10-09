@@ -32,6 +32,7 @@ namespace WebCore {
 
 class PageOverlayController;
 class ScrollLatchingState;
+class ServicesOverlayController;
 class WheelEventDeltaTracker;
 
 class MainFrame final : public Frame {
@@ -47,9 +48,13 @@ public:
     PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
 
 #if PLATFORM(MAC)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
+#endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+
     ScrollLatchingState* latchingState() { return m_latchingState.get(); }
     void resetLatchingState();
-#endif
+#endif // PLATFORM(MAC)
 
 private:
     MainFrame(Page&, FrameLoaderClient&);
@@ -60,6 +65,9 @@ private:
 
 #if PLATFORM(MAC)
     std::unique_ptr<ScrollLatchingState> m_latchingState;
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
+#endif
 #endif
     std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;

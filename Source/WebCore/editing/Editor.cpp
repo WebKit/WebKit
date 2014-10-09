@@ -61,6 +61,7 @@
 #include "InsertListCommand.h"
 #include "KeyboardEvent.h"
 #include "KillRing.h"
+#include "MainFrame.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -100,6 +101,10 @@
 #include "DictationCommandIOS.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+#endif
+
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
 #endif
 
 namespace WebCore {
@@ -3348,7 +3353,7 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     FrameSelection& frameSelection = m_frame.selection();
     if (!frameSelection.isRange()) {
-        client()->selectedTelephoneNumberRangesChanged();
+        m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
         return;
     }
     RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
@@ -3376,7 +3381,7 @@ void Editor::scanSelectionForTelephoneNumbers()
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
     if (!extendedRange) {
-        client()->selectedTelephoneNumberRangesChanged();
+        m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
         return;
     }
 
@@ -3388,7 +3393,7 @@ void Editor::scanSelectionForTelephoneNumbers()
             m_detectedTelephoneNumberRanges.append(range);
     }
 
-    client()->selectedTelephoneNumberRangesChanged();
+    m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)

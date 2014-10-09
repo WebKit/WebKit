@@ -30,6 +30,10 @@
 #include "ScrollLatchingState.h"
 #include "WheelEventDeltaTracker.h"
 
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
+#endif
+
 namespace WebCore {
 
 inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
@@ -37,6 +41,9 @@ inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
     , m_selfOnlyRefCount(0)
 #if PLATFORM(MAC)
     , m_latchingState(std::make_unique<ScrollLatchingState>())
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
+#endif
 #endif
     , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))

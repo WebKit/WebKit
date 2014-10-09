@@ -168,11 +168,6 @@ private:
 
     virtual bool supportsGlobalSelection() override;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) || ENABLE(SERVICE_CONTROLS)
-    virtual void selectedTelephoneNumberRangesChanged() override;
-    virtual void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&, bool isTextOnly) override;
-#endif
-
     WebPage* m_page;
 };
 

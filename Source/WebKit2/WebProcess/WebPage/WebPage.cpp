@@ -48,7 +48,6 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
-#include "ServicesOverlayController.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "SessionTracker.h"
@@ -262,9 +261,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_didFindPrimarySnapshottedPlugin(false)
     , m_numberOfPrimarySnapshotDetectionAttempts(0)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-    , m_serviceControlsEnabled(false)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(COCOA)
@@ -2626,10 +2622,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_pdfPluginEnabled = store.getBoolValueForKey(WebPreferencesKey::pdfPluginEnabledKey());
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
-    m_serviceControlsEnabled = store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey());
-#endif
-
     // FIXME: This should be generated from macro expansion for all preferences,
     // but we currently don't match the naming of WebCore exactly so we are
     // handrolling the boolean and integer preferences until that is fixed.
@@ -2843,6 +2835,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled(store.getBoolValueForKey(WebPreferencesKey::gamepadsEnabledKey()));
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    settings.setServiceControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey()));
 #endif
 
     if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
@@ -4778,16 +4774,6 @@ bool WebPage::synchronousMessagesShouldSpinRunLoop()
 #endif
     return false;
 }
-    
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-ServicesOverlayController& WebPage::servicesOverlayController()
-{
-    if (!m_servicesOverlayController)
-        m_servicesOverlayController = std::make_unique<ServicesOverlayController>(*this);
-
-    return *m_servicesOverlayController;
-}
-#endif
 
 void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
 {
