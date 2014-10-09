@@ -5,3 +5,32 @@
 # Cannot enable AX tests because there are too many differences between what is available
 # through the iPhone AX API and the OS X AX API.
 accessibility
+
+# batterystatus is not supported on iOS
+batterystatus
+
+# no plug-ins on iOS
+compositing/plugins
+
+webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.missingargs.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text-custom-font-load-crash.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.middle.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.top.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
+webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]

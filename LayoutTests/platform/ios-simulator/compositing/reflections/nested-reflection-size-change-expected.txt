@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x348
+  RenderBlock {HTML} at (0,0) size 800x348
+    RenderBody {BODY} at (8,16) size 784x312
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 293x19
+          text run at (0,0) width 293: "The four green squares should all be lined up."
+layer at (28,56) size 142x272
+  RenderBlock {DIV} at (20,40) size 142x272 [border: (1px solid #000000)]
+layer at (39,67) size 120x120
+  RenderBlock {DIV} at (11,11) size 120x120 [bgcolor=#008000]
+    RenderText {#text} at (43,1) size 34x75
+      text run at (43,1) width 34: "1"

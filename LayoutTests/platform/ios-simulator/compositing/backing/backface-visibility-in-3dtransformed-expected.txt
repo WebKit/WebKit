@@ -1,0 +1,28 @@
+Should be several layers here.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 52.00)
+          (bounds 122.00 122.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 10.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (position 11.00 11.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+              (backfaceVisibility hidden)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

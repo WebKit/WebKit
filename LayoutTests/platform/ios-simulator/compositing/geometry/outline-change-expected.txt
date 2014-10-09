@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x256
+  RenderBlock {HTML} at (0,0) size 800x256
+    RenderBody {BODY} at (8,16) size 784x232
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 306x19
+          text run at (0,0) width 306: "Adding outline should not affect layer positions"
+      RenderBlock {DIV} at (0,222) size 10x10
+layer at (58,86) size 102x102
+  RenderBlock (relative positioned) {DIV} at (50,70) size 102x102 [border: (1px solid #000000)]
+layer at (34,62) size 52x52
+  RenderBlock (positioned) {DIV} at (-24,-24) size 52x52 [border: (1px solid #0000FF)]

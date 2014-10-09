@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x276
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 167x19
+          text run at (0,0) width 167: "Deeply nested reflections."
+layer at (10,52) size 234x240
+  RenderBlock {DIV} at (2,36) size 234x240 [border: (1px solid #000000)]
+layer at (13,55) size 228x234
+  RenderBlock {DIV} at (3,3) size 228x234 [border: (1px solid #FFA500)]
+layer at (16,58) size 222x112
+  RenderBlock {DIV} at (3,3) size 222x112 [border: (1px solid #0000FF)]
+layer at (19,61) size 106x106
+  RenderBlock {DIV} at (3,3) size 106x106 [border: (1px solid #FF0000)]
+layer at (22,64) size 100x100
+  RenderBlock {DIV} at (3,3) size 100x100 [bgcolor=#008000] [border: (1px solid #000000)]
+    RenderText {#text} at (28,2) size 44x72
+      text run at (28,2) width 44: "C"

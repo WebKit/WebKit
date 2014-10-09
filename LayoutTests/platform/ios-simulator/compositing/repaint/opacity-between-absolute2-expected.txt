@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x262
+  RenderBlock {HTML} at (0,0) size 800x262
+    RenderBody {BODY} at (8,16) size 784x238
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 432x19
+          text run at (0,0) width 432: "This test should not assert, and you should see a fully green square."
+layer at (8,52) size 202x202
+  RenderBlock (relative positioned) {DIV} at (0,36) size 202x202 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (21,21) size 52x52 [border: (1px solid #000000)]
+layer at (50,94) size 52x52
+  RenderBlock {DIV} at (21,21) size 52x52 [border: (1px solid #000000)]
+layer at (109,153) size 80x80
+  RenderBlock (positioned) {DIV} at (101,101) size 80x80 [bgcolor=#008000]

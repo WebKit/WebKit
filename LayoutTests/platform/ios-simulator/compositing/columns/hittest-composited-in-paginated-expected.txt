@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 12: TypeError: null is not an object (evaluating 'document.elementFromPoint(500, 200).classList')
+Layer tree goes here in DRT

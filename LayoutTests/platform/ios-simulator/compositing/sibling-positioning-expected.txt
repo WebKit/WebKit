@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x298
+  RenderBlock {HTML} at (0,0) size 800x298
+    RenderBody {BODY} at (8,8) size 784x274
+      RenderBlock {P} at (0,218) size 784x20
+        RenderInline {A} at (0,0) size 310x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 310x19
+            text run at (0,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=26430"
+      RenderBlock {P} at (0,254) size 784x20
+        RenderText {#text} at (0,0) size 272x19
+          text run at (0,0) width 272: "Green box should not move when hovered"
+layer at (8,8) size 202x202
+  RenderBlock (relative positioned) {DIV} at (0,0) size 202x202 [border: (1px solid #000000)]
+layer at (59,59) size 60x60
+  RenderBlock (positioned) {DIV} at (51,51) size 60x60 [bgcolor=#008000]
+layer at (-41,-41) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderBlock (positioned) {DIV} at (-49,-49) size 100x100 [bgcolor=#808080]
