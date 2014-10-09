@@ -1,3 +1,9 @@
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS Simulator results for fonts tests.
+
+        * platform/ios-simulator/fonts/*: Added
+
 2014-10-09  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Decrement the font loading count before notifying callbacks
