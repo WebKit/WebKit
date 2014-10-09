@@ -1,3 +1,22 @@
+2014-10-09  Adrien Destugues  <pulkomandy@gmail.com>
+
+        Get the patch scripts running on Haiku
+        https://bugs.webkit.org/show_bug.cgi?id=137559
+
+        Reviewed by Benjamin Poulain.
+
+        Use /usr/bin/env instead of hardcoding path to perl.
+        Declare haiku platform in platforminfo.py to avoid check-webkit-style
+        failure.
+
+        * Scripts/commit-log-editor:
+        * Scripts/num-cpus:
+        * Scripts/prepare-ChangeLog:
+        * Scripts/run-launcher:
+        * Scripts/svn-create-patch:
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_os_name):
+
 2014-10-08  Jake Nielsen  <jacob_nielsen@apple.com>
 
         StyleQueue should throw a PatchIsNotValid exception to achieve

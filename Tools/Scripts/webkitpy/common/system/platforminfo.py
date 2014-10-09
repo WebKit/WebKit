@@ -129,6 +129,8 @@ class PlatformInfo(object):
             return 'freebsd'
         if sys_platform.startswith('openbsd'):
             return 'openbsd'
+        if sys_platform.startswith('haiku'):
+            return 'haiku'
         raise AssertionError('unrecognized platform string "%s"' % sys_platform)
 
     def _determine_mac_version(self, mac_version_string):
