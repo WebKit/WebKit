@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x148
+  RenderBlock {HTML} at (0,0) size 800x148
+    RenderBody {BODY} at (8,16) size 784x116
+      RenderBlock {DIV} at (0,0) size 784x116
+        RenderBlock {P} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 260x19
+            text run at (0,0) width 260: "The following two bars should be green."
+        RenderBlock {DIV} at (16,36) size 752x32 [bgcolor=#00FF00]
+        RenderBlock {DIV} at (16,84) size 752x32 [bgcolor=#FF0000]

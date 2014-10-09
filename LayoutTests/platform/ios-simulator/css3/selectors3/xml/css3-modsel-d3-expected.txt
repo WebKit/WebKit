@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {test} at (0,0) size 800x84
+    RenderBlock {div} at (0,16) size 800x68
+      RenderBlock {p} at (0,0) size 800x20
+        RenderText {#text} at (0,0) size 240x19
+          text run at (0,0) width 240: "The following block should be green."
+      RenderBlock (anonymous) at (0,36) size 800x0
+        RenderInline {stub} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {t} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {t} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {t} at (0,36) size 800x32 [bgcolor=#FF0000]

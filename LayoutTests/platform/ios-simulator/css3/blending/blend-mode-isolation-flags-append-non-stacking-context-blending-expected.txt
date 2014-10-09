@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,8) size 784x100
+layer at (8,8) size 100x100 isolatesBlending
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
+layer at (58,8) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FFFF00]
+layer at (58,8) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FFFF44]
+layer at (33,8) size 100x100 blendMode: difference
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF00FF]

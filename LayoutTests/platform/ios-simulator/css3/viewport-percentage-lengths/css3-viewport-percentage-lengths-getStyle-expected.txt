@@ -1,0 +1,116 @@
+Test for Bug: 27160/91440 - Implement vw/vh/vmin/vmax (viewport sizes) from CSS 3 Values and Units
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test for vw
+PASS style.getPropertyValue("height") is '96px'
+PASS style.getPropertyValue("width") is '96px'
+FAIL style.getPropertyValue("font-size") should be 9px. Was 10px.
+FAIL style.getPropertyValue("line-height") should be 12px. Was 12.800000190734863px.
+FAIL style.getPropertyValue("text-indent") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-left") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-right") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-top") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-bottom") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("border-top-left-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-top-right-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-bottom-left-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-bottom-right-radius") should be 3px. Was 3.1875px.
+PASS style.getPropertyValue("min-height") is '32px'
+PASS style.getPropertyValue("min-width") is '32px'
+PASS style.getPropertyValue("max-height") is '192px'
+PASS style.getPropertyValue("max-width") is '192px'
+PASS style.getPropertyValue("top") is '32px'
+PASS style.getPropertyValue("bottom") is '32px'
+PASS style.getPropertyValue("left") is '32px'
+PASS style.getPropertyValue("right") is '32px'
+FAIL style.getPropertyValue("padding-left") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-right") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-top") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-bottom") should be 6px. Was 6.400000095367432px.
+
+Test for vh
+PASS style.getPropertyValue("height") is '138px'
+PASS style.getPropertyValue("width") is '138px'
+FAIL style.getPropertyValue("font-size") should be 13px. Was 14px.
+FAIL style.getPropertyValue("line-height") should be 18px. Was 18.399999618530273px.
+FAIL style.getPropertyValue("text-indent") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-left") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-right") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-top") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-bottom") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("border-top-left-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-top-right-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-bottom-left-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-bottom-right-radius") should be 4px. Was 4.59375px.
+PASS style.getPropertyValue("min-height") is '46px'
+PASS style.getPropertyValue("min-width") is '46px'
+PASS style.getPropertyValue("max-height") is '276px'
+PASS style.getPropertyValue("max-width") is '276px'
+PASS style.getPropertyValue("top") is '46px'
+PASS style.getPropertyValue("bottom") is '46px'
+PASS style.getPropertyValue("left") is '46px'
+PASS style.getPropertyValue("right") is '46px'
+FAIL style.getPropertyValue("padding-left") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-right") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-top") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-bottom") should be 9px. Was 9.199999809265137px.
+
+Test for vmin
+PASS style.getPropertyValue("height") is '96px'
+PASS style.getPropertyValue("width") is '96px'
+FAIL style.getPropertyValue("font-size") should be 9px. Was 10px.
+FAIL style.getPropertyValue("line-height") should be 12px. Was 12.800000190734863px.
+FAIL style.getPropertyValue("text-indent") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-left") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-right") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-top") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("margin-bottom") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("border-top-left-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-top-right-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-bottom-left-radius") should be 3px. Was 3.1875px.
+FAIL style.getPropertyValue("border-bottom-right-radius") should be 3px. Was 3.1875px.
+PASS style.getPropertyValue("min-height") is '32px'
+PASS style.getPropertyValue("min-width") is '32px'
+PASS style.getPropertyValue("max-height") is '192px'
+PASS style.getPropertyValue("max-width") is '192px'
+PASS style.getPropertyValue("top") is '32px'
+PASS style.getPropertyValue("bottom") is '32px'
+PASS style.getPropertyValue("left") is '32px'
+PASS style.getPropertyValue("right") is '32px'
+FAIL style.getPropertyValue("padding-left") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-right") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-top") should be 6px. Was 6.400000095367432px.
+FAIL style.getPropertyValue("padding-bottom") should be 6px. Was 6.400000095367432px.
+
+Test for vmax
+PASS style.getPropertyValue("height") is '138px'
+PASS style.getPropertyValue("width") is '138px'
+FAIL style.getPropertyValue("font-size") should be 13px. Was 14px.
+FAIL style.getPropertyValue("line-height") should be 18px. Was 18.399999618530273px.
+FAIL style.getPropertyValue("text-indent") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-left") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-right") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-top") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("margin-bottom") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("border-top-left-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-top-right-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-bottom-left-radius") should be 4px. Was 4.59375px.
+FAIL style.getPropertyValue("border-bottom-right-radius") should be 4px. Was 4.59375px.
+PASS style.getPropertyValue("min-height") is '46px'
+PASS style.getPropertyValue("min-width") is '46px'
+PASS style.getPropertyValue("max-height") is '276px'
+PASS style.getPropertyValue("max-width") is '276px'
+PASS style.getPropertyValue("top") is '46px'
+PASS style.getPropertyValue("bottom") is '46px'
+PASS style.getPropertyValue("left") is '46px'
+PASS style.getPropertyValue("right") is '46px'
+FAIL style.getPropertyValue("padding-left") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-right") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-top") should be 9px. Was 9.199999809265137px.
+FAIL style.getPropertyValue("padding-bottom") should be 9px. Was 9.199999809265137px.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

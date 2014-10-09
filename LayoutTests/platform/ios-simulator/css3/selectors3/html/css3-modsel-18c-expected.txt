@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {A} at (0,0) size 387x19 [color=#000080]
+          RenderText {#text} at (0,0) size 44x19
+            text run at (0,0) width 44: "Hover "
+          RenderInline {STRONG} at (0,0) size 31x19
+            RenderText {#text} at (43,0) size 31x19
+              text run at (43,0) width 31: "here"
+          RenderText {#text} at (73,0) size 153x19
+            text run at (73,0) width 153: " and the background of "
+          RenderInline {SPAN} at (0,0) size 158x19
+            RenderText {#text} at (225,0) size 158x19
+              text run at (225,0) width 158: "this text should go green"
+          RenderText {#text} at (382,0) size 5x19
+            text run at (382,0) width 5: "."
