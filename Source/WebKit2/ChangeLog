@@ -1,3 +1,15 @@
+2014-10-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Crash in CFURLDownloadClient.didFail if the download has a null resumeData
+        https://bugs.webkit.org/show_bug.cgi?id=137551
+
+        Reviewed by David Kilzer.
+
+        CFDataGetBytePtr() and CFDataGetLength() crash if passed a null value.
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::setUpDownloadClient):
+
 2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [X11] Plugin process crashes in NetscapePlugin::platformPostInitialize()
