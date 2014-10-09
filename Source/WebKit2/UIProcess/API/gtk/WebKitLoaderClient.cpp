@@ -91,14 +91,6 @@ static void didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef
                             resourceError.failingURL().utf8().data(), webError.get());
 }
 
-static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    webkitWebViewUpdateURI(WEBKIT_WEB_VIEW(clientInfo));
-}
-
 static void didReceiveTitleForFrame(WKPageRef, WKStringRef titleRef, WKFrameRef frameRef, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frameRef))
@@ -151,7 +143,7 @@ void attachLoaderClientToView(WebKitWebView* webView)
         0, // didFinishDocumentLoadForFrame
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
-        didSameDocumentNavigationForFrame,
+        0, // didSameDocumentNavigationForFrame
         didReceiveTitleForFrame,
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
