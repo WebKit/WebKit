@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x171
+  RenderBlock {HTML} at (0,0) size 800x171
+    RenderBody {BODY} at (8,8) size 784x155
+      RenderPartObject {IFRAME} at (0,0) size 784x150
+        layer at (0,0) size 784x150
+          RenderView at (0,0) size 784x150
+        layer at (0,0) size 784x121
+          RenderBlock {HTML} at (0,0) size 784x121
+            RenderBody {BODY} at (8,8) size 768x105
+              RenderSVGRoot {svg} at (8,8) size 100x100
+                RenderSVGEllipse {circle} at (8,8) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=50.00] [cy=50.00] [r=50.00]
+      RenderText {#text} at (0,0) size 0x0

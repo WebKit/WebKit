@@ -1,0 +1,21 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (127,73) size 226x134
+      RenderSVGContainer {g} at (127,73) size 226x134
+        RenderSVGText {text} at (147,73) size 186x34 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 186x34
+            chunk 1 (middle anchor) text run 1 at (147.09,100.00) startOffset 0 endOffset 13 width 185.82: "Good morning!"
+        RenderSVGText {text} at (127,173) size 226x34 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 86x34
+            chunk 1 (middle anchor) text run 1 at (127.10,200.00) startOffset 0 endOffset 6 width 85.83: "Bonne "
+          RenderSVGTSpan {tspan} at (0,0) size 131x34
+            RenderSVGInlineText {#text} at (85,0) size 130x34
+              chunk 1 (middle anchor) text run 1 at (212.93,200.00) startOffset 0 endOffset 10 width 129.98: "avant-midi"
+          RenderSVGInlineText {#text} at (215,0) size 10x34
+            chunk 1 (middle anchor) text run 1 at (342.91,200.00) startOffset 0 endOffset 1 width 9.99: "!"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

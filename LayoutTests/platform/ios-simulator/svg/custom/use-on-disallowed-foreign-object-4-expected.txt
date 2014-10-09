@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (54,54) size 746x546
+    RenderSVGContainer {g} at (54,54) size 746x546
+      RenderSVGContainer {g} at (54,54) size 746x546
+        RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
+          RenderBlock {xhtml:div} at (0,0) size 580x20
+            RenderText {#text} at (0,0) size 247x19
+              text run at (0,0) width 247: "You should only see this string ONCE"
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-35.86)}]
+      RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-35.86)}]
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-35.86)}]
+        RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGContainer {g} at (0,0) size 0x0

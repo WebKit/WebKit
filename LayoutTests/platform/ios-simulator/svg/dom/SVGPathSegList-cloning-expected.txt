@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 770x39
+          text run at (0,0) width 770: "Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically generated path"
+          text run at (0,20) width 147: "and the right, its clone."
+      RenderBlock {DIV} at (0,56) size 784x400
+        RenderSVGRoot {svg} at (27,193) size 372x162
+          RenderSVGPath {path} at (27,193) size 222x162 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]
+          RenderSVGPath {path} at (177,193) size 222x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]

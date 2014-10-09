@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x296
+  RenderBlock {html} at (0,0) size 800x296
+    RenderBody {body} at (8,8) size 784x280
+      RenderEmbeddedObject {object} at (0,0) size 175x275 [bgcolor=#FFA500]
+        layer at (0,0) size 175x275
+          RenderView at (0,0) size 175x275
+        layer at (0,0) size 175x275
+          RenderSVGRoot {svg} at (0,50) size 175x175
+            RenderSVGRect {rect} at (0,50) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (70,120) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+      RenderText {#text} at (175,260) size 4x19
+        text run at (175,260) width 4: " "
+      RenderEmbeddedObject {object} at (179,0) size 175x275 [bgcolor=#FFA500]
+        layer at (0,0) size 175x275
+          RenderView at (0,0) size 175x275
+        layer at (0,0) size 175x275
+          RenderSVGRoot {svg} at (0,50) size 175x175
+            RenderSVGRect {rect} at (0,50) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (70,120) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+      RenderText {#text} at (354,260) size 4x19
+        text run at (354,260) width 4: " "
+      RenderEmbeddedObject {object} at (358,0) size 175x275 [bgcolor=#FFA500]
+        layer at (0,0) size 175x275
+          RenderView at (0,0) size 175x275
+        layer at (0,0) size 175x275
+          RenderSVGRoot {svg} at (0,50) size 175x175
+            RenderSVGRect {rect} at (0,50) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (70,120) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+      RenderText {#text} at (533,260) size 4x19
+        text run at (533,260) width 4: " "
+      RenderEmbeddedObject {object} at (537,0) size 175x275 [bgcolor=#FFA500]
+        layer at (0,0) size 175x275
+          RenderView at (0,0) size 175x275
+        layer at (0,0) size 175x275
+          RenderSVGRoot {svg} at (0,50) size 175x175
+            RenderSVGRect {rect} at (0,50) size 175x175 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (70,120) size 35x35 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+      RenderText {#text} at (0,0) size 0x0

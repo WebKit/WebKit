@@ -1,0 +1,17 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (28,25) size 387x240
+      RenderSVGContainer {g} at (28,25) size 387x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,80.00)}]
+        RenderSVGContainer {g} at (28,78) size 184x184
+          RenderSVGPath {path} at (28,78) size 184x184 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
+        RenderSVGContainer {g} at (225,75) size 190x190 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
+          RenderSVGPath {path} at (225,75) size 190x190 [stroke={[type=SOLID] [color=#000000] [stroke width=9.00]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
+        RenderSVGText {text} at (110,-55) size 144x32 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 144x32
+            chunk 1 text run 1 at (110.00,-30.00) startOffset 0 endOffset 12 width 143.86: "Shape stroke"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
