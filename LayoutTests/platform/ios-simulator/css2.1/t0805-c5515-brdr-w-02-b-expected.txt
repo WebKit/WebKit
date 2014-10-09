@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x124
+  RenderBlock {HTML} at (0,0) size 800x124
+    RenderBody {BODY} at (8,16) size 784x92
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 234x19
+          text run at (0,0) width 234: "There should be no red on this page:"
+      RenderBlock {P} at (0,36) size 784x20 [color=#FF0000]
+        RenderText {#text} at (0,0) size 4x19
+          text run at (0,0) width 4: " "
+      RenderBlock {P} at (0,72) size 784x20 [color=#FF0000]
+        RenderText {#text} at (0,0) size 4x19
+          text run at (0,0) width 4: " "

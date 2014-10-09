@@ -1,0 +1,111 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 237x19
+          text run at (0,0) width 237: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 93x19
+          RenderText {#text} at (236,0) size 93x19
+            text run at (236,0) width 93: "approximately"
+        RenderText {#text} at (328,0) size 66x19
+          text run at (328,0) width 66: " the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (0,0) size 8x19
+              text run at (0,0) width 8: "z"
+        RenderText {#text} at (7,0) size 5x19
+          text run at (7,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (11,0) size 8x19
+              text run at (11,0) width 8: "z"
+        RenderText {#text} at (18,0) size 5x19
+          text run at (18,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (22,0) size 8x19
+              text run at (22,0) width 8: "z"
+        RenderText {#text} at (29,0) size 5x19
+          text run at (29,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (33,0) size 8x19
+              text run at (33,0) width 8: "z"
+        RenderText {#text} at (40,0) size 5x19
+          text run at (40,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (44,0) size 8x19
+              text run at (44,0) width 8: "z"
+        RenderText {#text} at (51,0) size 5x19
+          text run at (51,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (55,0) size 8x19
+              text run at (55,0) width 8: "z"
+        RenderText {#text} at (62,0) size 5x19
+          text run at (62,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (66,0) size 8x19
+              text run at (66,0) width 8: "z"
+        RenderText {#text} at (73,0) size 5x19
+          text run at (73,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (77,0) size 8x19
+              text run at (77,0) width 8: "z"
+        RenderText {#text} at (84,0) size 5x19
+          text run at (84,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (88,0) size 8x19
+              text run at (88,0) width 8: "z"
+        RenderText {#text} at (95,0) size 5x19
+          text run at (95,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 9x19
+          RenderInline (generated) at (0,0) size 9x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (99,0) size 9x19
+              text run at (99,0) width 9: "z"
+        RenderText {#text} at (107,0) size 5x19
+          text run at (107,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (111,0) size 8x19
+              text run at (111,0) width 8: "z"
+        RenderText {#text} at (118,0) size 5x19
+          text run at (118,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 0x0
+            RenderText at (122,0) size 8x19
+              text run at (122,0) width 8: "z"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 130x19
+          text run at (0,0) width 12: "z "
+          text run at (11,0) width 12: "z "
+          text run at (22,0) width 12: "z "
+          text run at (33,0) width 12: "z "
+          text run at (44,0) width 12: "z "
+          text run at (55,0) width 12: "z "
+          text run at (66,0) width 12: "z "
+          text run at (77,0) width 12: "z "
+          text run at (88,0) width 12: "z "
+          text run at (99,0) width 13: "z "
+          text run at (111,0) width 12: "z "
+          text run at (122,0) width 8: "z"

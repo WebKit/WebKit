@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "The following two lines should be the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 159x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderText at (0,0) size 11x19
+              text run at (0,0) width 11: "B"
+            RenderCounter at (10,0) size 9x19
+              text run at (10,0) width 9: "1"
+            RenderText at (18,0) size 6x19
+              text run at (18,0) width 6: "-"
+          RenderInline {SPAN} at (0,0) size 110x19
+            RenderInline (generated) at (0,0) size 24x19
+              RenderText at (24,0) size 11x19
+                text run at (24,0) width 11: "B"
+              RenderCounter at (34,0) size 9x19
+                text run at (34,0) width 9: "2"
+              RenderText at (42,0) size 6x19
+                text run at (42,0) width 6: "-"
+            RenderInline {SPAN} at (0,0) size 49x19
+              RenderInline (generated) at (0,0) size 24x19
+                RenderText at (48,0) size 11x19
+                  text run at (48,0) width 11: "B"
+                RenderCounter at (58,0) size 9x19
+                  text run at (58,0) width 9: "3"
+                RenderText at (66,0) size 6x19
+                  text run at (66,0) width 6: "-"
+              RenderInline (generated) at (0,0) size 25x19
+                RenderText at (72,0) size 12x19
+                  text run at (72,0) width 12: "A"
+                RenderCounter at (83,0) size 9x19
+                  text run at (83,0) width 9: "4"
+                RenderText at (91,0) size 6x19
+                  text run at (91,0) width 6: "-"
+            RenderInline (generated) at (0,0) size 38x19
+              RenderText at (96,0) size 13x19
+                text run at (96,0) width 13: "A"
+              RenderCounter at (108,0) size 21x19
+                text run at (108,0) width 21: "4.1"
+              RenderText at (128,0) size 6x19
+                text run at (128,0) width 6: "-"
+          RenderInline (generated) at (0,0) size 26x19
+            RenderText at (133,0) size 13x19
+              text run at (133,0) width 13: "A"
+            RenderCounter at (145,0) size 9x19
+              text run at (145,0) width 9: "5"
+            RenderText at (153,0) size 6x19
+              text run at (153,0) width 6: "-"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 159x19
+          text run at (0,0) width 159: "B1-B2-B3-A4-A4.1-A5-"

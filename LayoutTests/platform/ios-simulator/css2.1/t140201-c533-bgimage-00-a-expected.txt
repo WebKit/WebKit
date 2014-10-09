@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88
+    RenderBody {BODY} at (8,16) size 784x56
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 166x19
+          text run at (0,0) width 166: "This line should be green."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 61x19
+          text run at (0,0) width 61: "This line "
+        RenderInline {SPAN} at (0,0) size 102x19
+          RenderText {#text} at (60,0) size 102x19
+            text run at (60,0) width 102: "should be green"
+        RenderText {#text} at (161,0) size 30x19
+          text run at (161,0) width 30: " too."

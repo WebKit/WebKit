@@ -1,5 +1,11 @@
 2014-10-08  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for css2.1 tests.
+
+        * platform/ios-simulator/css2.1/*: Added
+
+2014-10-08  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for css1 tests.
 
         * platform/ios-simulator/css1/basic/containment-expected.txt: Added.
