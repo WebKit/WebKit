@@ -1,3 +1,15 @@
+2014-10-09  Dana Burkart  <dburkart@apple.com>
+
+        Add Mac OS Yosemite dashboard support.
+
+        Rubber-stamped by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Yosemite.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Yosemite@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Babak to contributors.json and add historical email addresses for some contributors
