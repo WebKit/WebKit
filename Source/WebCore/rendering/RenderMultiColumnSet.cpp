@@ -137,8 +137,8 @@ void RenderMultiColumnSet::setLogicalBottomInFlowThread(LayoutUnit logicalBottom
 
 LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) const
 {
-    RenderBlockFlow* multicolBlock = toRenderBlockFlow(parent());
-    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderAndPaddingBefore();
+    RenderBlockFlow& multicolBlock = downcast<RenderBlockFlow>(*parent());
+    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock.borderAndPaddingBefore();
 
     height -= contentLogicalTop;
     return std::max(height, LayoutUnit::fromPixel(1)); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
@@ -421,10 +421,10 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
 {
     // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
     // go to the parent block to get the gap.
-    RenderBlockFlow* parentBlock = toRenderBlockFlow(parent());
-    if (parentBlock->style().hasNormalColumnGap())
-        return parentBlock->style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return parentBlock->style().columnGap();
+    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
+    if (parentBlock.style().hasNormalColumnGap())
+        return parentBlock.style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return parentBlock.style().columnGap();
 }
 
 unsigned RenderMultiColumnSet::columnCount() const

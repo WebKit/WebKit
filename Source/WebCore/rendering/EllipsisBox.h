@@ -36,7 +36,7 @@ public:
     void setSelectionState(RenderObject::SelectionState s) { m_selectionState = s; }
     IntRect selectionRect();
 
-    RenderBlockFlow& blockFlow() const { return toRenderBlockFlow(InlineBox::renderer()); }
+    RenderBlockFlow& blockFlow() const { return downcast<RenderBlockFlow>(InlineBox::renderer()); }
 
 private:
     void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle&);

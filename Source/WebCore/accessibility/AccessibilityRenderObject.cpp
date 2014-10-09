@@ -1285,8 +1285,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return false;
 #endif
     
-    if (m_renderer->isRenderBlockFlow() && m_renderer->childrenInline() && !canSetFocusAttribute())
-        return !toRenderBlockFlow(m_renderer)->hasLines() && !mouseButtonListener();
+    if (is<RenderBlockFlow>(*m_renderer) && m_renderer->childrenInline() && !canSetFocusAttribute())
+        return !downcast<RenderBlockFlow>(*m_renderer).hasLines() && !mouseButtonListener();
     
     // ignore images seemingly used as spacers
     if (isImage()) {
@@ -1298,9 +1298,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
         // However, if this is not a native image, fallback to the attribute on the Element.
         AccessibilityObjectInclusion altTextInclusion = DefaultBehavior;
-        bool isRenderImage = m_renderer && m_renderer->isRenderImage();
+        bool isRenderImage = is<RenderImage>(m_renderer);
         if (isRenderImage)
-            altTextInclusion = objectInclusionFromAltText(toRenderImage(m_renderer)->altText());
+            altTextInclusion = objectInclusionFromAltText(downcast<RenderImage>(*m_renderer).altText());
         else
             altTextInclusion = objectInclusionFromAltText(getAttribute(altAttr).string());
 
@@ -1315,13 +1315,13 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     
         if (isRenderImage) {
             // check for one-dimensional image
-            RenderImage* image = toRenderImage(m_renderer);
-            if (image->height() <= 1 || image->width() <= 1)
+            RenderImage& image = downcast<RenderImage>(*m_renderer);
+            if (image.height() <= 1 || image.width() <= 1)
                 return true;
             
             // check whether rendered image was stretched from one-dimensional file image
-            if (image->cachedImage()) {
-                LayoutSize imageSize = image->cachedImage()->imageSizeForRenderer(toRenderElement(m_renderer), image->view().zoomFactor());
+            if (image.cachedImage()) {
+                LayoutSize imageSize = image.cachedImage()->imageSizeForRenderer(toRenderElement(m_renderer), image.view().zoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
             }
         }

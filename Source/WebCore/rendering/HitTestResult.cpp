@@ -243,12 +243,12 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
             continue;
 
         if (auto renderer = downcast<Element>(*truncatedNode).renderer()) {
-            if (renderer->isRenderBlockFlow()) {
-                RenderBlockFlow* block = toRenderBlockFlow(renderer);
-                if (block->style().textOverflow()) {
-                    for (RootInlineBox* line = block->firstRootBox(); line; line = line->nextRootBox()) {
+            if (is<RenderBlockFlow>(*renderer)) {
+                RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
+                if (block.style().textOverflow()) {
+                    for (RootInlineBox* line = block.firstRootBox(); line; line = line->nextRootBox()) {
                         if (line->hasEllipsisBox()) {
-                            dir = block->style().direction();
+                            dir = block.style().direction();
                             return downcast<Element>(*truncatedNode).innerText();
                         }
                     }

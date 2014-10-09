@@ -745,7 +745,7 @@ RenderObject* RenderBlock::removeChild(RenderObject& oldChild)
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock.moveAllChildrenIncludingFloatsTo(&prevBlock, nextBlock.hasLayer() || prevBlock.hasLayer());
+            nextBlock.moveAllChildrenIncludingFloatsTo(prevBlock, nextBlock.hasLayer() || prevBlock.hasLayer());
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();

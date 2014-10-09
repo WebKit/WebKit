@@ -630,8 +630,8 @@ LayoutUnit RootInlineBox::selectionTopAdjustedForPrecedingBlock() const
 
     LayoutSize offsetToBlockBefore;
     if (RenderBlock* block = rootBox.blockFlow().blockBeforeWithinSelectionRoot(offsetToBlockBefore)) {
-        if (block->isRenderBlockFlow()) {
-            if (RootInlineBox* lastLine = toRenderBlockFlow(block)->lastRootBox()) {
+        if (is<RenderBlockFlow>(*block)) {
+            if (RootInlineBox* lastLine = downcast<RenderBlockFlow>(*block).lastRootBox()) {
                 RenderObject::SelectionState lastLineSelectionState = lastLine->selectionState();
                 if (lastLineSelectionState != RenderObject::SelectionInside && lastLineSelectionState != RenderObject::SelectionStart)
                     return top;
@@ -678,7 +678,7 @@ int RootInlineBox::blockDirectionPointInLine() const
 
 RenderBlockFlow& RootInlineBox::blockFlow() const
 {
-    return toRenderBlockFlow(renderer());
+    return downcast<RenderBlockFlow>(renderer());
 }
 
 static bool isEditableLeaf(InlineBox* leaf)

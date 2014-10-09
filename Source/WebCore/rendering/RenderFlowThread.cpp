@@ -92,10 +92,10 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
 
 void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
 {
-    if (child->isRenderBlockFlow())
-        removeLineRegionInfo(toRenderBlockFlow(child));
-    if (child->isBox())
-        removeRenderBoxRegionInfo(toRenderBox(child));
+    if (is<RenderBlockFlow>(*child))
+        removeLineRegionInfo(downcast<RenderBlockFlow>(child));
+    if (is<RenderBox>(*child))
+        removeRenderBoxRegionInfo(downcast<RenderBox>(child));
 }
 
 void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)

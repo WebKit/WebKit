@@ -471,7 +471,7 @@ private:
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
-    virtual void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert) override;
+    virtual void moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, bool fullRemoveInsert) override;
     virtual void repaintOverhangingFloats(bool paintAllDescendants) override final;
     virtual void clipOutFloatingObjects(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 
@@ -621,11 +621,9 @@ protected:
     friend class LineWidth; // Needs to know FloatingObject
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderBlockFlow, isRenderBlockFlow())
-
 inline bool RenderElement::isRenderNamedFlowFragmentContainer() const
 {
-    return isRenderBlockFlow() && toRenderBlockFlow(this)->renderNamedFlowFragment();
+    return is<RenderBlockFlow>(*this) && downcast<RenderBlockFlow>(*this).renderNamedFlowFragment();
 }
 
 inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const

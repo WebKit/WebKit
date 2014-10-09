@@ -183,9 +183,9 @@ void RenderMultiColumnFlowThread::evacuateAndDestroy()
     while ((it = m_spannerMap.begin()) != m_spannerMap.end()) {
         RenderBox* spanner = it->key;
         RenderMultiColumnSpannerPlaceholder* placeholder = it->value;
-        RenderBlockFlow* originalContainer = toRenderBlockFlow(placeholder->parent());
+        RenderBlockFlow& originalContainer = downcast<RenderBlockFlow>(*placeholder->parent());
         multicolContainer->removeChild(*spanner);
-        originalContainer->addChild(spanner, placeholder);
+        originalContainer.addChild(spanner, placeholder);
         placeholder->destroy();
         m_spannerMap.remove(it);
     }
@@ -296,7 +296,7 @@ RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(Rend
         // so that they live among the column sets. This simplifies the layout implementation, and
         // basically just relies on regular block layout done by the RenderBlockFlow that
         // establishes the multicol container.
-        RenderBlockFlow* container = toRenderBlockFlow(descendant->parent());
+        RenderBlockFlow* container = downcast<RenderBlockFlow>(descendant->parent());
         RenderMultiColumnSet* setToSplit = nullptr;
         if (nextRendererInFlowThread) {
             setToSplit = findSetRendering(descendant);
@@ -311,7 +311,7 @@ RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(Rend
         // content before and after the spanner, so that it becomes separate line boxes. Secondly,
         // this placeholder serves as a break point for column sets, so that, when encountered, we
         // end flowing one column set and move to the next one.
-        RenderMultiColumnSpannerPlaceholder* placeholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(this, toRenderBox(descendant), &container->style());
+        RenderMultiColumnSpannerPlaceholder* placeholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(this, downcast<RenderBox>(descendant), &container->style());
         container->addChild(placeholder, descendant->nextSibling());
         container->removeChild(*descendant);
         
@@ -329,14 +329,14 @@ RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(Rend
         nextDescendant = placeholder;
     } else {
         // This is regular multicol content, i.e. not part of a spanner.
-        if (nextRendererInFlowThread && nextRendererInFlowThread->isRenderMultiColumnSpannerPlaceholder()) {
+        if (is<RenderMultiColumnSpannerPlaceholder>(nextRendererInFlowThread)) {
             // Inserted right before a spanner. Is there a set for us there?
-            RenderMultiColumnSpannerPlaceholder* placeholder = toRenderMultiColumnSpannerPlaceholder(nextRendererInFlowThread);
-            if (RenderObject* previous = placeholder->spanner()->previousSibling()) {
-                if (previous->isRenderMultiColumnSet())
+            RenderMultiColumnSpannerPlaceholder& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*nextRendererInFlowThread);
+            if (RenderObject* previous = placeholder.spanner()->previousSibling()) {
+                if (is<RenderMultiColumnSet>(*previous))
                     return nextDescendant; // There's already a set there. Nothing to do.
             }
-            insertBeforeMulticolChild = placeholder->spanner();
+            insertBeforeMulticolChild = placeholder.spanner();
         } else if (RenderMultiColumnSet* lastSet = lastMultiColumnSet()) {
             // This child is not an immediate predecessor of a spanner, which means that if this
             // child precedes a spanner at all, there has to be a column set created for us there
@@ -383,13 +383,13 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 
                 // Insert after the placeholder, but don't let a notification happen.
                 gShiftingSpanner = true;
-                RenderBlockFlow* ancestorBlock = toRenderBlockFlow(spanner->parent());
-                ancestorBlock->moveChildTo(placeholder->parentBox(), spanner, placeholder->nextSibling(), true);
+                RenderBlockFlow& ancestorBlock = downcast<RenderBlockFlow>(*spanner->parent());
+                ancestorBlock.moveChildTo(placeholder->parentBox(), spanner, placeholder->nextSibling(), true);
                 gShiftingSpanner = false;
                 
                 // We have to nuke the placeholder, since the ancestor already lost the mapping to it when
                 // we shifted the placeholder down into this flow thread.
-                ancestorBlock->multiColumnFlowThread()->handleSpannerRemoval(spanner);
+                ancestorBlock.multiColumnFlowThread()->handleSpannerRemoval(spanner);
                 placeholder->destroy();
                 
                 // Now we process the spanner.

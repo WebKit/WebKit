@@ -437,8 +437,8 @@ void RenderObject::adjustComputedFontSizesOnBlocks(float size, float visibleWidt
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (descendent->isRenderBlockFlow() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            toRenderBlockFlow(descendent)->adjustComputedFontSizes(size, visibleWidth);
+        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            downcast<RenderBlockFlow>(*descendent).adjustComputedFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
 
@@ -465,8 +465,8 @@ void RenderObject::resetTextAutosizing()
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (descendent->isRenderBlockFlow() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            toRenderBlockFlow(descendent)->resetComputedFontSize();
+        if (is<RenderBlockFlow>(*descendent) && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            downcast<RenderBlockFlow>(*descendent).resetComputedFontSize();
         newFixedDepth = 0;
     }
 }
@@ -1429,11 +1429,11 @@ void RenderObject::showRenderTreeForThis() const
 
 void RenderObject::showLineTreeForThis() const
 {
-    if (!isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*this))
         return;
     showRenderTreeLegend();
     showRenderObject(false, 1);
-    toRenderBlockFlow(this)->showLineTreeAndMark(nullptr, 2);
+    downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, 2);
 }
 
 void RenderObject::showRegionsInformation() const
@@ -1586,8 +1586,8 @@ void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, in
 #endif
 
     showRenderObject(markedObject == this, depth);
-    if (isRenderBlockFlow())
-        toRenderBlockFlow(this)->showLineTreeAndMark(nullptr, depth + 1);
+    if (is<RenderBlockFlow>(*this))
+        downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, depth + 1);
 
     for (const RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
         child->showRenderSubTreeAndMark(markedObject, depth + 1);

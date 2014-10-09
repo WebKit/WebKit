@@ -2494,7 +2494,7 @@ bool Element::isSpellCheckingEnabled() const
 RenderNamedFlowFragment* Element::renderNamedFlowFragment() const
 {
     if (renderer() && renderer()->isRenderNamedFlowFragmentContainer())
-        return toRenderBlockFlow(renderer())->renderNamedFlowFragment();
+        return downcast<RenderBlockFlow>(*renderer()).renderNamedFlowFragment();
 
     return nullptr;
 }
@@ -2554,9 +2554,9 @@ Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
 
     document().updateLayoutIgnorePendingStylesheets();
     if (renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment* namedFlowFragment = toRenderBlockFlow(renderer())->renderNamedFlowFragment();
-        if (namedFlowFragment->isValid())
-            namedFlowFragment->getRanges(rangeObjects);
+        RenderNamedFlowFragment& namedFlowFragment = *downcast<RenderBlockFlow>(*renderer()).renderNamedFlowFragment();
+        if (namedFlowFragment.isValid())
+            namedFlowFragment.getRanges(rangeObjects);
     }
 
     return rangeObjects;

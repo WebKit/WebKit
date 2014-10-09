@@ -50,12 +50,12 @@ struct SVGTextQuery::Data {
 static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
 {
     if (!renderer)
-        return 0;
+        return nullptr;
 
-    if (renderer->isRenderBlockFlow()) {
+    if (is<RenderBlockFlow>(*renderer)) {
         // If we're given a block element, it has to be a RenderSVGText.
-        ASSERT(renderer->isSVGText());
-        RenderBlockFlow& renderBlock = toRenderBlockFlow(*renderer);
+        ASSERT(is<RenderSVGText>(*renderer));
+        RenderBlockFlow& renderBlock = downcast<RenderBlockFlow>(*renderer);
 
         // RenderSVGText only ever contains a single line box.
         auto flowBox = renderBlock.firstRootBox();
@@ -63,9 +63,9 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
         return flowBox;
     }
 
-    if (renderer->isRenderInline()) {
+    if (is<RenderInline>(*renderer)) {
         // We're given a RenderSVGInline or objects that derive from it (RenderSVGTSpan / RenderSVGTextPath)
-        RenderInline& renderInline = toRenderInline(*renderer);
+        RenderInline& renderInline = downcast<RenderInline>(*renderer);
 
         // RenderSVGInline only ever contains a single line box.
         InlineFlowBox* flowBox = renderInline.firstLineBox();
@@ -74,7 +74,7 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
     }
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 SVGTextQuery::SVGTextQuery(RenderObject* renderer)

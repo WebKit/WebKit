@@ -379,10 +379,10 @@ static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* main
     if (!containingView)
         return nullptr;
 
-    RenderBlockFlow* regionContainer = toRenderBlockFlow(region->parent());
-    LayoutRect borderBox = regionContainer->borderBoxRect();
-    borderBox.setWidth(borderBox.width() + regionContainer->verticalScrollbarWidth());
-    borderBox.setHeight(borderBox.height() + regionContainer->horizontalScrollbarHeight());
+    RenderBlockFlow& regionContainer = downcast<RenderBlockFlow>(*region->parent());
+    LayoutRect borderBox = regionContainer.borderBoxRect();
+    borderBox.setWidth(borderBox.width() + regionContainer.verticalScrollbarWidth());
+    borderBox.setHeight(borderBox.height() + regionContainer.horizontalScrollbarHeight());
 
     // Create incoming and outgoing boxes that we use to chain the regions toghether.
     const LayoutSize linkBoxSize(10, 10);
@@ -397,9 +397,9 @@ static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* main
     incomingRectBox.move(0, linkBoxVerticalOffset);
     outgoingRectBox.move(0, -linkBoxVerticalOffset);
 
-    FloatQuad borderRectQuad = regionContainer->localToAbsoluteQuad(FloatRect(borderBox));
-    FloatQuad incomingRectQuad = regionContainer->localToAbsoluteQuad(FloatRect(incomingRectBox));
-    FloatQuad outgoingRectQuad = regionContainer->localToAbsoluteQuad(FloatRect(outgoingRectBox));
+    FloatQuad borderRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(borderBox));
+    FloatQuad incomingRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(incomingRectBox));
+    FloatQuad outgoingRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(outgoingRectBox));
 
     contentsQuadToPage(mainView, containingView, borderRectQuad);
     contentsQuadToPage(mainView, containingView, incomingRectQuad);
@@ -711,13 +711,12 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     elementInfo->setString("nodeHeight", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), *modelObject) : boundingBox.height()));
     
     if (renderer->isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment* region = toRenderBlockFlow(renderer)->renderNamedFlowFragment();
-        if (region->isValid()) {
-            RenderFlowThread* flowThread = region->flowThread();
-            ASSERT(flowThread && flowThread->isRenderNamedFlowThread());
+        RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(*renderer).renderNamedFlowFragment();
+        if (region.isValid()) {
+            RenderFlowThread* flowThread = region.flowThread();
             RefPtr<InspectorObject> regionFlowInfo = InspectorObject::create();
-            regionFlowInfo->setString("name", toRenderNamedFlowThread(flowThread)->flowThreadName());
-            regionFlowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(region, flowThread));
+            regionFlowInfo->setString("name", downcast<RenderNamedFlowThread>(*flowThread).flowThreadName());
+            regionFlowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(&region, flowThread));
             elementInfo->setObject("regionFlowInfo", regionFlowInfo.release());
         }
     }

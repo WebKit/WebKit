@@ -1287,7 +1287,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // anonymous RenderRegion, but first we need to make sure that the parent itself of the region is going to
         // have a composited layer. We only want to make regions composited when there's an actual layer that we
         // need to move to that region.
-        computeRegionCompositingRequirements(toRenderBlockFlow(layer.renderer()).renderNamedFlowFragment(), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+        computeRegionCompositingRequirements(downcast<RenderBlockFlow>(layer.renderer()).renderNamedFlowFragment(), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
     }
 
     
@@ -1544,7 +1544,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     }
 
     if (layer.renderer().isRenderNamedFlowFragmentContainer())
-        rebuildRegionCompositingLayerTree(toRenderBlockFlow(layer.renderer()).renderNamedFlowFragment(), layerChildren, depth + 1);
+        rebuildRegionCompositingLayerTree(downcast<RenderBlockFlow>(layer.renderer()).renderNamedFlowFragment(), layerChildren, depth + 1);
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)

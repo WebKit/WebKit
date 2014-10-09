@@ -408,8 +408,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (viewStyleChanged && view().multiColumnFlowThread())
             view().updateStylesForColumnChildren();
         
-        if (rootStyleChanged && rootRenderer && rootRenderer->isRenderBlockFlow() && toRenderBlockFlow(rootRenderer)->multiColumnFlowThread())
-            toRenderBlockFlow(rootRenderer)->updateStylesForColumnChildren();
+        if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlowThread())
+            downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
     }
 
 #if ENABLE(CSS_SHAPES)

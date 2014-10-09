@@ -1,3 +1,102 @@
+2014-10-09  Christophe Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=137545
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for RenderBlockFlow and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * dom/Element.cpp:
+        (WebCore::Element::renderNamedFlowFragment):
+        (WebCore::Element::webkitGetRegionFlowRanges):
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasBidiSelection):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRegionHighlight):
+        (WebCore::buildObjectForElementInfo):
+        * rendering/EllipsisBox.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::innerTextIfTruncated):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::marginOffsetForSelfCollapsingBlock):
+        (WebCore::RenderBlockFlow::marginValuesForChild):
+        (WebCore::RenderBlockFlow::collapseMargins):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild):
+        (WebCore::RenderBlockFlow::handleAfterSideOfBlock):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBeforeForChild):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfterForChild):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::moveAllChildrenIncludingFloatsTo):
+        (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        (WebCore::getHeightForLineCount):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderElement::isRenderNamedFlowFragmentContainer):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createLineBoxes):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::expandClipRectForRegionAndReflection):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset):
+        (WebCore::RenderMultiColumnSet::columnGap):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::fragmentContainer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustComputedFontSizesOnBlocks):
+        (WebCore::RenderObject::resetTextAutosizing):
+        (WebCore::RenderObject::showLineTreeForThis):
+        (WebCore::RenderObject::showRenderSubTreeAndMark):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+        (WebCore::RenderText::ensureLineBoxes):
+        (WebCore::RenderText::simpleLineLayout):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTopAdjustedForPrecedingBlock):
+        (WebCore::RootInlineBox::blockFlow):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeTextBoundingBox):
+        (WebCore::SimpleLineLayout::computeTextFirstRunLocation):
+        (WebCore::SimpleLineLayout::collectTextAbsoluteRects):
+        (WebCore::SimpleLineLayout::collectTextAbsoluteQuads):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::flowBoxForRenderer):
+
 2014-10-09  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] Netscape plugin API symbol used outside feature guards

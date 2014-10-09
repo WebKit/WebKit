@@ -116,8 +116,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
         toRenderMultiColumnFlowThread(renderer)->computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
-    if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
-        establishLineGrid(toRenderBlockFlow(renderer));
+    if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(*renderer))
+        establishLineGrid(downcast<RenderBlockFlow>(renderer));
 
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }

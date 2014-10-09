@@ -231,7 +231,7 @@ RenderBlockFlow& RenderNamedFlowFragment::fragmentContainer() const
 {
     ASSERT(parent());
     ASSERT(parent()->isRenderNamedFlowFragmentContainer());
-    return *toRenderBlockFlow(parent());
+    return downcast<RenderBlockFlow>(*parent());
 }
 
 RenderLayer& RenderNamedFlowFragment::fragmentContainerLayer() const

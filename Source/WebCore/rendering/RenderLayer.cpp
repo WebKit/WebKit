@@ -412,9 +412,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
                 if (didRepaint && renderer().isRenderNamedFlowFragmentContainer()) {
                     // If we just repainted a region, we must also repaint the flow thread since it is the one
                     // doing the actual painting of the flowed content.
-                    RenderNamedFlowFragment* region = toRenderBlockFlow(&renderer())->renderNamedFlowFragment();
-                    if (region->isValid())
-                        region->flowThread()->layer()->repaintIncludingDescendants();
+                    RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(renderer()).renderNamedFlowFragment();
+                    if (region.isValid())
+                        region.flowThread()->layer()->repaintIncludingDescendants();
                 }
             }
         }
@@ -1579,12 +1579,12 @@ static void expandClipRectForRegionAndReflection(LayoutRect& clipRect, const Ren
 {
     // If this is a region, then the painting is actually done by its flow thread's layer.
     if (layer.renderer().isRenderNamedFlowFragmentContainer()) {
-        RenderBlockFlow* regionContainer = toRenderBlockFlow(&layer.renderer());
-        RenderNamedFlowFragment* region = regionContainer->renderNamedFlowFragment();
-        RenderLayer* flowThreadLayer = region->flowThread()->layer();
+        RenderBlockFlow& regionContainer = downcast<RenderBlockFlow>(layer.renderer());
+        RenderNamedFlowFragment& region = *regionContainer.renderNamedFlowFragment();
+        RenderLayer* flowThreadLayer = region.flowThread()->layer();
         if (flowThreadLayer && (!layer.reflection() || layer.reflectionLayer() != flowThreadLayer)) {
             LayoutRect flowThreadClipRect = transparencyClipBox(*flowThreadLayer, rootLayer, transparencyBehavior, DescendantsOfTransparencyClipBox, paintBehavior);
-            LayoutSize moveOffset = (regionContainer->contentBoxRect().location() + layer.offsetFromAncestor(flowThreadLayer)) - region->flowThreadPortionRect().location();
+            LayoutSize moveOffset = (regionContainer.contentBoxRect().location() + layer.offsetFromAncestor(flowThreadLayer)) - region.flowThreadPortionRect().location();
             flowThreadClipRect.move(moveOffset);
             
             clipRect.unite(flowThreadClipRect);
@@ -6160,15 +6160,15 @@ void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 void RenderLayer::repaintIncludingDescendants()
 {
     renderer().repaint();
-    for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->repaintIncludingDescendants();
+    for (RenderLayer* current = firstChild(); current; current = current->nextSibling())
+        current->repaintIncludingDescendants();
 
     // If this is a region, we must also repaint the flow thread's layer since it is the one
     // doing the actual painting of the flowed content, but only if the region is valid.
     if (renderer().isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment* region = toRenderBlockFlow(renderer()).renderNamedFlowFragment();
-        if (region->isValid())
-            region->flowThread()->layer()->repaintIncludingDescendants();
+        RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(renderer()).renderNamedFlowFragment();
+        if (region.isValid())
+            region.flowThread()->layer()->repaintIncludingDescendants();
     }
 }
 
@@ -6730,8 +6730,8 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
     if (!renderer().isRenderNamedFlowFragmentContainer())
         return;
     
-    RenderBlockFlow* renderNamedFlowFragmentContainer = toRenderBlockFlow(&renderer());
-    RenderNamedFlowFragment* flowFragment = renderNamedFlowFragmentContainer->renderNamedFlowFragment();
+    RenderBlockFlow& renderNamedFlowFragmentContainer = downcast<RenderBlockFlow>(renderer());
+    RenderNamedFlowFragment* flowFragment = renderNamedFlowFragmentContainer.renderNamedFlowFragment();
     if (!flowFragment->isValid())
         return;
 
@@ -6740,7 +6740,7 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
 
     LayoutRect regionClipRect = LayoutRect::infiniteRect();
     if (flowFragment->shouldClipFlowThreadContent()) {
-        regionClipRect = renderNamedFlowFragmentContainer->paddingBoxRect();
+        regionClipRect = renderNamedFlowFragmentContainer.paddingBoxRect();
 
         // When the layer of the flow fragment's container is composited, the flow fragment container receives a
         // GraphicsLayer of its own so the clipping coordinates (caused by overflow:hidden) must be relative to the
@@ -6778,23 +6778,23 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
     const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants)
 {
     if (!renderer().isRenderNamedFlowFragmentContainer())
-        return 0;
+        return nullptr;
 
-    RenderNamedFlowFragment* region = toRenderBlockFlow(&renderer())->renderNamedFlowFragment();
-    if (!region->isValid())
-        return 0;
+    RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(renderer()).renderNamedFlowFragment();
+    if (!region.isValid())
+        return nullptr;
 
-    RenderFlowThread* flowThread = region->flowThread();
-    LayoutPoint portionLocation = region->flowThreadPortionRect().location();
+    RenderFlowThread* flowThread = region.flowThread();
+    LayoutPoint portionLocation = region.flowThreadPortionRect().location();
     if (flowThread->style().isFlippedBlocksWritingMode()) {
         // The portion location coordinate must be translated into physical coordinates.
         if (flowThread->style().isHorizontalWritingMode())
-            portionLocation.setY(flowThread->height() - (portionLocation.y() + region->contentHeight()));
+            portionLocation.setY(flowThread->height() - (portionLocation.y() + region.contentHeight()));
         else
-            portionLocation.setX(flowThread->width() - (portionLocation.x() + region->contentWidth()));
+            portionLocation.setX(flowThread->width() - (portionLocation.x() + region.contentWidth()));
     }
 
-    LayoutRect regionContentBox = toRenderBlockFlow(&renderer())->contentBoxRect();
+    LayoutRect regionContentBox = downcast<RenderBlockFlow>(renderer()).contentBoxRect();
 
     RenderLayer* resultLayer = nullptr;
     for (int i = fragments.size() - 1; i >= 0; --i) {
@@ -6803,7 +6803,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         if (!fragment.backgroundRect.intersects(hitTestLocation))
             continue;
 
-        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
+        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + region.fragmentContainer().scrolledContentOffset();
 
         // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
         HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
@@ -6817,10 +6817,10 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         hitTestRectInFlowThread.expand(LayoutSize(fabs((double)hitTestOffset.width()), fabs((double)hitTestOffset.height())));
 
         CurrentRenderFlowThreadMaintainer flowThreadMaintainer(flowThread);
-        CurrentRenderRegionMaintainer regionMaintainer(*region);
+        CurrentRenderRegionMaintainer regionMaintainer(region);
 
         HitTestResult tempResult(result.hitTestLocation());
-        RenderLayer* hitLayer = flowThread->layer()->hitTestLayer(flowThread->layer(), 0, newRequest, tempResult, hitTestRectInFlowThread, newHitTestLocation, false, transformState, zOffsetForDescendants);
+        RenderLayer* hitLayer = flowThread->layer()->hitTestLayer(flowThread->layer(), nullptr, newRequest, tempResult, hitTestRectInFlowThread, newHitTestLocation, false, transformState, zOffsetForDescendants);
         if (result.isRectBasedTest())
             result.append(tempResult);
         if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {

@@ -1102,8 +1102,8 @@ void RenderText::setText(const String& text, bool force)
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownToHaveNoOverflowAndNoFallbackFonts = false;
 
-    if (parent()->isRenderBlockFlow())
-        toRenderBlockFlow(parent())->invalidateLineLayoutPath();
+    if (is<RenderBlockFlow>(*parent()))
+        downcast<RenderBlockFlow>(*parent()).invalidateLineLayoutPath();
     
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->textChanged(this);
@@ -1149,16 +1149,16 @@ void RenderText::positionLineBox(InlineTextBox& textBox)
 
 void RenderText::ensureLineBoxes()
 {
-    if (!parent()->isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*parent()))
         return;
-    toRenderBlockFlow(parent())->ensureLineBoxes();
+    downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
 }
 
 const SimpleLineLayout::Layout* RenderText::simpleLineLayout() const
 {
-    if (!parent()->isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*parent()))
         return nullptr;
-    return toRenderBlockFlow(parent())->simpleLineLayout();
+    return downcast<RenderBlockFlow>(*parent()).simpleLineLayout();
 }
 
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

@@ -542,7 +542,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         auto& text = downcast<RenderText>(o);
         if (auto layout = text.simpleLineLayout()) {
             ASSERT(!text.firstTextBox());
-            auto resolver = runResolver(toRenderBlockFlow(*text.parent()), *layout);
+            auto resolver = runResolver(downcast<RenderBlockFlow>(*text.parent()), *layout);
             for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
                 auto run = *it;
                 writeIndent(ts, indent + 1);

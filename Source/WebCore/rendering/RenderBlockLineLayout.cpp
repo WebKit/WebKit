@@ -190,16 +190,16 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
     unsigned lineDepth = 1;
-    InlineFlowBox* parentBox = 0;
-    InlineFlowBox* result = 0;
+    InlineFlowBox* parentBox = nullptr;
+    InlineFlowBox* result = nullptr;
     bool hasDefaultLineBoxContain = style().lineBoxContain() == RenderStyle::initialLineBoxContain();
     do {
-        ASSERT_WITH_SECURITY_IMPLICATION(obj->isRenderInline() || obj == this);
+        ASSERT_WITH_SECURITY_IMPLICATION(is<RenderInline>(*obj) || obj == this);
 
-        RenderInline* inlineFlow = (obj != this) ? toRenderInline(obj) : 0;
+        RenderInline* inlineFlow = obj != this ? downcast<RenderInline>(obj) : nullptr;
 
         // Get the last box we made for this render object.
-        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlockFlow(obj)->lastRootBox();
+        parentBox = inlineFlow ? inlineFlow->lastLineBox() : downcast<RenderBlockFlow>(*obj).lastRootBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box or its ancestor is unconstructed but it has

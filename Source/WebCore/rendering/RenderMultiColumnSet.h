@@ -49,7 +49,7 @@ public:
 
     virtual bool isRenderMultiColumnSet() const override { return true; }
 
-    RenderBlockFlow* multiColumnBlockFlow() const { return toRenderBlockFlow(parent()); }
+    RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return static_cast<RenderMultiColumnFlowThread*>(flowThread()); }
 
     RenderMultiColumnSet* nextSiblingMultiColumnSet() const;

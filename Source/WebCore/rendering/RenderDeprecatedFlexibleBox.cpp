@@ -942,18 +942,18 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
 
         child->clearOverrideSize();
         if (relayoutChildren || (child->isReplaced() && (child->style().width().isPercent() || child->style().height().isPercent()))
-            || (child->style().height().isAuto() && child->isRenderBlockFlow())) {
+            || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
             child->setChildNeedsLayout(MarkOnlyThis);
 
             // Dirty all the positioned objects.
-            if (child->isRenderBlockFlow()) {
-                toRenderBlockFlow(child)->markPositionedObjectsForLayout();
-                toRenderBlockFlow(child)->clearTruncation();
+            if (is<RenderBlockFlow>(*child)) {
+                downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
+                downcast<RenderBlockFlow>(*child).clearTruncation();
             }
         }
         child->layoutIfNeeded();
-        if (child->style().height().isAuto() && child->isRenderBlockFlow())
-            maxLineCount = std::max(maxLineCount, toRenderBlockFlow(child)->lineCount());
+        if (child->style().height().isAuto() && is<RenderBlockFlow>(*child))
+            maxLineCount = std::max(maxLineCount, downcast<RenderBlockFlow>(*child).lineCount());
     }
 
     // Get the number of lines and then alter all block flow children with auto height to use the
@@ -964,15 +964,15 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         return;
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (childDoesNotAffectWidthOrFlexing(child) || !child->style().height().isAuto() || !child->isRenderBlockFlow())
+        if (childDoesNotAffectWidthOrFlexing(child) || !child->style().height().isAuto() || !is<RenderBlockFlow>(*child))
             continue;
 
-        RenderBlockFlow* blockChild = toRenderBlockFlow(child);
-        int lineCount = blockChild->lineCount();
+        RenderBlockFlow& blockChild = downcast<RenderBlockFlow>(*child);
+        int lineCount = blockChild.lineCount();
         if (lineCount <= numVisibleLines)
             continue;
 
-        LayoutUnit newHeight = blockChild->heightForLineCount(numVisibleLines);
+        LayoutUnit newHeight = blockChild.heightForLineCount(numVisibleLines);
         if (newHeight == child->height())
             continue;
 
@@ -985,11 +985,11 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         // Get the last line
-        RootInlineBox* lastLine = blockChild->lineAtIndex(lineCount - 1);
+        RootInlineBox* lastLine = blockChild.lineAtIndex(lineCount - 1);
         if (!lastLine)
             continue;
 
-        RootInlineBox* lastVisibleLine = blockChild->lineAtIndex(numVisibleLines - 1);
+        RootInlineBox* lastVisibleLine = blockChild.lineAtIndex(numVisibleLines - 1);
         if (!lastVisibleLine)
             continue;
 
@@ -1005,7 +1005,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         if (anchorBox && anchorBox->renderer().style().isLink())
             totalWidth = anchorBox->logicalWidth() + font.width(constructTextRun(this, font, ellipsisAndSpace, 2, style()));
         else {
-            anchorBox = 0;
+            anchorBox = nullptr;
             totalWidth = font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
         }
 
@@ -1042,12 +1042,12 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
 
         child->clearOverrideSize();
         if ((child->isReplaced() && (child->style().width().isPercent() || child->style().height().isPercent()))
-            || (child->style().height().isAuto() && child->isRenderBlock())) {
+            || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
             child->setChildNeedsLayout();
 
-            if (child->isRenderBlockFlow()) {
-                toRenderBlockFlow(child)->markPositionedObjectsForLayout();
-                toRenderBlockFlow(child)->clearTruncation();
+            if (is<RenderBlockFlow>(*child)) {
+                downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
+                downcast<RenderBlockFlow>(*child).clearTruncation();
             }
         }
     }
