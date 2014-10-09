@@ -1,5 +1,13 @@
 2014-10-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove some more passing tests from TestExpectations.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-10-08  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for css3 tests.
 
         * platform/ios-simulator/css3/*: Added

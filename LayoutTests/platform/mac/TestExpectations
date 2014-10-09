@@ -1039,9 +1039,6 @@ webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
 # repaintRectsAsText reports different repaintrects on ML
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
-# cliprect fails to cover textarea.
-webkit.org/b/132515 [ MountainLion ] fast/forms/hidpi-textarea-on-subpixel-position.html [ Pass ImageOnlyFailure ]
-
 # Some CSS region expected tests do not properly match CSS region's behavior.
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 
@@ -1367,9 +1364,6 @@ webkit.org/b/135390 fast/css/fontloader-page-cache.html [ Pass ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip ]
 
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
-
-# Skip redundant test that fails only on some bots
-plugins/snapshotting/quicktime-plugin-snapshotted.html [ Failure ]
 
 # Some inspector tests failing after r173992
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Pass Failure Crash ]

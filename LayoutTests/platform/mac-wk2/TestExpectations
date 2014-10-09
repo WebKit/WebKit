@@ -251,14 +251,9 @@ webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ P
 
 webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Failure ]
 
-webkit.org/b/114573 fast/repaint/selection-gap-fixed-child.html [ Failure ]
-webkit.org/b/114573 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
-
 webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
-
-webkit.org/b/81604 media/video-loop.html [ Failure ]
 
 webkit.org/b/82554 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 
@@ -273,7 +268,8 @@ webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.h
 webkit.org/b/117767 media/broken-video.html [ Failure ]
 webkit.org/b/117767 media/event-attributes.html [ Failure ]
 
-webkit.org/b/117962 media/video-played-collapse.html [ Failure ]
+webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
+webkit.org/b/81604 media/video-loop.html [ Pass Failure ]
 
 webkit.org/b/118925 compositing/background-color/background-color-alpha.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 compositing/background-color/background-color-change-to-text.html  [ Pass ImageOnlyFailure ]
@@ -314,22 +310,14 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg  [ Ima
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 
 # Color space issues from switching to tiled drawing.
-webkit.org/b/122234 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure ]
-webkit.org/b/122234 svg/filters/color-space-conversion.svg  [ ImageOnlyFailure ]
-webkit.org/b/122234 svg/filters/filter-cycle.html [ ImageOnlyFailure ]
 webkit.org/b/122234 css3/filters/null-effect-check.html [ ImageOnlyFailure ]
 webkit.org/b/122234 fast/images/pdf-as-image-with-annotations.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122234 fast/images/pdf-as-image-crop-box.html [ Pass ImageOnlyFailure ]
 
 # Tiled background images that intersect the tiles are getting weird fringing.
 webkit.org/b/122235 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
-webkit.org/b/122235 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
-webkit.org/b/122235 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
-webkit.org/b/122235 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/122237 [ Debug ] fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Crash ]
-
-webkit.org/b/122456 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure ]
 
 webkit.org/b/124425 fast/dom/Geolocation/notimer-after-unload.html [ Pass Crash Failure ]
 
@@ -345,10 +333,8 @@ webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-pri
 
 webkit.org/b/134550 [ Mavericks ] http/tests/cache/iframe-304-crash.html [ Pass Failure ]
 
-# Subpixel wrong cliprect on WK2
-webkit.org/b/132100 fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
-
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
+webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass ]
 
 webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 
@@ -409,7 +395,7 @@ webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order-pr
 webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
 
 # test results in DRT don't match in browser behavior, test seems broken
-fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 
 webkit.org/b/126962 plugins/plugin-document-load-prevented-userscript.html [ Crash Pass Timeout ]
 
@@ -639,8 +625,9 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 [ Mavericks ] http/tests/navigation/ping-cookie.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=133227
-plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html
-plugins/snapshotting/set-plugin-size-to-tiny.html 
+plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html [ Failure ]
+plugins/snapshotting/set-plugin-size-to-tiny.html [ Failure ]
+plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
