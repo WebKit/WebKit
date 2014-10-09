@@ -1,5 +1,22 @@
 2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CSS Pretty Printing fails to put space between value functions around ending parenthesis
+        https://bugs.webkit.org/show_bug.cgi?id=137415
+
+        Reviewed by Timothy Hatcher.
+
+        Add a space after a closing parenthesis if we are still inside a property.
+        This adds space between space separated function lists such as
+        -webkit-transform:foo(...)bar(...). Also add a test for keyframe syntax.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/css-tests/keyframes-expected.css: Added.
+        * Tools/PrettyPrinting/css-tests/keyframes.css: Added.
+        * Tools/PrettyPrinting/index.html:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+
+2014-10-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CSS Pretty Printing fails to put space between rgb(...) and numbers in minified gradients
         https://bugs.webkit.org/show_bug.cgi?id=137414
 

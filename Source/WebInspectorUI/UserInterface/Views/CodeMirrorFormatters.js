@@ -325,7 +325,11 @@ CodeMirror.extendMode("css", {
             if (lastContent === ")" && (content !== ")" && content !== ",")) {
                 if (token === "number") // linear-gradient(rgb(...)0%,rgb(...)100%)
                     return true;
-                return state.state === "media" || state.state === "media_parens"; // Space in "not(foo)and" but not at the end of "not(not(foo))" 
+                if (state.state === "prop") // -webkit-transform:rotate(...)translate(...);
+                    return true;
+                if (state.state === "media" || state.state === "media_parens") // Space in "not(foo)and" but not at the end of "not(not(foo))" 
+                    return true;
+                return false; // color: rgb(...);
             }
             return ">+~-*/".indexOf(lastContent) >= 0; // calc() expression or child/sibling selectors
         }
