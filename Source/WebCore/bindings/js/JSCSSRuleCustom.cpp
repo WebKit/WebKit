@@ -94,11 +94,9 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule* rule)
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSKeyframesRule, rule);
             break;
-#if ENABLE(CSS3_CONDITIONAL_RULES)
         case CSSRule::SUPPORTS_RULE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, CSSSupportsRule, rule);
             break;
-#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case CSSRule::WEBKIT_VIEWPORT_RULE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSViewportRule, rule);

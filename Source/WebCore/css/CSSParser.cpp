@@ -303,9 +303,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_important(false)
     , m_id(CSSPropertyInvalid)
     , m_styleSheet(0)
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     , m_supportsCondition(false)
-#endif
     , m_selectorListForParseSelector(0)
     , m_numParsedPropertiesBeforeMarginBox(INVALID_NUM_PARSED_PROPERTIES)
     , m_inParseShorthand(0)
@@ -465,7 +463,6 @@ PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet
     return m_keyframe.release();
 }
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
 bool CSSParser::parseSupportsCondition(const String& string)
 {
     m_supportsCondition = false;
@@ -475,7 +472,6 @@ bool CSSParser::parseSupportsCondition(const String& string)
     cssyyparse(this);
     return m_supportsCondition;
 }
-#endif
 
 static inline bool isColorPropertyID(CSSPropertyID propertyId)
 {
@@ -10987,14 +10983,12 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
         }
         return;
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     case 's':
         if (length == 9 && isEqualToCSSIdentifier(name + 2, "upports")) {
             m_parsingMode = SupportsMode;
             m_token = SUPPORTS_SYM;
         }
         return;
-#endif
 
     case 't':
         if (hasEscape)
@@ -11090,18 +11084,15 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
             return;
 
         case 27:
-#if ENABLE(CSS3_CONDITIONAL_RULES)
             if (isEqualToCSSIdentifier(name + 2, "webkit-supports-condition")) {
                 m_parsingMode = SupportsMode;
                 m_token = WEBKIT_SUPPORTS_CONDITION_SYM;
             }
-#endif
             return;
         }
     }
 }
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
 template <typename CharacterType>
 inline void CSSParser::detectSupportsToken(int length)
 {
@@ -11118,7 +11109,6 @@ inline void CSSParser::detectSupportsToken(int length)
             m_token = SUPPORTS_NOT;
     }
 }
-#endif
 
 template <typename SrcCharacterType>
 int CSSParser::realLex(void* yylvalWithoutType)
@@ -11160,13 +11150,11 @@ restartAfterComment:
         m_token = IDENT;
 
         if (UNLIKELY(*currentCharacter<SrcCharacterType>() == '(')) {
-#if ENABLE(CSS3_CONDITIONAL_RULES)
             if (m_parsingMode == SupportsMode && !hasEscape) {
                 detectSupportsToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
                 if (m_token != IDENT)
                     break;
             }
-#endif
             m_token = FUNCTION;
             bool shouldSkipParenthesis = true;
             if (!hasEscape) {
@@ -11196,10 +11184,8 @@ restartAfterComment:
         } else if (UNLIKELY(m_parsingMode != NormalMode) && !hasEscape) {
             if (m_parsingMode == MediaQueryMode)
                 detectMediaQueryToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
-#if ENABLE(CSS3_CONDITIONAL_RULES)
             else if (m_parsingMode == SupportsMode)
                 detectSupportsToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
-#endif
             else if (m_parsingMode == NthChildMode && isASCIIAlphaCaselessEqual(tokenStart<SrcCharacterType>()[0], 'n')) {
                 if (result - tokenStart<SrcCharacterType>() == 1) {
                     // String "n" is IDENT but "n+1" is NTH.
@@ -11373,10 +11359,7 @@ restartAfterComment:
         break;
 
     case CharacterEndConditionQuery: {
-        bool isParsingCondition = m_parsingMode == MediaQueryMode;
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-        isParsingCondition = isParsingCondition || m_parsingMode == SupportsMode;
-#endif
+        bool isParsingCondition = m_parsingMode == MediaQueryMode || m_parsingMode == SupportsMode;
         if (isParsingCondition)
             m_parsingMode = NormalMode;
         break;
@@ -11566,7 +11549,6 @@ PassRefPtr<StyleRuleBase> CSSParser::createEmptyMediaRule(RuleList* rules)
     return createMediaRule(MediaQuerySet::create(), rules);
 }
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
 PassRefPtr<StyleRuleBase> CSSParser::createSupportsRule(bool conditionIsSupported, RuleList* rules)
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
@@ -11621,8 +11603,6 @@ PassRefPtr<CSSRuleSourceData> CSSParser::popSupportsRuleData()
     m_supportsRuleDataStack->removeLast();
     return data.release();
 }
-
-#endif
 
 void CSSParser::processAndAddNewRuleToSourceTreeIfNeeded()
 {

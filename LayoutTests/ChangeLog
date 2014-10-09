@@ -1,3 +1,16 @@
+2014-10-09  Dean Jackson  <dino@apple.com>
+
+        Remove ENABLE_CSS3_CONDITIONAL_RULES
+        https://bugs.webkit.org/show_bug.cgi?id=137571
+
+        Reviewed by Simon Fraser.
+
+        Unskip tests.
+
+        * platform/ios-sim/Skipped:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2014-10-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Add the baseline implementation of :not(selectorList)

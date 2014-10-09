@@ -343,8 +343,6 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %destructor { destroy($$); } track_names_list
 #endif
 
-#if ENABLE_CSS3_CONDITIONAL_RULES
-
 %token SUPPORTS_AND
 %token SUPPORTS_NOT
 %token SUPPORTS_OR
@@ -355,8 +353,6 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %destructor { if ($$) $$->deref(); } supports
 
 %type <boolean> supports_condition supports_condition_in_parens supports_conjunction supports_declaration_condition supports_disjunction supports_error supports_negation
-
-#endif
 
 #if ENABLE_CSS_DEVICE_ADAPTATION
 
@@ -384,9 +380,7 @@ stylesheet:
 #endif
   | webkit_selector maybe_space
   | webkit_keyframe_rule maybe_space
-#if ENABLE_CSS3_CONDITIONAL_RULES
   | webkit_supports_condition maybe_space
-#endif
   ;
 
 webkit_rule: WEBKIT_RULE_SYM '{' maybe_space valid_rule maybe_space '}' { parser->m_rule = adoptRef($4); } ;
@@ -419,11 +413,7 @@ webkit_selector:
     }
 ;
 
-#if ENABLE_CSS3_CONDITIONAL_RULES
-
 webkit_supports_condition: WEBKIT_SUPPORTS_CONDITION_SYM WHITESPACE maybe_space supports_condition '}' { parser->m_supportsCondition = $4; } ;
-
-#endif
 
 /* for expressions that require at least one whitespace to be present, like the + and - operators in calc expressions */
 space: WHITESPACE | space WHITESPACE ;
@@ -471,9 +461,7 @@ valid_rule:
   | namespace { $$ = nullptr; }
   | import
   | region
-#if ENABLE_CSS3_CONDITIONAL_RULES
   | supports
-#endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
 #endif
@@ -519,9 +507,7 @@ block_valid_rule:
   | font_face
   | media
   | keyframes
-#if ENABLE_CSS3_CONDITIONAL_RULES
   | supports
-#endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
 #endif
@@ -728,8 +714,6 @@ media:
     }
     ;
 
-#if ENABLE_CSS3_CONDITIONAL_RULES
-
 supports:
     before_supports_rule SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
         $$ = parser->createSupportsRule($4, std::unique_ptr<Vector<RefPtr<StyleRuleBase>>>($9).get()).leakRef();
@@ -794,8 +778,6 @@ supports_declaration_condition:
         p->markPropertyEnd($7, false);
     }
     ;
-
-#endif
 
 before_keyframes_rule:
     /* empty */ {

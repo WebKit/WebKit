@@ -66,9 +66,7 @@
 #include "CSSSegmentedFontFace.cpp"
 #include "CSSSelector.cpp"
 #include "CSSSelectorList.cpp"
-#if ENABLE(CSS3_CONDITIONAL_RULES)
 #include "CSSSupportsRule.cpp"
-#endif
 #include "CSSStyleRule.cpp"
 #include "CSSStyleSheet.cpp"
 #include "CSSTimingFunctionValue.cpp"

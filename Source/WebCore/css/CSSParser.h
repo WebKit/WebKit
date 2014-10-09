@@ -87,9 +87,7 @@ public:
     void parseSheet(StyleSheetContents*, const String&, int startLineNumber = 0, RuleSourceDataList* = 0, bool = false);
     PassRefPtr<StyleRuleBase> parseRule(StyleSheetContents*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(StyleSheetContents*, const String&);
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     bool parseSupportsCondition(const String&);
-#endif
     static bool parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, CSSParserMode, StyleSheetContents*);
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
@@ -314,12 +312,10 @@ public:
     PassRefPtr<StyleRuleBase> createPageRule(std::unique_ptr<CSSParserSelector> pageSelector);
     PassRefPtr<StyleRuleBase> createRegionRule(Vector<std::unique_ptr<CSSParserSelector>>* regionSelector, RuleList* rules);
     void createMarginAtRule(CSSSelector::MarginBoxType);
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     PassRefPtr<StyleRuleBase> createSupportsRule(bool conditionIsSupported, RuleList*);
     void markSupportsRuleHeaderStart();
     void markSupportsRuleHeaderEnd();
     PassRefPtr<CSSRuleSourceData> popSupportsRuleData();
-#endif
 
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
@@ -352,9 +348,7 @@ public:
     std::unique_ptr<SourceSizeList> m_sourceSizeList;
 #endif
     std::unique_ptr<CSSParserValueList> m_valueList;
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     bool m_supportsCondition;
-#endif
 
     typedef Vector<CSSProperty, 256> ParsedPropertyVector;
     ParsedPropertyVector m_parsedProperties;
@@ -483,10 +477,8 @@ private:
     inline void detectDashToken(int);
     template <typename CharacterType>
     inline void detectAtToken(int, bool);
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     template <typename CharacterType>
     inline void detectSupportsToken(int);
-#endif
 
     template <typename CharacterType>
     inline void setRuleHeaderEnd(const CharacterType*);
@@ -551,9 +543,7 @@ private:
     enum ParsingMode {
         NormalMode,
         MediaQueryMode,
-#if ENABLE(CSS3_CONDITIONAL_RULES)
         SupportsMode,
-#endif
         NthChildMode
     };
 
@@ -592,9 +582,7 @@ private:
 
     RefPtr<CSSCalcValue> m_parsedCalculation;
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     std::unique_ptr<RuleSourceDataList> m_supportsRuleDataStack;
-#endif
 
     // defines units allowed for a certain property, used in parseUnit
     enum Units {

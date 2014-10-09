@@ -190,7 +190,7 @@
     [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 #endif
 
-    [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] readonly attribute DOMWindowCSS CSS;
+    [Replaceable] readonly attribute DOMWindowCSS CSS;
 
     // Events
     attribute EventListener onabort;

@@ -37,8 +37,6 @@
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-
 namespace WebCore {
 
 CSSSupportsRule::CSSSupportsRule(StyleRuleSupports& supportsRule, CSSStyleSheet* parent)
@@ -65,5 +63,3 @@ String CSSSupportsRule::conditionText() const
 }
 
 } // namespace WebCore
-
-#endif

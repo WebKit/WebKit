@@ -31,7 +31,6 @@
     NoInterfaceObject,
     InterfaceName=CSS,
     ImplementationLacksVTable,
-    Conditional=CSS3_CONDITIONAL_RULES,
 ] interface DOMWindowCSS {
 
     boolean supports(DOMString property, DOMString value);

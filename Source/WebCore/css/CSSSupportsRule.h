@@ -31,8 +31,6 @@
 
 #include "CSSGroupingRule.h"
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-
 namespace WebCore {
 
 class CSSRule;
@@ -59,7 +57,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSSupportsRule, CSSRule::SUPPORTS_RULE)
-
-#endif // ENABLE(CSS3_CONDITIONAL_RULES)
 
 #endif // CSSSupportsRule_h

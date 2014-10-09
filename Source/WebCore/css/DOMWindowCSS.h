@@ -30,8 +30,6 @@
 #ifndef DOMWindowCSS_h
 #define DOMWindowCSS_h
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -52,7 +50,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(CSS3_CONDITIONAL_RULES)
 
 #endif

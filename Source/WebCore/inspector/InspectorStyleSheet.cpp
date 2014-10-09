@@ -107,10 +107,8 @@ static void flattenSourceData(RuleSourceDataList* dataList, RuleSourceDataList* 
             target->append(data);
         else if (data->type == CSSRuleSourceData::MEDIA_RULE)
             flattenSourceData(&data->childRules, target);
-#if ENABLE(CSS3_CONDITIONAL_RULES)
         else if (data->type == CSSRuleSourceData::SUPPORTS_RULE)
             flattenSourceData(&data->childRules, target);
-#endif
     }
 }
 
@@ -220,10 +218,8 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (is<WebKitCSSKeyframesRule>(*rule))
         return &downcast<WebKitCSSKeyframesRule>(*rule).cssRules();
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
     if (is<CSSSupportsRule>(*rule))
         return &downcast<CSSSupportsRule>(*rule).cssRules();
-#endif
 
     return nullptr;
 }

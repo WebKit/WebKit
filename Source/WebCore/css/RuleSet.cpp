@@ -340,9 +340,10 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(rule);
             resolver->fontSelector()->addFontFaceRule(fontFaceRule);
             resolver->invalidateMatchedPropertiesCache();
-        } else if (rule->isKeyframesRule() && resolver) {
+        } else if (rule->isKeyframesRule() && resolver)
             resolver->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(rule));
-        }
+        else if (rule->isSupportsRule() && static_cast<StyleRuleSupports*>(rule)->conditionIsSupported())
+            addChildRules(static_cast<StyleRuleSupports*>(rule)->childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
 #if ENABLE(CSS_REGIONS)
         else if (rule->isRegionRule() && resolver) {
             addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
@@ -352,10 +353,6 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
         else if (rule->isViewportRule() && resolver) {
             resolver->viewportStyleResolver()->addViewportRule(static_cast<StyleRuleViewport*>(rule));
         }
-#endif
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-        else if (rule->isSupportsRule() && static_cast<StyleRuleSupports*>(rule)->conditionIsSupported())
-            addChildRules(static_cast<StyleRuleSupports*>(rule)->childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
 #endif
     }
 }

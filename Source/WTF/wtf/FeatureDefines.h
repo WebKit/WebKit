@@ -333,10 +333,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_CSP_NEXT 0
 #endif
 
-#if !defined(ENABLE_CSS3_CONDITIONAL_RULES)
-#define ENABLE_CSS3_CONDITIONAL_RULES 0
-#endif
-
 #if !defined(ENABLE_CSS3_TEXT)
 #define ENABLE_CSS3_TEXT 0
 #endif

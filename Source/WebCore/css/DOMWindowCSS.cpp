@@ -30,8 +30,6 @@
 #include "config.h"
 #include "DOMWindowCSS.h"
 
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-
 #include "CSSParser.h"
 #include "StyleProperties.h"
 #include <wtf/text/WTFString.h>
@@ -85,5 +83,3 @@ bool DOMWindowCSS::supports(const String& conditionText) const
 }
 
 }
-
-#endif

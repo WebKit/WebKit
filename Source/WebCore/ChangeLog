@@ -1,3 +1,57 @@
+2014-10-09  Dean Jackson  <dino@apple.com>
+
+        Remove ENABLE_CSS3_CONDITIONAL_RULES
+        https://bugs.webkit.org/show_bug.cgi?id=137571
+
+        Reviewed by Simon Fraser.
+
+        We have good enough support for @supports that
+        it should be a consistent part of the platform. Remove
+        the compile-time guard.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.exp.in:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::CSSParser::detectAtToken):
+        (WebCore::CSSParser::detectSupportsToken):
+        (WebCore::CSSParser::realLex):
+        * css/CSSParser.h:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSSupportsRule.cpp:
+        * css/CSSSupportsRule.h:
+        * css/CSSSupportsRule.idl:
+        * css/DOMWindowCSS.cpp:
+        * css/DOMWindowCSS.h:
+        * css/DOMWindowCSS.idl:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collect):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        (WebCore::StyleRuleSupports::StyleRuleSupports):
+        * css/StyleRule.h:
+        (WebCore::toStyleRuleSupports):
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        (WebCore::asCSSRuleList):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::css):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2014-10-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Add the baseline implementation of :not(selectorList)

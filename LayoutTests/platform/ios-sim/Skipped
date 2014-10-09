@@ -659,9 +659,6 @@ http/tests/w3c/webperf
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
 
-# ENABLE_CSS3_CONDITIONAL_RULES - CSS3 Conditionals support is not yet enabled.
-css3/supports.html
-
 # ENABLE_CSS_IMAGE_ORIENTATION - CSS Image Orientation support is not yet enabled.
 fast/css/image-orientation
 
