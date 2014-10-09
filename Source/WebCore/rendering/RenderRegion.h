@@ -108,7 +108,7 @@ public:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds); // layerOffset is needed for multi-column.
+    virtual void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const;
 
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);

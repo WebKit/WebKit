@@ -1,3 +1,24 @@
+2014-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Remove unused parameter in adjustRegionBoundsFromFlowThreadPortionRect
+        https://bugs.webkit.org/show_bug.cgi?id=137518
+
+        Reviewed by Andrei Bucur.
+
+        This method is used only by region code in accelerated compositing.
+        The first parameter for the method was introduced with the intent to be used for multicolumn,
+        but without being actually used in multicolumn code. Also make the method const.
+        No new tests as no change in functionality.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderRegion.h:
+
 2014-10-08  Andreas Kling  <akling@apple.com>
 
         [Mac] Show repaint counters in tile coverage map.

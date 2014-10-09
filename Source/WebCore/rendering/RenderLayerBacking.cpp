@@ -995,7 +995,7 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect
 
         IntPoint flowDelta;
         m_owningLayer.convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
-        parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(flowDelta, ancestorCompositingBounds);
+        parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(ancestorCompositingBounds);
         RenderBoxModelObject& layerOwner = toRenderBoxModelObject(parentRegion->layerOwner());
         RenderLayerBacking* layerOwnerBacking = layerOwner.layer()->backing();
         if (!layerOwnerBacking)

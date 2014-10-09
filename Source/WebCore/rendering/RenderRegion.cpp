@@ -419,13 +419,11 @@ void RenderRegion::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
+void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const
 {
     LayoutRect flippedFlowThreadPortionRect = flowThreadPortionRect();
     flowThread()->flipForWritingMode(flippedFlowThreadPortionRect);
     regionBounds.moveBy(flippedFlowThreadPortionRect.location());
-
-    UNUSED_PARAM(layerOffset);
 }
 
 void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)

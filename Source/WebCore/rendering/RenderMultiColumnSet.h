@@ -151,7 +151,7 @@ private:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds) override;
+    virtual void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const override;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 

@@ -856,7 +856,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     return translationOffset;
 }
 
-void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint&, LayoutRect&)
+void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect&) const
 {
     // This only fires for named flow thread compositing code, so let's make sure to ASSERT if this ever gets invoked.
     ASSERT_NOT_REACHED();
