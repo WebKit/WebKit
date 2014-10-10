@@ -1,3 +1,9 @@
+2014-10-10  Andy Estes  <aestes@apple.com>
+
+        [Mac] Update a Mavericks-specific baseline.
+
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Skip some tests that timeout every time.
