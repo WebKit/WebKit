@@ -1,5 +1,21 @@
 2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ATK] WebKitAccessibleWrapperAtk should not depend on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=137177
+
+        Reviewed by Martin Robinson.
+
+        It's used to get the web view widget, but there's no GtkWidget in
+        the web process and platformPageClient is always NULL.
+
+        * PlatformGTK.cmake: Move accessibility sources to the WebCore
+        sources list.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkParentOfRootObject): Remove code to get view GtkWidget.
+        * editing/atk/FrameSelectionAtk.cpp: Remove unneeded header include.
+
+2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove unused GtkPluginWidget
         https://bugs.webkit.org/show_bug.cgi?id=137176
 
