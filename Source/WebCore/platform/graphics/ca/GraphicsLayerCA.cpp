@@ -449,7 +449,7 @@ bool GraphicsLayerCA::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newCh
 void GraphicsLayerCA::removeFromParent()
 {
     if (m_parent)
-        toGraphicsLayerCA(m_parent)->noteSublayersChanged();
+        downcast<GraphicsLayerCA>(*m_parent).noteSublayersChanged();
     GraphicsLayer::removeFromParent();
 }
 
@@ -464,7 +464,7 @@ void GraphicsLayerCA::setMaskLayer(GraphicsLayer* layer)
     propagateLayerChangeToReplicas();
     
     if (m_replicatedLayer)
-        toGraphicsLayerCA(m_replicatedLayer)->propagateLayerChangeToReplicas();
+        downcast<GraphicsLayerCA>(*m_replicatedLayer).propagateLayerChangeToReplicas();
 }
 
 void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
@@ -1015,8 +1015,8 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
     }
 
     if (m_maskLayer) {
-        GraphicsLayerCA* maskLayerCA = toGraphicsLayerCA(m_maskLayer);
-        if (maskLayerCA->recursiveVisibleRectChangeRequiresFlush(localState))
+        GraphicsLayerCA& maskLayerCA = downcast<GraphicsLayerCA>(*m_maskLayer);
+        if (maskLayerCA.recursiveVisibleRectChangeRequiresFlush(localState))
             return true;
     }
 
@@ -1024,13 +1024,13 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
     size_t numChildren = childLayers.size();
     
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerCA* curChild = toGraphicsLayerCA(childLayers[i]);
-        if (curChild->recursiveVisibleRectChangeRequiresFlush(localState))
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
+        if (currentChild.recursiveVisibleRectChangeRequiresFlush(localState))
             return true;
     }
 
     if (m_replicaLayer)
-        if (toGraphicsLayerCA(m_replicaLayer)->recursiveVisibleRectChangeRequiresFlush(localState))
+        if (downcast<GraphicsLayerCA>(*m_replicaLayer).recursiveVisibleRectChangeRequiresFlush(localState))
             return true;
     
     return false;
@@ -1131,7 +1131,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         m_uncommittedChanges |= VisibleRectChanged;
         m_visibleRect = visibleRect;
         
-        if (GraphicsLayerCA* maskLayer = toGraphicsLayerCA(m_maskLayer)) {
+        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
             maskLayer->m_uncommittedChanges |= VisibleRectChanged;
             maskLayer->m_visibleRect = visibleRect;
@@ -1180,21 +1180,21 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         affectedByTransformAnimation = true;
     }
 
-    if (GraphicsLayerCA* maskLayer = toGraphicsLayerCA(m_maskLayer))
+    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect);
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerCA* curChild = toGraphicsLayerCA(childLayers[i]);
-        curChild->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
+        currentChild.recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
-    if (GraphicsLayerCA* replicaLayer = toGraphicsLayerCA(m_replicaLayer))
+    if (GraphicsLayerCA* replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer))
         replicaLayer->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
-    if (GraphicsLayerCA* maskLayer = toGraphicsLayerCA(m_maskLayer))
+    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);
 
     commitLayerChangesAfterSublayers(childCommitState);
@@ -1425,7 +1425,7 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 
     if (m_structuralLayer) {
         if (m_replicaLayer)
-            structuralLayerChildren.append(toGraphicsLayerCA(m_replicaLayer)->primaryLayer());
+            structuralLayerChildren.append(downcast<GraphicsLayerCA>(*m_replicaLayer).primaryLayer());
     
         structuralLayerChildren.append(m_layer);
     }
@@ -1440,8 +1440,8 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerCA* curChild = toGraphicsLayerCA(childLayers[i]);
-        PlatformCALayer* childLayer = curChild->layerForSuperlayer();
+        GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
+        PlatformCALayer* childLayer = currentChild.layerForSuperlayer();
         childListForSublayers.append(childLayer);
     }
 
@@ -1696,7 +1696,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     
     if (purpose == StructuralLayerForPreserves3D) {
         if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerTypeTransformLayer)
-            m_structuralLayer = 0;
+            m_structuralLayer = nullptr;
         
         if (!m_structuralLayer) {
             m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeTransformLayer, this);
@@ -1704,7 +1704,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         }
     } else {
         if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerTypeLayer)
-            m_structuralLayer = 0;
+            m_structuralLayer = nullptr;
 
         if (!m_structuralLayer) {
             m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
@@ -1719,7 +1719,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 
     // We've changed the layer that our parent added to its sublayer list, so tell it to update
     // sublayers again in its commitLayerChangesAfterSublayers().
-    toGraphicsLayerCA(parent())->noteSublayersChanged(DontScheduleFlush);
+    downcast<GraphicsLayerCA>(*parent()).noteSublayersChanged(DontScheduleFlush);
 
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     FloatPoint point(m_size.width() / 2.0f, m_size.height() / 2.0f);
@@ -2006,15 +2006,15 @@ void GraphicsLayerCA::updateContentsRects()
 
 void GraphicsLayerCA::updateMaskLayer()
 {
-    PlatformCALayer* maskCALayer = m_maskLayer ? toGraphicsLayerCA(m_maskLayer)->primaryLayer() : 0;
+    PlatformCALayer* maskCALayer = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayer() : nullptr;
     m_layer->setMask(maskCALayer);
 
-    LayerMap* maskLayerCloneMap = m_maskLayer ? toGraphicsLayerCA(m_maskLayer)->primaryLayerClones() : 0;
+    LayerMap* maskLayerCloneMap = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayerClones() : nullptr;
     
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {            
-            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->key) : 0;
+            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->key) : nullptr;
             it->value->setMask(maskClone);
         }
     }
@@ -2060,12 +2060,12 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& r
 {
     // Limit replica nesting, to avoid 2^N explosion of replica layers.
     if (!m_replicatedLayer || replicaState.replicaDepth() == ReplicaState::maxReplicaDepth)
-        return 0;
+        return nullptr;
 
-    GraphicsLayerCA* replicatedLayer = toGraphicsLayerCA(m_replicatedLayer);
+    GraphicsLayerCA& replicatedLayer = downcast<GraphicsLayerCA>(*m_replicatedLayer);
     
-    RefPtr<PlatformCALayer> clonedLayerRoot = replicatedLayer->fetchCloneLayers(this, replicaState, RootCloneLevel);
-    FloatPoint cloneRootPosition = replicatedLayer->positionForCloneRootLayer();
+    RefPtr<PlatformCALayer> clonedLayerRoot = replicatedLayer.fetchCloneLayers(this, replicaState, RootCloneLevel);
+    FloatPoint cloneRootPosition = replicatedLayer.positionForCloneRootLayer();
 
     // Replica root has no offset or transform
     clonedLayerRoot->setPosition(cloneRootPosition);
@@ -2980,7 +2980,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         // A mask layer's superlayer is the layer that it masks. Set the MaskLayerChanged dirty bit
         // so that the parent will fix up the platform layers in commitLayerChangesAfterSublayers().
         if (GraphicsLayer* parentLayer = parent())
-            toGraphicsLayerCA(parentLayer)->noteLayerPropertyChanged(MaskLayerChanged);
+            downcast<GraphicsLayerCA>(*parentLayer).noteLayerPropertyChanged(MaskLayerChanged);
     } else if (oldLayer->superlayer()) {
         // Skip this step if we don't have a superlayer. This is probably a benign
         // case that happens while restructuring the layer tree, and also occurs with
@@ -3119,13 +3119,13 @@ FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
 
 void GraphicsLayerCA::propagateLayerChangeToReplicas()
 {
-    for (GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
-        GraphicsLayerCA* currLayerCA = toGraphicsLayerCA(currLayer);
-        if (!currLayerCA->hasCloneLayers())
+    for (GraphicsLayer* currentLayer = this; currentLayer; currentLayer = currentLayer->parent()) {
+        GraphicsLayerCA& currentLayerCA = downcast<GraphicsLayerCA>(*currentLayer);
+        if (!currentLayerCA.hasCloneLayers())
             break;
 
-        if (currLayerCA->replicaLayer())
-            toGraphicsLayerCA(currLayerCA->replicaLayer())->noteLayerPropertyChanged(ReplicatedLayerChanged);
+        if (currentLayerCA.replicaLayer())
+            downcast<GraphicsLayerCA>(*currentLayerCA.replicaLayer()).noteLayerPropertyChanged(ReplicatedLayerChanged);
     }
 }
 
@@ -3138,7 +3138,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, contentsClippingLayer, cloneLevel);
 
     if (m_maskLayer) {
-        RefPtr<PlatformCALayer> maskClone = toGraphicsLayerCA(m_maskLayer)->fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
+        RefPtr<PlatformCALayer> maskClone = downcast<GraphicsLayerCA>(*m_maskLayer).fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
         primaryLayer->setMask(maskClone.get());
     }
 
@@ -3146,7 +3146,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
         // We are a replica being asked for clones of our layers.
         RefPtr<PlatformCALayer> replicaRoot = replicatedLayerRoot(replicaState);
         if (!replicaRoot)
-            return 0;
+            return nullptr;
 
         if (structuralLayer) {
             structuralLayer->insertSublayer(replicaRoot.get(), 0);
@@ -3165,7 +3165,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     if (m_replicaLayer && m_replicaLayer != replicaRoot) {
         // We have nested replicas. Ask the replica layer for a clone of its contents.
         replicaState.setBranchType(ReplicaState::ReplicaBranch);
-        replicaLayer = toGraphicsLayerCA(m_replicaLayer)->fetchCloneLayers(replicaRoot, replicaState, RootCloneLevel);
+        replicaLayer = downcast<GraphicsLayerCA>(*m_replicaLayer).fetchCloneLayers(replicaRoot, replicaState, RootCloneLevel);
         replicaState.setBranchType(ReplicaState::ChildBranch);
     }
 
@@ -3196,13 +3196,10 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
         
         replicaState.push(ReplicaState::ChildBranch);
 
-        size_t numChildren = childLayers.size();
-        for (size_t i = 0; i < numChildren; ++i) {
-            GraphicsLayerCA* curChild = toGraphicsLayerCA(childLayers[i]);
-
-            RefPtr<PlatformCALayer> childLayer = curChild->fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
-            if (childLayer)
-                clonalSublayers.append(childLayer);
+        for (auto* childLayer : childLayers) {
+            GraphicsLayerCA& childLayerCA = downcast<GraphicsLayerCA>(*childLayer);
+            if (RefPtr<PlatformCALayer> platformLayer = childLayerCA.fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel))
+                clonalSublayers.append(platformLayer.release());
         }
 
         replicaState.pop();

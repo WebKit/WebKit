@@ -516,8 +516,8 @@ private:
     bool m_isCommittingChanges;
 };
 
-GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCA, isGraphicsLayerCA());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebCore::GraphicsLayerCA, isGraphicsLayerCA())
 
 #endif // GraphicsLayerCA_h

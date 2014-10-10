@@ -537,9 +537,9 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
     RenderLayerBacking* renderViewBacking = m_webPage.mainFrameView()->renderView()->layer()->backing();
 
     if (GraphicsLayer* contentsContainmentLayer = renderViewBacking->contentsContainmentLayer())
-        return toGraphicsLayerCA(contentsContainmentLayer)->platformCALayer();
+        return downcast<GraphicsLayerCA>(*contentsContainmentLayer).platformCALayer();
 
-    return toGraphicsLayerCA(renderViewBacking->graphicsLayer())->platformCALayer();
+    return downcast<GraphicsLayerCA>(*renderViewBacking->graphicsLayer()).platformCALayer();
 }
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() const
@@ -547,7 +547,7 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() co
     RenderLayerCompositor& renderLayerCompositor = m_webPage.mainFrameView()->renderView()->compositor();
 
     if (GraphicsLayer* shadowGraphicsLayer = renderLayerCompositor.layerForContentShadow())
-        return toGraphicsLayerCA(shadowGraphicsLayer)->platformCALayer();
+        return downcast<GraphicsLayerCA>(*shadowGraphicsLayer).platformCALayer();
 
     return nullptr;
 }

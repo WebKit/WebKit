@@ -58,8 +58,8 @@ private:
     RemoteLayerTreeContext& m_context;
 };
 
-GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCARemote, isGraphicsLayerCARemote());
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebKit::GraphicsLayerCARemote, isGraphicsLayerCARemote())
 
 #endif // GraphicsLayerCARemote_h

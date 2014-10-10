@@ -100,7 +100,7 @@ ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& contr
 
     // Set directly on the PlatformCALayer so that when we leave the 'from' value implicit
     // in our animations, we get the right initial value regardless of flush timing.
-    toGraphicsLayerCA(layer())->platformCALayer()->setOpacity(0);
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->setOpacity(0);
 
     controller.didCreateHighlight(this);
 }
@@ -178,7 +178,7 @@ void ServicesOverlayController::Highlight::fadeIn()
     [animation setToValue:@1];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
-    toGraphicsLayerCA(layer())->platformCALayer()->addAnimationForKey("FadeHighlightIn", platformAnimation.get());
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", platformAnimation.get());
 }
 
 void ServicesOverlayController::Highlight::fadeOut()
@@ -196,7 +196,7 @@ void ServicesOverlayController::Highlight::fadeOut()
     }];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
-    toGraphicsLayerCA(layer())->platformCALayer()->addAnimationForKey("FadeHighlightOut", platformAnimation.get());
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", platformAnimation.get());
     [CATransaction commit];
 }
 

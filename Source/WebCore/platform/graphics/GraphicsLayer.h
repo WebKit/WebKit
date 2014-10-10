@@ -39,6 +39,7 @@
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/TypeCasts.h>
 
 #if ENABLE(CSS_COMPOSITING)
 #include "GraphicsTypes.h"
@@ -604,10 +605,12 @@ protected:
     CustomBehavior m_customBehavior;
 };
 
-#define GRAPHICSLAYER_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::GraphicsLayer, value, value->predicate, value.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::GraphicsLayer& layer) { return layer.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.

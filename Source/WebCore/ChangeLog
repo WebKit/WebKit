@@ -1,5 +1,36 @@
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for GraphicsLayer subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137595
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for GraphicsLayer subclasses and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::Highlight):
+        (WebCore::ServicesOverlayController::Highlight::fadeIn):
+        (WebCore::ServicesOverlayController::Highlight::fadeOut):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::removeFromParent):
+        (WebCore::GraphicsLayerCA::setMaskLayer):
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        (WebCore::GraphicsLayerCA::replicatedLayerRoot):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::propagateLayerChangeToReplicas):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for RenderBoxModelObject
         https://bugs.webkit.org/show_bug.cgi?id=137587
 

@@ -1,3 +1,20 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for GraphicsLayer subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137595
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for GraphicsLayer subclasses and clean up the
+        surrounding code.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::layerForTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom):
+
 2014-10-10  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Fix debug build on EFL after r174584
