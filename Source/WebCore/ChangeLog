@@ -1,5 +1,18 @@
 2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Remove MainFrameScrollbarGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=137211
+
+        Reviewed by Philippe Normand.
+
+        This was only used by WebKit1.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/MainFrameScrollbarGtk.cpp: Removed.
+        * platform/gtk/MainFrameScrollbarGtk.h: Removed.
+
+2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove IntPointGtk.cpp and IntRectGtk.cpp
         https://bugs.webkit.org/show_bug.cgi?id=137209
 
