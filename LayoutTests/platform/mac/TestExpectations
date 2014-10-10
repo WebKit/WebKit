@@ -284,11 +284,6 @@ compositing/rtl/rtl-iframe-fixed-overflow.html [ Skip ]
 compositing/rtl/rtl-iframe-fixed.html [ Skip ]
 compositing/rtl/rtl-iframe-relative.html [ Skip ]
 
-# Only fail in WK1
-compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
-compositing/rtl/rtl-fixed-overflow.html [ Failure ]
-compositing/rtl/rtl-fixed.html [ Failure ]
-
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
