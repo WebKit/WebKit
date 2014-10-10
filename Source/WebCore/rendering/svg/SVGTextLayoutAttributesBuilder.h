@@ -45,7 +45,7 @@ public:
     bool buildLayoutAttributesForForSubtree(RenderSVGText&);
     void buildLayoutAttributesForTextRenderer(RenderSVGInlineText&);
 
-    void rebuildMetricsForTextRenderer(RenderSVGInlineText*);
+    void rebuildMetricsForTextRenderer(RenderSVGInlineText&);
 
     // Invoked whenever the underlying DOM tree changes, so that m_textPositions is rebuild.
     void clearTextPositioningElements() { m_textPositions.clear(); }

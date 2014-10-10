@@ -6297,13 +6297,13 @@ static bool hasPaintingNonLayerDescendants(const RenderElement& renderer, int de
         
         const RenderElement& renderElementChild = downcast<RenderElement>(child);
 
-        if (renderElementChild.isRenderLayerModelObject() && toRenderLayerModelObject(renderElementChild).hasSelfPaintingLayer())
+        if (is<RenderLayerModelObject>(renderElementChild) && downcast<RenderLayerModelObject>(renderElementChild).hasSelfPaintingLayer())
             continue;
 
         if (hasBoxDecorationsOrBackground(renderElementChild))
             return true;
         
-        if (renderElementChild.isRenderReplaced())
+        if (is<RenderReplaced>(renderElementChild))
             return true;
 
         if (hasPaintingNonLayerDescendants(renderElementChild, depth + 1))

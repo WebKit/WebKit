@@ -35,6 +35,7 @@
 #include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderIterator.h"
+#include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
@@ -127,15 +128,15 @@ static inline bool findPreviousAndNextAttributes(RenderElement* start, RenderSVG
     ASSERT(locateElement);
     // FIXME: Make this iterative.
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
-        if (child->isSVGInlineText()) {
-            RenderSVGInlineText* text = toRenderSVGInlineText(child);
-            if (locateElement != text) {
+        if (is<RenderSVGInlineText>(*child)) {
+            RenderSVGInlineText& text = downcast<RenderSVGInlineText>(*child);
+            if (locateElement != &text) {
                 if (stopAfterNext) {
-                    next = text->layoutAttributes();
+                    next = text.layoutAttributes();
                     return true;
                 }
 
-                previous = text->layoutAttributes();
+                previous = text.layoutAttributes();
                 continue;
             }
 
@@ -143,10 +144,10 @@ static inline bool findPreviousAndNextAttributes(RenderElement* start, RenderSVG
             continue;
         }
 
-        if (!child->isSVGInline())
+        if (!is<RenderSVGInline>(*child))
             continue;
 
-        if (findPreviousAndNextAttributes(toRenderElement(child), locateElement, stopAfterNext, previous, next))
+        if (findPreviousAndNextAttributes(downcast<RenderElement>(child), locateElement, stopAfterNext, previous, next))
             return true;
     }
 
@@ -296,8 +297,8 @@ void RenderSVGText::subtreeStyleDidChange(RenderSVGInlineText* text)
     // nor the layout attributes cached in the leaf #text renderers.
     FontCachePurgePreventer fontCachePurgePreventer;
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
-        if (descendant->isSVGInlineText())
-            m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(toRenderSVGInlineText(descendant));
+        if (is<RenderSVGInlineText>(*descendant))
+            m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
     }
 }
 
@@ -338,7 +339,7 @@ static inline void updateFontInAllDescendants(RenderObject* start, SVGTextLayout
         RenderSVGInlineText& text = toRenderSVGInlineText(*descendant);
         text.updateScaledFont();
         if (builder)
-            builder->rebuildMetricsForTextRenderer(&text);
+            builder->rebuildMetricsForTextRenderer(text);
     }
 }
 

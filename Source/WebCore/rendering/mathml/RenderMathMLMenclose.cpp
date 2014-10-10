@@ -54,7 +54,7 @@ void RenderMathMLMenclose::addChild(RenderObject* newChild, RenderObject* before
     
     if (newChild) {
         if (firstChild() && menclose->isRadical())
-            toRenderElement(firstChild())->addChild(newChild, beforeChild && beforeChild->parent() == firstChild() ? beforeChild : nullptr);
+            downcast<RenderElement>(*firstChild()).addChild(newChild, beforeChild && beforeChild->parent() == firstChild() ? beforeChild : nullptr);
         else
             RenderMathMLBlock::addChild(newChild, beforeChild);
     }

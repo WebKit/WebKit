@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGTextMetricsBuilder.h"
 
+#include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGTextRunRenderingContext.h"
@@ -91,16 +92,16 @@ void SVGTextMetricsBuilder::advanceComplexText()
     m_totalWidth = m_complexStartToCurrentMetrics.width();
 }
 
-void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlineText* text)
+void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlineText& text)
 {
-    m_text = text;
+    m_text = &text;
     m_textPosition = 0;
     m_currentMetrics = SVGTextMetrics();
     m_complexStartToCurrentMetrics = SVGTextMetrics();
     m_totalWidth = 0;
 
-    const Font& scaledFont = text->scaledFont();
-    m_run = SVGTextMetrics::constructTextRun(*text);
+    const Font& scaledFont = text.scaledFont();
+    m_run = SVGTextMetrics::constructTextRun(text);
     m_isComplexText = scaledFont.codePath(m_run) == Font::Complex;
 
     if (m_isComplexText)
@@ -126,11 +127,9 @@ struct MeasureTextData {
     unsigned skippedCharacters;
 };
 
-void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, MeasureTextData* data)
+void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, MeasureTextData* data)
 {
-    ASSERT(text);
-
-    SVGTextLayoutAttributes* attributes = text->layoutAttributes();
+    SVGTextLayoutAttributes* attributes = text.layoutAttributes();
     Vector<SVGTextMetrics>* textMetricsValues = &attributes->textMetricsValues();
     if (data->processRenderer) {
         if (data->allCharactersMap)
@@ -140,7 +139,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
     }
 
     initializeMeasurementWithTextRenderer(text);
-    bool preserveWhiteSpace = text->style().whiteSpace() == PRE;
+    bool preserveWhiteSpace = text.style().whiteSpace() == PRE;
     int surrogatePairCharacters = 0;
 
     while (advance()) {
@@ -178,9 +177,9 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
 void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* stopAtLeaf, MeasureTextData* data)
 {
     for (auto child = start.firstChild(); child; child = child->nextSibling()) {
-        if (child->isSVGInlineText()) {
-            RenderSVGInlineText* text = toRenderSVGInlineText(child);
-            if (stopAtLeaf && stopAtLeaf != text) {
+        if (is<RenderSVGInlineText>(*child)) {
+            RenderSVGInlineText& text = downcast<RenderSVGInlineText>(*child);
+            if (stopAtLeaf && stopAtLeaf != &text) {
                 data->processRenderer = false;
                 measureTextRenderer(text, data);
                 continue;
@@ -194,30 +193,27 @@ void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* 
             continue;
         }
 
-        if (!child->isSVGInline())
+        if (!is<RenderSVGInline>(*child))
             continue;
 
-        walkTree(toRenderElement(*child), stopAtLeaf, data);
+        walkTree(downcast<RenderSVGInline>(*child), stopAtLeaf, data);
     }
 }
 
-void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text)
+void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text)
 {
-    ASSERT(text);
-
-    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(*text);
+    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
     if (!textRoot)
         return;
 
-    MeasureTextData data(0);
-    walkTree(*textRoot, text, &data);
+    MeasureTextData data(nullptr);
+    walkTree(*textRoot, &text, &data);
 }
 
-void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText* textRoot, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)
+void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText& textRoot, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)
 {
-    ASSERT(textRoot);
     MeasureTextData data(&allCharactersMap);
-    walkTree(*textRoot, stopAtLeaf, &data);
+    walkTree(textRoot, stopAtLeaf, &data);
 }
 
 }

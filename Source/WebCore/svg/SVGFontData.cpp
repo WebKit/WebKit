@@ -143,7 +143,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
     ASSERT(associatedFontElement);
 
-    RenderObject* renderObject = 0;
+    RenderObject* renderObject = nullptr;
     if (TextRun::RenderingContext* renderingContext = run.renderingContext())
         renderObject = &static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
 
@@ -152,11 +152,10 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     Vector<String> altGlyphNames;
 
     if (renderObject) {
-        RenderElement* parentRenderer = renderObject->isRenderElement() ? toRenderElement(renderObject) : renderObject->parent();
-        ASSERT(parentRenderer);
+        RenderElement& parentRenderer = is<RenderElement>(*renderObject) ? downcast<RenderElement>(*renderObject) : *renderObject->parent();
 
-        isVerticalText = parentRenderer->style().svgStyle().isVerticalWritingMode();
-        if (Element* parentRendererElement = parentRenderer->element()) {
+        isVerticalText = parentRenderer.style().svgStyle().isVerticalWritingMode();
+        if (Element* parentRendererElement = parentRenderer.element()) {
             language = parentRendererElement->getAttribute(XMLNames::langAttr);
 
             if (is<SVGAltGlyphElement>(*parentRendererElement)) {

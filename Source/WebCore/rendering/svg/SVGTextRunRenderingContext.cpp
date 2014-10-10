@@ -246,14 +246,14 @@ class DummyGlyphToPathTranslator final : public GlyphToPathTranslator {
 
 std::unique_ptr<GlyphToPathTranslator> SVGTextRunRenderingContext::createGlyphToPathTranslator(const SimpleFontData& fontData, const TextRun* textRun, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
-    SVGFontElement* fontElement = 0;
-    SVGFontFaceElement* fontFaceElement = 0;
+    SVGFontElement* fontElement = nullptr;
+    SVGFontFaceElement* fontFaceElement = nullptr;
 
     const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(&fontData, fontFaceElement, fontElement);
     if (!fontElement || !fontFaceElement)
         return std::make_unique<DummyGlyphToPathTranslator>();
 
-    auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+    auto& elementRenderer = is<RenderElement>(renderer()) ? downcast<RenderElement>(renderer()) : *renderer().parent();
     RenderStyle& style = elementRenderer.style();
     bool isVerticalText = style.svgStyle().isVerticalWritingMode();
 
@@ -272,7 +272,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
         activePaintingResource = solidPaintingResource;
     }
 
-    auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+    auto& elementRenderer = is<RenderElement>(renderer()) ? downcast<RenderElement>(renderer()) : *renderer().parent();
     RenderStyle& style = elementRenderer.style();
 
     ASSERT(activePaintingResource);
@@ -282,9 +282,9 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
         Path glyphPath = translator->path();
         if (activePaintingResource->applyResource(elementRenderer, style, context, resourceMode)) {
             float strokeThickness = context->strokeThickness();
-            if (renderer().isSVGInlineText())
-                context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderer()).scalingFactor());
-            activePaintingResource->postApplyResource(elementRenderer, context, resourceMode, &glyphPath, 0);
+            if (is<RenderSVGInlineText>(renderer()))
+                context->setStrokeThickness(strokeThickness * downcast<RenderSVGInlineText>(renderer()).scalingFactor());
+            activePaintingResource->postApplyResource(elementRenderer, context, resourceMode, &glyphPath, nullptr);
             context->setStrokeThickness(strokeThickness);
         }
     }
@@ -314,9 +314,9 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
     // Characters enclosed by an <altGlyph> element, may not be registered in the GlyphPage.
     const SimpleFontData* originalFontData = glyphData.fontData;
     if (glyphData.fontData && !glyphData.fontData->isSVGFont()) {
-        auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+        auto& elementRenderer = is<RenderElement>(renderer()) ? downcast<RenderElement>(renderer()) : *renderer().parent();
         if (Element* parentRendererElement = elementRenderer.element()) {
-            if (parentRendererElement->hasTagName(SVGNames::altGlyphTag))
+            if (is<SVGAltGlyphElement>(*parentRendererElement))
                 glyphData.fontData = primaryFont;
         }
     }
@@ -326,8 +326,8 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
         if (!fontData->isSVGFont())
             return glyphData;
 
-        SVGFontElement* fontElement = 0;
-        SVGFontFaceElement* fontFaceElement = 0;
+        SVGFontElement* fontElement = nullptr;
+        SVGFontFaceElement* fontFaceElement = nullptr;
 
         const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(fontData, fontFaceElement, fontElement);
         if (!fontElement || !fontFaceElement)
@@ -347,7 +347,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
     // No suitable glyph found that is compatible with the requirments (same language, arabic-form, orientation etc.)
     // Even though our GlyphPage contains an entry for eg. glyph "a", it's not compatible. So we have to temporarily
     // remove the glyph data information from the GlyphPage, and retry the lookup, which handles font fallbacks correctly.
-    page->setGlyphDataForCharacter(character, 0, 0);
+    page->setGlyphDataForCharacter(character, 0, nullptr);
 
     // Assure that the font fallback glyph selection worked, aka. the fallbackGlyphData font data is not the same as before.
     GlyphData fallbackGlyphData = font.glyphDataForCharacter(character, mirror);

@@ -214,22 +214,22 @@ static bool isEmptyInline(const RenderInline& renderer)
 template <class Observer>
 static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
 {
-    RenderObject* next = 0;
+    RenderObject* next = nullptr;
     // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
     bool oldEndOfInline = endOfInlinePtr ? *endOfInlinePtr : false;
     bool endOfInline = false;
 
     while (current) {
-        next = 0;
+        next = nullptr;
         if (!oldEndOfInline && !isIteratorTarget(current)) {
-            next = toRenderElement(current)->firstChild();
+            next = downcast<RenderElement>(*current).firstChild();
             notifyObserverEnteredObject(observer, next);
         }
 
         // We hit this when either current has no children, or when current is not a renderer we care about.
         if (!next) {
             // If it is a renderer we care about, and we're doing our inline-walk, return it.
-            if (emptyInlineBehavior == IncludeEmptyInlines && !oldEndOfInline && current->isRenderInline()) {
+            if (emptyInlineBehavior == IncludeEmptyInlines && !oldEndOfInline && is<RenderInline>(*current)) {
                 next = current;
                 endOfInline = true;
                 break;
@@ -245,7 +245,7 @@ static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* cu
                 }
 
                 current = current->parent();
-                if (emptyInlineBehavior == IncludeEmptyInlines && current && current != &root && current->isRenderInline()) {
+                if (emptyInlineBehavior == IncludeEmptyInlines && current && current != &root && is<RenderInline>(*current)) {
                     next = current;
                     endOfInline = true;
                     break;
@@ -257,7 +257,7 @@ static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* cu
             break;
 
         if (isIteratorTarget(next)
-            || (next->isRenderInline() && (emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(toRenderInline(*next)))))
+            || (is<RenderInline>(*next) && (emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(downcast<RenderInline>(*next)))))
             break;
         current = next;
     }

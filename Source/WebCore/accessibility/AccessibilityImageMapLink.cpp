@@ -141,7 +141,7 @@ RenderElement* AccessibilityImageMapLink::imageMapLinkRenderer() const
 
     RenderElement* renderer = nullptr;
     if (m_parent && m_parent->isAccessibilityRenderObject())
-        renderer = toRenderElement(toAccessibilityRenderObject(m_parent)->renderer());
+        renderer = downcast<RenderElement>(toAccessibilityRenderObject(m_parent)->renderer());
     else
         renderer = m_mapElement->renderer();
     

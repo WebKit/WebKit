@@ -47,12 +47,15 @@
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderButton.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderListMarker.h"
+#include "RenderMenuList.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
@@ -3191,7 +3194,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
     // Drill into inlines looking for our first text descendant.
     firstLetter = firstLetterContainer->firstChild();
     while (firstLetter) {
-        if (firstLetter->isText()) {
+        if (is<RenderText>(*firstLetter)) {
             if (firstLetter == skipObject) {
                 firstLetter = firstLetter->nextSibling();
                 continue;
@@ -3200,8 +3203,8 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
             break;
         }
 
-        RenderElement& current = toRenderElement(*firstLetter);
-        if (current.isListMarker())
+        RenderElement& current = downcast<RenderElement>(*firstLetter);
+        if (is<RenderListMarker>(current))
             firstLetter = current.nextSibling();
         else if (current.isFloatingOrOutOfFlowPositioned()) {
             if (current.style().styleType() == FIRST_LETTER) {
@@ -3209,7 +3212,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isReplaced() || current.isRenderButton() || current.isMenuList())
+        } else if (current.isReplaced() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
         else if (current.style().hasPseudoStyle(FIRST_LETTER) && current.canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style

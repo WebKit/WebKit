@@ -1,3 +1,17 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=137622
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() for RenderElement and clean up the
+        surrounding code.
+
+        * WebFrame.cpp:
+        (WebFrame::pauseAnimation):
+        (WebFrame::pauseTransition):
+
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Widget subclasses

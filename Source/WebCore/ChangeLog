@@ -1,3 +1,117 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=137622
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() for RenderElement and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::imageMapLinkRenderer):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData):
+        * dom/Position.cpp:
+        (WebCore::isNonTextLeafChild):
+        (WebCore::searchAheadForBetterMatch):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didRecalcStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        * editing/htmlediting.cpp:
+        (WebCore::isEmptyTableCell):
+        * rendering/InlineIterator.h:
+        (WebCore::bidiNextShared):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getFirstLetter):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layout):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::rendererRemovedFromTree):
+        (WebCore::RenderCounter::rendererSubtreeAttached):
+        (showCounterRendererTree):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::removeChildInternal):
+        (WebCore::RenderElement::findNextLayer):
+        (WebCore::RenderElement::layout):
+        * rendering/RenderElement.h:
+        (WebCore::RenderObject::isRenderLayerModelObject):
+        (WebCore::RenderObject::isBoxModelObject):
+        (WebCore::RenderObject::isRenderBlock):
+        (WebCore::RenderObject::isRenderBlockFlow):
+        (WebCore::RenderObject::isRenderReplaced):
+        (WebCore::RenderObject::isRenderInline):
+        (WebCore::RenderObject::style):
+        (WebCore::RenderObject::firstLineStyle):
+        (WebCore::ContainerNode::renderer):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeChildrenStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::setObjectStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::clearNeedsLayout):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::collectAnnotatedRegions):
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::initializeLayoutParameters):
+        (WebCore::RenderVTTCue::repositionGenericCue):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::addChild):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::addChild):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::rebuildTokenContent):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::addChild):
+        (WebCore::RenderMathMLRoot::layout):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::addChild):
+        (WebCore::RenderMathMLToken::updateTokenContent):
+        (WebCore::RenderMathMLToken::updateStyle):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::findPreviousAndNextAttributes):
+        (WebCore::RenderSVGText::subtreeStyleDidChange):
+        (WebCore::updateFontInAllDescendants):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientWasAddedToTree):
+        (WebCore::SVGResourcesCache::clientWillBeRemovedFromTree):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree):
+        (WebCore::SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer):
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        (WebCore::SVGTextMetricsBuilder::walkTree):
+        (WebCore::SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes):
+        * rendering/svg/SVGTextMetricsBuilder.h:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::createGlyphToPathTranslator):
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs):
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+
 2014-10-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Update :nth-child(An+B of selector-list) to the latest specification

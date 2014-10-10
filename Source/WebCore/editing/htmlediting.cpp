@@ -47,6 +47,7 @@
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
+#include "RenderTableCell.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -849,11 +850,11 @@ bool isEmptyTableCell(const Node* node)
         if (!renderer)
             return false;
     }
-    if (!renderer->isTableCell())
+    if (!is<RenderTableCell>(*renderer))
         return false;
 
     // Check that the table cell contains no child renderers except for perhaps a single <br>.
-    RenderObject* childRenderer = toRenderElement(renderer)->firstChild();
+    RenderObject* childRenderer = downcast<RenderTableCell>(*renderer).firstChild();
     if (!childRenderer)
         return true;
     if (!childRenderer->isBR())

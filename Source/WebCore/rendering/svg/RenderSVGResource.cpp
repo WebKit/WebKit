@@ -185,17 +185,17 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
     if (needsLayout && !object.documentBeingDestroyed())
         object.setNeedsLayout();
 
-    if (object.isRenderElement())
-        removeFromCacheAndInvalidateDependencies(toRenderElement(object), needsLayout);
+    if (is<RenderElement>(object))
+        removeFromCacheAndInvalidateDependencies(downcast<RenderElement>(object), needsLayout);
 
     // Invalidate resources in ancestor chain, if needed.
     auto current = object.parent();
     while (current) {
         removeFromCacheAndInvalidateDependencies(*current, needsLayout);
 
-        if (current->isSVGResourceContainer()) {
+        if (is<RenderSVGResourceContainer>(*current)) {
             // This will process the rest of the ancestors.
-            toRenderSVGResourceContainer(*current).removeAllClientsFromCache();
+            downcast<RenderSVGResourceContainer>(*current).removeAllClientsFromCache();
             break;
         }
 

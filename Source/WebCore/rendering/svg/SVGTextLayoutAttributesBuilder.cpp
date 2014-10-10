@@ -51,7 +51,7 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer(Render
         buildCharacterDataMap(*textRoot);
     }
 
-    m_metricsBuilder.buildMetricsAndLayoutAttributes(textRoot, &text, m_characterDataMap);
+    m_metricsBuilder.buildMetricsAndLayoutAttributes(*textRoot, &text, m_characterDataMap);
 }
 
 bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree(RenderSVGText& textRoot)
@@ -68,13 +68,12 @@ bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree(RenderSV
         return false;
 
     buildCharacterDataMap(textRoot);
-    m_metricsBuilder.buildMetricsAndLayoutAttributes(&textRoot, nullptr, m_characterDataMap);
+    m_metricsBuilder.buildMetricsAndLayoutAttributes(textRoot, nullptr, m_characterDataMap);
     return true;
 }
 
-void SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer(RenderSVGInlineText* text)
+void SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer(RenderSVGInlineText& text)
 {
-    ASSERT(text);
     m_metricsBuilder.measureTextRenderer(text);
 }
 

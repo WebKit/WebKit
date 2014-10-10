@@ -973,7 +973,7 @@ PassRefPtr<Node> CompositeEditCommand::insertNewDefaultParagraphElementAt(const 
 PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)
 {
     if (pos.isNull())
-        return 0;
+        return nullptr;
     
     document().updateLayoutIgnorePendingStylesheets();
     
@@ -991,7 +991,7 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     // If there are no VisiblePositions in the same block as pos then 
     // upstreamStart will be outside the paragraph
     if (comparePositions(pos, upstreamStart) < 0)
-        return 0;
+        return nullptr;
 
     // Perform some checks to see if we need to perform work in this function.
     if (isBlock(upstreamStart.deprecatedNode())) {
@@ -1000,22 +1000,22 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
         if (upstreamStart.deprecatedNode() == editableRootForPosition(upstreamStart)) {
             // If the block is the root editable element and it contains no visible content, create a new
             // block but don't try and move content into it, since there's nothing for moveParagraphs to move.
-            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(toRenderElement(*upstreamStart.deprecatedNode()->renderer())))
+            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*upstreamStart.deprecatedNode()->renderer())))
                 return insertNewDefaultParagraphElementAt(upstreamStart);
         } else if (isBlock(upstreamEnd.deprecatedNode())) {
             if (!upstreamEnd.deprecatedNode()->isDescendantOf(upstreamStart.deprecatedNode())) {
                 // If the paragraph end is a descendant of paragraph start, then we need to run
                 // the rest of this function. If not, we can bail here.
-                return 0;
+                return nullptr;
             }
         } else if (enclosingBlock(upstreamEnd.deprecatedNode()) != upstreamStart.deprecatedNode()) {
             // The visibleEnd.  It must be an ancestor of the paragraph start.
             // We can bail as we have a full block to work with.
             ASSERT(upstreamStart.deprecatedNode()->isDescendantOf(enclosingBlock(upstreamEnd.deprecatedNode())));
-            return 0;
+            return nullptr;
         } else if (isEndOfEditableOrNonEditableContent(visibleEnd)) {
             // At the end of the editable region. We can bail here as well.
-            return 0;
+            return nullptr;
         }
     }
 

@@ -107,13 +107,13 @@ void PseudoElement::didRecalcStyle(Style::Change)
 
     // The renderers inside pseudo elements are anonymous so they don't get notified of recalcStyle and must have
     // the style propagated downward manually similar to RenderObject::propagateStyleToAnonymousChildren.
-    RenderObject* renderer = this->renderer();
-    for (RenderObject* child = renderer->nextInPreOrder(renderer); child; child = child->nextInPreOrder(renderer)) {
+    RenderElement& renderer = *this->renderer();
+    for (RenderObject* child = renderer.nextInPreOrder(&renderer); child; child = child->nextInPreOrder(&renderer)) {
         // We only manage the style for the generated content which must be images or text.
-        if (!child->isRenderImage() && !child->isQuote())
+        if (!is<RenderImage>(*child) && !is<RenderQuote>(*child))
             continue;
-        PassRef<RenderStyle> createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(renderer->style());
-        toRenderElement(*child).setStyle(WTF::move(createdStyle));
+        PassRef<RenderStyle> createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(renderer.style());
+        downcast<RenderElement>(*child).setStyle(WTF::move(createdStyle));
     }
 }
 

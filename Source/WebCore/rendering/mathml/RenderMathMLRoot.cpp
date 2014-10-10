@@ -158,18 +158,18 @@ void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChil
     auto index = indexWrapper();
     RenderElement* actualParent;
     RenderElement* actualBeforeChild;
-    if (isRenderMathMLSquareRoot()) {
+    if (is<RenderMathMLSquareRoot>(*this)) {
         // For square root, we always insert the child into the base wrapper.
         actualParent = base;
         if (beforeChild && beforeChild->parent() == base)
-            actualBeforeChild = toRenderElement(beforeChild);
+            actualBeforeChild = downcast<RenderElement>(beforeChild);
         else
             actualBeforeChild = nullptr;
     } else {
         // For mroot, we insert the child into the parent of beforeChild, or at the end of the index. The wrapper structure is reorganize below.
         actualParent = beforeChild ? beforeChild->parent() : nullptr;
         if (actualParent == base || actualParent == index)
-            actualBeforeChild = toRenderElement(beforeChild);
+            actualBeforeChild = downcast<RenderElement>(beforeChild);
         else {
             actualParent = index;
             actualBeforeChild = nullptr;
@@ -278,7 +278,7 @@ void RenderMathMLRoot::layout()
     // We layout the children.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->needsLayout())
-            toRenderElement(child)->layout();
+            downcast<RenderElement>(*child).layout();
     }
 
     auto radical = radicalOperator();

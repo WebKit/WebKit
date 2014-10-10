@@ -1095,13 +1095,11 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, InlineBox*& inlineBox, 
     getInlineBoxAndOffset(affinity, primaryDirection(), inlineBox, caretOffset);
 }
 
-static bool isNonTextLeafChild(RenderObject* object)
+static bool isNonTextLeafChild(RenderObject& object)
 {
-    if (object->isText())
+    if (is<RenderText>(object))
         return false;
-    if (toRenderElement(object)->firstChild())
-        return false;
-    return true;
+    return !downcast<RenderElement>(object).firstChild();
 }
 
 static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
@@ -1113,7 +1111,7 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
             return nullptr;
         if (next->isBR())
             return nullptr;
-        if (isNonTextLeafChild(next))
+        if (isNonTextLeafChild(*next))
             return nullptr;
         if (is<RenderText>(*next)) {
             InlineTextBox* match = nullptr;

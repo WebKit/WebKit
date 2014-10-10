@@ -592,8 +592,8 @@ void RenderObject::clearNeedsLayout()
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNormalChildNeedsLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
-    if (isRenderElement())
-        toRenderElement(this)->setAncestorLineBoxDirty(false);
+    if (is<RenderElement>(*this))
+        downcast<RenderElement>(*this).setAncestorLineBoxDirty(false);
 #ifndef NDEBUG
     checkBlockPositionedObjectsNeedLayout();
 #endif
@@ -2025,7 +2025,7 @@ void RenderObject::willBeDestroyed()
 
     removeFromParent();
 
-    ASSERT(documentBeingDestroyed() || !isRenderElement() || !view().frameView().hasSlowRepaintObject(toRenderElement(this)));
+    ASSERT(documentBeingDestroyed() || !is<RenderElement>(*this) || !view().frameView().hasSlowRepaintObject(downcast<RenderElement>(this)));
 
     // The remove() call above may invoke axObjectCache()->childrenChanged() on the parent, which may require the AX render
     // object for this renderer. So we remove the AX render object now, after the renderer is removed.
@@ -2356,12 +2356,12 @@ void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions
 {
     // RenderTexts don't have their own style, they just use their parent's style,
     // so we don't want to include them.
-    if (isText())
+    if (is<RenderText>(*this))
         return;
 
     addAnnotatedRegions(regions);
-    for (RenderObject* curr = toRenderElement(this)->firstChild(); curr; curr = curr->nextSibling())
-        curr->collectAnnotatedRegions(regions);
+    for (RenderObject* current = downcast<RenderElement>(*this).firstChild(); current; current = current->nextSibling())
+        current->collectAnnotatedRegions(regions);
 }
 #endif
 

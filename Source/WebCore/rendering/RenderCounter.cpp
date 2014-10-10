@@ -496,8 +496,8 @@ void RenderCounter::rendererRemovedFromTree(RenderElement& renderer)
     if (!currentRenderer)
         currentRenderer = &renderer;
     while (true) {
-        if (currentRenderer->isRenderElement())
-            destroyCounterNodes(toRenderElement(*currentRenderer));
+        if (is<RenderElement>(*currentRenderer))
+            destroyCounterNodes(downcast<RenderElement>(*currentRenderer));
         if (currentRenderer == &renderer)
             break;
         currentRenderer = currentRenderer->previousInPreOrder();
@@ -551,8 +551,8 @@ void RenderCounter::rendererSubtreeAttached(RenderElement& renderer)
     if (element && !element->renderer())
         return; // No need to update if the parent is not attached yet
     for (RenderObject* descendant = &renderer; descendant; descendant = descendant->nextInPreOrder(&renderer)) {
-        if (descendant->isRenderElement())
-            updateCounters(toRenderElement(*descendant));
+        if (is<RenderElement>(*descendant))
+            updateCounters(downcast<RenderElement>(*descendant));
     }
 }
 
@@ -613,15 +613,15 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
 
     AtomicString identifier(counterName);
     for (const WebCore::RenderObject* current = root; current; current = current->nextInPreOrder()) {
-        if (!current->isRenderElement())
+        if (!is<WebCore::RenderElement>(*current))
             continue;
         fprintf(stderr, "%c", (current == renderer) ? '*' : ' ');
         for (const WebCore::RenderObject* parent = current; parent && parent != root; parent = parent->parent())
             fprintf(stderr, "    ");
         fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
-            current->nextSibling(), toRenderElement(current)->hasCounterNodeMap() ?
-            counterName ? WebCore::counterMaps().get(toRenderElement(current))->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
+            current->nextSibling(), downcast<WebCore::RenderElement>(*current).hasCounterNodeMap() ?
+            counterName ? WebCore::counterMaps().get(downcast<WebCore::RenderElement>(current))->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
     }
     fflush(stderr);
 }

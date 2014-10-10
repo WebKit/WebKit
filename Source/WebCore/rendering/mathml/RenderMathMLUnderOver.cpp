@@ -85,7 +85,7 @@ void RenderMathMLUnderOver::layout()
                 }
             }
 
-            toRenderElement(child)->layout();
+            downcast<RenderElement>(*child).layout();
         }
 
         // Skipping the embellished op does not work for nested structures like

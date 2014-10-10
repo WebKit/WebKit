@@ -569,8 +569,8 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
     if (!documentBeingDestroyed()) {
         if (notifyChildren == NotifyChildren)
             newChild->insertedIntoTree();
-        if (newChild->isRenderElement())
-            RenderCounter::rendererSubtreeAttached(toRenderElement(*newChild));
+        if (is<RenderElement>(*newChild))
+            RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
@@ -638,8 +638,8 @@ RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyC
 
     // rendererRemovedFromTree walks the whole subtree. We can improve performance
     // by skipping this step when destroying the entire tree.
-    if (!documentBeingDestroyed() && oldChild.isRenderElement())
-        RenderCounter::rendererRemovedFromTree(toRenderElement(oldChild));
+    if (!documentBeingDestroyed() && is<RenderElement>(oldChild))
+        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(oldChild));
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
@@ -714,7 +714,7 @@ RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject
         return nullptr;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? toRenderLayerModelObject(this)->layer() : nullptr;
+    RenderLayer* ourLayer = hasLayer() ? downcast<RenderLayerModelObject>(*this).layer() : nullptr;
     if (ourLayer && ourLayer->parent() == parentLayer)
         return ourLayer;
 
@@ -722,9 +722,9 @@ RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject
     // into our siblings trying to find the next layer whose parent is the desired parent.
     if (!ourLayer || ourLayer == parentLayer) {
         for (RenderObject* child = startPoint ? startPoint->nextSibling() : firstChild(); child; child = child->nextSibling()) {
-            if (!child->isRenderElement())
+            if (!is<RenderElement>(*child))
                 continue;
-            RenderLayer* nextLayer = toRenderElement(child)->findNextLayer(parentLayer, nullptr, false);
+            RenderLayer* nextLayer = downcast<RenderElement>(*child).findNextLayer(parentLayer, nullptr, false);
             if (nextLayer)
                 return nextLayer;
         }
@@ -1109,7 +1109,7 @@ void RenderElement::layout()
     RenderObject* child = firstChild();
     while (child) {
         if (child->needsLayout())
-            toRenderElement(child)->layout();
+            downcast<RenderElement>(*child).layout();
         ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }

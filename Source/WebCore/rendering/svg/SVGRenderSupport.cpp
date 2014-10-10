@@ -246,21 +246,22 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (child->isSVGText())
-                toRenderSVGText(child)->setNeedsTextMetricsUpdate();
+            if (is<RenderSVGText>(*child))
+                downcast<RenderSVGText>(*child).setNeedsTextMetricsUpdate();
             needsLayout = true;
         }
 
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
-            if (SVGElement* element = child->node()->isSVGElement() ? downcast<SVGElement>(child->node()) : nullptr) {
+            if (SVGElement* element = is<SVGElement>(*child->node()) ? downcast<SVGElement>(child->node()) : nullptr) {
                 if (element->hasRelativeLengths()) {
                     // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
-                    if (child->isSVGShape())
-                        toRenderSVGShape(child)->setNeedsShapeUpdate();
-                    else if (child->isSVGText()) {
-                        toRenderSVGText(child)->setNeedsTextMetricsUpdate();
-                        toRenderSVGText(child)->setNeedsPositioningValuesUpdate();
+                    if (is<RenderSVGShape>(*child))
+                        downcast<RenderSVGShape>(*child).setNeedsShapeUpdate();
+                    else if (is<RenderSVGText>(*child)) {
+                        RenderSVGText& svgText = downcast<RenderSVGText>(*child);
+                        svgText.setNeedsTextMetricsUpdate();
+                        svgText.setNeedsPositioningValuesUpdate();
                     }
 
                     needsLayout = true;
@@ -272,15 +273,15 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
             child->setNeedsLayout(MarkOnlyThis);
 
         if (child->needsLayout()) {
-            toRenderElement(child)->layout();
+            downcast<RenderElement>(*child).layout();
             // Renderers are responsible for repainting themselves when changing, except
             // for the initial paint to avoid potential double-painting caused by non-sensical "old" bounds.
             // We could handle this in the individual objects, but for now it's easier to have
             // parent containers call repaint().  (RenderBlock::layout* has similar logic.)
             if (!childEverHadLayout)
                 child->repaint();
-        } else if (layoutSizeChanged && child->isRenderElement())
-            elementsThatDidNotReceiveLayout.add(toRenderElement(child));
+        } else if (layoutSizeChanged && is<RenderElement>(*child))
+            elementsThatDidNotReceiveLayout.add(downcast<RenderElement>(child));
 
         ASSERT(!child->needsLayout());
     }

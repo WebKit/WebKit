@@ -135,7 +135,7 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
 
     if (!rendererCanHaveResources(renderer))
         return;
-    RenderElement& elementRenderer = toRenderElement(renderer);
+    RenderElement& elementRenderer = downcast<RenderElement>(renderer);
     resourcesCacheFromRenderer(elementRenderer).addResourcesFromRenderer(elementRenderer, elementRenderer.style());
 }
 
@@ -148,7 +148,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 
     if (!rendererCanHaveResources(renderer))
         return;
-    RenderElement& elementRenderer = toRenderElement(renderer);
+    RenderElement& elementRenderer = downcast<RenderElement>(renderer);
     resourcesCacheFromRenderer(elementRenderer).removeResourcesFromRenderer(elementRenderer);
 }
 

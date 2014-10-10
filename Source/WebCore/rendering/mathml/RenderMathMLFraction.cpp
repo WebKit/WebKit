@@ -100,9 +100,9 @@ void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* /* before
     }
     
     if (firstChild()->isEmpty())
-        toRenderElement(firstChild())->addChild(child);
+        downcast<RenderElement>(*firstChild()).addChild(child);
     else
-        toRenderElement(lastChild())->addChild(child);
+        downcast<RenderElement>(*lastChild()).addChild(child);
     
     updateFromElement();
 }

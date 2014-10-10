@@ -1181,7 +1181,7 @@ HRESULT WebFrame::pauseAnimation(BSTR animationName, IDOMNode* node, double seco
     if (!domNode)
         return E_FAIL;
 
-    *animationWasRunning = frame->animation().pauseAnimationAtTime(toRenderElement(domNode->node()->renderer()), String(animationName, SysStringLen(animationName)), secondsFromNow);
+    *animationWasRunning = frame->animation().pauseAnimationAtTime(downcast<RenderElement>(domNode->node()->renderer()), String(animationName, SysStringLen(animationName)), secondsFromNow);
     return S_OK;
 }
 
@@ -1200,7 +1200,7 @@ HRESULT WebFrame::pauseTransition(BSTR propertyName, IDOMNode* node, double seco
     if (!domNode)
         return E_FAIL;
 
-    *transitionWasRunning = frame->animation().pauseTransitionAtTime(toRenderElement(domNode->node()->renderer()), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
+    *transitionWasRunning = frame->animation().pauseTransitionAtTime(downcast<RenderElement>(domNode->node()->renderer()), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
     return S_OK;
 }
 

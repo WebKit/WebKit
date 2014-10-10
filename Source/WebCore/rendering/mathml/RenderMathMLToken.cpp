@@ -51,7 +51,7 @@ RenderMathMLToken::RenderMathMLToken(Document& document, PassRef<RenderStyle> st
 void RenderMathMLToken::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     createWrapperIfNeeded();
-    toRenderElement(firstChild())->addChild(newChild, beforeChild);
+    downcast<RenderElement>(*firstChild()).addChild(newChild, beforeChild);
 }
 
 void RenderMathMLToken::createWrapperIfNeeded()
@@ -69,8 +69,8 @@ void RenderMathMLToken::updateTokenContent()
         // The renderers corresponding to the children of the token element are wrapped inside an anonymous RenderMathMLBlock.
         // When one of these renderers is a RenderElement, we handle the RenderMathMLToken differently.
         // For some reason, an additional anonymous RenderBlock is created as a child of the RenderMathMLToken and the renderers are actually inserted into that RenderBlock so we need to dig down one additional level here.
-        const auto& wrapper = toRenderElement(firstChild());
-        if (const auto& block = toRenderElement(wrapper->firstChild()))
+        const auto& wrapper = downcast<RenderElement>(firstChild());
+        if (const auto& block = downcast<RenderElement>(wrapper->firstChild()))
             m_containsElement = childrenOfType<RenderElement>(*block).first();
         updateStyle();
     }
@@ -81,7 +81,7 @@ void RenderMathMLToken::updateStyle()
 {
     const auto& tokenElement = element();
 
-    const auto& wrapper = toRenderElement(firstChild());
+    const auto& wrapper = downcast<RenderElement>(firstChild());
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
 
     if (tokenElement.hasTagName(MathMLNames::miTag)) {
