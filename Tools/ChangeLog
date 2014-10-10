@@ -1,3 +1,15 @@
+2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not generate webkit2gtk-tests-resources.gresource unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=137391
+
+        Reviewed by Martin Robinson.
+
+        Add a custom command to only re-generate
+        webkit2gtk-tests-resources.gresource when any of its dependencies changes.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+
 2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove IntPointGtk.cpp and IntRectGtk.cpp
