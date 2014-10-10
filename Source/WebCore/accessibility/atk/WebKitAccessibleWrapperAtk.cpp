@@ -662,8 +662,10 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case RadioGroupRole:
     case TabPanelRole:
         return ATK_ROLE_PANEL;
-    case RowHeaderRole: // Row headers are cells after all.
-    case ColumnHeaderRole: // Column headers are cells after all.
+    case RowHeaderRole:
+        return ATK_ROLE_ROW_HEADER;
+    case ColumnHeaderRole:
+        return ATK_ROLE_COLUMN_HEADER;
     case CellRole:
         return coreObject->inheritsPresentationalRole() ? ATK_ROLE_SECTION : ATK_ROLE_TABLE_CELL;
     case LinkRole:
@@ -1175,7 +1177,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAITable;
 
 #if ATK_CHECK_VERSION(2,11,90)
-    if (role == CellRole)
+    if (role == CellRole || role == ColumnHeaderRole || role == RowHeaderRole)
         interfaceMask |= 1 << WAITableCell;
 #endif
 

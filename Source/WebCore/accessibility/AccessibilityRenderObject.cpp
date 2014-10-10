@@ -2551,10 +2551,22 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
         return AnnotationRole;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     // Gtk ATs expect all tables, data and layout, to be exposed as tables.
-    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
+    if (node && (node->hasTagName(tdTag)))
         return CellRole;
+
+    if (node && (node->hasTagName(thTag))) {
+        for (Node* parentNode = node->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
+            if (parentNode->hasTagName(theadTag))
+                return ColumnHeaderRole;
+            if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag))
+                return RowHeaderRole;
+            if (parentNode->hasTagName(tableTag))
+                return CellRole;
+        }
+        return CellRole;
+    }
 
     if (node && node->hasTagName(trTag))
         return RowRole;

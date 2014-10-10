@@ -1,3 +1,29 @@
+2014-10-10  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Changing the mapping of ARIA rowheader and columnheader into respective ATK roles.
+        https://bugs.webkit.org/show_bug.cgi?id=136150
+
+        Reviewed by Chris Fleizach.
+
+        Minor changes in the roles-exposed test to check the mapping of rowheader and columnheader.
+        As a result of changes in the code test also shows the changes for the <th> element.
+        Changes expectations so that they cover propoer mapping of RowHeaderRole and ColumnHeaderRole.
+
+        * accessibility/aria-tables-expected.txt:
+        * accessibility/roles-exposed.html:
+        * accessibility/table-roles-hierarchy-expected.txt: Added.
+        * accessibility/table-roles-hierarchy.html: Added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Added.
+        * platform/efl/accessibility/table-attributes-expected.txt:
+        * platform/efl/accessibility/table-cells-expected.txt:
+        * platform/efl/accessibility/table-detection-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/table-attributes-expected.txt:
+        * platform/gtk/accessibility/table-cells-expected.txt:
+        * platform/gtk/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/aria-tables-expected.txt: Copied from LayoutTests/accessibility/aria-tables-expected.txt.
+        * platform/mac/accessibility/table-roles-hierarchy-expected.txt: Added.
+
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Rename some tests that oddly had -html.html suffixes.

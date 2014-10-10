@@ -8,7 +8,7 @@ All Regions	North	3333	1111	2222
 South	3333	1111	2222
 --------------------------
 
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 235.000000, 26.000000 }
@@ -27,7 +27,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 235.000000, 26.000000 }
@@ -46,7 +46,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 378.000000, 26.000000 }
@@ -65,7 +65,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 447.000000, 26.000000 }
@@ -84,7 +84,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 447.000000, 26.000000 }
@@ -107,7 +107,7 @@ AXPlatformAttributes: toolkit:WebKitGtk
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -126,7 +126,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -145,7 +145,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
@@ -164,7 +164,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
@@ -195,7 +195,7 @@ AXPlatformAttributes: toolkit:WebKitGtk
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -214,7 +214,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -233,7 +233,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 370.000000, 26.000000 }
@@ -252,7 +252,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 439.000000, 26.000000 }
@@ -271,7 +271,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 439.000000, 26.000000 }
@@ -290,7 +290,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -309,7 +309,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
@@ -328,7 +328,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 370.000000, 26.000000 }
@@ -347,7 +347,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 439.000000, 55.000000 }
@@ -366,7 +366,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 491.000000, 55.000000 }
@@ -385,7 +385,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
@@ -404,7 +404,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 317.000000, 89.000000 }
@@ -480,7 +480,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
@@ -499,7 +499,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 317.000000, 118.000000 }

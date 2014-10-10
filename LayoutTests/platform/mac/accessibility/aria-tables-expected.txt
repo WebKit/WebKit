@@ -12,9 +12,9 @@ cell	cell	cell
 cell
 AXRole: AXTable
 AXRole: AXTable
-AXRole: AXColumnHeader
-AXRole: AXColumnHeader
-AXRole: AXRowHeader
+AXRole: AXCell
+AXRole: AXCell
+AXRole: AXCell
 AXRole: AXCell
 Test passed
 

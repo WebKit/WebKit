@@ -56,7 +56,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return IgnoreObject;
 
     // Include all tables, even layout tables. The AT can decide what to do with each.
-    if (role == CellRole || role == TableRole)
+    if (role == CellRole || role == TableRole || role == ColumnHeaderRole || role == RowHeaderRole)
         return IncludeObject;
 
     // The object containing the text should implement AtkText itself.

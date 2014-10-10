@@ -10,7 +10,7 @@ South	3333	1111	2222
 South	3333	1111	2222
 ------------------------
 [0,0]
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -30,7 +30,7 @@ AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [3,1]
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -50,7 +50,7 @@ AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [1,1]
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }

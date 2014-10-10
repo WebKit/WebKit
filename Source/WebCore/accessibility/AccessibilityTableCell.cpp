@@ -108,10 +108,13 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     // Even though this object reports a Cell role, the ARIA role will be used
     // to determine if it's a column header.
     AccessibilityRole defaultRole = AccessibilityRenderObject::determineAccessibilityRole();
+#if !PLATFORM(EFL) && !PLATFORM(GTK)
     if (!isTableCell())
         return defaultRole;
     
     return CellRole;
+#endif
+    return defaultRole;
 }
     
 bool AccessibilityTableCell::isTableHeaderCell() const

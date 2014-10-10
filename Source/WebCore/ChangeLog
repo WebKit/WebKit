@@ -1,3 +1,29 @@
+2014-10-10  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Changing the mapping of ARIA rowheader and columnheader into respective ATK roles.
+        https://bugs.webkit.org/show_bug.cgi?id=136150
+
+        Reviewed by Chris Fleizach.
+
+        Expose ColumnHeaderRole and RowHeaderRole objects into ATK.
+
+        Test: accessibility/table-roles-hierarchy.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        Platforms based on ATK: added distinction of roles for the <th> elements.
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::determineAccessibilityRole):
+        Platforms based on ATK: the return value is determined in the ancestor.
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        In addition to CellRole also included ColumnHeaderRole and RowHeaderRole.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        Changing the mapping of ARIA rowheader and columnheader into respective ATK roles.
+        (getInterfaceMaskFromObject):
+        In addition to CellRole also included ColumnHeaderRole and RowHeaderRole.
+
 2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         MediaPlayer should use a reference for the MediaPlayerClient
