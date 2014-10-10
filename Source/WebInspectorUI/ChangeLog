@@ -1,3 +1,21 @@
+2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS minification should not strip whitespace around calc +/- binary operators
+        https://bugs.webkit.org/show_bug.cgi?id=137624
+
+        Reviewed by Timothy Hatcher.
+
+        Be careful when stripping whitespace around "+". We want to strip for
+        selectors "a + b" but not for calc expressions "calc(1px + 2px)".
+
+        This is not a perfect solution, but it does a good job. It may still break
+        with more complex calc expressions, like "calc(1px + calc())" but this
+        handles the basics.
+
+        * Scripts/copy-user-interface-resources-dryrun.rb: Added.
+        * Scripts/cssmin.py:
+        (cssminify):
+
 2014-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOM Storage Editing is broken in many ways, frustrating
