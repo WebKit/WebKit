@@ -1,5 +1,18 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename some tests that oddly had -html.html suffixes.
+        
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-background-composited-expected.html: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-background-composited-html-expected.html.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-background-composited.html: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-background-composited-html.html.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-expected.png: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-html-expected.png.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-expected.txt: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-html-expected.txt.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity.html: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-html.html.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-expected.png: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-html-expected.png.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-expected.txt: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-html-expected.txt.
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed.html: Renamed from LayoutTests/platform/mac-wk2/tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-html.html.
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Tweak some Mac test expectations.
 
         * platform/mac-wk2/TestExpectations:
