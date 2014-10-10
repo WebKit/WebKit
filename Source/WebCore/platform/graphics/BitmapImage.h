@@ -335,8 +335,8 @@ private:
     RefPtr<Image> m_cachedImage;
 };
 
-IMAGE_TYPE_CASTS(BitmapImage)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_IMAGE(BitmapImage)
 
-#endif
+#endif // BitmapImage_h

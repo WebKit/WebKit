@@ -271,17 +271,17 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     LayoutSize imageSize(m_image->size());
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    if (renderer && m_image->isBitmapImage()) {
+    if (renderer && is<BitmapImage>(*m_image)) {
         ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation(), renderer->style().imageOrientation());
         if (orientationDescription.respectImageOrientation() == RespectImageOrientation)
-            imageSize = LayoutSize(toBitmapImage(m_image.get())->sizeRespectingOrientation(orientationDescription));
+            imageSize = LayoutSize(downcast<BitmapImage>(*m_image).sizeRespectingOrientation(orientationDescription));
     }
 #else
-    if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
-        imageSize = LayoutSize(toBitmapImage(m_image.get())->sizeRespectingOrientation());
+    if (is<BitmapImage>(*m_image) && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
+        imageSize = LayoutSize(downcast<BitmapImage>(*m_image).sizeRespectingOrientation());
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
-    else if (m_image->isSVGImage() && sizeType == UsedSize) {
+    else if (is<SVGImage>(*m_image) && sizeType == UsedSize) {
         imageSize = LayoutSize(m_svgImageCache->imageSizeForRenderer(renderer));
     }
 
@@ -343,7 +343,7 @@ inline void CachedImage::createImage()
         m_image = svgImage.release();
     } else {
         m_image = BitmapImage::create(this);
-        toBitmapImage(m_image.get())->setAllowSubsampling(m_loader && m_loader->frameLoader()->frame().settings().imageSubsamplingEnabled());
+        downcast<BitmapImage>(*m_image).setAllowSubsampling(m_loader && m_loader->frameLoader()->frame().settings().imageSubsamplingEnabled());
     }
 
     if (m_image) {

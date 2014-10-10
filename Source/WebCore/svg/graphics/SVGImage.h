@@ -106,8 +106,8 @@ private:
 
 bool isInSVGImage(const Element*);
 
-IMAGE_TYPE_CASTS(SVGImage)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_IMAGE(SVGImage)
 
 #endif // SVGImage_h

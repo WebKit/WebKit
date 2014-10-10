@@ -1,5 +1,17 @@
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for Image subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137625
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Image subclasses.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for GraphicsLayer subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137595
 

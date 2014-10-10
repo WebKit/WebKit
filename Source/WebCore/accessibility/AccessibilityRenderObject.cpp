@@ -2867,11 +2867,10 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
         return nullptr;
     
     Image* image = cachedImage->image();
-    if (!image || !image->isSVGImage())
+    if (!is<SVGImage>(image))
         return nullptr;
     
-    SVGImage* svgImage = static_cast<SVGImage*>(image);
-    FrameView* frameView = svgImage->frameView();
+    FrameView* frameView = downcast<SVGImage>(*image).frameView();
     if (!frameView)
         return nullptr;
     Frame& frame = frameView->frame();

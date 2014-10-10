@@ -750,10 +750,10 @@ bool RenderImage::needsPreferredWidthsRecalculation() const
 RenderBox* RenderImage::embeddedContentBox() const
 {
     CachedImage* cachedImage = imageResource().cachedImage();
-    if (cachedImage && cachedImage->image() && cachedImage->image()->isSVGImage())
-        return static_cast<SVGImage*>(cachedImage->image())->embeddedContentBox();
+    if (cachedImage && is<SVGImage>(cachedImage->image()))
+        return downcast<SVGImage>(*cachedImage->image()).embeddedContentBox();
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

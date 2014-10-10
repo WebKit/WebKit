@@ -1,5 +1,29 @@
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for Image subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137625
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for Image subclasses.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        (WebCore::CachedImage::createImage):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::embeddedContentBox):
+        * svg/graphics/SVGImage.h:
+
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for RenderElement
         https://bugs.webkit.org/show_bug.cgi?id=137622
 

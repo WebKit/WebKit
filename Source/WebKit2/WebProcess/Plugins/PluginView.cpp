@@ -1729,7 +1729,7 @@ void PluginView::pluginSnapshotTimerFired()
 
         if (snapshotImage) {
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-            bool snapshotIsAlmostSolidColor = isAlmostSolidColor(toBitmapImage(snapshotImage.get()));
+            bool snapshotIsAlmostSolidColor = isAlmostSolidColor(downcast<BitmapImage>(snapshotImage.get()));
             snapshotFound = !snapshotIsAlmostSolidColor;
 #endif
 
