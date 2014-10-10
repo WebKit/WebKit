@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 310x42 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 308x40
+          RenderTableRow {TR} at (0,2) size 308x36
+            RenderTableCell {TD} at (2,2) size 304x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (2,2) size 96x32 [border: (3px solid #800080)]
+                RenderBlock {DIV} at (3,3) size 186x26 [border: (3px solid #0000FF)]
+                  RenderText {#text} at (3,3) size 22x19
+                    text run at (3,3) width 22: "foo"

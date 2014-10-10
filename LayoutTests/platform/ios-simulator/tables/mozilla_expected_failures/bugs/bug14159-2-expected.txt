@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 616x32
+        RenderTableSection {TBODY} at (0,0) size 616x32
+          RenderTableRow {TR} at (0,2) size 616x28
+            RenderTableCell {TD} at (2,2) size 612x28 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 610x26
+                RenderTableSection {TBODY} at (0,0) size 610x26
+                  RenderTableRow {TR} at (0,2) size 610x22
+                    RenderTableCell {TD} at (2,2) size 35x22 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 33x19
+                        text run at (1,1) width 33: "news"
+                    RenderTableCell {TD} at (39,2) size 56x22 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 54x19
+                        text run at (1,1) width 54: "archives"
+                    RenderTableCell {TD} at (97,2) size 62x22 [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 60x19
+                        text run at (1,1) width 60: "hardware"
+                    RenderTableCell {TD} at (161,2) size 35x22 [r=0 c=3 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 33x19
+                        text run at (1,1) width 33: "shots"
+                    RenderTableCell {TD} at (198,2) size 43x22 [r=0 c=4 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 41x19
+                        text run at (1,1) width 41: "games"
+                    RenderTableCell {TD} at (243,2) size 30x22 [r=0 c=5 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 28x19
+                        text run at (1,1) width 28: "files"
+                    RenderTableCell {TD} at (275,2) size 74x22 [r=0 c=6 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 72x19
+                        text run at (1,1) width 72: "reviewseek"
+                    RenderTableCell {TD} at (351,2) size 48x22 [r=0 c=7 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 46x19
+                        text run at (1,1) width 46: "forums"
+                    RenderTableCell {TD} at (401,2) size 69x22 [r=0 c=8 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 67x19
+                        text run at (1,1) width 67: "interviews"
+                    RenderTableCell {TD} at (472,2) size 38x22 [r=0 c=9 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 36x19
+                        text run at (1,1) width 36: "about"
+                    RenderTableCell {TD} at (512,2) size 34x22 [r=0 c=10 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 32x19
+                        text run at (1,1) width 32: "links"
+                    RenderTableCell {TD} at (548,2) size 60x22 [r=0 c=11 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 58x19
+                        text run at (1,1) width 58: "advertise"

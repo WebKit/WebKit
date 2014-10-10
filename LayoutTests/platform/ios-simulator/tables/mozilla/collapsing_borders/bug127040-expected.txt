@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 73x74 [bgcolor=#008000] [border: (1px solid #0000FF)]
+        RenderTableSection {TBODY} at (1,1) size 71x72
+          RenderTableRow {TR} at (0,0) size 71x24
+            RenderTableCell {TD} at (0,0) size 35x24 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x19
+                text run at (2,2) width 27: "asdf"
+            RenderTableCell {TD} at (35,0) size 36x24 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x19
+                text run at (2,2) width 32: "qwer"
+          RenderTableRow {TR} at (0,24) size 71x24
+            RenderTableCell {TD} at (0,24) size 35x24 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x19
+                text run at (2,2) width 27: "fdsa"
+            RenderTableCell {TD} at (35,24) size 36x24 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x19
+                text run at (2,2) width 32: "rewq"
+          RenderTableRow {TR} at (0,48) size 71x24
+            RenderTableCell {TD} at (0,48) size 35x24 [border: (1px solid #0000FF)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
+                text run at (2,2) width 31: "zxcv"
+            RenderTableCell {TD} at (35,48) size 36x24 [border: (1px solid #0000FF)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x19
+                text run at (2,2) width 29: "uiop"

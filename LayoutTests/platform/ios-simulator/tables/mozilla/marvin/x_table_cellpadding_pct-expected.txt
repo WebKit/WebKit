@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,8) size 784x68
+      RenderTable {table} at (0,0) size 544x68 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 542x66
+          RenderTableRow {tr} at (0,2) size 542x62
+            RenderTableCell {td} at (2,2) size 268x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (21,21) size 226x19
+                text run at (21,21) width 226: "This cell should have 20% padding"
+            RenderTableCell {td} at (272,2) size 268x62 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (21,21) size 226x19
+                text run at (21,21) width 226: "This cell should have 20% padding"

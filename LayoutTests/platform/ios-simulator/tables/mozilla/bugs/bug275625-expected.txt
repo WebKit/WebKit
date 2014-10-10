@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable at (0,0) size 138x20
+        RenderTableSection (anonymous) at (0,0) size 138x20
+          RenderTableRow {A} at (0,0) size 138x20 [color=#0000EE]
+            RenderTableCell (anonymous) at (0,0) size 138x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 138x19
+                text run at (0,0) width 138: "This should not crash"
+      RenderBlock (anonymous) at (0,20) size 784x20
+        RenderBR {BR} at (0,0) size 0x19

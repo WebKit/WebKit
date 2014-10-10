@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 600x50
+        RenderTableSection {TBODY} at (0,0) size 600x50
+          RenderTableRow {TR} at (0,0) size 600x20
+            RenderTableCell {TD} at (0,0) size 150x20 [bgcolor=#00EEEE] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 102x19
+                text run at (0,0) width 102: "150 pixels wide"
+            RenderTableCell {TD} at (150,9) size 1x1 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 1x1
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (151,0) size 449x20 [bgcolor=#EEEE00] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 102x19
+                text run at (0,0) width 102: "449 pixels wide"
+          RenderTableRow {TR} at (0,20) size 600x30
+            RenderTableCell {TD} at (0,20) size 600x30 [bgcolor=#00FF00] [r=1 c=0 rs=1 cs=3]
+              RenderText {#text} at (0,0) size 185x19
+                text run at (0,0) width 185: "Bottom cell, 600 pixels wide"
+              RenderImage {IMG} at (0,20) size 600x10
+              RenderText {#text} at (0,0) size 0x0

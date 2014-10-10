@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 40x26
+  RenderTable {table} at (0,0) size 40x26
+    RenderTableSection (anonymous) at (0,0) size 40x26
+      RenderTableRow {tr} at (0,2) size 40x22
+        RenderTableCell {td} at (2,2) size 36x22 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 34x19
+            text run at (1,1) width 34: "a test"

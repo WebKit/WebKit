@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
+      RenderTable {TABLE} at (0,0) size 188x30 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 186x28
+          RenderTableRow {TR} at (0,2) size 186x24
+            RenderTableCell {TD} at (2,2) size 66x24 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "appName"
+            RenderTableCell {TD} at (70,2) size 114x24 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 110x19
+                text run at (2,2) width 63: "Netscape "
+                text run at (64,2) width 48: "rules!!!"

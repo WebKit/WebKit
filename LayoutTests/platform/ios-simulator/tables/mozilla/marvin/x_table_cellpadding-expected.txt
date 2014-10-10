@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x64
+  RenderBlock {html} at (0,0) size 800x64
+    RenderBody {body} at (8,8) size 784x48
+      RenderTable {table} at (0,0) size 548x48 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 546x46
+          RenderTableRow {tr} at (0,2) size 546x42
+            RenderTableCell {td} at (2,2) size 270x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 248x19
+                text run at (11,11) width 248: "This cell should have an 10px padding"
+            RenderTableCell {td} at (274,2) size 270x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 248x19
+                text run at (11,11) width 248: "This cell should have an 10px padding"

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,0) size 640x26
+        RenderTableSection {TBODY} at (0,0) size 640x26
+          RenderTableRow {TR} at (0,2) size 640x22
+            RenderTableCell {TD} at (2,2) size 112x10 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 8x8
+                RenderTableSection {TBODY} at (0,0) size 8x8
+                  RenderTableRow {TR} at (0,0) size 8x8
+                    RenderTableCell {TD} at (0,0) size 8x8 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (116,12) size 2x2 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (120,12) size 2x2 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (124,12) size 2x2 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (128,12) size 2x2 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (132,12) size 2x2 [r=0 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (136,2) size 502x22 [r=0 c=6 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 25x19
+                text run at (1,1) width 25: "bull"

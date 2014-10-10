@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 150x58
+        RenderTableSection {TBODY} at (0,0) size 150x58
+          RenderTableRow {TR} at (0,2) size 150x54
+            RenderTableCell {TD} at (2,2) size 146x54 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 144x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,1) size 144x52
+                RenderTable {TABLE} at (0,0) size 144x52
+                  RenderTableSection {TBODY} at (0,0) size 144x52
+                    RenderTableRow {TR} at (0,2) size 144x48
+                      RenderTableCell {TD} at (2,2) size 140x48 [r=0 c=0 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 138x46
+                          RenderTableSection {TBODY} at (0,0) size 138x46
+                            RenderTableRow {TR} at (0,2) size 138x42
+                              RenderTableCell {TD} at (2,2) size 134x42 [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {FORM} at (1,1) size 132x24
+                                  RenderButton {INPUT} at (2,2) size 128x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                                    RenderBlock (anonymous) at (12,3) size 104x14
+                                      RenderText at (0,0) size 104x14
+                                        text run at (0,0) width 104: "ApplyForThisPosition"
+                                  RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,53) size 144x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

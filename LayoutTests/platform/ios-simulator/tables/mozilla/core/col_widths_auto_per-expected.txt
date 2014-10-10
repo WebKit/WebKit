@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 382x19
+          text run at (0,0) width 382: "auto table - % width single cell has no effect (not so in IE5)"
+      RenderTable {TABLE} at (0,20) size 692x46 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 690x44
+          RenderTableRow {TR} at (0,10) size 690x24
+            RenderTableCell {TD} at (10,10) size 670x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 63x19
+                text run at (2,2) width 63: "10% 10%"
+      RenderBlock (anonymous) at (0,66) size 784x60
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,20) size 775x39
+          text run at (0,20) width 775: "auto table - % width cell increases table width based on % cell which makes it largest. Nav4.x does not increase the table"
+          text run at (0,40) width 204: "too much if the only cells are %"
+      RenderTable {TABLE} at (0,126) size 784x46 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x44
+          RenderTableRow {TR} at (0,10) size 782x24
+            RenderTableCell {TD} at (10,10) size 85x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "1%"
+            RenderTableCell {TD} at (105,10) size 667x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x19
+                text run at (2,2) width 30: "10%"
+      RenderBlock (anonymous) at (0,172) size 784x20
+        RenderBR {BR} at (0,0) size 0x19

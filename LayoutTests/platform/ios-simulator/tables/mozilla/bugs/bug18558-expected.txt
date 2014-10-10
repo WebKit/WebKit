@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,0) size 784x96 [border: (4px outset #808080)]
+        RenderTableSection {TBODY} at (4,4) size 776x88
+          RenderTableRow {TR} at (0,2) size 776x84
+            RenderTableCell {TD} at (2,23) size 723x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 101x38 [border: (5px outset #808080)]
+                RenderTableSection {TBODY} at (5,5) size 91x28
+                  RenderTableRow {TR} at (0,2) size 91x24
+                    RenderTableCell {TD} at (2,2) size 87x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 48x19
+                        text run at (2,2) width 48: "This is "
+                      RenderText {#text} at (49,2) size 36x19
+                        text run at (49,2) width 36: "cell 1"
+            RenderTableCell {TD} at (727,2) size 47x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x79
+                text run at (2,2) width 36: "Hello"
+                text run at (2,22) width 43: "world!"
+                text run at (2,42) width 36: "Hello"
+                text run at (2,62) width 43: "world!"

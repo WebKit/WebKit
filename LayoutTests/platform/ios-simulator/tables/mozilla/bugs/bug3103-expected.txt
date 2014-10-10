@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 622x400 [border: (4px outset #808080)]
+        RenderTableSection {TBODY} at (4,4) size 614x392
+          RenderTableRow {TR} at (0,2) size 614x193
+            RenderTableCell {TD} at (2,164) size 204x64 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 172x59
+                text run at (2,2) width 172: "1 Some sample text for the"
+                text run at (2,22) width 148: "first column. Notice its"
+                text run at (2,42) width 72: "formatting."
+            RenderTableCell {TD} at (208,66) size 404x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 372x59
+                text run at (2,2) width 372: "2 Here is some sample text to demonstrate the problem. Is"
+                text run at (2,22) width 361: "there some setting in Navigator that will make this work"
+                text run at (2,42) width 311: "correctly ? If so I haven't found it. Is this a bug ?"
+          RenderTableRow {TR} at (0,197) size 614x193
+            RenderTableCell {TD} at (208,261) size 404x64 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 372x59
+                text run at (2,2) width 372: "3 Here is some sample text to demonstrate the problem. Is"
+                text run at (2,22) width 361: "there some setting in Navigator that will make this work"
+                text run at (2,42) width 311: "correctly ? If so I haven't found it. Is this a bug ?"

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable at (0,0) size 43x20
+        RenderTableSection (anonymous) at (0,0) size 43x20
+          RenderTableRow (anonymous) at (0,0) size 43x20
+            RenderTableCell {SPAN} at (0,0) size 22x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 22x19
+                text run at (0,0) width 22: "foo"
+            RenderTableCell {SPAN} at (22,0) size 21x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 21x19
+                text run at (0,0) width 21: "bar"
