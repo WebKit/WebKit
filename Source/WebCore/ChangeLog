@@ -1,3 +1,25 @@
+2014-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for FontData subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137591
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for FontData subclasses.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/FontData.h:
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::releaseFontData):
+        (WebCore::FontGlyphs::determinePitch):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/SegmentedFontData.h:
+        (isType):
+        * platform/graphics/SimpleFontData.h:
+        (isType):
+
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Revert part of r174543 that broke grid layout tests.

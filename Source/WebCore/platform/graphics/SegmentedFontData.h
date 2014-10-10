@@ -27,6 +27,7 @@
 #define SegmentedFontData_h
 
 #include "FontData.h"
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -80,8 +81,10 @@ private:
     Vector<FontDataRange, 1> m_ranges;
 };
 
-FONT_DATA_TYPE_CASTS(SegmentedFontData, fontData->isSegmented(), fontData.isSegmented())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SegmentedFontData)
+    static bool isType(const WebCore::FontData& fontData) { return fontData.isSegmented(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SegmentedFontData_h

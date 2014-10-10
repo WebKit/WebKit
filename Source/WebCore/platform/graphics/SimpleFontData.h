@@ -39,6 +39,7 @@
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
@@ -391,7 +392,10 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     return width;
 }
 
-FONT_DATA_TYPE_CASTS(SimpleFontData, !fontData->isSegmented(), !fontData.isSegmented())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SimpleFontData)
+    static bool isType(const WebCore::FontData& fontData) { return !fontData.isSegmented(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // SimpleFontData_h

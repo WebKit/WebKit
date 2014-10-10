@@ -206,31 +206,31 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             // Success is not guaranteed. For example, Times fails to fill page 260, giving glyph data
             // for only 128 out of 256 characters.
             bool haveGlyphs;
-            if (!fontData->isSegmented()) {
-                if (GlyphPage::mayUseMixedFontDataWhenFilling(buffer, bufferLength, toSimpleFontData(fontData)))
+            if (is<SimpleFontData>(*fontData)) {
+                if (GlyphPage::mayUseMixedFontDataWhenFilling(buffer, bufferLength, downcast<SimpleFontData>(fontData)))
                     m_page = GlyphPage::createForMixedFontData(this);
                 else
-                    m_page = GlyphPage::createForSingleFontData(this, toSimpleFontData(fontData));
+                    m_page = GlyphPage::createForSingleFontData(this, downcast<SimpleFontData>(fontData));
 #if PLATFORM(IOS)
                 // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
                 // Once we have the fix for <rdar://problem/9823975> then remove this code together with SimpleFontData::shouldNotBeUsedForArabic()
                 // in <rdar://problem/12096835>.
-                if (pageNumber == 6 && toSimpleFontData(fontData)->shouldNotBeUsedForArabic())
+                if (pageNumber == 6 && downcast<SimpleFontData>(*fontData).shouldNotBeUsedForArabic())
                     haveGlyphs = false;
                 else
 #endif
-                haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, toSimpleFontData(fontData));
+                haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, downcast<SimpleFontData>(fontData));
             } else {
                 m_page = GlyphPage::createForMixedFontData(this);
                 haveGlyphs = false;
 
-                const SegmentedFontData* segmentedFontData = toSegmentedFontData(fontData);
-                unsigned numRanges = segmentedFontData->numRanges();
+                const SegmentedFontData& segmentedFontData = downcast<SegmentedFontData>(*fontData);
+                unsigned numRanges = segmentedFontData.numRanges();
                 bool zeroFilled = false;
                 RefPtr<GlyphPage> scratchPage;
                 GlyphPage* pageToFill = m_page.get();
                 for (unsigned i = 0; i < numRanges; i++) {
-                    const FontDataRange& range = segmentedFontData->rangeAt(i);
+                    const FontDataRange& range = segmentedFontData.rangeAt(i);
                     // all this casting is to ensure all the parameters to min and max have the same type,
                     // to avoid ambiguous template parameter errors on Windows
                     int from = std::max(0, static_cast<int>(range.from()) - static_cast<int>(start));

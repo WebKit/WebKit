@@ -70,18 +70,17 @@ void FontGlyphs::releaseFontData()
     for (unsigned i = 0; i < numFonts; ++i) {
         if (m_realizedFontData[i]->isCustomFont())
             continue;
-        ASSERT(!m_realizedFontData[i]->isSegmented());
-        fontCache().releaseFontData(toSimpleFontData(m_realizedFontData[i]));
+        fontCache().releaseFontData(downcast<SimpleFontData>(m_realizedFontData[i].get()));
     }
 }
 
 void FontGlyphs::determinePitch(const FontDescription& description) const
 {
     const FontData* fontData = primaryFontData(description);
-    if (!fontData->isSegmented())
-        m_pitch = toSimpleFontData(*fontData).pitch();
+    if (is<SimpleFontData>(*fontData))
+        m_pitch = downcast<SimpleFontData>(*fontData).pitch();
     else {
-        const SegmentedFontData& segmentedFontData = toSegmentedFontData(*fontData);
+        const SegmentedFontData& segmentedFontData = downcast<SegmentedFontData>(*fontData);
         unsigned numRanges = segmentedFontData.numRanges();
         if (numRanges == 1)
             m_pitch = segmentedFontData.rangeAt(0).fontData()->pitch();

@@ -64,10 +64,6 @@ private:
     mutable unsigned m_maxGlyphPageTreeLevel;
 };
 
-#define FONT_DATA_TYPE_CASTS(ToValueTypeName, pointerPredicate, referencePredicate) \
-    template<typename T> inline ToValueTypeName* to##ToValueTypeName(const RefPtr<T>& fontData) { return to##ToValueTypeName(fontData.get()); } \
-    TYPE_CASTS_BASE(ToValueTypeName, FontData, fontData, pointerPredicate, referencePredicate)
-
 } // namespace WebCore
 
 #endif // FontData_h
