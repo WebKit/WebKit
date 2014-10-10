@@ -8211,9 +8211,6 @@
     <ClInclude Include="..\platform\MemoryPressureHandler.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\MainThreadTask.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\MIMETypeRegistry.h">
       <Filter>platform</Filter>
     </ClInclude>

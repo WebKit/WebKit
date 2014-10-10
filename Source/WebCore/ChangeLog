@@ -1,3 +1,23 @@
+2014-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove MainThreadTask
+        https://bugs.webkit.org/show_bug.cgi?id=137563
+
+        Reviewed by Darin Adler.
+
+        Replace the remaining uses of MainThreadTask with C++11 lambdas.
+        Remove the MainThreadTask header from the build.
+
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MainThreadTask.h: Removed.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::downloadThread):
+        (WebCore::CurlDownload::didReceiveHeader):
+        (WebCore::CurlDownload::didReceiveData):
+
 2014-10-10  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Changing the mapping of ARIA rowheader and columnheader into respective ATK roles.

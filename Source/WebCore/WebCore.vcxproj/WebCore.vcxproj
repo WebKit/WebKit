@@ -19452,7 +19452,6 @@
     <ClInclude Include="..\platform\LocalizedStrings.h" />
     <ClInclude Include="..\platform\Logging.h" />
     <ClInclude Include="..\platform\MemoryPressureHandler.h" />
-    <ClInclude Include="..\platform\MainThreadTask.h" />
     <ClInclude Include="..\platform\MIMETypeRegistry.h" />
     <ClInclude Include="..\platform\NotImplemented.h" />
     <ClInclude Include="..\platform\Pasteboard.h" />

@@ -5963,7 +5963,6 @@
 		E182568F0EF2B02D00933242 /* JSWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerGlobalScope.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */; };
-		E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E187056216E54A0D00585E97 /* MainThreadTask.h */; };
 		E18772F1126E2629003DD586 /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18772F0126E2629003DD586 /* Language.cpp */; };
 		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18DF33818AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */; };
@@ -13458,7 +13457,6 @@
 		E182568D0EF2B02D00933242 /* JSWorkerGlobalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScope.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerGlobalScope.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
-		E187056216E54A0D00585E97 /* MainThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadTask.h; sourceTree = "<group>"; };
 		E18772F0126E2629003DD586 /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
 		E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SerializedCryptoKeyWrapMac.mm; path = mac/SerializedCryptoKeyWrapMac.mm; sourceTree = "<group>"; };
@@ -21361,7 +21359,6 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
-				E187056216E54A0D00585E97 /* MainThreadTask.h */,
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
 				CD641EC7181ED60100EE4C41 /* MediaSample.h */,
 				657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */,
@@ -25275,7 +25272,6 @@
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */,
 				932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */,
-				E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				7C73FB12191EF6F4007DE061 /* JSUserMessageHandler.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
