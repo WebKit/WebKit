@@ -1,3 +1,15 @@
+2014-10-10  Daniel Bates  <dabates@apple.com>
+
+        Remove unused classes WebRender{Node, Layer}
+        https://bugs.webkit.org/show_bug.cgi?id=137628
+
+        Reviewed by Simon Fraser.
+
+        We no longer make use of the WebKit1-specific classes WebRenderNode and WebRenderLayer.
+        For completeness, there is a WebKit2 analogue of WebRenderLayer by the same name.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed 64-bit build fix after r174315.

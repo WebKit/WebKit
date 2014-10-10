@@ -1,3 +1,22 @@
+2014-10-10  Daniel Bates  <dabates@apple.com>
+
+        Remove unused classes WebRender{Node, Layer}
+        https://bugs.webkit.org/show_bug.cgi?id=137628
+
+        Reviewed by Simon Fraser.
+
+        We no longer make use of the WebKit1-specific classes WebRenderNode and WebRenderLayer.
+        For completeness, there is a WebKit2 analogue of WebRenderLayer by the same name.
+
+        * Configurations/WebKitLegacy.xcconfig: Remove file WebRenderNode.mm from the list
+        of excluded source files when building for iOS.
+        * WebKit.exp: Remove symbol for WebRenderLayer.
+        * WebKit.mac.exp: Remove symbol for WebRenderNode.
+        * WebView/WebRenderLayer.h: Removed.
+        * WebView/WebRenderLayer.mm: Removed.
+        * WebView/WebRenderNode.h: Removed.
+        * WebView/WebRenderNode.mm: Removed.
+
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderBoxModelObject
