@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x24
+  RenderBlock {html} at (0,0) size 800x24
+    RenderBody {body} at (8,16) size 784x0
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 396x19
+          text run at (0,0) width 396: "The entire canvas should be green and there should be no red."
