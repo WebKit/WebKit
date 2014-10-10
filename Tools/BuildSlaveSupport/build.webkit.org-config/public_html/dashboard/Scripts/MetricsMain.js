@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var hasBubbles = typeof bubbleQueueServer != "undefined";
+
 var analyzer = new Analyzer;
 
 var allBuilderResultsPseudoQueue = { id: "allBuilderResultsPseudoQueue" };
@@ -260,6 +262,39 @@ function buildQueuesTable()
     return table;
 }
 
+function buildBubbleQueuesTable()
+{
+    var table = document.createElement("table");
+    table.classList.add("queue-grid");
+
+    var row = document.createElement("tr");
+    row.classList.add("headers");
+
+    for (id in bubbleQueueServer.queues) {
+        var header = document.createElement("th");
+        header.textContent = bubbleQueueServer.queues[id].shortName;
+        row.appendChild(header);
+    }
+
+    table.appendChild(row);
+
+    row = document.createElement("tr");
+    row.classList.add("platform");
+
+    for (id in bubbleQueueServer.queues) {
+        var cell = document.createElement("td");
+        var view = new MetricsBubbleView(analyzer, bubbleQueueServer.queues[id]);
+        cell.appendChild(view.element);
+        row.appendChild(cell);
+    }
+
+    table.appendChild(row);
+
+    document.body.appendChild(table);
+
+    return table;
+}
+
 function documentReady()
 {
     var rangePicker = document.createElement("span");
@@ -302,6 +337,12 @@ function documentReady()
     }, this);
 
     buildAggregateTable();
+    if (hasBubbles) {
+        var tablesDivider = document.createElement("div");
+        tablesDivider.classList.add("tables-divider");
+        document.body.appendChild(tablesDivider);
+        buildBubbleQueuesTable();
+    }
 
     var tablesDivider = document.createElement("div");
     tablesDivider.classList.add("tables-divider");

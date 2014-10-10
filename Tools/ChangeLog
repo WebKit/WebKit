@@ -1,5 +1,37 @@
 2014-10-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Dashboard metrics page should have EWS statistics
+        https://bugs.webkit.org/show_bug.cgi?id=137626
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueue.js:
+        (BubbleQueue): Put shortName in the object, so that it's actually useful.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Re-ordered queues to match bubble order.
+        (BubbleQueueServer.prototype.jsonProcessingTimesURL): Added URL for the new handler.
+        (BubbleQueueServer.prototype.loadProcessingTimes): Load the data from webkit-queues.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        Added analysis for bubble queues.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsBubbleView.js: Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+        (buildBubbleQueuesTable): Build the UI.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/metrics.html:
+        Added JS sources to load.
+
+        * QueueStatusServer/app.yaml: To update app version.
+
+        * QueueStatusServer/handlers/processingtimesjson.py: Added.
+
+        * QueueStatusServer/main.py: Added a handler for processing-times-json.
+
+2014-10-10  Alexey Proskuryakov  <ap@apple.com>
+
         REGRESSION: Commit queue doesn't process rollouts
         https://bugs.webkit.org/show_bug.cgi?id=137623
 

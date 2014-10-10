@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,6 +39,7 @@ from handlers.gc import GC
 from handlers.nextpatch import NextPatch
 from handlers.patch import Patch
 from handlers.patchstatus import PatchStatus
+from handlers.processingtimesjson import ProcessingTimesJSON
 from handlers.queuecharts import QueueCharts
 from handlers.queuelengthjson import QueueLengthJSON
 from handlers.queuestatus import QueueStatus
@@ -79,6 +81,7 @@ routes = [
     ('/update-work-items', UpdateWorkItems),
     ('/update-svn-revision', UpdateSVNRevision),
     ('/active-bots', ActiveBots),
+    (r'/processing-times-json/(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)', ProcessingTimesJSON),
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)

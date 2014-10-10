@@ -28,10 +28,10 @@ BubbleQueueServer = function()
     const queueInfo = {
         "commit-queue": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "commit", title: "Commit Queue"},
         "style-queue": {shortName: "style", title: "Style Checker Queue"},
+        "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
         "mac-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
         "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
-        "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
         "efl-wk2-ews": {platform: Dashboard.Platform.LinuxEFL, shortName: "efl-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"}
     };
 
@@ -60,8 +60,39 @@ BubbleQueueServer.prototype = {
         return this.baseURL + "queue-status-json/" + encodeURIComponent(queueID);
     },
 
+    jsonProcessingTimesURL: function(fromTime, toTime)
+    {
+        return this.baseURL + "processing-times-json/" + [fromTime.getUTCFullYear(), fromTime.getUTCMonth() + 1, fromTime.getUTCDate(), fromTime.getUTCHours(), fromTime.getUTCMinutes(), fromTime.getUTCSeconds()].join("-")
+            + "-" + [toTime.getUTCFullYear(), toTime.getUTCMonth() + 1, toTime.getUTCDate(), toTime.getUTCHours(), toTime.getUTCMinutes(), toTime.getUTCSeconds()].join("-");
+    },
+
     queueStatusURL: function(queueID)
     {
         return this.baseURL + "queue-status/" + encodeURIComponent(queueID);
+    },
+
+    // Retrieves information about all patches that were submitted in the time range:
+    // {
+    //     patch_id_1: {
+    //         queue_name_1: {
+    //             date: <date/time when the patch was submitted to the queue>,
+    //             retry_count: <number of times a bot had to bail out and drop the lock, for another bot to start from scratch>,
+    //             wait_duration: <how long it took before a bot first locked the patch for processing>,
+    //             process_duration: <how long it took from end of wait to finish, only valid for finished patches. Includes wait time between retries>
+    //             final_message: <(pass|fail|not processed|could not apply|internal error|in progress)>
+    //         },
+    //         ...
+    //     },
+    //     ...
+    // }
+    loadProcessingTimes: function(fromTime, toTime, callback)
+    {
+        JSON.load(this.jsonProcessingTimesURL(fromTime, toTime), function(data) {
+            for (patch in data) {
+                for (queue in patch)
+                    queue.date = new Date(queue.date);
+            }
+            callback(data, fromTime, toTime);
+        }.bind(this));
     },
 };

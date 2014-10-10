@@ -78,6 +78,8 @@ Analyzer.prototype = {
         }, this);
 
         webkitTrac.load(this._rangeStartTime, this._rangeEndTime);
+
+        bubbleQueueServer.loadProcessingTimes(this._rangeStartTime, this._rangeEndTime, this._loadedBubblesTiming.bind(this));
     },
 
     _triggeringQueue: function(queue)
@@ -380,5 +382,117 @@ Analyzer.prototype = {
 
         if (this._hasTracData)
             this._analyze();
-    }
+    },
+
+    _analyzeBubblePerformance: function(queueID, patches)
+    {
+        var patchesThatCausedInternalError = [];
+        for (patchID in patches) {
+            if (patches[patchID].resolution === "internal error")
+                patchesThatCausedInternalError.push(patchID);
+        }
+
+        var waitTimes = [];
+        var totalTimes = [];
+        var totalTimesForPatchesThatWereNotRetried = [];
+        var totalTimesForPatchesThatSpinnedAndPassedOrFailed = [];
+        var patchesThatDidNotComplete = [];
+        var retryCounts = [];
+        var patchesThatSpinnedAndDidNotComplete = [];
+        var patchesThatSpinnedAndCeasedToApply = [];
+        var patchesThatSpinnedAndPassedOrFailed = [];
+        var patchesDidNotApply = [];
+        for (patchID in patches) {
+            var patch = patches[patchID];
+
+            // Wait time is equally interesting for all patches.
+            waitTimes.push(patch.wait_duration);
+
+            if (patch.resolution === "not processed")
+                patchesThatDidNotComplete.push(patchID);
+
+            if (patch.retry_count === 0)
+                totalTimesForPatchesThatWereNotRetried.push(patch.wait_duration + patch.process_duration);
+            else {
+                retryCounts.push(patch.retry_count);
+                if (patch.resolution === "not processed")
+                    patchesThatSpinnedAndDidNotComplete.push(patchID);
+                else if (patch.resolution === "could not apply")
+                    patchesThatSpinnedAndCeasedToApply.push(patchID);
+                else if (patch.resolution === "pass" || patch.resolution === "fail") {
+                    patchesThatSpinnedAndPassedOrFailed.push(patchID);
+                    totalTimesForPatchesThatSpinnedAndPassedOrFailed.push(patch.wait_duration + patch.process_duration);
+                }
+            }
+
+            // Analyze processing performance for patches that were definitely processed.
+            // We can't target improving performance of others (such as patches that were obsoleted while in the queue).
+            // Patches that don't apply to trunk have to be excluded, because otherwise we
+            // get times for patches that spinned until they ceased to apply.
+            if (patch.resolution === "pass" || patch.resolution === "fail")
+                totalTimes.push(patch.wait_duration + patch.process_duration);
+
+            if (patch.resolution === "could not apply")
+                patchesDidNotApply.push(patchID);
+        }
+
+        var result = {
+            queueID: queueID,
+            totalPatches: Object.keys(patches).length,
+            patchesThatDidNotCompleteCount: patchesThatDidNotComplete.length,
+            patchesWithRetriesCount: retryCounts.length,
+            patchesThatDidNotApplyCount: patchesDidNotApply.length,
+            patchesThatSpinnedAndDidNotCompleteCount: patchesThatSpinnedAndDidNotComplete.length,
+            patchesThatSpinnedAndCeasedToApplyCount: patchesThatSpinnedAndCeasedToApply.length,
+            patchesThatSpinnedAndPassedOrFailedCount: patchesThatSpinnedAndPassedOrFailed.length,
+            medianTotalTimeForPatchesThatSpinnedAndPassedOrFailedInSeconds: totalTimesForPatchesThatSpinnedAndPassedOrFailed.median(),
+            averageTotalTimeForPatchesThatSpinnedAndPassedOrFailedInSeconds: totalTimesForPatchesThatSpinnedAndPassedOrFailed.average(),
+            medianWaitTimeInSeconds: waitTimes.median(),
+            averageWaitTimeInSeconds: waitTimes.average(),
+            patchesThatCausedInternalError: patchesThatCausedInternalError,
+        };
+
+        if (totalTimes.length) {
+            result.medianTotalTimeInSeconds = totalTimes.median();
+            result.averageTotalTimeInSeconds = totalTimes.average();
+        }
+
+        if (totalTimesForPatchesThatWereNotRetried.length) {
+            result.medianTotalTimeForPatchesThatWereNotRetriedInSeconds = totalTimesForPatchesThatWereNotRetried.median();
+            result.averageTotalTimeForPatchesThatWereNotRetriedInSeconds = totalTimesForPatchesThatWereNotRetried.average();
+        }
+
+        this.dispatchEventToListeners(Analyzer.Event.QueueResults, result);
+    },
+
+    _analyzeAllBubblesPerformance: function(dataByPatch)
+    {
+        var data = {};
+        for (queueID in bubbleQueueServer.queues)
+            data[queueID] = {};
+
+        for (patchID in dataByPatch) {
+            for (queueID in dataByPatch[patchID]) {
+                if (!queueID in data)
+                    continue;
+                var patchData = dataByPatch[patchID][queueID];
+                if (patchData.date < this.fromDate || patchData.date > this.toDate)
+                    continue;
+                if (patchData.resolution === "in progress")
+                    continue;
+                data[queueID][patchID] = patchData;
+            };
+        };
+        for (queueID in data)
+            this._analyzeBubblePerformance(queueID, data[queueID]);
+    },
+
+    _loadedBubblesTiming: function(data, fromTime, toTime)
+    {
+        // Only analyze if the data covers the latest range requested by the user.
+        // It may be different from the loaded one if the user quickly requested multiple ranges.
+        if (fromTime > this._rangeStartTime || toTime < this._rangeEndTime)
+            return;
+        this._analyzeAllBubblesPerformance(data);
+    },
 };

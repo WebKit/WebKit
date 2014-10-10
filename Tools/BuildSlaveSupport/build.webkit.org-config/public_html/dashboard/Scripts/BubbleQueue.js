@@ -32,6 +32,7 @@ BubbleQueue = function(queueServer, id, info)
 
     this.queueServer = queueServer;
     this.id = id;
+    this.shortName = info.shortName || id;
     this.title = info.title || "\xa0";
 
     this.platform = info.platform ? info.platform.name : "unknown";
