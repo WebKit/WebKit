@@ -2124,7 +2124,7 @@ void RenderObject::destroy()
 {
 #if PLATFORM(IOS)
     if (hasLayer())
-        toRenderBoxModelObject(this)->layer()->willBeDestroyed();
+        downcast<RenderBoxModelObject>(*this).layer()->willBeDestroyed();
 #endif
 
     willBeDestroyed();
@@ -2424,7 +2424,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     // A is the HTML body element.
     // The computed value of the position property for element A is fixed.
     if (isRoot() || isBody() || (isOutOfFlowPositioned() && style().position() == FixedPosition))
-        return 0;
+        return nullptr;
 
     // If A is an area HTML element which has a map HTML element somewhere in the ancestor
     // chain return the nearest ancestor map HTML element and stop this algorithm.
@@ -2440,24 +2440,24 @@ RenderBoxModelObject* RenderObject::offsetParent() const
 
     bool skipTables = isPositioned();
     float currZoom = style().effectiveZoom();
-    auto curr = parent();
-    while (curr && (!curr->element() || (!curr->isPositioned() && !curr->isBody())) && !curr->isRenderNamedFlowThread()) {
-        Element* element = curr->element();
+    auto current = parent();
+    while (current && (!current->element() || (!current->isPositioned() && !current->isBody())) && !is<RenderNamedFlowThread>(*current)) {
+        Element* element = current->element();
         if (!skipTables && element && (is<HTMLTableElement>(*element) || is<HTMLTableCellElement>(*element)))
             break;
  
-        float newZoom = curr->style().effectiveZoom();
+        float newZoom = current->style().effectiveZoom();
         if (currZoom != newZoom)
             break;
         currZoom = newZoom;
-        curr = curr->parent();
+        current = current->parent();
     }
     
     // CSS regions specification says that region flows should return the body element as their offsetParent.
-    if (curr && curr->isRenderNamedFlowThread())
-        curr = document().body() ? document().body()->renderer() : 0;
+    if (is<RenderNamedFlowThread>(current))
+        current = document().body() ? document().body()->renderer() : nullptr;
     
-    return curr && curr->isBoxModelObject() ? toRenderBoxModelObject(curr) : 0;
+    return is<RenderBoxModelObject>(current) ? downcast<RenderBoxModelObject>(current) : nullptr;
 }
 
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity) const

@@ -2558,7 +2558,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
 
 bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
 {
-    RenderLayer& layer = *toRenderBoxModelObject(renderer).layer();
+    RenderLayer& layer = *downcast<RenderBoxModelObject>(renderer).layer();
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
@@ -3653,7 +3653,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     ASSERT(!layer.enclosingOverflowClipLayer(ExcludeSelf));
 #endif
 
-    RenderBoxModelObject& renderer = toRenderBoxModelObject(layer.renderer());
+    RenderBoxModelObject& renderer = downcast<RenderBoxModelObject>(layer.renderer());
 
     StickyPositionViewportConstraints constraints;
     renderer.computeStickyPositionConstraints(constraints, renderer.constrainingRectForStickyPosition());

@@ -853,12 +853,12 @@ void Frame::overflowScrollPositionChangedForNode(const IntPoint& position, Node*
     if (!renderer || !renderer->hasLayer())
         return;
 
-    RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
+    RenderLayer& layer = *downcast<RenderBoxModelObject>(*renderer).layer();
 
-    layer->setIsUserScroll(isUserScroll);
-    layer->scrollToOffsetWithoutAnimation(position);
-    layer->setIsUserScroll(false);
-    layer->didEndScroll(); // FIXME: Should we always call this?
+    layer.setIsUserScroll(isUserScroll);
+    layer.scrollToOffsetWithoutAnimation(position);
+    layer.setIsUserScroll(false);
+    layer.didEndScroll(); // FIXME: Should we always call this?
 }
 
 void Frame::resetAllGeolocationPermission()

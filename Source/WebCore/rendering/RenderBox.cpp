@@ -2904,7 +2904,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) cons
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            const LayoutUnit cw = isOutOfFlowPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
+            const LayoutUnit cw = isOutOfFlowPositioned() ? containingBlockLogicalWidthForPositioned(downcast<RenderBoxModelObject>(container())) : containingBlockLogicalWidthForContent();
             Length containerLogicalWidth = containingBlock()->style().logicalWidth();
             // FIXME: Handle cases when containing block width is calculated or viewport percent.
             // https://bugs.webkit.org/show_bug.cgi?id=91071
@@ -2969,7 +2969,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
             // https://bugs.webkit.org/show_bug.cgi?id=46496
             LayoutUnit availableHeight;
             if (isOutOfFlowPositioned())
-                availableHeight = containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb));
+                availableHeight = containingBlockLogicalHeightForPositioned(downcast<RenderBoxModelObject>(cb));
             else {
                 availableHeight = containingBlockLogicalHeightForContent(IncludeMarginBorderPadding);
                 // It is necessary to use the border-box to match WinIE's broken
@@ -3248,7 +3248,7 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
 
     // We don't use containingBlock(), since we may be positioned by an enclosing
     // relative positioned inline.
-    const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
+    const RenderBoxModelObject* containerBlock = downcast<RenderBoxModelObject>(container());
     
     const LayoutUnit containerLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, region);
 
@@ -3576,7 +3576,7 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
 
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
-    const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
+    const RenderBoxModelObject* containerBlock = downcast<RenderBoxModelObject>(container());
 
     const LayoutUnit containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
@@ -3829,10 +3829,10 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
 
     // We don't use containingBlock(), since we may be positioned by an enclosing
     // relative positioned inline.
-    const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
+    const RenderBoxModelObject* containerBlock = downcast<RenderBoxModelObject>(container());
 
     const LayoutUnit containerLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock);
-    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, 0, false);
+    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
@@ -3997,10 +3997,10 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     // the numbers correspond to numbers in spec)
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
-    const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
+    const RenderBoxModelObject* containerBlock = downcast<RenderBoxModelObject>(container());
 
     const LayoutUnit containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
-    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, 0, false);
+    const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
     // Variables to solve.
     Length marginBefore = style().marginBefore();

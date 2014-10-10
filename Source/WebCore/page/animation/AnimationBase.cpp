@@ -658,7 +658,7 @@ void AnimationBase::freezeAtTime(double t)
         m_pauseTime = m_startTime + t - m_animation->delay();
 
     if (m_object && m_object->isComposited())
-        toRenderBoxModelObject(m_object)->suspendAnimations(m_pauseTime);
+        downcast<RenderBoxModelObject>(*m_object).suspendAnimations(m_pauseTime);
 }
 
 double AnimationBase::beginAnimationUpdateTime() const

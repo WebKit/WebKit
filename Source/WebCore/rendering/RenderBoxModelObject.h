@@ -339,8 +339,6 @@ private:
     void pixelSnapBackgroundImageGeometryForPainting(BackgroundImageGeometry&) const;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderBoxModelObject, isBoxModelObject())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isBoxModelObject())

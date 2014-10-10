@@ -75,6 +75,7 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
+#include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFraction.h"
@@ -148,9 +149,9 @@ void AccessibilityRenderObject::detach(AccessibilityDetachmentType detachmentTyp
 
 RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
 {
-    if (!m_renderer || !m_renderer->isBoxModelObject())
+    if (!is<RenderBoxModelObject>(m_renderer))
         return nullptr;
-    return toRenderBoxModelObject(m_renderer);
+    return downcast<RenderBoxModelObject>(m_renderer);
 }
 
 void AccessibilityRenderObject::setRenderer(RenderObject* renderer)
@@ -159,16 +160,9 @@ void AccessibilityRenderObject::setRenderer(RenderObject* renderer)
     setNode(renderer->node());
 }
 
-static inline bool isInlineWithContinuation(RenderObject* object)
+static inline bool isInlineWithContinuation(RenderObject& object)
 {
-    if (!object->isBoxModelObject())
-        return false;
-
-    RenderBoxModelObject* renderer = toRenderBoxModelObject(object);
-    if (!renderer->isRenderInline())
-        return false;
-
-    return toRenderInline(renderer)->continuation();
+    return is<RenderInline>(object) && downcast<RenderInline>(object).continuation();
 }
 
 static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
@@ -190,7 +184,7 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject& rend
 {
     RenderObject* firstChild = renderer.firstChildSlow();
 
-    if (!firstChild && isInlineWithContinuation(&renderer))
+    if (!firstChild && isInlineWithContinuation(renderer))
         firstChild = firstChildInContinuation(downcast<RenderInline>(renderer));
 
     return firstChild;
@@ -356,7 +350,7 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 static inline bool lastChildHasContinuation(RenderElement& renderer)
 {
     RenderObject* child = renderer.lastChild();
-    return child && isInlineWithContinuation(child);
+    return child && isInlineWithContinuation(*child);
 }
 
 AccessibilityObject* AccessibilityRenderObject::nextSibling() const
@@ -388,11 +382,11 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
     // Case 4: node is an inline with a continuation. Next sibling is the next sibling of the end 
     // of the continuation chain.
-    else if (isInlineWithContinuation(m_renderer))
+    else if (isInlineWithContinuation(*m_renderer))
         nextSibling = endOfContinuations(*m_renderer)->nextSibling();
 
     // Case 5: node has no next sibling, and its parent is an inline with a continuation.
-    else if (isInlineWithContinuation(m_renderer->parent())) {
+    else if (isInlineWithContinuation(*m_renderer->parent())) {
         auto& continuation = *downcast<RenderInline>(*m_renderer->parent()).continuation();
         
         // Case 5a: continuation is a block - in this case the block itself is the next sibling.
@@ -1712,9 +1706,9 @@ Document* AccessibilityRenderObject::document() const
 
 Widget* AccessibilityRenderObject::widget() const
 {
-    if (!m_renderer->isBoxModelObject() || !toRenderBoxModelObject(m_renderer)->isWidget())
+    if (!is<RenderWidget>(*m_renderer))
         return nullptr;
-    return toRenderWidget(m_renderer)->widget();
+    return downcast<RenderWidget>(*m_renderer).widget();
 }
 
 AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
@@ -2377,18 +2371,18 @@ AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElem
     return nullptr;
 }
 
-bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject* renderer) const
+bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer) const
 {
     // AX clients will listen for AXValueChange on a text control.
-    if (renderer->isTextControl())
+    if (is<RenderTextControl>(renderer))
         return true;
     
     // AX clients will listen for AXSelectedChildrenChanged on listboxes.
-    Node* node = renderer->node();
+    Node* node = renderer.node();
     if (!node)
         return false;
     
-    if (nodeHasRole(node, "listbox") || (renderer->isBoxModelObject() && toRenderBoxModelObject(renderer)->isListBox()))
+    if (nodeHasRole(node, "listbox") || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isListBox()))
         return true;
 
     // Textboxes should send out notifications.
@@ -2402,7 +2396,7 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
     for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
-        if (renderObjectIsObservable(renderer)) {
+        if (renderObjectIsObservable(*renderer)) {
             if (AXObjectCache* cache = axObjectCache())
                 return cache->getOrCreate(renderer);
         }
@@ -3419,10 +3413,10 @@ static AccessibilityRole msaaRoleForRenderer(const RenderObject* renderer)
     if (!renderer)
         return UnknownRole;
 
-    if (renderer->isText())
+    if (is<RenderText>(*renderer))
         return EditableTextRole;
 
-    if (renderer->isBoxModelObject() && toRenderBoxModelObject(renderer)->isListItem())
+    if (is<RenderListItem>(*renderer))
         return ListItemRole;
 
     return UnknownRole;

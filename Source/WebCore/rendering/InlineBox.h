@@ -22,6 +22,7 @@
 #define InlineBox_h
 
 #include "RenderBoxModelObject.h"
+#include "RenderText.h"
 #include "TextDirection.h"
 
 namespace WebCore {
@@ -252,9 +253,9 @@ public:
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
-        if (!m_renderer.isText())
-            return &toRenderBoxModelObject(m_renderer);
-        return 0;
+        if (!is<RenderText>(m_renderer))
+            return &downcast<RenderBoxModelObject>(m_renderer);
+        return nullptr;
     }
 
     FloatPoint locationIncludingFlipping();

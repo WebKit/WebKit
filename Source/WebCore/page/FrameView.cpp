@@ -1782,7 +1782,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
         // Fixed items should always have layers.
         ASSERT(renderer->hasLayer());
-        RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
+        RenderLayer* layer = downcast<RenderBoxModelObject>(*renderer).layer();
 
         if (layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForBoundsOutOfView
             || layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForNoVisibleContent) {

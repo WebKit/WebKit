@@ -205,9 +205,8 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
-    if (m_object && m_object->isComposited()) {
-        return toRenderBoxModelObject(m_object)->startAnimation(timeOffset, m_animation.get(), m_keyframes);
-    }
+    if (m_object && m_object->isComposited())
+        return downcast<RenderBoxModelObject>(*m_object).startAnimation(timeOffset, m_animation.get(), m_keyframes);
     return false;
 }
 
@@ -217,7 +216,7 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
         return;
 
     if (m_object->isComposited())
-        toRenderBoxModelObject(m_object)->animationPaused(timeOffset, m_keyframes.animationName());
+        downcast<RenderBoxModelObject>(*m_object).animationPaused(timeOffset, m_keyframes.animationName());
 
     // Restore the original (unanimated) style
     if (!paused())
@@ -230,7 +229,7 @@ void KeyframeAnimation::endAnimation()
         return;
 
     if (m_object->isComposited())
-        toRenderBoxModelObject(m_object)->animationFinished(m_keyframes.animationName());
+        downcast<RenderBoxModelObject>(*m_object).animationFinished(m_keyframes.animationName());
 
     // Restore the original (unanimated) style
     if (!paused())

@@ -1,3 +1,18 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBoxModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=137587
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for RenderBoxModelObject and clean up the
+        surrounding code.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView invalidatePluginContentRect:]):
+        * WebView/WebRenderLayer.mm:
+        (-[WebRenderLayer initWithWebFrame:]):
+
 2014-10-09  Dean Jackson  <dino@apple.com>
 
         Remove ENABLE_CSS3_CONDITIONAL_RULES

@@ -1,3 +1,17 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBoxModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=137587
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for RenderBoxModelObject and clean up the
+        surrounding code.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::renderer):
+        (WebKit::PluginView::invalidateRect):
+
 2014-10-10  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         [SOUP] Remove custom URI schemes implementation

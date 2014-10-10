@@ -464,7 +464,7 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
 
 RenderBoxModelObject* PluginView::renderer() const
 {
-    return toRenderBoxModelObject(m_pluginElement->renderer());
+    return downcast<RenderBoxModelObject>(m_pluginElement->renderer());
 }
 
 void PluginView::pageScaleFactorDidChange()
@@ -1297,7 +1297,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
     if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
         return;
 
-    RenderBoxModelObject* renderer = toRenderBoxModelObject(m_pluginElement->renderer());
+    RenderBoxModelObject* renderer = downcast<RenderBoxModelObject>(m_pluginElement->renderer());
     if (!renderer)
         return;
 

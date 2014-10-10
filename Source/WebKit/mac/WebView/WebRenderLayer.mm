@@ -145,7 +145,7 @@ using namespace WebCore;
     }
 
     if (renderer->hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
+        RenderLayer* layer = downcast<RenderBoxModelObject>(*renderer).layer();
 
         name = [[WebRenderLayer nameForLayer:layer] retain];
         bounds = layer->absoluteBoundingBox();

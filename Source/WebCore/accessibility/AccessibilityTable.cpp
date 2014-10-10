@@ -259,13 +259,13 @@ bool AccessibilityTable::isDataTable() const
             
             // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
             if (row < 5 && row == alternatingRowColorCount) {
-                RenderObject* renderRow = cell->parent();
-                if (!renderRow || !renderRow->isBoxModelObject() || !toRenderBoxModelObject(renderRow)->isTableRow())
+                RenderElement* renderRow = cell->parent();
+                if (!is<RenderTableRow>(renderRow))
                     continue;
                 const RenderStyle& rowRenderStyle = renderRow->style();
                 Color rowColor = rowRenderStyle.visitedDependentColor(CSSPropertyBackgroundColor);
                 alternatingRowColors[alternatingRowColorCount] = rowColor;
-                alternatingRowColorCount++;
+                ++alternatingRowColorCount;
             }
         }
         

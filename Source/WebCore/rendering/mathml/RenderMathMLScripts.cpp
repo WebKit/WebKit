@@ -76,11 +76,11 @@ RenderMathMLScripts::RenderMathMLScripts(Element& element, PassRef<RenderStyle> 
 RenderBoxModelObject* RenderMathMLScripts::base() const
 {
     if (!m_baseWrapper)
-        return 0;
+        return nullptr;
     RenderObject* base = m_baseWrapper->firstChild();
-    if (!base || !base->isBoxModelObject())
-        return 0;
-    return toRenderBoxModelObject(base);
+    if (!is<RenderBoxModelObject>(base))
+        return nullptr;
+    return downcast<RenderBoxModelObject>(base);
 }
 
 void RenderMathMLScripts::fixAnonymousStyleForSubSupPair(RenderObject* subSupPair, bool isPostScript)

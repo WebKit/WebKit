@@ -225,11 +225,11 @@ void PrintContext::end()
 static RenderBoxModelObject* enclosingBoxModelObject(RenderObject* object)
 {
 
-    while (object && !object->isBoxModelObject())
+    while (object && !is<RenderBoxModelObject>(*object))
         object = object->parent();
     if (!object)
-        return 0;
-    return toRenderBoxModelObject(object);
+        return nullptr;
+    return downcast<RenderBoxModelObject>(object);
 }
 
 int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSizeInPixels)

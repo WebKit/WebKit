@@ -42,7 +42,7 @@ public:
     {
     }
 
-    RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
+    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
 
     virtual void deleteLine() override;
     virtual void extractLine() override;

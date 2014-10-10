@@ -368,10 +368,10 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
-    RenderObject* o = beforeChild;
-    while (o) {
-        RenderObject* tmp = o;
-        o = tmp->nextSibling();
+    RenderObject* renderer = beforeChild;
+    while (renderer) {
+        RenderObject* tmp = renderer;
+        renderer = tmp->nextSibling();
         removeChildInternal(*tmp, NotifyChildren);
         cloneInline->addChildIgnoringContinuation(tmp);
         tmp->setNeedsLayoutAndPrefWidthsRecalc();
@@ -383,8 +383,8 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
     // Once we hit the containing block we're done.
-    RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
-    RenderBoxModelObject* currChild = this;
+    RenderBoxModelObject* current = downcast<RenderBoxModelObject>(parent());
+    RenderBoxModelObject* currentChild = this;
     
     // FIXME: Because splitting is O(n^2) as tags nest pathologically, we cap the depth at which we're willing to clone.
     // There will eventually be a better approach to this problem that will let us nest to a much
@@ -392,49 +392,48 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // incorrect rendering, but the alternative is to hang forever.
     unsigned splitDepth = 1;
     const unsigned cMaxSplitDepth = 200; 
-    while (curr && curr != fromBlock) {
-        ASSERT(curr->isRenderInline());
+    while (current && current != fromBlock) {
         if (splitDepth < cMaxSplitDepth) {
             // Create a new clone.
             RenderPtr<RenderInline> cloneChild = WTF::move(cloneInline);
-            cloneInline = toRenderInline(curr)->clone();
+            cloneInline = downcast<RenderInline>(*current).clone();
 
             // Insert our child clone as the first child.
             cloneInline->addChildIgnoringContinuation(cloneChild.leakPtr());
 
             // Hook the clone up as a continuation of |curr|.
-            RenderInline* inlineCurr = toRenderInline(curr);
-            oldCont = inlineCurr->continuation();
-            inlineCurr->setContinuation(cloneInline.get());
+            RenderInline& currentInline = downcast<RenderInline>(*current);
+            oldCont = currentInline.continuation();
+            currentInline.setContinuation(cloneInline.get());
             cloneInline->setContinuation(oldCont);
 
             // Now we need to take all of the children starting from the first child
-            // *after* currChild and append them all to the clone.
-            o = currChild->nextSibling();
-            while (o) {
-                RenderObject* tmp = o;
-                o = tmp->nextSibling();
-                inlineCurr->removeChildInternal(*tmp, NotifyChildren);
+            // *after* currentChild and append them all to the clone.
+            renderer = currentChild->nextSibling();
+            while (renderer) {
+                RenderObject* tmp = renderer;
+                renderer = tmp->nextSibling();
+                currentInline.removeChildInternal(*tmp, NotifyChildren);
                 cloneInline->addChildIgnoringContinuation(tmp);
                 tmp->setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
         
         // Keep walking up the chain.
-        currChild = curr;
-        curr = toRenderBoxModelObject(curr->parent());
-        splitDepth++;
+        currentChild = current;
+        current = downcast<RenderBoxModelObject>(current->parent());
+        ++splitDepth;
     }
 
     // Now we are at the block level. We need to put the clone into the toBlock.
     toBlock->insertChildInternal(cloneInline.leakPtr(), nullptr, NotifyChildren);
 
-    // Now take all the children after currChild and remove them from the fromBlock
+    // Now take all the children after currentChild and remove them from the fromBlock
     // and put them in the toBlock.
-    o = currChild->nextSibling();
-    while (o) {
-        RenderObject* tmp = o;
-        o = tmp->nextSibling();
+    renderer = currentChild->nextSibling();
+    while (renderer) {
+        RenderObject* tmp = renderer;
+        renderer = tmp->nextSibling();
         fromBlock->removeChildInternal(*tmp, NotifyChildren);
         toBlock->insertChildInternal(tmp, nullptr, NotifyChildren);
     }
@@ -508,14 +507,13 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderBoxModelObject* flow = continuationBefore(beforeChild);
-    ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() || beforeChild->parent()->isRenderInline());
-    RenderBoxModelObject* beforeChildParent = 0;
+    ASSERT(!beforeChild || is<RenderBlock>(*beforeChild->parent()) || is<RenderInline>(*beforeChild->parent()));
+    RenderBoxModelObject* beforeChildParent = nullptr;
     if (beforeChild)
-        beforeChildParent = toRenderBoxModelObject(beforeChild->parent());
+        beforeChildParent = downcast<RenderBoxModelObject>(beforeChild->parent());
     else {
-        RenderBoxModelObject* cont = nextContinuation(flow);
-        if (cont)
-            beforeChildParent = cont;
+        if (RenderBoxModelObject* continuation = nextContinuation(flow))
+            beforeChildParent = continuation;
         else
             beforeChildParent = flow;
     }

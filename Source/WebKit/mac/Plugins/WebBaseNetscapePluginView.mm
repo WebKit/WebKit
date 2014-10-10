@@ -864,7 +864,7 @@ using namespace WebCore;
 
 - (void)invalidatePluginContentRect:(NSRect)rect
 {
-    if (RenderBoxModelObject *renderer = toRenderBoxModelObject(_element->renderer())) {
+    if (RenderBoxModelObject* renderer = downcast<RenderBoxModelObject>(_element->renderer())) {
         IntRect contentRect(rect);
         contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
         

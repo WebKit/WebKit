@@ -247,7 +247,7 @@ private:
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
-    bool renderObjectIsObservable(RenderObject*) const;
+    bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
     

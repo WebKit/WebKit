@@ -988,7 +988,7 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect
         }
 
         // Move the ancestor position at the top of the region where the composited layer is going to display.
-        RenderFlowThread& flowThread = toRenderFlowThread(flowThreadLayer->renderer());
+        RenderFlowThread& flowThread = downcast<RenderFlowThread>(flowThreadLayer->renderer());
         RenderNamedFlowFragment* parentRegion = flowThread.cachedRegionForCompositedLayer(m_owningLayer);
         if (!parentRegion)
             return;
@@ -996,7 +996,7 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect
         IntPoint flowDelta;
         m_owningLayer.convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
         parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(ancestorCompositingBounds);
-        RenderBoxModelObject& layerOwner = toRenderBoxModelObject(parentRegion->layerOwner());
+        RenderBoxModelObject& layerOwner = downcast<RenderBoxModelObject>(parentRegion->layerOwner());
         RenderLayerBacking* layerOwnerBacking = layerOwner.layer()->backing();
         if (!layerOwnerBacking)
             return;

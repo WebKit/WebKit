@@ -353,14 +353,14 @@ RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
 void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderBlock* flow = continuationBefore(beforeChild);
-    ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock());
-    RenderBoxModelObject* beforeChildParent = 0;
+    ASSERT(!beforeChild || is<RenderBlock>(*beforeChild->parent()));
+    RenderBoxModelObject* beforeChildParent = nullptr;
     if (beforeChild)
-        beforeChildParent = toRenderBoxModelObject(beforeChild->parent());
+        beforeChildParent = downcast<RenderBoxModelObject>(beforeChild->parent());
     else {
-        RenderBoxModelObject* cont = flow->continuation();
-        if (cont)
-            beforeChildParent = cont;
+        RenderBoxModelObject* continuation = flow->continuation();
+        if (continuation)
+            beforeChildParent = continuation;
         else
             beforeChildParent = flow;
     }

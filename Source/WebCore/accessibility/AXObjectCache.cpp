@@ -73,6 +73,7 @@
 #include "RenderMenuList.h"
 #include "RenderMeter.h"
 #include "RenderProgress.h"
+#include "RenderSVGRoot.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -290,40 +291,40 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
         return AccessibilityMediaControl::create(renderer);
 #endif
 
-    if (renderer->isSVGRoot())
+    if (is<RenderSVGRoot>(*renderer))
         return AccessibilitySVGRoot::create(renderer);
     
     // Search field buttons
     if (is<Element>(node) && downcast<Element>(*node).isSearchFieldCancelButtonElement())
         return AccessibilitySearchFieldCancelButton::create(renderer);
     
-    if (renderer->isBoxModelObject()) {
-        RenderBoxModelObject* cssBox = toRenderBoxModelObject(renderer);
-        if (cssBox->isListBox())
-            return AccessibilityListBox::create(toRenderListBox(cssBox));
-        if (cssBox->isMenuList())
-            return AccessibilityMenuList::create(toRenderMenuList(cssBox));
+    if (is<RenderBoxModelObject>(*renderer)) {
+        RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);
+        if (is<RenderListBox>(cssBox))
+            return AccessibilityListBox::create(&downcast<RenderListBox>(cssBox));
+        if (is<RenderMenuList>(cssBox))
+            return AccessibilityMenuList::create(&downcast<RenderMenuList>(cssBox));
 
         // standard tables
-        if (cssBox->isTable())
-            return AccessibilityTable::create(toRenderTable(cssBox));
-        if (cssBox->isTableRow())
-            return AccessibilityTableRow::create(toRenderTableRow(cssBox));
-        if (cssBox->isTableCell())
-            return AccessibilityTableCell::create(toRenderTableCell(cssBox));
+        if (is<RenderTable>(cssBox))
+            return AccessibilityTable::create(&downcast<RenderTable>(cssBox));
+        if (is<RenderTableRow>(cssBox))
+            return AccessibilityTableRow::create(&downcast<RenderTableRow>(cssBox));
+        if (is<RenderTableCell>(cssBox))
+            return AccessibilityTableCell::create(&downcast<RenderTableCell>(cssBox));
 
         // progress bar
-        if (cssBox->isProgress())
-            return AccessibilityProgressIndicator::create(toRenderProgress(cssBox));
+        if (is<RenderProgress>(cssBox))
+            return AccessibilityProgressIndicator::create(&downcast<RenderProgress>(cssBox));
 
 #if ENABLE(METER_ELEMENT)
-        if (cssBox->isMeter())
-            return AccessibilityProgressIndicator::create(toRenderMeter(cssBox));
+        if (is<RenderMeter>(cssBox))
+            return AccessibilityProgressIndicator::create(&downcast<RenderMeter>(cssBox));
 #endif
 
         // input type=range
-        if (cssBox->isSlider())
-            return AccessibilitySlider::create(toRenderSlider(cssBox));
+        if (is<RenderSlider>(cssBox))
+            return AccessibilitySlider::create(&downcast<RenderSlider>(cssBox));
     }
 
     return AccessibilityRenderObject::create(renderer);

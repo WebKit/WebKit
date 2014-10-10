@@ -75,7 +75,7 @@ public:
     virtual const char* boxName() const override;
 #endif
 
-    RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
+    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
     InlineFlowBox* prevLineBox() const { return m_prevLineBox; }

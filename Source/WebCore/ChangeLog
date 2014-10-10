@@ -1,3 +1,93 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBoxModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=137587
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for RenderBoxModelObject and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderBoxModelObject):
+        (WebCore::isInlineWithContinuation):
+        (WebCore::firstChildConsideringContinuation):
+        (WebCore::lastChildHasContinuation):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::AccessibilityRenderObject::widget):
+        (WebCore::AccessibilityRenderObject::renderObjectIsObservable):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::msaaRoleForRenderer):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * dom/Node.cpp:
+        (WebCore::Node::renderBox):
+        (WebCore::Node::renderBoxModelObject):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+        * page/PrintContext.cpp:
+        (WebCore::enclosingBoxModelObject):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::overflowScrollPositionChangedForNode):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::boxModelObject):
+        * rendering/InlineElementBox.h:
+        (WebCore::InlineElementBox::renderer):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::renderer):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::baselinePosition):
+        (WebCore::InlineTextBox::lineHeight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToContinuation):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::addChildToContinuation):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::offsetParent):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::base):
+
 2014-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove CrossThreadTask

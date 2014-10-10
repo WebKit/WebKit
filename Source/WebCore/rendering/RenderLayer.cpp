@@ -1251,7 +1251,7 @@ bool RenderLayer::updateLayerPosition()
     
     bool positionOrOffsetChanged = false;
     if (renderer().isInFlowPositioned()) {
-        LayoutSize newOffset = toRenderBoxModelObject(renderer()).offsetForInFlowPosition();
+        LayoutSize newOffset = downcast<RenderBoxModelObject>(renderer()).offsetForInFlowPosition();
         positionOrOffsetChanged = newOffset != m_offsetForInFlowPosition;
         m_offsetForInFlowPosition = newOffset;
         localPoint.move(m_offsetForInFlowPosition);
@@ -5404,10 +5404,10 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     foregroundRect = backgroundRect;
     outlineRect = backgroundRect;
 
-    RenderFlowThread* flowThread = namedFlowFragment ? namedFlowFragment->flowThread() : 0;
+    RenderFlowThread* flowThread = namedFlowFragment ? namedFlowFragment->flowThread() : nullptr;
     if (isSelfPaintingLayer() && flowThread && !renderer().isInFlowRenderFlowThread()) {
         ASSERT(namedFlowFragment->isValid());
-        const RenderBoxModelObject& boxModelObject = toRenderBoxModelObject(renderer());
+        const RenderBoxModelObject& boxModelObject = downcast<RenderBoxModelObject>(renderer());
         LayoutRect layerBoundsWithVisualOverflow = namedFlowFragment->visualOverflowRectForBox(&boxModelObject);
 
         // Layers are in physical coordinates so the origin must be moved to the physical top-left of the flowthread.
@@ -5593,7 +5593,7 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     // to the flow thread, not the last region (in which it will end up because of bottom:0px)
     if (namedFlowFragment && renderer().flowThreadContainingBlock()) {
         LayoutRect b = layerBounds;
-        b.moveBy(namedFlowFragment->visualOverflowRectForBox(toRenderBoxModelObject(&renderer())).location());
+        b.moveBy(namedFlowFragment->visualOverflowRectForBox(downcast<RenderBoxModelObject>(&renderer())).location());
         b.inflate(renderer().view().maximalOutlineSize());
         if (b.intersects(damageRect))
             return true;

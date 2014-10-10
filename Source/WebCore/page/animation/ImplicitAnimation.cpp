@@ -102,7 +102,7 @@ void ImplicitAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 bool ImplicitAnimation::startAnimation(double timeOffset)
 {
     if (m_object && m_object->isComposited())
-        return toRenderBoxModelObject(m_object)->startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
+        return downcast<RenderBoxModelObject>(*m_object).startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
     return false;
 }
 
@@ -112,7 +112,7 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
         return;
 
     if (m_object->isComposited())
-        toRenderBoxModelObject(m_object)->transitionPaused(timeOffset, m_animatingProperty);
+        downcast<RenderBoxModelObject>(*m_object).transitionPaused(timeOffset, m_animatingProperty);
     // Restore the original (unanimated) style
     if (!paused())
         setNeedsStyleRecalc(m_object->element());
@@ -121,7 +121,7 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
 void ImplicitAnimation::endAnimation()
 {
     if (m_object && m_object->isComposited())
-        toRenderBoxModelObject(m_object)->transitionFinished(m_animatingProperty);
+        downcast<RenderBoxModelObject>(*m_object).transitionFinished(m_animatingProperty);
 }
 
 void ImplicitAnimation::onAnimationEnd(double elapsedTime)

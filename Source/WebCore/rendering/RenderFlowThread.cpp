@@ -432,7 +432,7 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
     RenderRegion* startRegion = regionAtBlockOffset(objContainingBlock, referencePoint.y());
     if (startRegion) {
         // Take into account the offset coordinates of the region.
-        RenderBoxModelObject* startRegionBox = startRegion->isRenderNamedFlowFragment() ? toRenderBoxModelObject(startRegion->parent()) : startRegion;
+        RenderBoxModelObject* startRegionBox = is<RenderNamedFlowFragment>(*startRegion) ? downcast<RenderBoxModelObject>(startRegion->parent()) : startRegion;
         RenderBoxModelObject* currObject = startRegionBox;
         RenderBoxModelObject* currOffsetParent;
         while ((currOffsetParent = currObject->offsetParent())) {
