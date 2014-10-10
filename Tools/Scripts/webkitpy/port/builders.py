@@ -48,6 +48,11 @@ from webkitpy.common.memoized import memoized
 _exact_matches = {
     # These builders are on build.webkit.org.
 
+    "Apple Yosemite Release WK1 (Tests)": {"port_name": "mac-yosemite", "is_debug": False},
+    "Apple Yosemite Debug WK1 (Tests)": {"port_name": "mac-yosemite", "is_debug": True},
+    "Apple Yosemite Release WK2 (Tests)": {"port_name": "mac-yosemite-wk2", "is_debug": False},
+    "Apple Yosemite Debug WK2 (Tests)": {"port_name": "mac-yosemite-wk2", "is_debug": True},
+
     "Apple Mavericks Release WK1 (Tests)": {"port_name": "mac-mavericks", "is_debug": False},
     "Apple Mavericks Debug WK1 (Tests)": {"port_name": "mac-mavericks", "is_debug": True},
     "Apple Mavericks Release WK2 (Tests)": {"port_name": "mac-mavericks-wk2", "is_debug": False},

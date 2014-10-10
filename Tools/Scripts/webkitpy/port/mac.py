@@ -44,7 +44,7 @@ _log = logging.getLogger(__name__)
 class MacPort(ApplePort):
     port_name = "mac"
 
-    VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-mavericks']
+    VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-mavericks', 'mac-yosemite']
 
     ARCHITECTURES = ['x86_64', 'x86']
 

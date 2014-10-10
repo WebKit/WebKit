@@ -1,3 +1,26 @@
+2014-10-09  Andy Estes  <aestes@apple.com>
+
+        Teach webkitpy about OS X Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=137585
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_mac_version):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_os_version):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        * Scripts/webkitpy/port/builders.py:
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (test_versions):
+        (test_baseline_search_path):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+
 2014-10-09  Dana Burkart  <dburkart@apple.com>
 
         Add Mac OS Yosemite dashboard support.
