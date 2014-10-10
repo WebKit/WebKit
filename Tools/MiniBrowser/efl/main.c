@@ -1529,6 +1529,7 @@ on_popup_menu_hide(Ewk_View_Smart_Data *smartData)
         return EINA_FALSE;
 
     elm_menu_close(window->popup.elm_menu);
+    window->popup.ewk_menu = NULL;
 
     return EINA_TRUE;
 }

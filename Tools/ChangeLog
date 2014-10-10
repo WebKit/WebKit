@@ -1,3 +1,21 @@
+2014-10-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Crash on facebook.com
+        https://bugs.webkit.org/show_bug.cgi?id=137562
+
+        Reviewed by Chris Dumez.
+
+        Crash occurs on the facebook.com when the webview is resized
+        after the <select> item is clicked but no item is chosen.
+        This crash is just caused by the reference of invalidated variable.
+        From the EwkView::closePopupMenu(), ewk_menu is just invalidated.
+        Therefore ewk_menu variable is not available anymore when on_popup_menu_hide()
+        on MiniBrowser is called.
+        As a result, just set ewk_menu to NULL in order to prevent crash condition.
+
+        * MiniBrowser/efl/main.c:
+        (on_popup_menu_hide):
+
 2014-10-10  Alexey Proskuryakov  <ap@apple.com>
 
         A small wording change for clarity.
