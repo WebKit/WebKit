@@ -1,5 +1,14 @@
 2014-10-10  Andy Estes  <aestes@apple.com>
 
+        Fix some Mavericks test failures caused by r174585.
+
+        * platform/mac-mavericks/fast/css/resize-corner-tracking-expected.txt: Added.
+        * platform/mac-mavericks/fast/events/shadow-event-path-2-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/fast/text/systemFont-expected.txt: Renamed from LayoutTests/platform/mac-mountainlion/platform/mac/fast/text/systemFont-expected.txt.
+        * platform/mac-mavericks/platform/mac/fast/text/vertical-no-sideways-expected.txt: Renamed from LayoutTests/platform/mac-mountainlion/platform/mac/fast/text/vertical-no-sideways-expected.txt.
+
+2014-10-10  Andy Estes  <aestes@apple.com>
+
         Added Yosemite expected results and TestExpections to platform/mac/.
 
         To-be-overwritten files in platform/mac/ were first moved to platform/mac-mavericks/.
