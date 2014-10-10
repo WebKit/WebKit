@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 31: TypeError: null is not an object (evaluating 'elt.id')
+FAIL: Timed out waiting for notifyDone to be called
+This test starts a transition of the 'left' property and then does elementFromPoint calls at the shown yellow dots to see if hit testing works
+

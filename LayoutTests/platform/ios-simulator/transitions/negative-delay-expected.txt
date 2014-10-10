@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'left' transition on element 'square1'
+CONSOLE MESSAGE: line 240: Failed to pause 'left' transition on element 'square2'
+CONSOLE MESSAGE: line 240: Failed to pause 'left' transition on element 'square1'
+CONSOLE MESSAGE: line 240: Failed to pause 'left' transition on element 'square2'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-transform' transition on element 'square3'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-transform' transition on element 'square4'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-transform' transition on element 'square3'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-transform' transition on element 'square4'
+FAIL - "left" property for "square1" element at 0s expected: 300 but saw: 600
+FAIL - "left" property for "square2" element at 0s expected: 0 but saw: 600
+FAIL - "left" property for "square1" element at 0.5s expected: 450 but saw: 600
+FAIL - "left" property for "square2" element at 0.5s expected: 150 but saw: 600
+FAIL - "-webkit-transform.4" property for "square3" element at 0s expected: 300 but saw: matrix(1, 0, 0, 1, 600, 0)
+FAIL - "-webkit-transform.4" property for "square4" element at 0s expected: 0 but saw: matrix(1, 0, 0, 1, 600, 0)
+FAIL - "-webkit-transform.4" property for "square3" element at 0.5s expected: 450 but saw: matrix(1, 0, 0, 1, 600, 0)
+FAIL - "-webkit-transform.4" property for "square4" element at 0.5s expected: 150 but saw: matrix(1, 0, 0, 1, 600, 0)
+

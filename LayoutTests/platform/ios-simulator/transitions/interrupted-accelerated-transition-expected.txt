@@ -1,0 +1,4 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 240: Failed to pause 'opacity' transition on element 'box'
+FAIL - "opacity" property for "box" element at 0.5s expected: 0.5 but saw: 1
+

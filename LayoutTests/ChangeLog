@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results (many of which are failures) for transitions tests.
+
+        * platform/ios-simulator/transitions/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for transforms tests.
 
         * platform/ios-simulator/transforms/*: Added

@@ -1,0 +1,4 @@
+Test removes the transition properties while the transition is running, then adds them back in. If working properly the transitions should start from the beginning. But there was a bug that would cause the transition to continue to run (although with no visible effect). So when you restarted, it would pick up where it left off.
+
+lefttranslate
+left:FAIL(was:450, s/b:150), webkitTransform:FAIL(was: 400, s/b:50)
