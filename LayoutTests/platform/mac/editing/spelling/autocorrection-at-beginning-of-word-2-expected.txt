@@ -1,6 +1,6 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,122) size 784x140
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,132) size 581x136 clip at (11,133) size 579x134
-  RenderTextControl {TEXTAREA} at (2,2) size 581x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 575x26
+layer at (10,132) size 578x136 clip at (11,133) size 576x134
+  RenderTextControl {TEXTAREA} at (2,2) size 578x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 572x26
       RenderText {#text} at (0,0) size 45x13
         text run at (0,0) width 45: "mesage "
       RenderText {#text} at (44,0) size 1x13

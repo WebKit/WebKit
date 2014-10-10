@@ -1,5 +1,31 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Mac TestExpectations cleanup.
+        
+        Re-enable tests that now pass. Mark skipped tests as [ Failure ] when possible,
+        and rebaseline some tests.
+
+        * perf/nested-combined-selectors-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-delete-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-in-textarea-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-after-paste-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.txt:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.txt:
+        * platform/mac/editing/spelling/delete-autocorrected-word-2-expected.txt:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/mac/fast/forms/text-control-intrinsic-widths-expected.txt:
+        * platform/mac/fast/text/combining-character-sequence-fallback-expected.txt: Renamed from LayoutTests/platform/mac/platform/mac/fast/text/combining-character-sequence-fallback-expected.txt.
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+        * platform/mac/platform/mac/fast/text/combining-character-sequence-fallback-expected.png: Removed.
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Skip webgl tests in the iOS Simulator.
 
         * platform/ios-simulator/TestExpectations:

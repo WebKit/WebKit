@@ -248,17 +248,17 @@ cols=1000 clientWidth=7019
 
 Georgia
 input
-size=1 clientWidth=17
-size=2 clientWidth=22
-size=3 clientWidth=27
-size=4 clientWidth=32
-size=5 clientWidth=37
-size=10 clientWidth=62
-size=20 clientWidth=112
-size=50 clientWidth=262
-size=100 clientWidth=512
-size=500 clientWidth=2512
-size=1000 clientWidth=5012
+size=1 clientWidth=27
+size=2 clientWidth=32
+size=3 clientWidth=37
+size=4 clientWidth=42
+size=5 clientWidth=47
+size=10 clientWidth=72
+size=20 clientWidth=122
+size=50 clientWidth=272
+size=100 clientWidth=522
+size=500 clientWidth=2522
+size=1000 clientWidth=5022
 
 textarea
 cols=1 clientWidth=24
