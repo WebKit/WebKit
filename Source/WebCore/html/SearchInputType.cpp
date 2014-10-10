@@ -55,8 +55,8 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 void SearchInputType::addSearchResult()
 {
 #if !PLATFORM(IOS)
-    if (RenderObject* renderer = element().renderer())
-        toRenderSearchField(renderer)->addSearchResult();
+    if (auto* renderer = element().renderer())
+        downcast<RenderSearchField>(*renderer).addSearchResult();
 #endif
 }
 
@@ -186,7 +186,7 @@ bool SearchInputType::searchEventsShouldBeDispatched() const
 void SearchInputType::didSetValueByUserEdit(ValueChangeState state)
 {
     if (m_cancelButton)
-        toRenderSearchField(element().renderer())->updateCancelButtonVisibility();
+        downcast<RenderSearchField>(*element().renderer()).updateCancelButtonVisibility();
 
     // If the incremental attribute is set, then dispatch the search event
     if (searchEventsShouldBeDispatched())

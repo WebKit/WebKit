@@ -330,7 +330,7 @@ void HTMLCanvasElement::reset()
     if (auto renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
             if (oldSize != size()) {
-                toRenderHTMLCanvas(renderer)->canvasSizeChanged();
+                downcast<RenderHTMLCanvas>(*renderer).canvasSizeChanged();
                 if (renderBox() && renderBox()->hasAcceleratedCompositing())
                     renderBox()->contentChanged(CanvasChanged);
             }

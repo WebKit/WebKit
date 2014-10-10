@@ -1919,18 +1919,18 @@ LayoutSize RenderLayerBacking::contentOffsetInCompostingLayer() const
 
 LayoutRect RenderLayerBacking::contentsBox() const
 {
-    if (!renderer().isBox())
+    if (!is<RenderBox>(renderer()))
         return LayoutRect();
 
-    RenderBox& renderBox = toRenderBox(renderer());
+    RenderBox& renderBox = downcast<RenderBox>(renderer());
     LayoutRect contentsRect;
 #if ENABLE(VIDEO)
-    if (renderBox.isVideo())
-        contentsRect = toRenderVideo(renderBox).videoBox();
+    if (is<RenderVideo>(renderBox))
+        contentsRect = downcast<RenderVideo>(renderBox).videoBox();
     else
 #endif
-    if (renderBox.isRenderReplaced()) {
-        RenderReplaced& renderReplaced = *toRenderReplaced(&renderBox);
+    if (is<RenderReplaced>(renderBox)) {
+        RenderReplaced& renderReplaced = downcast<RenderReplaced>(renderBox);
         contentsRect = renderReplaced.replacedContentRect(renderBox.intrinsicSize());
     } else
         contentsRect = renderBox.contentBoxRect();

@@ -80,8 +80,6 @@ private:
     bool m_hasSVGShadow;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGModelObject, isRenderSVGModelObject())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGModelObject, isRenderSVGModelObject())

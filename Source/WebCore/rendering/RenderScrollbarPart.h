@@ -73,8 +73,6 @@ private:
     ScrollbarPart m_part;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderScrollbarPart, isRenderScrollbarPart())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderScrollbarPart, isRenderScrollbarPart())

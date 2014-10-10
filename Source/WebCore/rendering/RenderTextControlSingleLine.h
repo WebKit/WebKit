@@ -113,8 +113,6 @@ private:
     virtual bool isTextControlInnerBlock() const override { return true; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderTextControlInnerBlock, isTextControlInnerBlock())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlSingleLine, isTextField())

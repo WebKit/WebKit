@@ -48,6 +48,8 @@ private:
     FloatSize m_lastTranslation;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTransformableContainer, isSVGTransformableContainer())
 
 #endif // RenderSVGTransformableContainer_h

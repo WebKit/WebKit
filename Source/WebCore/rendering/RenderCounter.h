@@ -62,8 +62,6 @@ private:
     friend class CounterNode;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderCounter, isCounter())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isCounter())

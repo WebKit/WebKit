@@ -55,8 +55,6 @@ private:
     String m_text;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderQuote, isQuote())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderQuote, isQuote())

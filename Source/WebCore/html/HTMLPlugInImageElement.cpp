@@ -334,12 +334,12 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     m_snapshotImage = image;
 
-    if (renderer()->isSnapshottedPlugIn()) {
-        toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
+    if (is<RenderSnapshottedPlugIn>(*renderer())) {
+        downcast<RenderSnapshottedPlugIn>(*renderer()).updateSnapshot(image);
         return;
     }
 
-    if (renderer()->isEmbeddedObject())
+    if (is<RenderEmbeddedObject>(*renderer()))
         renderer()->repaint();
 }
 
@@ -582,7 +582,7 @@ bool HTMLPlugInImageElement::isTopLevelFullPagePlugin(const RenderEmbeddedObject
     
 void HTMLPlugInImageElement::checkSnapshotStatus()
 {
-    if (!renderer()->isSnapshottedPlugIn()) {
+    if (!is<RenderSnapshottedPlugIn>(*renderer())) {
         if (displayState() == Playing)
             checkSizeChangeForSnapshotting();
         return;
@@ -590,7 +590,7 @@ void HTMLPlugInImageElement::checkSnapshotStatus()
     
     // If width and height styles were previously not set and we've snapshotted the plugin we may need to restart the plugin so that its state can be updated appropriately.
     if (!document().page()->settings().snapshotAllPlugIns() && displayState() <= DisplayingSnapshot && !m_plugInDimensionsSpecified) {
-        RenderSnapshottedPlugIn& renderer = toRenderSnapshottedPlugIn(*this->renderer());
+        RenderSnapshottedPlugIn& renderer = downcast<RenderSnapshottedPlugIn>(*this->renderer());
         if (!renderer.style().logicalWidth().isSpecified() && !renderer.style().logicalHeight().isSpecified())
             return;
         

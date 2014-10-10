@@ -56,8 +56,6 @@ private:
     virtual bool shadowControlsNeedCustomLayoutMetrics() const { return true; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMedia, isMedia())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMedia, isMedia())

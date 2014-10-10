@@ -1863,7 +1863,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
         return true;
 
     HTMLPlugInElement& plugInElement = downcast<HTMLPlugInElement>(*parent);
-    if (!plugInElement.isPlugInImageElement())
+    if (!is<HTMLPlugInImageElement>(plugInElement))
         return true;
 
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(plugInElement);
@@ -1872,27 +1872,27 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
     if (!snapshot)
         return true;
 
-    RenderSnapshottedPlugIn* plugInRenderer = toRenderSnapshottedPlugIn(plugInImageElement.renderer());
-    FloatPoint snapshotAbsPos = plugInRenderer->localToAbsolute();
-    snapshotAbsPos.move(plugInRenderer->borderLeft() + plugInRenderer->paddingLeft(), plugInRenderer->borderTop() + plugInRenderer->paddingTop());
+    RenderSnapshottedPlugIn& plugInRenderer = downcast<RenderSnapshottedPlugIn>(*plugInImageElement.renderer());
+    FloatPoint snapshotAbsPos = plugInRenderer.localToAbsolute();
+    snapshotAbsPos.move(plugInRenderer.borderLeft() + plugInRenderer.paddingLeft(), plugInRenderer.borderTop() + plugInRenderer.paddingTop());
 
     // We could draw the snapshot with that coordinates, but we need to make sure there
     // isn't a composited layer between us and the plugInRenderer.
-    for (auto* renderBox = &downcast<RenderBox>(renderer); renderBox != plugInRenderer; renderBox = renderBox->parentBox()) {
+    for (auto* renderBox = &downcast<RenderBox>(renderer); renderBox != &plugInRenderer; renderBox = renderBox->parentBox()) {
         if (renderBox->hasLayer() && renderBox->layer() && renderBox->layer()->isComposited()) {
             snapshotAbsPos = -renderBox->location();
             break;
         }
     }
 
-    LayoutSize pluginSize(plugInRenderer->contentWidth(), plugInRenderer->contentHeight());
+    LayoutSize pluginSize(plugInRenderer.contentWidth(), plugInRenderer.contentHeight());
     LayoutRect pluginRect(snapshotAbsPos, pluginSize);
     IntRect alignedPluginRect = snappedIntRect(pluginRect);
 
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;
 
-    context->drawImage(snapshot, plugInRenderer->style().colorSpace(), alignedPluginRect, CompositeSourceOver);
+    context->drawImage(snapshot, plugInRenderer.style().colorSpace(), alignedPluginRect, CompositeSourceOver);
     return false;
 }
 

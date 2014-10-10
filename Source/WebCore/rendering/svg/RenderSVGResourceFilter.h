@@ -97,8 +97,6 @@ private:
     HashMap<RenderObject*, std::unique_ptr<FilterData>> m_filter;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceFilter, isSVGResourceFilter())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceFilter, isSVGResourceFilter())

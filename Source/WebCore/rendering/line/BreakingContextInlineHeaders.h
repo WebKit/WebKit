@@ -472,9 +472,9 @@ inline void nextCharacter(UChar& currentCharacter, UChar& lastCharacter, UChar& 
 // so we don't need this hack.
 inline void updateCounterIfNeeded(RenderText& renderText)
 {
-    if (!renderText.preferredLogicalWidthsDirty() || !renderText.isCounter())
+    if (!renderText.preferredLogicalWidthsDirty() || !is<RenderCounter>(renderText))
         return;
-    toRenderCounter(renderText).updateCounter();
+    downcast<RenderCounter>(renderText).updateCounter();
 }
 
 inline float measureHyphenWidth(RenderText* renderer, const Font& font, HashSet<const SimpleFontData*>* fallbackFonts = 0)

@@ -80,8 +80,6 @@ private:
     bool m_needsBoundariesUpdate : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGContainer, isSVGContainer())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isSVGContainer())

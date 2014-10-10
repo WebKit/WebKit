@@ -49,8 +49,6 @@ private:
     virtual void intrinsicSizeChanged() override { canvasSizeChanged(); }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderHTMLCanvas, isCanvas())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderHTMLCanvas, isCanvas())

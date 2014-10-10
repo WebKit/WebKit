@@ -45,8 +45,6 @@ private:
     Path m_layoutPath;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGTextPath, isSVGTextPath())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTextPath, isSVGTextPath())

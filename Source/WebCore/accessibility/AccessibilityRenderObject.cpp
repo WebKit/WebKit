@@ -623,8 +623,8 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     if (!m_renderer)
         return String();
 
-    if (m_renderer->isFileUploadControl())
-        return toRenderFileUploadControl(m_renderer)->buttonValue();
+    if (is<RenderFileUploadControl>(*m_renderer))
+        return downcast<RenderFileUploadControl>(*m_renderer).buttonValue();
     
     // Reflect when a content author has explicitly marked a line break.
     if (m_renderer->isBR())
@@ -722,10 +722,10 @@ String AccessibilityRenderObject::stringValue() const
         return staticText;
     }
         
-    if (m_renderer->isText())
+    if (is<RenderText>(*m_renderer))
         return textUnderElement();
     
-    if (cssBox && cssBox->isMenuList()) {
+    if (is<RenderMenuList>(cssBox)) {
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overridden in the case where the selected item has an ARIA label.
         HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*m_renderer->node());
@@ -736,11 +736,11 @@ String AccessibilityRenderObject::stringValue() const
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
-        return toRenderMenuList(m_renderer)->text();
+        return downcast<RenderMenuList>(*m_renderer).text();
     }
     
-    if (m_renderer->isListMarker())
-        return toRenderListMarker(*m_renderer).text();
+    if (is<RenderListMarker>(*m_renderer))
+        return downcast<RenderListMarker>(*m_renderer).text();
     
     if (isWebArea())
         return String();
@@ -748,8 +748,8 @@ String AccessibilityRenderObject::stringValue() const
     if (isTextControl())
         return text();
     
-    if (m_renderer->isFileUploadControl())
-        return toRenderFileUploadControl(m_renderer)->fileTextValue();
+    if (is<RenderFileUploadControl>(*m_renderer))
+        return downcast<RenderFileUploadControl>(*m_renderer).fileTextValue();
     
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
@@ -1086,7 +1086,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
-        return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
+        return axObjectCache()->getOrCreate(downcast<RenderFieldset>(*m_renderer).findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
     
     Node* node = m_renderer->node();
     if (!is<Element>(node))

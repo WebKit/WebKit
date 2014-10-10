@@ -90,8 +90,6 @@ private:
     Vector<String> m_recentSearches;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSearchField, isTextField())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSearchField, isTextField())

@@ -83,8 +83,6 @@ private:
     bool m_default;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderButton, isRenderButton())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderButton, isRenderButton())

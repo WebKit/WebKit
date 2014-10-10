@@ -161,8 +161,6 @@ private:
     int m_numberOfInFlowChildrenOnFirstLine;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderFlexibleBox, isFlexibleBox())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlexibleBox, isFlexibleBox())

@@ -572,12 +572,12 @@ FloatSize SVGSVGElement::currentViewportSize() const
     if (!renderer())
         return FloatSize();
 
-    if (renderer()->isSVGRoot()) {
-        LayoutRect contentBoxRect = toRenderSVGRoot(renderer())->contentBoxRect();
+    if (is<RenderSVGRoot>(*renderer())) {
+        LayoutRect contentBoxRect = downcast<RenderSVGRoot>(*renderer()).contentBoxRect();
         return FloatSize(contentBoxRect.width() / renderer()->style().effectiveZoom(), contentBoxRect.height() / renderer()->style().effectiveZoom());
     }
 
-    FloatRect viewportRect = toRenderSVGViewportContainer(renderer())->viewport();
+    FloatRect viewportRect = downcast<RenderSVGViewportContainer>(*renderer()).viewport();
     return FloatSize(viewportRect.width(), viewportRect.height());
 }
 

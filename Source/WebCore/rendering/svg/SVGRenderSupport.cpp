@@ -30,12 +30,14 @@
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -47,8 +49,8 @@ FloatRect SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVG
 {
     // FIXME: Add support for RenderSVGBlock.
 
-    if (renderer.isSVGShape() || renderer.isSVGImage() || renderer.isSVGContainer())
-        return toRenderSVGModelObject(renderer).repaintRectInLocalCoordinatesExcludingSVGShadow();
+    if (is<RenderSVGModelObject>(renderer))
+        return downcast<RenderSVGModelObject>(renderer).repaintRectInLocalCoordinatesExcludingSVGShadow();
 
     return renderer.repaintRectInLocalCoordinates();
 }
@@ -125,13 +127,13 @@ bool SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& rende
     // When a parent container is transformed in SVG, all children will be painted automatically
     // so we are able to skip redundant repaint checks.
     auto parent = renderer.parent();
-    return !(parent && parent->isSVGContainer() && toRenderSVGContainer(parent)->didTransformToRootUpdate());
+    return !(is<RenderSVGContainer>(parent) && downcast<RenderSVGContainer>(*parent).didTransformToRootUpdate());
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.
 static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, RenderObject* other, FloatRect otherBoundingBox)
 {
-    bool otherValid = other->isSVGContainer() ? toRenderSVGContainer(other)->isObjectBoundingBoxValid() : true;
+    bool otherValid = is<RenderSVGContainer>(*other) ? downcast<RenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
     if (!otherValid)
         return;
 
@@ -200,24 +202,23 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
     const RenderElement* start = &renderer;
-    while (start && !start->isSVGRoot() && !start->isSVGViewportContainer())
+    while (start && !is<RenderSVGRoot>(*start) && !is<RenderSVGViewportContainer>(*start))
         start = start->parent();
 
     ASSERT(start);
-    ASSERT(start->isSVGRoot() || start->isSVGViewportContainer());
-    if (start->isSVGViewportContainer())
-        return toRenderSVGViewportContainer(start)->isLayoutSizeChanged();
+    if (is<RenderSVGViewportContainer>(*start))
+        return downcast<RenderSVGViewportContainer>(*start).isLayoutSizeChanged();
 
-    return toRenderSVGRoot(start)->isLayoutSizeChanged();
+    return downcast<RenderSVGRoot>(*start).isLayoutSizeChanged();
 }
 
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
-    while (ancestor && !ancestor->isSVGRoot()) {
-        if (ancestor->isSVGTransformableContainer())
-            return toRenderSVGContainer(ancestor)->didTransformToRootUpdate();
-        if (ancestor->isSVGViewportContainer())
-            return toRenderSVGViewportContainer(ancestor)->didTransformToRootUpdate();
+    while (ancestor && !is<RenderSVGRoot>(*ancestor)) {
+        if (is<RenderSVGTransformableContainer>(*ancestor))
+            return downcast<RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
+        if (is<RenderSVGViewportContainer>(*ancestor))
+            return downcast<RenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
         ancestor = ancestor->parent();
     }
 
@@ -306,11 +307,11 @@ bool SVGRenderSupport::rendererHasSVGShadow(const RenderObject& renderer)
 {
     // FIXME: Add support for RenderSVGBlock.
 
-    if (renderer.isSVGShape() || renderer.isSVGImage() || renderer.isSVGContainer())
-        return toRenderSVGModelObject(renderer).hasSVGShadow();
+    if (is<RenderSVGModelObject>(renderer))
+        return downcast<RenderSVGModelObject>(renderer).hasSVGShadow();
 
-    if (renderer.isSVGRoot())
-        return toRenderSVGRoot(renderer).hasSVGShadow();
+    if (is<RenderSVGRoot>(renderer))
+        return downcast<RenderSVGRoot>(renderer).hasSVGShadow();
 
     return false;
 }
@@ -319,13 +320,13 @@ void SVGRenderSupport::setRendererHasSVGShadow(RenderObject& renderer, bool hasS
 {
     // FIXME: Add support for RenderSVGBlock.
 
-    if (renderer.isSVGShape() || renderer.isSVGImage() || renderer.isSVGContainer()) {
-        toRenderSVGModelObject(renderer).setHasSVGShadow(hasShadow);
+    if (is<RenderSVGModelObject>(renderer)) {
+        downcast<RenderSVGModelObject>(renderer).setHasSVGShadow(hasShadow);
         return;
     }
 
-    if (renderer.isSVGRoot())
-        toRenderSVGRoot(renderer).setHasSVGShadow(hasShadow);
+    if (is<RenderSVGRoot>(renderer))
+        downcast<RenderSVGRoot>(renderer).setHasSVGShadow(hasShadow);
 }
 
 void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderElement& renderer, FloatRect& repaintRect)

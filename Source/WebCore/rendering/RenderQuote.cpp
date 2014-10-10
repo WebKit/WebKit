@@ -393,9 +393,9 @@ void RenderQuote::attachQuote()
         for (RenderObject* predecessor = previousInPreOrder(); predecessor; predecessor = predecessor->previousInPreOrder()) {
             // Skip unattached predecessors to avoid having stale m_previous pointers
             // if the previous node is never attached and is then destroyed.
-            if (!predecessor->isQuote() || !toRenderQuote(predecessor)->m_isAttached)
+            if (!is<RenderQuote>(*predecessor) || !downcast<RenderQuote>(*predecessor).m_isAttached)
                 continue;
-            m_previous = toRenderQuote(predecessor);
+            m_previous = downcast<RenderQuote>(predecessor);
             m_next = m_previous->m_next;
             m_previous->m_next = this;
             if (m_next)

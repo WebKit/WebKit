@@ -28,7 +28,10 @@
 #include "config.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 
+#include "SVGFEDiffuseLightingElement.h"
+#include "SVGFEFloodElement.h"
 #include "SVGFEImage.h"
+#include "SVGFESpecularLightingElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 
@@ -48,23 +51,22 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
-    RenderObject* filter = parent();
+    auto* filter = parent();
     if (!filter)
         return;
-    ASSERT(filter->isSVGResourceFilter());
 
     if (diff == StyleDifferenceEqual || !oldStyle)
         return;
 
     const SVGRenderStyle& newStyle = style().svgStyle();
-    if (filterPrimitiveElement().hasTagName(SVGNames::feFloodTag)) {
+    if (is<SVGFEFloodElement>(filterPrimitiveElement())) {
         if (newStyle.floodColor() != oldStyle->svgStyle().floodColor())
-            toRenderSVGResourceFilter(filter)->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
+            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
         if (newStyle.floodOpacity() != oldStyle->svgStyle().floodOpacity())
-            toRenderSVGResourceFilter(filter)->primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
-    } else if (filterPrimitiveElement().hasTagName(SVGNames::feDiffuseLightingTag) || filterPrimitiveElement().hasTagName(SVGNames::feSpecularLightingTag)) {
+            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
+    } else if (is<SVGFEDiffuseLightingElement>(filterPrimitiveElement()) || is<SVGFESpecularLightingElement>(filterPrimitiveElement())) {
         if (newStyle.lightingColor() != oldStyle->svgStyle().lightingColor())
-            toRenderSVGResourceFilter(filter)->primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
+            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
     }
 }
 

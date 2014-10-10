@@ -89,8 +89,6 @@ private:
     mutable LayoutSize m_intrinsicSize;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderReplaced, isRenderReplaced())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderReplaced, isRenderReplaced())

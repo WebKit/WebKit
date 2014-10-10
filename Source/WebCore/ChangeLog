@@ -1,5 +1,101 @@
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Drop RENDER_OBJECT_TYPE_CASTS() for a lot of RenderObject subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137594
+
+        Reviewed by Darin Adler.
+
+        Drop RENDER_OBJECT_TYPE_CASTS() for RenderObject subclasses that no
+        longer needed it or that required very few changes to do so. This will
+        make sure developers start using is<>() / downcast<>() for those
+        classes.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didAttachRenderers):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateSnapshot):
+        (WebCore::HTMLPlugInImageElement::checkSnapshotStatus):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult):
+        (WebCore::SearchInputType::didSetValueByUserEdit):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::renderer):
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isInChildFrameWithFrameFlattening):
+        * rendering/RenderButton.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderIFrame.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsBox):
+        * rendering/RenderMedia.h:
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::attachQuote):
+        * rendering/RenderQuote.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/RenderVideo.cpp:
+        (WebCore::rendererPlaceholder):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::updateCounterIfNeeded):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::styleDidChange):
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVGShadow):
+        (WebCore::SVGRenderSupport::checkForSVGRepaintDuringLayout):
+        (WebCore::updateObjectBoundingBox):
+        (WebCore::layoutSizeOfNearestViewportChanged):
+        (WebCore::SVGRenderSupport::transformToRootChanged):
+        (WebCore::SVGRenderSupport::rendererHasSVGShadow):
+        (WebCore::SVGRenderSupport::setRendererHasSVGShadow):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathSegListChanged):
+        (WebCore::SVGPathElement::getBBox):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentViewportSize):
+
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for GraphicsLayer subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137595
 

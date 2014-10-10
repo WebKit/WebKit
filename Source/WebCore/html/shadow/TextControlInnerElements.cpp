@@ -117,13 +117,13 @@ RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Pass
 
 RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 {
-    return toRenderTextControlInnerBlock(HTMLDivElement::renderer());
+    return downcast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
 }
 
 PassRefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer(RenderStyle&)
 {
-    RenderTextControl* parentRenderer = toRenderTextControl(shadowHost()->renderer());
-    return parentRenderer->createInnerTextStyle(&parentRenderer->style());
+    RenderTextControl& parentRenderer = downcast<RenderTextControl>(*shadowHost()->renderer());
+    return parentRenderer.createInnerTextStyle(&parentRenderer.style());
 }
 
 // ----------------------------
@@ -146,11 +146,11 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
         input->focus();
         input->select();
 #if !PLATFORM(IOS)
-        RenderSearchField* renderer = toRenderSearchField(input->renderer());
-        if (renderer->popupIsVisible())
-            renderer->hidePopup();
+        RenderSearchField& renderer = downcast<RenderSearchField>(*input->renderer());
+        if (renderer.popupIsVisible())
+            renderer.hidePopup();
         else if (input->maxResults() > 0)
-            renderer->showPopup();
+            renderer.showPopup();
 #endif
         event->setDefaultHandled();
     }

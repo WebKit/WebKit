@@ -64,8 +64,6 @@ private:
     bool m_canReceiveDroppedFiles;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderFileUploadControl, isFileUploadControl())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFileUploadControl, isFileUploadControl())

@@ -55,8 +55,6 @@ private:
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGPath, isSVGPath())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())

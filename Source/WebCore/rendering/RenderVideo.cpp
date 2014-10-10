@@ -274,14 +274,7 @@ bool RenderVideo::requiresImmediateCompositing() const
 static const RenderBlock* rendererPlaceholder(const RenderObject* renderer)
 {
     RenderObject* parent = renderer->parent();
-    if (!parent)
-        return 0;
-    
-    RenderFullScreen* fullScreen = parent->isRenderFullScreen() ? toRenderFullScreen(parent) : 0;
-    if (!fullScreen)
-        return 0;
-    
-    return fullScreen->placeholder();
+    return is<RenderFullScreen>(parent) ? downcast<RenderFullScreen>(*parent).placeholder() : nullptr;
 }
 
 LayoutUnit RenderVideo::offsetLeft() const

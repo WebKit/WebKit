@@ -158,7 +158,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         LayoutUnit textY = 0;
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
-        if (RenderButton* buttonRenderer = toRenderButton(button->renderer()))
+        if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer()))
             textY = paintOffset.y() + borderTop() + paddingTop() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
         else
             textY = baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
@@ -178,7 +178,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
 #if PLATFORM(IOS)
-            if (RenderButton* buttonRenderer = toRenderButton(button->renderer())) {
+            if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer())) {
                 // Draw the file icon and decorations.
                 IntRect iconRect(iconX, iconY, iconWidth, iconHeight);
                 RenderTheme::FileUploadDecorations decorationsType = inputElement().files()->length() == 1 ? RenderTheme::SingleFile : RenderTheme::MultipleFiles;

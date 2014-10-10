@@ -45,8 +45,6 @@ private:
     Path getPath(const LayoutPoint& origin) const;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderDetailsMarker, isDetailsMarker())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isDetailsMarker())

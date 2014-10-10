@@ -60,8 +60,6 @@ private:
     SVGGradientElement* gradientElement();
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGGradientStop, isSVGGradientStop())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGGradientStop, isSVGGradientStop())

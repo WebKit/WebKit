@@ -165,12 +165,12 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     ASSERT(object);
 
     m_inPathLayout = true;
-    RenderSVGTextPath* textPath = toRenderSVGTextPath(object);
+    RenderSVGTextPath& textPath = downcast<RenderSVGTextPath>(*object);
 
-    m_textPath = textPath->layoutPath();
+    m_textPath = textPath.layoutPath();
     if (m_textPath.isEmpty())
         return;
-    m_textPathStartOffset = textPath->startOffset();
+    m_textPathStartOffset = textPath.startOffset();
     m_textPathLength = m_textPath.length();
     if (m_textPathStartOffset > 0 && m_textPathStartOffset <= 1)
         m_textPathStartOffset *= m_textPathLength;
@@ -202,7 +202,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     SVGLengthAdjustType lengthAdjust = SVGLengthAdjustUnknown;
     float desiredTextLength = 0;
 
-    if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textPath)) {
+    if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(&textPath)) {
         SVGLengthContext lengthContext(textContentElement);
         lengthAdjust = textContentElement->lengthAdjust();
         desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);

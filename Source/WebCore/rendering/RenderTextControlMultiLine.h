@@ -51,8 +51,6 @@ private:
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderTextControlMultiLine, isTextArea())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlMultiLine, isTextArea())

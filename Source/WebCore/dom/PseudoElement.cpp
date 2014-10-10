@@ -89,8 +89,8 @@ void PseudoElement::didAttachRenderers()
         if (renderer->isChildAllowed(*child, style)) {
             auto* childPtr = child.get();
             renderer->addChild(child.leakPtr());
-            if (childPtr->isQuote())
-                toRenderQuote(childPtr)->attachQuote();
+            if (is<RenderQuote>(*childPtr))
+                downcast<RenderQuote>(*childPtr).attachQuote();
         }
     }
 }

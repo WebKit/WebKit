@@ -3597,16 +3597,16 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
 
     // Frame flattening applies when the owner element is either in a frameset or
     // an iframe with flattening parameters.
-    if (frame().ownerElement()->hasTagName(iframeTag)) {
-        RenderIFrame* iframeRenderer = toRenderIFrame(frame().ownerElement()->renderWidget());
-        if (iframeRenderer->flattenFrame())
+    if (is<HTMLIFrameElement>(*frame().ownerElement())) {
+        RenderIFrame& iframeRenderer = downcast<RenderIFrame>(*frame().ownerElement()->renderWidget());
+        if (iframeRenderer.flattenFrame())
             return true;
     }
 
     if (!frameFlatteningEnabled())
         return false;
 
-    if (frame().ownerElement()->hasTagName(frameTag))
+    if (is<HTMLFrameElement>(*frame().ownerElement()))
         return true;
 
     return false;
