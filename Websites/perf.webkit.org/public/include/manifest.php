@@ -15,12 +15,18 @@ class ManifestGenerator {
         $config_table = $this->db->fetch_table('test_configurations');
         $platform_table = $this->db->fetch_table('platforms');
         $repositories_table = $this->db->fetch_table('repositories');
+
+        $repositories_with_commit = $this->db->query_and_fetch_all(
+            'SELECT DISTINCT(commit_repository) FROM commits WHERE commit_reported IS TRUE') or array();
+        foreach ($repositories_with_commit as &$row)
+            $row = $row['commit_repository'];
+
         $this->manifest = array(
             'tests' => $this->tests(),
             'metrics' => $this->metrics(),
             'all' => $this->platforms($config_table, $platform_table, false),
             'dashboard' => $this->platforms($config_table, $platform_table, true),
-            'repositories' => $this->repositories($repositories_table),
+            'repositories' => $this->repositories($repositories_table, $repositories_with_commit),
             'builders' => $this->builders(),
             'bugTrackers' => $this->bug_trackers($repositories_table),
         );
@@ -85,12 +91,16 @@ class ManifestGenerator {
         return $platforms;
     }
 
-    private function repositories($repositories_table) {
+    private function repositories($repositories_table, $repositories_with_commit) {
         $repositories = array();
         if (!$repositories_table)
             return $repositories;
-        foreach ($repositories_table as $row)
-            $repositories[$row['repository_name']] = array('url' => $row['repository_url'], 'blameUrl' => $row['repository_blame_url']);
+        foreach ($repositories_table as $row) {
+            $repositories[$row['repository_name']] = array(
+                'url' => $row['repository_url'],
+                'blameUrl' => $row['repository_blame_url'],
+                'hasReportedCommits' => in_array($row['repository_id'], $repositories_with_commit));
+        }
 
         return $repositories;
     }

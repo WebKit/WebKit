@@ -1408,7 +1408,7 @@ App.CommitsViewerComponent = Ember.Component.extend({
         var to = revisionInfo.get('currentRevision');
         var from = revisionInfo.get('previousRevision') || to;
         var repository = this.get('repository');
-        if (!from || !repository)
+        if (!from || !repository || !repository.get('hasReportedCommits'))
             return;
 
         var self = this;

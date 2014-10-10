@@ -1,21 +1,52 @@
 // We don't use DS.Model for these object types because we can't afford to process millions of them.
 
-FetchCommitsForTimeRange = function (repository, from, to)
+function FetchCommitsForTimeRange(repository, from, to)
 {
     var url = '../api/commits/' + repository.get('id') + '/' + from + '-' + to;
-    console.log('Fetching ' + url)
+
+    var cachedCommits = FetchCommitsForTimeRange._cachedCommitsByRepository[repository];
+    if (!cachedCommits) {
+        cachedCommits = {commitsByRevision: {}, commitsByTime: []};
+        FetchCommitsForTimeRange._cachedCommitsByRepository[repository] = cachedCommits;
+    }
+
+    if (cachedCommits) {
+        var startCommit = cachedCommits.commitsByRevision[from];
+        var endCommit = cachedCommits.commitsByRevision[to];
+        if (startCommit && endCommit) {
+            return new Ember.RSVP.Promise(function (resolve) {
+                resolve(cachedCommits.commitsByTime.slice(startCommit.index, endCommit.index + 1)) });
+        }
+    }
+
+    console.log('Fecthing ' + url);
+
     return new Ember.RSVP.Promise(function (resolve, reject) {
         $.getJSON(url, function (data) {
             if (data.status != 'OK') {
                 reject(data.status);
                 return;
             }
+
+            data.commits.forEach(function (commit) {
+                if (cachedCommits.commitsByRevision[commit.revision])
+                    return;
+                commit.time = new Date(commit.time.replace(' ', 'T'));
+                cachedCommits.commitsByRevision[commit.revision] = commit;
+                cachedCommits.commitsByTime.push(commit);
+            });
+
+            cachedCommits.commitsByTime.sort(function (a, b) { return a.time - b.time; });
+            cachedCommits.commitsByTime.forEach(function (commit, index) { commit.index = index; });
+
             resolve(data.commits);
         }).fail(function (xhr, status, error) {
             reject(xhr.status + (error ? ', ' + error : ''));
         })
     });
 }
+
+FetchCommitsForTimeRange._cachedCommitsByRepository = {};
 
 function Measurement(rawData)
 {

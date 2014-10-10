@@ -1,3 +1,31 @@
+2014-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard UI tries to fetch commits all the time
+        https://bugs.webkit.org/show_bug.cgi?id=137592
+
+        Reviewed by Andreas Kling.
+
+        Added hasReportedCommits boolean to repository meta data in manifest.json, and used that in
+        the front end to avoid issuing HTTP requests to fetch commit logs for repositories with
+        no reported commits as they are all going to fail.
+
+        Also added an internal cache to FetchCommitsForTimeRange in the front end to avoid fetching
+        the same commit logs repeatedly. There are two data structures we cache: commitsByRevision
+        which maps a given commit revision/hash to a commit object; and commitsByTime which is an array
+        of commits sorted chronologically by time.
+
+        * public/include/manifest.php:
+
+        * public/v2/app.js:
+        (App.CommitsViewerComponent.commitsChanged):
+
+        * public/v2/data.js:
+        (FetchCommitsForTimeRange):
+        (FetchCommitsForTimeRange._cachedCommitsByRepository):
+
+        * public/v2/manifest.js:
+        (App.Repository):
+
 2014-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another unreviewed build fix after r174477.

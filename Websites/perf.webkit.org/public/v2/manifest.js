@@ -72,6 +72,7 @@ App.Platform = App.NameLabelModel.extend({
 App.Repository = App.NameLabelModel.extend({
     url: DS.attr('string'),
     blameUrl: DS.attr('string'),
+    hasReportedCommits: DS.attr('boolean'),
     urlForRevision: function (currentRevision) {
         return (this.get('url') || '').replace(/\$1/g, currentRevision);
     },
