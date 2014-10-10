@@ -261,12 +261,14 @@ webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-worl
 webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
 
-webkit.org/b/82554 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
-
 webkit.org/b/116684 [ Lion ] compositing/overflow/overflow-compositing-descendant.html [ Timeout Failure ]
 
 # Only fails on WK1
 webkit.org/b/82805 [ Lion Debug ] fast/canvas/webgl/object-deletion-behaviour.html [ Pass ]
+
+# Only fail in WK1
+compositing/rtl/rtl-fixed-overflow.html [ Pass ]
+compositing/rtl/rtl-fixed.html [ Pass ]
 
 # [WK2] Media elements never fail to load
 webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Failure ]

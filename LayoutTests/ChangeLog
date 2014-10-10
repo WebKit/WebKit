@@ -1,3 +1,10 @@
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Some more Mac TestExpectation tweaking.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-10-10  Andy Estes  <aestes@apple.com>
 
         Fix some Mavericks test failures caused by r174585.
