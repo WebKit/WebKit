@@ -1,5 +1,13 @@
 2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Move RenderThemeGtk.h from platform/gtk to rendering.
+
+        I forgot to move this file in r173111.
+
+        * rendering/RenderThemeGtk.h: Renamed from Source/WebCore/platform/gtk/RenderThemeGtk.h.
+
+2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATK] WebKitAccessibleWrapperAtk should not depend on GTK
         https://bugs.webkit.org/show_bug.cgi?id=137177
 
