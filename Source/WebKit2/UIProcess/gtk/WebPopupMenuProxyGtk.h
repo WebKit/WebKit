@@ -21,11 +21,15 @@
 #define WebPopupMenuProxyGtk_h
 
 #include "WebPopupMenuProxy.h"
-#include <WebCore/GtkPopupMenu.h>
-#include <WebCore/IntRect.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 typedef struct _GMainLoop GMainLoop;
+typedef struct _GdkEventKey GdkEventKey;
+
+namespace WebCore {
+class IntRect;
+}
 
 namespace WebKit {
 
@@ -46,15 +50,28 @@ private:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client*);
     void shutdownRunLoop();
     void setActiveItem(int activeItem) { m_activeItem = activeItem; }
+    void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
     GtkAction* createGtkActionForMenuItem(const WebPopupItem&, int itemIndex);
+    void populatePopupMenu(const Vector<WebPopupItem>&);
+
+    bool typeAheadFind(GdkEventKey*);
+    void resetTypeAheadFindState();
 
     static void menuItemActivated(GtkAction*, WebPopupMenuProxyGtk*);
     static void menuUnmapped(GtkWidget*, WebPopupMenuProxyGtk*);
+    static void selectItemCallback(GtkWidget*, WebPopupMenuProxyGtk*);
+    static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
 
     GtkWidget* m_webView;
-    OwnPtr<WebCore::GtkPopupMenu> m_popup;
+    GtkWidget* m_popup;
     int m_activeItem;
     GRefPtr<GMainLoop> m_runLoop;
+
+    // Typeahead find.
+    unsigned m_previousKeyEventCharacter;
+    uint32_t m_previousKeyEventTimestamp;
+    GtkWidget* m_currentlySelectedMenuItem;
+    String m_currentSearchString;
 };
 
 } // namespace WebKit

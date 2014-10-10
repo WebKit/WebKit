@@ -1,3 +1,28 @@
+2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GtkPopupMenu implementation to WebPopupMenuProxyGtk
+        https://bugs.webkit.org/show_bug.cgi?id=137193
+
+        Reviewed by Gustavo Noronha Silva.
+
+        GtkPopupMenu was in platform only to have a common implementation to
+        be shared with WebKit1. Now that it's only used by
+        WebPopupMenuProxyGtk in WebKit2, we can simplify the code by
+        merging the implementation directly into WebPopupMenuProxyGtk.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::populatePopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::typeAheadFind):
+        (WebKit::WebPopupMenuProxyGtk::resetTypeAheadFindState):
+        (WebKit::WebPopupMenuProxyGtk::selectItemCallback):
+        (WebKit::WebPopupMenuProxyGtk::keyPressEventCallback):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        (WebKit::WebPopupMenuProxyGtk::setCurrentlySelectedMenuItem):
+
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use the PageLoadState observer also to monitor title and estimated load progress
