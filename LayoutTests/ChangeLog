@@ -1,3 +1,9 @@
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Denote some crashing SVG tests.
+
+        * platform/ios-simulator/TestExpectations:
+
 2014-10-09  Dean Jackson  <dino@apple.com>
 
         Computed style for clip is wrong with respect to auto

@@ -88,3 +88,7 @@ storage/storagequota-query-usage.html [ Skip ]
 storage/storagequota-request-quota.html [ Skip ]
 storage/websql/quota-tracking.html [ Skip ]
 
+# SVG
+webkit.org/b/137574 svg/as-image/svg-nested.html [ Crash ]
+webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Pass Crash ]
+webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Pass Crash ]
