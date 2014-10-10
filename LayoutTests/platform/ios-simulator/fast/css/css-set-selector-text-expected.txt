@@ -1,0 +1,253 @@
+This tests setting and re-serialization of some CSS selectors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS setThenReadSelectorText('') is '_foo'
+PASS setThenReadSelectorText('123') is '_foo'
+PASS setThenReadSelectorText('-') is '_foo'
+PASS setThenReadSelectorText('$') is '_foo'
+PASS setThenReadSelectorText(':') is '_foo'
+PASS setThenReadSelectorText('.') is '_foo'
+PASS setThenReadSelectorText('#') is '_foo'
+PASS setThenReadSelectorText('[]') is '_foo'
+PASS setThenReadSelectorText('()') is '_foo'
+
+PASS setThenReadSelectorText('*') is '*'
+PASS setThenReadSelectorText('a') is 'a'
+PASS setThenReadSelectorText('#a') is '#a'
+PASS setThenReadSelectorText('.a') is '.a'
+PASS setThenReadSelectorText(':active') is ':active'
+PASS setThenReadSelectorText('[a]') is '[a]'
+PASS setThenReadSelectorText('[a="b"]') is '[a="b"]'
+PASS setThenReadSelectorText('[a~="b"]') is '[a~="b"]'
+PASS setThenReadSelectorText('[a|="b"]') is '[a|="b"]'
+PASS setThenReadSelectorText('[a^="b"]') is '[a^="b"]'
+PASS setThenReadSelectorText('[a$="b"]') is '[a$="b"]'
+PASS setThenReadSelectorText('[a*="b"]') is '[a*="b"]'
+
+PASS setThenReadSelectorText('*|a') is '*|a'
+PASS setThenReadSelectorText('n|a') is 'n|a'
+PASS setThenReadSelectorText('*|*') is '*|*'
+PASS setThenReadSelectorText('n|*') is 'n|*'
+PASS setThenReadSelectorText('[*|a]') is '[*|a]'
+PASS setThenReadSelectorText('[n|a]') is '[n|a]'
+
+PASS setThenReadSelectorText('a:active') is 'a:active'
+PASS setThenReadSelectorText('a b') is 'a b'
+PASS setThenReadSelectorText('a + b') is 'a + b'
+PASS setThenReadSelectorText('a ~ b') is 'a ~ b'
+PASS setThenReadSelectorText('a > b') is 'a > b'
+
+PASS setThenReadSelectorText(':active') is ':active'
+PASS setThenReadSelectorText(':checked') is ':checked'
+PASS setThenReadSelectorText(':disabled') is ':disabled'
+PASS setThenReadSelectorText(':empty') is ':empty'
+PASS setThenReadSelectorText(':enabled') is ':enabled'
+PASS setThenReadSelectorText(':first-child') is ':first-child'
+PASS setThenReadSelectorText(':first-of-type') is ':first-of-type'
+PASS setThenReadSelectorText(':focus') is ':focus'
+PASS setThenReadSelectorText(':hover') is ':hover'
+PASS setThenReadSelectorText(':indeterminate') is ':indeterminate'
+PASS setThenReadSelectorText(':link') is ':link'
+PASS setThenReadSelectorText(':not(:placeholder-shown)') is ':not(:placeholder-shown)'
+PASS setThenReadSelectorText(':placeholder-shown') is ':placeholder-shown'
+PASS setThenReadSelectorText(':root') is ':root'
+PASS setThenReadSelectorText(':target') is ':target'
+PASS setThenReadSelectorText(':visited') is ':visited'
+
+PASS setThenReadSelectorText(':lang(a)') is ':lang(a)'
+PASS setThenReadSelectorText(':not(a)') is ':not(a)'
+PASS setThenReadSelectorText(':-webkit-any(a,b,p)') is ':-webkit-any(a,b,p)'
+
+PASS setThenReadSelectorText('::after') is '::after'
+PASS setThenReadSelectorText('::before') is '::before'
+PASS setThenReadSelectorText('::first-letter') is '::first-letter'
+PASS setThenReadSelectorText('::first-line') is '::first-line'
+PASS setThenReadSelectorText('::selection') is '::selection'
+
+PASS setThenReadSelectorText(':-webkit-any-link') is ':-webkit-any-link'
+PASS setThenReadSelectorText(':-webkit-autofill') is ':-webkit-autofill'
+PASS setThenReadSelectorText(':-webkit-drag') is ':-webkit-drag'
+
+PASS setThenReadSelectorText(':nth-child(odd)') is ':nth-child(odd)'
+PASS setThenReadSelectorText(':nth-child(even)') is ':nth-child(even)'
+PASS setThenReadSelectorText(':nth-child(n)') is ':nth-child(n)'
+PASS setThenReadSelectorText(':nth-child(-n)') is ':nth-child(-n)'
+PASS setThenReadSelectorText(':nth-child(5)') is ':nth-child(5)'
+PASS setThenReadSelectorText(':nth-child(-5)') is ':nth-child(-5)'
+PASS setThenReadSelectorText(':nth-child(5n+7)') is ':nth-child(5n+7)'
+PASS setThenReadSelectorText(':nth-child(-5n+7)') is ':nth-child(-5n+7)'
+PASS setThenReadSelectorText(':nth-child(5n-7)') is ':nth-child(5n-7)'
+PASS setThenReadSelectorText(':nth-child(-5n-7)') is ':nth-child(-5n-7)'
+
+PASS setThenReadSelectorText(':nth-child(odd of .foo, :nth-child(odd))') is ':nth-child(odd of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(even of .foo, :nth-child(odd))') is ':nth-child(even of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(n of .foo, :nth-child(odd))') is ':nth-child(n of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(-n of .foo, :nth-child(odd))') is ':nth-child(-n of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(5 of .foo, :nth-child(odd))') is ':nth-child(5 of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(-5 of .foo, :nth-child(odd))') is ':nth-child(-5 of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(5n+7 of .foo, :nth-child(odd))') is ':nth-child(5n+7 of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(-5n+7 of .foo, :nth-child(odd))') is ':nth-child(-5n+7 of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(5n-7 of .foo, :nth-child(odd))') is ':nth-child(5n-7 of .foo, :nth-child(odd))'
+PASS setThenReadSelectorText(':nth-child(-5n-7 of .foo, :nth-child(odd))') is ':nth-child(-5n-7 of .foo, :nth-child(odd))'
+
+PASS setThenReadSelectorText(':matches(single)') is ':matches(single)'
+PASS setThenReadSelectorText(':matches(a, b, p)') is ':matches(a, b, p)'
+PASS setThenReadSelectorText(':matches(#alice, #bob, #chris)') is ':matches(#alice, #bob, #chris)'
+PASS setThenReadSelectorText(':matches(.selector, #tama, #hanayo, #midoriko)') is ':matches(.selector, #tama, #hanayo, #midoriko)'
+PASS setThenReadSelectorText(':matches(.name, #ok, :visited)') is ':matches(.name, #ok, :visited)'
+PASS setThenReadSelectorText(':matches(.name, #ok, :visited, :link)') is ':matches(.name, #ok, :visited, :link)'
+PASS setThenReadSelectorText(':matches(.name, #ok, :matches(:visited))') is ':matches(.name, #ok, :matches(:visited))'
+PASS setThenReadSelectorText(':matches(.name, #ok, :not(:link))') is ':matches(.name, #ok, :not(:link))'
+PASS setThenReadSelectorText(':matches(.name, #ok, :not(:link))') is ':matches(.name, #ok, :not(:link))'
+PASS setThenReadSelectorText(':matches(.name, #ok, :-webkit-any(hello))') is ':matches(.name, #ok, :-webkit-any(hello))'
+PASS setThenReadSelectorText(':matches(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko))') is ':matches(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko))'
+PASS setThenReadSelectorText(':matches([type="file"])') is ':matches([type="file"])'
+PASS setThenReadSelectorText(':matches(:hover)') is ':matches(:hover)'
+PASS setThenReadSelectorText('input:matches([type="file"], :hover, :focus):enabled') is 'input:matches([type="file"], :hover, :focus):enabled'
+PASS setThenReadSelectorText(':matches(input[type="file"], a:hover, button:focus)') is ':matches(input[type="file"], a:hover, button:focus)'
+PASS setThenReadSelectorText(':matches(.class1.class2.class3)') is ':matches(.class1.class2.class3)'
+PASS setThenReadSelectorText(':matches(.class1:hover)') is ':matches(.class1:hover)'
+PASS setThenReadSelectorText(':matches(a.class1.class2.class3:hover)') is ':matches(a.class1.class2.class3:hover)'
+PASS setThenReadSelectorText(':matches(::first-letter, ::first-line)') is ':matches(::first-letter, ::first-line)'
+PASS setThenReadSelectorText(':matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before)') is ':matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before)'
+PASS setThenReadSelectorText(':matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before)') is ':matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before)'
+PASS setThenReadSelectorText(':matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before)') is ':matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before)'
+PASS setThenReadSelectorText(':-webkit-any(:matches(single))') is ':-webkit-any(:matches(single))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(a, b, p))') is ':-webkit-any(:matches(a, b, p))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(#alice, #bob, #chris))') is ':-webkit-any(:matches(#alice, #bob, #chris))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.selector, #tama, #hanayo, #midoriko))') is ':-webkit-any(:matches(.selector, #tama, #hanayo, #midoriko))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :visited))') is ':-webkit-any(:matches(.name, #ok, :visited))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :visited, :link))') is ':-webkit-any(:matches(.name, #ok, :visited, :link))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :matches(:visited)))') is ':-webkit-any(:matches(.name, #ok, :matches(:visited)))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :not(:link)))') is ':-webkit-any(:matches(.name, #ok, :not(:link)))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :not(:link)))') is ':-webkit-any(:matches(.name, #ok, :not(:link)))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :-webkit-any(hello)))') is ':-webkit-any(:matches(.name, #ok, :-webkit-any(hello)))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko)))') is ':-webkit-any(:matches(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko)))'
+PASS setThenReadSelectorText(':-webkit-any(:matches([type="file"]))') is ':-webkit-any(:matches([type="file"]))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(:hover))') is ':-webkit-any(:matches(:hover))'
+PASS setThenReadSelectorText(':-webkit-any(input:matches([type="file"], :hover, :focus):enabled)') is ':-webkit-any(input:matches([type="file"], :hover, :focus):enabled)'
+PASS setThenReadSelectorText(':-webkit-any(:matches(input[type="file"], a:hover, button:focus))') is ':-webkit-any(:matches(input[type="file"], a:hover, button:focus))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.class1.class2.class3))') is ':-webkit-any(:matches(.class1.class2.class3))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.class1:hover))') is ':-webkit-any(:matches(.class1:hover))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(a.class1.class2.class3:hover))') is ':-webkit-any(:matches(a.class1.class2.class3:hover))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(::first-letter, ::first-line))') is ':-webkit-any(:matches(::first-letter, ::first-line))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before))') is ':-webkit-any(:matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before))') is ':-webkit-any(:matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before))'
+PASS setThenReadSelectorText(':-webkit-any(:matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before))') is ':-webkit-any(:matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before))'
+
+PASS setThenReadSelectorText(':not(div)') is ':not(div)'
+PASS setThenReadSelectorText(':not(.div)') is ':not(.div)'
+PASS setThenReadSelectorText(':not(#div)') is ':not(#div)'
+PASS setThenReadSelectorText(':not([div])') is ':not([div])'
+PASS setThenReadSelectorText(':not(:empty)') is ':not(:empty)'
+FAIL setThenReadSelectorText(':not(div.div#div[div]:empty)') should be :not(div.div#div[div]:empty). Was _foo.
+FAIL setThenReadSelectorText(':not(div.div:empty[div]#div)') should be :not(div.div:empty[div]#div). Was _foo.
+FAIL setThenReadSelectorText(':not(div.div, #div[div], :empty)') should be :not(div.div, #div[div], :empty). Was _foo.
+FAIL setThenReadSelectorText(':not(div, .div, #div, [div], :empty)') should be :not(div, .div, #div, [div], :empty). Was _foo.
+FAIL setThenReadSelectorText(':not(:not(div))') should be :not(:not(div)). Was _foo.
+FAIL setThenReadSelectorText(':not(:not(div)):not(:not(foo)):not(:not(bar))') should be :not(:not(div)):not(:not(foo)):not(:not(bar)). Was _foo.
+FAIL setThenReadSelectorText(':not(:not(div, :not(foo, bar))):not(:not(foo)):not(:not(bar, baz))') should be :not(:not(div, :not(foo, bar))):not(:not(foo)):not(:not(bar, baz)). Was _foo.
+FAIL setThenReadSelectorText(':not(:matches(*))') should be :not(:matches(*)). Was _foo.
+FAIL setThenReadSelectorText(':not(:matches(foo, bar))') should be :not(:matches(foo, bar)). Was _foo.
+FAIL setThenReadSelectorText(':not(:matches(foo, bar), :matches(.foo, .bar), :matches(#foo, #bar), :matches([foo], [bar]))') should be :not(:matches(foo, bar), :matches(.foo, .bar), :matches(#foo, #bar), :matches([foo], [bar])). Was _foo.
+FAIL setThenReadSelectorText(':not(:matches(foo, bar:not(:empty)), :matches(.foo, .bar:not(:not(.mosaic))), :matches(#foo, #bar), :matches([foo], [bar]))') should be :not(:matches(foo, bar:not(:empty)), :matches(.foo, .bar:not(:not(.mosaic))), :matches(#foo, #bar), :matches([foo], [bar])). Was _foo.
+FAIL setThenReadSelectorText(':nth-child(2n of :not(a.b, c#d.e))') should be :nth-child(2n of :not(a.b, c#d.e)). Was _foo.
+FAIL setThenReadSelectorText(':not(:nth-child(2n of :not(a.b, c#d.e)))') should be :not(:nth-child(2n of :not(a.b, c#d.e))). Was _foo.
+FAIL setThenReadSelectorText(':not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)') should be :not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child). Was _foo.
+FAIL setThenReadSelectorText('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b + c:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) ~ d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) > d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child)') should be a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b + c:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) ~ d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) > d:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child). Was _foo.
+
+PASS setThenReadSelectorText('::-webkit-file-upload-button') is '*::-webkit-file-upload-button'
+PASS setThenReadSelectorText('::-webkit-search-cancel-button') is '*::-webkit-search-cancel-button'
+PASS setThenReadSelectorText('::-webkit-search-decoration') is '*::-webkit-search-decoration'
+PASS setThenReadSelectorText('::-webkit-search-results-button') is '*::-webkit-search-results-button'
+PASS setThenReadSelectorText('::-webkit-search-results-decoration') is '*::-webkit-search-results-decoration'
+PASS setThenReadSelectorText('::-webkit-slider-thumb') is '*::-webkit-slider-thumb'
+
+PASS setThenReadSelectorText('a::-webkit-slider-thumb') is 'a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('a ::-webkit-slider-thumb') is 'a *::-webkit-slider-thumb'
+PASS setThenReadSelectorText('[a]::-webkit-slider-thumb') is '[a]::-webkit-slider-thumb'
+PASS setThenReadSelectorText('[a] ::-webkit-slider-thumb') is '[a] *::-webkit-slider-thumb'
+PASS setThenReadSelectorText('.a::-webkit-slider-thumb') is '.a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('.a ::-webkit-slider-thumb') is '.a *::-webkit-slider-thumb'
+PASS setThenReadSelectorText('#a::-webkit-slider-thumb') is '#a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('#a ::-webkit-slider-thumb') is '#a *::-webkit-slider-thumb'
+PASS setThenReadSelectorText('* ::-webkit-slider-thumb') is '* *::-webkit-slider-thumb'
+
+PASS setThenReadSelectorText('a[b]::-webkit-slider-thumb') is 'a[b]::-webkit-slider-thumb'
+PASS setThenReadSelectorText('a.b::-webkit-slider-thumb') is 'a.b::-webkit-slider-thumb'
+PASS setThenReadSelectorText('a#b::-webkit-slider-thumb') is 'a#b::-webkit-slider-thumb'
+PASS setThenReadSelectorText('a[b].c#d::-webkit-slider-thumb') is 'a[b].c#d::-webkit-slider-thumb'
+
+PASS setThenReadSelectorText('input:not([type="file"]):focus') is 'input:not([type="file"]):focus'
+PASS setThenReadSelectorText(':-webkit-any([type="file"])') is ':-webkit-any([type="file"])'
+PASS setThenReadSelectorText(':-webkit-any(:hover)') is ':-webkit-any(:hover)'
+PASS setThenReadSelectorText('input:-webkit-any([type="file"],:hover,:focus):enabled') is 'input:-webkit-any([type="file"],:hover,:focus):enabled'
+PASS setThenReadSelectorText(':-webkit-any(input[type="file"],a:hover,button:focus)') is ':-webkit-any(input[type="file"],a:hover,button:focus)'
+PASS setThenReadSelectorText(':-webkit-any(.class1.class2.class3)') is ':-webkit-any(.class1.class2.class3)'
+PASS setThenReadSelectorText(':-webkit-any(.class1:hover)') is ':-webkit-any(.class1:hover)'
+PASS setThenReadSelectorText(':-webkit-any(a.class1.class2.class3:hover)') is ':-webkit-any(a.class1.class2.class3:hover)'
+
+PASS setThenReadSelectorText('*:active') is ':active'
+PASS setThenReadSelectorText('|a') is 'a'
+
+PASS setThenReadSelectorText('input[type=file]:focus') is 'input[type="file"]:focus'
+
+PASS setThenReadSelectorText('a+b') is 'a + b'
+PASS setThenReadSelectorText('a~b') is 'a ~ b'
+PASS setThenReadSelectorText('a>b') is 'a > b'
+
+PASS setThenReadSelectorText(':after') is '::after'
+PASS setThenReadSelectorText(':before') is '::before'
+PASS setThenReadSelectorText(':first-letter') is '::first-letter'
+PASS setThenReadSelectorText(':first-line') is '::first-line'
+PASS setThenReadSelectorText(':-webkit-any(    a.class1  ,  	#id,[attr]  )') is ':-webkit-any(a.class1,#id,[attr])'
+
+PASS setThenReadSelectorText(':matches(single    )') is ':matches(single)'
+PASS setThenReadSelectorText(':matches(a,b    ,p)') is ':matches(a, b, p)'
+PASS setThenReadSelectorText(':matches(#alice,                   #bob,#chris)') is ':matches(#alice, #bob, #chris)'
+PASS setThenReadSelectorText(':matches(  .selector,#tama,                #hanayo,#midoriko)') is ':matches(.selector, #tama, #hanayo, #midoriko)'
+PASS setThenReadSelectorText(':matches(    .name,#ok,:visited   )') is ':matches(.name, #ok, :visited)'
+PASS setThenReadSelectorText(':matches(    .name,#ok,    :visited, :link)') is ':matches(.name, #ok, :visited, :link)'
+PASS setThenReadSelectorText(':matches(    .name,#ok,    :matches(:visited    ))') is ':matches(.name, #ok, :matches(:visited))'
+PASS setThenReadSelectorText(':matches(.name,  #ok,:not(:link))') is ':matches(.name, #ok, :not(:link))'
+PASS setThenReadSelectorText(':matches(.name,#ok,:not(:link))') is ':matches(.name, #ok, :not(:link))'
+PASS setThenReadSelectorText(':matches(    .name,#ok,:-webkit-any(   hello))') is ':matches(.name, #ok, :-webkit-any(hello))'
+PASS setThenReadSelectorText(':matches(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))') is ':matches(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko))'
+PASS setThenReadSelectorText(':matches(       [type="file"])') is ':matches([type="file"])'
+PASS setThenReadSelectorText(':matches(  :hover    )') is ':matches(:hover)'
+PASS setThenReadSelectorText('input:matches([type="file"],:hover,:focus):enabled') is 'input:matches([type="file"], :hover, :focus):enabled'
+PASS setThenReadSelectorText(':matches(input[type="file"], a:hover, button:focus)') is ':matches(input[type="file"], a:hover, button:focus)'
+PASS setThenReadSelectorText(':matches( .class1.class2.class3   )') is ':matches(.class1.class2.class3)'
+PASS setThenReadSelectorText(':matches(.class1:hover   )') is ':matches(.class1:hover)'
+PASS setThenReadSelectorText(':matches(a.class1.class2.class3:hover   )') is ':matches(a.class1.class2.class3:hover)'
+PASS setThenReadSelectorText(':matches(:first-letter,::first-line)') is ':matches(::first-letter, ::first-line)'
+PASS setThenReadSelectorText(':matches(a>:first-letter,b   ~ ::first-line, c :after, d+ :before)') is ':matches(a > ::first-letter, b ~ ::first-line, c ::after, d + ::before)'
+PASS setThenReadSelectorText(':matches(.ok a >    ::first-letter, .ok b~ ::first-line, .ok c :after, .ok d +:before)') is ':matches(.ok a > ::first-letter, .ok b ~ ::first-line, .ok c ::after, .ok d + ::before)'
+PASS setThenReadSelectorText(':matches(.ok a> .ok ::first-letter, .ok b   ~.ok :first-line, .ok c .ok    ::after, .ok d + .ok ::before)') is ':matches(.ok a > .ok ::first-letter, .ok b ~ .ok ::first-line, .ok c .ok ::after, .ok d + .ok ::before)'
+
+PASS setThenReadSelectorText(':not(single    )') is ':not(single)'
+FAIL setThenReadSelectorText(':not(a,b    ,p)') should be :not(a, b, p). Was _foo.
+FAIL setThenReadSelectorText(':not(#alice,                   #bob,#chris)') should be :not(#alice, #bob, #chris). Was _foo.
+FAIL setThenReadSelectorText(':not(  .selector,#tama,                #hanayo,#midoriko)') should be :not(.selector, #tama, #hanayo, #midoriko). Was _foo.
+FAIL setThenReadSelectorText(':not(    .name,#ok,:visited   )') should be :not(.name, #ok, :visited). Was _foo.
+FAIL setThenReadSelectorText(':not(    .name,#ok,    :visited, :link)') should be :not(.name, #ok, :visited, :link). Was _foo.
+FAIL setThenReadSelectorText(':not(    .name,#ok,    :not(:visited    ))') should be :not(.name, #ok, :not(:visited)). Was _foo.
+FAIL setThenReadSelectorText(':not(.name,  #ok,:not(:link))') should be :not(.name, #ok, :not(:link)). Was _foo.
+FAIL setThenReadSelectorText(':not(.name,#ok,:not(:link))') should be :not(.name, #ok, :not(:link)). Was _foo.
+FAIL setThenReadSelectorText(':not(    .name,#ok,:-webkit-any(   hello))') should be :not(.name, #ok, :-webkit-any(hello)). Was _foo.
+FAIL setThenReadSelectorText(':not(    .name,#ok, :-webkit-any(.selector, #tama, #hanayo, #midoriko))') should be :not(.name, #ok, :-webkit-any(.selector,#tama,#hanayo,#midoriko)). Was _foo.
+PASS setThenReadSelectorText(':not(       [type="file"])') is ':not([type="file"])'
+PASS setThenReadSelectorText(':not(  :hover    )') is ':not(:hover)'
+FAIL setThenReadSelectorText('input:not([type="file"],:hover,:focus):enabled') should be input:not([type="file"], :hover, :focus):enabled. Was _foo.
+FAIL setThenReadSelectorText(':not(input[type="file"], a:hover, button:focus)') should be :not(input[type="file"], a:hover, button:focus). Was _foo.
+FAIL setThenReadSelectorText(':not( .class1.class2.class3   )') should be :not(.class1.class2.class3). Was _foo.
+FAIL setThenReadSelectorText(':not(.class1:hover   )') should be :not(.class1:hover). Was _foo.
+FAIL setThenReadSelectorText(':not(a.class1.class2.class3:hover   )') should be :not(a.class1.class2.class3:hover). Was _foo.
+FAIL setThenReadSelectorText(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris))') should be :not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris)). Was _foo.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

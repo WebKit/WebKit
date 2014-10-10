@@ -1,0 +1,7 @@
+Test having a <style scoped> element as a direct child of a ShadowRoot.
+
+windows.internals.numberOfScopedHTMLStyleChildren not found!
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,1000 @@
+Test the parsing of :not(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 valid selectors
+FAIL document.querySelector(":not(*, *, *)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, *). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, *    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, *). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, #id)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, #id    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, *, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, *, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, #id)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, #id    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, #id, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, #id, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :first-child, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :visited, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, .class:not(.notclass), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(*, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(*, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, #id)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, #id    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, #id). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, #id, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, #id, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :first-child, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :visited, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, .class:not(.notclass), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(#id, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(#id, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :first-child)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :first-child    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :first-child). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :first-child, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :first-child, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :visited, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, .class:not(.notclass), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:first-child, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:first-child, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, :visited)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, :visited    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, :visited). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :visited, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :visited, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, .class:not(.notclass), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:visited, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:visited, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), .class:not(.notclass)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), .class:not(.notclass), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), .class:not(.notclass), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(.class:not(.notclass), :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(.class:not(.notclass), :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a > b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a > b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a > b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a > b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a > b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a > b, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a > b, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, a + b)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, a + b    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, a + b). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, a + b > c ~ d e + g, a + b > c ~ d e + g). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, a + b > c ~ d e + g, :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(a + b > c ~ d e + g, :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(a + b > c ~ d e + g, :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:not(:link), :not(:link), :not(:link))") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:not(:link), :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(:not(:link), :not(:link), :not(:link)    )") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(:not(:link), :not(:link), :not(:link)). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+rect(0px, 0px, 0px, 0px)
+
+rect(5px, 0px, 0px, 0px)
+
+rect(0px, 5px, 0px, 0px)
+
+rect(0px, 0px, 5px, 0px)
+
+rect(0px, 0px, 0px, 5px)
+
+rect(5px, 0px, 5px, 0px)

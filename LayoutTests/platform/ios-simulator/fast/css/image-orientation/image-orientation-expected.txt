@@ -1,0 +1,43 @@
+Apply image-orientation property and check computed style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL p.style.cssText should be image-orientation: -360deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 0deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -315deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 0deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 0deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 0deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 315deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 0deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 360deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 0deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -270deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 90deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -225deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 90deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 45deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 90deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 90deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 90deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -180deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 180deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -135deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 180deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 135deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 180deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -180deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 180deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -90deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 270deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: -45deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 270deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 225deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 270deg (of type string). Was undefined (of type undefined).
+FAIL p.style.cssText should be image-orientation: 270deg;. Was .
+FAIL getComputedStyle(p).imageOrientation should be 270deg (of type string). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

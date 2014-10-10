@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 54x19
+          text run at (0,0) width 54: "Bullets: "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderText {#text} at (53,0) size 30x19
+            text run at (53,0) width 30: "\x{25CF}\x{25CF}\x{25CF}"
+        RenderText {#text} at (82,0) size 5x19
+          text run at (82,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 60x19
+          text run at (0,0) width 60: "Squares: "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderText {#text} at (59,0) size 30x19
+            text run at (59,0) width 30: "\x{25CF}\x{25CF}\x{25CF}"
+        RenderText {#text} at (88,0) size 5x19
+          text run at (88,0) width 5: "."
+      RenderBlock {P} at (0,72) size 784x20
+        RenderText {#text} at (0,0) size 54x19
+          text run at (0,0) width 54: "Circles: "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderText {#text} at (53,0) size 30x19
+            text run at (53,0) width 30: "\x{25CF}\x{25CF}\x{25CF}"
+        RenderText {#text} at (82,0) size 5x19
+          text run at (82,0) width 5: "."
+      RenderBlock {P} at (0,108) size 784x20
+        RenderText {#text} at (0,0) size 85x19
+          text run at (0,0) width 85: "Plain letters: "
+        RenderInline {SPAN} at (0,0) size 25x19
+          RenderText {#text} at (84,0) size 25x19
+            text run at (84,0) width 25: "xxx"
+        RenderText {#text} at (108,0) size 5x19
+          text run at (108,0) width 5: "."
+      RenderBlock {P} at (0,144) size 784x20
+        RenderText {#text} at (0,0) size 113x19
+          text run at (0,0) width 113: "Bullets (invalid): "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderText {#text} at (112,0) size 30x19
+            text run at (112,0) width 30: "\x{25CF}\x{25CF}\x{25CF}"
+        RenderText {#text} at (141,0) size 5x19
+          text run at (141,0) width 5: "."
+      RenderBlock {P} at (0,180) size 784x20
+        RenderText {#text} at (0,0) size 124x19
+          text run at (0,0) width 124: "Bullets (dynamic): "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderText {#text} at (123,0) size 30x19
+            text run at (123,0) width 30: "\x{25CF}\x{25CF}\x{25CF}"
+        RenderText {#text} at (152,0) size 5x19
+          text run at (152,0) width 5: "."

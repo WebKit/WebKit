@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+Test that rules in an inner scoped stylesheet don't override !important rules declared in an outer scoped stylesheet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Case1: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has any matched normal rule declared in an inner scoped stylesheet.
+FAIL getComputedStyle(target1).borderColor should be rgb(0, 128, 0). Was rgb(0, 0, 255).
+Case2: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has a matched normal ID rule declared in an inner scoped stylesheet.
+FAIL getComputedStyle(target2).borderColor should be rgb(0, 128, 0). Was rgb(0, 0, 255).
+Case3: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has matched normal rules declared in an inner scoped stylesheet and in a STYLE attribute.
+FAIL getComputedStyle(target3).borderColor should be rgb(0, 128, 0). Was rgb(0, 0, 255).
+Case4: The target element has matched important rules. One is declared in an outer scoped stylesheet and the other is declared in an inner scoped stylesheet.
+PASS getComputedStyle(target4).borderColor is "rgb(0, 0, 255)"
+Case5: The target element has any matched important rule declared in an author stylesheet, and the element also has matched normal rules declared in an inner scoped stylesheet.
+FAIL getComputedStyle(target5).borderColor should be rgb(0, 255, 0). Was rgb(0, 0, 255).
+Case6: The target element has matched important rules. One is declared in an author stylesheet (not scoped) and the other is declared in a scoped stylesheet.
+PASS getComputedStyle(target6).borderColor is "rgb(0, 0, 255)"
+Case7: The target element has any matched important rule declared in an outer scoped stylesheet. The element is in a shadow dom tree whose shadow root has apply-author-styles true. The shadow dom tree has any other normal rules which match the element.
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+Shadow Host
+Shadow Host

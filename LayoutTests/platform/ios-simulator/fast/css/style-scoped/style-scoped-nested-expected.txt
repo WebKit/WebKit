@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
+Test whether scoped styles are applied in the cascade order or not.
+If this test passes, rules which are declared in descendant scoping element are applied to a target element.
+c.f. https://bugs.webkit.org/show_bug.cgi?id=103239
+Only document.style is applied to the target.
+PASS window.getComputedStyle(target).color is "rgb(255, 0, 0)"
+A new scoped style is inserted into the grandparent node of the target. A class rule in the inserted scoped style wins an id rule in document.style.
+FAIL window.getComputedStyle(target).color should be rgb(255, 255, 0). Was rgb(255, 0, 0).
+A new scoped style is inserted into the parent node of the target. A tag rule in the inserted scoped style wins an id rule and a class rule in existing styles.
+FAIL window.getComputedStyle(target).color should be rgb(0, 0, 255). Was rgb(255, 0, 0).
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

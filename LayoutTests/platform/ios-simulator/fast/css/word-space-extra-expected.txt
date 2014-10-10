@@ -1,0 +1,1332 @@
+layer at (0,0) size 2081x2441
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2441
+  RenderBlock {HTML} at (0,0) size 800x2442
+    RenderBody {BODY} at (8,8) size 784x2426
+      RenderBlock {H2} at (0,0) size 784x30
+        RenderText {#text} at (0,1) size 139x28
+          text run at (0,1) width 139: "word-spacing"
+      RenderBlock (floating) {PRE} at (0,62) size 986x160
+        RenderBlock {H3} at (0,15) size 986x17
+          RenderText {#text} at (0,0) size 205x16
+            text run at (0,0) width 205: "In a floated pre"
+        RenderBlock (anonymous) at (0,46) size 986x113
+          RenderText {#text} at (0,0) size 257x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,14) size 24x14
+              text run at (256,14) width 24: "for"
+          RenderText {#text} at (299,14) size 29x14
+            text run at (299,14) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,14) size 63x14
+              text run at (327,14) width 63: "elements"
+          RenderText {#text} at (409,14) size 29x14
+            text run at (409,14) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,14) size 48x14
+              text run at (437,14) width 48: "within"
+          RenderText {#text} at (504,14) size 654x28
+            text run at (504,14) width 130: " elements too."
+            text run at (653,14) width 1: " "
+            text run at (0,28) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,28) size 24x14
+              text run at (256,28) width 24: "for"
+          RenderText {#text} at (299,28) size 29x14
+            text run at (299,28) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,28) size 63x14
+              text run at (327,28) width 63: "elements"
+          RenderText {#text} at (409,28) size 29x14
+            text run at (409,28) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,28) size 48x14
+              text run at (437,28) width 48: "within"
+          RenderText {#text} at (504,28) size 99x14
+            text run at (504,28) width 99: " elements "
+          RenderText {#text} at (602,28) size 1094x28
+            text run at (602,28) width 472: " too. (with comment between elements and too)"
+            text run at (1093,28) width 1: " "
+            text run at (0,42) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,42) size 24x14
+              text run at (256,42) width 24: "for"
+          RenderText {#text} at (299,42) size 29x14
+            text run at (299,42) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,42) size 63x14
+              text run at (327,42) width 63: "elements"
+          RenderText {#text} at (409,42) size 29x14
+            text run at (409,42) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,42) size 48x14
+              text run at (437,42) width 48: "within"
+          RenderText {#text} at (504,42) size 71x14
+            text run at (504,42) width 71: " elements"
+          RenderText {#text} at (594,42) size 1318x28
+            text run at (594,42) width 704: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (1317,42) width 1: " "
+            text run at (0,56) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,56) size 24x14
+              text run at (256,56) width 24: "for"
+          RenderText {#text} at (299,56) size 29x14
+            text run at (299,56) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,56) size 63x14
+              text run at (327,56) width 63: "elements"
+          RenderText {#text} at (409,56) size 29x14
+            text run at (409,56) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,56) size 48x14
+              text run at (437,56) width 48: "within"
+          RenderText {#text} at (504,56) size 99x14
+            text run at (504,56) width 99: " elements "
+          RenderText {#text} at (602,56) size 700x14
+            text run at (602,56) width 680: "too. (with comment (no trailing space) between elements and too)"
+            text run at (1301,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 390x14
+            RenderText {#text} at (0,70) size 257x14
+              text run at (0,70) width 257: "Word   spacing test "
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (256,70) size 24x14
+                text run at (256,70) width 24: "for"
+            RenderText {#text} at (299,70) size 29x14
+              text run at (299,70) width 29: " "
+            RenderInline {STRONG} at (0,0) size 63x14
+              RenderText {#text} at (327,70) size 63x14
+                text run at (327,70) width 63: "elements"
+          RenderText {#text} at (409,70) size 29x14
+            text run at (409,70) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,70) size 48x14
+              text run at (437,70) width 48: "within"
+          RenderText {#text} at (504,70) size 1137x28
+            text run at (504,70) width 613: " elements too. (with monospace font from Word to elements)"
+            text run at (1136,70) width 1: " "
+            text run at (0,84) width 257: "Word   spacing test "
+          RenderInline {SPAN} at (0,0) size 229x14
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (256,84) size 24x14
+                text run at (256,84) width 24: "for"
+            RenderText {#text} at (299,84) size 29x14
+              text run at (299,84) width 29: " "
+            RenderInline {STRONG} at (0,0) size 63x14
+              RenderText {#text} at (327,84) size 63x14
+                text run at (327,84) width 63: "elements"
+            RenderText {#text} at (409,84) size 29x14
+              text run at (409,84) width 29: " "
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (437,84) size 48x14
+                text run at (437,84) width 48: "within"
+          RenderText {#text} at (504,84) size 1114x28
+            text run at (504,84) width 590: " elements too. (with monospace font from for to within)"
+            text run at (1113,84) width 1: " "
+            text run at (0,98) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,98) size 24x14
+              text run at (256,98) width 24: "for"
+          RenderText {#text} at (299,98) size 29x14
+            text run at (299,98) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,98) size 63x14
+              text run at (327,98) width 63: "elements"
+          RenderText {#text} at (409,98) size 29x14
+            text run at (409,98) width 29: " "
+          RenderInline {SPAN} at (0,0) size 189x14
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (437,98) size 48x14
+                text run at (437,98) width 48: "within"
+            RenderText {#text} at (504,98) size 122x14
+              text run at (504,98) width 122: " elements too"
+          RenderText {#text} at (625,98) size 504x14
+            text run at (625,98) width 484: ". (with monospace font from elements to too)"
+            text run at (1128,98) width 1: " "
+      RenderBlock (anonymous) at (0,49) size 784x186
+        RenderBR {BR} at (985,0) size 1x19
+      RenderBlock {PRE} at (0,249) size 784x144
+        RenderBlock {H3} at (0,0) size 784x16
+          RenderText {#text} at (0,0) size 241x16
+            text run at (0,0) width 241: "In an un-floated pre"
+        RenderBlock (anonymous) at (0,31) size 784x113
+          RenderText {#text} at (0,0) size 257x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,14) size 24x14
+              text run at (256,14) width 24: "for"
+          RenderText {#text} at (299,14) size 29x14
+            text run at (299,14) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,14) size 63x14
+              text run at (327,14) width 63: "elements"
+          RenderText {#text} at (409,14) size 29x14
+            text run at (409,14) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,14) size 48x14
+              text run at (437,14) width 48: "within"
+          RenderText {#text} at (504,14) size 654x28
+            text run at (504,14) width 130: " elements too."
+            text run at (653,14) width 1: " "
+            text run at (0,28) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,28) size 24x14
+              text run at (256,28) width 24: "for"
+          RenderText {#text} at (299,28) size 29x14
+            text run at (299,28) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,28) size 63x14
+              text run at (327,28) width 63: "elements"
+          RenderText {#text} at (409,28) size 29x14
+            text run at (409,28) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,28) size 48x14
+              text run at (437,28) width 48: "within"
+          RenderText {#text} at (504,28) size 99x14
+            text run at (504,28) width 99: " elements "
+          RenderText {#text} at (602,28) size 1094x28
+            text run at (602,28) width 472: " too. (with comment between elements and too)"
+            text run at (1093,28) width 1: " "
+            text run at (0,42) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,42) size 24x14
+              text run at (256,42) width 24: "for"
+          RenderText {#text} at (299,42) size 29x14
+            text run at (299,42) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,42) size 63x14
+              text run at (327,42) width 63: "elements"
+          RenderText {#text} at (409,42) size 29x14
+            text run at (409,42) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,42) size 48x14
+              text run at (437,42) width 48: "within"
+          RenderText {#text} at (504,42) size 71x14
+            text run at (504,42) width 71: " elements"
+          RenderText {#text} at (594,42) size 1318x28
+            text run at (594,42) width 704: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (1317,42) width 1: " "
+            text run at (0,56) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,56) size 24x14
+              text run at (256,56) width 24: "for"
+          RenderText {#text} at (299,56) size 29x14
+            text run at (299,56) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,56) size 63x14
+              text run at (327,56) width 63: "elements"
+          RenderText {#text} at (409,56) size 29x14
+            text run at (409,56) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,56) size 48x14
+              text run at (437,56) width 48: "within"
+          RenderText {#text} at (504,56) size 99x14
+            text run at (504,56) width 99: " elements "
+          RenderText {#text} at (602,56) size 700x14
+            text run at (602,56) width 680: "too. (with comment (no trailing space) between elements and too)"
+            text run at (1301,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 390x14
+            RenderText {#text} at (0,70) size 257x14
+              text run at (0,70) width 257: "Word   spacing test "
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (256,70) size 24x14
+                text run at (256,70) width 24: "for"
+            RenderText {#text} at (299,70) size 29x14
+              text run at (299,70) width 29: " "
+            RenderInline {STRONG} at (0,0) size 63x14
+              RenderText {#text} at (327,70) size 63x14
+                text run at (327,70) width 63: "elements"
+          RenderText {#text} at (409,70) size 29x14
+            text run at (409,70) width 29: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (437,70) size 48x14
+              text run at (437,70) width 48: "within"
+          RenderText {#text} at (504,70) size 1137x28
+            text run at (504,70) width 613: " elements too. (with monospace font from Word to elements)"
+            text run at (1136,70) width 1: " "
+            text run at (0,84) width 257: "Word   spacing test "
+          RenderInline {SPAN} at (0,0) size 229x14
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (256,84) size 24x14
+                text run at (256,84) width 24: "for"
+            RenderText {#text} at (299,84) size 29x14
+              text run at (299,84) width 29: " "
+            RenderInline {STRONG} at (0,0) size 63x14
+              RenderText {#text} at (327,84) size 63x14
+                text run at (327,84) width 63: "elements"
+            RenderText {#text} at (409,84) size 29x14
+              text run at (409,84) width 29: " "
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (437,84) size 48x14
+                text run at (437,84) width 48: "within"
+          RenderText {#text} at (504,84) size 1114x28
+            text run at (504,84) width 590: " elements too. (with monospace font from for to within)"
+            text run at (1113,84) width 1: " "
+            text run at (0,98) width 257: "Word   spacing test "
+          RenderInline {EM} at (0,0) size 24x14
+            RenderText {#text} at (256,98) size 24x14
+              text run at (256,98) width 24: "for"
+          RenderText {#text} at (299,98) size 29x14
+            text run at (299,98) width 29: " "
+          RenderInline {STRONG} at (0,0) size 63x14
+            RenderText {#text} at (327,98) size 63x14
+              text run at (327,98) width 63: "elements"
+          RenderText {#text} at (409,98) size 29x14
+            text run at (409,98) width 29: " "
+          RenderInline {SPAN} at (0,0) size 189x14
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (437,98) size 48x14
+                text run at (437,98) width 48: "within"
+            RenderText {#text} at (504,98) size 122x14
+              text run at (504,98) width 122: " elements too"
+          RenderText {#text} at (625,98) size 504x14
+            text run at (625,98) width 484: ". (with monospace font from elements to too)"
+            text run at (1128,98) width 1: " "
+      RenderBlock (anonymous) at (0,405) size 784x0
+        RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,411) size 784x24
+        RenderBlock {H3} at (0,0) size 784x23
+          RenderText {#text} at (0,0) size 95x22
+            text run at (0,0) width 95: "In a span"
+      RenderBlock (anonymous) at (0,453) size 784x301
+        RenderInline {SPAN} at (0,0) size 823x259
+          RenderText {#text} at (0,0) size 179x19
+            text run at (0,0) width 60: "Word "
+            text run at (59,0) width 120: "spacing test "
+          RenderInline {EM} at (0,0) size 19x19
+            RenderText {#text} at (178,0) size 19x19
+              text run at (178,0) width 19: "for"
+          RenderText {#text} at (216,0) size 25x19
+            text run at (216,0) width 25: " "
+          RenderInline {STRONG} at (0,0) size 61x19
+            RenderText {#text} at (240,0) size 61x19
+              text run at (240,0) width 61: "elements"
+          RenderText {#text} at (320,0) size 25x19
+            text run at (320,0) width 25: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (344,5) size 48x14
+              text run at (344,5) width 48: "within"
+          RenderText {#text} at (411,0) size 90x19
+            text run at (411,0) width 90: " elements too."
+          RenderBR {BR} at (500,15) size 1x0
+          RenderText {#text} at (0,20) size 179x19
+            text run at (0,20) width 60: "Word "
+            text run at (59,20) width 120: "spacing test "
+          RenderInline {EM} at (0,0) size 19x19
+            RenderText {#text} at (178,20) size 19x19
+              text run at (178,20) width 19: "for"
+          RenderText {#text} at (216,20) size 25x19
+            text run at (216,20) width 25: " "
+          RenderInline {STRONG} at (0,0) size 61x19
+            RenderText {#text} at (240,20) size 61x19
+              text run at (240,20) width 61: "elements"
+          RenderText {#text} at (320,20) size 25x19
+            text run at (320,20) width 25: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (344,25) size 48x14
+              text run at (344,25) width 48: "within"
+          RenderText {#text} at (411,20) size 86x19
+            text run at (411,20) width 86: " elements "
+          RenderText {#text} at (496,20) size 801x39
+            text run at (496,20) width 305: "too. (with comment between elements"
+            text run at (0,40) width 53: "and too)"
+          RenderBR {BR} at (52,55) size 1x0
+          RenderText {#text} at (0,60) size 179x19
+            text run at (0,60) width 60: "Word "
+            text run at (59,60) width 120: "spacing test "
+          RenderInline {EM} at (0,0) size 19x19
+            RenderText {#text} at (178,60) size 19x19
+              text run at (178,60) width 19: "for"
+          RenderText {#text} at (216,60) size 25x19
+            text run at (216,60) width 25: " "
+          RenderInline {STRONG} at (0,0) size 61x19
+            RenderText {#text} at (240,60) size 61x19
+              text run at (240,60) width 61: "elements"
+          RenderText {#text} at (320,60) size 25x19
+            text run at (320,60) width 25: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (344,65) size 48x14
+              text run at (344,65) width 48: "within"
+          RenderText {#text} at (411,60) size 62x19
+            text run at (411,60) width 62: " elements"
+          RenderText {#text} at (492,60) size 782x39
+            text run at (492,60) width 290: " too. (with comment (no preceeding"
+            text run at (0,80) width 276: "space) between elements and too)"
+          RenderBR {BR} at (275,95) size 1x0
+          RenderText {#text} at (0,100) size 179x19
+            text run at (0,100) width 60: "Word "
+            text run at (59,100) width 120: "spacing test "
+          RenderInline {EM} at (0,0) size 19x19
+            RenderText {#text} at (178,100) size 19x19
+              text run at (178,100) width 19: "for"
+          RenderText {#text} at (216,100) size 25x19
+            text run at (216,100) width 25: " "
+          RenderInline {STRONG} at (0,0) size 61x19
+            RenderText {#text} at (240,100) size 61x19
+              text run at (240,100) width 61: "elements"
+          RenderText {#text} at (320,100) size 25x19
+            text run at (320,100) width 25: " "
+          RenderInline {TT} at (0,0) size 48x14
+            RenderText {#text} at (344,105) size 48x14
+              text run at (344,105) width 48: "within"
+          RenderText {#text} at (411,100) size 86x19
+            text run at (411,100) width 86: " elements "
+          RenderText {#text} at (496,100) size 823x39
+            text run at (496,100) width 327: "too. (with comment (no trailing space)"
+            text run at (0,120) width 212: "between elements and too)"
+          RenderBR {BR} at (211,135) size 1x0
+          RenderInline {SPAN} at (0,0) size 335x14
+            RenderText {#text} at (0,145) size 201x14
+              text run at (0,145) width 60: "Word "
+              text run at (59,145) width 142: "spacing test "
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (200,145) size 24x14
+                text run at (200,145) width 24: "for"
+            RenderText {#text} at (243,145) size 29x14
+              text run at (243,145) width 29: " "
+            RenderInline {STRONG} at (0,0) size 64x14
+              RenderText {#text} at (271,145) size 64x14
+                text run at (271,145) width 64: "elements"
+          RenderText {#text} at (354,140) size 25x19
+            text run at (354,140) width 25: " "
+          RenderInline {TT} at (0,0) size 47x14
+            RenderText {#text} at (378,145) size 47x14
+              text run at (378,145) width 47: "within"
+          RenderText {#text} at (444,140) size 793x39
+            text run at (444,140) width 349: " elements too. (with monospace font from"
+            text run at (0,160) width 138: "Word to elements)"
+          RenderBR {BR} at (137,175) size 1x0
+          RenderText {#text} at (0,180) size 179x19
+            text run at (0,180) width 60: "Word "
+            text run at (59,180) width 120: "spacing test "
+          RenderInline {SPAN} at (0,0) size 229x14
+            RenderInline {EM} at (0,0) size 24x14
+              RenderText {#text} at (178,185) size 24x14
+                text run at (178,185) width 24: "for"
+            RenderText {#text} at (221,185) size 29x14
+              text run at (221,185) width 29: " "
+            RenderInline {STRONG} at (0,0) size 63x14
+              RenderText {#text} at (249,185) size 63x14
+                text run at (249,185) width 63: "elements"
+            RenderText {#text} at (331,185) size 29x14
+              text run at (331,185) width 29: " "
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (359,185) size 48x14
+                text run at (359,185) width 48: "within"
+          RenderText {#text} at (426,180) size 818x39
+            text run at (426,180) width 392: " elements too. (with monospace font from for"
+            text run at (0,200) width 63: "to within)"
+          RenderBR {BR} at (62,215) size 1x0
+          RenderText {#text} at (0,220) size 179x19
+            text run at (0,220) width 60: "Word "
+            text run at (59,220) width 120: "spacing test "
+          RenderInline {EM} at (0,0) size 19x19
+            RenderText {#text} at (178,220) size 19x19
+              text run at (178,220) width 19: "for"
+          RenderText {#text} at (216,220) size 25x19
+            text run at (216,220) width 25: " "
+          RenderInline {STRONG} at (0,0) size 61x19
+            RenderText {#text} at (240,220) size 61x19
+              text run at (240,220) width 61: "elements"
+          RenderText {#text} at (320,220) size 25x19
+            text run at (320,220) width 25: " "
+          RenderInline {SPAN} at (0,0) size 169x14
+            RenderInline {TT} at (0,0) size 48x14
+              RenderText {#text} at (344,225) size 48x14
+                text run at (344,225) width 48: "within"
+            RenderText {#text} at (411,225) size 102x14
+              text run at (411,225) width 102: " elements too"
+          RenderText {#text} at (512,220) size 756x39
+            text run at (512,220) width 244: ". (with monospace font from"
+            text run at (0,240) width 148: "elements to too) "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,260) size 0x19
+        RenderBR {BR} at (0,280) size 0x19
+      RenderBlock {H2} at (0,773) size 784x31
+        RenderText {#text} at (0,1) size 140x28
+          text run at (0,1) width 140: "letter-spacing"
+      RenderBlock (floating) {PRE} at (0,835) size 1191x160
+        RenderBlock {H3} at (0,15) size 1191x17
+          RenderText {#text} at (0,0) size 225x16
+            text run at (0,0) width 225: "In a floated pre"
+        RenderBlock (anonymous) at (0,46) size 1191x113
+          RenderText {#text} at (0,0) size 282x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,14) size 40x14
+              text run at (281,14) width 40: "for"
+          RenderText {#text} at (320,14) size 13x14
+            text run at (320,14) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,14) size 104x14
+              text run at (332,14) width 104: "elements"
+          RenderText {#text} at (435,14) size 14x14
+            text run at (435,14) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,14) size 77x14
+              text run at (448,14) width 77: "within"
+          RenderText {#text} at (524,14) size 705x28
+            text run at (524,14) width 181: " elements too."
+            text run at (704,14) width 1: " "
+            text run at (0,28) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,28) size 40x14
+              text run at (281,28) width 40: "for"
+          RenderText {#text} at (320,28) size 13x14
+            text run at (320,28) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,28) size 104x14
+              text run at (332,28) width 104: "elements"
+          RenderText {#text} at (435,28) size 14x14
+            text run at (435,28) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,28) size 77x14
+              text run at (448,28) width 77: "within"
+          RenderText {#text} at (524,28) size 129x14
+            text run at (524,28) width 129: " elements "
+          RenderText {#text} at (652,28) size 1229x28
+            text run at (652,28) width 577: " too. (with comment between elements and too)"
+            text run at (1228,28) width 1: " "
+            text run at (0,42) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,42) size 40x14
+              text run at (281,42) width 40: "for"
+          RenderText {#text} at (320,42) size 13x14
+            text run at (320,42) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,42) size 104x14
+              text run at (332,42) width 104: "elements"
+          RenderText {#text} at (435,42) size 14x14
+            text run at (435,42) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,42) size 77x14
+              text run at (448,42) width 77: "within"
+          RenderText {#text} at (524,42) size 117x14
+            text run at (524,42) width 117: " elements"
+          RenderText {#text} at (640,42) size 1498x28
+            text run at (640,42) width 858: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (1497,42) width 1: " "
+            text run at (0,56) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,56) size 40x14
+              text run at (281,56) width 40: "for"
+          RenderText {#text} at (320,56) size 13x14
+            text run at (320,56) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,56) size 104x14
+              text run at (332,56) width 104: "elements"
+          RenderText {#text} at (435,56) size 14x14
+            text run at (435,56) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,56) size 77x14
+              text run at (448,56) width 77: "within"
+          RenderText {#text} at (524,56) size 129x14
+            text run at (524,56) width 129: " elements "
+          RenderText {#text} at (652,56) size 821x14
+            text run at (652,56) width 821: "too. (with comment (no trailing space) between elements and too)"
+            text run at (1472,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 436x14
+            RenderText {#text} at (0,70) size 282x14
+              text run at (0,70) width 282: "Letter   spacing test "
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (281,70) size 40x14
+                text run at (281,70) width 40: "for"
+            RenderText {#text} at (320,70) size 13x14
+              text run at (320,70) width 13: " "
+            RenderInline {STRONG} at (0,0) size 104x14
+              RenderText {#text} at (332,70) size 104x14
+                text run at (332,70) width 104: "elements"
+          RenderText {#text} at (435,70) size 14x14
+            text run at (435,70) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,70) size 77x14
+              text run at (448,70) width 77: "within"
+          RenderText {#text} at (524,70) size 1293x28
+            text run at (524,70) width 769: " elements too. (with monospace font from Letter to elements)"
+            text run at (1292,70) width 1: " "
+            text run at (0,84) width 282: "Letter   spacing test "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (281,84) size 40x14
+                text run at (281,84) width 40: "for"
+            RenderText {#text} at (320,84) size 13x14
+              text run at (320,84) width 13: " "
+            RenderInline {STRONG} at (0,0) size 104x14
+              RenderText {#text} at (332,84) size 104x14
+                text run at (332,84) width 104: "elements"
+            RenderText {#text} at (435,84) size 14x14
+              text run at (435,84) width 14: " "
+            RenderInline {TT} at (0,0) size 77x14
+              RenderText {#text} at (448,84) size 77x14
+                text run at (448,84) width 77: "within"
+          RenderText {#text} at (524,84) size 1229x28
+            text run at (524,84) width 705: " elements too. (with monospace font from for to within)"
+            text run at (1228,84) width 1: " "
+            text run at (0,98) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,98) size 40x14
+              text run at (281,98) width 40: "for"
+          RenderText {#text} at (320,98) size 13x14
+            text run at (320,98) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,98) size 104x14
+              text run at (332,98) width 104: "elements"
+          RenderText {#text} at (435,98) size 14x14
+            text run at (435,98) width 14: " "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {TT} at (0,0) size 77x14
+              RenderText {#text} at (448,98) size 77x14
+                text run at (448,98) width 77: "within"
+            RenderText {#text} at (524,98) size 168x14
+              text run at (524,98) width 168: " elements too"
+          RenderText {#text} at (691,98) size 564x14
+            text run at (691,98) width 564: ". (with monospace font from elements to too)"
+            text run at (1254,98) width 1: " "
+      RenderBlock (anonymous) at (0,822) size 784x186
+        RenderBR {BR} at (1190,0) size 1x19
+      RenderBlock {PRE} at (0,1022) size 784x144
+        RenderBlock {H3} at (0,0) size 784x16
+          RenderText {#text} at (0,0) size 281x16
+            text run at (0,0) width 281: "In an un-floated pre"
+        RenderBlock (anonymous) at (0,31) size 784x113
+          RenderText {#text} at (0,0) size 282x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,14) size 40x14
+              text run at (281,14) width 40: "for"
+          RenderText {#text} at (320,14) size 13x14
+            text run at (320,14) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,14) size 104x14
+              text run at (332,14) width 104: "elements"
+          RenderText {#text} at (435,14) size 14x14
+            text run at (435,14) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,14) size 77x14
+              text run at (448,14) width 77: "within"
+          RenderText {#text} at (524,14) size 705x28
+            text run at (524,14) width 181: " elements too."
+            text run at (704,14) width 1: " "
+            text run at (0,28) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,28) size 40x14
+              text run at (281,28) width 40: "for"
+          RenderText {#text} at (320,28) size 13x14
+            text run at (320,28) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,28) size 104x14
+              text run at (332,28) width 104: "elements"
+          RenderText {#text} at (435,28) size 14x14
+            text run at (435,28) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,28) size 77x14
+              text run at (448,28) width 77: "within"
+          RenderText {#text} at (524,28) size 129x14
+            text run at (524,28) width 129: " elements "
+          RenderText {#text} at (652,28) size 1229x28
+            text run at (652,28) width 577: " too. (with comment between elements and too)"
+            text run at (1228,28) width 1: " "
+            text run at (0,42) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,42) size 40x14
+              text run at (281,42) width 40: "for"
+          RenderText {#text} at (320,42) size 13x14
+            text run at (320,42) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,42) size 104x14
+              text run at (332,42) width 104: "elements"
+          RenderText {#text} at (435,42) size 14x14
+            text run at (435,42) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,42) size 77x14
+              text run at (448,42) width 77: "within"
+          RenderText {#text} at (524,42) size 117x14
+            text run at (524,42) width 117: " elements"
+          RenderText {#text} at (640,42) size 1498x28
+            text run at (640,42) width 858: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (1497,42) width 1: " "
+            text run at (0,56) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,56) size 40x14
+              text run at (281,56) width 40: "for"
+          RenderText {#text} at (320,56) size 13x14
+            text run at (320,56) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,56) size 104x14
+              text run at (332,56) width 104: "elements"
+          RenderText {#text} at (435,56) size 14x14
+            text run at (435,56) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,56) size 77x14
+              text run at (448,56) width 77: "within"
+          RenderText {#text} at (524,56) size 129x14
+            text run at (524,56) width 129: " elements "
+          RenderText {#text} at (652,56) size 821x14
+            text run at (652,56) width 821: "too. (with comment (no trailing space) between elements and too)"
+            text run at (1472,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 436x14
+            RenderText {#text} at (0,70) size 282x14
+              text run at (0,70) width 282: "Letter   spacing test "
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (281,70) size 40x14
+                text run at (281,70) width 40: "for"
+            RenderText {#text} at (320,70) size 13x14
+              text run at (320,70) width 13: " "
+            RenderInline {STRONG} at (0,0) size 104x14
+              RenderText {#text} at (332,70) size 104x14
+                text run at (332,70) width 104: "elements"
+          RenderText {#text} at (435,70) size 14x14
+            text run at (435,70) width 14: " "
+          RenderInline {TT} at (0,0) size 77x14
+            RenderText {#text} at (448,70) size 77x14
+              text run at (448,70) width 77: "within"
+          RenderText {#text} at (524,70) size 1293x28
+            text run at (524,70) width 769: " elements too. (with monospace font from Letter to elements)"
+            text run at (1292,70) width 1: " "
+            text run at (0,84) width 282: "Letter   spacing test "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (281,84) size 40x14
+                text run at (281,84) width 40: "for"
+            RenderText {#text} at (320,84) size 13x14
+              text run at (320,84) width 13: " "
+            RenderInline {STRONG} at (0,0) size 104x14
+              RenderText {#text} at (332,84) size 104x14
+                text run at (332,84) width 104: "elements"
+            RenderText {#text} at (435,84) size 14x14
+              text run at (435,84) width 14: " "
+            RenderInline {TT} at (0,0) size 77x14
+              RenderText {#text} at (448,84) size 77x14
+                text run at (448,84) width 77: "within"
+          RenderText {#text} at (524,84) size 1229x28
+            text run at (524,84) width 705: " elements too. (with monospace font from for to within)"
+            text run at (1228,84) width 1: " "
+            text run at (0,98) width 282: "Letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (281,98) size 40x14
+              text run at (281,98) width 40: "for"
+          RenderText {#text} at (320,98) size 13x14
+            text run at (320,98) width 13: " "
+          RenderInline {STRONG} at (0,0) size 104x14
+            RenderText {#text} at (332,98) size 104x14
+              text run at (332,98) width 104: "elements"
+          RenderText {#text} at (435,98) size 14x14
+            text run at (435,98) width 14: " "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {TT} at (0,0) size 77x14
+              RenderText {#text} at (448,98) size 77x14
+                text run at (448,98) width 77: "within"
+            RenderText {#text} at (524,98) size 168x14
+              text run at (524,98) width 168: " elements too"
+          RenderText {#text} at (691,98) size 564x14
+            text run at (691,98) width 564: ". (with monospace font from elements to too)"
+            text run at (1254,98) width 1: " "
+      RenderBlock (anonymous) at (0,1178) size 784x21
+        RenderBR {BR} at (0,0) size 0x19
+        RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,1217) size 784x24
+        RenderBlock {H3} at (0,0) size 784x23
+          RenderText {#text} at (0,0) size 120x22
+            text run at (0,0) width 120: "In a span"
+      RenderBlock (anonymous) at (0,1259) size 784x301
+        RenderInline {SPAN} at (0,0) size 780x259
+          RenderText {#text} at (0,0) size 222x19
+            text run at (0,0) width 78: "Letter "
+            text run at (77,0) width 145: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (221,0) size 34x19
+              text run at (221,0) width 34: "for"
+          RenderText {#text} at (254,0) size 10x19
+            text run at (254,0) width 10: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (263,0) size 101x19
+              text run at (263,0) width 101: "elements"
+          RenderText {#text} at (363,0) size 10x19
+            text run at (363,0) width 10: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (372,5) size 78x14
+              text run at (372,5) width 78: "within"
+          RenderText {#text} at (449,0) size 160x19
+            text run at (449,0) width 160: " elements too."
+          RenderBR {BR} at (608,15) size 1x0
+          RenderText {#text} at (0,20) size 222x19
+            text run at (0,20) width 78: "Letter "
+            text run at (77,20) width 145: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (221,20) size 34x19
+              text run at (221,20) width 34: "for"
+          RenderText {#text} at (254,20) size 10x19
+            text run at (254,20) width 10: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (263,20) size 101x19
+              text run at (263,20) width 101: "elements"
+          RenderText {#text} at (363,20) size 10x19
+            text run at (363,20) width 10: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (372,25) size 78x14
+              text run at (372,25) width 78: "within"
+          RenderText {#text} at (449,20) size 116x19
+            text run at (449,20) width 116: " elements "
+          RenderText {#text} at (564,20) size 780x39
+            text run at (564,20) width 216: "too. (with comment"
+            text run at (0,40) width 297: "between elements and too)"
+          RenderBR {BR} at (296,55) size 1x0
+          RenderText {#text} at (0,60) size 222x19
+            text run at (0,60) width 78: "Letter "
+            text run at (77,60) width 145: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (221,60) size 34x19
+              text run at (221,60) width 34: "for"
+          RenderText {#text} at (254,60) size 10x19
+            text run at (254,60) width 10: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (263,60) size 101x19
+              text run at (263,60) width 101: "elements"
+          RenderText {#text} at (363,60) size 10x19
+            text run at (363,60) width 10: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (372,65) size 78x14
+              text run at (372,65) width 78: "within"
+          RenderText {#text} at (449,60) size 107x19
+            text run at (449,60) width 107: " elements"
+          RenderText {#text} at (555,60) size 780x39
+            text run at (555,60) width 225: " too. (with comment"
+            text run at (0,80) width 551: "(no preceeding space) between elements and too)"
+          RenderBR {BR} at (550,95) size 1x0
+          RenderText {#text} at (0,100) size 222x19
+            text run at (0,100) width 78: "Letter "
+            text run at (77,100) width 145: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (221,100) size 34x19
+              text run at (221,100) width 34: "for"
+          RenderText {#text} at (254,100) size 10x19
+            text run at (254,100) width 10: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (263,100) size 101x19
+              text run at (263,100) width 101: "elements"
+          RenderText {#text} at (363,100) size 10x19
+            text run at (363,100) width 10: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (372,105) size 78x14
+              text run at (372,105) width 78: "within"
+          RenderText {#text} at (449,100) size 116x19
+            text run at (449,100) width 116: " elements "
+          RenderText {#text} at (564,100) size 780x39
+            text run at (564,100) width 216: "too. (with comment"
+            text run at (0,120) width 517: "(no trailing space) between elements and too)"
+          RenderBR {BR} at (516,135) size 1x0
+          RenderInline {SPAN} at (0,0) size 410x14
+            RenderText {#text} at (0,145) size 257x14
+              text run at (0,145) width 90: "Letter "
+              text run at (89,145) width 168: "spacing test "
+            RenderInline {EM} at (0,0) size 39x14
+              RenderText {#text} at (256,145) size 39x14
+                text run at (256,145) width 39: "for"
+            RenderText {#text} at (294,145) size 14x14
+              text run at (294,145) width 14: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (307,145) size 103x14
+                text run at (307,145) width 103: "elements"
+          RenderText {#text} at (409,140) size 10x19
+            text run at (409,140) width 10: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (418,145) size 78x14
+              text run at (418,145) width 78: "within"
+          RenderText {#text} at (495,140) size 723x39
+            text run at (495,140) width 228: " elements too. (with"
+            text run at (0,160) width 457: "monospace font from Letter to elements)"
+          RenderBR {BR} at (456,175) size 1x0
+          RenderText {#text} at (0,180) size 222x19
+            text run at (0,180) width 78: "Letter "
+            text run at (77,180) width 145: "spacing test "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {EM} at (0,0) size 39x14
+              RenderText {#text} at (221,185) size 39x14
+                text run at (221,185) width 39: "for"
+            RenderText {#text} at (259,185) size 14x14
+              text run at (259,185) width 14: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (272,185) size 103x14
+                text run at (272,185) width 103: "elements"
+            RenderText {#text} at (374,185) size 14x14
+              text run at (374,185) width 14: " "
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (387,185) size 78x14
+                text run at (387,185) width 78: "within"
+          RenderText {#text} at (464,180) size 692x39
+            text run at (464,180) width 228: " elements too. (with"
+            text run at (0,200) width 397: "monospace font from for to within)"
+          RenderBR {BR} at (396,215) size 1x0
+          RenderText {#text} at (0,220) size 222x19
+            text run at (0,220) width 78: "Letter "
+            text run at (77,220) width 145: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (221,220) size 34x19
+              text run at (221,220) width 34: "for"
+          RenderText {#text} at (254,220) size 10x19
+            text run at (254,220) width 10: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (263,220) size 101x19
+              text run at (263,220) width 101: "elements"
+          RenderText {#text} at (363,220) size 10x19
+            text run at (363,220) width 10: " "
+          RenderInline {SPAN} at (0,0) size 244x14
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (372,225) size 78x14
+                text run at (372,225) width 78: "within"
+            RenderText {#text} at (449,225) size 167x14
+              text run at (449,225) width 167: " elements too"
+          RenderText {#text} at (615,220) size 693x39
+            text run at (615,220) width 78: ". (with"
+            text run at (0,240) width 433: "monospace font from elements to too) "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,260) size 0x19
+        RenderBR {BR} at (0,280) size 0x19
+      RenderBlock {H2} at (0,1579) size 784x31
+        RenderText {#text} at (0,1) size 133x28
+          text run at (0,1) width 133: "both-spacing"
+      RenderBlock (floating) {PRE} at (0,1642) size 1451x159
+        RenderBlock {H3} at (0,15) size 1451x17
+          RenderText {#text} at (0,0) size 285x16
+            text run at (0,0) width 285: "In a floated pre"
+        RenderBlock (anonymous) at (0,46) size 1451x113
+          RenderText {#text} at (0,0) size 537x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,14) size 40x14
+              text run at (536,14) width 40: "for"
+          RenderText {#text} at (595,14) size 34x14
+            text run at (595,14) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,14) size 103x14
+              text run at (628,14) width 103: "elements"
+          RenderText {#text} at (750,14) size 34x14
+            text run at (750,14) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,14) size 78x14
+              text run at (783,14) width 78: "within"
+          RenderText {#text} at (880,14) size 1100x28
+            text run at (880,14) width 200: " elements too."
+            text run at (1099,14) width 1: " "
+            text run at (0,28) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,28) size 40x14
+              text run at (536,28) width 40: "for"
+          RenderText {#text} at (595,28) size 34x14
+            text run at (595,28) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,28) size 103x14
+              text run at (628,28) width 103: "elements"
+          RenderText {#text} at (750,28) size 34x14
+            text run at (750,28) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,28) size 78x14
+              text run at (783,28) width 78: "within"
+          RenderText {#text} at (880,28) size 149x14
+            text run at (880,28) width 149: " elements "
+          RenderText {#text} at (1028,28) size 1745x28
+            text run at (1028,28) width 697: " too. (with comment between elements and too)"
+            text run at (1744,28) width 1: " "
+            text run at (0,42) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,42) size 40x14
+              text run at (536,42) width 40: "for"
+          RenderText {#text} at (595,42) size 34x14
+            text run at (595,42) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,42) size 103x14
+              text run at (628,42) width 103: "elements"
+          RenderText {#text} at (750,42) size 34x14
+            text run at (750,42) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,42) size 78x14
+              text run at (783,42) width 78: "within"
+          RenderText {#text} at (880,42) size 116x14
+            text run at (880,42) width 116: " elements"
+          RenderText {#text} at (1015,42) size 2073x28
+            text run at (1015,42) width 1038: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (2072,42) width 1: " "
+            text run at (0,56) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,56) size 40x14
+              text run at (536,56) width 40: "for"
+          RenderText {#text} at (595,56) size 34x14
+            text run at (595,56) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,56) size 103x14
+              text run at (628,56) width 103: "elements"
+          RenderText {#text} at (750,56) size 34x14
+            text run at (750,56) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,56) size 78x14
+              text run at (783,56) width 78: "within"
+          RenderText {#text} at (880,56) size 149x14
+            text run at (880,56) width 149: " elements "
+          RenderText {#text} at (1028,56) size 1020x14
+            text run at (1028,56) width 1000: "too. (with comment (no trailing space) between elements and too)"
+            text run at (2047,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 731x14
+            RenderText {#text} at (0,70) size 537x14
+              text run at (0,70) width 537: "Word and letter   spacing test "
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (536,70) size 40x14
+                text run at (536,70) width 40: "for"
+            RenderText {#text} at (595,70) size 34x14
+              text run at (595,70) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (628,70) size 103x14
+                text run at (628,70) width 103: "elements"
+          RenderText {#text} at (750,70) size 34x14
+            text run at (750,70) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,70) size 78x14
+              text run at (783,70) width 78: "within"
+          RenderText {#text} at (880,70) size 1803x28
+            text run at (880,70) width 903: " elements too. (with monospace font from Word to elements)"
+            text run at (1802,70) width 1: " "
+            text run at (0,84) width 537: "Word and letter   spacing test "
+          RenderInline {SPAN} at (0,0) size 325x14
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (536,84) size 40x14
+                text run at (536,84) width 40: "for"
+            RenderText {#text} at (595,84) size 34x14
+              text run at (595,84) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (628,84) size 103x14
+                text run at (628,84) width 103: "elements"
+            RenderText {#text} at (750,84) size 34x14
+              text run at (750,84) width 34: " "
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (783,84) size 78x14
+                text run at (783,84) width 78: "within"
+          RenderText {#text} at (880,84) size 1765x28
+            text run at (880,84) width 865: " elements too. (with monospace font from for to within)"
+            text run at (1764,84) width 1: " "
+            text run at (0,98) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,98) size 40x14
+              text run at (536,98) width 40: "for"
+          RenderText {#text} at (595,98) size 34x14
+            text run at (595,98) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,98) size 103x14
+              text run at (628,98) width 103: "elements"
+          RenderText {#text} at (750,98) size 34x14
+            text run at (750,98) width 34: " "
+          RenderInline {SPAN} at (0,0) size 284x14
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (783,98) size 78x14
+                text run at (783,98) width 78: "within"
+            RenderText {#text} at (880,98) size 187x14
+              text run at (880,98) width 187: " elements too"
+          RenderText {#text} at (1066,98) size 724x14
+            text run at (1066,98) width 704: ". (with monospace font from elements to too)"
+            text run at (1789,98) width 1: " "
+      RenderBlock (anonymous) at (0,1629) size 784x185
+        RenderBR {BR} at (1450,0) size 1x19
+      RenderBlock {PRE} at (0,1828) size 784x144
+        RenderBlock {H3} at (0,0) size 784x16
+          RenderText {#text} at (0,0) size 341x16
+            text run at (0,0) width 341: "In an un-floated pre"
+        RenderBlock (anonymous) at (0,31) size 784x113
+          RenderText {#text} at (0,0) size 537x28
+            text run at (0,0) width 0: " "
+            text run at (0,14) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,14) size 40x14
+              text run at (536,14) width 40: "for"
+          RenderText {#text} at (595,14) size 34x14
+            text run at (595,14) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,14) size 103x14
+              text run at (628,14) width 103: "elements"
+          RenderText {#text} at (750,14) size 34x14
+            text run at (750,14) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,14) size 78x14
+              text run at (783,14) width 78: "within"
+          RenderText {#text} at (880,14) size 1100x28
+            text run at (880,14) width 200: " elements too."
+            text run at (1099,14) width 1: " "
+            text run at (0,28) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,28) size 40x14
+              text run at (536,28) width 40: "for"
+          RenderText {#text} at (595,28) size 34x14
+            text run at (595,28) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,28) size 103x14
+              text run at (628,28) width 103: "elements"
+          RenderText {#text} at (750,28) size 34x14
+            text run at (750,28) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,28) size 78x14
+              text run at (783,28) width 78: "within"
+          RenderText {#text} at (880,28) size 149x14
+            text run at (880,28) width 149: " elements "
+          RenderText {#text} at (1028,28) size 1745x28
+            text run at (1028,28) width 697: " too. (with comment between elements and too)"
+            text run at (1744,28) width 1: " "
+            text run at (0,42) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,42) size 40x14
+              text run at (536,42) width 40: "for"
+          RenderText {#text} at (595,42) size 34x14
+            text run at (595,42) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,42) size 103x14
+              text run at (628,42) width 103: "elements"
+          RenderText {#text} at (750,42) size 34x14
+            text run at (750,42) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,42) size 78x14
+              text run at (783,42) width 78: "within"
+          RenderText {#text} at (880,42) size 116x14
+            text run at (880,42) width 116: " elements"
+          RenderText {#text} at (1015,42) size 2073x28
+            text run at (1015,42) width 1038: " too. (with comment (no preceeding space) between elements and too)"
+            text run at (2072,42) width 1: " "
+            text run at (0,56) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,56) size 40x14
+              text run at (536,56) width 40: "for"
+          RenderText {#text} at (595,56) size 34x14
+            text run at (595,56) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,56) size 103x14
+              text run at (628,56) width 103: "elements"
+          RenderText {#text} at (750,56) size 34x14
+            text run at (750,56) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,56) size 78x14
+              text run at (783,56) width 78: "within"
+          RenderText {#text} at (880,56) size 149x14
+            text run at (880,56) width 149: " elements "
+          RenderText {#text} at (1028,56) size 1020x14
+            text run at (1028,56) width 1000: "too. (with comment (no trailing space) between elements and too)"
+            text run at (2047,56) width 1: " "
+          RenderInline {SPAN} at (0,0) size 731x14
+            RenderText {#text} at (0,70) size 537x14
+              text run at (0,70) width 537: "Word and letter   spacing test "
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (536,70) size 40x14
+                text run at (536,70) width 40: "for"
+            RenderText {#text} at (595,70) size 34x14
+              text run at (595,70) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (628,70) size 103x14
+                text run at (628,70) width 103: "elements"
+          RenderText {#text} at (750,70) size 34x14
+            text run at (750,70) width 34: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (783,70) size 78x14
+              text run at (783,70) width 78: "within"
+          RenderText {#text} at (880,70) size 1803x28
+            text run at (880,70) width 903: " elements too. (with monospace font from Word to elements)"
+            text run at (1802,70) width 1: " "
+            text run at (0,84) width 537: "Word and letter   spacing test "
+          RenderInline {SPAN} at (0,0) size 325x14
+            RenderInline {EM} at (0,0) size 40x14
+              RenderText {#text} at (536,84) size 40x14
+                text run at (536,84) width 40: "for"
+            RenderText {#text} at (595,84) size 34x14
+              text run at (595,84) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (628,84) size 103x14
+                text run at (628,84) width 103: "elements"
+            RenderText {#text} at (750,84) size 34x14
+              text run at (750,84) width 34: " "
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (783,84) size 78x14
+                text run at (783,84) width 78: "within"
+          RenderText {#text} at (880,84) size 1765x28
+            text run at (880,84) width 865: " elements too. (with monospace font from for to within)"
+            text run at (1764,84) width 1: " "
+            text run at (0,98) width 537: "Word and letter   spacing test "
+          RenderInline {EM} at (0,0) size 40x14
+            RenderText {#text} at (536,98) size 40x14
+              text run at (536,98) width 40: "for"
+          RenderText {#text} at (595,98) size 34x14
+            text run at (595,98) width 34: " "
+          RenderInline {STRONG} at (0,0) size 103x14
+            RenderText {#text} at (628,98) size 103x14
+              text run at (628,98) width 103: "elements"
+          RenderText {#text} at (750,98) size 34x14
+            text run at (750,98) width 34: " "
+          RenderInline {SPAN} at (0,0) size 284x14
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (783,98) size 78x14
+                text run at (783,98) width 78: "within"
+            RenderText {#text} at (880,98) size 187x14
+              text run at (880,98) width 187: " elements too"
+          RenderText {#text} at (1066,98) size 724x14
+            text run at (1066,98) width 704: ". (with monospace font from elements to too)"
+            text run at (1789,98) width 1: " "
+      RenderBlock (anonymous) at (0,1984) size 784x21
+        RenderBR {BR} at (0,0) size 0x19
+        RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,2023) size 784x24
+        RenderBlock {H3} at (0,0) size 784x23
+          RenderText {#text} at (0,0) size 140x22
+            text run at (0,0) width 140: "In a span"
+      RenderBlock (anonymous) at (0,2065) size 784x361
+        RenderInline {SPAN} at (0,0) size 862x359
+          RenderText {#text} at (0,0) size 428x19
+            text run at (0,0) width 244: "Word and letter "
+            text run at (243,0) width 185: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (427,0) size 34x19
+              text run at (427,0) width 34: "for"
+          RenderText {#text} at (480,0) size 30x19
+            text run at (480,0) width 30: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (509,0) size 101x19
+              text run at (509,0) width 101: "elements"
+          RenderText {#text} at (629,0) size 30x19
+            text run at (629,0) width 30: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (658,5) size 78x14
+              text run at (658,5) width 78: "within"
+          RenderText {#text} at (755,0) size 862x39
+            text run at (755,0) width 107: " elements"
+            text run at (0,20) width 45: "too."
+          RenderBR {BR} at (44,35) size 1x0
+          RenderText {#text} at (0,40) size 428x19
+            text run at (0,40) width 244: "Word and letter "
+            text run at (243,40) width 185: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (427,40) size 34x19
+              text run at (427,40) width 34: "for"
+          RenderText {#text} at (480,40) size 30x19
+            text run at (480,40) width 30: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (509,40) size 101x19
+              text run at (509,40) width 101: "elements"
+          RenderText {#text} at (629,40) size 30x19
+            text run at (629,40) width 30: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (658,45) size 78x14
+              text run at (658,45) width 78: "within"
+          RenderText {#text} at (755,40) size 107x19
+            text run at (755,40) width 107: " elements"
+          RenderText {#text} at (0,60) size 621x19
+            text run at (0,60) width 621: "too. (with comment between elements and too)"
+          RenderBR {BR} at (620,75) size 1x0
+          RenderText {#text} at (0,80) size 428x19
+            text run at (0,80) width 244: "Word and letter "
+            text run at (243,80) width 185: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (427,80) size 34x19
+              text run at (427,80) width 34: "for"
+          RenderText {#text} at (480,80) size 30x19
+            text run at (480,80) width 30: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (509,80) size 101x19
+              text run at (509,80) width 101: "elements"
+          RenderText {#text} at (629,80) size 30x19
+            text run at (629,80) width 30: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (658,85) size 78x14
+              text run at (658,85) width 78: "within"
+          RenderText {#text} at (755,80) size 107x19
+            text run at (755,80) width 107: " elements"
+          RenderText {#text} at (0,100) size 668x39
+            text run at (0,100) width 668: "too. (with comment (no preceeding space) between"
+            text run at (0,120) width 219: "elements and too)"
+          RenderBR {BR} at (218,135) size 1x0
+          RenderText {#text} at (0,140) size 428x19
+            text run at (0,140) width 244: "Word and letter "
+            text run at (243,140) width 185: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (427,140) size 34x19
+              text run at (427,140) width 34: "for"
+          RenderText {#text} at (480,140) size 30x19
+            text run at (480,140) width 30: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (509,140) size 101x19
+              text run at (509,140) width 101: "elements"
+          RenderText {#text} at (629,140) size 30x19
+            text run at (629,140) width 30: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (658,145) size 78x14
+              text run at (658,145) width 78: "within"
+          RenderText {#text} at (755,140) size 107x19
+            text run at (755,140) width 107: " elements"
+          RenderText {#text} at (0,160) size 760x39
+            text run at (0,160) width 760: "too. (with comment (no trailing space) between elements"
+            text run at (0,180) width 93: "and too)"
+          RenderBR {BR} at (92,195) size 1x0
+          RenderInline {SPAN} at (0,0) size 665x14
+            RenderText {#text} at (0,205) size 472x14
+              text run at (0,205) width 265: "Word and letter "
+              text run at (264,205) width 208: "spacing test "
+            RenderInline {EM} at (0,0) size 39x14
+              RenderText {#text} at (471,205) size 39x14
+                text run at (471,205) width 39: "for"
+            RenderText {#text} at (529,205) size 34x14
+              text run at (529,205) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (562,205) size 103x14
+                text run at (562,205) width 103: "elements"
+          RenderText {#text} at (684,200) size 30x19
+            text run at (684,200) width 30: " "
+          RenderInline {TT} at (0,0) size 78x14
+            RenderText {#text} at (713,205) size 78x14
+              text run at (713,205) width 78: "within"
+          RenderText {#text} at (0,220) size 675x39
+            text run at (0,220) width 675: "elements too. (with monospace font from Word to"
+            text run at (0,240) width 108: "elements)"
+          RenderBR {BR} at (107,255) size 1x0
+          RenderText {#text} at (0,260) size 428x19
+            text run at (0,260) width 244: "Word and letter "
+            text run at (243,260) width 185: "spacing test "
+          RenderInline {SPAN} at (0,0) size 324x14
+            RenderInline {EM} at (0,0) size 39x14
+              RenderText {#text} at (427,265) size 39x14
+                text run at (427,265) width 39: "for"
+            RenderText {#text} at (485,265) size 34x14
+              text run at (485,265) width 34: " "
+            RenderInline {STRONG} at (0,0) size 103x14
+              RenderText {#text} at (518,265) size 103x14
+                text run at (518,265) width 103: "elements"
+            RenderText {#text} at (640,265) size 34x14
+              text run at (640,265) width 34: " "
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (673,265) size 78x14
+                text run at (673,265) width 78: "within"
+          RenderText {#text} at (0,280) size 764x19
+            text run at (0,280) width 764: "elements too. (with monospace font from for to within)"
+          RenderBR {BR} at (763,295) size 1x0
+          RenderText {#text} at (0,300) size 428x19
+            text run at (0,300) width 244: "Word and letter "
+            text run at (243,300) width 185: "spacing test "
+          RenderInline {EM} at (0,0) size 34x19
+            RenderText {#text} at (427,300) size 34x19
+              text run at (427,300) width 34: "for"
+          RenderText {#text} at (480,300) size 30x19
+            text run at (480,300) width 30: " "
+          RenderInline {STRONG} at (0,0) size 101x19
+            RenderText {#text} at (509,300) size 101x19
+              text run at (509,300) width 101: "elements"
+          RenderText {#text} at (629,300) size 30x19
+            text run at (629,300) width 30: " "
+          RenderInline {SPAN} at (0,0) size 736x34
+            RenderInline {TT} at (0,0) size 78x14
+              RenderText {#text} at (658,305) size 78x14
+                text run at (658,305) width 78: "within"
+            RenderText {#text} at (0,325) size 154x14
+              text run at (0,325) width 154: "elements too"
+          RenderText {#text} at (153,320) size 709x39
+            text run at (153,320) width 556: ". (with monospace font from elements to"
+            text run at (0,340) width 46: "too)"
+        RenderText {#text} at (0,0) size 0x0

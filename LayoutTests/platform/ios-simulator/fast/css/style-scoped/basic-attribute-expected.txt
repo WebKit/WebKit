@@ -1,0 +1,62 @@
+Basic test for the <style scoped> attribute.
+
+--- Initial ---
+PASS global1.getAttribute('scoped') is null
+FAIL global1.scoped should be false (of type boolean). Was undefined (of type undefined).
+PASS global2.getAttribute('scoped') is null
+FAIL global2.scoped should be false (of type boolean). Was undefined (of type undefined).
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+FAIL scoped1.scoped should be true (of type boolean). Was undefined (of type undefined).
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+FAIL scoped2.scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL testBooleanAttribute(scoped3, 'scoped') should be true. Was false.
+PASS scoped3.scoped is true
+--- After insertion into tree ---
+PASS global1.getAttribute('scoped') is null
+FAIL global1.scoped should be false (of type boolean). Was undefined (of type undefined).
+PASS global2.getAttribute('scoped') is null
+FAIL global2.scoped should be false (of type boolean). Was undefined (of type undefined).
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+FAIL scoped1.scoped should be true (of type boolean). Was undefined (of type undefined).
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+FAIL scoped2.scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL testBooleanAttribute(scoped3, 'scoped') should be true. Was false.
+PASS scoped3.scoped is true
+--- Inverting 'scoped' attribute while in tree ---
+FAIL testBooleanAttribute(global1, 'scoped') should be true. Was false.
+PASS global1.scoped is true
+PASS testBooleanAttribute(global2, 'scoped') is true
+FAIL global2.scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL scoped1.getAttribute('scoped') should be null (of type object). Was scoped (of type string).
+FAIL scoped1.scoped should be false (of type boolean). Was null (of type object).
+FAIL scoped2.getAttribute('scoped') should be null (of type object). Was scoped (of type string).
+PASS scoped2.scoped is false
+PASS scoped3.getAttribute('scoped') is null
+FAIL scoped3.scoped should be false. Was true.
+--- After removal from tree (attribute is still inverted) ---
+FAIL testBooleanAttribute(global1, 'scoped') should be true. Was false.
+PASS global1.scoped is true
+PASS testBooleanAttribute(global2, 'scoped') is true
+FAIL global2.scoped should be true (of type boolean). Was undefined (of type undefined).
+FAIL scoped1.getAttribute('scoped') should be null (of type object). Was scoped (of type string).
+FAIL scoped1.scoped should be false (of type boolean). Was null (of type object).
+FAIL scoped2.getAttribute('scoped') should be null (of type object). Was scoped (of type string).
+PASS scoped2.scoped is false
+PASS scoped3.getAttribute('scoped') is null
+FAIL scoped3.scoped should be false. Was true.
+--- Inverting 'scoped' attribute again, while outside tree ---
+PASS global1.getAttribute('scoped') is null
+PASS global1.scoped is false
+PASS global2.getAttribute('scoped') is null
+FAIL global2.scoped should be false (of type boolean). Was undefined (of type undefined).
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+PASS scoped1.scoped is true
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+PASS scoped2.scoped is true
+PASS testBooleanAttribute(scoped3, 'scoped') is true
+PASS scoped3.scoped is true
+--- DONE ---
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
