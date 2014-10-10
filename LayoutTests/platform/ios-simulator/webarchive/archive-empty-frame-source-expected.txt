@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Empty iFrame causes archive exception&lt;/title&gt;
+&lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpSourceAsWebArchive();
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;
+Here lies an `iframe` with no content/src:
+&lt;p&gt;
+
+&lt;iframe id="emptyFrame" style="width: 100%; height: 100px; border: solid 2px red;"&gt;
+&lt;/iframe&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/archive-empty-frame-source.html</string>
+	</dict>
+	<key>WebSubframeArchives</key>
+	<array>
+		<dict>
+			<key>WebMainResource</key>
+			<dict>
+				<key>WebResourceData</key>
+				<string></string>
+				<key>WebResourceFrameName</key>
+				<string>emptyFrame</string>
+				<key>WebResourceMIMEType</key>
+				<string>text/html</string>
+				<key>WebResourceURL</key>
+				<string>about:blank</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

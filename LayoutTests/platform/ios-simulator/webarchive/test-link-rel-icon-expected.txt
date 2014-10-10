@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.setIconDatabaseEnabled(true);
+        testRunner.dumpDOMAsWebArchive();
+        testRunner.queueReload();
+    }
+}
+&lt;/script&gt;
+&lt;link rel="icon" href="resources/favicon.ico" type="image/x-icon"&gt;
+&lt;/head&gt;
+&lt;body onload="runTest()"&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-link-rel-icon.html</string>
+	</dict>
+</dict>
+</plist>

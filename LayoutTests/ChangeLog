@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for webarchive tests.
+
+        * platform/ios-simulator/webarchive/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator and generic results for userscripts tests.
 
         * platform/ios-simulator/userscripts/user-script-plugin-document-expected.txt: Added.
