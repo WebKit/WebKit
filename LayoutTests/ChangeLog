@@ -1,3 +1,38 @@
+2014-10-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update :nth-child(An+B of selector-list) to the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=137593
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/nth-child-of-chained-3-expected.txt: Added.
+        * fast/selectors/nth-child-of-chained-3.html: Added.
+        This is an interesting new case with the new definition. Since the initial
+        element must also match the selector, it is now possible to fail even
+        if the combination An+B can match anything.
+
+        * fast/css/nth-child-of-classname-expected.html:
+        * fast/css/nth-child-of-classname.html:
+        * fast/css/nth-child-of-compound-selector-expected.html:
+        * fast/css/nth-child-of-compound-selector.html:
+        * fast/css/nth-child-of-tagname-expected.html:
+        * fast/css/nth-child-of-tagname.html:
+        * fast/selectors/nth-child-of-backtracking-adjacent-2.html:
+        * fast/selectors/nth-child-of-backtracking-adjacent.html:
+        * fast/selectors/nth-child-of-basics-2-expected.txt:
+        * fast/selectors/nth-child-of-basics-2.html:
+        * fast/selectors/nth-child-of-basics-expected.txt:
+        * fast/selectors/nth-child-of-basics.html:
+        * fast/selectors/nth-child-of-chained-2-expected.txt:
+        * fast/selectors/nth-child-of-chained-2.html:
+        * fast/selectors/nth-child-of-complex-selectors-expected.txt:
+        * fast/selectors/nth-child-of-complex-selectors.html:
+        * fast/selectors/nth-child-of-never-matching-selector-expected.txt:
+        * fast/selectors/nth-child-of-never-matching-selector.html:
+        * fast/selectors/nth-child-of-selector-list-expected.txt:
+        * fast/selectors/nth-child-of-selector-list.html:
+        Updating the test and tests result for the new definition.
+
 2014-10-10  Andy Estes  <aestes@apple.com>
 
         [Mac] Update a Mavericks-specific baseline.

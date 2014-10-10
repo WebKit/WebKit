@@ -1,3 +1,26 @@
+2014-10-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update :nth-child(An+B of selector-list) to the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=137593
+
+        Reviewed by Andreas Kling.
+
+        Following my implementation feedback on :nth-child(An+B of selector-list),
+        the CSS WG decided to change the definition such that the current element on which
+        the selector is matched must also match the selector list in :nth-child().
+
+        This patch updates the implementation accordingly.
+
+        Test: fast/selectors/nth-child-of-chained-3.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchSelectorList):
+        * css/SelectorChecker.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
         Drop RENDER_OBJECT_TYPE_CASTS() for a lot of RenderObject subclasses

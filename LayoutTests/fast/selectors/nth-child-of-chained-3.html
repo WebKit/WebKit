@@ -45,7 +45,7 @@
     </div>
 </body>
 <script>
-description('Check ":nth-child(An+B of selectorList)" with a selector list.');
+description('Test the chaining of multiple :nth-child(An+B of selector) does match every one of the selector.');
 
 function testQuerySelector(selector, expectedIds) {
     shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
@@ -73,30 +73,14 @@ function testSelector(selector, expectedIds) {
     debug("");
 }
 
-// Since :not(*) never match anything, this should be equivalent to :nth-child(2n).
-testSelector(":nth-child(2n of *, :not(*), *)", ["testcase2", "testcase4", "testcase6", "testcase8", "testcase10", "testcase12", "testcase14", "testcase16", "testcase18", "testcase20", "testcase22", "testcase24", "testcase26", "testcase28", "testcase30"]);
+// Using n and n+1 are interesting because they always match regardless of the siblings. But since the definition of :nth-child(An+B) include the current element, at least that one needs to match.
+testSelector("testcaseA.foo[id]", ["testcase3", "testcase5", "testcase9", "testcase11", "testcase13", "testcase15", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
+testSelector(":nth-child(n of .foo):nth-child(n of testcaseA):nth-child(n of [id])", ["testcase3", "testcase5", "testcase9", "testcase11", "testcase13", "testcase15", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
+testSelector(":nth-child(n+1 of .foo):nth-child(n of testcaseA):nth-child(n+1 of [id])", ["testcase3", "testcase5", "testcase9", "testcase11", "testcase13", "testcase15", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
+testSelector(":nth-child(n+1 of .foo):nth-child(n+1 of testcaseA):nth-child(n of [id])", ["testcase3", "testcase5", "testcase9", "testcase11", "testcase13", "testcase15", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
 
-// The selector list can never match anything.
-testSelector(":nth-child(2n of :not(*), :empty:not(:empty), [attribute1][attribute2][attribute3], .foo.bar.baz.bazoo, :not([id]), :not([class]))", []);
-
-// Filtering with "testcaseA, testcaseB" matches everything too, that should be equivalent to :nth-child(odd).
-testSelector(":nth-child(odd of testcaseA, testcaseB)", ["testcase1", "testcase3", "testcase5", "testcase7", "testcase9", "testcase11", "testcase13", "testcase15", "testcase17", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
-
-// Matching all the classes should match everything like :nth-child(even).
-testSelector(":nth-child(even of .foo, .bar, .baz)", ["testcase2", "testcase4", "testcase6", "testcase8", "testcase10", "testcase12", "testcase14", "testcase16", "testcase18", "testcase20", "testcase22", "testcase24", "testcase26", "testcase28", "testcase30"]);
-
-// Every element has an attribute, this should be equivalent to :nth-child(odd)
-testSelector(":nth-child(odd of [attribute1], [attribute2=value2])", ["testcase1", "testcase3", "testcase5", "testcase7", "testcase9", "testcase11", "testcase13", "testcase15", "testcase17", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
-
-// Any element with an odd number of (attribute3 or empty) above.
-testSelector(':nth-child(even of [attribute3$="3"], :empty)', ["testcase2", "testcase6", "testcase10", "testcase16", "testcase20", "testcase24", "testcase27"]);
-
-// Any element with an odd number of (attribute3 or empty) above. Overqualified with id to test compound selectors.
-testSelector(':nth-child(even of [id][attribute3$="3"], [id]:empty)', ["testcase2", "testcase6", "testcase10", "testcase16", "testcase20", "testcase24", "testcase27"]);
-
-// id is always there but attribute2 is uncommon. The classes .foo.bar matches many elements.
-testSelector(':nth-child(even of [id][attribute2*="alue"], .foo.bar)', ["testcase4", "testcase6", "testcase10", "testcase14", "testcase16", "testcase20", "testcase24", "testcase27", "testcase30"]);
-
+testSelector(":nth-child(n+1 of .foo):nth-child(2n of testcaseA):nth-child(n of [id])", ["testcase3", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
+testSelector(":nth-child(2n+1 of .foo):nth-child(2n of testcaseA):nth-child(n of [id])", ["testcase3", "testcase15", "testcase27"]);
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </html>

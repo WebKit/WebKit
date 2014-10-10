@@ -74,10 +74,10 @@ function testSelector(selector, expectedIds) {
 }
 
 testSelector("testcaseA:nth-child(2n of testcaseA)", ["testcase3", "testcase7", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
-testSelector("testcaseA:nth-child(2n of [attribute1])", ["testcase3", "testcase5", "testcase11", "testcase13", "testcase21", "testcase23", "testcase25", "testcase27"]);
+testSelector("testcaseA:nth-child(2n of [attribute1])", ["testcase3", "testcase11", "testcase13", "testcase21", "testcase23", "testcase25"]);
 
 // This should be the conjunction of the two selectors, which should return the intersection of the results.
-testSelector("testcaseA:nth-child(2n of testcaseA):nth-child(2n of [attribute1])", ["testcase3", "testcase11", "testcase23", "testcase27"]);
+testSelector("testcaseA:nth-child(2n of testcaseA):nth-child(2n of [attribute1])", ["testcase3", "testcase11", "testcase23"]);
 
 // This is the disjunction of the selectors. Due to the counting, it is not the union of the previous results.
 testSelector("testcaseA:nth-child(2n of testcaseA, [attribute1])", ["testcase3", "testcase5", "testcase7", "testcase9", "testcase11", "testcase13", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);

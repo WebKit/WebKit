@@ -77,9 +77,9 @@ testSelector(":nth-child(2 of :not(*))", []);
 testSelector(":nth-child(n+2 of :not(*))", []);
 
 // The count of previous sibling must be An+B-1. A never matching selector always satisfies this.
-testSelector(":nth-child(1 of :not(*))", ['testcase1', 'testcase2', 'testcase3', 'testcase4', 'testcase5', 'testcase6', 'testcase7', 'testcase8', 'testcase9', 'testcase10', 'testcase11', 'testcase12', 'testcase13', 'testcase14', 'testcase15', 'testcase16', 'testcase17', 'testcase18', 'testcase19', 'testcase20', 'testcase21', 'testcase22', 'testcase23', 'testcase24', 'testcase25', 'testcase26', 'testcase27', 'testcase28', 'testcase29', 'testcase30']);
-testSelector(":nth-child(n of :not(*))", ['testcase1', 'testcase2', 'testcase3', 'testcase4', 'testcase5', 'testcase6', 'testcase7', 'testcase8', 'testcase9', 'testcase10', 'testcase11', 'testcase12', 'testcase13', 'testcase14', 'testcase15', 'testcase16', 'testcase17', 'testcase18', 'testcase19', 'testcase20', 'testcase21', 'testcase22', 'testcase23', 'testcase24', 'testcase25', 'testcase26', 'testcase27', 'testcase28', 'testcase29', 'testcase30']);
-testSelector(":nth-child(n-99999 of :not(*))", ['testcase1', 'testcase2', 'testcase3', 'testcase4', 'testcase5', 'testcase6', 'testcase7', 'testcase8', 'testcase9', 'testcase10', 'testcase11', 'testcase12', 'testcase13', 'testcase14', 'testcase15', 'testcase16', 'testcase17', 'testcase18', 'testcase19', 'testcase20', 'testcase21', 'testcase22', 'testcase23', 'testcase24', 'testcase25', 'testcase26', 'testcase27', 'testcase28', 'testcase29', 'testcase30']);
+testSelector(":nth-child(1 of :not(*))", []);
+testSelector(":nth-child(n of :not(*))", []);
+testSelector(":nth-child(n-99999 of :not(*))", []);
 
 // Selectors that could match but do not match in this particular document.
 testSelector(":nth-child(n+2 of [attribute4])", []);

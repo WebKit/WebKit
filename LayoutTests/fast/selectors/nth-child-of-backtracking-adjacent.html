@@ -8,31 +8,31 @@ span.target {
     color:rgb(0,0,0);
 }
 
-a + b:nth-child(n+2 of a + a) span.target {
+a + :nth-child(n+1 of a + a ~ b) span.target {
     background-color:rgb(1,2,3);
 }
-b:nth-child(n+2 of a + a) span.target {
+b:nth-child(n+1 of a + a ~ b) span.target {
     color:rgb(1,2,3);
 }
 
-d:nth-child(n+2 of c + c + c) span.target {
+:nth-child(n+1 of c + c + c ~ d) span.target {
     background-color:rgb(4,5,6);
 }
-c + c + c + d:nth-child(n+2 of c + c + c) span.target {
+c + c + c + d:nth-child(n+1 of c + c + c ~ d) span.target {
     color:rgb(4,5,6);
 }
 
-f:nth-child(n+2 of e + e) ~ g span.target {
+f:nth-child(n+1 of e + e ~ f) ~ g span.target {
     background-color:rgb(7,8,9);
 }
-e + f:nth-child(n+2 of e + e) ~ g span.target {
+e + f:nth-child(n+1 of e + e ~ f) ~ g span.target {
     color:rgb(7,8,9);
 }
 
-span.target:nth-child(n+2 of h + h) {
+span.target:nth-child(n+1 of h + h ~ span.target) {
     background-color:rgb(10,11,12);
 }
-h + span.target:nth-child(n+2 of h + h) {
+h + span.target:nth-child(n+1 of h + h ~ span.target) {
     color:rgb(10,11,12);
 }
 
@@ -62,10 +62,10 @@ q:nth-child(n+2 of q) ~ r span.target {
     background-color:rgb(25,26,27);
 }
 
-s s:nth-child(n+2 of t+t+t)>s>s span.target {
+s s:nth-child(n+1 of t+t+t+s)>s>s span.target {
     background-color:rgb(28,29,30);
 }
-s t+t+t+s:nth-child(n+2 of t+t+t)>s>s span.target {
+s t+t+t+s:nth-child(n+1 of t+t+t+s)>s>s span.target {
     color:rgb(28,29,30);
 }
 </style>

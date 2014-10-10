@@ -79,16 +79,16 @@ testSelector(":nth-child(2n of *)", ["testcase2", "testcase4", "testcase6", "tes
 /* -- Some generic tests for primitive selectors. -- */
 
 // Even of a tag name.
-testSelector(":nth-child(2n + 1 of testcaseA)", ["testcase1", "testcase4", "testcase5", "testcase8", "testcase9", "testcase12", "testcase13", "testcase16", "testcase17", "testcase20", "testcase21", "testcase24", "testcase25", "testcase28", "testcase29"]);
+testSelector(":nth-child(2n + 1 of testcaseA)", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25", "testcase29"]);
 
 // Attribute.
-testSelector(":nth-child(3n - 2 of [attribute1=value1])", ["testcase1", "testcase5", "testcase6", "testcase9", "testcase10", "testcase13", "testcase17", "testcase20", "testcase21", "testcase24", "testcase27", "testcase28"]);
+testSelector(":nth-child(3n - 2 of [attribute1=value1])", ["testcase1", "testcase6", "testcase10", "testcase13", "testcase17", "testcase21", "testcase24", "testcase28"]);
 
 // Class.
-testSelector(":nth-child(4n - 1 of .bar)", ["testcase3", "testcase4", "testcase10", "testcase15", "testcase20", "testcase25"]);
+testSelector(":nth-child(4n - 1 of .bar)", ["testcase4", "testcase10", "testcase15", "testcase20", "testcase25"]);
 
 // Value.
-testSelector(":nth-child(2n + 2 of :empty)", ["testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase22", "testcase23", "testcase24", "testcase25", "testcase26", "testcase27"]);
+testSelector(":nth-child(2n + 2 of :empty)", ["testcase9", "testcase27"]);
 
 
 /* -- In practice, we expect a lot of filtering will be done on the same type. -- */
@@ -97,7 +97,7 @@ testSelector(":nth-child(2n + 2 of :empty)", ["testcase3", "testcase4", "testcas
 testSelector("testcaseA:nth-child(even of testcaseA)", ["testcase3", "testcase7", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
 
 // All the testcaseA with an odd number of testcaseA.bazoo before it.
-testSelector("testcaseA:nth-child(even of testcaseA.bazoo)", ["testcase3", "testcase7", "testcase11", "testcase13", "testcase17", "testcase21", "testcase23", "testcase29"]);
+testSelector("testcaseA:nth-child(even of testcaseA.bazoo)", ["testcase3", "testcase7", "testcase13", "testcase17", "testcase23", "testcase29"]);
 
 // Odd of [attribute2].
 testSelector("[attribute2]:nth-child(odd of [attribute2])", ["testcase2", "testcase9", "testcase20"]);
@@ -107,10 +107,10 @@ testSelector(".foo:nth-child(even of .foo)", ["testcase4", "testcase6", "testcas
 
 
 /* -- Compound selectors -- */
-testSelector("testcaseA:nth-child(even of .bar.foo)", ["testcase5", "testcase13", "testcase21", "testcase25"]);
-testSelector('*:nth-child(3n+1 of [id][attribute2^="value"].bazoo)', ["testcase1", "testcase2", "testcase10", "testcase11", "testcase12", "testcase13", "testcase14", "testcase15", "testcase16", "testcase17", "testcase18", "testcase19", "testcase20"]);
-testSelector(':-webkit-any(testcaseA, dontExist):nth-child(n+3 of .foo:empty)', ["testcase23", "testcase25", "testcase27", "testcase29"]);
-testSelector('*:nth-child(even of :nth-child(odd of [attribute2]))', ["testcase2", "testcase7", "testcase9", "testcase16", "testcase18", "testcase20", "testcase29"]);
+testSelector("testcaseA:nth-child(even of .bar.foo)", ["testcase21", "testcase25"]);
+testSelector('*:nth-child(3n+1 of [id][attribute2^="value"].bazoo)', ["testcase2", "testcase20"]);
+testSelector(':-webkit-any(testcaseA, dontExist):nth-child(n+3 of .foo:empty)', ["testcase27"]);
+testSelector('*:nth-child(even of :nth-child(odd of [attribute2]))', ["testcase9"]);
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </html>

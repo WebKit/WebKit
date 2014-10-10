@@ -3,65 +3,65 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <style>
-span.target {
+sibling.target {
     background-color:rgb(0,0,0);
 }
-span.target:nth-child(n+2 of a + b sibling) {
+sibling.target:nth-child(n+2 of a + b sibling) {
     background-color:rgb(1,2,3);
 }
-span.target:nth-child(n+2 of c + c + d sibling) {
+sibling.target:nth-child(n+2 of c + c + d sibling) {
     background-color:rgb(4,5,6);
 }
-span.target:nth-child(n+2 of e + f ~ g sibling) {
+sibling.target:nth-child(n+2 of e + f ~ g sibling) {
     background-color:rgb(7,8,9);
 }
-span.target:nth-child(n+2 of h + sibling) {
+sibling.target:nth-child(n+2 of h + sibling) {
     background-color:rgb(10,11,12);
 }
-span.target:nth-child(n+2 of j+j+j~j>k sibling) {
+sibling.target:nth-child(n+2 of j+j+j~j>k sibling) {
     background-color:rgb(13,14,15);
 }
-span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) {
+sibling.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) {
     background-color:rgb(16,17,18);
 }
-span.target:nth-child(n+2 of n o~n>n>n sibling) {
+sibling.target:nth-child(n+2 of n o~n>n>n sibling) {
     background-color:rgb(19,20,21);
 }
-span.target:nth-child(n+2 of p ~ sibling) {
+sibling.target:nth-child(n+2 of p ~ sibling) {
     background-color:rgb(22,23,24);
 }
-span.target:nth-child(n+2 of q ~ r sibling) {
+sibling.target:nth-child(n+2 of q ~ r sibling) {
     background-color:rgb(25,26,27);
 }
-span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
+sibling.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
     background-color:rgb(28,29,30);
 }
 </style>
 </head>
 <body>
 <div style="display:none">
-    <!-- span.target:nth-child(n+2 of a + b sibling) -->
+    <!-- sibling.target:nth-child(n+2 of a + b sibling) -->
     <target1>
         <a></a>
         <b>
             <sibling></sibling>
-            <span class="target" id="target1"></span>
+            <sibling class="target" id="target1"></sibling>
         </b>
     </target1>
 
-    <!-- span.target:nth-child(n+2 of a + b sibling) -->
+    <!-- sibling.target:nth-child(n+2 of a + b sibling) -->
     <target2>
         <a></a>
         <b>
             <b></b>  <!-- Fail here and restart backtracking. -->
             <b>
                 <sibling></sibling>
-                <span class="target" id="target2"></span>
+                <sibling class="target" id="target2"></sibling>
             </b>
         </b>
     </target2>
 
-    <!-- span.target:nth-child(n+2 of c + c + d sibling) -->
+    <!-- sibling.target:nth-child(n+2 of c + c + d sibling) -->
     <target3>
         <c></c>
         <c></c>
@@ -73,13 +73,13 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                 <c></c>
                 <d>
                     <sibling></sibling>
-                    <span class="target" id="target3"></span>
+                    <sibling class="target" id="target3"></sibling>
                 </d>
             </d>
         </d>
     </target3>
 
-    <!-- span.target:nth-child(n+2 of e + f ~ g sibling) -->
+    <!-- sibling.target:nth-child(n+2 of e + f ~ g sibling) -->
     <target4>
         <d></d>
         <e></e>
@@ -91,32 +91,33 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
             <f></f>
             <g>
                 <sibling></sibling>
-                <span class="target" id="target4"></span>
+                <sibling class="target" id="target4"></sibling>
             </g>
         </g>
     </target4>
 
-    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <!-- sibling.target:nth-child(n+2 of j+j+j~j>k sibling) -->
     <target6>
         <h></h>
         <sibling></sibling>
-        <span class="target" id="target6.1"></span>
+        <h></h>        
+        <sibling class="target" id="target6.1"></sibling>
     </target6>
 
-    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <!-- sibling.target:nth-child(n+2 of j+j+j~j>k sibling) -->
     <target6>
         <a></a>
         <sibling></sibling>
-        <span class="target" id="target6.2"></span>
+        <sibling class="target" id="target6.2"></sibling>
     </target6>
 
-    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <!-- sibling.target:nth-child(n+2 of j+j+j~j>k sibling) -->
     <target6>
         <sibling></sibling>
-        <span class="target" id="target6.3"></span>
+        <sibling class="target" id="target6.3"></sibling>
     </target6>
 
-    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <!-- sibling.target:nth-child(n+2 of j+j+j~j>k sibling) -->
     <target7>
         <d></d>  <!-- Fail here. -->
         <j></j>
@@ -124,11 +125,11 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         <j></j>
         <k>
             <sibling></sibling>
-            <span class="target" id="target7"></span>
+            <sibling class="target" id="target7"></sibling>
         </k>
     </target7>
 
-    <!-- span.target:nth-child(n+2 of j+j+j~j>k sibling) -->
+    <!-- sibling.target:nth-child(n+2 of j+j+j~j>k sibling) -->
     <target8>
         <j></j>  <!-- Match here. -->
         <j></j>
@@ -140,12 +141,12 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         <j>
             <k>
                 <sibling></sibling>
-                <span class="target" id="target8"></span>
+                <sibling class="target" id="target8"></sibling>
             </k>
         </j>
     </target8>
 
-    <!-- span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
+    <!-- sibling.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
     <target9>
         <m>
             <l></l>  <!-- Fail here -->
@@ -161,7 +162,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                     <m>
                         <m>
                             <sibling></sibling>
-                            <span class="target" id="target9"></span>
+                            <sibling class="target" id="target9"></sibling>
                         </m>
                     </m>
                 </m>
@@ -169,7 +170,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         </m>
     </target9>
 
-    <!-- span.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
+    <!-- sibling.target:nth-child(n+2 of m l+l+l+l~m>m>m sibling) -->
     <target10>
         <m>
             <l></l>  <!-- Match here -->
@@ -186,7 +187,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                     <m>
                         <m>
                             <sibling></sibling>
-                            <span class="target" id="target10"></span>
+                            <sibling class="target" id="target10"></sibling>
                         </m>
                     </m>
                 </m>
@@ -194,7 +195,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         </m>
     </target10>
 
-    <!-- span.target:nth-child(n+2 of n o~n>n>n sibling) -->
+    <!-- sibling.target:nth-child(n+2 of n o~n>n>n sibling) -->
     <target11>
         <n>
             <a></a>  <!-- Fail here -->
@@ -205,7 +206,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                     <n>
                         <n>
                             <sibling></sibling>
-                            <span class="target" id="target11"></span>
+                            <sibling class="target" id="target11"></sibling>
                         </n>
                     </n>
                 </n>
@@ -213,7 +214,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         </n>
     </target11>
 
-    <!-- span.target:nth-child(n+2 of n o~n>n>n sibling) -->
+    <!-- sibling.target:nth-child(n+2 of n o~n>n>n sibling) -->
     <target12>
         <n>
             <o></o>  <!-- Match here -->
@@ -225,7 +226,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                     <n>
                         <n>
                             <sibling></sibling>
-                            <span class="target" id="target12"></span>
+                            <sibling class="target" id="target12"></sibling>
                         </n>
                     </n>
                 </n>
@@ -233,28 +234,28 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         </n>
     </target12>
 
-    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <!-- sibling.target:nth-child(n+2 of p ~ sibling) -->
     <target13>
         <p></p>  <!-- Match here -->
         <sibling></sibling>
-        <span class="target" id="target13.1"></span>
+        <sibling class="target" id="target13.1"></sibling>
     </target13>
 
-    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <!-- sibling.target:nth-child(n+2 of p ~ sibling) -->
     <target13>
         <a></a>  <!-- Fail here -->
         <sibling></sibling>
-        <span class="target" id="target13.2"></span>
+        <sibling class="target" id="target13.2"></sibling>
     </target13>
 
-    <!-- span.target:nth-child(n+2 of p ~ sibling) -->
+    <!-- sibling.target:nth-child(n+2 of p ~ sibling) -->
     <target13>
         <!-- Fail here -->
         <sibling></sibling>
-        <span class="target" id="target13.3"></span>
+        <sibling class="target" id="target13.3"></sibling>
     </target13>
 
-    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <!-- sibling.target:nth-child(n+2 of q ~ r sibling) -->
     <target14>
         <q></q>  <!-- Match here -->
         <a></a>
@@ -262,36 +263,36 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
             <a></a>  <!-- Fail here -->
             <r>
                 <sibling></sibling>
-                <span class="target" id="target14.1"></span>
+                <sibling class="target" id="target14.1"></sibling>
             </r>
         </r>
     </target14>
 
-    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <!-- sibling.target:nth-child(n+2 of q ~ r sibling) -->
     <target14>
         <!-- Fail here -->
         <r>
             <a></a>  <!-- Fail here -->
             <r>
                 <sibling></sibling>
-                <span class="target" id="target14.2"></span>
+                <sibling class="target" id="target14.2"></sibling>
             </r>
         </r>
     </target14>
 
-    <!-- span.target:nth-child(n+2 of q ~ r sibling) -->
+    <!-- sibling.target:nth-child(n+2 of q ~ r sibling) -->
     <target14>
         <!-- Fail here -->
         <r>
             <!-- Fail here -->
             <r>
                 <sibling></sibling>
-                <span class="target" id="target14.3"></span>
+                <sibling class="target" id="target14.3"></sibling>
             </r>
         </r>
     </target14>
 
-    <!-- span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
+    <!-- sibling.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
     <target15>
         <s>
             <!-- Fail here and backtrack with the tail -->
@@ -305,7 +306,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                     <s>
                         <s>
                             <sibling></sibling>
-                            <span class="target" id="target15"></span>
+                            <sibling class="target" id="target15"></sibling>
                         </s>
                     </s>
                 </s>
@@ -313,7 +314,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
         </s>
     </target15>
 
-    <!-- span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
+    <!-- sibling.target:nth-child(n+2 of s t+t+t+s>s>s sibling) -->
     <target16>
         <s>
             <t></t>  <!-- Match here -->
@@ -331,7 +332,7 @@ span.target:nth-child(n+2 of s t+t+t+s>s>s sibling) {
                         <s>
                             <s>
                                 <sibling></sibling>
-                                <span class="target" id="target16"></span>
+                                <sibling class="target" id="target16"></sibling>
                             </s>
                         </s>
                     </s>

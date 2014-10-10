@@ -85,6 +85,7 @@ public:
 private:
     Match matchRecursively(const CheckingContextWithStatus&, PseudoId&) const;
     bool checkOne(const CheckingContextWithStatus&) const;
+    bool matchSelectorList(const CheckingContextWithStatus&, Element&, const CSSSelectorList&) const;
 
     bool checkScrollbarPseudoClass(const CheckingContextWithStatus&, const CSSSelector*) const;
 

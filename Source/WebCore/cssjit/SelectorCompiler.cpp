@@ -239,6 +239,7 @@ private:
 
     void generateSelectorChecker();
     void generateSelectorCheckerExcludingPseudoElements(Assembler::JumpList& failureCases, const SelectorFragmentList&);
+    Assembler::JumpList generateElementMatchesSelectorList(Assembler::RegisterID elementRegister, const Vector<SelectorFragmentList>&);
 
     // Element relations tree walker.
     void generateWalkToParentNode(Assembler::RegisterID targetRegister);
@@ -1595,6 +1596,45 @@ void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assem
     ASSERT(!m_backtrackingLevels.last().descendantBacktrackingStart.isValid());
     ASSERT(!m_backtrackingLevels.last().adjacentBacktrackingStart.isValid());
     m_backtrackingLevels.takeLast();
+}
+
+Assembler::JumpList SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::RegisterID elementRegister, const Vector<SelectorFragmentList>& selectorList)
+{
+    Assembler::JumpList matchFragmentList;
+    for (const SelectorFragmentList& selectorFragmentList : selectorList) {
+        Assembler::JumpList failureCases;
+
+        RegisterVector allocatedRegisters = m_registerAllocator.allocatedRegisters();
+        if (m_descendantBacktrackingStartInUse)
+            allocatedRegisters.remove(allocatedRegisters.find(m_descendantBacktrackingStart));
+        StackAllocator::StackReferenceVector allocatedRegistersOnStack = m_stackAllocator.push(allocatedRegisters);
+
+        StackAllocator successStack = m_stackAllocator;
+        StackAllocator failureStack = m_stackAllocator;
+
+        for (Assembler::RegisterID registerID : allocatedRegisters) {
+            if (registerID != elementAddressRegister)
+                m_registerAllocator.deallocateRegister(registerID);
+        }
+
+        if (elementRegister != elementAddressRegister)
+            m_assembler.move(elementRegister, elementAddressRegister);
+        generateSelectorCheckerExcludingPseudoElements(failureCases, selectorFragmentList);
+
+        for (Assembler::RegisterID registerID : allocatedRegisters) {
+            if (registerID != elementAddressRegister)
+                m_registerAllocator.allocateRegister(registerID);
+        }
+
+        successStack.pop(allocatedRegistersOnStack, allocatedRegisters);
+        matchFragmentList.append(m_assembler.jump());
+
+        failureCases.link(&m_assembler);
+        failureStack.pop(allocatedRegistersOnStack, allocatedRegisters);
+
+        m_stackAllocator.merge(WTF::move(successStack), WTF::move(failureStack));
+    }
+    return matchFragmentList;
 }
 
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
@@ -3183,6 +3223,13 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
         generateWalkToParentElement(failureCases, parentElement);
     }
 
+    // The initial element must match the selector list.
+    for (const NthChildOfSelectorInfo& nthChildOfSelectorInfo : fragment.nthChildOfFilters) {
+        Assembler::JumpList matchFragmentList = generateElementMatchesSelectorList(elementAddressRegister, nthChildOfSelectorInfo.selectorList);
+        failureCases.append(m_assembler.jump());
+        matchFragmentList.link(&m_assembler);
+    }
+
     Vector<const NthChildOfSelectorInfo*> validSubsetFilters;
     for (const NthChildOfSelectorInfo& nthChildOfSelectorInfo : fragment.nthChildOfFilters) {
         if (nthFilterIsAlwaysSatisified(nthChildOfSelectorInfo.a, nthChildOfSelectorInfo.b))
@@ -3205,53 +3252,19 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
             LocalRegister previousSibling(m_registerAllocator);
             m_assembler.move(elementAddressRegister, previousSibling);
 
-            // Getting the child index is very efficient when it works. When there is no child index,
-            // querying at every iteration is very inefficient. We solve this by only testing the child
-            // index on the first direct adjacent.
             Assembler::JumpList noMoreSiblingsCases;
 
             Assembler::Label loopStart = m_assembler.label();
+
             generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
             markElementIfResolvingStyle(previousSibling, Node::flagAffectsNextSiblingElementStyle());
 
-            Assembler::JumpList matchFragmentList;
-            for (const SelectorFragmentList& selectorFragmentList : nthChildOfSelectorInfo->selectorList) {
-                Assembler::JumpList failureCases;
-
-                RegisterVector allocatedRegisters = m_registerAllocator.allocatedRegisters();
-                if (m_descendantBacktrackingStartInUse)
-                    allocatedRegisters.remove(allocatedRegisters.find(m_descendantBacktrackingStart));
-                StackAllocator::StackReferenceVector allocatedRegistersOnStack = m_stackAllocator.push(allocatedRegisters);
-
-                StackAllocator successStack = m_stackAllocator;
-                StackAllocator failureStack = m_stackAllocator;
-
-                for (Assembler::RegisterID registerID : allocatedRegisters) {
-                    if (registerID != elementAddressRegister)
-                        m_registerAllocator.deallocateRegister(registerID);
-                }
-
-                m_assembler.move(previousSibling, elementAddressRegister);
-                generateSelectorCheckerExcludingPseudoElements(failureCases, selectorFragmentList);
-
-                for (Assembler::RegisterID registerID : allocatedRegisters) {
-                    if (registerID != elementAddressRegister)
-                        m_registerAllocator.allocateRegister(registerID);
-                }
-
-                successStack.pop(allocatedRegistersOnStack, allocatedRegisters);
-                matchFragmentList.append(m_assembler.jump());
-
-                failureCases.link(&m_assembler);
-                failureStack.pop(allocatedRegistersOnStack, allocatedRegisters);
-
-                m_stackAllocator.merge(WTF::move(successStack), WTF::move(failureStack));
-            }
+            Assembler::JumpList matchFragmentList = generateElementMatchesSelectorList(previousSibling, nthChildOfSelectorInfo->selectorList);
             m_assembler.jump().linkTo(loopStart, &m_assembler);
-
             matchFragmentList.link(&m_assembler);
             m_assembler.add32(Assembler::TrustedImm32(1), elementCounter);
             m_assembler.jump().linkTo(loopStart, &m_assembler);
+
             noMoreSiblingsCases.link(&m_assembler);
         }
 

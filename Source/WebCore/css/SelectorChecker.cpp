@@ -682,6 +682,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
             if (!selector->parseNth())
                 break;
             if (element->parentElement()) {
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = selector->selectorList()) {
+                    if (!matchSelectorList(context, *element, *selectorList))
+                        return false;
+                }
+#endif
+
                 if (context.resolvingMode == Mode::ResolvingStyle)
                     element->setStyleIsAffectedByPreviousSibling();
 
@@ -692,19 +699,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
                         if (context.resolvingMode == Mode::ResolvingStyle)
                             sibling->setAffectsNextSiblingElementStyle();
 
-                        for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                            CheckingContextWithStatus subcontext(context);
-                            subcontext.element = sibling;
-                            subcontext.selector = subselector;
-                            subcontext.inFunctionalPseudoClass = true;
-                            subcontext.firstSelectorOfTheFragment = subselector;
-                            PseudoId ignoreDynamicPseudo = NOPSEUDO;
-                            if (matchRecursively(subcontext, ignoreDynamicPseudo) == SelectorMatches) {
-                                ASSERT(ignoreDynamicPseudo == NOPSEUDO);
-                                ++count;
-                                break;
-                            }
-                        }
+                        if (matchSelectorList(context, *sibling, *selectorList))
+                            ++count;
                     }
                 } else
 #endif
@@ -924,6 +920,23 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
 #endif
     // ### add the rest of the checks...
     return true;
+}
+
+bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseContext, Element& element, const CSSSelectorList& selectorList) const
+{
+    for (const CSSSelector* subselector = selectorList.first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+        CheckingContextWithStatus subcontext(baseContext);
+        subcontext.element = &element;
+        subcontext.selector = subselector;
+        subcontext.inFunctionalPseudoClass = true;
+        subcontext.firstSelectorOfTheFragment = subselector;
+        PseudoId ignoreDynamicPseudo = NOPSEUDO;
+        if (matchRecursively(subcontext, ignoreDynamicPseudo) == SelectorMatches) {
+            ASSERT(ignoreDynamicPseudo == NOPSEUDO);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContextWithStatus& context, const CSSSelector* selector) const

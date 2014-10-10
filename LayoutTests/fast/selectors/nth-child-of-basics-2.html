@@ -85,12 +85,12 @@ testSelector(":nth-child(even of [class], [id]):nth-child(3n+1 of [class])", ["t
 
 // Test cases inspired by the :nth-of-type() examples from http://nthmaster.com/.
 testSelector("testcaseA:nth-child(3 of testcaseA)", ["testcase5"]);
-testSelector(":nth-child(3 of testcaseA)", ["testcase4", "testcase5"]);
+testSelector(":nth-child(3 of testcaseA)", ["testcase5"]);
 testSelector("testcaseB:nth-child(4 of testcaseB)", ["testcase8"]);
-testSelector(":nth-child(4 of testcaseB)", ["testcase7", "testcase8"]);
+testSelector(":nth-child(4 of testcaseB)", ["testcase8"]);
 
 testSelector("testcaseA:nth-child(n+3 of testcaseA)", ["testcase5", "testcase7", "testcase9", "testcase11", "testcase13", "testcase15", "testcase17", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
-testSelector(":nth-child(n+3 of testcaseA)", ["testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10", "testcase11", "testcase12", "testcase13", "testcase14", "testcase15", "testcase16", "testcase17", "testcase18", "testcase19", "testcase20", "testcase21", "testcase22", "testcase23", "testcase24", "testcase25", "testcase26", "testcase27", "testcase28", "testcase29", "testcase30"]);
+testSelector(":nth-child(n+3 of testcaseA)", ["testcase5", "testcase7", "testcase9", "testcase11", "testcase13", "testcase15", "testcase17", "testcase19", "testcase21", "testcase23", "testcase25", "testcase27", "testcase29"]);
 
 testSelector("testcaseA:nth-child(2n+2 of testcaseA)", ["testcase3", "testcase7", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
 

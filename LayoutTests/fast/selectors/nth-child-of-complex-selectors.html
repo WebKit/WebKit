@@ -67,19 +67,19 @@ function testSelector(selector, expectedIds) {
     debug("");
 }
 
-testSelector(':nth-child(2n of :root parent1>testcaseA)', ["target2", "target3", "target6", "target7", "target10"]);
+testSelector(':nth-child(2n of :root parent1>testcaseA)', ["target3", "target7"]);
 
-testSelector(':nth-child(2n of :root parent2>.foo)', ["target12", "target13", "target16", "target17", "target20"]);
+testSelector(':nth-child(2n of :root parent2>.foo)', ["target13", "target17"]);
 
 // Since the two above are disjoint sets, the combined selector should match the combined results.
-testSelector(':nth-child(2n of :root parent2>.foo, :root parent1>testcaseA)', ["target2", "target3", "target6", "target7", "target10", "target12", "target13", "target16", "target17", "target20"]);
+testSelector(':nth-child(2n of :root parent2>.foo, :root parent1>testcaseA)', ["target3", "target7", "target13", "target17"]);
 
 
-testSelector('> * > *:nth-child(2n + 1 of html div testcaseA~testcaseA + *)', ["target1", "target2", "target3", "target4", "target7", "target8", "target11", "target12", "target13", "target15", "target17", "target19"]);
+testSelector('> * > *:nth-child(2n + 1 of html div testcaseA~testcaseA + *)', ["target4", "target8", "target13", "target15", "target17", "target19"]);
 
-testSelector('> * > *:nth-child(2n+1 of html .foo)', ["target1", "target2", "target3", "target4", "target5", "target6", "target7", "target8", "target9", "target10", "target11", "target14", "target15", "target18", "target19"]);
+testSelector('> * > *:nth-child(2n+1 of html .foo)', ["target11", "target15", "target19"]);
 
-testSelector('> * > *:nth-child(2n+1 of html div testcaseA~testcaseA + *, html .foo)', ["target1", "target2", "target3", "target4", "target7", "target8", "target11", "target14", "target16", "target18", "target20"]);
+testSelector('> * > *:nth-child(2n+1 of html div testcaseA~testcaseA + *, html .foo)', ["target4", "target8", "target11", "target14", "target16", "target18", "target20"]);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>
