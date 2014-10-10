@@ -2,13 +2,7 @@
 # disabled and this triggers the inclusion of the WebKit2 headers.
 add_definitions(-DBUILDING_WEBKIT2__)
 
-add_custom_target(forwarding-headersGTKForTestWebKitAPI
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} gtk
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${FORWARDING_HEADERS_DIR}  gtk
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${FORWARDING_HEADERS_DIR} soup
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${FORWARDING_HEADERS_DIR}  soup
-)
-set(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersGTKForTestWebKitAPI)
+set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
 
 include_directories(
     ${FORWARDING_HEADERS_DIR}
@@ -137,4 +131,21 @@ set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBK
 list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/gobject/GMainLoopSource.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/gobject/GUniquePtr.cpp
+)
+
+file(GLOB_RECURSE TestWebKitAPI_SOURCES
+    *.cpp
+    *.h
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/TestWebKitAPI-forwarding-headers.stamp
+    DEPENDS ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
+            ${TestWebKitAPI_SOURCES}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${FORWARDING_HEADERS_DIR} gtk
+    COMMAND touch ${CMAKE_BINARY_DIR}/TestWebKitAPI-forwarding-headers.stamp
+)
+add_custom_target(TestWebKitAPI-forwarding-headers
+    DEPENDS WebKit2-forwarding-headers
+    DEPENDS ${CMAKE_BINARY_DIR}/TestWebKitAPI-forwarding-headers.stamp
 )

@@ -1,3 +1,15 @@
+2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make forwarding headers generation depend on source code
+        https://bugs.webkit.org/show_bug.cgi?id=137394
+
+        Reviewed by Philippe Normand.
+
+        * TestWebKitAPI/CMakeLists.txt: Add missing dependency rule.
+        * TestWebKitAPI/PlatformGTK.cmake: Only run
+        generate-forwarding-headers.pl when source code changes.
+        * WebKitTestRunner/PlatformGTK.cmake: Ditto.
+
 2014-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not generate webkit2gtk-tests-resources.gresource unconditionally

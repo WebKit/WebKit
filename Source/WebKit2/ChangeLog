@@ -1,3 +1,15 @@
+2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make forwarding headers generation depend on source code
+        https://bugs.webkit.org/show_bug.cgi?id=137394
+
+        Reviewed by Philippe Normand.
+
+        Only run generate-forwarding-headers.pl when source code changes
+        and use a different target for the symlinks.
+
+        * PlatformGTK.cmake:
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GtkPopupMenu implementation to WebPopupMenuProxyGtk
