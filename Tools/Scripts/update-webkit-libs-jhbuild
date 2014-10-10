@@ -25,10 +25,13 @@ use Getopt::Long qw(:config pass_through);
 my $platform = "";
 $platform = "efl" if isEfl();
 $platform = "gtk" if isGtk();
+my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
 
 if (!$platform) {
     die "No platform specified for " . basename($0) .". Use --gtk or --efl.\n";
 }
+
+GetOptions('wipe-on-change!' => \$wipeOnChange,);
 
 sub getMD5HashForFile($)
 {
@@ -111,7 +114,7 @@ chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
 my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+" );
 
-if (-e getJhbuildPath() && jhbuildConfigurationChanged()) {
+if ($wipeOnChange && -e getJhbuildPath() && jhbuildConfigurationChanged()) {
     cleanJhbuild();
 }
 

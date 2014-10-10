@@ -1,3 +1,16 @@
+2014-10-10  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [jhbuild] We should be able to disable wiping on configuration change
+        https://bugs.webkit.org/show_bug.cgi?id=137446
+
+        Reviewed by Csaba Osztrogonác.
+
+        The default behaviour isn't changed, wiping on configuration change feature can be disabled with
+        setting JHBUILD_WIPE_ON_CHANGE=0 environment variable
+        or passing --no-wipe-on-change command line option.
+
+        * Scripts/update-webkit-libs-jhbuild:
+
 2014-10-09  Andy Estes  <aestes@apple.com>
 
         Teach webkitpy about OS X Yosemite
