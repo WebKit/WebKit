@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Open Type MATH - under-over operator</title>
-  <meta charset="utf-8">
   <style type="text/css">
-    /* This font is taken from Mozilla's test suite. */
     @font-face {
       font-family: stretchy;
       src: url("stretchy.woff");
@@ -13,9 +10,14 @@
       font-family: stretchy;
       font-size: 10px;
     }
+    div {
+      width: 700px;
+      height: 100px;
+      background-color:#eeeeee;
+    }
   </style>
 <body>
-<div>
+<div id="mathContainer">
   <math display='block'>
     <mrow>
       <mmultiscripts>
@@ -98,13 +100,16 @@
   </math>
 </div>
 <script>
-	for (var zoom = 110; zoom <= 200; zoom += 10) {
-        document.body.style.zoom = zoom + "%";
-	}
-    document.body.style.zoom="100%";
-    var width = window.outerWidth;
-    window.resizeTo(250, window.outerHeight); 
-    window.resizeTo(width, window.outerHeight);
+  var mathDiv = document.getElementById("mathContainer");
+
+  mathDiv.style.width = "300px";
+  document.body.offsetWidth; // forces layout
+
+  mathDiv.style.width = "500px";
+  document.body.offsetWidth; // forces layout
+
+  mathDiv.style.width = "700px";
+  document.body.offsetWidth; // forces layout
 </script>
 </body>
 </html>
