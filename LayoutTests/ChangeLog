@@ -1,3 +1,11 @@
+2014-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Mark and report test failing after r137615 and r174540.
+        * platform/gtk/mathml/opentype/munderover-window-resize-expected.txt: Added. Rebaseline after r174540.
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Rebaseline after r174540.
+
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         iOS Simulator results for fast/css-generated-content, css-grid-layout tests.
