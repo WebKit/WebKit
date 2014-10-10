@@ -1,0 +1,141 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dotted #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dotted #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dotted #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dotted #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dotted #FF0000)]
+        RenderText {#text} at (346,47) size 44x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 40: "dotted"
+      RenderBlock {DIV} at (0,67) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dashed #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dashed #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dashed #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dashed #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px dashed #FF0000)]
+        RenderText {#text} at (346,47) size 49x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 45: "dashed"
+      RenderBlock {DIV} at (0,134) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px solid #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px solid #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px solid #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px solid #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px solid #FF0000)]
+        RenderText {#text} at (346,47) size 36x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 32: "solid"
+      RenderBlock {DIV} at (0,201) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px double #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px double #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px double #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px double #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px double #FF0000)]
+        RenderText {#text} at (346,47) size 48x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 44: "double"
+      RenderBlock {DIV} at (0,268) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px groove #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px groove #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px groove #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px groove #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px groove #FF0000)]
+        RenderText {#text} at (346,47) size 49x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 45: "groove"
+      RenderBlock {DIV} at (0,335) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px ridge #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px ridge #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px ridge #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px ridge #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px ridge #FF0000)]
+        RenderText {#text} at (346,47) size 37x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 33: "ridge"
+      RenderBlock {DIV} at (0,402) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px inset #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px inset #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px inset #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px inset #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px inset #FF0000)]
+        RenderText {#text} at (346,47) size 35x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 31: "inset"
+      RenderBlock {DIV} at (0,469) size 784x67
+        RenderBlock {SPAN} at (2,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px outset #FF0000)]
+        RenderText {#text} at (66,47) size 4x19
+          text run at (66,47) width 4: " "
+        RenderBlock {SPAN} at (72,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px outset #FF0000)]
+        RenderText {#text} at (136,47) size 4x19
+          text run at (136,47) width 4: " "
+        RenderBlock {SPAN} at (142,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px outset #FF0000)]
+        RenderText {#text} at (206,47) size 4x19
+          text run at (206,47) width 4: " "
+        RenderBlock {SPAN} at (212,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px outset #FF0000)]
+        RenderText {#text} at (276,47) size 4x19
+          text run at (276,47) width 4: " "
+        RenderBlock {SPAN} at (282,0) size 62x62 [bgcolor=#CCCCCC] [border: (6px outset #FF0000)]
+        RenderText {#text} at (346,47) size 43x19
+          text run at (346,47) width 4: " "
+          text run at (350,47) width 39: "outset"

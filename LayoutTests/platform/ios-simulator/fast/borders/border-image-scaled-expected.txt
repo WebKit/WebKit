@@ -1,0 +1,22 @@
+layer at (0,0) size 800x626
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x626
+  RenderBlock {HTML} at (0,0) size 800x626
+    RenderBody {BODY} at (8,8) size 784x610
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 751x39
+          text run at (0,0) width 751: "The purpose of this test case is to illustrate the legacy behavior of -webkit-border-image. The specified border widths"
+          text run at (0,20) width 716: "actually end up becoming the real border widths. The border-image property in the specification doesn't do this."
+      RenderBlock (anonymous) at (0,56) size 784x554
+        RenderBlock {DIV} at (10,10) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderText {#text} at (272,257) size 4x19
+          text run at (272,257) width 4: " "
+        RenderBlock {DIV} at (286,10) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderText {#text} at (548,257) size 4x19
+          text run at (548,257) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBlock {DIV} at (10,287) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderText {#text} at (272,534) size 4x19
+          text run at (272,534) width 4: " "
+        RenderBlock {DIV} at (286,287) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderText {#text} at (0,0) size 0x0
