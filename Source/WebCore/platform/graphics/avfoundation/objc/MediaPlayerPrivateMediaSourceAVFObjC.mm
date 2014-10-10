@@ -537,7 +537,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 {
-    if (m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
+    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
         ensureLayer();
     else
         destroyLayer();
@@ -720,7 +720,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer(AVSampleBufferDisplay
 
     m_sampleBufferDisplayLayer = displayLayer;
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
-    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+    m_player->client().mediaPlayerRenderingModeChanged(m_player);
 
     // FIXME: move this somewhere appropriate:
     m_player->firstVideoFrameAvailable();
@@ -737,7 +737,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer(AVSampleBufferDisp
     }];
 
     m_sampleBufferDisplayLayer = nullptr;
-    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+    m_player->client().mediaPlayerRenderingModeChanged(m_player);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
@@ -751,7 +751,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioR
     [audioRenderer setVolume:m_player->volume()];
 
     [m_synchronizer addRenderer:audioRenderer];
-    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+    m_player->client().mediaPlayerRenderingModeChanged(m_player);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
@@ -766,7 +766,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAud
     }];
 
     m_sampleBufferAudioRenderers.remove(pos);
-    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+    m_player->client().mediaPlayerRenderingModeChanged(m_player);
 }
 
 }

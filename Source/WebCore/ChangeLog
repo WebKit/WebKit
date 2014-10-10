@@ -1,3 +1,99 @@
+2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        MediaPlayer should use a reference for the MediaPlayerClient
+        https://bugs.webkit.org/show_bug.cgi?id=137552
+
+        Reviewed by Darin Adler.
+
+        The MediaPlayer client is set on constructor by HTMLMediaElement
+        and cleared on HTMLMediaElement destructor that also frees the
+        MediaPlayer object. Since the client will never be null while the
+        MediaPlayer player is alive, we can use a reference and remove all
+        the unneeded null checks. The member has also been renamed to m_client.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::~MediaPlayer):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::inMediaDocument):
+        (WebCore::MediaPlayer::currentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::MediaPlayer::readyStateChanged):
+        (WebCore::MediaPlayer::volumeChanged):
+        (WebCore::MediaPlayer::muteChanged):
+        (WebCore::MediaPlayer::timeChanged):
+        (WebCore::MediaPlayer::sizeChanged):
+        (WebCore::MediaPlayer::repaint):
+        (WebCore::MediaPlayer::durationChanged):
+        (WebCore::MediaPlayer::rateChanged):
+        (WebCore::MediaPlayer::playbackStateChanged):
+        (WebCore::MediaPlayer::firstVideoFrameAvailable):
+        (WebCore::MediaPlayer::characteristicChanged):
+        (WebCore::MediaPlayer::keyAdded):
+        (WebCore::MediaPlayer::keyError):
+        (WebCore::MediaPlayer::keyMessage):
+        (WebCore::MediaPlayer::keyNeeded):
+        (WebCore::MediaPlayer::referrer):
+        (WebCore::MediaPlayer::userAgent):
+        (WebCore::MediaPlayer::graphicsDeviceAdapter):
+        (WebCore::MediaPlayer::cachedResourceLoader):
+        (WebCore::MediaPlayer::addAudioTrack):
+        (WebCore::MediaPlayer::removeAudioTrack):
+        (WebCore::MediaPlayer::addTextTrack):
+        (WebCore::MediaPlayer::removeTextTrack):
+        (WebCore::MediaPlayer::addVideoTrack):
+        (WebCore::MediaPlayer::removeVideoTrack):
+        (WebCore::MediaPlayer::outOfBandTrackSources):
+        (WebCore::MediaPlayer::shouldWaitForResponseToAuthenticationChallenge):
+        (WebCore::MediaPlayer::handlePlaybackCommand):
+        (WebCore::MediaPlayer::sourceApplicationIdentifier):
+        (WebCore::MediaPlayer::doesHaveAttribute):
+        (WebCore::MediaPlayer::mediaPlayerNetworkInterfaceName):
+        (WebCore::MediaPlayer::getRawCookies):
+        (WebCore::MediaPlayer::setWirelessVideoPlaybackDisabled): Deleted.
+        (WebCore::MediaPlayer::audioSourceProvider): Deleted.
+        (WebCore::MediaPlayer::engineDescription): Deleted.
+        (WebCore::MediaPlayer::notifyTrackModeChanged): Deleted.
+        (WebCore::MediaPlayer::totalFrameDelay): Deleted.
+        (WebCore::MediaPlayerFactorySupport::callRegisterMediaEngine): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::create):
+        (WebCore::MediaPlayer::platformVolumeConfigurationRequired):
+        (WebCore::MediaPlayer::client):
+        (WebCore::MediaPlayer::mediaPlayerClient): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareForRendering):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateQTKit::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateQTKit::prepareForRendering):
+        (WebCore::MediaPlayerPrivateQTKit::sawUnsupportedTracks):
+
 2014-10-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Make RenderFlowThread::regionAtBlockOffset const

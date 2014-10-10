@@ -495,7 +495,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     if (priv->player) {
         if (CachedResourceLoader* loader = priv->player->cachedResourceLoader())
-            priv->client = new CachedResourceStreamingClient(src, loader, request, priv->player->mediaPlayerClient()->mediaPlayerCORSMode());
+            priv->client = new CachedResourceStreamingClient(src, loader, request, priv->player->client().mediaPlayerCORSMode());
     }
 
     if (!priv->client)

@@ -130,8 +130,7 @@ void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
     if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
         return;
 
-    const char* role = m_player->mediaPlayerClient() && m_player->mediaPlayerClient()->mediaPlayerIsVideo()
-        ? "video" : "music";
+    const char* role = m_player->client().mediaPlayerIsVideo() ? "video" : "music";
     GstStructure* structure = gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, NULL);
     g_object_set(object, "stream-properties", structure, NULL);
     gst_structure_free(structure);
@@ -681,13 +680,13 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     }
 #endif
 
-    m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
+    m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 {
     m_videoSize = IntSize();
-    m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
+    m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 
 void MediaPlayerPrivateGStreamer::audioChanged()
@@ -729,7 +728,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
     }
 #endif
 
-    m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
+    m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -1609,7 +1608,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
     m_isEndReached = true;
     timeChanged();
 
-    if (!m_player->mediaPlayerClient()->mediaPlayerIsLooping()) {
+    if (!m_player->client().mediaPlayerIsLooping()) {
         m_paused = true;
         changePipelineState(GST_STATE_READY);
         m_downloadFinished = false;

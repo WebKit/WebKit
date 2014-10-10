@@ -279,7 +279,7 @@ class MediaPlayer {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    static PassOwnPtr<MediaPlayer> create(MediaPlayerClient* client)
+    static PassOwnPtr<MediaPlayer> create(MediaPlayerClient& client)
     {
         return adoptPtr(new MediaPlayer(client));
     }
@@ -380,7 +380,7 @@ public:
 
     double volume() const;
     void setVolume(double);
-    bool platformVolumeConfigurationRequired() const { return m_mediaPlayerClient->mediaPlayerPlatformVolumeConfigurationRequired(); }
+    bool platformVolumeConfigurationRequired() const { return m_client.mediaPlayerPlatformVolumeConfigurationRequired(); }
 
     bool muted() const;
     void setMuted(bool);
@@ -438,8 +438,7 @@ public:
 
     void repaint();
 
-    MediaPlayerClient* mediaPlayerClient() const { return m_mediaPlayerClient; }
-    void clearMediaPlayerClient() { m_mediaPlayerClient = 0; }
+    MediaPlayerClient& client() const { return m_client; }
 
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
@@ -578,14 +577,14 @@ public:
     String sourceApplicationIdentifier() const;
 
 private:
-    MediaPlayer(MediaPlayerClient*);
+    MediaPlayer(MediaPlayerClient&);
     MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(MediaPlayerFactory*);
     void reloadTimerFired(Timer<MediaPlayer>&);
 
     static void initializeMediaEngines();
 
-    MediaPlayerClient* m_mediaPlayerClient;
+    MediaPlayerClient& m_client;
     Timer<MediaPlayer> m_reloadTimer;
     OwnPtr<MediaPlayerPrivateInterface> m_private;
     MediaPlayerFactory* m_currentMediaEngine;
