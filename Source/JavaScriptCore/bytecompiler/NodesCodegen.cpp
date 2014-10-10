@@ -386,7 +386,7 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
         && !generator.symbolTable().slowArguments()) {
         RegisterID* property = generator.emitNode(m_subscript);
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-        return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedLocalArgumentsRegister(), property);
+        return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedRegisterForArguments(), property);
     }
 
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
@@ -412,7 +412,7 @@ RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, Register
         if (!generator.willResolveToArguments(resolveNode->identifier()))
             goto nonArgumentsPath;
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-        return generator.emitGetArgumentsLength(generator.finalDestination(dst), generator.uncheckedLocalArgumentsRegister());
+        return generator.emitGetArgumentsLength(generator.finalDestination(dst), generator.uncheckedRegisterForArguments());
     }
 
 nonArgumentsPath:
@@ -593,7 +593,7 @@ static RegisterID* getArgumentByVal(BytecodeGenerator& generator, ExpressionNode
         && generator.willResolveToArguments(static_cast<ResolveNode*>(base)->identifier())
         && !generator.symbolTable().slowArguments()) {
         generator.emitExpressionInfo(divot, divotStart, divotEnd);
-        return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedLocalArgumentsRegister(), property);
+        return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedRegisterForArguments(), property);
     }
     return nullptr;
 }
@@ -621,7 +621,7 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
             RefPtr<RegisterID> thisRegister = getArgumentByVal(generator, subject, generator.emitLoad(0, jsNumber(0)), 0, spread->divot(), spread->divotStart(), spread->divotEnd());
             RefPtr<RegisterID> argumentsRegister;
             if (thisRegister)
-                argumentsRegister = generator.uncheckedLocalArgumentsRegister();
+                argumentsRegister = generator.uncheckedRegisterForArguments();
             else {
                 argumentsRegister = generator.emitNode(subject);
                 generator.emitExpressionInfo(spread->divot(), spread->divotStart(), spread->divotEnd());
@@ -749,7 +749,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         RefPtr<RegisterID> argsRegister;
         ArgumentListNode* args = m_args->m_listNode->m_next;
         if (args->m_expr->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(args->m_expr)->identifier()) && !generator.symbolTable().slowArguments())
-            argsRegister = generator.uncheckedLocalArgumentsRegister();
+            argsRegister = generator.uncheckedRegisterForArguments();
         else
             argsRegister = generator.emitNode(args->m_expr);
 
@@ -2721,7 +2721,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
 {
     if (rhs->isResolveNode()
         && generator.willResolveToArguments(static_cast<ResolveNode*>(rhs)->identifier())
-        && generator.hasSafeLocalArgumentsRegister()&& !generator.symbolTable().slowArguments()) {
+        && !generator.symbolTable().slowArguments()) {
         for (size_t i = 0; i < m_targetPatterns.size(); i++) {
             auto target = m_targetPatterns[i];
             if (!target)
@@ -2729,7 +2729,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
             
             RefPtr<RegisterID> temp = generator.newTemporary();
             generator.emitLoad(temp.get(), jsNumber(i));
-            generator.emitGetArgumentByVal(temp.get(), generator.uncheckedLocalArgumentsRegister(), temp.get());
+            generator.emitGetArgumentByVal(temp.get(), generator.uncheckedRegisterForArguments(), temp.get());
             target->bindValue(generator, temp.get());
         }
         if (dst == generator.ignoredResult() || !dst)

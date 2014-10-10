@@ -277,9 +277,7 @@ namespace JSC {
         void setIsNumericCompareFunction(bool isNumericCompareFunction);
 
         bool willResolveToArguments(const Identifier&);
-
-        bool hasSafeLocalArgumentsRegister() { return m_localArgumentsRegister; }
-        RegisterID* uncheckedLocalArgumentsRegister();
+        RegisterID* uncheckedRegisterForArguments();
 
         bool isCaptured(int operand);
         CaptureMode captureMode(int operand) { return isCaptured(operand) ? IsCaptured : NotCaptured; }
@@ -754,8 +752,6 @@ namespace JSC {
         RegisterID* m_lexicalEnvironmentRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;
-        RegisterID* m_localArgumentsRegister;
-
         Vector<Identifier, 16> m_watchableVariables;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;

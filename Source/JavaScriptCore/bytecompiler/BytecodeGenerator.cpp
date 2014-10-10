@@ -167,7 +167,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
-    , m_localArgumentsRegister(0)
     , m_finallyDepth(0)
     , m_localScopeDepth(0)
     , m_codeType(GlobalCode)
@@ -212,7 +211,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
-    , m_localArgumentsRegister(0)
     , m_finallyDepth(0)
     , m_localScopeDepth(0)
     , m_codeType(FunctionCode)
@@ -252,15 +250,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitOpcode(op_create_lexical_environment);
         instructions().append(m_lexicalEnvironmentRegister->index());
     }
-    RegisterID* localArgumentsRegister = nullptr;
     RegisterID* scratch = addVar();
     m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
 
     if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
         RegisterID* argumentsRegister = addVar(propertyNames().arguments, IsVariable, NotWatchable); // Can be changed by assigning to 'arguments'.
-
-        localArgumentsRegister = argumentsRegister;
 
         // We can save a little space by hard-coding the knowledge that the two
         // 'arguments' values are stored in consecutive registers, and storing
@@ -279,15 +274,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 initializeCapturedVariable(argumentsRegister, propertyNames().arguments, argumentsRegister);
                 RegisterID* uncheckedArgumentsRegister = &registerFor(JSC::unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
                 initializeCapturedVariable(uncheckedArgumentsRegister, propertyNames().arguments, uncheckedArgumentsRegister);
-                if (functionBody->modifiesArguments()) {
-                    emitOpcode(op_mov);
-                    instructions().append(argumentsRegister->index());
-                    instructions().append(addConstantValue(jsUndefined())->index());
-                    emitOpcode(op_mov);
-                    instructions().append(uncheckedArgumentsRegister->index());
-                    instructions().append(addConstantValue(jsUndefined())->index());
-                    localArgumentsRegister = nullptr;
-                }
             }
         }
     }
@@ -400,7 +386,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     int nextParameterIndex = CallFrame::thisArgumentOffset();
     m_thisRegister.setIndex(nextParameterIndex++);
     m_codeBlock->addParameter();
-
     for (size_t i = 0; i < parameters.size(); ++i, ++nextParameterIndex) {
         int index = nextParameterIndex;
         auto pattern = parameters.at(i);
@@ -434,7 +419,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         instructions().append(0);
         instructions().append(0);
     }
-    m_localArgumentsRegister = localArgumentsRegister;
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
@@ -447,7 +431,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
-    , m_localArgumentsRegister(0)
     , m_finallyDepth(0)
     , m_localScopeDepth(0)
     , m_codeType(EvalCode)
@@ -562,17 +545,19 @@ bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
     if (entry.isNull())
         return false;
 
-    if (m_codeBlock->usesArguments() && m_codeType == FunctionCode && m_localArgumentsRegister)
+    if (m_codeBlock->usesArguments() && m_codeType == FunctionCode)
         return true;
     
     return false;
 }
 
-RegisterID* BytecodeGenerator::uncheckedLocalArgumentsRegister()
+RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
 {
     ASSERT(willResolveToArguments(propertyNames().arguments));
-    ASSERT(m_localArgumentsRegister);
-    return m_localArgumentsRegister;
+
+    SymbolTableEntry entry = symbolTable().get(propertyNames().arguments.impl());
+    ASSERT(!entry.isNull());
+    return &registerFor(entry.getIndex());
 }
 
 RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
@@ -1843,7 +1828,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
             RefPtr<RegisterID> argumentRegister;
             if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
-                argumentRegister = uncheckedLocalArgumentsRegister();
+                argumentRegister = uncheckedRegisterForArguments();
             else
                 argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
             RefPtr<RegisterID> thisRegister = emitMove(newTemporary(), callArguments.thisRegister());
@@ -1985,7 +1970,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
             RefPtr<RegisterID> argumentRegister;
             if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
-                argumentRegister = uncheckedLocalArgumentsRegister();
+                argumentRegister = uncheckedRegisterForArguments();
             else
                 argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
             return emitConstructVarargs(dst, func, argumentRegister.get(), newTemporary(), 0, callArguments.profileHookRegister(), divot, divotStart, divotEnd);
@@ -2553,13 +2538,13 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         emitJump(loopCondition.get());
         emitLabel(loopStart.get());
         emitLoopHint();
-        emitGetArgumentByVal(value.get(), uncheckedLocalArgumentsRegister(), index.get());
+        emitGetArgumentByVal(value.get(), uncheckedRegisterForArguments(), index.get());
         callBack(*this, value.get());
     
         emitLabel(scope->continueTarget());
         emitInc(index.get());
         emitLabel(loopCondition.get());
-        RefPtr<RegisterID> length = emitGetArgumentsLength(newTemporary(), uncheckedLocalArgumentsRegister());
+        RefPtr<RegisterID> length = emitGetArgumentsLength(newTemporary(), uncheckedRegisterForArguments());
         emitJumpIfTrue(emitEqualityOp(op_less, newTemporary(), index.get(), length.get()), loopStart.get());
         emitLabel(scope->breakTarget());
         return;

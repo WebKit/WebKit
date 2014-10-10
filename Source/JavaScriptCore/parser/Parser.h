@@ -279,7 +279,7 @@ struct Scope {
         return true;
     }
 
-    void getCapturedVariables(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
+    void getCapturedVariables(IdentifierSet& capturedVariables, bool& modifiedParameter)
     {
         if (m_needsFullActivation || m_usesEval) {
             modifiedParameter = true;
@@ -292,13 +292,9 @@ struct Scope {
             capturedVariables.add(*ptr);
         }
         modifiedParameter = false;
-        if (shadowsArguments())
-            modifiedArguments = true;
         if (m_declaredParameters.size()) {
             IdentifierSet::iterator end = m_writtenVariables.end();
             for (IdentifierSet::iterator ptr = m_writtenVariables.begin(); ptr != end; ++ptr) {
-                if (*ptr == m_vm->propertyNames->arguments.impl())
-                    modifiedArguments = true;
                 if (!m_declaredParameters.contains(*ptr))
                     continue;
                 modifiedParameter = true;
