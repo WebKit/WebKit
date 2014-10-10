@@ -185,7 +185,7 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
     String sourceURLCopy = sourceURL.isolatedCopy();
 
     for (auto& document : m_workerDocuments)
-        document->postTask([=] (ScriptExecutionContext& context) {
+        document->postTask([errorMessageCopy, lineNumber, columnNumber, sourceURLCopy] (ScriptExecutionContext& context) {
             context.reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, nullptr);
         });
 }
@@ -197,7 +197,7 @@ void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, M
     String sourceURLCopy = sourceURL.isolatedCopy();
 
     for (auto& document : m_workerDocuments)
-        document->postTask([=] (ScriptExecutionContext& context) {
+        document->postTask([source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
             context.addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
         });
 }
@@ -254,7 +254,7 @@ void SharedWorkerProxy::close()
 class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
 public:
     SharedWorkerConnectTask(MessagePortChannel* channel)
-        : ScriptExecutionContext::Task([=] (ScriptExecutionContext& context) {
+        : ScriptExecutionContext::Task([channel] (ScriptExecutionContext& context) {
             RefPtr<MessagePort> port = MessagePort::create(context);
             port->entangle(std::unique_ptr<MessagePortChannel>(channel));
             ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(context));

@@ -185,7 +185,7 @@ protected:
     class AddConsoleMessageTask : public Task {
     public:
         AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
-            : Task([=] (ScriptExecutionContext& context) {
+            : Task([source, level, message] (ScriptExecutionContext& context) {
                 context.addConsoleMessage(source, level, message);
             })
         {

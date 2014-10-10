@@ -156,7 +156,7 @@ void ThreadableWebSocketChannelClientWrapper::clearClient()
 void ThreadableWebSocketChannelClientWrapper::didConnect()
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didConnect();
         deref();
@@ -170,7 +170,7 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& me
 {
     ref();
     String messageCopy = message.isolatedCopy();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, message] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didReceiveMessage(message);
         deref();
@@ -183,7 +183,7 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& me
 void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, binaryData] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didReceiveBinaryData(binaryData);
         deref();
@@ -196,7 +196,7 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(PassOwnPtr<Ve
 void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(unsigned long bufferedAmount)
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this, bufferedAmount] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didUpdateBufferedAmount(bufferedAmount);
         deref();
@@ -209,7 +209,7 @@ void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(unsigned l
 void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didStartClosingHandshake();
         deref();
@@ -223,11 +223,12 @@ void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBu
 {
     ref();
     String reasonCopy = reason.isolatedCopy();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
-        if (m_client)
-            m_client->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reasonCopy);
-        deref();
-    }));
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>(
+        [this, unhandledBufferedAmount, closingHandshakeCompletion, code, reasonCopy] (ScriptExecutionContext&) {
+            if (m_client)
+                m_client->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reasonCopy);
+            deref();
+        }));
 
     if (!m_suspended)
         processPendingTasks();
@@ -236,7 +237,7 @@ void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBu
 void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError()
 {
     ref();
-    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([=](ScriptExecutionContext&) {
+    m_pendingTasks.append(std::make_unique<ScriptExecutionContext::Task>([this] (ScriptExecutionContext&) {
         if (m_client)
             m_client->didReceiveMessageError();
         deref();
@@ -265,7 +266,7 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
         // When a synchronous operation is in progress (i.e. the execution stack contains
         // WorkerThreadableWebSocketChannel::waitForMethodCompletion()), we cannot invoke callbacks in this run loop.
         ref();
-        m_context->postTask([=](ScriptExecutionContext& context) {
+        m_context->postTask([this] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, context.isWorkerGlobalScope());
             processPendingTasks();
             deref();

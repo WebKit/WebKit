@@ -96,7 +96,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
 {
     MessagePortChannelArray* channelsPtr = channels.release();
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext& context) {
+    m_scriptExecutionContext->postTask([this, channelsPtr, message] (ScriptExecutionContext& context) {
         Worker* workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
@@ -112,7 +112,7 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(PassRefPtr<SerializedS
         return;
 
     MessagePortChannelArray* channelsPtr = channels.release();
-    ScriptExecutionContext::Task task([=] (ScriptExecutionContext& scriptContext) {
+    ScriptExecutionContext::Task task([channelsPtr, message] (ScriptExecutionContext& scriptContext) {
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         DedicatedWorkerGlobalScope& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(scriptContext, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
@@ -148,7 +148,7 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
 {
     String errorMessageCopy = errorMessage.isolatedCopy();
     String sourceURLCopy = sourceURL.isolatedCopy();
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext& context) {
+    m_scriptExecutionContext->postTask([this, errorMessageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
         Worker* workerObject = this->workerObject();
         if (!workerObject)
             return;
@@ -166,7 +166,7 @@ void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source
 {
     String messageCopy = message.isolatedCopy();
     String sourceURLCopy = sourceURL.isolatedCopy();
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext& context) {
+    m_scriptExecutionContext->postTask([this, source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
         if (askedToTerminate())
             return;
         context.addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
@@ -211,7 +211,7 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
     if (!m_workerThread)
         return;
 
-    m_workerThread->runLoop().postTask([=] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postTask([isOnline] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
     });
 }
@@ -295,7 +295,7 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
     String messageCopy = message.isolatedCopy();
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext&) {
+    m_scriptExecutionContext->postTask([this, messageCopy] (ScriptExecutionContext&) {
         m_pageInspector->dispatchMessageFromWorker(messageCopy);
     });
 }
@@ -303,7 +303,7 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext&) {
+    m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(true, hasPendingActivity);
     });
     // Will execute reportPendingActivityInternal() on context's thread.
@@ -311,7 +311,7 @@ void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivit
 
 void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
 {
-    m_scriptExecutionContext->postTask([=] (ScriptExecutionContext&) {
+    m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(false, hasPendingActivity);
     });
     // Will execute reportPendingActivityInternal() on context's thread.

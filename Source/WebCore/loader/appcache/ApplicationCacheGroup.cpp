@@ -1117,7 +1117,7 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     ASSERT(frame->loader().documentLoader() == loader);
 
     RefPtr<DocumentLoader> loaderProtector(loader);
-    frame->document()->postTask([=] (ScriptExecutionContext& context) {
+    frame->document()->postTask([loaderProtector, eventID, progressTotal, progressDone] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isDocument());
         Frame* frame = loaderProtector->frame();
         if (!frame)

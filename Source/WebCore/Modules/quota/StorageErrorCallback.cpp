@@ -40,7 +40,7 @@
 namespace WebCore {
 
 StorageErrorCallback::CallbackTask::CallbackTask(PassRefPtr<StorageErrorCallback> callback, ExceptionCode ec)
-    : ScriptExecutionContext::Task([=] (ScriptExecutionContext*) {
+    : ScriptExecutionContext::Task([callback, ec] (ScriptExecutionContext*) {
         if (callback)
             callback->handleEvent(DOMCoreException::create(ExceptionCodeDescription(ec)).get());
     })

@@ -152,7 +152,7 @@ void FileReader::abort()
     m_aborting = true;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
-    scriptExecutionContext()->postTask([=](ScriptExecutionContext&) {
+    scriptExecutionContext()->postTask([this] (ScriptExecutionContext&) {
         ASSERT(m_state != DONE);
 
         terminate();

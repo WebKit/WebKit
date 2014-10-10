@@ -311,7 +311,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
 
     if (backend->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
-        database->m_scriptExecutionContext->postTask([=] (ScriptExecutionContext&) {
+        database->m_scriptExecutionContext->postTask([creationCallback, database] (ScriptExecutionContext&) {
             creationCallback->handleEvent(database.get());
         });
     }

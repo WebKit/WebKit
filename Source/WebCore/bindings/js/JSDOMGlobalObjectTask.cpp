@@ -83,7 +83,7 @@ JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, PassRefP
     : ScriptExecutionContext::Task(nullptr)
 {
     RefPtr<JSGlobalObjectCallback> callback = JSGlobalObjectCallback::create(globalObject, task);
-    m_task = [=] (ScriptExecutionContext&) {
+    m_task = [callback] (ScriptExecutionContext&) {
         callback->call();
     };
 }

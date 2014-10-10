@@ -90,7 +90,7 @@ bool WorkerEventQueue::enqueueEvent(PassRefPtr<Event> event)
 
     EventDispatcher* eventDispatcherPtr = new EventDispatcher(event.get(), *this);
     m_eventDispatcherMap.add(event, eventDispatcherPtr);
-    m_scriptExecutionContext.postTask([=] (ScriptExecutionContext&) {
+    m_scriptExecutionContext.postTask([eventDispatcherPtr] (ScriptExecutionContext&) {
         std::unique_ptr<EventDispatcher> eventDispatcher(eventDispatcherPtr);
         eventDispatcher->dispatch();
     });
