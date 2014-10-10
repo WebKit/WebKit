@@ -1546,6 +1546,3 @@ webkit.org/b/136109 [ Yosemite ] fast/multicol/mixed-opacity-fixed-test.html  [ 
 [ Yosemite ] inspector/event-listener.html [ Failure Crash ]
 [ Yosemite ] inspector/model/parse-script-syntax-tree.html [ Failure Crash ]
 [ Yosemite ] inspector/protocol-promise-result.html [ Failure Crash ]
-
-# FIXME: Needs bugzilla
-platform/mac/editing/input/undo-grouping-on-text-insertion.html [ Failure ]

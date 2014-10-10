@@ -1,3 +1,10 @@
+2014-10-10  Andy Estes  <aestes@apple.com>
+
+        Only run platform/mac/editing/input/undo-grouping-on-text-insertion.html on Yosemite
+
+        * platform/mac-mavericks/TestExpectations: Added.
+        * platform/mac/TestExpectations:
+
 2014-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
