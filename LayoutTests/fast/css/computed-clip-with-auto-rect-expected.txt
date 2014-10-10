@@ -1,0 +1,11 @@
+rect(auto, auto, auto, auto)
+
+rect(5px, auto, auto, auto)
+
+rect(auto, 5px, auto, auto)
+
+rect(auto, auto, 5px, auto)
+
+rect(auto, auto, auto, 5px)
+
+rect(5px, auto, 5px, auto)
