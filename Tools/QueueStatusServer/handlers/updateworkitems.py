@@ -47,7 +47,7 @@ class UpdateWorkItems(UpdateBase):
         return map(int, item_strings)
 
     def _work_items_from_request(self):
-        high_priority_items_string = self.request.get("high_priority_items")
+        high_priority_items_string = self.request.get("high_priority_work_items")
         items_string = self.request.get("work_items")
         high_priority_work_items = self._parse_work_items_string(high_priority_items_string)
         work_items = self._parse_work_items_string(items_string)

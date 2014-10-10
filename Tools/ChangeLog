@@ -1,3 +1,14 @@
+2014-10-10  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Commit queue doesn't process rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=137623
+
+        Reviewed by Tim Horton.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/handlers/updateworkitems.py:
+        (UpdateWorkItems._work_items_from_request):
+
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix syntax error after r174601.
