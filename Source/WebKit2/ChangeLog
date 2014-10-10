@@ -1,3 +1,13 @@
+2014-10-10  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Fix debug build on EFL after r174584
+        https://bugs.webkit.org/show_bug.cgi?id=137613
+
+        Reviewed by Christophe Dumez.
+
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderBoxModelObject

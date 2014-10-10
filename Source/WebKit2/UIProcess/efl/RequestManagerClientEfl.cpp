@@ -39,7 +39,7 @@ static inline RequestManagerClientEfl* toRequestManagerClientEfl(const void* cli
 RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
 {
     m_requestManager = toAPI(toImpl(context)->supplement<WebSoupCustomProtocolRequestManager>());
-    ASSERT(m_soupRequestManager);
+    ASSERT(m_requestManager);
 
     WKSoupCustomProtocolRequestManagerClientV0 wkRequestManagerClient;
     memset(&wkRequestManagerClient, 0, sizeof(WKSoupCustomProtocolRequestManagerClientV0));
