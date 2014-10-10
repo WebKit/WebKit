@@ -1,0 +1,2 @@
+FAIL: Timed out waiting for notifyDone to be called
+This is a div containing text. Wheel events originating on the text node should target the div.

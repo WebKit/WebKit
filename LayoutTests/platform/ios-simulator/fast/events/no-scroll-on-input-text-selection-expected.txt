@@ -1,0 +1,21 @@
+Verify selecting text does not cause any scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL document.getSelection().toString().length > 1 should be true. Was false.
+PASS pageXOffset is 0
+PASS pageYOffset is originalPageYOffset
+PASS document.body.scrollLeft is 0
+PASS document.body.scrollTop is originalBodyScrollTop
+PASS pageYOffset is document.body.scrollTop
+PASS pageYOffset > 2000 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test for bug 12331.
+
+To test manually, scroll down until you find the input element. Select some text. If the bug occurs, the page will scroll back up to the top.
+
+
+If the bug does not occur, you'll be left down here at the bottom.

@@ -1,0 +1,32 @@
+PASS simulateTextEntry(elements[0], '', BEFORE); is false
+PASS simulateTextEntry(elements[0], 'fo', BEFORE); is true
+FAIL simulateTextEntry(elements[0], 'o'); should be true. Was false.
+FAIL simulateTextEntry(elements[0], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[0], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[0], ' '); should be true. Was false.
+PASS simulateTextEntry(elements[0], 'foo bar', BEFORE); is true
+FAIL simulateTextEntry(elements[0], 'foo bar', BEFORE); should be false. Was true.
+PASS setTextValue(elements[0], 'foo'); is false
+PASS simulateTextEntry(elements[0], 'foo bar', BEFORE); is true
+FAIL simulateTextEntry(elements[1], '', BEFORE); should be true. Was false.
+FAIL simulateTextEntry(elements[1], 'fo', BEFORE); should be true. Was false.
+FAIL simulateTextEntry(elements[1], 'o'); should be true. Was false.
+FAIL simulateTextEntry(elements[1], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[2], 'wee', AFTER); should be false. Was true.
+FAIL simulateTextEntry(elements[2], 'foo', BEFORE | AFTER); should be false. Was true.
+PASS simulateTextEntry(elements[2], 'fo', BEFORE); is true
+FAIL simulateTextEntry(elements[2], 'o'); should be true. Was false.
+FAIL simulateTextEntry(elements[2], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[3], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[3], 'foo', BEFORE); should be false. Was true.
+PASS setTextValue(elements[3], ''); is false
+FAIL simulateTextEntry(elements[3], 'fo', BEFORE); should be true. Was false.
+FAIL simulateTextEntry(elements[3], 'o'); should be true. Was false.
+FAIL simulateTextEntry(elements[3], 'foo', BEFORE); should be false. Was true.
+FAIL simulateTextEntry(elements[4], 'foo', AFTER); should be false. Was true.
+PASS simulateTextEntry(elements[4], 'foo'); is true
+FAIL simulateTextEntry(elements[4], 'foo', BEFORE); should be false. Was true.
+PASS simulateTextEntry(elements[4], 'foo', BEFORE | AFTER); is true
+PASS simulateTextEntry(elements[4], '', AFTER); is false
+FAIL simulateTextEntry(elements[4], 'foo', AFTER); should be false. Was true.
+

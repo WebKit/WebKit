@@ -1,0 +1,14 @@
+FAIL events.length should be 2. Was 0.
+FAIL events[0] should be change e (of type string). Was undefined (of type undefined).
+FAIL events[1] should be change es (of type string). Was undefined (of type undefined).
+FAIL events.length should be 3. Was 0.
+FAIL events[0] should be change a (of type string). Was undefined (of type undefined).
+FAIL events[1] should be change ab (of type string). Was undefined (of type undefined).
+FAIL events[2] should be change abc (of type string). Was undefined (of type undefined).
+FAIL events.length should be 2. Was 0.
+FAIL events[0] should be change e (of type string). Was undefined (of type undefined).
+FAIL events[1] should be change es (of type string). Was undefined (of type undefined).
+FAIL events.length should be 2. Was 0.
+FAIL events[0] should be change e (of type string). Was undefined (of type undefined).
+FAIL events[1] should be change es (of type string). Was undefined (of type undefined).
+

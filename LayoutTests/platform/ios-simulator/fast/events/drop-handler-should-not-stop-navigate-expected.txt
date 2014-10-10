@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 38: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['DRTFakeFile'])')
+FAIL: Timed out waiting for notifyDone to be called
+This tests that a drop handler's default action must be prevented in order to stop navigation. Otherwise, if event.preventDefault() is not called, navigation should occur. To test manually, simply drag and drop another link or HTML file on this page. If navigation occurs, then the test passed.
+
+Starting test

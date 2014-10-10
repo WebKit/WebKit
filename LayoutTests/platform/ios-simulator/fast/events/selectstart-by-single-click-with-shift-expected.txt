@@ -1,0 +1,10 @@
+This test ensures selectstart is fired exactly once when selecting text by a mouse drag.
+
+Initial state: PASS
+Mouse down: PASS
+Mouse up: PASS
+Moving to the right: PASS
+Second mouse down: FAIL - expected selection to be range but was caret
+Second mouse up: FAIL - expected selection to be range but was caret
+Done.
+

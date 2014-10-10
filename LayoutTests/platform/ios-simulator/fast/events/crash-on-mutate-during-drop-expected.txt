@@ -1,0 +1,5 @@
+This test tests for a crash when a DOM mutation event listener modifies the text during a drop. If the test doesn't crash, all is good.
+
+drag source text
+
+drag dest text

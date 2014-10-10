@@ -1,0 +1,5 @@
+FAIL window.document.body.scrollTop should be 100. Was 0.
+FAIL window.document.body.scrollLeft should be 100. Was 0.
+FAIL window.scrollX should be 100. Was 0.
+FAIL window.scrollY should be 100. Was 0.
+

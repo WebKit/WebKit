@@ -1,0 +1,5 @@
+FAIL: Timed out waiting for notifyDone to be called
+
+Test touchend events are emulated in iframes correctly.
+
+

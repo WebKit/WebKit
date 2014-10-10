@@ -1,0 +1,11 @@
+FAIL: Timed out waiting for notifyDone to be called
+
+Tests that tap gesture events set and clear the active state of elements, even when inside an iframe and the document is scrolled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+See https://bugs.webkit.org/show_bug.cgi?id=96060 for details
+
+GestureTapDown is not supported by this platform
+

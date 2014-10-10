@@ -1,0 +1,42 @@
+This test checks that drag-and-drop support works and conforms to the HTML 5 specification.
+For each effectAllowed, iterates through the possible dropEffects: none, copy, move, link, dummy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+When effectAllowed == "uninitialized"
+
+
+When effectAllowed == "undefined"
+
+
+When effectAllowed == "none"
+
+
+When effectAllowed == "all"
+
+
+When effectAllowed == "copy"
+
+
+When effectAllowed == "move"
+
+
+When effectAllowed == "link"
+
+
+When effectAllowed == "copyMove"
+
+
+When effectAllowed == "copyLink"
+
+
+When effectAllowed == "linkMove"
+
+
+When effectAllowed == "dummy"
+
+
+TEST COMPLETE
+

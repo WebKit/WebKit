@@ -1,0 +1,118 @@
+This test verifies that the Home/End/PageUp/PageDown keys work correctly for <select> elements. Since it requires eventSender.keyDown, it will not run solo in the web browser; it must be run with run-webkit-tests.
+
+    
+PASS sendKeyAndExpectIndex("ss", "pageDown", 0, 3) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 1, 4) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 2, 5) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 3, 6) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 4, 6) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 5, 6) is true
+PASS sendKeyAndExpectIndex("ss", "pageDown", 6, 6) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 6, 3) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 5, 2) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 4, 1) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 3, 0) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 2, 0) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 1, 0) is true
+PASS sendKeyAndExpectIndex("ss", "pageUp", 0, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 6, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 5, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 4, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 3, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 2, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 1, 0) is true
+PASS sendKeyAndExpectIndex("ss", "home", 0, 0) is true
+PASS sendKeyAndExpectIndex("ss", "end", 6, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 5, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 4, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 3, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 2, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 1, 6) is true
+PASS sendKeyAndExpectIndex("ss", "end", 0, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 0, 4) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 1, 4) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 2, 5) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 4, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 5, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "pageDown", 6, 6) is true
+FAIL sendKeyAndExpectIndex("ssd", "pageDown", 7, 6) should be true. Was false.
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 7, 4) is true
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 6, 2) is true
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 5, 2) is true
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 4, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 2, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "pageUp", 1, 1) is true
+FAIL sendKeyAndExpectIndex("ssd", "pageUp", 0, 1) should be true. Was false.
+PASS sendKeyAndExpectIndex("ssd", "home", 7, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 6, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 5, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 4, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 3, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 2, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 1, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "home", 0, 1) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 7, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 6, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 5, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 4, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 3, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 2, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 1, 6) is true
+PASS sendKeyAndExpectIndex("ssd", "end", 0, 6) is true
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageDown", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageDown", [0, 1, 2, 3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageDown", [0, 1, 2, 3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0, 1, 2, 3]) should be true. Was false.
+PASS sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0]) is true
+PASS sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0]) is true
+FAIL sendWithShiftKeyAndExpectIndices("ss", "end", [0, 1, 2, 3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "end", [0, 1, 2, 3, 4, 5, 6]) should be true. Was false.
+PASS sendWithShiftKeyAndExpectIndices("ss", "home", [0]) is true
+PASS sendWithShiftKeyAndExpectIndices("ss", "home", [0]) is true
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageDown", [3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageDown", [3, 4, 5, 6]) should be true. Was false.
+PASS sendWithShiftKeyAndExpectIndices("ss", "pageUp", [3]) is true
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "pageUp", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "end", [3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "end", [3, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "home", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ss", "home", [0, 1, 2, 3]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageDown", [1, 2, 4]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageDown", [1, 2, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageDown", [1, 2, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [1, 2]) should be true. Was false.
+PASS sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [1]) is true
+PASS sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [1]) is true
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "end", [1, 2, 4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "end", [1, 2, 4, 5, 6]) should be true. Was false.
+PASS sendWithShiftKeyAndExpectIndices("ssd", "home", [1]) is true
+PASS sendWithShiftKeyAndExpectIndices("ssd", "home", [1]) is true
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageDown", [4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageDown", [4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [2, 4]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [1, 2, 4]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "pageUp", [1, 2, 4]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "end", [4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "end", [4, 5, 6]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "home", [1, 2, 4]) should be true. Was false.
+FAIL sendWithShiftKeyAndExpectIndices("ssd", "home", [1, 2, 4]) should be true. Was false.
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 0, 3) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 1, 3) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 2, 4) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 3, 5) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 4, 6) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 5, 6) is true
+PASS sendKeyAndExpectIndex("ssg", "pageDown", 6, 6) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 6, 4) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 5, 3) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 4, 2) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 3, 1) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 2, 0) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 1, 0) is true
+PASS sendKeyAndExpectIndex("ssg", "pageUp", 0, 0) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+selectedIndex should be 6 (is 7) after a pageDown from index 7 selectedIndex should be 1 (is 0) after a pageUp from index 0 selected indices should be [0, 1, 2, 3] (is [3]) after a pageDown selected indices should be [0, 1, 2, 3, 4, 5, 6] (is [6]) after a pageDown selected indices should be [0, 1, 2, 3, 4, 5, 6] (is [6]) after a pageDown selected indices should be [0, 1, 2, 3] (is [3]) after a pageUp selected indices should be [0, 1, 2, 3, 4, 5, 6] (is [6]) after a end selected indices should be [0, 1, 2, 3, 4, 5, 6] (is [6]) after a end selected indices should be [3, 4, 5, 6] (is [6]) after a pageDown selected indices should be [3, 4, 5, 6] (is [6]) after a pageDown selected indices should be [0, 1, 2, 3] (is [0]) after a pageUp selected indices should be [0, 1, 2, 3] (is [0]) after a pageUp selected indices should be [0, 1, 2, 3] (is [0]) after a pageUp selected indices should be [3, 4, 5, 6] (is [6]) after a end selected indices should be [3, 4, 5, 6] (is [6]) after a end selected indices should be [0, 1, 2, 3] (is [0]) after a home selected indices should be [0, 1, 2, 3] (is [0]) after a home selected indices should be [1, 2, 4] (is [4]) after a pageDown selected indices should be [1, 2, 4, 5, 6] (is [6]) after a pageDown selected indices should be [1, 2, 4, 5, 6] (is [6]) after a pageDown selected indices should be [1, 2] (is [2]) after a pageUp selected indices should be [1, 2, 4, 5, 6] (is [6]) after a end selected indices should be [1, 2, 4, 5, 6] (is [6]) after a end selected indices should be [4, 5, 6] (is [6]) after a pageDown selected indices should be [4, 5, 6] (is [6]) after a pageDown selected indices should be [2, 4] (is [2]) after a pageUp selected indices should be [1, 2, 4] (is [1]) after a pageUp selected indices should be [1, 2, 4] (is [1]) after a pageUp selected indices should be [4, 5, 6] (is [6]) after a end selected indices should be [4, 5, 6] (is [6]) after a end selected indices should be [1, 2, 4] (is [1]) after a home selected indices should be [1, 2, 4] (is [1]) after a home

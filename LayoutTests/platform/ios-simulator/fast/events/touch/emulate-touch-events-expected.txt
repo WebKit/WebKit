@@ -1,0 +1,10 @@
+FAIL: Timed out waiting for notifyDone to be called
+This tests single touch event emulation using mouse events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'ontouchstart' in window is true
+PASS 'ontouchend' in document is true
+Unexpected mousemove event received before touchstart
+

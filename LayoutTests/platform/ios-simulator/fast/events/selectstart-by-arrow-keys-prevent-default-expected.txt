@@ -1,0 +1,9 @@
+This test ensures selectstart event fires when selection is created by arrow key and script can prevent the selection change.
+
+If running this test manually, click on the div ("Hello World") and try to select the text using arrow keys.
+Expected result: SelectStart event will fire when user starts extending the selection, but due to script preventDefault it prevents the selection change.
+Hello World
+Check Right arrow + Shift: FAIL - expected 1 events but got 0 events
+Check Right arrow + Shift + Control: FAIL - expected 2 events but got 0 events
+Check End + Shift: FAIL - expected 3 events but got 0 events
+

@@ -1,0 +1,3 @@
+FAIL document.body.scrollTop should be 511. Was 0.
+FAIL document.body.scrollLeft should be 686. Was 0.
+

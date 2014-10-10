@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 69: TypeError: undefined is not a function (evaluating 'eventSender.gestureTap(10, 12)')
+FAIL: Timed out waiting for notifyDone to be called
+This tests basic gesture callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

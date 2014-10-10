@@ -1,0 +1,3 @@
+PASS div.scrollTop is window.expectedScrollTop
+PASS div.scrollLeft is window.expectedScrollLeft
+

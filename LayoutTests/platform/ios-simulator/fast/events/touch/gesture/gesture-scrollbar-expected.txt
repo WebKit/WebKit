@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 50: TypeError: undefined is not a function (evaluating 'eventSender.gestureTapDown(scrollbarX, scrollbarY)')
+This tests scroll gesture events on a scroll bar. The scrollable div below should be slightly scrolled down if successful.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS movingDiv.scrollTop is 0
+

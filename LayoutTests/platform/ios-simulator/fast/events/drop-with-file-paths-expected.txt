@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 11: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['resources/file-for-drop-with-file-paths.html'])')
+Drop files anywhere on this page. The page will try to intercept the drop--it should succeed but not be able to use dataTransfer.getData

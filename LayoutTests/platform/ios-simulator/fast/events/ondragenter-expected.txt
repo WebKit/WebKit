@@ -1,0 +1,2 @@
+Text
+This automated layout test checks to see that ondragenter events are being sent.

@@ -1,5 +1,11 @@
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for fast/events tests.
+
+        * platform/ios-simulator/fast/events/*: Added
+
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for fast/dynamic tests.
 
         * platform/ios-simulator/fast/dynamic/*: Added

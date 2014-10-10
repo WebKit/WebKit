@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 18: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(["resources/abe.png"])')
+FAIL: Timed out waiting for notifyDone to be called
+This test passes if there is no crash when dragging a file over and then away from the file input element below.
+
+

@@ -1,0 +1,8 @@
+Pop up a modal dialog. Verifies that focus events are not fired while inside the message loop.
+
+
+You need to disable pop-up blocker for this test to run successfully in the browser.
+
+onblur fired. Should see this exactly once.
+ERROR: onfocus fired.
+Modal dialog closing.

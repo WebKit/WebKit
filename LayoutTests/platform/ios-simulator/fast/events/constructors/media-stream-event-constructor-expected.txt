@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 12: ReferenceError: Can't find variable: webkitMediaStream
+This tests the constructor for the MediaStreamEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

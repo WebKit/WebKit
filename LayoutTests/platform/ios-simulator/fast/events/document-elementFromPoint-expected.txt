@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 230: TypeError: null is not an object (evaluating 'target.dispatchEvent')
+FAIL: Timed out waiting for notifyDone to be called
+Absolute
+Relative
+Fixed
+x	x
+Table Content
+In Columns
+Transformed
+In RTL overflow
+FAIL: event at (109, 57) expected to hit absolute at (29, 32) but hit filler at (109, 57)
+FAIL: event at (161, 13) expected to hit relative at (31, 28) but hit filler at (161, 13)
+FAIL: event at (40, 297) expected to hit table-content at (15, 18) but hit filler at (40, 297)
+FAIL: event at (122, 407) expected to hit transformed at (18, 15) but hit table-content at (77, 28)
+

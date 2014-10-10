@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 67: TypeError: undefined is not an object (evaluating 'dataTransfer.items.length')
+FAIL: Timed out waiting for notifyDone to be called
+To manually test, press your browser shortcut for copy and then for paste. Several lines that say 'PASS' should appear below.
+
+Copy handler: 
+Paste handler: 
+Running test with Legacy copy handler and Legacy paste handler
+FAIL: 4(of type number) !== 10(of type number)
+FAIL: types array did not contain "text/html"
+FAIL: types array did not contain "custom-data"
+FAIL: sample(of type string) !== (of type string)
+FAIL: http://www.google.com/(of type string) !== (of type string)
+FAIL: <em>Markup</em>(of type string) !== (of type string)
+FAIL: hello world(of type string) !== (of type string)
+Running test with Legacy copy handler and DataTransferItemList paste handler
+

@@ -1,0 +1,8 @@
+This test checks that on a successful drop we can access event.dataTransfer.types without crashing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+TEST COMPLETE
+

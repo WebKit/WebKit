@@ -1,0 +1,3 @@
+PASS div.scrollTop is window.expectedScrollTop
+FAIL div.scrollLeft should be 322. Was 0.
+

@@ -1,0 +1,9 @@
+This test ensures that we can click to focus an a element. Click on the element below.
+
+The expected result is platform specific. Mac doesn't allow some form controls to be mouse focusable.
+
+Result
+
+a4 received focus ()
+FAIL Some form elements didn't get focus
+

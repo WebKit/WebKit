@@ -1,0 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
+To test, try dragging this div around. It shouldn't crash, the div should disappear and PASS should appear.
+

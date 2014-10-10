@@ -1,0 +1,5 @@
+FAIL frame.contentDocument.body.scrollTop should be 100. Was 0.
+FAIL frame.contentDocument.body.scrollLeft should be 100. Was 0.
+FAIL frame.contentWindow.scrollX should be 100. Was 0.
+FAIL frame.contentWindow.scrollY should be 100. Was 0.
+

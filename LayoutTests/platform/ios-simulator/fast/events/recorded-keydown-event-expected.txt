@@ -1,0 +1,5 @@
+FAIL: Timed out waiting for notifyDone to be called
+Test for bug 37718: Crash when replaying a sequence of keyboard events.
+
+
+Please press any key.

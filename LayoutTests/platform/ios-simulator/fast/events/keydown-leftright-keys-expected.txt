@@ -1,0 +1,28 @@
+
+This tests keyboard events with KeyLocationCode argument.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 16. Was 0.
+FAIL lastKeyboardEvent.location should be 1. Was 0.
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 17. Was 0.
+FAIL lastKeyboardEvent.location should be 1. Was 0.
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 18. Was 0.
+FAIL lastKeyboardEvent.location should be 1. Was 0.
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 16. Was 0.
+FAIL lastKeyboardEvent.location should be 2. Was 0.
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 17. Was 0.
+FAIL lastKeyboardEvent.location should be 2. Was 0.
+PASS lastKeyboardEvent.type is "keydown"
+FAIL lastKeyboardEvent.keyCode should be 18. Was 0.
+FAIL lastKeyboardEvent.location should be 2. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

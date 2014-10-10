@@ -1,0 +1,4 @@
+This tests that you can use arrow keys to navigate.
+
+Test Failed. Selection start: 0 Selection end: 0
+
