@@ -1,5 +1,13 @@
 2014-10-10  Andy Estes  <aestes@apple.com>
 
+        [Mountain Lion] Fix global-constructors-attributes.html
+
+        Get rid of the platform/mac-wk2/ result since it's identical to the platform/mac/ version.
+
+        * platform/mac-wk2/js/dom/global-constructors-attributes-expected.txt: Removed.
+
+2014-10-10  Andy Estes  <aestes@apple.com>
+
         Fixes for additional Mavericks test failures.
 
         * platform/mac-mavericks/compositing/fixed-image-loading-expected.txt: Added.
