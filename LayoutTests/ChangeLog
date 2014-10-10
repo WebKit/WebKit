@@ -1,3 +1,9 @@
+2014-10-10  Andy Estes  <aestes@apple.com>
+
+        Mark compositing/rtl/rtl-fixed-overflow-scrolled.html as [ Failure ] on mac-wk1 platforms.
+
+        * platform/mac-wk1/TestExpectations:
+
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         iOS Simulator results for fast/events tests.
