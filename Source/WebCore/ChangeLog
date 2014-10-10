@@ -1,3 +1,9 @@
+2014-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Move sources not using GTK+ from WebCorePlatformGTK_SOURCES to WebCore_SOURCES.
+
+        * PlatformGTK.cmake:
+
 2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Move RenderThemeGtk.h from platform/gtk to rendering.

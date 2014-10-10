@@ -52,6 +52,8 @@ list(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/PlatformStrategies.cpp
 
+    platform/audio/gtk/AudioBusGtk.cpp
+
     platform/audio/gstreamer/AudioDestinationGStreamer.cpp
     platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
@@ -120,7 +122,16 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/opentype/OpenTypeVerticalData.cpp
 
+    platform/gtk/ErrorsGtk.cpp
+    platform/gtk/EventLoopGtk.cpp
+    platform/gtk/FileSystemGtk.cpp
     platform/gtk/GamepadsGtk.cpp
+    platform/gtk/LanguageGtk.cpp
+    platform/gtk/LoggingGtk.cpp
+    platform/gtk/MIMETypeRegistryGtk.cpp
+    platform/gtk/SharedBufferGtk.cpp
+    platform/gtk/TemporaryLinkStubs.cpp
+    platform/gtk/UserAgentGtk.cpp
 
     platform/image-decoders/ImageDecoder.cpp
 
@@ -186,8 +197,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
 
-    platform/audio/gtk/AudioBusGtk.cpp
-
     platform/cairo/WidgetBackingStoreCairo.cpp
 
     platform/graphics/GLContext.cpp
@@ -214,9 +223,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/DragDataGtk.cpp
     platform/gtk/DragIcon.cpp
     platform/gtk/DragImageGtk.cpp
-    platform/gtk/ErrorsGtk.cpp
-    platform/gtk/EventLoopGtk.cpp
-    platform/gtk/FileSystemGtk.cpp
     platform/gtk/GRefPtrGtk.cpp
     platform/gtk/GtkClickCounter.cpp
     platform/gtk/GtkDragAndDropHelper.cpp
@@ -226,10 +232,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/GtkUtilities.cpp
     platform/gtk/GtkVersioning.c
     platform/gtk/KeyBindingTranslator.cpp
-    platform/gtk/LanguageGtk.cpp
     platform/gtk/LocalizedStringsGtk.cpp
-    platform/gtk/LoggingGtk.cpp
-    platform/gtk/MIMETypeRegistryGtk.cpp
     platform/gtk/MainFrameScrollbarGtk.cpp
     platform/gtk/PasteboardGtk.cpp
     platform/gtk/PasteboardHelper.cpp
@@ -239,11 +242,8 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformWheelEventGtk.cpp
     platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/SharedBufferGtk.cpp
     platform/gtk/SharedTimerGtk.cpp
     platform/gtk/SoundGtk.cpp
-    platform/gtk/TemporaryLinkStubs.cpp
-    platform/gtk/UserAgentGtk.cpp
     platform/gtk/WidgetBackingStoreGtkX11.cpp
     platform/gtk/WidgetGtk.cpp
 
