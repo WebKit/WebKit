@@ -75,6 +75,7 @@ const CodeFeatures ThisFeature = 1 << 4;
 const CodeFeatures StrictModeFeature = 1 << 5;
 const CodeFeatures ShadowsArgumentsFeature = 1 << 6;
 const CodeFeatures ModifiedParameterFeature = 1 << 7;
+const CodeFeatures ModifiedArgumentsFeature = 1 << 8;
 
 const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature;
 
