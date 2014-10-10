@@ -1,3 +1,11 @@
+2014-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update my information in contributors.json
+
+        Use my preferred first name and update my expertise areas.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-10-10  Adrien Destugues  <pulkomandy@gmail.com>
 
         Fix perl scripts to run with env on Linux

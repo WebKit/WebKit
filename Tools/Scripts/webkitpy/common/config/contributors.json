@@ -3712,6 +3712,20 @@
             "cblu"
          ]
       },
+      "Chris Dumez" : {
+         "emails" : [
+            "cdumez@apple.com",
+            "dchris@gmail.com",
+            "ch.dumez@samsung.com",
+            "ch.dumez@sta.samsung.com",
+            "ch.dumez@sisa.samsung.com",
+            "christophe.dumez@intel.com"
+         ],
+         "expertise" : "Performance, DOM, HTML, Bindings generator, EFLWebKit Port",
+         "nicks" : [
+            "cdumez"
+         ]
+      },
       "Chris Fleizach" : {
          "emails" : [
             "cfleizach@apple.com"
@@ -3743,20 +3757,6 @@
          ],
          "nicks" : [
             "crogers"
-         ]
-      },
-      "Christophe Dumez" : {
-         "emails" : [
-            "cdumez@apple.com",
-            "dchris@gmail.com",
-            "ch.dumez@samsung.com",
-            "ch.dumez@sta.samsung.com",
-            "ch.dumez@sisa.samsung.com",
-            "christophe.dumez@intel.com"
-         ],
-         "expertise" : "The EFLWebKit Port, Bindings generator, Performance",
-         "nicks" : [
-            "cdumez"
          ]
       },
       "Csaba Osztrogon\u00e1c" : {
