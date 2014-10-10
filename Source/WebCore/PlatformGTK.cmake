@@ -212,8 +212,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/graphics/gtk/IconGtk.cpp
     platform/graphics/gtk/ImageBufferGtk.cpp
     platform/graphics/gtk/ImageGtk.cpp
-    platform/graphics/gtk/IntPointGtk.cpp
-    platform/graphics/gtk/IntRectGtk.cpp
 
     platform/gtk/ClipboardUtilitiesGtk.cpp
     platform/gtk/ContextMenuGtk.cpp

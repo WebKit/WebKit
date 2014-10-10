@@ -116,7 +116,6 @@ set(TestWebCoreGtk_SOURCES
     ${WEBCORE_DIR}/platform/graphics/IntRect.cpp
     ${WEBCORE_DIR}/platform/graphics/IntSize.cpp
     ${WEBCORE_DIR}/platform/graphics/cairo/IntRectCairo.cpp
-    ${WEBCORE_DIR}/platform/graphics/gtk/IntRectGtk.cpp
     ${WEBCORE_DIR}/platform/gtk/GtkInputMethodFilter.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/gtk/InputMethodFilter.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/gtk/UserAgentQuirks.cpp

@@ -49,10 +49,6 @@ typedef struct _NSRect NSRect;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
-#elif PLATFORM(GTK)
-#ifdef GTK_API_VERSION_2
-typedef struct _GdkRectangle GdkRectangle;
-#endif
 #endif
 
 #if USE(CAIRO)
@@ -171,11 +167,6 @@ public:
 #if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
-#elif PLATFORM(GTK)
-#ifdef GTK_API_VERSION_2
-    IntRect(const GdkRectangle&);
-    operator GdkRectangle() const;
-#endif
 #elif PLATFORM(EFL)
     explicit IntRect(const Eina_Rectangle&);
     operator Eina_Rectangle() const;
