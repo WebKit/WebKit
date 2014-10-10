@@ -124,10 +124,9 @@ private:
     virtual void flowThreadDescendantBoxLaidOut(RenderBox*) override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     virtual LayoutUnit initialLogicalWidth() const override;
-    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) override;
     virtual void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
-    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration) override;
+    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false) const override;
     virtual void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*) override;
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     virtual bool isPageLogicalHeightKnown() const override;

@@ -1,3 +1,33 @@
+2014-10-09  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Make RenderFlowThread::regionAtBlockOffset const
+        https://bugs.webkit.org/show_bug.cgi?id=137555
+
+        Reviewed by David Hyatt.
+
+        Make the method const and remove autoGenerateRegionsToBlockOffset method as it
+        is not used by region-based multicolumn code. Also removed the RegionAutoGenerationPolicy
+        parameter in the process and the call sites. Make const some of the methods that call
+        regionAtBlockOffset.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderFlowThread::pageLogicalTopForOffset):
+        (WebCore::RenderFlowThread::pageLogicalWidthForOffset):
+        (WebCore::RenderFlowThread::pageLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::computedRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::regionAtBlockOffset):
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion):
+        (WebCore::RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset): Deleted.
+        * rendering/RenderMultiColumnFlowThread.h:
+
 2014-10-09  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for FontData subclasses

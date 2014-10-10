@@ -232,7 +232,7 @@ const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFr
     return iterator == m_regionToLayerListMap->end() ? nullptr : &iterator->value;
 }
 
-RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer& childLayer)
+RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer& childLayer) const
 {
     if (childLayer.renderer().fixedPositionedWithNamedFlowContainingBlock())
         return nullptr;
@@ -246,7 +246,7 @@ RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer&
 
     // FIXME: remove this when we'll have region ranges for inlines as well.
     LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer.renderer().localToContainerPoint(LayoutPoint(), this, ApplyContainerFlip));
-    return toRenderNamedFlowFragment(regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true, DisallowRegionAutoGeneration));
+    return toRenderNamedFlowFragment(regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true));
 }
 
 RenderNamedFlowFragment* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer& childLayer) const
@@ -396,12 +396,9 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect) 
         region->repaintFlowThreadContent(repaintRect);
 }
 
-RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastRegion, RegionAutoGenerationPolicy autoGenerationPolicy)
+RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastRegion) const
 {
     ASSERT(!m_regionsInvalidated);
-
-    if (autoGenerationPolicy == AllowRegionAutoGeneration)
-        autoGenerateRegionsToBlockOffset(offset);
 
     if (m_regionList.isEmpty())
         return nullptr;
@@ -426,7 +423,7 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, L
     return region ? clampBox->clampToStartAndEndRegions(region) : nullptr;
 }
 
-LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint)
+LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint) const
 {
     LayoutPoint referencePoint = startPoint;
     
@@ -507,30 +504,30 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
     return referencePoint;
 }
 
-LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset)
+LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false, AllowRegionAutoGeneration);
+    RenderRegion* region = regionAtBlockOffset(0, offset, false);
     return region ? region->pageLogicalTopForOffset(offset) : LayoutUnit();
 }
 
-LayoutUnit RenderFlowThread::pageLogicalWidthForOffset(LayoutUnit offset)
+LayoutUnit RenderFlowThread::pageLogicalWidthForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, true, AllowRegionAutoGeneration);
+    RenderRegion* region = regionAtBlockOffset(0, offset, true);
     return region ? region->pageLogicalWidth() : contentLogicalWidth();
 }
 
-LayoutUnit RenderFlowThread::pageLogicalHeightForOffset(LayoutUnit offset)
+LayoutUnit RenderFlowThread::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false, AllowRegionAutoGeneration);
+    RenderRegion* region = regionAtBlockOffset(0, offset, false);
     if (!region)
         return 0;
 
     return region->pageLogicalHeight();
 }
 
-LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule)
+LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false, AllowRegionAutoGeneration);
+    RenderRegion* region = regionAtBlockOffset(0, offset, false);
     if (!region)
         return 0;
 
@@ -557,7 +554,7 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
         flipForWritingMode(boxRect);
 
         LayoutPoint center = boxRect.center();
-        renderRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true, DisallowRegionAutoGeneration);
+        renderRegion = regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true);
         if (!renderRegion)
             return nullptr;
     }
@@ -834,7 +831,7 @@ bool RenderFlowThread::computedRegionRangeForBox(const RenderBox* box, RenderReg
         // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
         // FIXME: Find the cases when this startRegion should not be equal with endRegion and make sure these boxes have cached region ranges.
         if (hasCachedRegionRangeForBox(cb)) {
-            startRegion = endRegion = const_cast<RenderFlowThread*>(this)->regionAtBlockOffset(cb, box->offsetFromLogicalTopOfFirstPage(), true, DisallowRegionAutoGeneration);
+            startRegion = endRegion = regionAtBlockOffset(cb, box->offsetFromLogicalTopOfFirstPage(), true);
             return true;
         }
     }

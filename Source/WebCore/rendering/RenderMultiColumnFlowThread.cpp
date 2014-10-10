@@ -485,33 +485,6 @@ LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const
     return columnWidth();
 }
 
-void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit offset)
-{
-    // This function ensures we have the correct column set information at all times.
-    // For a simple multi-column layout in continuous media, only one column set child is required.
-    // Once a column is nested inside an enclosing pagination context, the number of column sets
-    // required becomes 2n-1, where n is the total number of nested pagination contexts. For example:
-    //
-    // Column layout with no enclosing pagination model = 2 * 1 - 1 = 1 column set.
-    // Columns inside pages = 2 * 2 - 1 = 3 column sets (bottom of first page, all the subsequent pages, then the last page).
-    // Columns inside columns inside pages = 2 * 3 - 1 = 5 column sets.
-    //
-    // In addition, column spans will force a column set to "split" into before/after sets around the spanning element.
-    //
-    // Finally, we will need to deal with columns inside regions. If regions have variable widths, then there will need
-    // to be unique column sets created inside any region whose width is different from its surrounding regions. This is
-    // actually pretty similar to the spanning case, in that we break up the column sets whenever the width varies.
-    //
-    // FIXME: Parent fragmentation contexts might require us to insert additional column sets here,
-    // but we don't worry about it for now. This matches the old multi-column code. Right now our
-    // goal is just feature parity with the old multi-column code so that we can switch over to the
-    // new code as soon as possible. The one column set that we need has already been made during
-    // render tree creation, so there's nothing to do here, for the time being.
-
-    (void)offset; // hide warning
-    ASSERT(toRenderMultiColumnSet(regionAtBlockOffset(0, offset, true, DisallowRegionAutoGeneration)));
-}
-
 void RenderMultiColumnFlowThread::setPageBreak(const RenderBlock* block, LayoutUnit offset, LayoutUnit spaceShortage)
 {
     if (RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(regionAtBlockOffset(block, offset)))
@@ -524,10 +497,10 @@ void RenderMultiColumnFlowThread::updateMinimumPageHeight(const RenderBlock* blo
         multicolSet->updateMinimumColumnHeight(minHeight);
 }
 
-RenderRegion* RenderMultiColumnFlowThread::regionAtBlockOffset(const RenderBox* box, LayoutUnit offset, bool extendLastRegion, RegionAutoGenerationPolicy autoGenerationPolicy)
+RenderRegion* RenderMultiColumnFlowThread::regionAtBlockOffset(const RenderBox* box, LayoutUnit offset, bool extendLastRegion) const
 {
     if (!m_inLayout)
-        return RenderFlowThread::regionAtBlockOffset(box, offset, extendLastRegion, autoGenerationPolicy);
+        return RenderFlowThread::regionAtBlockOffset(box, offset, extendLastRegion);
 
     // Layout in progress. We are calculating the set heights as we speak, so the region range
     // information is not up-to-date.
@@ -710,7 +683,7 @@ RenderRegion* RenderMultiColumnFlowThread::mapFromFlowToRegion(TransformState& t
     // for now we just take the center of the mapped enclosing box and map it to a column.
     LayoutPoint centerPoint = boxRect.center();
     LayoutUnit centerLogicalOffset = isHorizontalWritingMode() ? centerPoint.y() : centerPoint.x();
-    RenderRegion* renderRegion = const_cast<RenderMultiColumnFlowThread*>(this)->regionAtBlockOffset(this, centerLogicalOffset, true, DisallowRegionAutoGeneration);
+    RenderRegion* renderRegion = regionAtBlockOffset(this, centerLogicalOffset, true);
     if (!renderRegion)
         return nullptr;
     transformState.move(physicalTranslationOffsetFromFlowToRegion(renderRegion, centerLogicalOffset));
@@ -753,7 +726,7 @@ RenderRegion* RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion(L
     
     // Now get the region that we are in.
     LayoutUnit logicalOffset = isHorizontalWritingMode() ? logicalPoint.y() : logicalPoint.x();
-    RenderRegion* renderRegion = const_cast<RenderMultiColumnFlowThread*>(this)->regionAtBlockOffset(this, logicalOffset, true, DisallowRegionAutoGeneration);
+    RenderRegion* renderRegion = regionAtBlockOffset(this, logicalOffset, true);
     if (!renderRegion)
         return nullptr;
     

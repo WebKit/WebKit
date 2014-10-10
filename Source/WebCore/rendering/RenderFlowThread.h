@@ -107,22 +107,17 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&) const;
     
-    LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&);
+    LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&) const;
 
-    LayoutUnit pageLogicalTopForOffset(LayoutUnit);
-    LayoutUnit pageLogicalWidthForOffset(LayoutUnit);
-    LayoutUnit pageLogicalHeightForOffset(LayoutUnit);
-    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary);
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit) const;
+    LayoutUnit pageLogicalWidthForOffset(LayoutUnit) const;
+    LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const;
+    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary) const;
 
     virtual void setPageBreak(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*spaceShortage*/) { }
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*minHeight*/) { }
 
-    enum RegionAutoGenerationPolicy {
-        AllowRegionAutoGeneration,
-        DisallowRegionAutoGeneration,
-    };
-
-    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
+    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
@@ -200,7 +195,7 @@ public:
 
     const RenderLayerList* getLayerListForRegion(RenderNamedFlowFragment*) const;
 
-    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&); // By means of getRegionRangeForBox or regionAtBlockOffset.
+    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&) const; // By means of getRegionRangeForBox or regionAtBlockOffset.
     RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&) const;
 
     virtual bool collectsGraphicsLayersUnderRegions() const;
@@ -270,8 +265,6 @@ protected:
     void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
 
     void initializeRegionsComputedAutoHeight(RenderRegion* = 0);
-
-    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) { };
 
     inline bool hasCachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
     inline LayoutUnit cachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
