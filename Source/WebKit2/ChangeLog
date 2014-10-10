@@ -1,3 +1,42 @@
+2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Race condition with WebKitWebView:is-loading after starting page load
+        https://bugs.webkit.org/show_bug.cgi?id=136692
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use PageLoadState::Observer to update both is-loading and uri
+        properties, instead of manually update them. This ensures that our
+        web view is always in sync with the WebPageProxy so that
+        webkit_web_view_is_loading() returns true right after requesting
+        any load. We still need to manually set the is-loading property
+        only in the case where we delay the emission of the load-changed
+        signals when waiting for the main resource. The bahaviour is a bit
+        different but still consistent with what our API documentation says.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView): Remove
+        didSameDocumentNavigationForFrame implementation, since we are
+        already notified about the URL change by the PageLoadState::Observer.
+        (didSameDocumentNavigationForFrame): Deleted.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetIsLoading): No longer update the URI when
+        changing the is-loading property.
+        (webkitWebViewConstructed): Crate a PageLoadStateObserver and add
+        it to the PageLoadState.
+        (webkitWebViewDispose): Remove the PageLoadStateObserver from the PageLoadState.
+        (webkitWebViewEmitLoadChanged): Add isDelayedEvent parameter to
+        update the is-loading property accordingly when emitting the
+        delayed events.
+        (webkitWebViewEmitDelayedLoadEvents): Pass true as isDelayedEvent
+        parameter of webkitWebViewEmitLoadChanged().
+        (webkitWebViewLoadChanged): Pass false as isDelayedEvent parameter
+        of webkitWebViewEmitLoadChanged().
+        (webkitWebViewLoadFailed):
+        (webkitWebViewLoadFailedWithTLSErrors):
+        (webkitWebViewUpdateURI): Deleted.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
 2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [X11] Plugin process crashes in NetscapePlugin::platformPostInitialize()

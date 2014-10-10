@@ -1,3 +1,27 @@
+2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Race condition with WebKitWebView:is-loading after starting page load
+        https://bugs.webkit.org/show_bug.cgi?id=136692
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (loadChangedCallback): Only check is-loading is false when load
+        has finished if the load didn't fail due to a cancellation.
+        (loadFailedCallback): Only check is-loading is false if the load
+        didn't fail due to a cancellation.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::loadURI): Check is-loading is true and active URI is
+        the requested one rigth after requesting the load.
+        (WebViewTest::loadHtml): Ditto.
+        (WebViewTest::loadPlainText): Ditto.
+        (WebViewTest::loadBytes): Ditto.
+        (WebViewTest::loadRequest): Ditto.
+        (WebViewTest::loadAlternateHTML): Ditto.
+        (WebViewTest::goBack): Ditto.
+        (WebViewTest::goForward): Ditto.
+        (WebViewTest::goToBackForwardListItem): Ditto.
+
 2014-09-23  Jer Noble  <jer.noble@apple.com>
 
         [Tools] git-commit uses wrong ChangeLog when run from a subdirectory

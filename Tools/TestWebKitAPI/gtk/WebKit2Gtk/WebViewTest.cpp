@@ -54,6 +54,8 @@ void WebViewTest::loadURI(const char* uri)
 {
     m_activeURI = uri;
     webkit_web_view_load_uri(m_webView, uri);
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::loadHtml(const char* html, const char* baseURI)
@@ -63,12 +65,20 @@ void WebViewTest::loadHtml(const char* html, const char* baseURI)
     else
         m_activeURI = baseURI;
     webkit_web_view_load_html(m_webView, html, baseURI);
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::loadPlainText(const char* plainText)
 {
     m_activeURI = "about:blank";
     webkit_web_view_load_plain_text(m_webView, plainText);
+#if 0
+    // FIXME: Pending API request URL no set when loading plain text.
+    // See https://bugs.webkit.org/show_bug.cgi?id=136916.
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+#endif
 }
 
 void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* encoding, const char* baseURI)
@@ -78,23 +88,38 @@ void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* enc
     else
         m_activeURI = baseURI;
     webkit_web_view_load_bytes(m_webView, bytes, mimeType, encoding, baseURI);
+#if 0
+    // FIXME: Pending API request URL no set when loading data.
+    // See https://bugs.webkit.org/show_bug.cgi?id=136916.
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+#endif
 }
 
 void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
     m_activeURI = webkit_uri_request_get_uri(request);
     webkit_web_view_load_request(m_webView, request);
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI)
 {
     m_activeURI = contentURI;
     webkit_web_view_load_alternate_html(m_webView, html, contentURI, baseURI);
+#if 0
+    // FIXME: Pending API request URL no set when loading Alternate HTML.
+    // See https://bugs.webkit.org/show_bug.cgi?id=136916.
+    g_assert(webkit_web_view_is_loading(m_webView));
+#endif
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::goBack()
 {
-    if (webkit_web_view_can_go_back(m_webView)) {
+    bool canGoBack = webkit_web_view_can_go_back(m_webView);
+    if (canGoBack) {
         WebKitBackForwardList* list = webkit_web_view_get_back_forward_list(m_webView);
         WebKitBackForwardListItem* item = webkit_back_forward_list_get_nth_item(list, -1);
         m_activeURI = webkit_back_forward_list_item_get_original_uri(item);
@@ -102,11 +127,16 @@ void WebViewTest::goBack()
 
     // Call go_back even when can_go_back returns FALSE to check nothing happens.
     webkit_web_view_go_back(m_webView);
+    if (canGoBack) {
+        g_assert(webkit_web_view_is_loading(m_webView));
+        g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+    }
 }
 
 void WebViewTest::goForward()
 {
-    if (webkit_web_view_can_go_forward(m_webView)) {
+    bool canGoForward = webkit_web_view_can_go_forward(m_webView);
+    if (canGoForward) {
         WebKitBackForwardList* list = webkit_web_view_get_back_forward_list(m_webView);
         WebKitBackForwardListItem* item = webkit_back_forward_list_get_nth_item(list, 1);
         m_activeURI = webkit_back_forward_list_item_get_original_uri(item);
@@ -114,12 +144,18 @@ void WebViewTest::goForward()
 
     // Call go_forward even when can_go_forward returns FALSE to check nothing happens.
     webkit_web_view_go_forward(m_webView);
+    if (canGoForward) {
+        g_assert(webkit_web_view_is_loading(m_webView));
+        g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+    }
 }
 
 void WebViewTest::goToBackForwardListItem(WebKitBackForwardListItem* item)
 {
     m_activeURI = webkit_back_forward_list_item_get_original_uri(item);
     webkit_web_view_go_to_back_forward_list_item(m_webView, item);
+    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::quitMainLoop()
