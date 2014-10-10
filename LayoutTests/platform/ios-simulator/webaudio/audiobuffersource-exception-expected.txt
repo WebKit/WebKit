@@ -1,0 +1,11 @@
+Tests that AudioBufferSourceNode validates start and stop calls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS bufferSource.stop(0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS bufferSource.start(0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS bufferSource.stop(0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

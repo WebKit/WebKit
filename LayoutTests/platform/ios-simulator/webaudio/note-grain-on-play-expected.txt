@@ -1,0 +1,13 @@
+Test noteGrainOn offset rendering.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Found all 100 grains.
+PASS All 100 grains started at the correct time.
+PASS All 100 grains ended at the correct time.
+PASS All 100 grains contained the correct data.
+PASS noteGrainOn offset rendering tests passed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

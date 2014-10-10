@@ -1,0 +1,18 @@
+Basic tests for AudioBuffer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sampleRate has been set correctly.
+PASS length has been set correctly.
+PASS duration has been set correctly.
+PASS numberOfChannels has been set correctly.
+PASS getChannelData(0) returns a Float32Array object.
+PASS getChannelData(1) returns a Float32Array object.
+PASS getChannelData(2) returns a Float32Array object.
+PASS getChannelData(3) returns a Float32Array object.
+PASS Exception has been thrown correctly when index is not less than numberOfChannels.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

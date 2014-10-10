@@ -1,0 +1,11 @@
+Tests Biquad peaking filter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Rendered output did not have infinities or NaNs.
+PASS Peaking filter response is correct.
+PASS Test signal was correctly filtered.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+Tests AudioBufferSourceNode start() with a variety of offsets and durations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS start(when): implicitly play whole buffer from beginning to end
+PASS start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0
+PASS start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames
+PASS start(when, 4_frames): play with explicit non-zero offset
+PASS start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration
+

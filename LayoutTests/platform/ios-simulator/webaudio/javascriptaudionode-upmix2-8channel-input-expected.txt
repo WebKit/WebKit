@@ -1,0 +1,9 @@
+Tests upmixing a 2-channel source connected to a JavaScriptAudioNode with 8-channel input.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS onaudioprocess was called with correct input data.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
