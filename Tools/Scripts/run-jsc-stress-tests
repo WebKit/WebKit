@@ -107,6 +107,7 @@ $outputDir = Pathname.new("results")
 $verbosity = 0
 $bundle = nil
 $tarball = false
+$tarFileName = "payload.tar.gz"
 $copyVM = false
 $testRunnerType = :make
 $remoteUser = nil
@@ -126,7 +127,7 @@ def usage
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
-    puts "--tarball                   Creates a tarball of the final bundle."
+    puts "--tarball [fileName]        Creates a tarball of the final bundle.  Use name if supplied for tar file."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
     puts "--remote                    Specify a remote host on which to run tests."
@@ -144,7 +145,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
-               ['--tarball', GetoptLong::NO_ARGUMENT],
+               ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
@@ -171,6 +172,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--tarball'
         $tarball = true
         $copyVM = true
+        $tarFileName = arg unless arg == ''
     when '--force-vm-copy'
         $copyVM = true
     when '--shell-runner'
@@ -1346,11 +1348,11 @@ def runShellTestRunner
         }
 
         $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
-        mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + "payload.tar.gz").to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
+        mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
         remoteScript = "\""
         remoteScript += "cd #{$remoteDirectory} && "
         remoteScript += "rm -rf #{$outputDir.basename} && "
-        remoteScript += "tar xzf payload.tar.gz && "
+        remoteScript += "tar xzf #{$tarFileName} && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += "DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" sh runscript"
         remoteScript += "\""
@@ -1393,7 +1395,7 @@ def detectFailures
 end
 
 def compressBundle
-    cmd = "cd #{$outputDir}/.. && tar -czf payload.tar.gz #{$outputDir.basename}"
+    cmd = "cd #{$outputDir}/.. && tar -czf #{$tarFileName} #{$outputDir.basename}"
     $stderr.puts ">> #{cmd}" if $verbosity >= 2
     raise unless system(cmd)
 end

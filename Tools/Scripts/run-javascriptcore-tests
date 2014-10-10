@@ -268,6 +268,10 @@ if ($runJSCStress) {
         push(@jscStressDriverCmd, "--remote");
         push(@jscStressDriverCmd, $remoteHost);
     }
+
+    # End option processing, the rest of the arguments are tests
+    push((@jscStressDriverCmd, "--");
+
     if (defined($extraTests)) {
         push(@jscStressDriverCmd, $extraTests);
     }
