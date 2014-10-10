@@ -126,7 +126,7 @@ MetricsBubbleView.prototype = {
                 addLine(this.element, "- average: " + pluralizeMinutes(this._results.averageTotalTimeForPatchesThatWereNotRetriedInSeconds) + ".");
                 if (this._results.patchesThatDidNotApplyCount !== this._results.patchesThatSpinnedAndCeasedToApplyCount) {
                     if (this._results.patchesThatDidNotApplyCount - this._results.patchesThatSpinnedAndCeasedToApplyCount === numberOfPatchesThatHadFinalResultsAtFirstTry)
-                        addLine(this.element, "None of these applied to trunk.");
+                        addLine(this.element, "None of these patches applied to trunk.");
                     else
                         addLine(this.element, "This includes " + formatPercentage((this._results.patchesThatDidNotApplyCount - this._results.patchesThatSpinnedAndCeasedToApplyCount) / this._results.totalPatches) + " that did not apply to trunk.");
                 }
