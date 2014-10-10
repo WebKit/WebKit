@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2007, 2013 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Staikos Computing Services, Inc.  <info@staikos.net>
@@ -30,6 +30,7 @@
 # Simplified "run" script for WebKit Open Source Project.
 
 use strict;
+use warnings;
 use File::Spec::Functions qw/catdir/;
 use File::Temp qw/tempfile/;
 use FindBin;

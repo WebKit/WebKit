@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved.
@@ -30,6 +30,7 @@
 # Script to put change log comments in as default check-in comment.
 
 use strict;
+use warnings;
 use Getopt::Long;
 use File::Basename;
 use File::Spec;

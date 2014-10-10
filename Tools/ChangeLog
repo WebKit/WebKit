@@ -1,3 +1,20 @@
+2014-10-10  Adrien Destugues  <pulkomandy@gmail.com>
+
+        Fix perl scripts to run with env on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=137601
+
+        Reviewed by Csaba Osztrogonác.
+
+        Use of arguments in #! is nonstandard and does not behave the same on
+        different systems. Linux would look for an executable named "perl -w" 
+        "use warnings;" does the same things in a more portable way.
+
+        * Scripts/commit-log-editor:
+        * Scripts/num-cpus:
+        * Scripts/prepare-ChangeLog:
+        * Scripts/run-launcher:
+        * Scripts/svn-create-patch:
+
 2014-10-10  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [jhbuild] We should be able to disable wiping on configuration change
