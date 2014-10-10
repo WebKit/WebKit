@@ -64,7 +64,6 @@ class ProtocolTypesHeaderGenerator(Generator):
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in sorted(headers)]),
             'typedefs': '',
-            'inputFilename': self._input_filepath
         }
 
         return_type = 'String'

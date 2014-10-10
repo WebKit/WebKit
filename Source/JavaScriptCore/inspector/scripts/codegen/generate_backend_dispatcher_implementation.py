@@ -55,7 +55,6 @@ class BackendDispatcherImplementationGenerator(Generator):
         header_args = {
             'primaryInclude': '"Inspector%sBackendDispatchers.h"' % self.model().framework.setting('prefix'),
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
-            'inputFilename': self._input_filepath
         }
 
         sections = []

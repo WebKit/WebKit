@@ -60,7 +60,6 @@ class BackendDispatcherHeaderGenerator(Generator):
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in headers]),
             'typedefs': '\n'.join(['typedef %s %s;' % typedef for typedef in typedefs]),
-            'inputFilename': self._input_filepath
         }
 
         sections = []

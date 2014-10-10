@@ -59,7 +59,6 @@ class FrontendDispatcherHeaderGenerator(Generator):
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in headers]),
             'typedefs': '',
-            'inputFilename': self._input_filepath
         }
 
         sections = []

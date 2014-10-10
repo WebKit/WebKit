@@ -52,7 +52,6 @@ class FrontendDispatcherImplementationGenerator(Generator):
         header_args = {
             'primaryInclude': '"Inspector%sFrontendDispatchers.h"' % self.model().framework.setting('prefix'),
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
-            'inputFilename': self._input_filepath
         }
 
         sections = []

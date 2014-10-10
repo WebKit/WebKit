@@ -37,10 +37,6 @@ _FRAMEWORK_CONFIG_MAP = {
     "Global": {
         "prefix": "",
     },
-
-    "WTF": {
-        "prefix": "WTF",
-    },
     "JavaScriptCore": {
         "prefix": "JS",
         "export_macro": "JS_EXPORT_PRIVATE"
@@ -76,9 +72,6 @@ class Framework:
         if frameworkString == "Global":
             return Frameworks.Global
 
-        if frameworkString == "WTF":
-            return Frameworks.WTF
-
         if frameworkString == "JavaScriptCore":
             return Frameworks.JavaScriptCore
 
@@ -93,7 +86,6 @@ class Framework:
 
 class Frameworks:
     Global = Framework("Global")
-    WTF = Framework("WTF")
     JavaScriptCore = Framework("JavaScriptCore")
     WebCore = Framework("WebCore")
     Test = Framework("Test")

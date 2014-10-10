@@ -1,3 +1,30 @@
+2014-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused generator code
+        https://bugs.webkit.org/show_bug.cgi?id=137564
+
+        Reviewed by Brian Burg.
+
+        * inspector/scripts/codegen/generate_backend_dispatcher_header.py:
+        (BackendDispatcherHeaderGenerator.generate_output): Deleted.
+        * inspector/scripts/codegen/generate_backend_dispatcher_implementation.py:
+        (BackendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_header.py:
+        (FrontendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py:
+        (FrontendDispatcherImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generate_protocol_types_header.py:
+        (ProtocolTypesHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_protocol_types_implementation.py:
+        (ProtocolTypesImplementationGenerator.generate_output):
+        inputFilename is now handled by the generic generator base class.
+
+        * inspector/scripts/codegen/models.py:
+        (Framework.fromString):
+        (Frameworks):
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        The WTF framework is unused. Remove unexpected frameworks.
+
 2014-10-09  Dean Jackson  <dino@apple.com>
 
         Remove ENABLE_CSS3_CONDITIONAL_RULES
