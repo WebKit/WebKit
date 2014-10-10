@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for transforms tests.
+
+        * platform/ios-simulator/transforms/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for tables tests.
 
         * platform/ios-simulator/tables/*: Added
