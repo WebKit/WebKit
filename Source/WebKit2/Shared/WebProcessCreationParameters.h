@@ -95,9 +95,6 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 #endif
 #if USE(SOUP)
-#if !ENABLE(CUSTOM_PROTOCOLS)
-    Vector<String> urlSchemesRegistered;
-#endif
     String cookiePersistentStoragePath;
     uint32_t cookiePersistentStorageType;
     HTTPCookieAcceptPolicy cookieAcceptPolicy;

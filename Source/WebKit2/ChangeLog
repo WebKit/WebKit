@@ -1,3 +1,36 @@
+2014-10-10  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        [SOUP] Remove custom URI schemes implementation
+        https://bugs.webkit.org/show_bug.cgi?id=128169
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/soup/WKAPICastSoup.h:
+        * UIProcess/API/C/soup/WKContextSoup.cpp: Removed.
+        * UIProcess/API/C/soup/WKSoupRequestManager.cpp: Removed.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveURIRequest): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp: Removed.
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp: Removed.
+        * UIProcess/soup/WebSoupRequestManagerProxy.messages.in: Removed.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync):
+        (webkitSoupRequestGenericSendFinish):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/soup/WebSoupRequestManager.cpp: Removed.
+        * WebProcess/soup/WebSoupRequestManager.messages.in: Removed.
+
 2014-10-09  Dean Jackson  <dino@apple.com>
 
         Remove ENABLE_CSS3_CONDITIONAL_RULES

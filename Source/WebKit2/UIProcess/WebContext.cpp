@@ -99,12 +99,8 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
-#if USE(SOUP)
-#if ENABLE(CUSTOM_PROTOCOLS)
+#if USE(SOUP) && ENABLE(CUSTOM_PROTOCOLS)
 #include "WebSoupCustomProtocolRequestManager.h"
-#else
-#include "WebSoupRequestManagerProxy.h"
-#endif
 #endif
 
 #ifndef NDEBUG
@@ -209,12 +205,8 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #if ENABLE(SQL_DATABASE)
     addSupplement<WebDatabaseManagerProxy>();
 #endif
-#if USE(SOUP)
-#if ENABLE(CUSTOM_PROTOCOLS)
+#if USE(SOUP) && ENABLE(CUSTOM_PROTOCOLS)
     addSupplement<WebSoupCustomProtocolRequestManager>();
-#else
-    addSupplement<WebSoupRequestManagerProxy>();
-#endif
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManagerProxy>();

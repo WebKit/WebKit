@@ -22,11 +22,6 @@
 
 #include <wtf/text/CString.h>
 
-#if !ENABLE(CUSTOM_PROTOCOLS)
-#include "WebProcess.h"
-#include "WebSoupRequestManager.h"
-#endif
-
 using namespace WebKit;
 
 G_DEFINE_TYPE(WebKitSoupRequestGeneric, webkit_soup_request_generic, SOUP_TYPE_REQUEST)
@@ -55,8 +50,6 @@ static void webkitSoupRequestGenericSendAsync(SoupRequest* request, GCancellable
     CustomProtocolManagerImpl* customProtocolManager = WEBKIT_SOUP_REQUEST_GENERIC_GET_CLASS(request)->customProtocolManager;
     ASSERT(customProtocolManager);
     customProtocolManager->send(g_task_new(request, cancellable, callback, userData));
-#else
-    WebProcess::shared().supplement<WebSoupRequestManager>()->send(g_task_new(request, cancellable, callback, userData));
 #endif
 }
 
@@ -68,7 +61,7 @@ static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest* request, GA
     ASSERT(customProtocolManager);
     return customProtocolManager->finish(G_TASK(result), error);
 #else
-    return WebProcess::shared().supplement<WebSoupRequestManager>()->finish(G_TASK(result), error);
+    return nullptr;
 #endif
 }
 

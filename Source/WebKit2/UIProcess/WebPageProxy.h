@@ -1253,10 +1253,6 @@ private:
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
-#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
-    void didReceiveURIRequest(String uriString, uint64_t requestID);
-#endif
-
     void clearLoadDependentCallbacks();
 
     void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);

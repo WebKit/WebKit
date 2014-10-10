@@ -44,10 +44,6 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
-#if !ENABLE(CUSTOM_PROTOCOLS)
-#include "WebSoupRequestManager.h"
-#endif
-
 namespace WebKit {
 
 static uint64_t getCacheDiskFreeSize(SoupCache* cache)
@@ -169,11 +165,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
-
-#if !ENABLE(CUSTOM_PROTOCOLS)
-    for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
-        supplement<WebSoupRequestManager>()->registerURIScheme(parameters.urlSchemesRegistered[i]);
-#endif
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 

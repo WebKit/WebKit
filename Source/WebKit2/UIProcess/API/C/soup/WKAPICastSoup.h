@@ -37,8 +37,6 @@ class WebSoupRequestManagerProxy;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 WK_ADD_API_MAPPING(WKSoupCustomProtocolRequestManagerRef, WebSoupCustomProtocolRequestManager)
-#else
-WK_ADD_API_MAPPING(WKSoupRequestManagerRef, WebSoupRequestManagerProxy)
 #endif
 
 }

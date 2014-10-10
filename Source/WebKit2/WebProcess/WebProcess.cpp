@@ -128,10 +128,6 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
-#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
-#include "WebSoupRequestManager.h"
-#endif
-
 using namespace JSC;
 using namespace WebCore;
 
@@ -203,9 +199,6 @@ WebProcess::WebProcess()
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManager>();
-#endif
-#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
-    addSupplement<WebSoupRequestManager>();
 #endif
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 }
