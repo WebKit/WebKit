@@ -160,7 +160,6 @@ struct _WebKitWebViewPrivate {
     WebKitWebView* relatedView;
     CString title;
     CString customTextEncoding;
-    double estimatedLoadProgress;
     CString activeURI;
     bool isLoading;
 
@@ -237,8 +236,16 @@ private:
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
-    virtual void willChangeTitle() override { }
-    virtual void didChangeTitle() override { }
+    virtual void willChangeTitle() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    virtual void didChangeTitle() override
+    {
+        m_webView->priv->title = getPage(m_webView)->pageLoadState().title().utf8();
+        g_object_notify(G_OBJECT(m_webView), "title");
+        g_object_thaw_notify(G_OBJECT(m_webView));
+    }
 
     virtual void willChangeActiveURL() override
     {
@@ -253,8 +260,17 @@ private:
 
     virtual void willChangeHasOnlySecureContent() override { }
     virtual void didChangeHasOnlySecureContent() override { }
-    virtual void willChangeEstimatedProgress() override { }
-    virtual void didChangeEstimatedProgress() override { }
+
+    virtual void willChangeEstimatedProgress() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    virtual void didChangeEstimatedProgress() override
+    {
+        g_object_notify(G_OBJECT(m_webView), "estimated-load-progress");
+        g_object_thaw_notify(G_OBJECT(m_webView));
+    }
+
     virtual void willChangeCanGoBack() override { }
     virtual void didChangeCanGoBack() override { }
     virtual void willChangeCanGoForward() override { }
@@ -1657,25 +1673,6 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
-void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->title == title)
-        return;
-
-    priv->title = title;
-    g_object_notify(G_OBJECT(webView), "title");
-}
-
-void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
-{
-    if (webView->priv->estimatedLoadProgress == estimatedLoadProgress)
-        return;
-
-    webView->priv->estimatedLoadProgress = estimatedLoadProgress;
-    g_object_notify(G_OBJECT(webView), "estimated-load-progress");
-}
-
 WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
 {
     WebKitWebView* newWebView;
@@ -2520,7 +2517,7 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
 gdouble webkit_web_view_get_estimated_load_progress(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    return webView->priv->estimatedLoadProgress;
+    return getPage(webView)->pageLoadState().estimatedProgress();
 }
 
 /**

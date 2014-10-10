@@ -1,5 +1,26 @@
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use the PageLoadState observer also to monitor title and estimated load progress
+        https://bugs.webkit.org/show_bug.cgi?id=136997
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView): Remove implementation of
+        didReceiveTitleForFrame, didStartProgress, didChangeProgress and
+        didFinishProgress.
+        (didReceiveTitleForFrame): Deleted.
+        (didChangeProgress): Deleted.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_estimated_load_progress): Return the value
+        directly from the PageLoadState object, since we don't need to
+        cache the value anymore.
+        (webkitWebViewSetTitle): Deleted.
+        (webkitWebViewSetEstimatedLoadProgress): Deleted.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
+2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Race condition with WebKitWebView:is-loading after starting page load
         https://bugs.webkit.org/show_bug.cgi?id=136692
 

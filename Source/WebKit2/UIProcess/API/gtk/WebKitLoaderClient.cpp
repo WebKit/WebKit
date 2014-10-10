@@ -91,14 +91,6 @@ static void didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef
                             resourceError.failingURL().utf8().data(), webError.get());
 }
 
-static void didReceiveTitleForFrame(WKPageRef, WKStringRef titleRef, WKFrameRef frameRef, WKTypeRef, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frameRef))
-        return;
-
-    webkitWebViewSetTitle(WEBKIT_WEB_VIEW(clientInfo), toImpl(titleRef)->string().utf8());
-}
-
 static void didDisplayInsecureContentForFrame(WKPageRef, WKFrameRef, WKTypeRef /* userData */, const void *clientInfo)
 {
     webkitWebViewInsecureContentDetected(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_INSECURE_CONTENT_DISPLAYED);
@@ -107,11 +99,6 @@ static void didDisplayInsecureContentForFrame(WKPageRef, WKFrameRef, WKTypeRef /
 static void didRunInsecureContentForFrame(WKPageRef, WKFrameRef, WKTypeRef /* userData */, const void *clientInfo)
 {
     webkitWebViewInsecureContentDetected(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_INSECURE_CONTENT_RUN);
-}
-
-static void didChangeProgress(WKPageRef page, const void* clientInfo)
-{
-    webkitWebViewSetEstimatedLoadProgress(WEBKIT_WEB_VIEW(clientInfo), WKPageGetEstimatedProgress(page));
 }
 
 static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
@@ -144,7 +131,7 @@ void attachLoaderClientToView(WebKitWebView* webView)
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
         0, // didSameDocumentNavigationForFrame
-        didReceiveTitleForFrame,
+        0, // didReceiveTitleForFrame,
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy
@@ -152,9 +139,9 @@ void attachLoaderClientToView(WebKitWebView* webView)
         didRunInsecureContentForFrame,
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         didReceiveAuthenticationChallengeInFrame,
-        didChangeProgress, // didStartProgress
-        didChangeProgress,
-        didChangeProgress, // didFinishProgress
+        0, // didStartProgress
+        0, // didChangeProgress,
+        0, // didFinishProgress
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
         processDidCrash,
