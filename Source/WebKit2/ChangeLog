@@ -1,3 +1,25 @@
+2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [X11] Plugin process crashes in NetscapePlugin::platformPostInitialize()
+        https://bugs.webkit.org/show_bug.cgi?id=137426
+
+        Reviewed by Darin Adler.
+
+        For some reason flash crashes when NPP_GetValue is called with
+        NPPVpluginCancelSrcStream, but only in windowed mode. Not calling
+        NPP_GetValue and unconditionally loading the source URL in the
+        browser fixes the crash and plugins work normally. We can handle
+        this particular case with a new quirk.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks): Add
+        DoNotCancelSrcStreamInWindowedMode quirk if it's flash plugin.
+        * Shared/Plugins/PluginQuirks.h: Add
+        DoNotCancelSrcStreamInWindowedMode quirk.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::shouldLoadSrcURL): Return early if plugin
+        is windowed and DoNotCancelSrcStreamInWindowedMode quirk is present.
+
 2014-09-25  Tim Horton  <timothy_horton@apple.com>
 
         CommitLayerTree decode fails in 32-bit apps on 64-bit devices (TransformationMatrix alignment differs)

@@ -189,6 +189,7 @@ void NetscapePluginModule::determineQuirks()
 #if PLATFORM(EFL)
             m_pluginQuirks.add(PluginQuirks::ForceFlashWindowlessMode);
 #endif
+            m_pluginQuirks.add(PluginQuirks::DoNotCancelSrcStreamInWindowedMode);
             break;
         }
     }
