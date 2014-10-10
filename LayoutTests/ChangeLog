@@ -1,5 +1,12 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for fast/css-generated-content, css-grid-layout tests.
+
+        * platform/ios-simulator/fast/css-generated-content/*: Added.
+        * platform/ios-simulator/fast/css-grid-layout/*: Added.
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for fast/css tests.
 
         * platform/ios-simulator/fast/css/*: Added

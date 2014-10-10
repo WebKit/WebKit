@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {SPAN} at (0,0) size 226x19
+          RenderText {#text} at (0,0) size 226x19
+            text run at (0,0) width 226: "This test passes if it does not crash."
+        RenderText {#text} at (225,0) size 5x19
+          text run at (225,0) width 5: " "
+        RenderBR {BR} at (229,15) size 1x0
+      RenderBlock {UL} at (0,36) size 784x60
+        RenderListItem {LI} at (40,0) size 744x60
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+          RenderTable at (0,20) size 32x20
+            RenderTableSection (anonymous) at (0,0) size 32x20
+              RenderTableRow (anonymous) at (0,0) size 32x20
+                RenderTableCell (anonymous) at (0,0) size 32x20 [r=0 c=0 rs=1 cs=1]
+                  RenderText at (0,0) size 32x19
+                    text run at (0,0) width 32: "hello"
+          RenderBlock (anonymous) at (0,40) size 744x20
+            RenderText {#text} at (0,0) size 23x19
+              text run at (0,0) width 23: "test"

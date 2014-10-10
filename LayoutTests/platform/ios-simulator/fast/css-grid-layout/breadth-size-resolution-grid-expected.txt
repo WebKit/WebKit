@@ -1,0 +1,38 @@
+Test that specifying the track breadth sizes works properly with all the allowed length types and in different writing modes.
+
+FAIL:
+Expected 60 for height, but got 46. 
+Expected 80 for width, but got 32. 
+Expected 60 for height, but got 46. 
+Expected 80 for width, but got 32. 
+
+<div class="grid">
+    <div class="firstRowFirstColumn" data-expected-width="100" data-expected-height="60"></div>
+    <div class="firstRowSecondColumn" data-expected-width="80" data-expected-height="60"></div>
+    <div class="secondRowFirstColumn" data-expected-width="100" data-expected-height="100"></div>
+    <div class="secondRowSecondColumn" data-expected-width="80" data-expected-height="100"></div>
+</div>
+FAIL:
+Expected 60 for width, but got 46. 
+Expected 60 for width, but got 46. 
+Expected 80 for height, but got 32. 
+Expected 80 for height, but got 32. 
+
+<div class="grid verticalRL">
+    <div class="firstRowFirstColumn" data-expected-width="60" data-expected-height="100"></div>
+    <div class="firstRowSecondColumn" data-expected-width="60" data-expected-height="80"></div>
+    <div class="secondRowFirstColumn" data-expected-width="100" data-expected-height="100"></div>
+    <div class="secondRowSecondColumn" data-expected-width="100" data-expected-height="80"></div>
+</div>
+FAIL:
+Expected 60 for height, but got 46. 
+Expected 80 for width, but got 32. 
+Expected 60 for height, but got 46. 
+Expected 80 for width, but got 32. 
+
+<div class="grid">
+     <div class="firstRowFirstColumn" data-expected-width="100" data-expected-height="60"></div>
+     <div class="firstRowSecondColumn" data-expected-width="80" data-expected-height="60"></div>
+     <div class="secondRowFirstColumn" data-expected-width="100" data-expected-height="100"></div>
+     <div class="secondRowSecondColumn" data-expected-width="80" data-expected-height="100"></div>
+</div>
