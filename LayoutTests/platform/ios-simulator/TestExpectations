@@ -98,3 +98,5 @@ webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Skip ] # unsupported audio f
 webaudio/mediastreamaudiodestinationnode.html [ Skip ] # don't support context.createMediaStreamDestination
 webaudio/mediastreamaudiosourcenode.html [ Skip ] # don't support getUserMedia
 
+# Skip webgl tests in the simulator
+webgl

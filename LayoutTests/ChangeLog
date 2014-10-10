@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Skip webgl tests in the iOS Simulator.
+
+        * platform/ios-simulator/TestExpectations:
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for webaudio tests.
 
         * platform/ios-simulator/webaudio/*: Added
