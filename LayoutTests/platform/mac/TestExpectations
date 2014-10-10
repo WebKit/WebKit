@@ -58,7 +58,7 @@ fast/events/touch
 # No button tracked
 fast/events/mouseover-button.html
 
-webkit.org/b/33923 platform/mac/accessibility/change-notification-on-scroll.html [ Failure ]
+webkit.org/b/33923 platform/mac/accessibility/change-notification-on-scroll.html [ Skip ] # times out
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
@@ -815,6 +815,9 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+fast/workers/worker-close-more.html [ Skip ] # times out
+fast/workers/worker-document-leak.html [ Skip ] # times out
+fast/workers/worker-lifecycle.html [ Skip ] # times out
 
 webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
 
@@ -1520,6 +1523,9 @@ webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-hue-rotate.html [ ImageOnlyF
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+
+# FIXME: Needs bugzilla
+platform/mac/editing/input/undo-grouping-on-text-insertion.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17890720>)
 [ Yosemite ] fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]

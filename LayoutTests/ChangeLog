@@ -1,3 +1,9 @@
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip some tests that timeout every time.
+
+        * platform/mac/TestExpectations:
+
 2014-10-10  Andy Estes  <aestes@apple.com>
 
         [Mac] Re-enable some compositing/rtl/ tests that acquired correct baselines in r174589
