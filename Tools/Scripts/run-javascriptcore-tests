@@ -270,7 +270,7 @@ if ($runJSCStress) {
     }
 
     # End option processing, the rest of the arguments are tests
-    push((@jscStressDriverCmd, "--");
+    push(@jscStressDriverCmd, "--");
 
     if (defined($extraTests)) {
         push(@jscStressDriverCmd, $extraTests);

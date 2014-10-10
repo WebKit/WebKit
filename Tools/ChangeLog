@@ -1,3 +1,9 @@
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix syntax error after r174601.
+
+        * Scripts/run-javascriptcore-tests:
+
 2014-10-10  Michael Saboff  <msaboff@apple.com>
 
         Add ability to select tarfile name in run-jsc-stress-tests
