@@ -1,3 +1,18 @@
+2014-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not generate a symlink in derived sources for every header in WebCore/bindings/gobject
+        https://bugs.webkit.org/show_bug.cgi?id=137389
+
+        Reviewed by Martin Robinson.
+
+        We only need a symlink for static sources that are included in
+        public generated headers, because they are added with as
+        <webkitdom/WebKitDOMFoo.h> so they need to be inside a webkitdom
+        directory. Also use proper targets and commands to create the
+        symlinks only when needed instead of for every build.
+
+        * PlatformGTK.cmake:
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GtkPopupMenu implementation to WebPopupMenuProxyGtk

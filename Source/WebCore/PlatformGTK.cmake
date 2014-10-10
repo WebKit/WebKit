@@ -459,6 +459,7 @@ target_link_libraries(WebCorePlatformGTK
 
 include_directories(
     ${WebCore_INCLUDE_DIRECTORIES}
+    "${WEBCORE_DIR}/bindings/gobject/"
     "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}"
 )
@@ -682,7 +683,9 @@ if (ENABLE_QUOTA)
     )
 endif ()
 
-set(GObjectDOMBindingsStable_CLASS_LIST Custom EventTarget NodeFilter Object XPathNSResolver)
+set(GObjectDOMBindings_STATIC_CLASS_LIST Custom EventTarget NodeFilter Object XPathNSResolver)
+
+set(GObjectDOMBindingsStable_CLASS_LIST ${GObjectDOMBindings_STATIC_CLASS_LIST})
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
@@ -734,8 +737,19 @@ add_custom_command(
     COMMAND echo ${GObjectDOMBindingsStable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
 )
 
-add_custom_target(fake-installed-webkitdom-headers
-    COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/*.h ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
+# Some of the static headers are included by generated public headers with include <webkitdom/WebKitDOMFoo.h>.
+# We need those headers in the derived sources to be in webkitdom directory.
+foreach (classname ${GObjectDOMBindings_STATIC_CLASS_LIST})
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h
+        DEPENDS ${WEBCORE_DIR}/bindings/gobject/WebKitDOM${classname}.h
+        COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/WebKitDOM${classname}.h ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
+    )
+    list(APPEND GObjectDOMBindings_STATIC_GENERATED_SOURCES ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
+endforeach ()
+
+add_custom_target(fake-generated-webkitdom-headers
+    DEPENDS ${GObjectDOMBindings_STATIC_GENERATED_SOURCES}
 )
 
 set(GObjectDOMBindings_IDL_FILES ${GObjectDOMBindingsStable_IDL_FILES} ${GObjectDOMBindingsUnstable_IDL_FILES})
@@ -762,7 +776,7 @@ WEBKIT_SET_EXTRA_COMPILER_FLAGS(GObjectDOMBindings)
 
 add_dependencies(GObjectDOMBindings
     WebCore
-    fake-installed-webkitdom-headers
+    fake-generated-webkitdom-headers
 )
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
