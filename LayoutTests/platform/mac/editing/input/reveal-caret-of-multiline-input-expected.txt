@@ -9,10 +9,10 @@ layer at (0,0) size 800x178
       RenderBlock (anonymous) at (0,18) size 784x144
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,28) size 91x136 clip at (11,29) size 74x134 scrollY 99 scrollHeight 420
-  RenderTextControl {TEXTAREA} at (2,2) size 91x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 70x416
-      RenderText {#text} at (0,0) size 23x403
+layer at (10,28) size 87x136 clip at (11,29) size 70x134 scrollY 99 scrollHeight 420
+  RenderTextControl {TEXTAREA} at (2,2) size 87x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 66x416
+      RenderText {#text} at (0,0) size 21x403
         text run at (0,0) width 14: "00"
         text run at (13,0) width 1: " "
         text run at (0,13) width 14: "01"
@@ -37,8 +37,8 @@ layer at (10,28) size 91x136 clip at (11,29) size 74x134 scrollY 99 scrollHeight
         text run at (13,130) width 1: " "
         text run at (0,143) width 14: "11"
         text run at (13,143) width 1: " "
-        text run at (0,156) width 23: ">12"
-        text run at (22,156) width 1: " "
+        text run at (0,156) width 21: ">12"
+        text run at (20,156) width 1: " "
         text run at (0,169) width 14: "13"
         text run at (13,169) width 1: " "
         text run at (0,182) width 14: "14"

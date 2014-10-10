@@ -184,18 +184,18 @@ layer at (0,0) size 785x2589
         RenderBlock {P} at (0,0) size 769x45
           RenderText {#text} at (0,1) size 263x18
             text run at (0,1) width 263: "How does your browser fare on this test? "
-          RenderMenuList {SELECT} at (265,2) size 470x18 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (0,0) size 470x18
-              RenderText at (8,2) size 439x13
-                text run at (8,2) width 439: "The tests all render identically, and this browser may or may not grok CSS2 tables."
+          RenderMenuList {SELECT} at (265,2) size 469x18 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (0,0) size 469x18
+              RenderText at (8,2) size 438x13
+                text run at (8,2) width 438: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {LABEL} at (0,0) size 220x18
+          RenderInline {LABEL} at (0,0) size 211x18
             RenderText {#text} at (0,24) size 70x18
               text run at (0,24) width 70: "Comment: "
-            RenderTextControl {INPUT} at (72,24) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (219,24) size 5x18
-            text run at (219,24) width 5: " "
-          RenderButton {INPUT} at (225,25) size 54x18 [bgcolor=#C0C0C0]
+            RenderTextControl {INPUT} at (72,24) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (210,24) size 5x18
+            text run at (210,24) width 5: " "
+          RenderButton {INPUT} at (216,25) size 54x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 38x13
               RenderText at (0,0) size 38x13
                 text run at (0,0) width 38: "Submit"
@@ -239,5 +239,5 @@ layer at (0,0) size 785x2589
       RenderBlock {P} at (0,2533) size 769x19
         RenderText {#text} at (0,0) size 182x18
           text run at (0,0) width 182: "Last updated in March 1999."
-layer at (83,2367) size 139x13
-  RenderBlock {DIV} at (3,3) size 140x13
+layer at (83,2367) size 130x13
+  RenderBlock {DIV} at (3,3) size 131x13

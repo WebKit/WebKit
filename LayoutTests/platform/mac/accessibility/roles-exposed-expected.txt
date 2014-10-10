@@ -212,7 +212,7 @@ input[type='color']
 input[type='checkbox']
       AXRole: AXCheckBox
       AXSubrole: 
-      AXRoleDescription: check box
+      AXRoleDescription: checkbox
       
 input[type='date']
       AXRole: AXTextField
@@ -622,7 +622,7 @@ div[role=button]
 div[role=checkbox]
       AXRole: AXCheckBox
       AXSubrole: 
-      AXRoleDescription: check box
+      AXRoleDescription: checkbox
       
 div[role=combobox]
       AXRole: AXComboBox

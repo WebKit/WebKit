@@ -7,41 +7,41 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 783x18
           text run at (0,0) width 783: "Test appearances of spin buttons. Disabled state and read-only state should have appearances different from the normal state."
       RenderBlock {DIV} at (0,34) size 784x33
-        RenderInline {LABEL} at (0,0) size 347x18
-          RenderTextControl {INPUT} at (2,2) size 259x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (3,3) size 253x23
-              RenderBlock {DIV} at (0,0) size 234x23
-          RenderText {#text} at (262,10) size 85x18
-            text run at (262,10) width 85: " Normal state"
+        RenderInline {LABEL} at (0,0) size 317x18
+          RenderTextControl {INPUT} at (2,2) size 229x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderFlexibleBox {DIV} at (3,3) size 223x23
+              RenderBlock {DIV} at (0,0) size 204x23
+          RenderText {#text} at (232,10) size 85x18
+            text run at (232,10) width 85: " Normal state"
       RenderBlock {DIV} at (0,67) size 784x33
-        RenderInline {LABEL} at (0,0) size 355x18
-          RenderTextControl {INPUT} at (2,2) size 259x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (3,3) size 253x23
-              RenderBlock {DIV} at (0,0) size 234x23
-          RenderText {#text} at (262,10) size 93x18
-            text run at (262,10) width 93: " Disabled state"
+        RenderInline {LABEL} at (0,0) size 325x18
+          RenderTextControl {INPUT} at (2,2) size 229x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderFlexibleBox {DIV} at (3,3) size 223x23
+              RenderBlock {DIV} at (0,0) size 204x23
+          RenderText {#text} at (232,10) size 93x18
+            text run at (232,10) width 93: " Disabled state"
       RenderBlock {DIV} at (0,100) size 784x33
-        RenderInline {LABEL} at (0,0) size 365x18
-          RenderTextControl {INPUT} at (2,2) size 259x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderFlexibleBox {DIV} at (3,3) size 253x23
-              RenderBlock {DIV} at (0,0) size 234x23
-          RenderText {#text} at (262,10) size 103x18
-            text run at (262,10) width 103: " Read-only state"
-layer at (13,47) size 234x23
-  RenderBlock {DIV} at (0,0) size 234x23
-    RenderText {#text} at (0,0) size 13x23
-      text run at (0,0) width 13: "0"
-layer at (13,80) size 234x23
-  RenderBlock {DIV} at (0,0) size 234x23 [color=#545454]
-    RenderText {#text} at (0,0) size 13x23
-      text run at (0,0) width 13: "0"
-layer at (13,113) size 234x23
-  RenderBlock {DIV} at (0,0) size 234x23
-    RenderText {#text} at (0,0) size 13x23
-      text run at (0,0) width 13: "0"
-layer at (248,46) size 19x25
-  RenderBlock (relative positioned) {DIV} at (234,-1) size 20x25
-layer at (248,79) size 19x25
-  RenderBlock (relative positioned) {DIV} at (234,-1) size 20x25
-layer at (248,112) size 19x25
-  RenderBlock (relative positioned) {DIV} at (234,-1) size 20x25
+        RenderInline {LABEL} at (0,0) size 335x18
+          RenderTextControl {INPUT} at (2,2) size 229x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderFlexibleBox {DIV} at (3,3) size 223x23
+              RenderBlock {DIV} at (0,0) size 204x23
+          RenderText {#text} at (232,10) size 103x18
+            text run at (232,10) width 103: " Read-only state"
+layer at (13,47) size 204x23
+  RenderBlock {DIV} at (0,0) size 204x23
+    RenderText {#text} at (0,0) size 12x23
+      text run at (0,0) width 12: "0"
+layer at (13,80) size 204x23
+  RenderBlock {DIV} at (0,0) size 204x23 [color=#545454]
+    RenderText {#text} at (0,0) size 12x23
+      text run at (0,0) width 12: "0"
+layer at (13,113) size 204x23
+  RenderBlock {DIV} at (0,0) size 204x23
+    RenderText {#text} at (0,0) size 12x23
+      text run at (0,0) width 12: "0"
+layer at (218,46) size 19x25
+  RenderBlock (relative positioned) {DIV} at (204,-1) size 20x25
+layer at (218,79) size 19x25
+  RenderBlock (relative positioned) {DIV} at (204,-1) size 20x25
+layer at (218,112) size 19x25
+  RenderBlock (relative positioned) {DIV} at (204,-1) size 20x25

@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (22,2) size 14x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (37,2) size 5x18
           text run at (37,2) width 5: " "
-        RenderButton {INPUT} at (43,3) size 31x18 [bgcolor=#C0C0C0]
+        RenderButton {INPUT} at (43,3) size 30x18 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 14x13
             RenderText at (0,0) size 14x13
               text run at (0,0) width 14: "go"
@@ -45,7 +45,7 @@ layer at (13,147) size 7x13 scrollWidth 8
   RenderBlock {DIV} at (3,3) size 7x13
     RenderText {#text} at (0,0) size 7x13
       text run at (0,0) width 7: "2"
-layer at (34,147) size 7x13 scrollWidth 8
+layer at (34,147) size 7x13 backgroundClip at (34,147) size 6x13 clip at (34,147) size 6x13 scrollWidth 8
   RenderBlock {DIV} at (3,3) size 7x13
     RenderText {#text} at (0,0) size 7x13
       text run at (0,0) width 7: "4"

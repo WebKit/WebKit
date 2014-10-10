@@ -50,7 +50,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,22) size 166x20 [r=1 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,44) size 684x24
             RenderTableCell {TD} at (0,46) size 169x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 67x18
@@ -69,7 +69,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,46) size 166x20 [r=2 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,68) size 684x30
             RenderTableCell {TD} at (0,73) size 169x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 88x18
@@ -88,7 +88,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,73) size 166x20 [r=3 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,98) size 684x24
             RenderTableCell {TD} at (0,100) size 169x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 83x18
@@ -107,7 +107,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,100) size 166x20 [r=4 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,122) size 684x24
             RenderTableCell {TD} at (0,124) size 169x20 [r=5 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 167x18
@@ -126,7 +126,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,124) size 166x20 [r=5 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,146) size 684x25
             RenderTableCell {TD} at (0,148) size 169x20 [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 111x18
@@ -145,7 +145,7 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,148) size 166x20 [r=6 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,171) size 684x59
             RenderTableCell {TD} at (0,190) size 169x20 [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 91x18
@@ -164,4 +164,4 @@ layer at (0,0) size 800x318
                     text run at (0,0) width 18: "foo"
             RenderTableCell {TD} at (518,190) size 166x20 [r=7 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 104x18
-                text run at (1,1) width 104: "(18, 34) (18, 34)"
+                text run at (1,1) width 104: "(18, 33) (18, 33)"

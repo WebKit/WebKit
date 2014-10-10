@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,122) size 784x140
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,132) size 578x136 clip at (11,133) size 576x134
-  RenderTextControl {TEXTAREA} at (2,2) size 578x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 572x13
+layer at (10,132) size 543x136 clip at (11,133) size 541x134
+  RenderTextControl {TEXTAREA} at (2,2) size 543x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 537x13
       RenderText {#text} at (0,0) size 55x13
         text run at (0,0) width 55: "mesage m"
 caret: position 8 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {TEXTAREA} of body

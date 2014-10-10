@@ -6,19 +6,19 @@ layer at (0,0) size 800x486
       RenderBlock {DIV} at (0,0) size 784x470 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,2) size 164x18
           text run at (1,2) width 164: "Whitespace in option text:"
-        RenderMenuList {SELECT} at (167,3) size 56x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (0,0) size 56x18
-            RenderText at (8,2) size 25x13
-              text run at (8,2) width 25: "f o o"
-        RenderText {#text} at (225,2) size 7x18
-          text run at (225,2) width 7: "a"
-        RenderMenuList {SELECT} at (234,3) size 56x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (0,0) size 56x18
-            RenderText at (8,2) size 25x13
-              text run at (8,2) width 25: "f o o"
-        RenderText {#text} at (292,2) size 8x18
-          text run at (292,2) width 8: "b"
-        RenderBR {BR} at (300,2) size 0x18
+        RenderMenuList {SELECT} at (167,3) size 55x18 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 55x18
+            RenderText at (8,2) size 24x13
+              text run at (8,2) width 24: "f o o"
+        RenderText {#text} at (224,2) size 7x18
+          text run at (224,2) width 7: "a"
+        RenderMenuList {SELECT} at (233,3) size 55x18 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 55x18
+            RenderText at (8,2) size 24x13
+              text run at (8,2) width 24: "f o o"
+        RenderText {#text} at (290,2) size 8x18
+          text run at (290,2) width 8: "b"
+        RenderBR {BR} at (298,2) size 0x18
         RenderBR {BR} at (1,22) size 0x18
         RenderText {#text} at (1,40) size 135x18
           text run at (1,40) width 135: "Simple select control:"
@@ -137,8 +137,8 @@ layer at (0,0) size 800x486
         RenderBR {BR} at (169,316) size 0x18
         RenderMenuList {SELECT} at (3,335) size 197x18 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 197x18
-            RenderText at (8,2) size 69x13
-              text run at (8,2) width 69: "Future Series"
+            RenderText at (8,2) size 71x13
+              text run at (8,2) width 71: "Future Series"
         RenderText {#text} at (202,334) size 4x18
           text run at (202,334) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -147,8 +147,8 @@ layer at (0,0) size 800x486
         RenderBR {BR} at (169,354) size 0x18
         RenderMenuList {SELECT} at (3,373) size 197x18 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 197x18
-            RenderText at (8,2) size 69x13
-              text run at (8,2) width 69: "Future Series"
+            RenderText at (8,2) size 71x13
+              text run at (8,2) width 71: "Future Series"
         RenderText {#text} at (202,372) size 4x18
           text run at (202,372) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -157,8 +157,8 @@ layer at (0,0) size 800x486
         RenderBR {BR} at (166,392) size 0x18
         RenderMenuList {SELECT} at (3,411) size 197x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 195x16
-            RenderText at (8,1) size 69x13
-              text run at (8,1) width 69: "Future Series"
+            RenderText at (8,1) size 71x13
+              text run at (8,1) width 71: "Future Series"
         RenderText {#text} at (202,410) size 4x18
           text run at (202,410) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -167,8 +167,8 @@ layer at (0,0) size 800x486
         RenderBR {BR} at (291,430) size 0x18
         RenderMenuList {SELECT} at (3,449) size 197x18 [bgcolor=#33CCFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 195x16
-            RenderText at (8,1) size 69x13
-              text run at (8,1) width 69: "Future Series"
+            RenderText at (8,1) size 71x13
+              text run at (8,1) width 71: "Future Series"
         RenderText {#text} at (202,448) size 4x18
           text run at (202,448) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

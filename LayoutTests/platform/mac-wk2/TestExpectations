@@ -637,3 +637,147 @@ plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
+
+# ======================================================================
+# Section 7
+# A copy of failures that were new in Mavericks, and still apply to Yosemite
+# ======================================================================
+
+# Shared workers disabled with the Network Process
+[ Yosemite ] fast/workers/shared-worker-constructor.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-context-gc.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-event-listener.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-exception.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-frame-lifecycle.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-gc.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-in-iframe.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-lifecycle.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-load-error.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-location.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-messageevent-source.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-name.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-navigator.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-replace-global-constructor.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-replace-self.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-script-error.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-shared.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-simple.html [ Skip ]
+[ Yosemite ] fast/workers/shared-worker-storagequota-query-usage.html [ Skip ]
+[ Yosemite ] fast/workers/worker-crash-with-invalid-location.html [ Skip ]
+[ Yosemite ] http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Skip ]
+[ Yosemite ] http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Skip ]
+[ Yosemite ] http/tests/security/cross-origin-shared-worker-allowed.html [ Skip ]
+[ Yosemite ] http/tests/security/cross-origin-shared-worker.html [ Skip ]
+[ Yosemite ] http/tests/security/same-origin-shared-worker-blocked.html [ Skip ]
+[ Yosemite ] http/tests/security/storage-blocking-loosened-shared-worker.html [ Skip ]
+[ Yosemite ] http/tests/security/storage-blocking-strengthened-shared-worker.html [ Skip ]
+[ Yosemite ] http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip ]
+[ Yosemite ] http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip ]
+[ Yosemite ] http/tests/workers/shared-worker-importScripts.html [ Skip ]
+[ Yosemite ] http/tests/workers/shared-worker-invalid-url.html [ Skip ]
+[ Yosemite ] http/tests/workers/shared-worker-redirect.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip ]
+[ Yosemite ] js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
+[ Yosemite ] fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+[ Yosemite ] js/dom/constructor-length.html [ Failure ]
+[ Yosemite ] js/dom/global-constructors-attributes.html [ Failure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=115274
+# PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
+[ Yosemite ] http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
+[ Yosemite ] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
+[ Yosemite ] http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
+[ Yosemite ] http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
+[ Yosemite ] http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
+[ Yosemite ] http/tests/security/cross-frame-access-private-browsing.html [ Skip ]
+[ Yosemite ] http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+[ Yosemite ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
+[ Yosemite ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+[ Yosemite ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
+[ Yosemite ] plugins/private-browsing-mode-2.html [ Skip ]
+[ Yosemite ] plugins/private-browsing-mode.html [ Skip ]
+[ Yosemite ] storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
+[ Yosemite ] storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
+[ Yosemite ] storage/websql/private-browsing-noread-nowrite.html [ Skip ]
+
+webkit.org/b/123431 [ Yosemite ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure ]
+webkit.org/b/123431 [ Yosemite ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure ]
+webkit.org/b/123431 [ Yosemite ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+webkit.org/b/123431 [ Yosemite ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=115282
+# PPT: https loads fail due to self-signed certificate
+[ Yosemite ] http/tests/appcache/different-https-origin-resource-main.html [ Skip ]
+[ Yosemite ] http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ]
+[ Yosemite ] http/tests/misc/dns-prefetch-control.html [ Skip ]
+[ Yosemite ] http/tests/navigation/https-in-page-cache.html [ Skip ]
+[ Yosemite ] http/tests/navigation/ping-cross-origin-from-https.html [ Skip ]
+[ Yosemite ] http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html [ Skip ]
+[ Yosemite ] http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Skip ]
+[ Yosemite ] http/tests/security/mixedContent [ Skip ]
+[ Yosemite ] http/tests/security/originHeader/origin-header-for-https.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-https-always.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-https-default.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-https-never.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-https-origin.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-redirect-link.html [ Skip ]
+[ Yosemite ] http/tests/security/referrer-policy-redirect.html [ Skip ]
+[ Yosemite ] http/tests/ssl [ Skip ]
+
+# testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+
+# FIXME: Needs bugzilla (<rdar://problem/12829991>)
+# PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
+http/tests/navigation/ping-cookie.html [ Skip ]
+
+# ======================================================================
+# Section 8
+# New WebKit2-only failures in Yosemite
+# ======================================================================
+
+# FIXME: Needs bugzilla (<rdar://problem/16678392>)
+[ Yosemite ] fast/events/page-visibility-iframe-delete-test.html [ Failure Timeout ]
+[ Yosemite ] fast/events/page-visibility-iframe-move-test.html [ Failure Timeout ]
+[ Yosemite ] fast/events/page-visibility-iframe-propagation-test.html [ Failure Timeout ]
+[ Yosemite ] fast/events/page-visibility-transition-test.html [ Failure Timeout ]
+
+# ======================================================================
+# Section 9
+# Unmarking WebKit1-only failures in Yosemite
+# ======================================================================
+
+# FIXME: Needs bugzilla (<rdar://problem/16715047>)
+[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html [ Pass ]
+[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ Pass ]
+[ Yosemite ] fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ Pass ]
+[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ Pass ]
+[ Yosemite ] fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ Pass ]
+[ Yosemite ] fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ Pass ]
+[ Yosemite ] fast/borders/hidpi-rounded-border-on-subpixel-position.html [ Pass ]
+[ Yosemite ] fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ Pass ]
+[ Yosemite ] svg/custom/hidpi-masking-clipping.svg [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/16731930>)
+[ Yosemite ] compositing/contents-scale/incremental-change.html [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/16732502>)
+[ Yosemite ] compositing/video/video-object-fit.html [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/17748156>)
+[ Yosemite ] compositing/iframes/become-composited-nested-iframes.html [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/17748276>)
+[ Yosemite ] compositing/reflections/repaint-with-reflection.html [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/17748454>)
+[ Yosemite ] compositing/repaint/foreground-layer-change.html [ Pass ]
+
+# FIXME: Needs bugzilla (<rdar://problem/16660589>)
+[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Pass ]
+[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Pass ]

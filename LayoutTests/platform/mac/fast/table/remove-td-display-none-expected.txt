@@ -60,7 +60,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (47,1) size 5x18
           text run at (47,1) width 5: " "
         RenderButton {BUTTON} at (53,2) size 40x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,2) size 24x13
-            RenderText {#text} at (0,0) size 24x13
-              text run at (0,0) width 24: "hide"
+          RenderBlock (anonymous) at (8,2) size 23x13
+            RenderText {#text} at (0,0) size 23x13
+              text run at (0,0) width 23: "hide"
         RenderText {#text} at (0,0) size 0x0
