@@ -1,3 +1,24 @@
+2014-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [cairo] GraphicsContext should not depend on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=137175
+
+        Reviewed by Martin Robinson.
+
+        Remove the unused methods depending on GDK and simplify
+        GraphicsContext::drawFocusRing() using only cairo API.
+
+        * PlatformGTK.cmake: Move GraphicsContextCairo.cpp to the webcore sources.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Iterate the rectangles
+        instead of creating a region for the rectangles and call gdk_cairo_region().
+        (WebCore::GraphicsContext::setGdkExposeEvent): Deleted.
+        (WebCore::GraphicsContext::gdkExposeEvent): Deleted.
+        (WebCore::GraphicsContext::gdkWindow): Deleted.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+
 2014-10-01  Chris Dumez  <cdumez@apple.com>
 
         Add basic caching for Document.cookie API

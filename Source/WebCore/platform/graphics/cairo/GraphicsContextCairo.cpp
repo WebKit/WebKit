@@ -58,9 +58,7 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(GTK)
-#include <gdk/gdk.h>
-#elif PLATFORM(WIN)
+#if PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif
 
@@ -557,36 +555,16 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     if (paintingDisabled())
         return;
 
-    unsigned rectCount = rects.size();
-
     cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     cairo_push_group(cr);
     cairo_new_path(cr);
 
 #if PLATFORM(GTK)
-#ifdef GTK_API_VERSION_2
-    GdkRegion* reg = gdk_region_new();
+    for (const auto& rect : rects)
+        cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
 #else
-    cairo_region_t* reg = cairo_region_create();
-#endif
-
-    for (unsigned i = 0; i < rectCount; i++) {
-#ifdef GTK_API_VERSION_2
-        GdkRectangle rect = rects[i];
-        gdk_region_union_with_rect(reg, &rect);
-#else
-        cairo_rectangle_int_t rect = rects[i];
-        cairo_region_union_rectangle(reg, &rect);
-#endif
-    }
-    gdk_cairo_region(cr, reg);
-#ifdef GTK_API_VERSION_2
-    gdk_region_destroy(reg);
-#else
-    cairo_region_destroy(reg);
-#endif
-#else
+    unsigned rectCount = rects.size();
     int radius = (width - 1) / 2;
     Path path;
     for (unsigned i = 0; i < rectCount; ++i) {
@@ -1085,26 +1063,6 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     fillCurrentCairoPath(this);
     cairo_restore(cr);
 }
-
-#if PLATFORM(GTK)
-void GraphicsContext::setGdkExposeEvent(GdkEventExpose* expose)
-{
-    m_data->expose = expose;
-}
-
-GdkEventExpose* GraphicsContext::gdkExposeEvent() const
-{
-    return m_data->expose;
-}
-
-GdkWindow* GraphicsContext::gdkWindow() const
-{
-    if (!m_data->expose)
-        return 0;
-
-    return m_data->expose->window;
-}
-#endif
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)
 {
