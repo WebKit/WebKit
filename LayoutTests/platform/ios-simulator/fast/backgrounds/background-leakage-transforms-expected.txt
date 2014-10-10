@@ -1,0 +1,55 @@
+layer at (0,0) size 800x854
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x854
+  RenderBlock {HTML} at (0,0) size 800x854
+    RenderBody {BODY} at (8,8) size 784x838
+      RenderBlock {DIV} at (0,0) size 784x149
+        RenderBlock {DIV} at (10,10) size 268x129
+          RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
+          RenderText {#text} at (132,107) size 4x19
+            text run at (132,107) width 4: " "
+          RenderBlock {DIV} at (146,12) size 110x100 [bgcolor=#000000] [border: (20px double #FFFFFF)]
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (288,117) size 4x19
+          text run at (288,117) width 4: " "
+        RenderBlock {DIV} at (302,10) size 268x129 [bgcolor=#808080]
+          RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F)]
+          RenderText {#text} at (132,107) size 4x19
+            text run at (132,107) width 4: " "
+          RenderBlock {DIV} at (146,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px double #0000FF7F)]
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,157) size 784x149
+  RenderBlock {DIV} at (0,149) size 784x149
+    RenderBlock {DIV} at (10,10) size 268x129
+      RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
+      RenderText {#text} at (132,107) size 4x19
+        text run at (132,107) width 4: " "
+      RenderBlock {DIV} at (146,12) size 110x100 [bgcolor=#000000] [border: (20px double #FFFFFF)]
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (288,117) size 4x19
+      text run at (288,117) width 4: " "
+    RenderBlock {DIV} at (302,10) size 268x129 [bgcolor=#808080]
+      RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F)]
+      RenderText {#text} at (132,107) size 4x19
+        text run at (132,107) width 4: " "
+      RenderBlock {DIV} at (146,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px double #0000FF7F)]
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,306) size 159x540
+  RenderBlock {DIV} at (0,298) size 159x540
+    RenderBlock {DIV} at (10,10) size 139x248
+      RenderBlock {DIV} at (16,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
+      RenderText {#text} at (2,122) size 19x4
+        text run at (2,122) width 4: " "
+      RenderBlock {DIV} at (16,136) size 110x100 [bgcolor=#000000] [border: (20px double #FFFFFF)]
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (128,268) size 19x4
+      text run at (128,268) width 4: " "
+    RenderBlock {DIV} at (10,282) size 139x248 [bgcolor=#808080]
+      RenderBlock {DIV} at (16,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F)]
+      RenderText {#text} at (2,122) size 19x4
+        text run at (2,122) width 4: " "
+      RenderBlock {DIV} at (16,136) size 110x100 [bgcolor=#FFFFFF] [border: (20px double #0000FF7F)]
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

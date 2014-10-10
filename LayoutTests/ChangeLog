@@ -1,3 +1,11 @@
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip fast/animation in the iOS Simulator.
+        Add results for fast/backgrounds
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/backgrounds/*: Added.
+
 2014-10-10  Andy Estes  <aestes@apple.com>
 
         Add a mac-mountainlion result for delete-autocorrected-word-2.html.

@@ -47,6 +47,9 @@ touchadjustment
 # ENABLE_VIBRATION - Vibration API is not enabled.
 vibration
 
+# Skip webgl tests in the simulator
+webgl
+
 # canvas
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
@@ -98,5 +101,9 @@ webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Skip ] # unsupported audio f
 webaudio/mediastreamaudiodestinationnode.html [ Skip ] # don't support context.createMediaStreamDestination
 webaudio/mediastreamaudiosourcenode.html [ Skip ] # don't support getUserMedia
 
-# Skip webgl tests in the simulator
-webgl
+# request-animation-frame broken in the simulator.
+webkit.org/b/137588 fast/animation
+
+# enableAutoResizeMode not implementated
+fast/autoresize
+
