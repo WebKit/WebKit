@@ -20473,7 +20473,6 @@
     <ClInclude Include="..\dom\CompositionEvent.h" />
     <ClInclude Include="..\dom\ContainerNode.h" />
     <ClInclude Include="..\dom\ContextDestructionObserver.h" />
-    <ClInclude Include="..\dom\CrossThreadTask.h" />
     <ClInclude Include="..\dom\CustomEvent.h" />
     <ClInclude Include="..\dom\DatasetDOMStringMap.h" />
     <ClInclude Include="..\dom\DataTransfer.h" />

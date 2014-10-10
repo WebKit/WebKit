@@ -204,10 +204,6 @@ private:
     void evict(CachedResource*);
 
     WEBCORE_EXPORT CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
-    static void removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest&, SessionID);
-    static void removeRequestFromSessionCachesImpl(ScriptExecutionContext*, const ResourceRequest&);
-    static void crossThreadRemoveRequestFromCache(ScriptExecutionContext&, PassOwnPtr<CrossThreadResourceRequestData>, SessionID);
-    static void crossThreadRemoveRequestFromSessionCaches(ScriptExecutionContext&, PassOwnPtr<CrossThreadResourceRequestData>);
 
     CachedResourceMap& getSessionMap(SessionID);
 

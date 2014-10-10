@@ -1,5 +1,55 @@
 2014-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove CrossThreadTask
+        https://bugs.webkit.org/show_bug.cgi?id=137570
+
+        Reviewed by Darin Adler.
+
+        Replace uses of CrossThreadTask with C++11 lambdas. The initializations
+        of cross-thread copies are rather verbose at the moment, but should look
+        better once we can switch to using C++14 init capture for lambdas.
+
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CrossThreadTask.h: Removed.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge): Deleted.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader): Deleted.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadDestroy): Deleted.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCancel): Deleted.
+        (WebCore::workerGlobalScopeDidSendData): Deleted.
+        (WebCore::workerGlobalScopeDidReceiveResponse): Deleted.
+        (WebCore::workerGlobalScopeDidReceiveData): Deleted.
+        (WebCore::workerGlobalScopeDidFinishLoading): Deleted.
+        (WebCore::workerGlobalScopeDidFail): Deleted.
+        (WebCore::workerGlobalScopeDidFailAccessControlCheck): Deleted.
+        (WebCore::workerGlobalScopeDidFailRedirectCheck): Deleted.
+        * loader/WorkerThreadableLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeRequestFromCache):
+        (WebCore::MemoryCache::removeRequestFromSessionCaches):
+        (WebCore::MemoryCache::removeRequestFromCacheImpl): Deleted.
+        (WebCore::MemoryCache::removeRequestFromSessionCachesImpl): Deleted.
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromCache): Deleted.
+        (WebCore::MemoryCache::crossThreadRemoveRequestFromSessionCaches): Deleted.
+        * loader/cache/MemoryCache.h:
+
+2014-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
         Avoid defaulting to capture-by-value for C++11 lambdas in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=137565
 

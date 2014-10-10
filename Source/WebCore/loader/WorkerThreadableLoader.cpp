@@ -33,7 +33,6 @@
 
 #include "Document.h"
 #include "DocumentThreadableLoader.h"
-#include "CrossThreadTask.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -91,32 +90,22 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
     , m_taskMode(taskMode.isolatedCopy())
 {
     ASSERT(m_workerClientWrapper.get());
-    m_loaderProxy.postTaskToLoader(CrossThreadTask(&MainThreadBridge::mainThreadCreateLoader, AllowCrossThreadAccess(this), request, options, outgoingReferrer));
-}
 
-WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
-{
-}
+    CrossThreadResourceRequestData* requestData = request.copyData().leakPtr();
+    String outgoingReferrerCopy = outgoingReferrer.isolatedCopy();
+    m_loaderProxy.postTaskToLoader([this, requestData, options, outgoingReferrerCopy] (ScriptExecutionContext& context) {
+        ASSERT(isMainThread());
+        Document& document = downcast<Document>(context);
 
-void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext& context, MainThreadBridge* thisPtr, PassOwnPtr<CrossThreadResourceRequestData> requestData, ThreadableLoaderOptions options, const String& outgoingReferrer)
-{
-    ASSERT(isMainThread());
-    Document& document = downcast<Document>(context);
+        OwnPtr<ResourceRequest> request = ResourceRequest::adopt(adoptPtr(requestData));
+        request->setHTTPReferrer(outgoingReferrerCopy);
 
-    OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
-    request->setHTTPReferrer(outgoingReferrer);
-    // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
-    // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
-    // a failure.
-    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(document, *thisPtr, *request, options);
-    ASSERT(thisPtr->m_mainThreadLoader);
-}
-
-void WorkerThreadableLoader::MainThreadBridge::mainThreadDestroy(ScriptExecutionContext& context, MainThreadBridge* thisPtr)
-{
-    ASSERT(isMainThread());
-    ASSERT_UNUSED(context, context.isDocument());
-    delete thisPtr;
+        // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
+        // will return a 0 value. Either this should return 0 or the other code path should do a callback with
+        // a failure.
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, options);
+        ASSERT(m_mainThreadLoader);
+    });
 }
 
 void WorkerThreadableLoader::MainThreadBridge::destroy()
@@ -125,23 +114,25 @@ void WorkerThreadableLoader::MainThreadBridge::destroy()
     clearClientWrapper();
 
     // "delete this" and m_mainThreadLoader::deref() on the worker object's thread.
-    m_loaderProxy.postTaskToLoader(CrossThreadTask(&MainThreadBridge::mainThreadDestroy, AllowCrossThreadAccess(this)));
-}
-
-void WorkerThreadableLoader::MainThreadBridge::mainThreadCancel(ScriptExecutionContext& context, MainThreadBridge* thisPtr)
-{
-    ASSERT(isMainThread());
-    ASSERT_UNUSED(context, context.isDocument());
-
-    if (!thisPtr->m_mainThreadLoader)
-        return;
-    thisPtr->m_mainThreadLoader->cancel();
-    thisPtr->m_mainThreadLoader = 0;
+    m_loaderProxy.postTaskToLoader([this] (ScriptExecutionContext& context) {
+        ASSERT(isMainThread());
+        ASSERT_UNUSED(context, context.isDocument());
+        delete this;
+    });
 }
 
 void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
-    m_loaderProxy.postTaskToLoader(CrossThreadTask(&MainThreadBridge::mainThreadCancel, AllowCrossThreadAccess(this)));
+    m_loaderProxy.postTaskToLoader([this] (ScriptExecutionContext& context) {
+        ASSERT(isMainThread());
+        ASSERT_UNUSED(context, context.isDocument());
+
+        if (!m_mainThreadLoader)
+            return;
+        m_mainThreadLoader->cancel();
+        m_mainThreadLoader = nullptr;
+    });
+
     ThreadableLoaderClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (!clientWrapper->done()) {
         // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
@@ -158,84 +149,74 @@ void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
     m_workerClientWrapper->clearClient();
 }
 
-static void workerGlobalScopeDidSendData(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
-}
-
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent), m_taskMode);
-}
-
-static void workerGlobalScopeDidReceiveResponse(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier, PassOwnPtr<CrossThreadResourceResponseData> responseData)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));
-    workerClientWrapper->didReceiveResponse(identifier, *response);
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidReceiveResponse, m_workerClientWrapper, identifier, response), m_taskMode);
-}
-
-static void workerGlobalScopeDidReceiveData(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<Vector<char>> vectorData)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didReceiveData(vectorData->data(), vectorData->size());
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    CrossThreadResourceResponseData* responseData = response.copyData().leakPtr();
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, identifier, responseData] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        OwnPtr<ResourceResponse> response(ResourceResponse::adopt(adoptPtr(responseData)));
+        workerClientWrapper->didReceiveResponse(identifier, *response);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, int dataLength)
 {
-    OwnPtr<Vector<char>> vector = adoptPtr(new Vector<char>(dataLength)); // needs to be an OwnPtr for usage with CrossThreadTask.
-    memcpy(vector->data(), data, dataLength);
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidReceiveData, m_workerClientWrapper, vector.release()), m_taskMode);
-}
-
-static void workerGlobalScopeDidFinishLoading(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier, double finishTime)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didFinishLoading(identifier, finishTime);
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    Vector<char>* vectorPtr = new Vector<char>(dataLength);
+    memcpy(vectorPtr->data(), data, dataLength);
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, vectorPtr] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        OwnPtr<Vector<char>> vector = adoptPtr(vectorPtr);
+        workerClientWrapper->didReceiveData(vector->data(), vector->size());
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier, double finishTime)
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidFinishLoading, m_workerClientWrapper, identifier, finishTime), m_taskMode);
-}
-
-static void workerGlobalScopeDidFail(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didFail(error);
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, identifier, finishTime] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didFinishLoading(identifier, finishTime);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidFail, m_workerClientWrapper, error), m_taskMode);
-}
-
-static void workerGlobalScopeDidFailAccessControlCheck(ScriptExecutionContext& context, PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didFailAccessControlCheck(error);
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    ResourceError errorCopy = error.copy();
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, errorCopy] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didFail(errorCopy);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck(const ResourceError& error)
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidFailAccessControlCheck, m_workerClientWrapper, error), m_taskMode);
-}
-
-static void workerGlobalScopeDidFailRedirectCheck(ScriptExecutionContext& context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
-{
-    ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-    workerClientWrapper->didFailRedirectCheck();
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    ResourceError errorCopy = error.copy();
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, errorCopy] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didFailAccessControlCheck(errorCopy);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
 {
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope(CrossThreadTask(&workerGlobalScopeDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
+    RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper] (ScriptExecutionContext& context) {
+        ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        workerClientWrapper->didFailRedirectCheck();
+    }, m_taskMode);
 }
 
 } // namespace WebCore

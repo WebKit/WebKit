@@ -28,7 +28,6 @@
 #include "CachedImageClient.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
-#include "CrossThreadTask.h"
 #include "Document.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
@@ -754,15 +753,14 @@ void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const 
 {
     ASSERT(context);
     if (is<WorkerGlobalScope>(*context)) {
-        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader(CrossThreadTask(&crossThreadRemoveRequestFromCache, request, sessionID));
+        CrossThreadResourceRequestData* requestData = request.copyData().leakPtr();
+        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([requestData, sessionID] (ScriptExecutionContext& context) {
+            OwnPtr<ResourceRequest> request(ResourceRequest::adopt(adoptPtr(requestData)));
+            removeRequestFromCache(&context, *request, sessionID);
+        });
         return;
     }
 
-    removeRequestFromCacheImpl(context, request, sessionID);
-}
-
-void MemoryCache::removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest& request, SessionID sessionID)
-{
     if (CachedResource* resource = memoryCache()->resourceForRequest(request, sessionID))
         memoryCache()->remove(resource);
 }
@@ -771,30 +769,18 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context
 {
     ASSERT(context);
     if (is<WorkerGlobalScope>(*context)) {
-        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader(CrossThreadTask(&crossThreadRemoveRequestFromSessionCaches, request));
+        CrossThreadResourceRequestData* requestData = request.copyData().leakPtr();
+        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([requestData] (ScriptExecutionContext& context) {
+            OwnPtr<ResourceRequest> request(ResourceRequest::adopt(adoptPtr(requestData)));
+            MemoryCache::removeRequestFromSessionCaches(&context, *request);
+        });
         return;
     }
-    removeRequestFromSessionCachesImpl(context, request);
-}
 
-void MemoryCache::removeRequestFromSessionCachesImpl(ScriptExecutionContext*, const ResourceRequest& request)
-{
     for (auto& resources : memoryCache()->m_sessionResources) {
         if (CachedResource* resource = memoryCache()->resourceForRequestImpl(request, *resources.value))
         memoryCache()->remove(resource);
     }
-}
-
-void MemoryCache::crossThreadRemoveRequestFromCache(ScriptExecutionContext& context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData, SessionID sessionID)
-{
-    OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
-    MemoryCache::removeRequestFromCacheImpl(&context, *request, sessionID);
-}
-
-void MemoryCache::crossThreadRemoveRequestFromSessionCaches(ScriptExecutionContext& context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData)
-{
-    OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
-    MemoryCache::removeRequestFromSessionCaches(&context, *request);
 }
 
 void MemoryCache::TypeStatistic::addResource(CachedResource* o)

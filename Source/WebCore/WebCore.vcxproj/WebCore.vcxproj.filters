@@ -10152,9 +10152,6 @@
     <ClInclude Include="..\dom\ContextDestructionObserver.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\CrossThreadTask.h">
-      <Filter>dom</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\CustomEvent.h">
       <Filter>dom</Filter>
     </ClInclude>

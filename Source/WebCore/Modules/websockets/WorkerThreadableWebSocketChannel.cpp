@@ -35,7 +35,6 @@
 #include "WorkerThreadableWebSocketChannel.h"
 
 #include "Blob.h"
-#include "CrossThreadTask.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -397,8 +396,15 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
     ASSERT(!m_peer);
     setMethodNotCompleted();
     Ref<Bridge> protect(*this);
-    m_loaderProxy.postTaskToLoader(CrossThreadTask(&Bridge::mainThreadInitialize, AllowCrossThreadAccess(&m_loaderProxy), m_workerClientWrapper, m_taskMode));
+
+    WorkerLoaderProxy* loaderProxy = &m_loaderProxy;
+    RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
+    String taskModeCopy = m_taskMode.isolatedCopy();
+    m_loaderProxy.postTaskToLoader([loaderProxy, workerClientWrapper, taskModeCopy] (ScriptExecutionContext& context) {
+        mainThreadInitialize(context, loaderProxy, workerClientWrapper, taskModeCopy);
+    });
     waitForMethodCompletion();
+
     // m_peer may be null when the nested runloop exited before a peer has created.
     m_peer = m_workerClientWrapper->peer();
     if (!m_peer)
