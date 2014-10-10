@@ -980,7 +980,9 @@ static PassRef<CSSValue> specifiedValueForGridTrackBreadth(const GridLength& tra
         return cssValuePool().createValue(trackBreadth.flex(), CSSPrimitiveValue::CSS_FR);
 
     const Length& trackBreadthLength = trackBreadth.length();
-    return autoOrZoomAdjustedValue(trackBreadthLength, style);
+    if (trackBreadthLength.isAuto())
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+    return zoomAdjustedPixelValueForLength(trackBreadthLength, style);
 }
 
 static PassRef<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSize, const RenderStyle* style)
