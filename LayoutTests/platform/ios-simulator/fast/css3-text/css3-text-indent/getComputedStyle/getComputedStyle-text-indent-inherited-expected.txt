@@ -1,0 +1,21 @@
+This tests check that the value of text-indent is properly inherited to the child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Value of ancestor is '10px':
+PASS window.getComputedStyle(ancestor).getPropertyValue('text-indent') is '10px'
+PASS window.getComputedStyle(child).getPropertyValue('text-indent') is '10px'
+
+Value of ancestor is '10px -webkit-each-line':
+FAIL window.getComputedStyle(ancestor).getPropertyValue('text-indent') should be 10px -webkit-each-line. Was 10px.
+FAIL window.getComputedStyle(child).getPropertyValue('text-indent') should be 10px -webkit-each-line. Was 10px.
+
+Value of ancestor is '10px -webkit-each-line', while child is '10px':
+FAIL window.getComputedStyle(ancestor).getPropertyValue('text-indent') should be 10px -webkit-each-line. Was 10px.
+PASS window.getComputedStyle(child).getPropertyValue('text-indent') is '10px'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

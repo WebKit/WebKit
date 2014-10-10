@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 38: TypeError: null is not an object (evaluating 'range.startContainer')
+xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx

@@ -1,0 +1,27 @@
+
+Both meter elements should have a nested shadow box with a width specified:
+| "
+    "
+| <meter>
+|   max="100"
+|   value="70"
+| "
+    "
+| <meter>
+|   high="6"
+|   low="3"
+|   max="10"
+|   min="0"
+|   optimum="5"
+|   value="10"
+| "
+    "
+| <meter>
+|   high="6"
+|   low="3"
+|   max="10"
+|   min="0"
+|   optimum="0"
+|   value="10"
+| "
+  "

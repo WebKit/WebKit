@@ -1,3 +1,12 @@
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS Simulator results for fast/css3-text, fast/doctypes, fast/dom tests.
+        Skip fast/DeviceOrientation, fast/dom/shadow and some other failing tests.
+
+        * platform/ios-simulator/fast/css3-text/*: Added.
+        * platform/ios-simulator/fast/doctypes/*: Added.
+        * platform/ios-simulator/fast/dom/*: Added.
+
 2014-10-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderMathMLUnderOver adds spacing to the child operator indefinitely when resizing the window.

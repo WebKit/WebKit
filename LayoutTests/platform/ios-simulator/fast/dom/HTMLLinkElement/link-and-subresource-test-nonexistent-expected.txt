@@ -1,0 +1,7 @@
+FAIL: Timed out waiting for notifyDone to be called
+This test verifies that an image which is prefetched, and which is also contained as a subresource of the current document can be loaded correctly as a subresource, even if the URI doesn't exist.
+
+When this test succeeds, you will see nothing. When this test fails, you will crash or have another error.  
+
+DNE_ONERROR called
+

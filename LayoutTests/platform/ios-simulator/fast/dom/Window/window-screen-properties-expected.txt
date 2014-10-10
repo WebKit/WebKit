@@ -1,0 +1,2 @@
+FAIL: window.screen.pixelDepth is 32, expected 16 or 24
+FAIL: window.screen.colorDepth is 32, expected 16 or 24

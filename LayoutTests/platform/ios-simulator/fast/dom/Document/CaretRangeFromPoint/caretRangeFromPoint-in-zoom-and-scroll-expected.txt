@@ -1,0 +1,5 @@
+ALERT: range is null
+A long text to test document caretRangeFromPoint. Test scroll, zoom, zoomAndScroll .................................... The End
+FAIL check scroll offset actual: 14; expected: 29
+FAIL check zoom and scroll offset actual: 15; expected: 29
+

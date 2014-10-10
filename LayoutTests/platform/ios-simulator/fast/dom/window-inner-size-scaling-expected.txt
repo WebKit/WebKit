@@ -1,0 +1,11 @@
+This test ensures window.innerWidth/innerHeight return the size of the visual viewport in CSS pixels.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.innerWidth should be 160. Was 320.
+FAIL window.innerHeight should be 230. Was 460.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,33 @@
+PASS event.clientX is 50
+PASS event.clientY is 50
+PASS event.pageX is 50
+PASS event.pageY is 50
+PASS event.layerX is 50
+PASS event.layerY is 50
+PASS event.offsetX is 42
+PASS event.offsetY is 42
+PASS event.clientX is 50
+PASS event.clientY is 50
+PASS event.pageX is 50
+FAIL event.pageY should be 550. Was 50.
+PASS event.layerX is 50
+FAIL event.layerY should be 550. Was 50.
+PASS event.offsetX is 42
+FAIL event.offsetY should be 542. Was 42.
+PASS event.clientX is 50
+PASS event.clientY is 50
+FAIL event.pageX should be 550. Was 50.
+PASS event.pageY is 50
+FAIL event.layerX should be 550. Was 50.
+PASS event.layerY is 50
+FAIL event.offsetX should be 542. Was 42.
+PASS event.offsetY is 42
+PASS ev.clientX is 50
+PASS ev.clientY is 50
+FAIL ev.pageX should be 550. Was 50.
+FAIL ev.pageY should be 550. Was 50.
+FAIL ev.layerX should be 550. Was 50.
+FAIL ev.layerY should be 550. Was 50.
+FAIL ev.offsetX should be 542. Was 42.
+FAIL ev.offsetY should be 542. Was 42.
+

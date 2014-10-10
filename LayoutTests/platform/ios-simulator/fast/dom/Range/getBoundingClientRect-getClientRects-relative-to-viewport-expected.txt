@@ -1,0 +1,8 @@
+FAIL unScrolledBoundingBox.top - scrolledDownBoundingBox.top should be 50. Was 0.
+FAIL unScrolledBoundingBoxes[0].top - scrolledDownBoundingBoxes[0].top should be 50. Was 0.
+FAIL unScrolledBoundingBox.left - scrolledRightBoundingBox.left should be 50. Was 0.
+FAIL unScrolledBoundingBoxes[0].left - scrolledRightBoundingBoxes[0].left should be 50. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

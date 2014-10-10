@@ -1,0 +1,4 @@
+frame "theiframe" - has 3 onunload handler(s)
+This is a test for bug 29193: Need to prevent Javascript sleeps in unload handlers. If successful, PASS should be printed below.
+
+FAIL

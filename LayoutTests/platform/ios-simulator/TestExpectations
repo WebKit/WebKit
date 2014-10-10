@@ -117,3 +117,17 @@ webkit.org/b/137588 fast/animation
 # enableAutoResizeMode not implementated
 fast/autoresize
 
+# CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
+webkit.org/b/76173 fast/css3-text/css3-text-align-last
+webkit.org/b/99945 fast/css3-text/css3-text-justify [ Skip ]
+webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
+webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
+
+# ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow
+fast/dom/HTMLTemplateElement/cycles-in-shadow.html
+editing/shadow
+accessibility/corresponding-control-deleted-crash.html
+editing/text-iterator/basic-iteration-shadowdom.html
+fast/dom/DeviceMotion/no-page-cache.html [ Skip ]
+fast/dom/DeviceOrientation

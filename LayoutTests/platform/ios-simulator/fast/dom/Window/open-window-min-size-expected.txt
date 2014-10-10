@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 6: TypeError: undefined is not an object (evaluating 'msg["width"]')
+FAIL: Timed out waiting for notifyDone to be called
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

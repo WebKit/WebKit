@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 29: TypeError: undefined is not a function (evaluating 'document.register('x-foo', { prototype: Object.create(HTMLElement.prototype) })')
+Testing document.register() type extension behaviours through createElement().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+
