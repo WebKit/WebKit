@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 336x19
+          text run at (0,0) width 336: "These should be two identical green hollow squares:"
+      RenderBlock (anonymous) at (0,36) size 784x61
+        RenderHTMLCanvas {CANVAS} at (0,0) size 56x56 [border: (3px solid #008000)]
+        RenderText {#text} at (56,41) size 4x19
+          text run at (56,41) width 4: " "
+        RenderHTMLCanvas {CANVAS} at (60,0) size 56x56 [border: (3px solid #008000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

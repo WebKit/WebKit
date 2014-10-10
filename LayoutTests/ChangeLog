@@ -1,5 +1,16 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for fast/box-shadow, box-sizing, canvas, clip and compact tests.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/box-shadow/*
+        * platform/ios-simulator/fast/box-sizing/*: Added.
+        * platform/ios-simulator/fast/canvas/*: Added.
+        * platform/ios-simulator/fast/clip/*: Added.
+        * platform/ios-simulator/fast/compact/*: Added.
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         iOS Simulator results for fast/borders tests.
 
         * platform/ios-simulator/fast/borders/*: Added

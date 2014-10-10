@@ -48,6 +48,7 @@ touchadjustment
 vibration
 
 # Skip webgl tests in the simulator
+fast/canvas/webgl
 webgl
 
 # canvas
@@ -73,6 +74,15 @@ webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
+
+fast/canvas/canvas-bg.html [ Failure ]
+fast/canvas/canvas-blending-global-alpha.html [ Failure ]
+fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
+fast/canvas/canvas-measureText-ideographicSpace.html [ Failure ]
+fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
+fast/canvas/canvas-toDataURL-webp.html  [ Skip ] # Webp not supported
+fast/canvas/draw-focus-if-needed-with-path.html [ Failure ]
+fast/canvas/draw-focus-if-needed.html [ Failure ]
 
 webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Failure ]
