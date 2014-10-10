@@ -1,5 +1,12 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Tweak some Mac test expectations.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Mac TestExpectations cleanup.
         
         Re-enable tests that now pass. Mark skipped tests as [ Failure ] when possible,

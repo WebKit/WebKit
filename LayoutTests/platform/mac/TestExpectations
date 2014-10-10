@@ -158,6 +158,9 @@ http/tests/security/contentTypeOptions
 fast/mediastream
 fast/events/constructors/media-stream-event-constructor.html
 
+# Asserts in debug.
+[ Debug ] fast/images/large-size-image-crash.html [ Skip ]
+
 # Directory upload is not enabled.
 fast/forms/file/input-file-directory-upload.html
 
@@ -170,6 +173,7 @@ webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 
 # Still working out flakiness issues with the perf tests.
 perf/adding-radio-buttons.html [ Pass Failure ]
+perf/show-hide-table-rows.html [ Pass Failure ]
 
 # This test appears to be flakey on all platforms, especially
 # Mac-Leopard after r63862.  Skipping for now.
@@ -402,7 +406,7 @@ webkit.org/b/87347 fast/frames/flattening/iframe-tiny.html [ Pass Failure ]
 webkit.org/b/89680 fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
 
 # Implement textInputController.setComposition()
-webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
+webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Pass Failure ]
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
 
@@ -505,6 +509,8 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 css3/filters/composited-during-transition-layertree.html
 webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
+platform/mac/fast/text/combining-character-sequence-fallback.html [ Pass Failure ]
+
 # --- Editing ---
 # Pasting replaces the three periods with an ellipsis on Lion and Mountain Lion
 editing/pasteboard/5478250.html
@@ -558,7 +564,7 @@ http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 platform/mac/accessibility/selection-value-changes-for-aria-textbox.html [ Failure ]
 
 # -- Flaky tests (WebKit 1 only) ---
-platform/mac/accessibility/search-with-frames.html [ Failure ]
+platform/mac/accessibility/search-with-frames.html [ Pass Failure ]
 
 # --- Plugins ---
 # WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
@@ -941,9 +947,9 @@ webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-paddi
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass ]
-webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
 
 webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Skip ]
@@ -1020,8 +1026,8 @@ webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-con
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 
 # These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
-[ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
-[ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
+[ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ Pass ImageOnlyFailure ]
 # clipping filter effects when region is present. 
 webkit.org/b/133523 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 # End of subpixel failures.

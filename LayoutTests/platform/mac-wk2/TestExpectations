@@ -631,7 +631,7 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 [ Mavericks ] http/tests/navigation/ping-cookie.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=133227
-plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html [ Failure ]
+plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html [ Pass Failure ]
 plugins/snapshotting/set-plugin-size-to-tiny.html [ Failure ]
 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
