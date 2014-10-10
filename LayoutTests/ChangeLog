@@ -1,5 +1,11 @@
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        iOS Simulator results for fast/block tests.
+
+        * platform/ios-simulator/fast/block/*: Added
+
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Skip fast/animation in the iOS Simulator.
         Add results for fast/backgrounds
 

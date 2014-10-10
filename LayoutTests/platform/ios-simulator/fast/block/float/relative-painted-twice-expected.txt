@@ -1,0 +1,11 @@
+layer at (0,0) size 800x2016
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2016
+  RenderBlock {HTML} at (0,0) size 800x2016
+    RenderBody {BODY} at (8,8) size 784x2000
+      RenderBlock {DIV} at (0,0) size 784x150
+      RenderBlock {DIV} at (0,150) size 784x0
+layer at (8,58) size 784x0
+  RenderBlock (relative positioned) {DIV} at (0,0) size 784x0
+    RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#0000007F]
+caret: position 0 of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of body

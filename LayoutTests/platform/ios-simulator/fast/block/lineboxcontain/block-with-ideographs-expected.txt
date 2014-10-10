@@ -1,0 +1,68 @@
+layer at (0,0) size 800x631
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x631
+  RenderBlock {html} at (0,0) size 800x631
+    RenderBody {body} at (8,8) size 784x615
+      RenderBlock {div} at (0,0) size 784x205
+        RenderBlock {div} at (0,0) size 59x146 [border: (1px solid #FF0000)]
+          RenderText {#text} at (3,1) size 54x48
+            text run at (3,1) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 54x48
+            RenderRubyRun (anonymous) at (1,49) size 57x48
+              RenderRubyBase (anonymous) at (0,0) size 57x48
+                RenderText {#text} at (1,0) size 54x48
+                  text run at (1,0) width 48: "\x{6AFB}"
+          RenderText {#text} at (3,97) size 54x48
+            text run at (3,97) width 48: "\x{7530}"
+        RenderBlock {div} at (0,146) size 784x59 [border: (1px solid #008000)]
+          RenderText {#text} at (1,2) size 48x54
+            text run at (1,2) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 48x54
+            RenderRubyRun (anonymous) at (49,1) size 48x57
+              RenderRubyBase (anonymous) at (0,0) size 48x57
+                RenderText {#text} at (0,1) size 48x54
+                  text run at (0,1) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,2) size 48x54
+            text run at (97,2) width 48: "\x{7530}"
+      RenderBlock {div} at (0,205) size 784x205
+        RenderBlock {div} at (0,0) size 59x146 [border: (1px solid #FF0000)]
+          RenderText {#text} at (3,1) size 54x48
+            text run at (3,1) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 54x48
+            RenderRubyRun (anonymous) at (1,49) size 57x48
+              RenderRubyBase (anonymous) at (0,0) size 57x48
+                RenderText {#text} at (1,0) size 54x48
+                  text run at (1,0) width 48: "\x{6AFB}"
+          RenderText {#text} at (3,97) size 54x48
+            text run at (3,97) width 48: "\x{7530}"
+        RenderBlock {div} at (0,146) size 784x59 [border: (1px solid #008000)]
+          RenderText {#text} at (1,2) size 48x54
+            text run at (1,2) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 48x54
+            RenderRubyRun (anonymous) at (49,1) size 48x57
+              RenderRubyBase (anonymous) at (0,0) size 48x57
+                RenderText {#text} at (0,1) size 48x54
+                  text run at (0,1) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,2) size 48x54
+            text run at (97,2) width 48: "\x{7530}"
+      RenderBlock {div} at (0,410) size 784x205
+        RenderBlock {div} at (0,0) size 59x146 [border: (1px solid #FF0000)]
+          RenderText {#text} at (3,1) size 54x48
+            text run at (3,1) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 54x48
+            RenderRubyRun (anonymous) at (1,49) size 57x48
+              RenderRubyBase (anonymous) at (0,0) size 57x48
+                RenderText {#text} at (1,0) size 54x48
+                  text run at (1,0) width 48: "\x{6AFB}"
+          RenderText {#text} at (3,97) size 54x48
+            text run at (3,97) width 48: "\x{7530}"
+        RenderBlock {div} at (0,146) size 784x59 [border: (1px solid #008000)]
+          RenderText {#text} at (1,2) size 48x54
+            text run at (1,2) width 48: "\x{70BA}"
+          RenderRuby (inline) {ruby} at (0,0) size 48x54
+            RenderRubyRun (anonymous) at (49,1) size 48x57
+              RenderRubyBase (anonymous) at (0,0) size 48x57
+                RenderText {#text} at (0,1) size 48x54
+                  text run at (0,1) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,2) size 48x54
+            text run at (97,2) width 48: "\x{7530}"

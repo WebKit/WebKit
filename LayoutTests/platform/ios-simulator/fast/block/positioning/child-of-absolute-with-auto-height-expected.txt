@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 420x19
+          text run at (0,0) width 420: "The inner blue box should be 50% as tall as the outer yellow box."
+layer at (8,30) size 304x540
+  RenderBlock (positioned) {DIV} at (8,30) size 304x540 [bgcolor=#FFFF00] [border: (2px dashed #000000)]
+    RenderBlock {DIV} at (2,2) size 300x272 [bgcolor=#0000FF] [border: (2px dashed #000000)]
