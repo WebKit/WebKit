@@ -1,5 +1,11 @@
 2014-10-10  Andy Estes  <aestes@apple.com>
 
+        Add a mac-mountainlion result for delete-autocorrected-word-2.html.
+
+        * platform/mac-mountainlion/platform/mac/editing/spelling/delete-autocorrected-word-2-expected.txt: Added.
+
+2014-10-10  Andy Estes  <aestes@apple.com>
+
         [Mountain Lion] Fix global-constructors-attributes.html
 
         Get rid of the platform/mac-wk2/ result since it's identical to the platform/mac/ version.
