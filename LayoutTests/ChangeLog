@@ -1,3 +1,17 @@
+2014-10-10  Andy Estes  <aestes@apple.com>
+
+        Fixes for additional Mavericks test failures.
+
+        * platform/mac-mavericks/compositing/fixed-image-loading-expected.txt: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-expected.png: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-expected.txt: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-expected.png: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-expected.txt: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Added.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/mac-mavericks/fast/repaint/selection-gap-fixed-child-expected.txt: Added.
+        * platform/mac-mavericks/fast/repaint/selection-gap-flipped-fixed-child-expected.txt: Added.
+
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Some more Mac TestExpectation tweaking.
