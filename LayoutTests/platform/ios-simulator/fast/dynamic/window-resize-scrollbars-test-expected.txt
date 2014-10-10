@@ -1,0 +1,10 @@
+FAIL: Timed out waiting for notifyDone to be called
+layer at (0,0) size 288x428
+  RenderView at (0,0) size 100x100
+layer at (0,0) size 288x428
+  RenderBlock {HTML} at (0,0) size 288x428
+    RenderBody {BODY} at (8,8) size 272x84
+      RenderText {#text} at (0,0) size 264x39
+        text run at (0,0) width 264: "This window should not have scroll bars."
+        text run at (0,20) width 227: "If it has scroll bars, try to use them."
+      RenderText {#text} at (0,0) size 0x0
