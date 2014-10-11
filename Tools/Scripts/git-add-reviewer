@@ -382,7 +382,7 @@ sub getConfigValue($)
 {
     my ($variable) = @_;
 
-    chomp(my $value = runCommmandWithOutput('git', 'config', '--get', $variable));
+    chomp(my $value = runCommandWithOutput('git', 'config', '--get', $variable));
 
     return $value;
 }

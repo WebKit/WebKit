@@ -1,3 +1,12 @@
+2014-10-10  Dana Burkart  <dburkart@apple.com>
+
+        Fix fat-fingered function name in git-add-reviewer.
+
+        Unreviewed.
+
+        * Scripts/git-add-reviewer:
+        (getConfigValue):
+
 2014-10-10  David Farler  <dfarler@apple.com>
 
         [iOS] LayoutTestRelay should ensure its DRT/WKTR dies when receiving kill/term signals
