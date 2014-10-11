@@ -34,6 +34,9 @@
         function checkResult(pos, isIn)
         {
             var elt = document.elementFromPoint(pos, 150);
+            if (!elt)
+                return "Failed to find element at " + pos + ", 150";
+
             var good = isIn ? "inside" : "outside";
             var bad = isIn ? "outside" : "inside";
             return (isIn == (elt.id == "target")) ?
@@ -55,9 +58,12 @@
         {
             if (window.testRunner) {
                 var target = document.getElementById("target");
-                if (!internals.pauseAnimationAtTimeOnElement("anim", 2.0, target))
-                    throw("Transition is not running");
-        
+                if (!internals.pauseAnimationAtTimeOnElement("anim", 2.0, target)) {
+                    document.getElementById('result').innerHTML = "FAIL: Failed to pause animation"
+                    testRunner.notifyDone();
+                    return;
+                }
+
                 checkResults();
                 testRunner.notifyDone();
             }

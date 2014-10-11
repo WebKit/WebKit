@@ -1,3 +1,10 @@
+2014-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Make these animation tests not timeout if hit testing fails.
+
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-hit-test.html:
+
 2014-10-10  Andy Estes  <aestes@apple.com>
 
         Mark compositing/rtl/rtl-fixed-overflow-scrolled.html as [ Failure ] on mac-wk1 platforms.
