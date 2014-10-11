@@ -1,6 +1,7 @@
 list(APPEND WTF_SOURCES
     gobject/GMainLoopSource.cpp
     gobject/GRefPtr.cpp
+    gobject/GThreadSafeMainLoopSource.cpp
     gobject/GlibUtilities.cpp
 
     gtk/MainThreadGtk.cpp

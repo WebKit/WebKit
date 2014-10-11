@@ -4,6 +4,7 @@ list(APPEND WTF_SOURCES
 
     gobject/GMainLoopSource.cpp
     gobject/GRefPtr.cpp
+    gobject/GThreadSafeMainLoopSource.cpp
 )
 
 list(APPEND WTF_LIBRARIES

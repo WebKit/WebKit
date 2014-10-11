@@ -19,11 +19,12 @@
 
 #include "config.h"
 
-#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/gobject/GThreadSafeMainLoopSource.h>
 #include <stdio.h>
 
 namespace TestWebKitAPI {
 
+template <typename T>
 class GMainLoopSourceTest {
 public:
     GMainLoopSourceTest()
@@ -56,21 +57,16 @@ public:
         g_main_loop_quit(m_mainLoop);
     }
 
-    GMainLoopSource& source() { return m_source; }
+    T& source() { return m_source; }
 
 private:
     GMainLoop* m_mainLoop;
-    GMainLoopSource m_source;
+    T m_source;
 };
 
-TEST(WTF_GMainLoopSource, BasicRescheduling)
+template <typename T>
+static void basicRescheduling(T& context)
 {
-    struct TestingContext {
-        GMainLoopSourceTest test;
-        bool finishedFirstTask = false;
-        bool finishedSecondTask = false;
-    } context;
-
     EXPECT_TRUE(!context.test.source().isActive());
 
     context.test.source().schedule("[Test] FirstTask", [&] {
@@ -94,14 +90,26 @@ TEST(WTF_GMainLoopSource, BasicRescheduling)
     EXPECT_TRUE(context.finishedSecondTask);
 }
 
-TEST(WTF_GMainLoopSource, ReentrantRescheduling)
+TEST(WTF_GMainLoopSource, BasicRescheduling)
 {
     struct TestingContext {
-        GMainLoopSourceTest test;
+        GMainLoopSourceTest<GMainLoopSource> test;
         bool finishedFirstTask = false;
         bool finishedSecondTask = false;
     } context;
+    basicRescheduling<TestingContext>(context);
 
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        bool finishedFirstTask = false;
+        bool finishedSecondTask = false;
+    } threadSafeContext;
+    basicRescheduling<ThreadSafeTestingContext>(threadSafeContext);
+}
+
+template <typename T>
+static void reentrantRescheduling(T& context)
+{
     EXPECT_TRUE(!context.test.source().isActive());
 
     context.test.source().schedule("[Test] FirstTask", [&] {
@@ -127,10 +135,27 @@ TEST(WTF_GMainLoopSource, ReentrantRescheduling)
     EXPECT_TRUE(context.finishedSecondTask);
 }
 
+TEST(WTF_GMainLoopSource, ReentrantRescheduling)
+{
+    struct TestingContext {
+        GMainLoopSourceTest<GMainLoopSource> test;
+        bool finishedFirstTask = false;
+        bool finishedSecondTask = false;
+    } context;
+    reentrantRescheduling<TestingContext>(context);
+
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        bool finishedFirstTask = false;
+        bool finishedSecondTask = false;
+    } threadSafeContext;
+    reentrantRescheduling<ThreadSafeTestingContext>(threadSafeContext);
+}
+
 TEST(WTF_GMainLoopSource, ReschedulingFromDifferentThread)
 {
     struct TestingContext {
-        GMainLoopSourceTest test;
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
         bool finishedFirstTask;
         bool finishedSecondTask;
     } context;
@@ -198,13 +223,9 @@ TEST(WTF_GMainLoopSource, DestructionDuringDispatch)
     g_main_loop_unref(loop);
 }
 
-TEST(WTF_GMainLoopSource, CancelRepeatingSourceDuringDispatch)
+template <typename T>
+static void cancelRepeatingSourceDuringDispatch(T& context)
 {
-    struct TestingContext {
-        GMainLoopSourceTest test;
-        unsigned callCount = 0;
-    } context;
-
     EXPECT_TRUE(!context.test.source().isActive());
 
     context.test.source().schedule("[Test] RepeatingTask",
@@ -225,16 +246,26 @@ TEST(WTF_GMainLoopSource, CancelRepeatingSourceDuringDispatch)
     EXPECT_EQ(3, context.callCount);
 }
 
-TEST(WTF_GMainLoopSource, BasicDestroyCallbacks)
+TEST(WTF_GMainLoopSource, CancelRepeatingSourceDuringDispatch)
 {
     struct TestingContext {
-        GMainLoopSourceTest test;
-        bool callbackCalled = false;
-        bool destroyCallbackCalled = false;
-    };
+        GMainLoopSourceTest<GMainLoopSource> test;
+        unsigned callCount = 0;
+    } context;
+    cancelRepeatingSourceDuringDispatch<TestingContext>(context);
 
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        unsigned callCount = 0;
+    } threadSafeContext;
+    cancelRepeatingSourceDuringDispatch<ThreadSafeTestingContext>(threadSafeContext);
+}
+
+template <typename T>
+static void basicDestroyCallbacks()
+{
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] DestroyCallback",
             [&] {
@@ -256,7 +287,7 @@ TEST(WTF_GMainLoopSource, BasicDestroyCallbacks)
     }
 
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] DestroyCallback",
             std::function<bool ()>([&] {
@@ -279,16 +310,28 @@ TEST(WTF_GMainLoopSource, BasicDestroyCallbacks)
     }
 }
 
-TEST(WTF_GMainLoopSource, DestroyCallbacksAfterCancellingDuringDispatch)
+TEST(WTF_GMainLoopSource, BasicDestroyCallbacks)
 {
     struct TestingContext {
-        GMainLoopSourceTest test;
-        unsigned callbackCallCount= 0;
+        GMainLoopSourceTest<GMainLoopSource> test;
+        bool callbackCalled = false;
         bool destroyCallbackCalled = false;
     };
+    basicDestroyCallbacks<TestingContext>();
 
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        bool callbackCalled = false;
+        bool destroyCallbackCalled = false;
+    };
+    basicDestroyCallbacks<ThreadSafeTestingContext>();
+}
+
+template <typename T>
+static void destroyCallbacksAfterCancellingDuringDispatch()
+{
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] DestroyCallback",
             [&] {
@@ -312,7 +355,7 @@ TEST(WTF_GMainLoopSource, DestroyCallbacksAfterCancellingDuringDispatch)
     }
 
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] DestroyCallback",
             std::function<bool ()>([&] {
@@ -337,18 +380,28 @@ TEST(WTF_GMainLoopSource, DestroyCallbacksAfterCancellingDuringDispatch)
     }
 }
 
-TEST(WTF_GMainLoopSource, DestroyCallbacksAfterReschedulingDuringDispatch)
+TEST(WTF_GMainLoopSource, DestroyCallbacksAfterCancellingDuringDispatch)
 {
     struct TestingContext {
-        GMainLoopSourceTest test;
-        unsigned firstCallbackCallCount = 0;
-        bool firstDestroyCallbackCalled = false;
-        unsigned secondCallbackCallCount = 0;
-        bool secondDestroyCallbackCalled = false;
+        GMainLoopSourceTest<GMainLoopSource> test;
+        unsigned callbackCallCount= 0;
+        bool destroyCallbackCalled = false;
     };
+    destroyCallbacksAfterCancellingDuringDispatch<TestingContext>();
 
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        unsigned callbackCallCount= 0;
+        bool destroyCallbackCalled = false;
+    };
+    destroyCallbacksAfterCancellingDuringDispatch<ThreadSafeTestingContext>();
+}
+
+template <typename T>
+static void destroyCallbacksAfterReschedulingDuringDispatch()
+{
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] BaseCallback",
             [&] {
@@ -383,7 +436,7 @@ TEST(WTF_GMainLoopSource, DestroyCallbacksAfterReschedulingDuringDispatch)
     }
 
     {
-        TestingContext context;
+        T context;
         EXPECT_TRUE(!context.test.source().isActive());
         context.test.source().schedule("[Test] BaseCallback",
             std::function<bool ()>([&] {
@@ -420,6 +473,27 @@ TEST(WTF_GMainLoopSource, DestroyCallbacksAfterReschedulingDuringDispatch)
     }
 }
 
+TEST(WTF_GMainLoopSource, DestroyCallbacksAfterReschedulingDuringDispatch)
+{
+    struct TestingContext {
+        GMainLoopSourceTest<GMainLoopSource> test;
+        unsigned firstCallbackCallCount = 0;
+        bool firstDestroyCallbackCalled = false;
+        unsigned secondCallbackCallCount = 0;
+        bool secondDestroyCallbackCalled = false;
+    };
+    destroyCallbacksAfterReschedulingDuringDispatch<TestingContext>();
+
+    struct ThreadSafeTestingContext {
+        GMainLoopSourceTest<GThreadSafeMainLoopSource> test;
+        unsigned firstCallbackCallCount = 0;
+        bool firstDestroyCallbackCalled = false;
+        unsigned secondCallbackCallCount = 0;
+        bool secondDestroyCallbackCalled = false;
+    };
+    destroyCallbacksAfterReschedulingDuringDispatch<ThreadSafeTestingContext>();
+}
+
 TEST(WTF_GMainLoopSource, DeleteOnDestroySources)
 {
     // Testing the delete-on-destroy sources is very limited. There's no good way
@@ -427,7 +501,7 @@ TEST(WTF_GMainLoopSource, DeleteOnDestroySources)
     // is destroyed.
 
     struct TestingContext {
-        GMainLoopSourceTest test;
+        GMainLoopSourceTest<GMainLoopSource> test;
         unsigned callbackCallCount = 0;
         bool destroyCallbackCalled = false;
     } context;

@@ -30,7 +30,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/gobject/GThreadSafeMainLoopSource.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -44,11 +44,11 @@ typedef struct _Source {
     guint64 size;
     gboolean paused;
 
-    GMainLoopSource start;
-    GMainLoopSource stop;
-    GMainLoopSource needData;
-    GMainLoopSource enoughData;
-    GMainLoopSource seek;
+    GThreadSafeMainLoopSource start;
+    GThreadSafeMainLoopSource stop;
+    GThreadSafeMainLoopSource needData;
+    GThreadSafeMainLoopSource enoughData;
+    GThreadSafeMainLoopSource seek;
 
     guint64 requestedOffset;
 } Source;

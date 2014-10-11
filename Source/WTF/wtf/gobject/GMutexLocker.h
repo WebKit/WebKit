@@ -27,10 +27,40 @@
 
 namespace WTF {
 
+template<typename T>
+struct MutexWrapper;
+
+template<>
+struct MutexWrapper<GMutex> {
+    static void lock(GMutex* mutex)
+    {
+        g_mutex_lock(mutex);
+    }
+
+    static void unlock(GMutex* mutex)
+    {
+        g_mutex_unlock(mutex);
+    }
+};
+
+template<>
+struct MutexWrapper<GRecMutex> {
+    static void lock(GRecMutex* mutex)
+    {
+        g_rec_mutex_lock(mutex);
+    }
+
+    static void unlock(GRecMutex* mutex)
+    {
+        g_rec_mutex_unlock(mutex);
+    }
+};
+
+template<typename T>
 class GMutexLocker {
     WTF_MAKE_NONCOPYABLE(GMutexLocker);
 public:
-    explicit GMutexLocker(GMutex& mutex)
+    explicit GMutexLocker(T& mutex)
         : m_mutex(mutex)
         , m_locked(false)
     {
@@ -44,22 +74,24 @@ public:
 
     void lock()
     {
-        if (!m_locked) {
-            g_mutex_lock(&m_mutex);
-            m_locked = true;
-        }
+        if (m_locked)
+            return;
+
+        MutexWrapper<T>::lock(&m_mutex);
+        m_locked = true;
     }
 
     void unlock()
     {
-        if (m_locked) {
-            m_locked = false;
-            g_mutex_unlock(&m_mutex);
-        }
+        if (!m_locked)
+            return;
+
+        m_locked = false;
+        MutexWrapper<T>::unlock(&m_mutex);
     }
 
 private:
-    GMutex& m_mutex;
+    T& m_mutex;
     bool m_locked;
 };
 
