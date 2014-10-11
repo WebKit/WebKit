@@ -1,3 +1,10 @@
+2014-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark some more tests as sometimes passing.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Enable WebP support.
