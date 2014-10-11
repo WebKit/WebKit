@@ -1,3 +1,28 @@
+2014-10-10  David Farler  <dfarler@apple.com>
+
+        [iOS] LayoutTestRelay should detect EOF and properly signal underlying DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=137527
+
+        Reviewed by Simon Fraser.
+
+        NSFileHandle doesn't notify of EOF in its readability handler.
+        Use a dispatch_source_t and an event handler that is called when reading is possible.
+        In the handler block, do a run-of-the-mill read(2) from standard input and
+        detect EOF in the usual way by checking that zero bytes were read.
+
+        Once an EOF is received, the FIFOs are disconnected, the simulator app
+        is killed, and the relay exits with status 0.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]):
+        (-[LTRelayController didDisconnect]):
+        (-[LTRelayController didConnect]):
+        (-[LTRelayController launchApp]):
+        Rename "dispatchSource" to "simulatorAppExitDispatchSource" to prevent any
+        confusion with this new dispatch source, called "standardInputDispatchSource".
+        (-[LTRelayController finish]): Added.
+        (-[LTRelayController readFileHandle:]): Deleted.
+
 2014-10-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Crash on facebook.com
