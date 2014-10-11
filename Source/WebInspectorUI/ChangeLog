@@ -1,5 +1,16 @@
 2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: assert always logs undefined instead of the desired string
+        https://bugs.webkit.org/show_bug.cgi?id=137632
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.dispatch):
+        Fix the assert log to include the method name.
+
+2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CSS minification should not strip whitespace around calc +/- binary operators
         https://bugs.webkit.org/show_bug.cgi?id=137624
 
