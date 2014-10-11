@@ -22,6 +22,7 @@ find_package(ICU REQUIRED)
 find_package(Threads REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
+find_package(WebP REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(glib_components gio gobject gthread)

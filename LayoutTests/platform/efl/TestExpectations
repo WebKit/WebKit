@@ -1101,13 +1101,13 @@ webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 
 # Requires WebP support.
-Bug(EFL) fast/canvas/canvas-toDataURL-webp.html
-Bug(EFL) fast/images/webp-image-decoding.html
-Bug(EFL) fast/images/webp-color-profile-lossless.html
-Bug(EFL) fast/images/webp-color-profile-lossy-alpha.html
-Bug(EFL) fast/images/webp-color-profile-lossy.html
-Bug(EFL) http/tests/images/webp-partial-load.html
-Bug(EFL) http/tests/images/webp-progressive-load.html
+Bug(EFL) fast/canvas/canvas-toDataURL-webp.html [ Skip ]
+# Requires WebP 0.2 support.
+Bug(EFL) fast/images/webp-image-decoding.html [ Skip ]
+# Requires WebP 0.3 and color profile support.
+Bug(EFL) fast/images/webp-color-profile-lossless.html [ Skip ]
+Bug(EFL) fast/images/webp-color-profile-lossy-alpha.html [ Skip ]
+Bug(EFL) fast/images/webp-color-profile-lossy.html [ Skip ]
 
 # Requires MEDIA_SOURCE support.
 webkit.org/b/95296 http/tests/media/media-source [ Skip ]

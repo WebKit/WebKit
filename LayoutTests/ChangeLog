@@ -1,3 +1,14 @@
+2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Enable WebP support.
+        https://bugs.webkit.org/show_bug.cgi?id=136156
+
+        Reviewed by Gyuyoung Kim.
+
+        Clarify skipped webp test for Webkit EFL.
+
+        * platform/efl/TestExpectations:
+
 2014-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Make these animation tests not timeout if hit testing fails.

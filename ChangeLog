@@ -1,3 +1,14 @@
+2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Enable WebP support.
+        https://bugs.webkit.org/show_bug.cgi?id=136156
+
+        Reviewed by Gyuyoung Kim.
+
+        Add WebP package finding rule.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-10-07  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         [EFL] Enable custom URI schemes with CustomProtocols
