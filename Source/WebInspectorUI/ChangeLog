@@ -1,5 +1,19 @@
 2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve appearance of alpha color swatches
+        https://bugs.webkit.org/show_bug.cgi?id=137627
+
+        Reviewed by Timothy Hatcher.
+
+        This improves the sizes. The color-swatch size is 1em x 1em,
+        which ends up being 11px, and thus there is still an imbalance.
+        However on both 1x and 2x displays this looks more even.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch):
+
+2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: assert always logs undefined instead of the desired string
         https://bugs.webkit.org/show_bug.cgi?id=137632
 

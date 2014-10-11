@@ -127,7 +127,7 @@
     background-image: linear-gradient(to bottom, rgb(204, 204, 204), rgb(204, 204, 204)),
         linear-gradient(to bottom, rgb(204, 204, 204), rgb(204, 204, 204));
     background-color: white;
-    background-size: calc(50% + 1px);
+    background-size: calc(50%);
     background-position: top left, bottom right;
     background-repeat: no-repeat;
 
