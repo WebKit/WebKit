@@ -1,3 +1,10 @@
+2014-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        After r174628 we send the test process a SIGTERM before the SIGKILL.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+
 2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Enable WebP support.
