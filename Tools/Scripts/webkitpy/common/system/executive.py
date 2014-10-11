@@ -199,6 +199,10 @@ class Executive(object):
         while retries_left > 0:
             try:
                 retries_left -= 1
+                # Give processes one change to clean up quickly before exiting.
+                # Following up with a kill should have no effect if the process
+                # already exited, and forcefully kill it if SIGTERM wasn't enough.
+                os.kill(pid, signal.SIGTERM)
                 os.kill(pid, signal.SIGKILL)
                 _ = os.waitpid(pid, os.WNOHANG)
             except OSError, e:

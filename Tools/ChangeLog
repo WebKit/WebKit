@@ -1,5 +1,27 @@
 2014-10-10  David Farler  <dfarler@apple.com>
 
+        [iOS] LayoutTestRelay should ensure its DRT/WKTR dies when receiving kill/term signals
+        https://bugs.webkit.org/show_bug.cgi?id=137528
+
+        Reviewed by Simon Fraser.
+
+        Catch SIGINT and SIGTERM signals in the LayoutTestRelay
+        and SIGKILL the paired simulator app before exiting cleanly.
+
+        webkitpy only uses SIGKILL to kill processes which you cannot
+        catch. Send SIGTERM to the process and give it chance to do
+        its thing before sending SIGKILL. Sending a SIGKILL to an already
+        dead PID is safe.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h:
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController finish]):
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+        (receivedSignal):
+        (main):
+
+2014-10-10  David Farler  <dfarler@apple.com>
+
         [iOS] LayoutTestRelay should detect EOF and properly signal underlying DRT/WKTR
         https://bugs.webkit.org/show_bug.cgi?id=137527
 
