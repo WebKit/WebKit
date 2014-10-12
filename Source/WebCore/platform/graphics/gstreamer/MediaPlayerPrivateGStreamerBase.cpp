@@ -275,7 +275,7 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)
 {
-    GMutexLocker lock(m_bufferMutex);
+    GMutexLocker<GMutex> lock(m_bufferMutex);
     if (!m_buffer)
         return nullptr;
 
@@ -325,7 +325,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
     g_return_if_fail(GST_IS_BUFFER(buffer));
 
     {
-        GMutexLocker lock(m_bufferMutex);
+        GMutexLocker<GMutex> lock(m_bufferMutex);
         gst_buffer_replace(&m_buffer, buffer);
     }
 
@@ -357,7 +357,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     if (!m_player->visible())
         return;
 
-    GMutexLocker lock(m_bufferMutex);
+    GMutexLocker<GMutex> lock(m_bufferMutex);
     if (!m_buffer)
         return;
 

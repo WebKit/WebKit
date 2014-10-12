@@ -1,3 +1,52 @@
+2014-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Split GMainLoopSource moving thread safe implementation to its own class GThreadSafeMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=137485
+
+        Reviewed by Sergio Villar Senin.
+
+        Use GThreadSafeMainLoopSource for GStreamer sources, since they
+        can be used from different threads. Also update GMutexLocker
+        usages, since it's now a template.
+
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::createBus):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkTimeoutCallback):
+        (webkitVideoSinkRender):
+        (unlockBufferMutex):
+        (webkitVideoSinkUnlockStop):
+        (webkitVideoSinkStart):
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekDataCb):
+        (webKitWebSrcSetMediaPlayer):
+        (StreamingClient::createReadBuffer):
+        (StreamingClient::handleResponseReceived):
+        (StreamingClient::handleDataReceived):
+        (StreamingClient::handleNotifyFinished):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+
 2014-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not generate a symlink in derived sources for every header in WebCore/bindings/gobject

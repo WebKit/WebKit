@@ -24,12 +24,11 @@
  */
 
 #include "config.h"
+#include "GMainLoopSource.h"
 
 #if USE(GLIB)
 
-#include "GMainLoopSource.h"
 #include <gio/gio.h>
-#include <wtf/gobject/GMutexLocker.h>
 
 namespace WTF {
 
@@ -42,20 +41,17 @@ GMainLoopSource::GMainLoopSource()
     : m_deleteOnDestroy(DoNotDeleteOnDestroy)
     , m_status(Ready)
 {
-    g_mutex_init(&m_mutex);
 }
 
 GMainLoopSource::GMainLoopSource(DeleteOnDestroyType deleteOnDestroy)
     : m_deleteOnDestroy(deleteOnDestroy)
     , m_status(Ready)
 {
-    g_mutex_init(&m_mutex);
 }
 
 GMainLoopSource::~GMainLoopSource()
 {
     cancel();
-    g_mutex_clear(&m_mutex);
 }
 
 bool GMainLoopSource::isScheduled() const
@@ -70,28 +66,15 @@ bool GMainLoopSource::isActive() const
 
 void GMainLoopSource::cancel()
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
-}
-
-void GMainLoopSource::cancelWithoutLocking()
-{
     // Delete-on-destroy GMainLoopSource objects can't be cancelled.
     if (m_deleteOnDestroy == DeleteOnDestroy)
         return;
 
     // A valid context should only be present if GMainLoopSource is in the Scheduled or Dispatching state.
     ASSERT(!m_context.source || m_status == Scheduled || m_status == Dispatching);
-    // The general cancellable object should only be present if we're currently dispatching this GMainLoopSource.
-    ASSERT(!m_cancellable || m_status == Dispatching);
 
     m_status = Ready;
 
-    // The source is perhaps being cancelled in the middle of a callback dispatch.
-    // Cancelling this GCancellable object will convey this information to the
-    // current execution context when the callback dispatch is finished.
-    g_cancellable_cancel(m_cancellable.get());
-    m_cancellable = nullptr;
     g_cancellable_cancel(m_context.socketCancellable.get());
 
     if (!m_context.source)
@@ -115,13 +98,12 @@ void GMainLoopSource::scheduleIdleSource(const char* name, GSourceFunc sourceFun
 
 void GMainLoopSource::schedule(const char* name, std::function<void ()> function, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_idle_source_new()),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
@@ -133,13 +115,12 @@ void GMainLoopSource::schedule(const char* name, std::function<void ()> function
 
 void GMainLoopSource::schedule(const char* name, std::function<bool ()> function, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_idle_source_new()),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
@@ -151,14 +132,13 @@ void GMainLoopSource::schedule(const char* name, std::function<bool ()> function
 
 void GMainLoopSource::schedule(const char* name, std::function<bool (GIOCondition)> function, GSocket* socket, GIOCondition condition, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     GCancellable* socketCancellable = g_cancellable_new();
     m_context = {
         adoptGRef(g_socket_create_source(socket, condition, socketCancellable)),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         adoptGRef(socketCancellable),
         nullptr, // voidCallback
         nullptr, // boolCallback
@@ -187,13 +167,12 @@ void GMainLoopSource::scheduleTimeoutSource(const char* name, GSourceFunc source
 
 void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()> function, std::chrono::milliseconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_timeout_source_new(delay.count())),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
@@ -205,13 +184,12 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()
 
 void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()> function, std::chrono::milliseconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_timeout_source_new(delay.count())),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
@@ -223,13 +201,12 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
 
 void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()> function, std::chrono::seconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_timeout_source_new_seconds(delay.count())),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
@@ -241,13 +218,12 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()
 
 void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()> function, std::chrono::seconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
 {
-    GMutexLocker locker(m_mutex);
-    cancelWithoutLocking();
+    cancel();
 
     ASSERT(!m_context.source);
     m_context = {
         adoptGRef(g_timeout_source_new_seconds(delay.count())),
-        adoptGRef(g_cancellable_new()),
+        nullptr, // cancellable
         nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
@@ -287,86 +263,80 @@ void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std
     create().scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
 }
 
+bool GMainLoopSource::prepareVoidCallback(Context& context)
+{
+    if (!m_context.source)
+        return false;
+
+    context = WTF::move(m_context);
+
+    ASSERT(context.voidCallback);
+    ASSERT(m_status == Scheduled);
+    m_status = Dispatching;
+
+    return true;
+}
+
+void GMainLoopSource::finishVoidCallback()
+{
+    m_status = Ready;
+}
+
 void GMainLoopSource::voidCallback()
 {
     Context context;
-
-    {
-        GMutexLocker locker(m_mutex);
-        if (!m_context.source)
-            return;
-
-        context = WTF::move(m_context);
-
-        ASSERT(context.voidCallback);
-        ASSERT(m_status == Scheduled);
-        m_status = Dispatching;
-
-        m_cancellable = context.cancellable;
-    }
+    if (!prepareVoidCallback(context))
+        return;
 
     context.voidCallback();
-
-    if (g_cancellable_is_cancelled(context.cancellable.get())) {
-        context.destroySource();
-        return;
-    }
-
-    bool shouldSelfDestruct = false;
-    {
-        GMutexLocker locker(m_mutex);
-        m_status = Ready;
-        m_cancellable = nullptr;
-        shouldSelfDestruct = m_deleteOnDestroy == DeleteOnDestroy;
+    if (m_status != Ready && !m_context.source) {
+        // Switch to Ready if it hasn't been re-scheduled or cancelled.
+        finishVoidCallback();
     }
 
     context.destroySource();
-    if (shouldSelfDestruct)
+    if (m_deleteOnDestroy == DeleteOnDestroy)
         delete this;
+}
+
+bool GMainLoopSource::prepareBoolCallback(Context& context)
+{
+    if (!m_context.source)
+        return false;
+
+    context = WTF::move(m_context);
+
+    ASSERT(context.boolCallback);
+    ASSERT(m_status == Scheduled || m_status == Dispatching);
+    m_status = Dispatching;
+    return true;
+}
+
+void GMainLoopSource::finishBoolCallback(bool retval, Context& context)
+{
+    // m_status should reflect whether the GMainLoopSource has been rescheduled during dispatch.
+    ASSERT((!m_context.source && m_status == Dispatching) || m_status == Scheduled);
+    if (retval && !m_context.source)
+        m_context = WTF::move(context);
+    else if (!retval)
+        m_status = Ready;
 }
 
 bool GMainLoopSource::boolCallback()
 {
     Context context;
-
-    {
-        GMutexLocker locker(m_mutex);
-        if (!m_context.source)
-            return Stop;
-
-        context = WTF::move(m_context);
-
-        ASSERT(context.boolCallback);
-        ASSERT(m_status == Scheduled || m_status == Dispatching);
-        m_status = Dispatching;
-
-        m_cancellable = context.cancellable;
-    }
+    if (!prepareBoolCallback(context))
+        return Stop;
 
     bool retval = context.boolCallback();
-
-    if (g_cancellable_is_cancelled(context.cancellable.get())) {
-        context.destroySource();
-        return Stop;
-    }
-
-    bool shouldSelfDestruct = false;
-    {
-        GMutexLocker locker(m_mutex);
-        m_cancellable = nullptr;
-        shouldSelfDestruct = m_deleteOnDestroy == DeleteOnDestroy;
-
-        // m_status should reflect whether the GMainLoopSource has been rescheduled during dispatch.
-        ASSERT((!m_context.source && m_status == Dispatching) || m_status == Scheduled);
-        if (retval && !m_context.source)
-            m_context = WTF::move(context);
-        else if (!retval)
-            m_status = Ready;
+    if (m_status != Ready && !m_context.source) {
+        // Prepare for a new iteration or switch to Ready if it hasn't been re-scheduled or cancelled.
+        finishBoolCallback(retval, context);
     }
 
     if (context.source) {
         context.destroySource();
-        if (shouldSelfDestruct)
+        if (m_deleteOnDestroy == DeleteOnDestroy)
             delete this;
     }
 
@@ -375,21 +345,14 @@ bool GMainLoopSource::boolCallback()
 
 bool GMainLoopSource::socketCallback(GIOCondition condition)
 {
-    Context context;
+    if (!m_context.source)
+        return Stop;
 
-    {
-        GMutexLocker locker(m_mutex);
-        if (!m_context.source)
-            return Stop;
+    Context context = WTF::move(m_context);
 
-        context = WTF::move(m_context);
-
-        ASSERT(context.socketCallback);
-        ASSERT(m_status == Scheduled || m_status == Dispatching);
-        m_status = Dispatching;
-
-        m_cancellable = context.cancellable;
-    }
+    ASSERT(context.socketCallback);
+    ASSERT(m_status == Scheduled || m_status == Dispatching);
+    m_status = Dispatching;
 
     if (g_cancellable_is_cancelled(context.socketCancellable.get())) {
         context.destroySource();
@@ -398,18 +361,9 @@ bool GMainLoopSource::socketCallback(GIOCondition condition)
 
     bool retval = context.socketCallback(condition);
 
-    if (g_cancellable_is_cancelled(context.cancellable.get())) {
-        context.destroySource();
-        return Stop;
-    }
-
-    {
-        GMutexLocker locker(m_mutex);
-        m_cancellable = nullptr;
-
+    if (m_status != Ready && !m_context.source) {
         // m_status should reflect whether the GMainLoopSource has been rescheduled during dispatch.
         ASSERT((!m_context.source && m_status == Dispatching) || m_status == Scheduled);
-
         if (retval && !m_context.source)
             m_context = WTF::move(context);
         else if (!retval)

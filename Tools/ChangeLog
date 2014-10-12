@@ -1,3 +1,27 @@
+2014-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Split GMainLoopSource moving thread safe implementation to its own class GThreadSafeMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=137485
+
+        Reviewed by Sergio Villar Senin.
+
+        Update GMainLoopSource tests. Most of the tests are now run twice,
+        first with a GMainLoopSource and then with a
+        GThreadSafeMainLoopSource, since both should have the same
+        behaviour. The threading test uses GThreadSafeMainLoopSource and
+        the delete on destroy test uses GMainLoopSource. The tests
+        themselves haven't changed, since there's no change in behaviour.
+
+        * TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp:
+        (TestWebKitAPI::GMainLoopSourceTest::source):
+        (TestWebKitAPI::basicRescheduling):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::reentrantRescheduling):
+        (TestWebKitAPI::cancelRepeatingSourceDuringDispatch):
+        (TestWebKitAPI::basicDestroyCallbacks):
+        (TestWebKitAPI::destroyCallbacksAfterCancellingDuringDispatch):
+        (TestWebKitAPI::destroyCallbacksAfterReschedulingDuringDispatch):
+
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make forwarding headers generation depend on source code

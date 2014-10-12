@@ -31,8 +31,8 @@
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GThreadSafeMainLoopSource.h>
 #include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
@@ -334,7 +334,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     m_loop = adoptGRef(g_main_loop_new(context.get(), FALSE));
 
     // Start the pipeline processing just after the loop is started.
-    GMainLoopSource source;
+    GThreadSafeMainLoopSource source;
     source.schedule("[WebKit] AudioFileReader::decodeAudioForBusCreation", std::function<void()>(std::bind(&AudioFileReader::decodeAudioForBusCreation, this)), G_PRIORITY_DEFAULT, nullptr, context.get());
 
     g_main_loop_run(m_loop.get());

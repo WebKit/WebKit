@@ -36,8 +36,8 @@
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GMutexLocker.h>
+#include <wtf/gobject/GThreadSafeMainLoopSource.h>
 
 using namespace WebCore;
 
@@ -88,7 +88,7 @@ struct _WebKitVideoSinkPrivate {
     }
 
     GstBuffer* buffer;
-    GMainLoopSource timeoutSource;
+    GThreadSafeMainLoopSource timeoutSource;
     GMutex bufferMutex;
     GCond dataCondition;
 
@@ -121,7 +121,7 @@ static void webkitVideoSinkTimeoutCallback(WebKitVideoSink* sink)
 {
     WebKitVideoSinkPrivate* priv = sink->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    GMutexLocker<GMutex> lock(priv->bufferMutex);
     GstBuffer* buffer = priv->buffer;
     priv->buffer = 0;
 
@@ -140,7 +140,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    GMutexLocker<GMutex> lock(priv->bufferMutex);
 
     if (priv->unlocked)
         return GST_FLOW_OK;
@@ -257,7 +257,7 @@ static void webkitVideoSinkGetProperty(GObject* object, guint propertyId, GValue
 
 static void unlockBufferMutex(WebKitVideoSinkPrivate* priv)
 {
-    GMutexLocker lock(priv->bufferMutex);
+    GMutexLocker<GMutex> lock(priv->bufferMutex);
 
     if (priv->buffer) {
         gst_buffer_unref(priv->buffer);
@@ -283,7 +283,7 @@ static gboolean webkitVideoSinkUnlockStop(GstBaseSink* baseSink)
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
     {
-        GMutexLocker lock(priv->bufferMutex);
+        GMutexLocker<GMutex> lock(priv->bufferMutex);
         priv->unlocked = false;
     }
 
@@ -308,7 +308,7 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
 {
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
-    GMutexLocker lock(priv->bufferMutex);
+    GMutexLocker<GMutex> lock(priv->bufferMutex);
     priv->unlocked = false;
     return TRUE;
 }

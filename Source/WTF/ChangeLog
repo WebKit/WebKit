@@ -1,3 +1,58 @@
+2014-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Split GMainLoopSource moving thread safe implementation to its own class GThreadSafeMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=137485
+
+        Reviewed by Sergio Villar Senin.
+
+        We made GMainLoopSource thread safe, but in most of the cases we
+        know the sources are used by a single thread, which has an impact
+        in the performance (mutex, GCancellable, etc.). The new class
+        GThreadSafeMainLoopSource inherits from GMainLoopSource overriding
+        the new virtual methods and calling the parent for the common code.
+        GMutexLocker now supports recursive mutexes, it's a template that
+        can wrap a GMutex or a GRecMutex. GThreadSafeMainLoopSource uses a
+        recursive mutex using the new GMutexLocker API.
+
+        * wtf/PlatformEfl.cmake: Add new file to compilation.
+        * wtf/PlatformGTK.cmake: Ditto.
+        * wtf/gobject/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::GMainLoopSource):
+        (WTF::GMainLoopSource::~GMainLoopSource):
+        (WTF::GMainLoopSource::cancel):
+        (WTF::GMainLoopSource::schedule):
+        (WTF::GMainLoopSource::scheduleAfterDelay):
+        (WTF::GMainLoopSource::prepareVoidCallback):
+        (WTF::GMainLoopSource::finishVoidCallback):
+        (WTF::GMainLoopSource::voidCallback):
+        (WTF::GMainLoopSource::prepareBoolCallback):
+        (WTF::GMainLoopSource::finishBoolCallback):
+        (WTF::GMainLoopSource::boolCallback):
+        (WTF::GMainLoopSource::socketCallback):
+        (WTF::GMainLoopSource::cancelWithoutLocking): Deleted.
+        * wtf/gobject/GMainLoopSource.h:
+        * wtf/gobject/GMutexLocker.h:
+        (WTF::MutexWrapper<GMutex>::lock):
+        (WTF::MutexWrapper<GMutex>::unlock):
+        (WTF::MutexWrapper<GRecMutex>::lock):
+        (WTF::MutexWrapper<GRecMutex>::unlock):
+        (WTF::GMutexLocker::GMutexLocker):
+        (WTF::GMutexLocker::lock):
+        (WTF::GMutexLocker::unlock):
+        * wtf/gobject/GThreadSafeMainLoopSource.cpp: Added.
+        (WTF::GThreadSafeMainLoopSource::GThreadSafeMainLoopSource):
+        (WTF::GThreadSafeMainLoopSource::~GThreadSafeMainLoopSource):
+        (WTF::GThreadSafeMainLoopSource::cancel):
+        (WTF::GThreadSafeMainLoopSource::schedule):
+        (WTF::GThreadSafeMainLoopSource::scheduleAfterDelay):
+        (WTF::GThreadSafeMainLoopSource::prepareVoidCallback):
+        (WTF::GThreadSafeMainLoopSource::finishVoidCallback):
+        (WTF::GThreadSafeMainLoopSource::voidCallback):
+        (WTF::GThreadSafeMainLoopSource::prepareBoolCallback):
+        (WTF::GThreadSafeMainLoopSource::finishBoolCallback):
+        (WTF::GThreadSafeMainLoopSource::boolCallback):
+        * wtf/gobject/GThreadSafeMainLoopSource.h: Added.
+
 2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Dot not allow to create delete-on-destroy GMainLoopSources
