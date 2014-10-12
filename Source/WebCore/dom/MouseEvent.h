@@ -99,6 +99,8 @@ public:
 
     virtual bool isMouseEvent() const override;
     virtual bool isDragEvent() const override;
+    static bool canTriggerActivationBehavior(const Event&); 
+
     virtual int which() const override;
 
     virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const override;

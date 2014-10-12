@@ -1,3 +1,22 @@
+2014-10-12  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Support activation behavior of link element
+        https://bugs.webkit.org/show_bug.cgi?id=137597
+
+        Reviewed by Benjamin Poulain.
+
+        Add test cases for link element activation behavior.
+
+        * fast/dom/html-link-element-activation-behavior-on-element-click-expected.txt: Added.
+        * fast/dom/html-link-element-activation-behavior-on-element-click.html: Added.
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click-expected.txt: Added.
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click.html: Added.
+        * fast/dom/html-link-element-activation-behavior-url-is-null-expected.txt: Added.
+        * fast/dom/html-link-element-activation-behavior-url-is-null.html: Added.
+        * fast/dom/resources/html-link-element-activation-behavior-on-element-click-step1.html: Added.
+        * fast/dom/resources/html-link-element-activation-behavior-on-mouse-click-step1.html: Added.
+        * fast/dom/resources/html-link-element-activation-behavior-target.html: Added.
+
 2014-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Mark some more tests as sometimes passing.

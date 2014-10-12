@@ -1,0 +1,22 @@
+<head>
+<style type="text/css">
+link {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+}
+</style>
+</head>
+<div></div>
+<link id="target" href="html-link-element-activation-behavior-target.html">
+<script>
+function mouseClick() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(50, 140);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }	
+}
+window.addEventListener("message", mouseClick);
+</script>

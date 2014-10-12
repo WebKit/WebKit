@@ -43,6 +43,7 @@
 #include "HTMLParserIdioms.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "SecurityOrigin.h"
@@ -394,6 +395,28 @@ void HTMLLinkElement::startLoadingDynamicSheet()
 bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);
+}
+
+void HTMLLinkElement::defaultEventHandler(Event* event)
+{
+    ASSERT(event);
+    if (MouseEvent::canTriggerActivationBehavior(*event)) {
+        handleClick(*event);
+        return;
+    }
+    HTMLElement::defaultEventHandler(event);
+}
+
+void HTMLLinkElement::handleClick(Event& event)
+{
+    event.setDefaultHandled();
+    URL url = href();
+    if (url.isNull())
+        return;
+    Frame* frame = document().frame();
+    if (!frame)
+        return;
+    frame->loader().urlSelected(url, target(), PassRefPtr<Event>(&event), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer);
 }
 
 URL HTMLLinkElement::href() const

@@ -1,3 +1,33 @@
+2014-10-12  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Support activation behavior of link element
+        https://bugs.webkit.org/show_bug.cgi?id=137597
+
+        Reviewed by Benjamin Poulain.
+
+        Support activation behavior of link elements as defined in [1],
+        i.e. to follow the hyperlink created by the link element when it is fully active.
+
+        [1] https://html.spec.whatwg.org/multipage/semantics.html#the-link-element
+
+        Tests: fast/dom/html-link-element-activation-behavior-on-element-click.html
+               fast/dom/html-link-element-activation-behavior-on-mouse-click.html
+               fast/dom/html-link-element-activation-behavior-url-is-null.html
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::triggerActivationBehavior):
+        * dom/MouseEvent.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::isLinkClick): Deleted.
+        * html/HTMLAnchorElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::defaultEventHandler):
+        (WebCore::HTMLLinkElement::handleClick):
+        * html/HTMLLinkElement.h:
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Enable WebP support.

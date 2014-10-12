@@ -190,6 +190,11 @@ bool MouseEvent::isDragEvent() const
                || t == eventNames().dragstartEvent|| t == eventNames().dragEvent || t == eventNames().dragendEvent;
 }
 
+bool MouseEvent::canTriggerActivationBehavior(const Event& event)
+{
+    return event.type() == eventNames().clickEvent && (!is<MouseEvent>(event) || downcast<MouseEvent>(event).button() != RightButton);
+}
+
 int MouseEvent::which() const
 {
     // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.

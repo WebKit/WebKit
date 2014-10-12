@@ -189,7 +189,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (isLinkClick(event) && treatLinkAsLiveForEventType(eventType(event))) {
+        if (MouseEvent::canTriggerActivationBehavior(*event) && treatLinkAsLiveForEventType(eventType(event))) {
             handleClick(event);
             return;
         }
@@ -595,11 +595,6 @@ bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
 bool isEnterKeyKeydownEvent(Event* event)
 {
     return event->type() == eventNames().keydownEvent && is<KeyboardEvent>(*event) && downcast<KeyboardEvent>(*event).keyIdentifier() == "Enter";
-}
-
-bool isLinkClick(Event* event)
-{
-    return event->type() == eventNames().clickEvent && (!is<MouseEvent>(*event) || downcast<MouseEvent>(*event).button() != RightButton);
 }
 
 bool shouldProhibitLinks(Element* element)

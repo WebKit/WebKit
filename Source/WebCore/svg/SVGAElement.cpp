@@ -155,7 +155,7 @@ void SVGAElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (isLinkClick(event)) {
+        if (MouseEvent::canTriggerActivationBehavior(*event)) {
             String url = stripLeadingAndTrailingHTMLSpaces(href());
 
             if (url[0] == '#') {

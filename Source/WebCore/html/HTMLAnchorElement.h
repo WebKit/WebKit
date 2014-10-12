@@ -152,7 +152,6 @@ inline LinkHash HTMLAnchorElement::visitedLinkHash() const
 // Functions shared with the other anchor elements (i.e., SVG).
 
 bool isEnterKeyKeydownEvent(Event*);
-bool isLinkClick(Event*);
 bool shouldProhibitLinks(Element*);
 
 } // namespace WebCore
