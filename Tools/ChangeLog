@@ -1,3 +1,9 @@
+2014-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Adding svn:ignore so that .pyc files don't show up as new.
+
+        * Scripts/webkitpy/xcode: Added property svn:ignore.
+
 2014-10-12  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Introduce EWebKit_Extension
