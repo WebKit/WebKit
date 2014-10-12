@@ -1,3 +1,18 @@
+2014-10-12  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Introduce EWebKit_Extension
+        https://bugs.webkit.org/show_bug.cgi?id=134921
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Added x option to test extension path.
+        (window_create):
+        (elm_main):
+        * Scripts/webkitpy/common/config/watchlist:
+        Added Source/WebKit2/WebProcess/InjectedBundle/API/efl/ into EFLWebKit2PublicAPI.
+        * Scripts/webkitpy/style/checker.py:
+        Added Source/WebKit2/WebProcess/InjectedBundle/API/efl/ into EFL exceptions.
+
 2014-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         After r174628 we send the test process a SIGTERM before the SIGKILL.

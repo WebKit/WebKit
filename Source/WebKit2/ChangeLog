@@ -1,3 +1,59 @@
+2014-10-12  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Introduce EWebKit_Extension
+        https://bugs.webkit.org/show_bug.cgi?id=134921
+
+        Reviewed by Gyuyoung Kim.
+
+        EWebKit2 does not provide the functionality to extend WebProcess.
+        Although there is ewk_context_new_with_injected_bundle_path() in ewebkit2 APIs,
+        application developers can not make bundle object without touching WK APIs
+        which ewebkit2 does not expose.
+
+        This patch introduces EWebKit_Extension, basic structure for the extension of WebProcess.
+
+        * PlatformEfl.cmake:
+        Added files for the EWebKit_Extension and install them properly.
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (bundlePathForExtension):
+        (EwkContext::create):
+        (EwkContext::getInjectedBundleInitializationUserData):
+        (EwkContext::setMessageFromInjectedBundleCallback):
+        (ewk_context_new_with_extensions_path):
+        Deleted because ewebkit2 does not have a way to make injected bundle.
+        Instead, Ewk_Extension will cover the same functionalities.
+        (ewk_context_new_with_injected_bundle_path): Deleted.
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext::extensionsPath):
+        * UIProcess/API/efl/tests/InjectedBundle/injected_bundle_sample.cpp: Removed.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp:
+        (EWK2UnitTest::EWK2UnitTestEnvironment::extensionSample):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::injectedBundleSample): Renamed injectedBundleSample to extensionSample.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h:
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp: Copied from Source/WebKit2/UIProcess/API/efl/tests/InjectedBundle/injected_bundle_sample.cpp.
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp: Renamed ewk_context_new_with_injected_bundle_path to ewk_context_new_with_extensions_path.
+        (TEST_F):
+        * WebProcess/InjectedBundle/API/efl/EWebKit_Extension.h: Added.
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.cpp: Added.
+        (EwkExtension::append):
+        (EwkExtension::remove):
+        (ewk_extension_client_add):
+        (ewk_extension_client_del):
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.h: Added.
+        * WebProcess/InjectedBundle/API/efl/ewk_extension_private.h: Added.
+        (EwkExtension::EwkExtension):
+        (EwkExtension::~EwkExtension):
+        * WebProcess/efl/ExtensionManagerEfl.cpp: Added.
+        (WebKit::ExtensionManagerEfl::shared):
+        (WebKit::ExtensionManagerEfl::ExtensionManagerEfl):
+        (WebKit::ExtensionManagerEfl::initialize):
+        * WebProcess/efl/ExtensionManagerEfl.h: Added.
+        * WebProcess/efl/WebInjectedBundleMainEfl.cpp: Added.
+        (WKBundleInitialize):
+        * efl/ewebkit2-extension.pc.in: Added.
+
 2014-10-10  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Image subclasses
