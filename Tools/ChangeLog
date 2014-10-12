@@ -1,3 +1,26 @@
+2014-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Page not fully rendered in iOS DRT snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=137638
+
+        Reviewed by Tim Horton.
+        
+        In iOS DumpRenderTree, we need to wait for a cycle of the WebThread runloop
+        to ensure that the page has laid out and is rendered by the time we take
+        the snapshot.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (-[DumpRenderTree _webThreadEventLoopHasRun]): Moved.
+        (-[DumpRenderTree _webThreadInvoked]): Moved.
+        (-[DumpRenderTree _waitForWebThreadThenDump]):
+        (dump): Use a performSelectorOnMainThread:withObject:waitUntilDone:NO to wait
+        for a cycle of the WebThrewd runloop. We can't just call _waitForWebThread because
+        that blocks on a delegate callback, and we can't dispatch_async because _waitForWebThread
+        relies on dispatch_async too, and the inner block won't complete until the outer block
+        has completed.
+        (dumpTestResults): Move the guts of dump() here.
+        (runTest): Whitespace.
+
 2014-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Adding svn:ignore so that .pyc files don't show up as new.

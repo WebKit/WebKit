@@ -155,6 +155,7 @@ using namespace std;
 #endif
 
 static void runTest(const string& testPathOrURL);
+static void dumpTestResults();
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -1216,20 +1217,6 @@ static const char **_argv;
     });
 }
 
-- (void)_webThreadEventLoopHasRun
-{
-    ASSERT(!WebThreadIsCurrent());
-    _hasFlushedWebThreadRunQueue = YES;
-}
-
-- (void)_webThreadInvoked
-{
-    ASSERT(WebThreadIsCurrent());
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self _webThreadEventLoopHasRun];
-    });
-}
-
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     /* Apps will get suspended or killed some time after entering the background state but we want to be able to run multiple copies of DumpRenderTree. Periodically check to see if our remaining background time dips below a threshold and create a new background task.
@@ -1253,6 +1240,20 @@ static const char **_argv;
     });
 }
 
+- (void)_webThreadEventLoopHasRun
+{
+    ASSERT(!WebThreadIsCurrent());
+    _hasFlushedWebThreadRunQueue = YES;
+}
+
+- (void)_webThreadInvoked
+{
+    ASSERT(WebThreadIsCurrent());
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _webThreadEventLoopHasRun];
+    });
+}
+
 // The test can end in response to a delegate callback while there are still methods queued on the Web Thread.
 // If we do not ensure the Web Thread has been run, the callback can be done on a WebView that no longer exists.
 // To avoid this, _waitForWebThread dispatches a call to the WebThread event loop, actively processing the delegate
@@ -1269,6 +1270,12 @@ static const char **_argv;
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         [pool release];
     }
+}
+
+- (void)_waitForWebThreadThenDump
+{
+    [self _waitForWebThread];
+    dumpTestResults();
 }
 
 @end
@@ -1561,6 +1568,19 @@ void dump()
         [(DumpRenderTree *)UIApp _deferDumpToMainThread];
         return;
     }
+
+    // Allow the web thread to run before dumping. We can't call -_waitForWebThread directly since we may
+    // be inside a delegate callback.
+    [UIApp performSelectorOnMainThread:@selector(_waitForWebThreadThenDump) withObject:nil waitUntilDone:NO];
+    return;
+#endif
+
+    dumpTestResults();
+}
+
+void dumpTestResults()
+{
+#if PLATFORM(IOS)
     WebThreadLock();
 #endif
 
@@ -1831,6 +1851,7 @@ static void runTest(const string& inputLine)
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
+
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
 
