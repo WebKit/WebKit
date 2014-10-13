@@ -34,12 +34,13 @@
 #include "IntSize.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
+#include <wtf/NeverDestroyed.h>
+
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
 #include <CoreGraphics/CGImagePrivate.h>
 #include <ImageIO/ImageIO.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -106,7 +107,7 @@ void ImageSource::clear(bool destroyAllFrames, size_t, SharedBuffer* data, bool 
         setData(data, allDataReceived);
 }
 
-static CFDictionaryRef createImageSourceOptions(SubsamplingLevel subsamplingLevel)
+static RetainPtr<CFDictionaryRef> createImageSourceOptions(SubsamplingLevel subsamplingLevel)
 {
     if (!subsamplingLevel) {
         const unsigned numOptions = 3;
@@ -122,15 +123,15 @@ static CFDictionaryRef createImageSourceOptions(SubsamplingLevel subsamplingLeve
     const CFIndex numOptions = 4;
     const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetadata, kCGImageSourceSubsampleFactor };
     const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue, subsampleNumber.get() };
-    return CFDictionaryCreate(nullptr, keys, values, numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    return adoptCF(CFDictionaryCreate(nullptr, keys, values, numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
-static CFDictionaryRef imageSourceOptions(SubsamplingLevel subsamplingLevel = 0)
+static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = 0)
 {
     if (subsamplingLevel)
         return createImageSourceOptions(subsamplingLevel);
 
-    static CFDictionaryRef options = createImageSourceOptions(0);
+    static NeverDestroyed<RetainPtr<CFDictionaryRef>> options = createImageSourceOptions(0);
     return options;
 }
 
@@ -185,7 +186,7 @@ bool ImageSource::isSizeAvailable()
 
     // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
     if (imageSourceStatus >= kCGImageStatusIncomplete) {
-        RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions()));
+        RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions().get()));
         if (image0Properties) {
             CFNumberRef widthNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelWidth);
             CFNumberRef heightNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelHeight);
@@ -210,7 +211,7 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
 
 bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t) const
 {
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions().get()));
     if (!properties)
         return false;
 
@@ -232,7 +233,7 @@ bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t) const
 
 IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageOrientationDescription description) const
 {
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel)));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel).get()));
 
     if (!properties)
         return IntSize();
@@ -254,7 +255,7 @@ IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsampling
 
 ImageOrientation ImageSource::orientationAtIndex(size_t index) const
 {
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions().get()));
     if (!properties)
         return DefaultImageOrientation;
 
@@ -268,7 +269,7 @@ IntSize ImageSource::size(ImageOrientationDescription description) const
 
 bool ImageSource::getHotSpot(IntPoint& hotSpot) const
 {
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions().get()));
     if (!properties)
         return false;
 
@@ -304,7 +305,7 @@ int ImageSource::repetitionCount()
     if (!initialized())
         return cAnimationLoopOnce;
 
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_decoder, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_decoder, imageSourceOptions().get()));
     if (!properties)
         return cAnimationLoopOnce;
 
@@ -348,7 +349,7 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
     if (!initialized())
         return 0;
 
-    RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel)));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel).get()));
 
 #if PLATFORM(IOS)
     // <rdar://problem/7371198> - CoreGraphics changed the default caching behaviour in iOS 4.0 to kCGImageCachingTransient
@@ -391,7 +392,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
         return 0;
 
     float duration = 0;
-    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions().get()));
     if (properties) {
         CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
         if (gifProperties) {
