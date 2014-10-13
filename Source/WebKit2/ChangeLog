@@ -1,3 +1,10 @@
+2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+
 2014-10-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [SOUP] [WK2] WebProcess and NetworkProcess initialization clears cache contents

@@ -1,3 +1,9 @@
+2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2014-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Split GMainLoopSource moving thread safe implementation to its own class GThreadSafeMainLoopSource

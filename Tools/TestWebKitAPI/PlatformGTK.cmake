@@ -124,6 +124,8 @@ add_executable(TestWebCore
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
+add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
+
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
 set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
