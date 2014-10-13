@@ -41,6 +41,12 @@
 .gridMaxContentAndMaxContentFixed {
     -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 35px);
 }
+.gridMinContentFixedAndFixedFixedAndAuto {
+    -webkit-grid-template-columns: minmax(-webkit-min-content, 20px) minmax(20px, 30px) auto;
+}
+.gridAutoAndFixedFixedAndMaxContentFixed {
+    -webkit-grid-template-columns: auto minmax(20px, 30px) minmax(-webkit-max-content, 20px);
+}
 </style>
 <script src="../../resources/js-test.js"></script>
 </head>
@@ -97,6 +103,35 @@
     <div class="firstRowBothColumn">XXXX XXXX</div>
 </div>
 
+<!-- The next four force the grid to grow only a particular subset of tracks above the limits -->
+<div class="constrainedContainer">
+    <div class="grid gridMinContentFixedAndAuto" id="gridMinContentFixedAndAutoAboveLimits">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+	<div class="firstRowBothColumn">XXXXXXXXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMaxContentFixedAndAuto" id="gridMaxContentFixedAndAutoAboveLimits">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+	<div class="firstRowBothColumn">XXXXXXXXXXXXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridMinContentFixedAndFixedFixedAndAuto" id="gridMinContentFixedAndFixedFixedAndAuto">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+	<div class="firstRowBothColumn">XXXXXXXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="grid gridAutoAndFixedFixedAndMaxContentFixed" id="gridAutoAndFixedFixedAndMaxContentFixed">
+	<div class="firstRowBothColumn">XXXX XXXX</div>
+	<div class="firstRowBothColumn">XXXXXXXXXXXXXXX</div>
+    </div>
+</div>
+
 <script>
 function testGridColumnsValues(id, computedColumnValue)
 {
@@ -115,6 +150,11 @@ testGridColumnsValues("gridAutoMinContent", "70px 20px");
 testGridColumnsValues("gridAutoMaxContent", "20px 70px");
 testGridColumnsValues("gridMaxContentAndMinContentFixed", "70px 20px");
 testGridColumnsValues("gridMaxContentAndMaxContentFixed", "55px 35px");
+
+testGridColumnsValues("gridMinContentFixedAndAutoAboveLimits", "15px 95px");
+testGridColumnsValues("gridMaxContentFixedAndAutoAboveLimits", "65px 85px");
+testGridColumnsValues("gridMinContentFixedAndFixedFixedAndAuto", "20px 20px 60px");
+testGridColumnsValues("gridAutoAndFixedFixedAndMaxContentFixed", "40px 20px 90px");
 </script>
 </body>
 </html>

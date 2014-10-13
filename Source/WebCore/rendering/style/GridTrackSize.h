@@ -115,6 +115,9 @@ public:
     bool hasMaxContentMinTrackBreadth() const { return minTrackBreadth().isLength() && minTrackBreadth().length().isMaxContent(); }
     bool hasMinOrMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isLength() && (maxTrackBreadth().length().isMinContent() || maxTrackBreadth().length().isMaxContent()); }
     bool hasMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isLength() && maxTrackBreadth().length().isMaxContent(); }
+    bool hasMinContentMinTrackBreadthAndMinOrMaxContentMaxTrackBreadth() const { return minTrackBreadth().isLength() && minTrackBreadth().length().isMinContent() && hasMinOrMaxContentMaxTrackBreadth(); }
+    bool hasMaxContentMinTrackBreadthAndMaxContentMaxTrackBreadth() const { return hasMaxContentMinTrackBreadth() && hasMaxContentMaxTrackBreadth(); }
+
 
 private:
     GridTrackSizeType m_type;

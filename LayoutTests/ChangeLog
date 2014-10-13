@@ -1,3 +1,13 @@
+2014-09-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Pass the valid set of tracks to grow beyond growth limits
+        https://bugs.webkit.org/show_bug.cgi?id=137253
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt:
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html:
+
 2014-10-12  Mike West  <mkwst@chromium.org>
 
         Referrer Policy: Update <meta name="referrer"> values to match the spec

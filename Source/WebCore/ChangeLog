@@ -1,3 +1,36 @@
+2014-09-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Pass the valid set of tracks to grow beyond growth limits
+        https://bugs.webkit.org/show_bug.cgi?id=137253
+
+        Reviewed by Darin Adler.
+
+        Section 10.4 of the specs describe how to resolve content based
+        track sizing functions. Among others it describes the "distribute
+        extra space" algorithm. The 3rd bullet of that algorithm specifies
+        how to distribute (and also the target tracks) the extra space
+        once all the tracks have reached their growth limits.
+
+        Our implementation had 2 problems. First we were not passing a
+        valid subset of tracks (instead we were always using all of
+        them). Now we use a function that filters the right tracks to be
+        the target of the extra space distribution depending on whether
+        we're computing the min track function or the max track function.
+
+        Secondly the algorithm that was distributing the extra space was
+        not using that list of passed in tracks (it iterated over all of
+        them). From now on it will use the set of tracks selected using
+        the filter function described above.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::hasMinContentMinTrackBreadthAndMinOrMaxContentMaxTrackBreadth):
+        (WebCore::GridTrackSize::hasMaxContentMinTrackBreadthAndMaxContentMaxTrackBreadth):
+
 2014-10-12  Mike West  <mkwst@chromium.org>
 
         Referrer Policy: Update <meta name="referrer"> values to match the spec
