@@ -55,7 +55,7 @@ public:
     void setSublayers(const PlatformCALayerList&);
     void getSublayers(PlatformCALayerList&) const;
     void removeAllSublayers();
-    void insertSublayer(PlatformCALayer*, size_t);
+    void insertSublayer(PlatformCALayer&, size_t);
     size_t sublayerCount() const;
     int indexOfSublayer(const PlatformCALayer* reference);
 

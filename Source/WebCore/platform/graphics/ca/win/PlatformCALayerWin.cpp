@@ -182,7 +182,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* own
     newLayer->setOpaque(isOpaque());
     newLayer->setBackgroundColor(backgroundColor());
     newLayer->setContentsScale(contentsScale());
-    newLayer->copyFiltersFrom(this);
+    newLayer->copyFiltersFrom(*this);
 
     return newLayer;
 }
@@ -190,7 +190,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* own
 PlatformCALayer* PlatformCALayerWin::rootLayer() const
 {
     AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
-    return host ? host->rootLayer() : 0;
+    return host ? host->rootLayer() : nullptr;
 }
 
 void PlatformCALayerWin::animationStarted(const String& animationKey, CFTimeInterval beginTime)
@@ -270,43 +270,40 @@ void PlatformCALayerWin::removeAllSublayers()
     intern(this)->removeAllSublayers();
 }
 
-void PlatformCALayerWin::appendSublayer(PlatformCALayer* layer)
+void PlatformCALayerWin::appendSublayer(PlatformCALayer& layer)
 {
     // This must be in terms of insertSublayer instead of a direct call so PlatformCALayerInternal can override.
     insertSublayer(layer, intern(this)->sublayerCount());
 }
 
-void PlatformCALayerWin::insertSublayer(PlatformCALayer* layer, size_t index)
+void PlatformCALayerWin::insertSublayer(PlatformCALayer& layer, size_t index)
 {
     intern(this)->insertSublayer(layer, index);
 }
 
-void PlatformCALayerWin::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* newLayer)
+void PlatformCALayerWin::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& newLayer)
 {
     // This must not use direct calls to allow PlatformCALayerInternal to override.
-    ASSERT_ARG(reference, reference);
-    ASSERT_ARG(reference, reference->superlayer() == this);
+    ASSERT_ARG(reference, reference.superlayer() == this);
 
-    if (reference == newLayer)
+    if (&reference == &newLayer)
         return;
 
-    int referenceIndex = intern(this)->indexOfSublayer(reference);
+    int referenceIndex = intern(this)->indexOfSublayer(&reference);
     ASSERT(referenceIndex != -1);
     if (referenceIndex == -1)
         return;
 
-    reference->removeFromSuperlayer();
+    reference.removeFromSuperlayer();
 
-    if (newLayer) {
-        newLayer->removeFromSuperlayer();
-        insertSublayer(newLayer, referenceIndex);
-    }
+    newLayer.removeFromSuperlayer();
+    insertSublayer(newLayer, referenceIndex);
 }
 
-void PlatformCALayerWin::adoptSublayers(PlatformCALayer* source)
+void PlatformCALayerWin::adoptSublayers(PlatformCALayer& source)
 {
     PlatformCALayerList sublayers;
-    intern(source)->getSublayers(sublayers);
+    intern(&source)->getSublayers(sublayers);
 
     // Use setSublayers() because it properly nulls out the superlayer pointers.
     setSublayers(sublayers);
@@ -547,7 +544,7 @@ void PlatformCALayerWin::setFilters(const FilterOperations&)
 {
 }
 
-void PlatformCALayerWin::copyFiltersFrom(const PlatformCALayer*)
+void PlatformCALayerWin::copyFiltersFrom(const PlatformCALayer&)
 {
 }
 

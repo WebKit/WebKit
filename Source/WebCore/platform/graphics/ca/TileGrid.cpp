@@ -543,7 +543,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
             bool shouldParentTileLayer = (!m_controller.unparentsOffscreenTiles() || m_controller.isInWindow()) && !tileInfo.layer->superlayer();
 
             if (shouldParentTileLayer)
-                m_containerLayer.get().appendSublayer(tileInfo.layer.get());
+                m_containerLayer.get().appendSublayer(*tileInfo.layer);
         }
     }
     

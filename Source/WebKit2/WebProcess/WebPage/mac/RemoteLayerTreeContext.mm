@@ -105,7 +105,7 @@ std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(Graph
 
 void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
 {
-    PlatformCALayerRemote& rootLayerRemote = toPlatformCALayerRemote(rootLayer);
+    PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
 
     m_currentTransaction = &transaction;

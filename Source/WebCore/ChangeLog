@@ -1,5 +1,51 @@
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for PlatformCALayer subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137661
+
+        Reviewed by Simon Fraser.
+
+        Use is<>() / downcast<>() for PlatformCALayer subclasses and clean up
+        the surrounding code.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::updateReplicatedLayers):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers): Deleted.
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::ensureTilesForRect):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::clone):
+        (PlatformCALayerMac::appendSublayer):
+        (PlatformCALayerMac::insertSublayer):
+        (PlatformCALayerMac::replaceSublayer):
+        (PlatformCALayerMac::adoptSublayers):
+        (PlatformCALayerMac::copyFiltersFrom):
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::setRootChildLayer):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::clone):
+        (PlatformCALayerWin::rootLayer):
+        (PlatformCALayerWin::appendSublayer):
+        (PlatformCALayerWin::insertSublayer):
+        (PlatformCALayerWin::replaceSublayer):
+        (PlatformCALayerWin::adoptSublayers):
+        (PlatformCALayerWin::copyFiltersFrom):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::insertSublayer):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h:
+
+2014-10-13  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for Filter / FilterOperation subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137644
 

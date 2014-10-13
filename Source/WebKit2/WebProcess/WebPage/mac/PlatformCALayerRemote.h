@@ -60,11 +60,11 @@ public:
     virtual void removeFromSuperlayer() override;
     virtual void setSublayers(const WebCore::PlatformCALayerList&) override;
     virtual void removeAllSublayers() override;
-    virtual void appendSublayer(WebCore::PlatformCALayer*) override;
-    virtual void insertSublayer(WebCore::PlatformCALayer*, size_t index) override;
-    virtual void replaceSublayer(WebCore::PlatformCALayer* reference, WebCore::PlatformCALayer*) override;
+    virtual void appendSublayer(WebCore::PlatformCALayer&) override;
+    virtual void insertSublayer(WebCore::PlatformCALayer&, size_t index) override;
+    virtual void replaceSublayer(WebCore::PlatformCALayer& reference, WebCore::PlatformCALayer&) override;
     virtual const WebCore::PlatformCALayerList* customSublayers() const override { return nullptr; }
-    virtual void adoptSublayers(WebCore::PlatformCALayer* source) override;
+    virtual void adoptSublayers(WebCore::PlatformCALayer& source) override;
 
     virtual void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation*) override;
     virtual void removeAnimationForKey(const String& key) override;
@@ -124,7 +124,7 @@ public:
 
     virtual void setFilters(const WebCore::FilterOperations&) override;
     static bool filtersCanBeComposited(const WebCore::FilterOperations&);
-    virtual void copyFiltersFrom(const WebCore::PlatformCALayer*) override;
+    virtual void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
 
 #if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(WebCore::BlendMode) override;
@@ -193,8 +193,8 @@ private:
     RemoteLayerTreeContext* m_context;
 };
 
-PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerRemote, isPlatformCALayerRemote())
-
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemote, isPlatformCALayerRemote())
 
 #endif // PlatformCALayerRemote_h

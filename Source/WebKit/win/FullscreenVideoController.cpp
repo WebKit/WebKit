@@ -282,7 +282,8 @@ void FullscreenVideoController::enterFullscreen()
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 
     PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_videoElement->platformLayer());
-    m_rootChild->appendSublayer(videoLayer);
+    ASSERT(videoLayer);
+    m_rootChild->appendSublayer(*videoLayer);
     m_rootChild->setNeedsLayout();
     m_rootChild->setGeometryFlipped(1);
 

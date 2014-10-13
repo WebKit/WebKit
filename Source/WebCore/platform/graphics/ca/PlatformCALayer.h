@@ -34,6 +34,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -115,16 +116,16 @@ public:
     virtual void removeFromSuperlayer() = 0;
     virtual void setSublayers(const PlatformCALayerList&) = 0;
     virtual void removeAllSublayers() = 0;
-    virtual void appendSublayer(PlatformCALayer*) = 0;
-    virtual void insertSublayer(PlatformCALayer*, size_t index) = 0;
-    virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) = 0;
+    virtual void appendSublayer(PlatformCALayer&) = 0;
+    virtual void insertSublayer(PlatformCALayer&, size_t index) = 0;
+    virtual void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) = 0;
 
     // A list of sublayers that GraphicsLayerCA should maintain as the first sublayers.
     virtual const PlatformCALayerList* customSublayers() const = 0;
 
     // This method removes the sublayers from the source and reparents them to the current layer.
     // Any sublayers previously in the current layer are removed.
-    virtual void adoptSublayers(PlatformCALayer* source) = 0;
+    virtual void adoptSublayers(PlatformCALayer& source) = 0;
 
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) = 0;
     virtual void removeAnimationForKey(const String& key) = 0;
@@ -182,7 +183,7 @@ public:
     virtual float opacity() const = 0;
     virtual void setOpacity(float) = 0;
     virtual void setFilters(const FilterOperations&) = 0;
-    virtual void copyFiltersFrom(const PlatformCALayer*) = 0;
+    virtual void copyFiltersFrom(const PlatformCALayer&) = 0;
 
 #if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(BlendMode) = 0;
@@ -259,9 +260,11 @@ protected:
     PlatformCALayerClient* m_owner;
 };
 
-#define PLATFORM_CALAYER_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::PlatformCALayer, object, object->predicate, object.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::PlatformCALayer& layer) { return layer.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PlatformCALayer_h

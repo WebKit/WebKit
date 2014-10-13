@@ -106,7 +106,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* 
 PlatformCALayerRemote::~PlatformCALayerRemote()
 {
     for (const auto& layer : m_children)
-        toPlatformCALayerRemote(layer.get())->m_superlayer = nullptr;
+        downcast<PlatformCALayerRemote>(*layer).m_superlayer = nullptr;
 
     if (m_context)
         m_context->layerWillBeDestroyed(*this);
@@ -133,7 +133,7 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setBackgroundColor(backgroundColor());
     clone.setContentsScale(contentsScale());
     if (m_properties.filters)
-        clone.copyFiltersFrom(this);
+        clone.copyFiltersFrom(*this);
     clone.updateCustomAppearance(customAppearance());
 }
 
@@ -167,9 +167,9 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
-        PlatformCALayerRemote* child = toPlatformCALayerRemote(m_children[i].get());
-        ASSERT(child->superlayer() == this);
-        child->recursiveBuildTransaction(context, transaction);
+        PlatformCALayerRemote& child = downcast<PlatformCALayerRemote>(*m_children[i]);
+        ASSERT(child.superlayer() == this);
+        child.recursiveBuildTransaction(context, transaction);
     }
 
     if (m_maskLayer)
@@ -255,7 +255,7 @@ void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
 
     for (const auto& layer : list) {
         layer->removeFromSuperlayer();
-        toPlatformCALayerRemote(layer.get())->m_superlayer = this;
+        downcast<PlatformCALayerRemote>(*layer).m_superlayer = this;
     }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
@@ -270,47 +270,47 @@ void PlatformCALayerRemote::removeAllSublayers()
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
-void PlatformCALayerRemote::appendSublayer(PlatformCALayer* layer)
+void PlatformCALayerRemote::appendSublayer(PlatformCALayer& layer)
 {
-    RefPtr<PlatformCALayer> layerProtector(layer);
+    Ref<PlatformCALayer> layerProtector(layer);
 
-    layer->removeFromSuperlayer();
-    m_children.append(layer);
-    toPlatformCALayerRemote(layer)->m_superlayer = this;
+    layer.removeFromSuperlayer();
+    m_children.append(&layer);
+    downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
-void PlatformCALayerRemote::insertSublayer(PlatformCALayer* layer, size_t index)
+void PlatformCALayerRemote::insertSublayer(PlatformCALayer& layer, size_t index)
 {
-    RefPtr<PlatformCALayer> layerProtector(layer);
+    Ref<PlatformCALayer> layerProtector(layer);
 
-    layer->removeFromSuperlayer();
-    m_children.insert(index, layer);
-    toPlatformCALayerRemote(layer)->m_superlayer = this;
+    layer.removeFromSuperlayer();
+    m_children.insert(index, &layer);
+    downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
-void PlatformCALayerRemote::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* layer)
+void PlatformCALayerRemote::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& layer)
 {
-    ASSERT(reference->superlayer() == this);
-    RefPtr<PlatformCALayer> layerProtector(layer);
+    ASSERT(reference.superlayer() == this);
+    Ref<PlatformCALayer> layerProtector(layer);
 
-    layer->removeFromSuperlayer();
-    size_t referenceIndex = m_children.find(reference);
+    layer.removeFromSuperlayer();
+    size_t referenceIndex = m_children.find(&reference);
     if (referenceIndex != notFound) {
         m_children[referenceIndex]->removeFromSuperlayer();
-        m_children.insert(referenceIndex, layer);
-        toPlatformCALayerRemote(layer)->m_superlayer = this;
+        m_children.insert(referenceIndex, &layer);
+        downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
     }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
-void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
+void PlatformCALayerRemote::adoptSublayers(PlatformCALayer& source)
 {
-    PlatformCALayerList layersToMove = toPlatformCALayerRemote(source)->m_children;
+    PlatformCALayerList layersToMove = downcast<PlatformCALayerRemote>(source).m_children;
 
-    if (const PlatformCALayerList* customLayers = source->customSublayers()) {
+    if (const PlatformCALayerList* customLayers = source.customSublayers()) {
         for (const auto& layer : *customLayers) {
             size_t layerIndex = layersToMove.find(layer);
             if (layerIndex != notFound)
@@ -379,7 +379,7 @@ void PlatformCALayerRemote::animationEnded(const String& key)
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 {
     if (layer) {
-        m_maskLayer = toPlatformCALayerRemote(layer);
+        m_maskLayer = downcast<PlatformCALayerRemote>(layer);
         m_properties.maskLayerID = m_maskLayer->layerID();
     } else {
         m_maskLayer = nullptr;
@@ -602,9 +602,9 @@ void PlatformCALayerRemote::setFilters(const FilterOperations& filters)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::FiltersChanged);
 }
 
-void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer* sourceLayer)
+void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer& sourceLayer)
 {
-    if (const FilterOperations* filters = toPlatformCALayerRemote(sourceLayer)->m_properties.filters.get())
+    if (const FilterOperations* filters = downcast<PlatformCALayerRemote>(sourceLayer).m_properties.filters.get())
         setFilters(*filters);
     else if (m_properties.filters)
         m_properties.filters = nullptr;

@@ -320,7 +320,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
     newLayer->setOpaque(isOpaque());
     newLayer->setBackgroundColor(backgroundColor());
     newLayer->setContentsScale(contentsScale());
-    newLayer->copyFiltersFrom(this);
+    newLayer->copyFiltersFrom(*this);
     newLayer->updateCustomAppearance(customAppearance());
 
     if (type == LayerTypeAVPlayerLayer) {
@@ -422,34 +422,34 @@ void PlatformCALayerMac::removeAllSublayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::appendSublayer(PlatformCALayer* layer)
+void PlatformCALayerMac::appendSublayer(PlatformCALayer& layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer != layer->m_layer);
-    [m_layer.get() addSublayer:layer->m_layer.get()];
+    ASSERT(m_layer != layer.m_layer);
+    [m_layer.get() addSublayer:layer.m_layer.get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::insertSublayer(PlatformCALayer* layer, size_t index)
+void PlatformCALayerMac::insertSublayer(PlatformCALayer& layer, size_t index)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer != layer->m_layer);
-    [m_layer.get() insertSublayer:layer->m_layer.get() atIndex:index];
+    ASSERT(m_layer != layer.m_layer);
+    [m_layer.get() insertSublayer:layer.m_layer.get() atIndex:index];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* layer)
+void PlatformCALayerMac::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer != layer->m_layer);
-    [m_layer.get() replaceSublayer:reference->m_layer.get() with:layer->m_layer.get()];
+    ASSERT(m_layer != layer.m_layer);
+    [m_layer.get() replaceSublayer:reference.m_layer.get() with:layer.m_layer.get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::adoptSublayers(PlatformCALayer* source)
+void PlatformCALayerMac::adoptSublayers(PlatformCALayer& source)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setSublayers:[source->m_layer.get() sublayers]];
+    [m_layer.get() setSublayers:[source.m_layer.get() sublayers]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -713,10 +713,10 @@ void PlatformCALayerMac::setFilters(const FilterOperations& filters)
     PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
 }
 
-void PlatformCALayerMac::copyFiltersFrom(const PlatformCALayer* sourceLayer)
+void PlatformCALayerMac::copyFiltersFrom(const PlatformCALayer& sourceLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setFilters:[sourceLayer->platformLayer() filters]];
+    [m_layer.get() setFilters:[sourceLayer.platformLayer() filters]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

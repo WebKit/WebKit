@@ -258,16 +258,16 @@ void PlatformCALayerWinInternal::removeAllSublayers()
     }
 }
 
-void PlatformCALayerWinInternal::insertSublayer(PlatformCALayer* layer, size_t index)
+void PlatformCALayerWinInternal::insertSublayer(PlatformCALayer& layer, size_t index)
 {
     index = min(index, sublayerCount());
     if (layerTypeIsTiled(m_owner->layerType())) {
         // Add 1 to account for the tile parent layer
-        index++;
+        ++index;
     }
 
-    layer->removeFromSuperlayer();
-    CACFLayerInsertSublayer(owner()->platformLayer(), layer->platformLayer(), index);
+    layer.removeFromSuperlayer();
+    CACFLayerInsertSublayer(owner()->platformLayer(), layer.platformLayer(), index);
     owner()->setNeedsCommit();
 }
 

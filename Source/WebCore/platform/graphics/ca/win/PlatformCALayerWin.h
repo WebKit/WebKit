@@ -46,11 +46,11 @@ public:
     virtual void removeFromSuperlayer() override;
     virtual void setSublayers(const PlatformCALayerList&) override;
     virtual void removeAllSublayers() override;
-    virtual void appendSublayer(PlatformCALayer*) override;
-    virtual void insertSublayer(PlatformCALayer*, size_t index) override;
-    virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) override;
+    virtual void appendSublayer(PlatformCALayer&) override;
+    virtual void insertSublayer(PlatformCALayer&, size_t index) override;
+    virtual void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) override;
     virtual const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
-    virtual void adoptSublayers(PlatformCALayer* source) override;
+    virtual void adoptSublayers(PlatformCALayer& source) override;
 
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) override;
     virtual void removeAnimationForKey(const String& key) override;
@@ -111,7 +111,7 @@ public:
 
     virtual void setFilters(const FilterOperations&) override;
     static bool filtersCanBeComposited(const FilterOperations&) { return false; }
-    virtual void copyFiltersFrom(const PlatformCALayer*) override;
+    virtual void copyFiltersFrom(const PlatformCALayer&) override;
 
     virtual void setName(const String&) override;
 

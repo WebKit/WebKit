@@ -205,7 +205,7 @@ void CACFLayerTreeHost::setRootChildLayer(PlatformCALayer* layer)
     m_rootLayer->removeAllSublayers();
     m_rootChildLayer = layer;
     if (m_rootChildLayer)
-        m_rootLayer->appendSublayer(m_rootChildLayer.get());
+        m_rootLayer->appendSublayer(*m_rootChildLayer);
 }
    
 void CACFLayerTreeHost::layerTreeDidChange()
