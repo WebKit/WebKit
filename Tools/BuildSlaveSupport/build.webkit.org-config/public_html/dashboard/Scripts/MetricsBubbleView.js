@@ -162,7 +162,12 @@ MetricsBubbleView.prototype = {
         }
 
         addDivider(this.element);
-        addLine(this.element, "Median wait time before processing started: " + pluralizeMinutes(this._results.medianWaitTimeInSeconds) + ".");
+        addLine(this.element, "Wait time before processing started:");
+        addLine(this.element, "- median: " + pluralizeMinutes(this._results.medianWaitTimeInSeconds) + ";");
+        addLine(this.element, "- average: " + pluralizeMinutes(this._results.averageWaitTimeInSeconds) + ".");
+        addLine(this.element, "- worst: " + pluralizeMinutes(this._results.maximumWaitTimeInSeconds) + ".");
+        if (this._results.medianWaitTimeInSeconds < 3 * 60 && this._results.patchesThatWaitedMoreThan3MinutesCount)
+            addLine(this.element, formatPercentage(this._results.patchesThatWaitedMoreThan3MinutesCount / this._results.totalPatches) + " of patches had a wait time of more than 3 minutes.");
 
         if (this._results.patchesThatCausedInternalError.length) {
             addDivider(this.element);

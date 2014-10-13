@@ -393,6 +393,7 @@ Analyzer.prototype = {
         }
 
         var waitTimes = [];
+        var patchesThatWaitedMoreThan3Minutes = [];
         var totalTimes = [];
         var totalTimesForPatchesThatWereNotRetried = [];
         var totalTimesForPatchesThatSpinnedAndPassedOrFailed = [];
@@ -407,6 +408,9 @@ Analyzer.prototype = {
 
             // Wait time is equally interesting for all patches.
             waitTimes.push(patch.wait_duration);
+
+            if (patch.wait_duration > 3 * 60)
+                patchesThatWaitedMoreThan3Minutes.push(patchID);
 
             if (patch.resolution === "not processed")
                 patchesThatDidNotComplete.push(patchID);
@@ -449,6 +453,8 @@ Analyzer.prototype = {
             averageTotalTimeForPatchesThatSpinnedAndPassedOrFailedInSeconds: totalTimesForPatchesThatSpinnedAndPassedOrFailed.average(),
             medianWaitTimeInSeconds: waitTimes.median(),
             averageWaitTimeInSeconds: waitTimes.average(),
+            maximumWaitTimeInSeconds: Math.max.apply(Math, waitTimes),
+            patchesThatWaitedMoreThan3MinutesCount: patchesThatWaitedMoreThan3Minutes.length,
             patchesThatCausedInternalError: patchesThatCausedInternalError,
         };
 

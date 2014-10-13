@@ -1,3 +1,22 @@
+2014-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Add more detailed wait time information to EWS metrics
+        https://bugs.webkit.org/show_bug.cgi?id=137649
+
+        Reviewed by Daniel Bates.
+
+        Added average and worst time (we used to only have median), and also a percentage
+        of patches that took a non-trivial time to start. Non-trivial is defined as 3 minutes.
+
+        There is always some wait due to the polling nature of the queues, which is well understood
+        and doesn't need to be measured. What needs to be measured is whether there is enough
+        bot machines to process patches as soon as they are submitted.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        (Analyzer.prototype._analyzeBubblePerformance):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsBubbleView.js:
+        (MetricsBubbleView.prototype._update):
+
 2014-10-11  Jer Noble  <jer.noble@apple.com>
 
         MediaPlayer::characteristicChanged() is not called when new tracks are found in SourceBufferPrivateAVFObjC
