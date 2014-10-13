@@ -17,7 +17,10 @@ class ManifestGenerator {
         $repositories_table = $this->db->fetch_table('repositories');
 
         $repositories_with_commit = $this->db->query_and_fetch_all(
-            'SELECT DISTINCT(commit_repository) FROM commits WHERE commit_reported IS TRUE') or array();
+            'SELECT DISTINCT(commit_repository) FROM commits WHERE commit_reported IS TRUE');
+        if (!$repositories_with_commit)
+            $repositories_with_commit = array();
+
         foreach ($repositories_with_commit as &$row)
             $row = $row['commit_repository'];
 

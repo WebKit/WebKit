@@ -45,8 +45,8 @@ describe("/admin/regenerate-manifest", function () {
                             assert.equal(response.statusCode, 200);
                             var manifest = JSON.parse(response.responseText);
                             assert.deepEqual(manifest['repositories'], {
-                                'WebKit': { url: 'trac.webkit.org', blameUrl: null },
-                                'Chromium': { url: null, blameUrl: 'SomeBlameURL' }
+                                'WebKit': { url: 'trac.webkit.org', blameUrl: null, hasReportedCommits: false },
+                                'Chromium': { url: null, blameUrl: 'SomeBlameURL', hasReportedCommits: false }
                             });
                             assert.deepEqual(manifest['bugTrackers']['Bugzilla'], { newBugUrl: null, repositories: ['WebKit'] });
                             assert.deepEqual(manifest['bugTrackers']['Issue Tracker'], { newBugUrl: null, repositories: ['WebKit', 'Chromium'] });
