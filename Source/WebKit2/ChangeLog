@@ -1,5 +1,11 @@
 2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.1 release.
+
+        * gtk/NEWS: Add release notes for 2.6.1.
+
+2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix make distcheck.
 
         * CMakeLists.txt:

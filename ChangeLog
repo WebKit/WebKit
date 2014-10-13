@@ -1,3 +1,9 @@
+2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.1 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Gtk] build.sh needs a -- before make options when the build command is cmake --build

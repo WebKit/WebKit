@@ -1,8 +1,26 @@
 =================
+WebKitGTK+  2.6.1
+=================
+
+What's new in WebKitGTK+ 2.6.1?
+
+  - Ensure WebKitWebView:is-loading is TRUE right after a new load starts.
+  - Fix a crash in the plugin process with some windowed flash plugins.
+  - Allow to dock the inspector again once undocked when building with
+    GTK+ >= 3.10.
+  - TLS errors now take precedence over the HTTP authentication dialog.
+  - Do not shrink on-disk cache to its default size on startup.
+  - Improve the proportion and visibility of some web inspector icons.
+  - Fix GTK+2 plugins not working after being updated.
+  - Don't include full path names in WebKitEnumTypes.h to ensure the
+    generated headers are always identical.
+  - Translation updates: Telugu, Hindi.
+
+=================
 WebKitGTK+  2.6.0
 =================
 
-What's new in WebKitGTK+ 2.4.0?
+What's new in WebKitGTK+ 2.6.0?
 
   - Make vimeo videos work again with the GStreamer media backend.
   - Add more free icons for the web inspector.
