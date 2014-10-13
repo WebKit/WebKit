@@ -1,3 +1,24 @@
+2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS DRT snapshots are limited to the page visible area
+        https://bugs.webkit.org/show_bug.cgi?id=137650
+
+        Reviewed by Daniel Bates.
+        
+        LegacyTileCache drawing was limited to the window's visible area, found by
+        crawling up the layer hierarchy to the root layer. This caused test snapshots to
+        be missing non-composited content outside the iPhone visible area, which hinders
+        testing.
+        
+        Fix by adding a test-only mode where the window visible area is the entire window.
+        
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (dumpWebViewAsPixelsAndCompareWithExpected): Drive-by RetainPtr fix.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow initWithLayer:]): Call setEntireWindowVisibleForTesting:YES
+        for the DRT window.
+        
+
 2014-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Page not fully rendered in iOS DRT snapshots

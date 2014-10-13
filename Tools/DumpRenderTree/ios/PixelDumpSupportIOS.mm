@@ -60,8 +60,8 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
     WebThreadLock();
     [gWebBrowserView setNeedsDisplay];
     [gWebBrowserView layoutTilesNow];
-    CGImageRef snapshot = [gWebBrowserView createSnapshotWithRect:[[mainFrame webView] frame]];
-    NSData *pngData = UIImagePNGRepresentation([UIImage imageWithCGImage:snapshot]);
+    RetainPtr<CGImageRef> snapshot = adoptCF([gWebBrowserView newSnapshotWithRect:[[mainFrame webView] frame]]);
+    NSData *pngData = UIImagePNGRepresentation([UIImage imageWithCGImage:snapshot.get()]);
     
     // Hash the PNG data
     char actualHash[33];
@@ -76,5 +76,4 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
     printf("Content-Type: image/png\n");
     printf("Content-Length: %lu\n", (unsigned long)[pngData length]);
     fwrite([pngData bytes], 1, [pngData length], stdout);
-    CGImageRelease(snapshot);
 }

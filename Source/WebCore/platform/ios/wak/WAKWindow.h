@@ -85,6 +85,7 @@ extern NSString * const WAKWindowVisibilityDidChangeNotification;
 
     BOOL _visible;
     BOOL _useOrientationDependentFontAntialiasing;
+    BOOL _entireWindowVisibleForTesting;
 }
 
 @property (nonatomic, assign) BOOL useOrientationDependentFontAntialiasing;
@@ -132,6 +133,8 @@ extern NSString * const WAKWindowVisibilityDidChangeNotification;
 - (CGRect)exposedScrollViewRect;
 // setExposedScrollViewRect should only ever be called from UIKit.
 - (void)setExposedScrollViewRect:(CGRect)exposedScrollViewRect;
+// Used only by DumpRenderTree.
+- (void)setEntireWindowVisibleForTesting:(BOOL)entireWindowVisible;
 
 // Tiling support
 - (void)layoutTiles;
