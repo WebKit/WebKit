@@ -1,3 +1,19 @@
+2014-10-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [SOUP] [WK2] WebProcess and NetworkProcess initialization clears cache contents
+        https://bugs.webkit.org/show_bug.cgi?id=137489
+
+        Reviewed by Carlos Garcia Campos.
+
+        Temporarily set the SoupCache's maximum size to a huge value
+        before calling soup_cache_load() so that the cache is not shrinked
+        to the default value.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make forwarding headers generation depend on source code
