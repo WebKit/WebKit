@@ -107,6 +107,11 @@ enum class FragmentPositionInRootFragments {
     NotRightmost
 };
 
+enum class VisitedMode {
+    None,
+    Visited
+};
+
 class AttributeMatchingInfo {
 public:
     AttributeMatchingInfo(const CSSSelector* selector, bool canDefaultToCaseSensitiveValueMatch)
@@ -242,6 +247,7 @@ private:
     Assembler::JumpList generateElementMatchesSelectorList(Assembler::RegisterID elementRegister, const Vector<SelectorFragmentList>&);
 
     // Element relations tree walker.
+    void generateRightmostTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateWalkToParentNode(Assembler::RegisterID targetRegister);
     void generateWalkToParentElement(Assembler::JumpList& failureCases, Assembler::RegisterID targetRegister);
     void generateParentElementTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -261,6 +267,7 @@ private:
     // Element properties matchers.
     void generateElementMatching(Assembler::JumpList& matchingTagNameFailureCases, Assembler::JumpList& matchingPostTagNameFailureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementLinkMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateContextFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -297,6 +304,8 @@ private:
     void addFlagsToElementStyleFromContext(Assembler::RegisterID checkingContext, int64_t);
     Assembler::Jump branchOnResolvingModeWithCheckingContext(Assembler::RelationalCondition, SelectorChecker::Mode, Assembler::RegisterID checkingContext);
     Assembler::Jump branchOnResolvingMode(Assembler::RelationalCondition, SelectorChecker::Mode, Assembler::RegisterID checkingContext);
+    void generateElementIsFirstLink(Assembler::JumpList& failureCases, Assembler::RegisterID element);
+    void generateStoreLastVisitedElement(Assembler::RegisterID element);
     void generateMarkPseudoStyleForPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateNthFilterTest(Assembler::JumpList& failureCases, Assembler::RegisterID counter, int a, int b);
     void generateRequestedPseudoElementEqualsToSelectorPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment&, Assembler::RegisterID checkingContext);
@@ -321,6 +330,7 @@ private:
     SelectorContext m_selectorContext;
     FunctionType m_functionType;
     SelectorFragmentList m_selectorFragments;
+    VisitedMode m_visitedMode;
 
     StackAllocator::StackReference m_checkingContextStackReference;
 
@@ -328,6 +338,8 @@ private:
     Assembler::RegisterID m_descendantBacktrackingStart;
     StackAllocator::StackReferenceVector m_backtrackingStack;
     Deque<BacktrackingLevel, 32> m_backtrackingLevels;
+    StackAllocator::StackReference m_lastVisitedElement;
+    StackAllocator::StackReference m_startElement;
 
 #if CSS_SELECTOR_JIT_DEBUGGING
     const CSSSelector* m_originalSelector;
@@ -344,7 +356,7 @@ enum class FragmentsLevel {
     InFunctionalPseudoType = 1
 };
 
-static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel, FragmentPositionInRootFragments);
+static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel, FragmentPositionInRootFragments, bool visitedMatchEnabled, VisitedMode&);
 
 static void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, unsigned level = 0);
 
@@ -434,7 +446,7 @@ static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& select
     return FunctionType::CannotMatchAnything;
 }
 
-static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext, FragmentPositionInRootFragments positionInRootFragments)
+static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode)
 {
     CSSSelector::PseudoClassType type = selector.pseudoClassType();
     switch (type) {
@@ -490,7 +502,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassWindowInactive:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isWindowInactive));
         return FunctionType::SimpleSelectorChecker;
-            
+
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoClassFullScreen:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFullScreenPseudoClass));
@@ -534,7 +546,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassNthOfType:
     case CSSSelector::PseudoClassNthLastChild:
     case CSSSelector::PseudoClassNthLastOfType:
-    case CSSSelector::PseudoClassVisited:
     case CSSSelector::PseudoClassDrag:
 #if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassMatches:
@@ -543,13 +554,24 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     // Optimized pseudo selectors.
     case CSSSelector::PseudoClassAnyLink:
-        fragment.pseudoClasses.add(CSSSelector::PseudoClassLink);
-        return FunctionType::SimpleSelectorChecker;
-
     case CSSSelector::PseudoClassLink:
     case CSSSelector::PseudoClassRoot:
     case CSSSelector::PseudoClassTarget:
         fragment.pseudoClasses.add(type);
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClassVisited:
+        // Determine this :visited cannot match anything statically.
+        if (!visitedMatchEnabled)
+            return FunctionType::CannotMatchAnything;
+
+        // Inside functional pseudo class except for :not, :visited never matches.
+        // And in the case inside :not, returning CannotMatchAnything indicates that :not(:visited) can match over anything.
+        if (fragmentLevel == FragmentsLevel::InFunctionalPseudoType)
+            return FunctionType::CannotMatchAnything;
+
+        fragment.pseudoClasses.add(type);
+        visitedMode = VisitedMode::Visited;
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassScope:
@@ -597,7 +619,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
                 for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
                     SelectorFragmentList selectorFragments;
-                    FunctionType functionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments);
+                    VisitedMode ignoreVisitedMode = VisitedMode::None;
+                    FunctionType functionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode);
+                    ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
                     switch (functionType) {
                     case FunctionType::SimpleSelectorChecker:
                     case FunctionType::SelectorCheckerWithCheckingContext:
@@ -632,7 +656,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 #endif
 
             SelectorFragmentList notFragments;
-            FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments);
+            VisitedMode ignoreVisitedMode = VisitedMode::None;
+            FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode);
+            ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
             // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
             if (functionType == FunctionType::CannotMatchAnything)
@@ -647,10 +673,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
             const SelectorFragment& subFragment = notFragments.first();
 
-            // FIXME: Currently we don't support visitedMatchType.
-            if (subFragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
-                return FunctionType::CannotCompile;
-
             fragment.notFilters.append(subFragment);
             return functionType;
         }
@@ -661,7 +683,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             for (const CSSSelector* rootSelector = selector.selectorList()->first(); rootSelector; rootSelector = CSSSelectorList::next(rootSelector)) {
                 SelectorFragmentList fragmentList;
-                FunctionType subFunctionType = constructFragments(rootSelector, selectorContext, fragmentList, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments);
+                VisitedMode ignoreVisitedMode = VisitedMode::None;
+                FunctionType subFunctionType = constructFragments(rootSelector, selectorContext, fragmentList, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode);
+                ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this fragment always unmatch against the element, don't insert it to anyFragments.
                 if (subFunctionType == FunctionType::CannotMatchAnything)
@@ -723,6 +747,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     : m_stackAllocator(m_assembler)
     , m_selectorContext(selectorContext)
     , m_functionType(FunctionType::SimpleSelectorChecker)
+    , m_visitedMode(VisitedMode::None)
     , m_descendantBacktrackingStartInUse(false)
 #if CSS_SELECTOR_JIT_DEBUGGING
     , m_originalSelector(rootSelector)
@@ -732,7 +757,10 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     dataLogF("Compiling \"%s\"\n", m_originalSelector->selectorText().utf8().data());
 #endif
 
-    m_functionType = constructFragments(rootSelector, m_selectorContext, m_selectorFragments, FragmentsLevel::Root, FragmentPositionInRootFragments::Rightmost);
+    // In QuerySelector context, :visited always has no effect due to security issues.
+    bool visitedMatchEnabled = selectorContext != SelectorContext::QuerySelector;
+
+    m_functionType = constructFragments(rootSelector, m_selectorContext, m_selectorFragments, FragmentsLevel::Root, FragmentPositionInRootFragments::Rightmost, visitedMatchEnabled, m_visitedMode);
     if (m_functionType != FunctionType::CannotCompile && m_functionType != FunctionType::CannotMatchAnything)
         computeBacktrackingInformation(m_selectorFragments);
 }
@@ -748,7 +776,7 @@ static bool isScrollbarPseudoElement(CSSSelector::PseudoElementType type)
     return type >= CSSSelector::PseudoElementScrollbar && type <= CSSSelector::PseudoElementScrollbarTrackPiece;
 }
 
-static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments)
+static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode)
 {
     SelectorFragment fragment;
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
@@ -793,7 +821,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             if (fragment.pseudoElementSelector && isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
                 functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, fragment));
             else
-                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext, subPosition));
+                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode));
             if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
                 fragment.onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
@@ -876,6 +904,9 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             if (selectorContext == SelectorContext::QuerySelector)
                 relationFunctionType = FunctionType::SimpleSelectorChecker;
             functionType = mostRestrictiveFunctionType(functionType, relationFunctionType);
+
+            // When the relation is adjacent, disable :visited match.
+            visitedMatchEnabled = false;
         }
 
         fragment.relationToLeftFragment = fragmentRelationForSelectorRelation(relation);
@@ -1508,8 +1539,24 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
         m_checkingContextStackReference = m_stackAllocator.push(checkingContextRegister);
 
-    if (unsigned stackRequirementCount = backtrackingMemoryRequirements.stackCount)
-        m_backtrackingStack = m_stackAllocator.allocateUninitialized(stackRequirementCount);
+    unsigned stackRequirementCount = backtrackingMemoryRequirements.stackCount;
+    if (m_visitedMode == VisitedMode::Visited)
+        stackRequirementCount += 2;
+
+    StackAllocator::StackReferenceVector temporaryStack;
+    if (stackRequirementCount)
+        temporaryStack = m_stackAllocator.allocateUninitialized(stackRequirementCount);
+
+    if (m_visitedMode == VisitedMode::Visited) {
+        m_lastVisitedElement = temporaryStack.takeLast();
+        m_startElement = temporaryStack.takeLast();
+        unsigned offsetToStartElement = m_stackAllocator.offsetToStackReference(m_startElement);
+        m_assembler.storePtr(elementAddressRegister, Assembler::Address(Assembler::stackPointerRegister, offsetToStartElement));
+        unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
+        m_assembler.storePtr(Assembler::TrustedImmPtr(nullptr), Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement));
+    }
+
+    m_backtrackingStack = temporaryStack;
 
     Assembler::JumpList failureCases;
     generateSelectorCheckerExcludingPseudoElements(failureCases, m_selectorFragments);
@@ -1517,6 +1564,15 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
         ASSERT(!m_selectorFragments.isEmpty());
         generateMarkPseudoStyleForPseudoElement(failureCases, m_selectorFragments.first());
+    }
+
+    if (m_visitedMode == VisitedMode::Visited) {
+        LocalRegister lastVisitedElement(m_registerAllocator);
+        unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
+        m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement), lastVisitedElement);
+        Assembler::Jump noLastVisitedElement = m_assembler.branchTestPtr(Assembler::Zero, lastVisitedElement);
+        generateElementIsFirstLink(failureCases, lastVisitedElement);
+        noLastVisitedElement.link(&m_assembler);
     }
 
     m_registerAllocator.deallocateRegister(elementAddressRegister);
@@ -1573,7 +1629,7 @@ void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assem
     for (const SelectorFragment& fragment : selectorFragmentList) {
         switch (fragment.relationToRightFragment) {
         case FragmentRelation::Rightmost:
-            generateElementMatching(failureCases, failureCases, fragment);
+            generateRightmostTreeWalker(failureCases, fragment);
             break;
         case FragmentRelation::Descendant:
             generateAncestorTreeWalker(failureCases, fragment);
@@ -1640,6 +1696,11 @@ Assembler::JumpList SelectorCodeGenerator::generateElementMatchesSelectorList(As
 static inline Assembler::Jump testIsElementFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
 {
     return assembler.branchTest32(condition, Assembler::Address(nodeAddress, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsElement()));
+}
+
+void SelectorCodeGenerator::generateRightmostTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    generateElementMatching(failureCases, failureCases, fragment);
 }
 
 void SelectorCodeGenerator::generateWalkToParentNode(Assembler::RegisterID targetRegister)
@@ -2146,8 +2207,7 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
     if (fragment.tagName)
         generateElementHasTagName(matchingTagNameFailureCases, *(fragment.tagName));
 
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink))
-        generateElementIsLink(matchingPostTagNameFailureCases);
+    generateElementLinkMatching(matchingPostTagNameFailureCases, fragment);
 
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassRoot))
         generateElementIsRoot(matchingPostTagNameFailureCases);
@@ -2194,6 +2254,11 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementIsInLanguage(matchingPostTagNameFailureCases, *fragment.langFilter);
     if (fragment.pseudoElementSelector)
         generateElementHasPseudoElement(matchingPostTagNameFailureCases, fragment);
+
+    // Reach here when the generateElementMatching matching succeeded.
+    // Only when the matching succeeeded, the last visited element should be stored and checked at the end of the whole matching.
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited))
+        generateStoreLastVisitedElement(elementAddressRegister);
 }
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -2215,6 +2280,12 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
         generateElementHasClasses(failureCases, elementDataAddress, fragment.classNames);
     if (!fragment.attributes.isEmpty())
         generateElementAttributesMatching(failureCases, elementDataAddress, fragment);
+}
+
+void SelectorCodeGenerator::generateElementLinkMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLink) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited))
+        generateElementIsLink(failureCases);
 }
 
 static inline Assembler::Jump testIsHTMLFlagOnNode(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID nodeAddress)
@@ -3362,6 +3433,35 @@ void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failure
     LocalRegister document(m_registerAllocator);
     getDocument(m_assembler, elementAddressRegister, document);
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(document, Document::cssTargetMemoryOffset()), elementAddressRegister));
+}
+
+void SelectorCodeGenerator::generateElementIsFirstLink(Assembler::JumpList& failureCases, Assembler::RegisterID element)
+{
+    LocalRegister currentElement(m_registerAllocator);
+    unsigned offsetToStartElement = m_stackAllocator.offsetToStackReference(m_startElement);
+    m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToStartElement), currentElement);
+
+    // Tree walking up to the provided element until link node is found.
+    Assembler::Label loopStart(m_assembler.label());
+
+    // The target element is always in the ancestors from the start element to the root node.
+    // So the tree walking doesn't loop infinitely and it will be stopped with the following `currentElement == element` condition.
+    Assembler::Jump reachedToElement = m_assembler.branchPtr(Assembler::Equal, currentElement, element);
+
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(currentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
+
+    // And these ancestors are guaranteed that they are element nodes.
+    // So there's no need to check whether it is an element node and whether it is not a nullptr.
+    m_assembler.loadPtr(Assembler::Address(currentElement, Node::parentNodeMemoryOffset()), currentElement);
+    m_assembler.jump(loopStart);
+
+    reachedToElement.link(&m_assembler);
+}
+
+void SelectorCodeGenerator::generateStoreLastVisitedElement(Assembler::RegisterID element)
+{
+    unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
+    m_assembler.storePtr(element, Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement));
 }
 
 void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

@@ -546,7 +546,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
                     // the parser enforces that this never occurs
                     ASSERT(subcontext.selector->pseudoClassType() != CSSSelector::PseudoClassNot);
                     // We select between :visited and :link when applying. We don't know which one applied (or not) yet.
-                    if (subcontext.selector->pseudoClassType() == CSSSelector::PseudoClassVisited || (subcontext.selector->pseudoClassType() == CSSSelector::PseudoClassLink && subcontext.visitedMatchType == VisitedMatchType::Enabled))
+                    if (subcontext.selector->pseudoClassType() == CSSSelector::PseudoClassVisited)
                         return true;
                 }
                 if (!checkOne(subcontext))

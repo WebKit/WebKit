@@ -22,7 +22,7 @@ function compareStyles()
         twoStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("two"));
         threeStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("three"));
         fourStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("four"));
-        shouldBecomeEqualToString("oneStyle.color", "rgb(0, 128, 0)", finish);
+        shouldBecomeEqualToString("oneStyle.color", "rgb(255, 0, 0)", finish);
         shouldBecomeEqualToString("twoStyle.color", "rgb(0, 128, 0)", finish);
         shouldBecomeEqualToString("threeStyle.color", "rgb(0, 128, 0)", finish);
         shouldBecomeEqualToString("fourStyle.color", "rgb(0, 128, 0)", finish);
@@ -30,6 +30,7 @@ function compareStyles()
 }
 </script>
 <style>
+/* After https://bugs.webkit.org/show_bug.cgi?id=135293, :not(:link) simply considered as :not(:any-link) in the selector matching. */
 a { color: red; }
 #area1 a:not(:link) {
     color: green;
@@ -55,7 +56,7 @@ a { color: red; }
 <body onload="compareStyles()">
 <iframe src="resources/dummy.html" style="display:none"></iframe>
 
-<p>color of One, Two, Three, and Four should be green:</p>
+<p>color of One should be red, and those of Two, Three, and Four should be green:</p>
 <p>
 
 <p id="area1">

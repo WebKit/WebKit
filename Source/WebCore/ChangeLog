@@ -1,3 +1,46 @@
+2014-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Implement :visited pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=135293
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements CSS JIT for :visited. And it makes :not(:link) JIT-ed.
+        Following the design discussed at the other bug[1], implemented :visited JIT
+        without tracking VisitedMatchEnabled state.
+
+        In this patch, we change the semantics of :visited / :link
+        inside functional pseudo classes for further CSS Selector Level 4 extensions.
+
+        Edge cases are tested by the existing tests.
+        :not(:link)
+            fast/history/link-inside-not.html
+        :not(:visited)
+            fast/history/visited-inside-not.html
+        :-webkit-any(:link)
+            fast/history/link-inside-any.html
+        :-webkit-any(:visited)
+            fast/history/visited-inside-any.html
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=135639
+
+        Test: fast/history/link-inside-not-inside-any.html
+            To cover the :-webkit-any(:not(:link)), added new tests.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRightmostTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementLinkMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstLink):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateStoreLastVisitedElement):
+
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
         Use modern loops in RenderLayerCompositor

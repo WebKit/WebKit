@@ -1,3 +1,18 @@
+2014-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Implement :visited pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=135293
+
+        Reviewed by Benjamin Poulain.
+
+        To cover the :-webkit-any(:not(:link)), added new tests.
+
+        * TestExpectations:
+        * fast/history/link-inside-not-expected.txt:
+        * fast/history/link-inside-not-inside-any-expected.txt: Added.
+        * fast/history/link-inside-not-inside-any.html: Added.
+        * fast/history/link-inside-not.html:
+
 2014-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the test image diffs page

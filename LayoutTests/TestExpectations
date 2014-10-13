@@ -217,9 +217,6 @@ webkit.org/b/137167 js/kde/function_arguments.html [ Failure ]
 # Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit.
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 
-# Intentional breaking of :not(:link) and :not(:visited) for the development of the extended :not() from CSS Selector Level 4.
-fast/history/link-inside-not.html [ Failure ]
-
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
