@@ -80,6 +80,7 @@ public:
 
     void effectiveRateChanged();
     void sizeChanged();
+    void characteristicsChanged();
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     virtual void setCDMSession(CDMSession*) override;

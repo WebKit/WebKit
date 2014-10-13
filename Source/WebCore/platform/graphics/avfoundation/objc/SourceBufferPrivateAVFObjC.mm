@@ -599,6 +599,8 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
         // FIXME(125161): Add TextTrack support
     }
 
+    m_mediaSource->player()->characteristicsChanged();
+
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveInitializationSegment(this, segment);
 }

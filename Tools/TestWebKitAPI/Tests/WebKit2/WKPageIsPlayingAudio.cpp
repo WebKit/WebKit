@@ -28,6 +28,8 @@
 #include "PlatformWebView.h"
 #include "Test.h"
 #include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKPreferencesRef.h>
+#include <WebKit/WKPreferencesRefPrivate.h>
 
 // This test loads file-with-video.html. It first checks to make sure WKPageIsPlayingAudio() returns
 // false for the page. Then it calls a JavaScript method to play the video, waits for
@@ -85,6 +87,32 @@ TEST(WebKit2, WKPageIsPlayingAudio)
     Util::run(&didFinishLoad);
 
     EXPECT_FALSE(WKPageIsPlayingAudio(webView.page()));
+    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), 0, nullJavaScriptCallback);
+
+    Util::run(&isPlayingAudioChanged);
+    EXPECT_TRUE(WKPageIsPlayingAudio(webView.page()));
+}
+
+TEST(WebKit2, MSEIsPlayingAudio)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MSEIsPlayingAudioPageGroup").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetMediaSourceEnabled(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
+    setUpClients(webView.page());
+
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("file-with-mse", "html"));
+    didFinishLoad = false;
+    WKPageLoadURL(webView.page(), url.get());
+
+    Util::run(&didFinishLoad);
+
+    EXPECT_FALSE(WKPageIsPlayingAudio(webView.page()));
+    isPlayingAudioChanged = false;
     WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), 0, nullJavaScriptCallback);
 
     Util::run(&isPlayingAudioChanged);

@@ -1,3 +1,19 @@
+2014-10-08  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayer::characteristicChanged() is not called when new tracks are found in SourceBufferPrivateAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=137533
+
+        Reviewed by Darin Adler.
+
+        When a new AVAsset is returned out of the AVStreamDataParser, notify the HTMLMediaElement that
+        characteristics of the player may have changed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+
 2014-10-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Stop listening for wireless playback target availability when the default controls are hidden.
