@@ -45,7 +45,7 @@ public:
     virtual bool isSVGResourceFilterPrimitive() const { return true; }
 
     // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
-    static FloatRect determineFilterPrimitiveSubregion(FilterEffect*);
+    static FloatRect determineFilterPrimitiveSubregion(FilterEffect&);
 
     inline void primitiveAttributeChanged(const QualifiedName& attribute)
     {

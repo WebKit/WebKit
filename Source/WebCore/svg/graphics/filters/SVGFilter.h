@@ -30,6 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -58,8 +59,10 @@ private:
     bool m_effectBBoxMode;
 };
 
-FILTER_TYPE_CASTS(SVGFilter, isSVGFilter())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGFilter)
+    static bool isType(const WebCore::Filter& filter) { return filter.isSVGFilter(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // SVGFilter_h

@@ -64,30 +64,30 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
 {
     encoder << static_cast<uint32_t>(filters.size());
     for (size_t i = 0; i < filters.size(); ++i) {
-        const FilterOperation* filter = filters.at(i);
-        FilterOperation::OperationType type = filter->type();
+        const FilterOperation& filter = *filters.at(i);
+        FilterOperation::OperationType type = filter.type();
         encoder.encodeEnum(type);
         switch (type) {
         case FilterOperation::GRAYSCALE:
         case FilterOperation::SEPIA:
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE:
-            encoder << static_cast<double>(toBasicColorMatrixFilterOperation(filter)->amount());
+            encoder << static_cast<double>(downcast<BasicColorMatrixFilterOperation>(filter).amount());
             break;
         case FilterOperation::INVERT:
         case FilterOperation::BRIGHTNESS:
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY:
-            encoder << static_cast<double>(toBasicComponentTransferFilterOperation(filter)->amount());
+            encoder << static_cast<double>(downcast<BasicComponentTransferFilterOperation>(filter).amount());
             break;
         case FilterOperation::BLUR:
-            ArgumentCoder<Length>::encode(encoder, toBlurFilterOperation(filter)->stdDeviation());
+            ArgumentCoder<Length>::encode(encoder, downcast<BlurFilterOperation>(filter).stdDeviation());
             break;
         case FilterOperation::DROP_SHADOW: {
-            const DropShadowFilterOperation* shadow = toDropShadowFilterOperation(filter);
-            ArgumentCoder<IntPoint>::encode(encoder, shadow->location());
-            encoder << static_cast<int32_t>(shadow->stdDeviation());
-            ArgumentCoder<Color>::encode(encoder, shadow->color());
+            const DropShadowFilterOperation& shadow = downcast<DropShadowFilterOperation>(filter);
+            ArgumentCoder<IntPoint>::encode(encoder, shadow.location());
+            encoder << static_cast<int32_t>(shadow.stdDeviation());
+            ArgumentCoder<Color>::encode(encoder, shadow.color());
             break;
         }
         case FilterOperation::REFERENCE:

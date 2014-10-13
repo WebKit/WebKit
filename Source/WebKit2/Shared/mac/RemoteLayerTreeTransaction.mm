@@ -694,52 +694,52 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
         ts << "reference";
         break;
     case FilterOperation::GRAYSCALE: {
-        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
         ts << "grayscale(" << colorMatrixFilter.amount() << ")";
         break;
     }
     case FilterOperation::SEPIA: {
-        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
         ts << "sepia(" << colorMatrixFilter.amount() << ")";
         break;
     }
     case FilterOperation::SATURATE: {
-        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
         ts << "saturate(" << colorMatrixFilter.amount() << ")";
         break;
     }
     case FilterOperation::HUE_ROTATE: {
-        const BasicColorMatrixFilterOperation& colorMatrixFilter = toBasicColorMatrixFilterOperation(filter);
+        const auto& colorMatrixFilter = downcast<BasicColorMatrixFilterOperation>(filter);
         ts << "hue-rotate(" << colorMatrixFilter.amount() << ")";
         break;
     }
     case FilterOperation::INVERT: {
-        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
         ts << "invert(" << componentTransferFilter.amount() << ")";
         break;
     }
     case FilterOperation::OPACITY: {
-        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
         ts << "opacity(" << componentTransferFilter.amount() << ")";
         break;
     }
     case FilterOperation::BRIGHTNESS: {
-        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
         ts << "brightness(" << componentTransferFilter.amount() << ")";
         break;
     }
     case FilterOperation::CONTRAST: {
-        const BasicComponentTransferFilterOperation& componentTransferFilter = toBasicComponentTransferFilterOperation(filter);
+        const auto& componentTransferFilter = downcast<BasicComponentTransferFilterOperation>(filter);
         ts << "contrast(" << componentTransferFilter.amount() << ")";
         break;
     }
     case FilterOperation::BLUR: {
-        const BlurFilterOperation& blurFilter = toBlurFilterOperation(filter);
+        const auto& blurFilter = downcast<BlurFilterOperation>(filter);
         ts << "blur(" << floatValueForLength(blurFilter.stdDeviation(), 0) << ")";
         break;
     }
     case FilterOperation::DROP_SHADOW: {
-        const DropShadowFilterOperation& dropShadowFilter = toDropShadowFilterOperation(filter);
+        const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
         ts << "drop-shadow(" << dropShadowFilter.x() << " " << dropShadowFilter.y() << " " << dropShadowFilter.location() << " ";
         ts << dropShadowFilter.color() << ")";
         break;
@@ -748,7 +748,7 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
         ts << "passthrough";
         break;
     case FilterOperation::DEFAULT: {
-        const DefaultFilterOperation& defaultFilter = toDefaultFilterOperation(filter);
+        const auto& defaultFilter = downcast<DefaultFilterOperation>(filter);
         ts << "default type=" << (int)defaultFilter.representedType();
         break;
     }

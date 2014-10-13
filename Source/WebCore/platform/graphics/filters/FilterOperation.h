@@ -33,6 +33,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 // Annoyingly, wingdi.h #defines this.
@@ -114,9 +115,6 @@ protected:
     OperationType m_type;
 };
 
-#define FILTEROPERATION_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::FilterOperation, value, value->predicate, value.predicate)
-
 class WEBCORE_EXPORT DefaultFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<DefaultFilterOperation> create(OperationType representedType)
@@ -143,9 +141,6 @@ private:
     OperationType m_representedType;
 };
 
-FILTEROPERATION_TYPE_CASTS(DefaultFilterOperation, type() == FilterOperation::DEFAULT);
-
-
 class PassthroughFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<PassthroughFilterOperation> create()
@@ -169,8 +164,6 @@ private:
     {
     }
 };
-
-FILTEROPERATION_TYPE_CASTS(PassthroughFilterOperation, type() == FilterOperation::PASSTHROUGH);
 
 class ReferenceFilterOperation : public FilterOperation {
 public:
@@ -210,8 +203,6 @@ private:
     RefPtr<FilterEffect> m_filterEffect;
 };
 
-FILTEROPERATION_TYPE_CASTS(ReferenceFilterOperation, type() == FilterOperation::REFERENCE);
-
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.
 // For HUE_ROTATE, the angle of rotation is stored in m_amount.
 class WEBCORE_EXPORT BasicColorMatrixFilterOperation : public FilterOperation {
@@ -243,8 +234,6 @@ private:
 
     double m_amount;
 };
-
-FILTEROPERATION_TYPE_CASTS(BasicColorMatrixFilterOperation, isBasicColorMatrixFilterOperation());
 
 // INVERT, BRIGHTNESS, CONTRAST and OPACITY are variations on a basic component transfer effect.
 class WEBCORE_EXPORT BasicComponentTransferFilterOperation : public FilterOperation {
@@ -279,8 +268,6 @@ private:
     double m_amount;
 };
 
-FILTEROPERATION_TYPE_CASTS(BasicComponentTransferFilterOperation, isBasicComponentTransferFilterOperation());
-
 class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation)
@@ -311,8 +298,6 @@ private:
 
     Length m_stdDeviation;
 };
-
-FILTEROPERATION_TYPE_CASTS(BlurFilterOperation, type() == FilterOperation::BLUR);
 
 class WEBCORE_EXPORT DropShadowFilterOperation : public FilterOperation {
 public:
@@ -353,8 +338,19 @@ private:
     Color m_color;
 };
 
-FILTEROPERATION_TYPE_CASTS(DropShadowFilterOperation, type() == FilterOperation::DROP_SHADOW);
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::FilterOperation& operation) { return operation.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(DefaultFilterOperation, type() == WebCore::FilterOperation::DEFAULT)
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(PassthroughFilterOperation, type() == WebCore::FilterOperation::PASSTHROUGH)
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(ReferenceFilterOperation, type() == WebCore::FilterOperation::REFERENCE)
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BasicColorMatrixFilterOperation, isBasicColorMatrixFilterOperation())
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BasicComponentTransferFilterOperation, isBasicComponentTransferFilterOperation())
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BlurFilterOperation, type() == WebCore::FilterOperation::BLUR)
+SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(DropShadowFilterOperation, type() == WebCore::FilterOperation::DROP_SHADOW)
 
 #endif // FilterOperation_h

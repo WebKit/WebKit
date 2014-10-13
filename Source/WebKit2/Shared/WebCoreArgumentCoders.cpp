@@ -1538,26 +1538,26 @@ void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const Filt
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
-        encoder << toBasicColorMatrixFilterOperation(filter).amount();
+        encoder << downcast<BasicColorMatrixFilterOperation>(filter).amount();
         break;
     case FilterOperation::INVERT:
     case FilterOperation::OPACITY:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
-        encoder << toBasicComponentTransferFilterOperation(filter).amount();
+        encoder << downcast<BasicComponentTransferFilterOperation>(filter).amount();
         break;
     case FilterOperation::BLUR:
-        encoder << toBlurFilterOperation(filter).stdDeviation();
+        encoder << downcast<BlurFilterOperation>(filter).stdDeviation();
         break;
     case FilterOperation::DROP_SHADOW: {
-        const auto& dropShadowFilter = toDropShadowFilterOperation(filter);
+        const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
         encoder << dropShadowFilter.location();
         encoder << dropShadowFilter.stdDeviation();
         encoder << dropShadowFilter.color();
         break;
     }
     case FilterOperation::DEFAULT:
-        encoder.encodeEnum(toDefaultFilterOperation(filter).representedType());
+        encoder.encodeEnum(downcast<DefaultFilterOperation>(filter).representedType());
         break;
     case FilterOperation::PASSTHROUGH:
         break;

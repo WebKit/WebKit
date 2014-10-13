@@ -106,24 +106,24 @@ FilterOutsets FilterOperations::outsets() const
 {
     FilterOutsets totalOutsets;
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        const FilterOperation* filterOperation = m_operations.at(i).get();
-        switch (filterOperation->type()) {
+        const FilterOperation& filterOperation = *m_operations.at(i);
+        switch (filterOperation.type()) {
         case FilterOperation::BLUR: {
-            const BlurFilterOperation* blurOperation = toBlurFilterOperation(filterOperation);
-            float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
+            const BlurFilterOperation& blurOperation = downcast<BlurFilterOperation>(filterOperation);
+            float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
             IntSize outsetSize = outsetSizeForBlur(stdDeviation);
             FilterOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
             totalOutsets += outsets;
             break;
         }
         case FilterOperation::DROP_SHADOW: {
-            const DropShadowFilterOperation* dropShadowOperation = toDropShadowFilterOperation(filterOperation);
-            IntSize outsetSize = outsetSizeForBlur(dropShadowOperation->stdDeviation());
+            const DropShadowFilterOperation& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
+            IntSize outsetSize = outsetSizeForBlur(dropShadowOperation.stdDeviation());
             FilterOutsets outsets(
-                std::max(0, outsetSize.height() - dropShadowOperation->y()),
-                std::max(0, outsetSize.width() + dropShadowOperation->x()),
-                std::max(0, outsetSize.height() + dropShadowOperation->y()),
-                std::max(0, outsetSize.width() - dropShadowOperation->x())
+                std::max(0, outsetSize.height() - dropShadowOperation.y()),
+                std::max(0, outsetSize.width() + dropShadowOperation.x()),
+                std::max(0, outsetSize.height() + dropShadowOperation.y()),
+                std::max(0, outsetSize.width() - dropShadowOperation.x())
             );
             totalOutsets += outsets;
             break;

@@ -1,5 +1,45 @@
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for Filter / FilterOperation subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137644
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Filter / FilterOperation subclasses.
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::filterValueForOperation):
+        (PlatformCAFilters::colorMatrixValueForFilter):
+        * platform/graphics/filters/Filter.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::DefaultFilterOperation::operator==):
+        (WebCore::ReferenceFilterOperation::operator==):
+        (WebCore::BasicColorMatrixFilterOperation::blend):
+        (WebCore::BasicColorMatrixFilterOperation::operator==):
+        (WebCore::BasicComponentTransferFilterOperation::blend):
+        (WebCore::BasicComponentTransferFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::blend):
+        (WebCore::DropShadowFilterOperation::operator==):
+        (WebCore::DropShadowFilterOperation::blend):
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::outsets):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        * svg/graphics/filters/SVGFilter.h:
+        (isType):
+
+2014-10-13  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for Table render objects
         https://bugs.webkit.org/show_bug.cgi?id=137641
 
