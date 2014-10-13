@@ -1,3 +1,21 @@
+2014-10-13  Antti Koivisto  <antti@apple.com>
+
+        Add StringCapture helper for thread-safe lambda capture
+        https://bugs.webkit.org/show_bug.cgi?id=137664
+
+        Reviewed by Anders Carlsson.
+
+        There is currently no clean way to capture a String in a thread-safe manner. This will now work:
+
+        StringCapture stringCapture(string);
+        auto lambdaThatRunsInAnotherThread = [stringCapture] { String string = stringCapture.string(); ... }
+
+        This type won't be necessary with C++14 initialized lambda capture: [string = string.isolatedCopy()].
+
+        * wtf/text/WTFString.h:
+        (WTF::StringCapture::StringCapture): Create isolated copy in copy-constructor.
+        (WTF::StringCapture::string):
+
 2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Enable WebP support.
