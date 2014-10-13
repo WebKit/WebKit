@@ -1,5 +1,25 @@
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
+        Drop unnecessary overlapMap null checks in computeCompositingRequirements()
+        https://bugs.webkit.org/show_bug.cgi?id=137668
+
+        Reviewed by Andreas Kling.
+
+        Drop unnecessary overlapMap null checks in computeCompositingRequirements().
+        The function is never called with a null overlapMap so we can make the
+        argument a reference and drop all the null checks.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::computeRegionCompositingRequirements):
+        * rendering/RenderLayerCompositor.h:
+
+2014-10-13  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for PlatformCALayer subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137661
 

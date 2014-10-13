@@ -339,11 +339,11 @@ private:
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>&);
 
     // Returns true if any layer's compositing changed
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap*, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap&, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
 
-    void computeRegionCompositingRequirements(RenderNamedFlowFragment*, OverlapMap*, CompositingState&, bool& layersChanged, bool& anyDescendantHas3DTransform);
+    void computeRegionCompositingRequirements(RenderNamedFlowFragment*, OverlapMap&, CompositingState&, bool& layersChanged, bool& anyDescendantHas3DTransform);
 
-    void computeCompositingRequirementsForNamedFlowFixed(RenderLayer&, OverlapMap*, CompositingState&, bool& layersChanged, bool& anyDescendantHas3DTransform);
+    void computeCompositingRequirementsForNamedFlowFixed(RenderLayer&, OverlapMap&, CompositingState&, bool& layersChanged, bool& anyDescendantHas3DTransform);
 
     // Recurses down the tree, parenting descendant compositing layers and collecting an array of child layers for the current compositing layer.
     void rebuildCompositingLayerTree(RenderLayer&, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth);
