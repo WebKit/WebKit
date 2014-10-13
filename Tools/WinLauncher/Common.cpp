@@ -29,6 +29,7 @@
 #include "AccessibilityDelegate.h"
 #include "DOMDefaultImpl.h"
 #include "PrintWebUIDelegate.h"
+#include "ResourceLoadDelegate.h"
 #include "WinLauncher.h"
 #include "WinLauncherReplace.h"
 #include <WebKit/WebKitCOMAPI.h>
@@ -683,6 +684,26 @@ static void updateStatistics(HWND dialog)
         setWindowText(dialog, IDC_SITE_ICON_RECORDS, count);
     if (SUCCEEDED(webCoreStatistics->iconsWithDataCount(&count)))
         setWindowText(dialog, IDC_SITE_ICONS_WITH_DATA, count);
+}
+
+static void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, bool& pageLoadTesting, _bstr_t& requestedURL)
+{
+    usesLayeredWebView = false;
+    useFullDesktop = false;
+    pageLoadTesting = false;
+
+    int argc = 0;
+    WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    for (int i = 1; i < argc; ++i) {
+        if (!wcsicmp(argv[i], L"--transparent"))
+            usesLayeredWebView = true;
+        else if (!wcsicmp(argv[i], L"--desktop"))
+            useFullDesktop = true;
+        else if (!requestedURL)
+            requestedURL = argv[i];
+        else if (!wcsicmp(argv[i], L"--performance"))
+            pageLoadTesting = true;
+    }
 }
 
 extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)

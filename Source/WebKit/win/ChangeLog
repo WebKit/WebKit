@@ -1,3 +1,20 @@
+2014-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement a page load profiling tool
+        https://bugs.webkit.org/show_bug.cgi?id=137673
+
+        Reviewed by Dean Jackson.
+
+        Add a new predicate (isMainFrame) to the IWebFrame interface so
+        that we can make decisions about a frames position in the page
+        load hierarchy in client programs.
+
+        * Interfaces/IWebFrame.idl: Added new isMainFrame
+        predicate to interface definition.
+        * WebFrame.cpp:
+        (WebFrame::isMainFrame): Added.
+        * WebFrame.h:
+
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for PlatformCALayer subclasses

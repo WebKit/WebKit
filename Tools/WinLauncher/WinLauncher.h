@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "PageLoadTestClient.h"
 #include <WebKit/WebKit.h>
+#include <memory>
 #include <vector>
 
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
@@ -39,10 +41,11 @@ typedef _com_ptr_t<_com_IIID<IAccessibilityDelegate, &__uuidof(IAccessibilityDel
 typedef _com_ptr_t<_com_IIID<IWebInspector, &__uuidof(IWebInspector)>> IWebInspectorPtr;
 typedef _com_ptr_t<_com_IIID<IWebCoreStatistics, &__uuidof(IWebCoreStatistics)>> IWebCoreStatisticsPtr;
 typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
+typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoadDelegate)>> IWebResourceLoadDelegatePtr;
 
 class WinLauncher {
 public:
-    WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false);
+    WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView = false, bool pageLoadTesting = false);
 
     HRESULT init();
     HRESULT prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL, HWND& viewWnd);
@@ -53,12 +56,15 @@ public:
     void launchInspector();
     void navigateForwardOrBackward(HWND hWnd, UINT menuID);
     void navigateToHistory(HWND hWnd, UINT menuID);
+    void exitProgram();
     bool seedInitialDefaultPreferences();
     bool setToDefaultPreferences();
 
     HRESULT setFrameLoadDelegate(IWebFrameLoadDelegate*);
+    HRESULT setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate*);
     HRESULT setUIDelegate(IWebUIDelegate*);
     HRESULT setAccessibilityDelegate(IAccessibilityDelegate*);
+    HRESULT setResourceLoadDelegate(IWebResourceLoadDelegate*);
 
     IWebPreferencesPtr standardPreferences() { return m_standardPreferences;  }
     IWebPreferencesPrivatePtr privatePreferences() { return m_prefsPrivate; }
@@ -72,8 +78,12 @@ public:
     bool goBack();
     bool goForward();
 
+    PageLoadTestClient& pageLoadTestClient() { return *m_pageLoadTestClient; }
+
 private:
     std::vector<IWebHistoryItemPtr> m_historyItems;
+
+    std::unique_ptr<PageLoadTestClient> m_pageLoadTestClient;
 
     IWebViewPtr m_webView;
     IWebViewPrivatePtr m_webViewPrivate;
@@ -86,6 +96,7 @@ private:
     IWebFrameLoadDelegatePtr m_frameLoadDelegate;
     IWebUIDelegatePtr m_uiDelegate;
     IAccessibilityDelegatePtr m_accessibilityDelegate;
+    IWebResourceLoadDelegatePtr m_resourceLoadDelegate;
 
     IWebCoreStatisticsPtr m_statistics;
     IWebCachePtr m_webCache;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013-2014 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -30,6 +30,7 @@
 #include "WinLauncherWebHost.h"
 
 #include "DOMDefaultImpl.h"
+#include "PageLoadTestClient.h"
 #include "WinLauncher.h"
 #include <WebKit/WebKit.h>
 
@@ -82,9 +83,19 @@ HRESULT WinLauncherWebHost::updateAddressBar(IWebView& webView)
     if (FAILED(hr))
         return 0;
 
-    ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETTEXT), 0, reinterpret_cast<LPARAM>(frameURL.GetBSTR()));
+    if (frameURL.length()) {
+        m_client->pageLoadTestClient().setPageURL(frameURL);
+        m_client->pageLoadTestClient().didCommitLoad();
+    }
+
+    loadURL(frameURL);
 
     return 0;
+}
+
+void WinLauncherWebHost::loadURL(_bstr_t& url)
+{
+    ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETTEXT), 0, reinterpret_cast<LPARAM>(url.GetBSTR()));
 }
 
 HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(IWebView*, IWebError *error, IWebFrame*)
@@ -134,6 +145,15 @@ typedef _com_ptr_t<_com_IIID<IDOMEventTarget, &__uuidof(IDOMEventTarget)>> IDOME
 
 HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* frame)
 {
+    if (!frame || !webView)
+        return E_POINTER;
+
+    BOOL mainFrame;
+    if (SUCCEEDED(frame->isMainFrame(&mainFrame))) {
+        if (mainFrame)
+            m_client->pageLoadTestClient().didFinishLoad();
+    }
+
     IDOMDocumentPtr doc;
     frame->DOMDocument(&doc.GetInterfacePtr());
 
@@ -157,4 +177,55 @@ HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* 
         return hr;
 
     return hr;
+}
+
+HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(IWebView*, IWebFrame* frame)
+{
+    if (!frame)
+        return E_FAIL;
+
+    m_client->pageLoadTestClient().didStartProvisionalLoad(*frame);
+    return S_OK;
+}
+
+HRESULT WinLauncherWebHost::didFailLoadWithError(IWebView*, IWebError*, IWebFrame*)
+{
+    m_client->pageLoadTestClient().didFailLoad();
+    return S_OK;
+}
+
+HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(IWebView* sender, IWebFrame* frame)
+{
+    IWebDataSourcePtr dataSource;
+    HRESULT hr = frame->dataSource(&dataSource.GetInterfacePtr());
+    if (FAILED(hr) || !dataSource)
+        hr = frame->provisionalDataSource(&dataSource.GetInterfacePtr());
+    if (FAILED(hr) || !dataSource)
+        return 0;
+
+    IWebMutableURLRequestPtr request;
+    hr = dataSource->request(&request.GetInterfacePtr());
+    if (FAILED(hr) || !request)
+        return 0;
+
+    _bstr_t frameURL;
+    hr = request->mainDocumentURL(frameURL.GetAddress());
+    if (FAILED(hr))
+        return 0;
+
+    if (frameURL.length())
+        m_client->pageLoadTestClient().didHandleOnLoadEvents();
+
+    return S_OK;
+}
+
+HRESULT WinLauncherWebHost::didFirstLayoutInFrame(IWebView*, IWebFrame* frame)
+{
+    BOOL mainFrame;
+    if (SUCCEEDED(frame->isMainFrame(&mainFrame))) {
+        if (mainFrame)
+            m_client->pageLoadTestClient().didFirstLayoutForMainFrame();
+    }
+
+    return S_OK;
 }

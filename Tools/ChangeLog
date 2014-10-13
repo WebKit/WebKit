@@ -1,3 +1,80 @@
+2014-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement a page load profiling tool
+        https://bugs.webkit.org/show_bug.cgi?id=137673
+
+        Reviewed by Dean Jackson.
+
+        Add a tool to capture and summarize page load statistics.
+
+        * WinLauncher/Common.cpp:
+        (parseCommandLine): Move from WinMain.cpp so that it can
+        be shared with internal tools.
+        * WinLauncher/PageLoadTestClient.cpp: Added.
+        (PageLoadTestClient::PageLoadTestClient):
+        (PageLoadTestClient::pageLoadStartedAtTime):
+        (PageLoadTestClient::didStartProvisionalLoad):
+        (PageLoadTestClient::didCommitLoad):
+        (PageLoadTestClient::didFirstLayoutForMainFrame):
+        (PageLoadTestClient::didHandleOnLoadEvents):
+        (PageLoadTestClient::didFinishLoad):
+        (PageLoadTestClient::didFailLoad):
+        (PageLoadTestClient::didInitiateResourceLoad):
+        (PageLoadTestClient::didEndResourceLoad):
+        (PageLoadTestClient::pageLoadEndedAtTime):
+        (PageLoadTestClient::endPageLoad):
+        (PageLoadTestClient::clearPageLoadState):
+        (PageLoadTestClient::shouldConsiderPageLoadEnded):
+        (PageLoadTestClient::maybeEndPageLoadSoon):
+        (PageLoadTestClient::setPageURL):
+        (PageLoadTestClient::dumpRunStatistics):
+        * WinLauncher/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::createWebViewWithRequest): Handle
+        nullptr URL properly.
+        * WinLauncher/ResourceLoadDelegate.cpp: Added.
+        (ResourceLoadDelegate::QueryInterface):
+        (ResourceLoadDelegate::AddRef):
+        (ResourceLoadDelegate::Release):
+        (ResourceLoadDelegate::identifierForInitialRequest):
+        (ResourceLoadDelegate::willSendRequest):
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        (ResourceLoadDelegate::didCancelAuthenticationChallenge):
+        (ResourceLoadDelegate::didReceiveResponse):
+        (ResourceLoadDelegate::didReceiveContentLength):
+        (ResourceLoadDelegate::didFinishLoadingFromDataSource):
+        (ResourceLoadDelegate::didFailLoadingWithError):
+        (ResourceLoadDelegate::plugInFailedWithError):
+        * WinLauncher/ResourceLoadDelegate.h: Added.
+        (ResourceLoadDelegate::ResourceLoadDelegate):
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::WinLauncher): Accept argument to indicate we want to capture
+        page loading statistics.
+        (WinLauncher::setFrameLoadDelegatePrivate): Get rid of stub implementation
+        and set private load delegate state.
+        (WinLauncher::setResourceLoadDelegate): Replace stub with a full implementation
+        that sets the view's resource load delegate.
+        (WinLauncher::loadURL): If no URL is passed, load the test document.
+        * WinLauncher/WinLauncher.h:
+        (WinLauncher::pageLoadTestClient):
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj: Updated for new source files.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters: Ditto.
+        * WinLauncher/WinLauncherWebHost.cpp:
+        (WinLauncherWebHost::updateAddressBar): Hook into page load statistics routine.
+        (WinLauncherWebHost::loadURL): Moved 'SendMessage' call to its own method so that
+        it could be used from other source files.
+        (WinLauncherWebHost::didFinishLoadForFrame): Added overload to capture statistics.
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame): Ditto.
+        (WinLauncherWebHost::didFailLoadWithError): Ditto.
+        (WinLauncherWebHost::didHandleOnloadEventsForFrame): Ditto.
+        (WinLauncherWebHost::didFirstLayoutInFrame): Ditto.
+        (WinLauncherWebHost::didFinishDocumentLoadForFrame): Ditto.
+        (WinLauncherWebHost::didFirstVisuallyNonEmptyLayoutInFrame): Ditto.
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame): Deleted.
+        * WinLauncher/WinLauncherWebHost.h:
+        * WinLauncher/WinMain.cpp:
+        (wWinMain): Create and use new delegates for gathering page load data.
+        * WinLauncher/stdafx.h: Need to add <wtf/Platform> include for various macros used in build.
+
 2014-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the test image diffs page

@@ -49,7 +49,7 @@ HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessa
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::createWebViewWithRequest(IWebView*, IWebURLRequest* request, IWebView**)
+HRESULT PrintWebUIDelegate::createWebViewWithRequest(IWebView*, IWebURLRequest* request, IWebView**)
 {
     if (!request)
         return E_POINTER;
@@ -63,6 +63,9 @@ HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::createWebViewWithRequest(IWebView*
     HRESULT hr = request->URL(&url.GetBSTR());
     if (FAILED(hr))
         return E_FAIL;
+
+    if (!url)
+        return S_OK;
 
     std::wstring command = std::wstring(L"\"") + executablePath + L"\" " + (const wchar_t*)url;
 

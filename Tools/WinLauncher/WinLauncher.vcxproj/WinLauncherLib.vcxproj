@@ -218,7 +218,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\DOMDefaultImpl.cpp" />
+    <ClCompile Include="..\PageLoadTestClient.cpp" />
     <ClCompile Include="..\PrintWebUIDelegate.cpp" />
+    <ClCompile Include="..\ResourceLoadDelegate.cpp" />
     <ClCompile Include="..\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -240,7 +242,9 @@
   <ItemGroup>
     <ClInclude Include="..\AccessibilityDelegate.h" />
     <ClInclude Include="..\DOMDefaultImpl.h" />
+    <ClInclude Include="..\PageLoadTestClient.h" />
     <ClInclude Include="..\PrintWebUIDelegate.h" />
+    <ClInclude Include="..\ResourceLoadDelegate.h" />
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\WinLauncher.h" />
     <ClInclude Include="..\WinLauncherReplace.h" />

@@ -53,18 +53,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     bool usesLayeredWebView = false;
     bool useFullDesktop = false;
-
+    bool pageLoadTesting = false;
     _bstr_t requestedURL;
-    int argc = 0;
-    WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    for (int i = 1; i < argc; ++i) {
-        if (!wcsicmp(argv[i], L"--transparent"))
-            usesLayeredWebView = true;
-        else if (!wcsicmp(argv[i], L"--desktop"))
-            useFullDesktop = true;
-        else if (!requestedURL)
-            requestedURL = argv[i];
-    }
+
+    parseCommandLine(usesLayeredWebView, useFullDesktop, pageLoadTesting, requestedURL);
 
     // Initialize global strings
     LoadString(hInst, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -107,7 +99,9 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     RECT clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
 
-    gWinLauncher = new WinLauncher(hMainWnd, hURLBarWnd, usesLayeredWebView);
+    WinLauncherWebHost* webHost = nullptr;
+
+    gWinLauncher = new WinLauncher(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!gWinLauncher)
         goto exit;
 
@@ -124,7 +118,13 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
     if (!setCacheFolder())
         goto exit;
 
-    hr = gWinLauncher->setFrameLoadDelegate(new WinLauncherWebHost(gWinLauncher, hURLBarWnd));
+    webHost = new WinLauncherWebHost(gWinLauncher, hURLBarWnd);
+
+    hr = gWinLauncher->setFrameLoadDelegate(webHost);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = gWinLauncher->setFrameLoadDelegatePrivate(webHost);
     if (FAILED(hr))
         goto exit;
 
@@ -134,6 +134,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     hr = gWinLauncher->setAccessibilityDelegate(new AccessibilityDelegate());
     if (FAILED (hr))
+        goto exit;
+
+    hr = gWinLauncher->setResourceLoadDelegate(new ResourceLoadDelegate(gWinLauncher));
+    if (FAILED(hr))
         goto exit;
 
     hr = gWinLauncher->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR(), gViewWindow);

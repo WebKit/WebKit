@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2009, 2011, 2013-2014 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2097,3 +2097,13 @@ void WebFrame::updateBackground()
     coreFrame->view()->updateBackgroundRecursively(backgroundColor, webView()->transparent());
 }
 
+HRESULT WebFrame::isMainFrame(BOOL* value)
+{
+    if (!value)
+        return E_POINTER;
+
+    Frame* coreFrame = core(this);
+    *value = coreFrame->isMainFrame();
+
+    return S_OK;
+}

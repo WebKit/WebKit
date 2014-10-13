@@ -51,10 +51,11 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView)
+WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
     : m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
+    , m_pageLoadTestClient(std::make_unique<PageLoadTestClient>(this, pageLoadTesting))
 {
 }
 
@@ -122,6 +123,11 @@ HRESULT WinLauncher::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelega
     return m_webView->setFrameLoadDelegate(frameLoadDelegate);
 }
 
+HRESULT WinLauncher::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
+{
+    return m_webViewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegatePrivate);
+}
+
 HRESULT WinLauncher::setUIDelegate(IWebUIDelegate* uiDelegate)
 {
     m_uiDelegate = uiDelegate;
@@ -132,6 +138,13 @@ HRESULT WinLauncher::setAccessibilityDelegate(IAccessibilityDelegate* accessibil
 {
     m_accessibilityDelegate = accessibilityDelegate;
     return m_webView->setAccessibilityDelegate(accessibilityDelegate);
+}
+
+
+HRESULT WinLauncher::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
+{
+    m_resourceLoadDelegate = resourceLoadDelegate;
+    return m_webView->setResourceLoadDelegate(resourceLoadDelegate);
 }
 
 IWebFramePtr WinLauncher::mainFrame()
@@ -348,6 +361,9 @@ HRESULT WinLauncher::loadURL(const BSTR& passedURL)
     if (FAILED(hr))
         return hr;
 
+    if (!passedURL)
+        return frame->loadHTMLString(_bstr_t(defaultHTML).GetBSTR(), 0);
+
     IWebMutableURLRequestPtr request;
     hr = WebKitCreateInstance(CLSID_WebMutableURLRequest, 0, IID_IWebMutableURLRequest, (void**)&request);
     if (FAILED(hr))
@@ -365,4 +381,9 @@ HRESULT WinLauncher::loadURL(const BSTR& passedURL)
     hr = frame->loadRequest(request);
 
     return hr;
+}
+
+void WinLauncher::exitProgram()
+{
+    ::PostMessage(m_hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_EXIT, 0), 0);
 }
