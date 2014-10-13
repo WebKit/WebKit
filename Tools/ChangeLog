@@ -1,3 +1,13 @@
+2014-10-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [XvfbDriver] Regular expression used to match running X servers fails on Fedora 21.
+        https://bugs.webkit.org/show_bug.cgi?id=137659
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._next_free_display): Update the regular expression to also match Xorg.bin
+
 2014-10-13  Alexey Proskuryakov  <ap@apple.com>
 
         Add more detailed wait time information to EWS metrics
