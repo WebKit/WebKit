@@ -1,3 +1,26 @@
+2014-10-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Make RenderNamedFlowFragment::computeStyleInRegion const
+        https://bugs.webkit.org/show_bug.cgi?id=137604
+
+        Reviewed by Andrei Bucur.
+
+        The method computeStyleInRegion should be const as it does not modify
+        the state of the RenderNamedFlowFragment instance. Make pointers to
+        the region used for styling const along the way. No new tests as no
+        change in functionality.
+
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        (WebCore::ElementRuleCollector::setRegionForStyling):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::initForStyleResolve):
+        (WebCore::StyleResolver::styleForElement):
+        * css/StyleResolver.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        * rendering/RenderNamedFlowFragment.h:
+
 2014-09-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Pass the valid set of tracks to grow beyond growth limits

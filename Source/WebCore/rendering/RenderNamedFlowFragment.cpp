@@ -348,7 +348,7 @@ void RenderNamedFlowFragment::checkRegionStyle()
     toRenderNamedFlowThread(m_flowThread)->checkRegionsWithStyling();
 }
 
-PassRefPtr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, RenderStyle& parentStyle)
+PassRefPtr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, RenderStyle& parentStyle) const
 {
     ASSERT(!renderer.isAnonymous());
 

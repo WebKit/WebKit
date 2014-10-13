@@ -147,7 +147,7 @@ public:
     void popParentElement(Element*);
 
     PassRef<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle, StyleSharingBehavior = AllowStyleSharing,
-        RuleMatchingBehavior = MatchAllRules, RenderRegion* regionForStyling = nullptr);
+        RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr);
 
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
@@ -356,7 +356,7 @@ public:
 
     public:
         void initElement(Element*);
-        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, RenderRegion* regionForStyling = nullptr);
+        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr);
         void clear();
 
         Document& document() const { return m_element->document(); }
@@ -418,7 +418,7 @@ public:
         RenderStyle* m_rootElementStyle;
 
         // Required to ASSERT in applyProperties.
-        RenderRegion* m_regionForStyling;
+        const RenderRegion* m_regionForStyling;
         
         EInsideLink m_elementLinkState;
 

@@ -46,7 +46,7 @@ public:
         , m_ruleSets(ruleSets)
         , m_selectorFilter(selectorFilter)
         , m_isPrintStyle(false)
-        , m_regionForStyling(0)
+        , m_regionForStyling(nullptr)
         , m_pseudoStyleRequest(NOPSEUDO)
         , m_sameOriginOnly(false)
         , m_mode(SelectorChecker::Mode::ResolvingStyle)
@@ -62,7 +62,7 @@ public:
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoStyleRequest(const PseudoStyleRequest& request) { m_pseudoStyleRequest = request; }
     void setSameOriginOnly(bool f) { m_sameOriginOnly = f; } 
-    void setRegionForStyling(RenderRegion* regionForStyling) { m_regionForStyling = regionForStyling; }
+    void setRegionForStyling(const RenderRegion* regionForStyling) { m_regionForStyling = regionForStyling; }
     void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
 
     bool hasAnyMatchingRules(RuleSet*);
@@ -94,7 +94,7 @@ private:
     const SelectorFilter& m_selectorFilter;
 
     bool m_isPrintStyle;
-    RenderRegion* m_regionForStyling;
+    const RenderRegion* m_regionForStyling;
     PseudoStyleRequest m_pseudoStyleRequest;
     bool m_sameOriginOnly;
     SelectorChecker::Mode m_mode;

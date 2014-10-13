@@ -404,7 +404,7 @@ inline void StyleResolver::initElement(Element* e)
     }
 }
 
-inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
+inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, const RenderRegion* regionForStyling)
 {
     m_regionForStyling = regionForStyling;
 
@@ -736,7 +736,7 @@ static inline bool isAtShadowBoundary(const Element* element)
 }
 
 PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
-    StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, RenderRegion* regionForStyling)
+    StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
