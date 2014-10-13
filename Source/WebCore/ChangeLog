@@ -1,5 +1,37 @@
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
+        Use modern loops in RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=137670
+
+        Reviewed by Simon Fraser.
+
+        Use modern range for-loops in RenderLayerCompositor.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::OverlapMapContainer::overlapsLayers):
+        (WebCore::RenderLayerCompositor::OverlapMap::RectList::intersects):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::computeRegionCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::rebuildRegionCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayer):
+        (WebCore::resetTrackedRepaintRectsRecursive):
+        (WebCore::RenderLayerCompositor::layerHas3DContent):
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::registerAllScrollingLayers):
+        (WebCore::RenderLayerCompositor::unregisterAllScrollingLayers):
+
+2014-10-13  Chris Dumez  <cdumez@apple.com>
+
         Drop unnecessary overlapMap null checks in computeCompositingRequirements()
         https://bugs.webkit.org/show_bug.cgi?id=137668
 

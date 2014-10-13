@@ -115,8 +115,8 @@ public:
         // never overlap with each other.
         if (!bounds.intersects(m_boundingBox))
             return false;
-        for (unsigned i = 0; i < m_layerRects.size(); i++) {
-            if (m_layerRects[i].intersects(bounds))
+        for (const auto& layerRect : m_layerRects) {
+            if (layerRect.intersects(bounds))
                 return true;
         }
         return false;
@@ -204,8 +204,8 @@ private:
             if (!rects.size() || !boundingRect.intersects(rect))
                 return false;
 
-            for (unsigned i = 0; i < rects.size(); i++) {
-                if (rects[i].intersects(rect))
+            for (const auto& currentRect : rects) {
+                if (currentRect.intersects(rect))
                     return true;
             }
             return false;
@@ -502,8 +502,8 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
     updateCustomLayersAfterFlush();
 #endif
 
-    for (auto it = m_scrollCoordinatedLayersNeedingUpdate.begin(), end = m_scrollCoordinatedLayersNeedingUpdate.end(); it != end; ++it)
-        updateScrollCoordinatedStatus(**it);
+    for (auto* layer : m_scrollCoordinatedLayersNeedingUpdate)
+        updateScrollCoordinatedStatus(*layer);
 
     m_scrollCoordinatedLayersNeedingUpdate.clear();
 }
@@ -540,8 +540,8 @@ void RenderLayerCompositor::updateCustomLayersAfterFlush()
     if (!m_scrollingLayersNeedingUpdate.isEmpty()) {
         ChromeClient* chromeClient = this->chromeClient();
 
-        for (auto it = m_scrollingLayersNeedingUpdate.begin(), end = m_scrollingLayersNeedingUpdate.end(); it != end; ++it)
-            updateScrollingLayerWithClient(**it, chromeClient);
+        for (auto* layer : m_scrollingLayersNeedingUpdate)
+            updateScrollingLayerWithClient(*layer, chromeClient);
         m_scrollingLayersNeedingUpdate.clear();
     }
     m_scrollingLayersNeedingUpdate.clear();
@@ -1124,20 +1124,20 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i)
-                addToOverlapMapRecursive(overlapMap, *negZOrderList->at(i), &layer);
+            for (auto* renderLayer : *negZOrderList)
+                addToOverlapMapRecursive(overlapMap, *renderLayer, &layer);
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
-            addToOverlapMapRecursive(overlapMap, *normalFlowList->at(i), &layer);
+        for (auto* renderLayer : *normalFlowList)
+            addToOverlapMapRecursive(overlapMap, *renderLayer, &layer);
     }
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
-                addToOverlapMapRecursive(overlapMap, *posZOrderList->at(i), &layer);
+            for (auto* renderLayer : *posZOrderList)
+                addToOverlapMapRecursive(overlapMap, *renderLayer, &layer);
         }
     }
     
@@ -1156,10 +1156,8 @@ void RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed(Rend
     Vector<RenderLayer*> fixedLayers;
     layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
 
-    for (size_t i = 0; i < fixedLayers.size(); ++i) {
-        RenderLayer* fixedLayer = fixedLayers.at(i);
+    for (auto* fixedLayer : fixedLayers)
         computeCompositingRequirements(&layer, *fixedLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
-    }
 }
 
 //  Recurse through the layers in z-index and overflow order (which is equivalent to painting order)
@@ -1260,8 +1258,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i) {
-                computeCompositingRequirements(&layer, *negZOrderList->at(i), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+            for (auto* renderLayer : *negZOrderList) {
+                computeCompositingRequirements(&layer, *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
 
                 // If we have to make a layer for this child, make one now so we can have a contents layer
                 // (since we need to ensure that the -ve z-order child renders underneath our contents).
@@ -1289,14 +1287,14 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
-            computeCompositingRequirements(&layer, *normalFlowList->at(i), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+        for (auto* renderLayer : *normalFlowList)
+            computeCompositingRequirements(&layer, *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
     }
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
-                computeCompositingRequirements(&layer, *posZOrderList->at(i), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+            for (auto* renderLayer : *posZOrderList)
+                computeCompositingRequirements(&layer, *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
         }
     }
 
@@ -1411,10 +1409,9 @@ void RenderLayerCompositor::computeRegionCompositingRequirements(RenderNamedFlow
     overlapMap.geometryMap().pushRenderFlowThread(flowThread);
 
     if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
-        for (size_t i = 0, listSize = layerList->size(); i < listSize; ++i) {
-            RenderLayer& curLayer = *layerList->at(i);
-            ASSERT(flowThread->regionForCompositedLayer(curLayer) == region);
-            computeCompositingRequirements(flowThread->layer(), curLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+        for (auto* renderLayer : *layerList) {
+            ASSERT(flowThread->regionForCompositedLayer(*renderLayer) == region);
+            computeCompositingRequirements(flowThread->layer(), *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
         }
     }
 
@@ -1469,10 +1466,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed(RenderL
     Vector<RenderLayer*> fixedLayers;
     layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
 
-    for (size_t i = 0; i < fixedLayers.size(); ++i) {
-        RenderLayer* fixedLayer = fixedLayers.at(i);
+    for (auto* fixedLayer : fixedLayers)
         rebuildCompositingLayerTree(*fixedLayer, childGraphicsLayersOfEnclosingLayer, depth);
-    }
 }
 
 void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer, int depth)
@@ -1524,8 +1519,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i)
-                rebuildCompositingLayerTree(*negZOrderList->at(i), childList, depth + 1);
+            for (auto* renderLayer : *negZOrderList)
+                rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
         }
 
         // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
@@ -1537,14 +1532,14 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
         rebuildRegionCompositingLayerTree(downcast<RenderBlockFlow>(layer.renderer()).renderNamedFlowFragment(), layerChildren, depth + 1);
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
-            rebuildCompositingLayerTree(*normalFlowList->at(i), childList, depth + 1);
+        for (auto* renderLayer : *normalFlowList)
+            rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
     }
     
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
-                rebuildCompositingLayerTree(*posZOrderList->at(i), childList, depth + 1);
+            for (auto* renderLayer : *posZOrderList)
+                rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
         }
     }
 
@@ -1593,10 +1588,9 @@ void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFra
     RenderFlowThread* flowThread = region->flowThread();
     ASSERT(flowThread->collectsGraphicsLayersUnderRegions());
     if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
-        for (size_t i = 0, listSize = layerList->size(); i < listSize; ++i) {
-            RenderLayer& curLayer = *layerList->at(i);
-            ASSERT(flowThread->regionForCompositedLayer(curLayer) == region);
-            rebuildCompositingLayerTree(curLayer, childList, depth + 1);
+        for (auto* renderLayer : *layerList) {
+            ASSERT(flowThread->regionForCompositedLayer(*renderLayer) == region);
+            rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
         }
     }
 }
@@ -1801,20 +1795,20 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int dept
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i)
-                updateLayerTreeGeometry(*negZOrderList->at(i), depth + 1);
+            for (auto* renderLayer : *negZOrderList)
+                updateLayerTreeGeometry(*renderLayer, depth + 1);
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
-            updateLayerTreeGeometry(*normalFlowList->at(i), depth + 1);
+        for (auto* renderLayer : *normalFlowList)
+            updateLayerTreeGeometry(*renderLayer, depth + 1);
     }
     
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
-                updateLayerTreeGeometry(*posZOrderList->at(i), depth + 1);
+            for (auto* renderLayer : *posZOrderList)
+                updateLayerTreeGeometry(*renderLayer, depth + 1);
         }
     }
 
@@ -1854,23 +1848,20 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
     
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            size_t listSize = negZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i)
-                updateCompositingDescendantGeometry(compositingAncestor, *negZOrderList->at(i), compositedChildrenOnly);
+            for (auto* renderLayer : *negZOrderList)
+                updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i)
-            updateCompositingDescendantGeometry(compositingAncestor, *normalFlowList->at(i), compositedChildrenOnly);
+        for (auto* renderLayer : *normalFlowList)
+            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
     }
     
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            size_t listSize = posZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i)
-                updateCompositingDescendantGeometry(compositingAncestor, *posZOrderList->at(i), compositedChildrenOnly);
+            for (auto* renderLayer : *posZOrderList)
+                updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
         }
     }
     
@@ -1897,18 +1888,18 @@ void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer)
 
     if (layer.hasCompositingDescendant()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i)
-                recursiveRepaintLayer(*negZOrderList->at(i));
+            for (auto* renderLayer : *negZOrderList)
+                recursiveRepaintLayer(*renderLayer);
         }
 
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i)
-                recursiveRepaintLayer(*posZOrderList->at(i));
+            for (auto* renderLayer : *posZOrderList)
+                recursiveRepaintLayer(*renderLayer);
         }
     }
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
-            recursiveRepaintLayer(*normalFlowList->at(i));
+        for (auto* renderLayer : *normalFlowList)
+            recursiveRepaintLayer(*renderLayer);
     }
 }
 
@@ -2826,8 +2817,8 @@ static void resetTrackedRepaintRectsRecursive(GraphicsLayer& graphicsLayer)
 {
     graphicsLayer.resetTrackedRepaints();
 
-    for (size_t i = 0, size = graphicsLayer.children().size(); i < size; ++i)
-        resetTrackedRepaintRectsRecursive(*graphicsLayer.children()[i]);
+    for (auto* childLayer : graphicsLayer.children())
+        resetTrackedRepaintRectsRecursive(*childLayer);
 
     if (GraphicsLayer* replicaLayer = graphicsLayer.replicaLayer())
         resetTrackedRepaintRectsRecursive(*replicaLayer);
@@ -3534,23 +3525,23 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 
     if (layer.isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = layer.negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i) {
-                if (layerHas3DContent(*negZOrderList->at(i)))
+            for (auto* renderLayer : *negZOrderList) {
+                if (layerHas3DContent(*renderLayer))
                     return true;
             }
         }
 
         if (Vector<RenderLayer*>* posZOrderList = layer.posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i) {
-                if (layerHas3DContent(*posZOrderList->at(i)))
+            for (auto* renderLayer : *posZOrderList) {
+                if (layerHas3DContent(*renderLayer))
                     return true;
             }
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
-        for (size_t i = 0, size = normalFlowList->size(); i < size; ++i) {
-            if (layerHas3DContent(*normalFlowList->at(i)))
+        for (auto* renderLayer : *normalFlowList) {
+            if (layerHas3DContent(*renderLayer))
                 return true;
         }
     }
@@ -3872,24 +3863,23 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
     LayerMap layerMap;
     StickyContainerMap stickyContainerMap;
 
-    for (auto it = m_scrollCoordinatedLayers.begin(), end = m_scrollCoordinatedLayers.end(); it != end; ++it) {
-        RenderLayer& layer = **it;
-        ASSERT(layer.isComposited());
+    for (auto* layer : m_scrollCoordinatedLayers) {
+        ASSERT(layer->isComposited());
 
         std::unique_ptr<ViewportConstraints> constraints;
-        if (layer.renderer().isStickyPositioned()) {
-            constraints = std::make_unique<StickyPositionViewportConstraints>(computeStickyViewportConstraints(layer));
+        if (layer->renderer().isStickyPositioned()) {
+            constraints = std::make_unique<StickyPositionViewportConstraints>(computeStickyViewportConstraints(*layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
-            if (isAsyncScrollableStickyLayer(layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
+            if (isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
-                stickyContainerMap.add(layer.backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
+                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
             }
-        } else if (layer.renderer().style().position() == FixedPosition)
-            constraints = std::make_unique<FixedPositionViewportConstraints>(computeFixedViewportConstraints(layer));
+        } else if (layer->renderer().style().position() == FixedPosition)
+            constraints = std::make_unique<FixedPositionViewportConstraints>(computeFixedViewportConstraints(*layer));
         else
             continue;
 
-        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTF::move(constraints));
+        layerMap.add(layer->backing()->graphicsLayer()->platformLayer(), WTF::move(constraints));
     }
     
     if (ChromeClient* client = this->chromeClient())
@@ -3918,8 +3908,8 @@ void RenderLayerCompositor::registerAllScrollingLayers()
     if (!client)
         return;
 
-    for (auto it = m_scrollingLayers.begin(), end = m_scrollingLayers.end(); it != end; ++it)
-        updateScrollingLayerWithClient(**it, client);
+    for (auto* layer : m_scrollingLayers)
+        updateScrollingLayerWithClient(*layer, client);
 }
 
 void RenderLayerCompositor::unregisterAllScrollingLayers()
@@ -3928,11 +3918,10 @@ void RenderLayerCompositor::unregisterAllScrollingLayers()
     if (!client)
         return;
 
-    for (auto it = m_scrollingLayers.begin(), end = m_scrollingLayers.end(); it != end; ++it) {
-        RenderLayer& layer = **it;
-        RenderLayerBacking* backing = layer.backing();
+    for (auto* layer : m_scrollingLayers) {
+        RenderLayerBacking* backing = layer->backing();
         ASSERT(backing);
-        client->removeScrollingLayer(layer.renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer());
+        client->removeScrollingLayer(layer->renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer());
     }
 }
 #endif
