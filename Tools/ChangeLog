@@ -1,3 +1,16 @@
+2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the test image diffs page
+        https://bugs.webkit.org/show_bug.cgi?id=137674
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Don't treat the input file as a format string, otherwise we have to escape special
+        characters. Just do a couple of replaces.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.write_image_diff_files):
+
 2014-10-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [XvfbDriver] Regular expression used to match running X servers fails on Fedora 21.

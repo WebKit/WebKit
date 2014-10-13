@@ -175,13 +175,8 @@ class TestResultWriter(object):
         if self._filesystem.exists(image_diff_template):
             image_diff_file = self._filesystem.read_text_file(image_diff_template)
 
-        # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
-        # FIXME: old-run-webkit-tests include a link to the test file.
-        html = image_diff_file % {
-            'title': self._test_name,
-            'diff_filename': self._output_testname(self.FILENAME_SUFFIX_IMAGE_DIFF),
-            'prefix': self._output_testname(''),
-        }
+        html = image_diff_file.replace('__TITLE__', self._test_name);
+        html = html.replace('__PREFIX__', self._output_testname(''));
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         self._filesystem.write_text_file(diffs_html_filename, html)

@@ -1,5 +1,18 @@
 2014-10-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Improve the test image diffs page
+        https://bugs.webkit.org/show_bug.cgi?id=137674
+
+        Reviewed by Alexey Proskuryakov.
+        
+        New version of the image diff page that has the diff images in-place, and allows
+        for control of the image toggling.
+
+        * fast/harness/image-diff-template-expected.txt:
+        * fast/harness/image-diff-template.html:
+
+2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
         Gardening.
 
         * platform/mac/TestExpectations:
