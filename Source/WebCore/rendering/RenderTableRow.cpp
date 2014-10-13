@@ -109,28 +109,28 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell*
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    if (!child->isTableCell()) {
+    if (!is<RenderTableCell>(*child)) {
         RenderObject* last = beforeChild;
         if (!last)
             last = lastCell();
-        if (last && last->isAnonymous() && last->isTableCell() && !last->isBeforeOrAfterContent()) {
-            RenderTableCell* cell = toRenderTableCell(last);
-            if (beforeChild == cell)
-                beforeChild = cell->firstChild();
-            cell->addChild(child, beforeChild);
+        if (last && last->isAnonymous() && is<RenderTableCell>(*last) && !last->isBeforeOrAfterContent()) {
+            RenderTableCell& cell = downcast<RenderTableCell>(*last);
+            if (beforeChild == &cell)
+                beforeChild = cell.firstChild();
+            cell.addChild(child, beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* cell = beforeChild->previousSibling();
-            if (cell && cell->isTableCell() && cell->isAnonymous()) {
-                toRenderTableCell(cell)->addChild(child);
+            if (is<RenderTableCell>(cell) && cell->isAnonymous()) {
+                downcast<RenderTableCell>(*cell).addChild(child);
                 return;
             }
         }
 
         // If beforeChild is inside an anonymous cell, insert into the cell.
-        if (last && !last->isTableCell() && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
+        if (last && !is<RenderTableCell>(*last) && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
             last->parent()->addChild(child, beforeChild);
             return;
         }
@@ -144,14 +144,14 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     if (beforeChild && beforeChild->parent() != this)
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);    
 
-    RenderTableCell* cell = toRenderTableCell(child);
+    RenderTableCell& cell = downcast<RenderTableCell>(*child);
 
     // Generated content can result in us having a null section so make sure to null check our parent.
     if (parent())
-        section()->addCell(cell, this);
+        section()->addCell(&cell, this);
 
-    ASSERT(!beforeChild || beforeChild->isTableCell());
-    RenderBox::addChild(cell, beforeChild);
+    ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
+    RenderBox::addChild(&cell, beforeChild);
 
     if (beforeChild || nextRow())
         section()->setNeedsCellRecalc();

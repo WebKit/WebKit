@@ -785,7 +785,7 @@ static bool shouldEmitTabBeforeNode(Node& node)
         return false;
     
     // Want a tab before every cell other than the first one.
-    RenderTableCell& cell = toRenderTableCell(*renderer);
+    RenderTableCell& cell = downcast<RenderTableCell>(*renderer);
     RenderTable* table = cell.table();
     return table && (table->cellBefore(&cell) || table->cellAbove(&cell));
 }
@@ -840,14 +840,14 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
     
     // Need to make an exception for table row elements, because they are neither
     // "inline" or "RenderBlock", but we want newlines for them.
-    if (renderer->isTableRow()) {
-        RenderTable* table = toRenderTableRow(*renderer).table();
+    if (is<RenderTableRow>(*renderer)) {
+        RenderTable* table = downcast<RenderTableRow>(*renderer).table();
         if (table && !table->isInline())
             return true;
     }
     
     return !renderer->isInline()
-        && renderer->isRenderBlock()
+        && is<RenderBlock>(*renderer)
         && !renderer->isFloatingOrOutOfFlowPositioned()
         && !renderer->isBody()
         && !renderer->isRubyText();

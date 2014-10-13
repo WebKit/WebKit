@@ -43,8 +43,8 @@ public:
     RenderTableCell* firstCell() const;
     RenderTableCell* lastCell() const;
 
-    RenderTableSection* section() const { return toRenderTableSection(parent()); }
-    RenderTable* table() const { return toRenderTable(parent()->parent()); }
+    RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
+    RenderTable* table() const { return downcast<RenderTable>(parent()->parent()); }
 
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
@@ -119,26 +119,24 @@ private:
     unsigned m_rowIndex : 31;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderTableRow, isTableRow())
-
 inline RenderTableRow* RenderTableSection::firstRow() const
 {
-    return toRenderTableRow(RenderBox::firstChild());
+    return downcast<RenderTableRow>(RenderBox::firstChild());
 }
 
 inline RenderTableRow* RenderTableSection::lastRow() const
 {
-    return toRenderTableRow(RenderBox::lastChild());
+    return downcast<RenderTableRow>(RenderBox::lastChild());
 }
 
 inline RenderTableRow* RenderTableRow::nextRow() const
 {
-    return toRenderTableRow(RenderBox::nextSibling());
+    return downcast<RenderTableRow>(RenderBox::nextSibling());
 }
 
 inline RenderTableRow* RenderTableRow::previousRow() const
 {
-    return toRenderTableRow(RenderBox::previousSibling());
+    return downcast<RenderTableRow>(RenderBox::previousSibling());
 }
 
 } // namespace WebCore

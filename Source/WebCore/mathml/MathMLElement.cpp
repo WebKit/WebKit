@@ -212,11 +212,11 @@ int MathMLElement::rowSpan() const
 void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == rowspanAttr) {
-        if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
-            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
+        if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
+            downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
     } else if (name == columnspanAttr) {
-        if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
-            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
+        if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
+            downcast<RenderTableCell>(renderer())->colSpanOrRowSpanChanged();
     } else
         StyledElement::parseAttribute(name, value);
 }

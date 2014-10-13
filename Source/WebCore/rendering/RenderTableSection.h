@@ -81,7 +81,7 @@ public:
     void layoutRows();
     void computeOverflowFromCells();
 
-    RenderTable* table() const { return toRenderTable(parent()); }
+    RenderTable* table() const { return downcast<RenderTable>(parent()); }
 
     struct CellStruct {
         Vector<RenderTableCell*, 1> cells; 
@@ -346,8 +346,6 @@ private:
     // It is held at RenderTableSection level to spare memory consumption by table cells.
     HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 };
-
-RENDER_OBJECT_TYPE_CASTS(RenderTableSection, isTableSection())
 
 } // namespace WebCore
 

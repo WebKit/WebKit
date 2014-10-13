@@ -368,8 +368,8 @@ void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth,
             minLogicalWidth = 0;
     }
 
-    if (isTableCell()) {
-        Length tableCellWidth = toRenderTableCell(this)->styleOrColLogicalWidth();
+    if (is<RenderTableCell>(*this)) {
+        Length tableCellWidth = downcast<RenderTableCell>(*this).styleOrColLogicalWidth();
         if (tableCellWidth.isFixed() && tableCellWidth.value() > 0)
             maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth.value()));
     }

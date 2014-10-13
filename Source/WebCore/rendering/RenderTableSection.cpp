@@ -33,6 +33,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <limits>
@@ -135,22 +136,22 @@ void RenderTableSection::willBeRemovedFromTree()
 
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    if (!child->isTableRow()) {
+    if (!is<RenderTableRow>(*child)) {
         RenderObject* last = beforeChild;
         if (!last)
             last = lastRow();
         if (last && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
-            RenderTableRow* row = toRenderTableRow(last);
-            if (beforeChild == row)
-                beforeChild = row->firstCell();
-            row->addChild(child, beforeChild);
+            RenderTableRow& row = downcast<RenderTableRow>(*last);
+            if (beforeChild == &row)
+                beforeChild = row.firstCell();
+            row.addChild(child, beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* row = beforeChild->previousSibling();
-            if (row && row->isTableRow() && row->isAnonymous()) {
-                toRenderTableRow(row)->addChild(child);
+            if (is<RenderTableRow>(row) && row->isAnonymous()) {
+                downcast<RenderTableRow>(*row).addChild(child);
                 return;
             }
         }
@@ -158,10 +159,10 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         // If beforeChild is inside an anonymous cell/row, insert into the cell or into
         // the anonymous row containing it, if there is one.
         RenderObject* lastBox = last;
-        while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableRow())
+        while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableRow>(*lastBox))
             lastBox = lastBox->parent();
         if (lastBox && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
-            toRenderTableRow(lastBox)->addChild(child, beforeChild);
+            downcast<RenderTableRow>(*lastBox).addChild(child, beforeChild);
             return;
         }
 
@@ -180,9 +181,9 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     ensureRows(m_cRow);
 
-    RenderTableRow* row = toRenderTableRow(child);
-    m_grid[insertionRow].rowRenderer = row;
-    row->setRowIndex(insertionRow);
+    RenderTableRow& row = downcast<RenderTableRow>(*child);
+    m_grid[insertionRow].rowRenderer = &row;
+    row.setRowIndex(insertionRow);
 
     if (!beforeChild)
         setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
@@ -190,7 +191,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     if (beforeChild && beforeChild->parent() != this)
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
-    ASSERT(!beforeChild || beforeChild->isTableRow());
+    ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
     RenderBox::addChild(child, beforeChild);
 }
 
@@ -577,11 +578,11 @@ void RenderTableSection::layoutRows()
             bool flexAllChildren = cell->style().logicalHeight().isFixed()
                 || (!table()->style().logicalHeight().isAuto() && rHeight != cell->logicalHeight());
 
-            for (RenderObject* o = cell->firstChild(); o; o = o->nextSibling()) {
-                if (!o->isText() && o->style().logicalHeight().isPercent() && (flexAllChildren || ((o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow())) && !o->isTextControl()))) {
+            for (RenderObject* renderer = cell->firstChild(); renderer; renderer = renderer->nextSibling()) {
+                if (!is<RenderText>(*renderer) && renderer->style().logicalHeight().isPercent() && (flexAllChildren || ((renderer->isReplaced() || (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).scrollsOverflow())) && !is<RenderTextControl>(*renderer)))) {
                     // Tables with no sections do not flex.
-                    if (!o->isTable() || toRenderTable(o)->hasSections()) {
-                        o->setNeedsLayout(MarkOnlyThis);
+                    if (!is<RenderTable>(*renderer) || downcast<RenderTable>(*renderer).hasSections()) {
+                        renderer->setNeedsLayout(MarkOnlyThis);
                         cellChildrenFlex = true;
                     }
                 }
@@ -985,13 +986,13 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
 {
     LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
     PaintPhase paintPhase = paintInfo.phase;
-    RenderTableRow* row = toRenderTableRow(cell->parent());
+    RenderTableRow& row = downcast<RenderTableRow>(*cell->parent());
 
     if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) {
         // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
         // the column group, column, row group, row, and then the cell.
         RenderTableCol* column = table()->colElement(cell->col());
-        RenderTableCol* columnGroup = column ? column->enclosingColumnGroup() : 0;
+        RenderTableCol* columnGroup = column ? column->enclosingColumnGroup() : nullptr;
 
         // Column groups and columns first.
         // FIXME: Columns and column groups do not currently support opacity, and they are being painted "too late" in
@@ -1006,10 +1007,10 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
 
         // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
         // painting the row background for the cell.
-        if (!row->hasSelfPaintingLayer())
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, row);
+        if (!row.hasSelfPaintingLayer())
+            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, &row);
     }
-    if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()))
+    if ((!cell->hasSelfPaintingLayer() && !row.hasSelfPaintingLayer()))
         cell->paint(paintInfo, cellPoint);
 }
 

@@ -2812,7 +2812,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
     else if (hasOverrideContainingBlockLogicalHeight())
         availableHeight = overrideContainingBlockContentLogicalHeight();
 #endif
-    else if (cb->isTableCell()) {
+    else if (is<RenderTableCell>(*cb)) {
         if (!skippedAutoHeightContainingBlock) {
             // Table cells violate what the CSS spec says to do with heights. Basically we
             // don't care if the cell specified a height or not. We just always make ourselves
@@ -2825,8 +2825,8 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
                 // no size and allow the flexing of the table or the cell to its specified height to cause us
                 // to grow to fill the space. This could end up being wrong in some cases, but it is
                 // preferable to the alternative (sizing intrinsically and making the row end up too big).
-                RenderTableCell* cell = toRenderTableCell(cb);
-                if (scrollsOverflowY() && (!cell->style().logicalHeight().isAuto() || !cell->table()->style().logicalHeight().isAuto()))
+                RenderTableCell& cell = downcast<RenderTableCell>(*cb);
+                if (scrollsOverflowY() && (!cell.style().logicalHeight().isAuto() || !cell.table()->style().logicalHeight().isAuto()))
                     return 0;
                 return -1;
             }
@@ -4740,18 +4740,18 @@ bool RenderBox::hasRelativeLogicalHeight() const
             || style().logicalMaxHeight().isPercent();
 }
 
-static void markBoxForRelayoutAfterSplit(RenderBox* box)
+static void markBoxForRelayoutAfterSplit(RenderBox& box)
 {
     // FIXME: The table code should handle that automatically. If not,
     // we should fix it and remove the table part checks.
-    if (box->isTable()) {
+    if (is<RenderTable>(box)) {
         // Because we may have added some sections with already computed column structures, we need to
         // sync the table structure with them now. This avoids crashes when adding new cells to the table.
-        toRenderTable(box)->forceSectionsRecalc();
-    } else if (box->isTableSection())
-        toRenderTableSection(box)->setNeedsCellRecalc();
+        downcast<RenderTable>(box).forceSectionsRecalc();
+    } else if (is<RenderTableSection>(box))
+        downcast<RenderTableSection>(box).setNeedsCellRecalc();
 
-    box->setNeedsLayoutAndPrefWidthsRecalc();
+    box.setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChild)
@@ -4771,12 +4771,12 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
             // We need to invalidate the |parentBox| before inserting the new node
             // so that the table repainting logic knows the structure is dirty.
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
-            markBoxForRelayoutAfterSplit(parentBox);
+            markBoxForRelayoutAfterSplit(*parentBox);
             parentBox->insertChildInternal(postBox, boxToSplit->nextSibling(), NotifyChildren);
             boxToSplit->moveChildrenTo(postBox, beforeChild, 0, true);
 
-            markBoxForRelayoutAfterSplit(boxToSplit);
-            markBoxForRelayoutAfterSplit(postBox);
+            markBoxForRelayoutAfterSplit(*boxToSplit);
+            markBoxForRelayoutAfterSplit(*postBox);
 
             beforeChild = postBox;
         } else
@@ -4784,7 +4784,7 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
     }
 
     if (didSplitParentAnonymousBoxes)
-        markBoxForRelayoutAfterSplit(this);
+        markBoxForRelayoutAfterSplit(*this);
 
     ASSERT(beforeChild->parent() == this);
     return beforeChild;

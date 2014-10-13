@@ -26,6 +26,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -44,20 +45,20 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
 {
     Layout& columnLayout = m_layoutStruct[effCol];
 
-    RenderTableCell* fixedContributor = 0;
-    RenderTableCell* maxContributor = 0;
+    RenderTableCell* fixedContributor = nullptr;
+    RenderTableCell* maxContributor = nullptr;
 
     for (RenderObject* child = m_table->firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderTableCol()){
+        if (is<RenderTableCol>(*child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
             // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
             // ancestors as dirty.
-            toRenderTableCol(child)->clearPreferredLogicalWidthsDirtyBits();
-        } else if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
-            unsigned numRows = section->numRows();
-            for (unsigned i = 0; i < numRows; i++) {
-                RenderTableSection::CellStruct current = section->cellAt(i, effCol);
+            downcast<RenderTableCol>(*child).clearPreferredLogicalWidthsDirtyBits();
+        } else if (is<RenderTableSection>(*child)) {
+            RenderTableSection& section = downcast<RenderTableSection>(*child);
+            unsigned numRows = section.numRows();
+            for (unsigned i = 0; i < numRows; ++i) {
+                RenderTableSection::CellStruct current = section.cellAt(i, effCol);
                 RenderTableCell* cell = current.primaryCell();
                 
                 if (current.inColSpan || !cell)
@@ -120,7 +121,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     default:
                         break;
                     }
-                } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
+                } else if (!effCol || section.primaryCellAt(i, effCol - 1) != cell) {
                     // This spanning cell originates in this column. Insert the cell into spanning cells list.
                     insertSpanCell(cell);
                 }
@@ -132,7 +133,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     if (columnLayout.logicalWidth.isFixed()) {
         if (m_table->document().inQuirksMode() && columnLayout.maxLogicalWidth > columnLayout.logicalWidth.value() && fixedContributor != maxContributor) {
             columnLayout.logicalWidth = Length();
-            fixedContributor = 0;
+            fixedContributor = nullptr;
         }
     }
 
@@ -186,25 +187,25 @@ static bool shouldScaleColumns(RenderTable* table)
     // a cell, then don't bloat the maxwidth by examining percentage growth.
     bool scale = true;
     while (table) {
-        Length tw = table->style().width();
-        if ((tw.isAuto() || tw.isPercent()) && !table->isOutOfFlowPositioned()) {
-            RenderBlock* cb = table->containingBlock();
-            while (cb && !cb->isRenderView() && !cb->isTableCell() &&
-                cb->style().width().isAuto() && !cb->isOutOfFlowPositioned())
-                cb = cb->containingBlock();
+        Length tableWidth = table->style().width();
+        if ((tableWidth.isAuto() || tableWidth.isPercent()) && !table->isOutOfFlowPositioned()) {
+            RenderBlock* containingBlock = table->containingBlock();
+            while (containingBlock && !is<RenderView>(*containingBlock) && !is<RenderTableCell>(*containingBlock)
+                && containingBlock->style().width().isAuto() && !containingBlock->isOutOfFlowPositioned())
+                containingBlock = containingBlock->containingBlock();
 
-            table = 0;
-            if (cb && cb->isTableCell() &&
-                (cb->style().width().isAuto() || cb->style().width().isPercent())) {
-                RenderTableCell* cell = toRenderTableCell(cb);
-                if (cell->colSpan() > 1 || cell->table()->style().width().isAuto())
+            table = nullptr;
+            if (is<RenderTableCell>(containingBlock)
+                && (containingBlock->style().width().isAuto() || containingBlock->style().width().isPercent())) {
+                RenderTableCell& cell = downcast<RenderTableCell>(*containingBlock);
+                if (cell.colSpan() > 1 || cell.table()->style().width().isAuto())
                     scale = false;
                 else
-                    table = cell->table();
+                    table = cell.table();
             }
         }
         else
-            table = 0;
+            table = nullptr;
     }
     return scale;
 }

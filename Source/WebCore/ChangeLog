@@ -1,3 +1,93 @@
+2014-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Table render objects
+        https://bugs.webkit.org/show_bug.cgi?id=137641
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for table-related render objects and clean
+        up the surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableElement):
+        (WebCore::AccessibilityTable::isDataTable):
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::addChildren):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode):
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitTabBeforeNode):
+        (WebCore::shouldEmitNewlinesBeforeAndAfterNode):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseAttribute):
+        (WebCore::HTMLTableCellElement::cellAbove):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseAttribute):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::shouldScaleColumns):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::addChild):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::firstColumn):
+        (WebCore::RenderTable::recalcSections):
+        (WebCore::RenderTable::sectionAbove):
+        (WebCore::RenderTable::sectionBelow):
+        (WebCore::RenderTable::bottomSection):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::table):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::nextCell):
+        (WebCore::RenderTableCell::previousCell):
+        (WebCore::RenderTableRow::firstCell):
+        (WebCore::RenderTableRow::lastCell):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::table):
+        (WebCore::RenderTableCol::enclosingColumnGroup):
+        (WebCore::RenderTableCol::nextColumn):
+        * rendering/RenderTableCol.h:
+        Make updateFromElement() public to allow the callers to use tighter
+        typing and devitualize the call as the class is final.
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableSection::firstRow):
+        (WebCore::RenderTableSection::lastRow):
+        (WebCore::RenderTableRow::nextRow):
+        (WebCore::RenderTableRow::previousRow):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::paintCell):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        (WebCore::writeSimpleLine):
+
 2014-10-08  Jer Noble  <jer.noble@apple.com>
 
         MediaPlayer::characteristicChanged() is not called when new tracks are found in SourceBufferPrivateAVFObjC

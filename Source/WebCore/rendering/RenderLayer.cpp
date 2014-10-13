@@ -5622,8 +5622,8 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
     LayoutRect result;
     if (renderer().isInline() && renderer().isRenderInline())
         result = toRenderInline(renderer()).linesVisualOverflowBoundingBox();
-    else if (renderer().isTableRow()) {
-        RenderTableRow& tableRow = toRenderTableRow(renderer());
+    else if (is<RenderTableRow>(renderer())) {
+        RenderTableRow& tableRow = downcast<RenderTableRow>(renderer());
         // Our bounding box is just the union of all of our cells' border/overflow rects.
         for (RenderTableCell* cell = tableRow.firstCell(); cell; cell = cell->nextCell()) {
             LayoutRect bbox = cell->borderBoxRect();

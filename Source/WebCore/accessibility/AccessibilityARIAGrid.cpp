@@ -117,12 +117,11 @@ void AccessibilityARIAGrid::addChildren()
     for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
         bool footerSection = false;
         if (RenderObject* childRenderer = child->renderer()) {
-            if (childRenderer->isTableSection()) {
-                if (RenderTableSection* childSection = toRenderTableSection(childRenderer)) {
-                    if (childSection == childSection->table()->footer()) {
-                        footerSections.append(child);
-                        footerSection = true;
-                    }
+            if (is<RenderTableSection>(*childRenderer)) {
+                RenderTableSection& childSection = downcast<RenderTableSection>(*childRenderer);
+                if (&childSection == childSection.table()->footer()) {
+                    footerSections.append(child);
+                    footerSection = true;
                 }
             }
         }

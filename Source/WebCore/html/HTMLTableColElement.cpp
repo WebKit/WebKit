@@ -67,15 +67,15 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const Atomic
     if (name == spanAttr) {
         int newSpan = value.toInt();
         m_span = newSpan ? newSpan : 1;
-        if (renderer() && renderer()->isRenderTableCol())
-            renderer()->updateFromElement();
+        if (is<RenderTableCol>(renderer()))
+            downcast<RenderTableCol>(*renderer()).updateFromElement();
     } else if (name == widthAttr) {
         if (!value.isEmpty()) {
-            if (renderer() && renderer()->isRenderTableCol()) {
-                RenderTableCol* col = toRenderTableCol(renderer());
+            if (is<RenderTableCol>(renderer())) {
+                RenderTableCol& col = downcast<RenderTableCol>(*renderer());
                 int newWidth = width().toInt();
-                if (newWidth != col->width())
-                    col->setNeedsLayoutAndPrefWidthsRecalc();
+                if (newWidth != col.width())
+                    col.setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
     } else

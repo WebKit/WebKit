@@ -139,28 +139,28 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     bool wrapInAnonymousSection = !child->isOutOfFlowPositioned();
 
-    if (child->isTableCaption())
+    if (is<RenderTableCaption>(*child))
         wrapInAnonymousSection = false;
-    else if (child->isRenderTableCol()) {
+    else if (is<RenderTableCol>(*child)) {
         m_hasColElements = true;
         wrapInAnonymousSection = false;
-    } else if (child->isTableSection()) {
+    } else if (is<RenderTableSection>(*child)) {
         switch (child->style().display()) {
             case TABLE_HEADER_GROUP:
                 resetSectionPointerIfNotBefore(m_head, beforeChild);
                 if (!m_head) {
-                    m_head = toRenderTableSection(child);
+                    m_head = downcast<RenderTableSection>(child);
                 } else {
                     resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                     if (!m_firstBody) 
-                        m_firstBody = toRenderTableSection(child);
+                        m_firstBody = downcast<RenderTableSection>(child);
                 }
                 wrapInAnonymousSection = false;
                 break;
             case TABLE_FOOTER_GROUP:
                 resetSectionPointerIfNotBefore(m_foot, beforeChild);
                 if (!m_foot) {
-                    m_foot = toRenderTableSection(child);
+                    m_foot = downcast<RenderTableSection>(child);
                     wrapInAnonymousSection = false;
                     break;
                 }
@@ -168,18 +168,18 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             case TABLE_ROW_GROUP:
                 resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                 if (!m_firstBody)
-                    m_firstBody = toRenderTableSection(child);
+                    m_firstBody = downcast<RenderTableSection>(child);
                 wrapInAnonymousSection = false;
                 break;
             default:
                 ASSERT_NOT_REACHED();
         }
-    } else if (child->isTableCell() || child->isTableRow())
+    } else if (is<RenderTableCell>(*child) || is<RenderTableRow>(*child))
         wrapInAnonymousSection = true;
     else
         wrapInAnonymousSection = true;
 
-    if (child->isTableSection())
+    if (is<RenderTableSection>(*child))
         setNeedsSectionRecalc();
 
     if (!wrapInAnonymousSection) {
@@ -190,32 +190,32 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         return;
     }
 
-    if (!beforeChild && lastChild() && lastChild()->isTableSection() && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
-        toRenderTableSection(lastChild())->addChild(child);
+    if (!beforeChild && is<RenderTableSection>(lastChild()) && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
+        downcast<RenderTableSection>(*lastChild()).addChild(child);
         return;
     }
 
     if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
         RenderObject* section = beforeChild->previousSibling();
-        if (section && section->isTableSection() && section->isAnonymous()) {
-            toRenderTableSection(section)->addChild(child);
+        if (is<RenderTableSection>(section) && section->isAnonymous()) {
+            downcast<RenderTableSection>(*section).addChild(child);
             return;
         }
     }
 
     RenderObject* lastBox = beforeChild;
-    while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableSection() && lastBox->style().display() != TABLE_CAPTION && lastBox->style().display() != TABLE_COLUMN_GROUP)
+    while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableSection>(*lastBox) && lastBox->style().display() != TABLE_CAPTION && lastBox->style().display() != TABLE_COLUMN_GROUP)
         lastBox = lastBox->parent();
     if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox) && lastBox->isTableSection()) {
-        RenderTableSection* section = toRenderTableSection(lastBox);
-        if (beforeChild == section)
-            beforeChild = section->firstRow();
-        section->addChild(child, beforeChild);
+        RenderTableSection& section = downcast<RenderTableSection>(*lastBox);
+        if (beforeChild == &section)
+            beforeChild = section.firstRow();
+        section.addChild(child, beforeChild);
         return;
     }
 
-    if (beforeChild && !beforeChild->isTableSection() && beforeChild->style().display() != TABLE_CAPTION && beforeChild->style().display() != TABLE_COLUMN_GROUP)
-        beforeChild = 0;
+    if (beforeChild && !is<RenderTableSection>(*beforeChild) && beforeChild->style().display() != TABLE_CAPTION && beforeChild->style().display() != TABLE_COLUMN_GROUP)
+        beforeChild = nullptr;
 
     RenderTableSection* section = RenderTableSection::createAnonymousWithParentRenderer(this);
     addChild(section, beforeChild);
@@ -459,8 +459,8 @@ void RenderTable::layout()
     bool collapsing = collapseBorders();
 
     for (auto& child : childrenOfType<RenderElement>(*this)) {
-        if (child.isTableSection()) {
-            RenderTableSection& section = toRenderTableSection(child);
+        if (is<RenderTableSection>(child)) {
+            RenderTableSection& section = downcast<RenderTableSection>(child);
             if (m_columnLogicalWidthChanged)
                 section.setChildNeedsLayout(MarkOnlyThis);
             section.layoutIfNeeded();
@@ -468,8 +468,8 @@ void RenderTable::layout()
             if (collapsing)
                 section.recalcOuterBorder();
             ASSERT(!section.needsLayout());
-        } else if (child.isRenderTableCol()) {
-            toRenderTableCol(child).layoutIfNeeded();
+        } else if (is<RenderTableCol>(child)) {
+            downcast<RenderTableCol>(child).layoutIfNeeded();
             ASSERT(!child.needsLayout());
         }
     }
@@ -851,15 +851,15 @@ void RenderTable::appendColumn(unsigned span)
 RenderTableCol* RenderTable::firstColumn() const
 {
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderTableCol())
-            return toRenderTableCol(child);
+        if (is<RenderTableCol>(*child))
+            return downcast<RenderTableCol>(child);
 
         // We allow only table-captions before columns or column-groups.
-        if (!child->isTableCaption())
-            return 0;
+        if (!is<RenderTableCaption>(*child))
+            return nullptr;
     }
 
-    return 0;
+    return nullptr;
 }
 
 void RenderTable::updateColumnCache() const
@@ -1006,31 +1006,31 @@ void RenderTable::recalcSections() const
             m_hasColElements = true;
             break;
         case TABLE_HEADER_GROUP:
-            if (child->isTableSection()) {
-                RenderTableSection* section = toRenderTableSection(child);
+            if (is<RenderTableSection>(*child)) {
+                RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_head)
-                    m_head = section;
+                    m_head = &section;
                 else if (!m_firstBody)
-                    m_firstBody = section;
-                section->recalcCellsIfNeeded();
+                    m_firstBody = &section;
+                section.recalcCellsIfNeeded();
             }
             break;
         case TABLE_FOOTER_GROUP:
-            if (child->isTableSection()) {
-                RenderTableSection* section = toRenderTableSection(child);
+            if (is<RenderTableSection>(*child)) {
+                RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_foot)
-                    m_foot = section;
+                    m_foot = &section;
                 else if (!m_firstBody)
-                    m_firstBody = section;
-                section->recalcCellsIfNeeded();
+                    m_firstBody = &section;
+                section.recalcCellsIfNeeded();
             }
             break;
         case TABLE_ROW_GROUP:
-            if (child->isTableSection()) {
-                RenderTableSection* section = toRenderTableSection(child);
+            if (is<RenderTableSection>(*child)) {
+                RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_firstBody)
-                    m_firstBody = section;
-                section->recalcCellsIfNeeded();
+                    m_firstBody = &section;
+                section.recalcCellsIfNeeded();
             }
             break;
         default:
@@ -1284,17 +1284,17 @@ RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section,
     recalcSectionsIfNeeded();
 
     if (section == m_head)
-        return 0;
+        return nullptr;
 
     RenderObject* prevSection = section == m_foot ? lastChild() : section->previousSibling();
     while (prevSection) {
-        if (prevSection->isTableSection() && prevSection != m_head && prevSection != m_foot && (skipEmptySections == DoNotSkipEmptySections || toRenderTableSection(prevSection)->numRows()))
+        if (is<RenderTableSection>(*prevSection) && prevSection != m_head && prevSection != m_foot && (skipEmptySections == DoNotSkipEmptySections || downcast<RenderTableSection>(*prevSection).numRows()))
             break;
         prevSection = prevSection->previousSibling();
     }
     if (!prevSection && m_head && (skipEmptySections == DoNotSkipEmptySections || m_head->numRows()))
         prevSection = m_head;
-    return toRenderTableSection(prevSection);
+    return downcast<RenderTableSection>(prevSection);
 }
 
 RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section, SkipEmptySectionsValue skipEmptySections) const
@@ -1302,17 +1302,17 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
     recalcSectionsIfNeeded();
 
     if (section == m_foot)
-        return 0;
+        return nullptr;
 
     RenderObject* nextSection = section == m_head ? firstChild() : section->nextSibling();
     while (nextSection) {
-        if (nextSection->isTableSection() && nextSection != m_head && nextSection != m_foot && (skipEmptySections  == DoNotSkipEmptySections || toRenderTableSection(nextSection)->numRows()))
+        if (is<RenderTableSection>(*nextSection) && nextSection != m_head && nextSection != m_foot && (skipEmptySections  == DoNotSkipEmptySections || downcast<RenderTableSection>(*nextSection).numRows()))
             break;
         nextSection = nextSection->nextSibling();
     }
     if (!nextSection && m_foot && (skipEmptySections == DoNotSkipEmptySections || m_foot->numRows()))
         nextSection = m_foot;
-    return toRenderTableSection(nextSection);
+    return downcast<RenderTableSection>(nextSection);
 }
 
 RenderTableSection* RenderTable::bottomSection() const
@@ -1323,11 +1323,11 @@ RenderTableSection* RenderTable::bottomSection() const
         return m_foot;
 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->isTableSection())
-            return toRenderTableSection(child);
+        if (is<RenderTableSection>(*child))
+            return downcast<RenderTableSection>(child);
     }
 
-    return 0;
+    return nullptr;
 }
 
 RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const

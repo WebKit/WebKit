@@ -381,8 +381,6 @@ inline RenderTableSection* RenderTable::topSection() const
     return m_foot;
 }
 
-RENDER_OBJECT_TYPE_CASTS(RenderTable, isTable())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTable, isTable())

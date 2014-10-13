@@ -55,7 +55,7 @@ void RenderTableCaption::willBeRemovedFromTree()
 
 RenderTable* RenderTableCaption::table() const
 {
-    return toRenderTable(parent());
+    return downcast<RenderTable>(parent());
 }
 
 }

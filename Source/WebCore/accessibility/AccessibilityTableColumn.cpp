@@ -89,23 +89,17 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
         return nullptr;
     }
 
-    if (!renderer->isTable())
+    if (!is<RenderTable>(*renderer))
         return nullptr;
     
-    RenderTable* table = toRenderTable(renderer);
-    
-    AccessibilityObject* headerObject = nullptr;
-    
-    // try the <thead> section first. this doesn't require th tags
-    headerObject = headerObjectForSection(table->header(), false);
+    RenderTable& table = downcast<RenderTable>(*renderer);
 
-    if (headerObject)
+    // try the <thead> section first. this doesn't require th tags
+    if (auto* headerObject = headerObjectForSection(table.header(), false))
         return headerObject;
     
     // now try for <th> tags in the first body
-    headerObject = headerObjectForSection(table->firstBody(), true);
-
-    return headerObject;
+    return headerObjectForSection(table.firstBody(), true);
 }
 
 AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTableSection* section, bool thTagRequired)

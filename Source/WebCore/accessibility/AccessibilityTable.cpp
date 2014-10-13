@@ -92,16 +92,16 @@ bool AccessibilityTable::isAccessibilityTable() const
 
 HTMLTableElement* AccessibilityTable::tableElement() const
 {
-    if (!m_renderer->isTable())
+    if (!is<RenderTable>(*m_renderer))
         return nullptr;
     
-    RenderTable* table = toRenderTable(m_renderer);
-    if (is<HTMLTableElement>(table->element()))
-        return downcast<HTMLTableElement>(table->element());
+    RenderTable& table = downcast<RenderTable>(*m_renderer);
+    if (is<HTMLTableElement>(table.element()))
+        return downcast<HTMLTableElement>(table.element());
     
     // If the table has a display:table-row-group, then the RenderTable does not have a pointer to it's HTMLTableElement.
     // We can instead find it by asking the firstSection for its parent.
-    RenderTableSection* firstBody = table->firstBody();
+    RenderTableSection* firstBody = table.firstBody();
     if (!firstBody || !firstBody->element())
         return nullptr;
     
@@ -127,16 +127,14 @@ bool AccessibilityTable::isDataTable() const
     if (node() && node()->hasEditableStyle())
         return true;
 
-    if (!m_renderer->isTable())
+    if (!is<RenderTable>(*m_renderer))
         return false;
 
     // This employs a heuristic to determine if this table should appear.
     // Only "data" tables should be exposed as tables.
     // Unfortunately, there is no good way to determine the difference
     // between a "layout" table and a "data" table.
-    RenderTable* table = toRenderTable(m_renderer);
-    HTMLTableElement* tableElement = this->tableElement();
-    if (tableElement) {
+    if (HTMLTableElement* tableElement = this->tableElement()) {
         // If there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table.
         if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
             return true;
@@ -146,16 +144,17 @@ bool AccessibilityTable::isDataTable() const
             return true;
 
         // If there's a colgroup or col element, it's probably a data table.
-        for (const auto& child : childrenOfType<Element>(*tableElement)) {
+        for (const auto& child : childrenOfType<HTMLElement>(*tableElement)) {
             if (child.hasTagName(colTag) || child.hasTagName(colgroupTag))
                 return true;
         }
     }
     
+    RenderTable& table = downcast<RenderTable>(*m_renderer);
     // go through the cell's and check for tell-tale signs of "data" table status
     // cells have borders, or use attributes like headers, abbr, scope or axis
-    table->recalcSectionsIfNeeded();
-    RenderTableSection* firstBody = table->firstBody();
+    table.recalcSectionsIfNeeded();
+    RenderTableSection* firstBody = table.firstBody();
     if (!firstBody)
         return false;
     
@@ -171,7 +170,7 @@ bool AccessibilityTable::isDataTable() const
         return true;
     
     // Store the background color of the table to check against cell's background colors.
-    const RenderStyle& tableStyle = table->style();
+    const RenderStyle& tableStyle = table.style();
     Color tableBGColor = tableStyle.visitedDependentColor(CSSPropertyBackgroundColor);
     
     // check enough of the cells to find if the table matches our criteria
@@ -206,16 +205,16 @@ bool AccessibilityTable::isDataTable() const
             if (cell->width() < 1 || cell->height() < 1)
                 continue;
             
-            validCellCount++;
+            ++validCellCount;
             
             bool isTHCell = cellElement->hasTagName(thTag);
             // If the first row is comprised of all <th> tags, assume it is a data table.
             if (!row && isTHCell)
-                headersInFirstRowCount++;
+                ++headersInFirstRowCount;
 
             // If the first column is comprised of all <th> tags, assume it is a data table.
             if (!col && isTHCell)
-                headersInFirstColumnCount++;
+                ++headersInFirstColumnCount;
             
             // In this case, the developer explicitly assigned a "data" table attribute.
             if (is<HTMLTableCellElement>(*cellElement)) {
@@ -233,25 +232,25 @@ bool AccessibilityTable::isDataTable() const
             // If a cell has matching bordered sides, call it a (fully) bordered cell.
             if ((cell->borderTop() > 0 && cell->borderBottom() > 0)
                 || (cell->borderLeft() > 0 && cell->borderRight() > 0))
-                borderedCellCount++;
+                ++borderedCellCount;
 
             // Also keep track of each individual border, so we can catch tables where most
             // cells have a bottom border, for example.
             if (cell->borderTop() > 0)
-                cellsWithTopBorder++;
+                ++cellsWithTopBorder;
             if (cell->borderBottom() > 0)
-                cellsWithBottomBorder++;
+                ++cellsWithBottomBorder;
             if (cell->borderLeft() > 0)
-                cellsWithLeftBorder++;
+                ++cellsWithLeftBorder;
             if (cell->borderRight() > 0)
-                cellsWithRightBorder++;
+                ++cellsWithRightBorder;
             
             // If the cell has a different color from the table and there is cell spacing,
             // then it is probably a data table cell (spacing and colors take the place of borders).
             Color cellColor = renderStyle.visitedDependentColor(CSSPropertyBackgroundColor);
-            if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0
+            if (table.hBorderSpacing() > 0 && table.vBorderSpacing() > 0
                 && tableBGColor != cellColor && cellColor.alpha() != 1)
-                backgroundDifferenceCellCount++;
+                ++backgroundDifferenceCellCount;
             
             // If we've found 10 "good" cells, we don't need to keep searching.
             if (borderedCellCount >= 10 || backgroundDifferenceCellCount >= 10)
@@ -327,7 +326,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility() const
 
     // Gtk+ ATs expect all tables to be exposed as tables.
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    Element* tableNode = toRenderTable(m_renderer)->element();
+    Element* tableNode = downcast<RenderTable>(*m_renderer).element();
     return is<HTMLTableElement>(tableNode);
 #endif
 
@@ -356,17 +355,17 @@ void AccessibilityTable::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!m_renderer || !m_renderer->isTable())
+    if (!is<RenderTable>(m_renderer))
         return;
     
-    RenderTable* table = toRenderTable(m_renderer);
+    RenderTable& table = downcast<RenderTable>(*m_renderer);
     // Go through all the available sections to pull out the rows and add them as children.
-    table->recalcSectionsIfNeeded();
+    table.recalcSectionsIfNeeded();
     
     unsigned maxColumnCount = 0;
-    RenderTableSection* footer = table->footer();
+    RenderTableSection* footer = table.footer();
     
-    for (RenderTableSection* tableSection = table->topSection(); tableSection; tableSection = table->sectionBelow(tableSection, SkipEmptySections)) {
+    for (RenderTableSection* tableSection = table.topSection(); tableSection; tableSection = table.sectionBelow(tableSection, SkipEmptySections)) {
         if (tableSection == footer)
             continue;
         addChildrenFromSection(tableSection, maxColumnCount);
