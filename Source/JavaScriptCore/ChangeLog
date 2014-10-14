@@ -1,3 +1,10 @@
+2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Ignore Visual Studio *.sdf files.
+
+        * JavaScriptCore.vcxproj: Modified properties svn:ignore and svn:ignore.
+        * JavaScriptCore.vcxproj/jsc: Modified property svn:ignore.
+
 2014-10-14  Matthew Mirman  <mmirman@apple.com>
 
         Removes references to LLVMJIT which is no longer part of LLVM

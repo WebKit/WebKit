@@ -1,3 +1,9 @@
+2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Ignore Visual Studio *.sdf temporary files.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj: Modified property svn:ignore.
+
 2014-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the make build after r174683

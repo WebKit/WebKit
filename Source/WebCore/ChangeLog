@@ -1,5 +1,11 @@
 2014-10-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening. Ignore Visual Studio *.sdf files.
+
+        * WebCore.vcxproj: Modified property svn:ignore.
+
+2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Enable Encrypted Media Support
         https://bugs.webkit.org/show_bug.cgi?id=137710
         <rdar://problem/18652699>
