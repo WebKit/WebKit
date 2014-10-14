@@ -98,7 +98,7 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
     rowRange.second = 1;
 }
 
-void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange)
+void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent)

@@ -1,3 +1,27 @@
+2014-10-14  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [AX] Improve AccessibilityTableCell columnHeaders and rowHeaders functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136818
+
+        Reviewed by Chris Fleizach.
+
+        Take into account that <th> elements can be both the column headers and row headers 
+        improved the operation of two functions: columnHeaders and rowHeaders.
+
+        Test: accessibility/table-headers.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::isColumnHeaderCell):
+        A new function that helps the main goal.
+        (WebCore::AccessibilityTableCell::isRowHeaderCell):
+        A new function that helps the main goal.
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        Use isColumnHeaderCell instead of isTableHeaderCell.
+        (WebCore::AccessibilityTableCell::rowHeaders):
+        Use isRowHeaderCell also includes <th> row header element next to the scope attribute.
+        * accessibility/AccessibilityTableCell.h:
+        Adds new functions to the header file.
+
 2014-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(VIDEO) build after r174353

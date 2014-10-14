@@ -1,3 +1,16 @@
+2014-10-14  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [AX] Improve AccessibilityTableCell columnHeaders and rowHeaders functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136818
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/table-headers-expected.txt: Added.
+        * accessibility/table-headers.html: Added.
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+
 2014-10-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Add test coverage for the more complex cases of :not()

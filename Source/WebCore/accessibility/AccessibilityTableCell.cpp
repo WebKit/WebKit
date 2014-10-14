@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
+#include "ElementIterator.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
@@ -122,6 +123,55 @@ bool AccessibilityTableCell::isTableHeaderCell() const
     return node() && node()->hasTagName(thTag);
 }
 
+bool AccessibilityTableCell::isColumnHeaderCell() const
+{
+    const AtomicString& scope = getAttribute(scopeAttr);
+    if (scope == "col" || scope == "colgroup")
+        return true;
+    if (scope == "row" || scope == "rowgroup")
+        return false;
+    if (!isTableHeaderCell())
+        return false;
+
+    // We are in a situation after checking the scope attribute.
+    // It is an attempt to resolve the type of th element without support in the specification.
+    // Checking tableTag lets stop the loop at the table level.
+    for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
+        if (parentNode->hasTagName(theadTag))
+            return true;
+        if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tableTag))
+            return false;
+    }
+    return false;
+}
+
+bool AccessibilityTableCell::isRowHeaderCell() const
+{
+    const AtomicString& scope = getAttribute(scopeAttr);
+    if (scope == "row" || scope == "rowgroup")
+        return true;
+    if (scope == "col" || scope == "colgroup")
+        return false;
+    if (!isTableHeaderCell())
+        return false;
+
+    // We are in a situation after checking the scope attribute.
+    // It is an attempt to resolve the type of th element without support in the specification.
+    // Checking tableTag lets stop the loop at the table level.
+    for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
+        if (parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tbodyTag)) {
+            std::pair<unsigned, unsigned> colRange;
+            columnIndexRange(colRange);
+            if (!colRange.first)
+                return true;
+            return false;
+        }
+        if (parentNode->hasTagName(theadTag) || parentNode->hasTagName(tableTag))
+            return false;
+    }
+    return false;
+}
+
 bool AccessibilityTableCell::isTableCellInSameRowGroup(AccessibilityTableCell* otherTableCell)
 {
     Node* parentNode = node();
@@ -190,9 +240,9 @@ void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
         tableCell->rowIndexRange(childRowRange);
             
         const AtomicString& scope = tableCell->getAttribute(scopeAttr);
-        if (scope == "col" || tableCell->isTableHeaderCell())
+        if (scope == "colgroup" && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
-        else if (scope == "colgroup" && isTableCellInSameColGroup(tableCell))
+        else if (tableCell->isColumnHeaderCell())
             headers.append(tableCell);
     }
 }
@@ -215,9 +265,9 @@ void AccessibilityTableCell::rowHeaders(AccessibilityChildrenVector& headers)
             continue;
         
         const AtomicString& scope = tableCell->getAttribute(scopeAttr);
-        if (scope == "row")
+        if (scope == "rowgroup" && isTableCellInSameRowGroup(tableCell))
             headers.append(tableCell);
-        else if (scope == "rowgroup" && isTableCellInSameRowGroup(tableCell))
+        else if (tableCell->isRowHeaderCell())
             headers.append(tableCell);
     }
 }
@@ -251,7 +301,7 @@ void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRan
     rowRange.first += rowOffset;
 }
     
-void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange)
+void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
 {
     if (!is<RenderTableCell>(m_renderer))
         return;

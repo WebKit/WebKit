@@ -45,11 +45,13 @@ public:
     
     virtual bool isTableCell() const override;
     bool isTableHeaderCell() const;
+    bool isColumnHeaderCell() const;
+    bool isRowHeaderCell() const;
     
     // fills in the start location and row span of cell
     virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange);
     // fills in the start location and column span of cell
-    virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange);
+    virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const;
     
     void columnHeaders(AccessibilityChildrenVector&);
     void rowHeaders(AccessibilityChildrenVector&);

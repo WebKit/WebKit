@@ -1,0 +1,14 @@
+No	Country	Capital
+1.	Poland	Warsaw
+2.	Russia	Moscow
+3.	Ukraine	Kiev
+
+This tests that the columnHeaders() and rowHeaders() functions return the correct headers for a table cell.
+
+The table cell at (0,3) should have exactly one column header, currently it has 1 column header(s).
+The table cell at (0,3) should have exactly 0 row headers, currently it has 0 row header(s).
+
+The table cell at (1,2) should have exactly one column header, currently it has 1 column header(s).
+The table cell at (1,2) should have exactly one row header, currently it has 1 row header(s).
+
+
