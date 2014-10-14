@@ -49,10 +49,10 @@ public:
     bool shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestRef);
     void didCancelLoadingRequest(AVCFAssetResourceLoadingRequestRef);
     void didStopLoadingRequest(AVCFAssetResourceLoadingRequestRef);
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     RetainPtr<AVCFAssetResourceLoadingRequestRef> takeRequestForKeyURI(const String&);
+#endif
 #endif
 
     static void registerMediaEngine(MediaEngineRegistrar);

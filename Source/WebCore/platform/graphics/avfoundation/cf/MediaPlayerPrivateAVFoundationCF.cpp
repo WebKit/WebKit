@@ -54,7 +54,7 @@
 #include <AVFoundationCF/AVCFPlayerItemLegibleOutput.h>
 #endif
 #include <AVFoundationCF/AVCFPlayerLayer.h>
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE) || HAVE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 #include <AVFoundationCF/AVCFAssetResourceLoader.h>
 #endif
 #include <AVFoundationCF/AVFoundationCF.h>
@@ -62,7 +62,7 @@
 #include <d3d9.h>
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
 #include <runtime/DataView.h>
 #include <runtime/Uint16Array.h>
 #endif
@@ -150,7 +150,7 @@ public:
 #endif
     inline dispatch_queue_t dispatchQueue() const { return m_notificationQueue; }
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
     RetainPtr<AVCFAssetResourceLoadingRequestRef> takeRequestForKeyURI(const String&);
     void setRequestForKey(const String& keyURI, AVCFAssetResourceLoadingRequestRef avRequest);
 #endif
@@ -903,7 +903,7 @@ void MediaPlayerPrivateAVFoundationCF::getSupportedTypes(HashSet<String>& suppor
     supportedTypes = mimeTypeCache();
 } 
 
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
 static bool keySystemIsSupported(const String& keySystem)
 {
     if (equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0"))
@@ -924,7 +924,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const M
 
 bool MediaPlayerPrivateAVFoundationCF::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
     if (keySystem.isEmpty())
         return false;
 
@@ -1110,7 +1110,7 @@ bool MediaPlayerPrivateAVFoundationCF::requiresImmediateCompositing() const
     return true;
 }
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
 RetainPtr<AVCFAssetResourceLoadingRequestRef> MediaPlayerPrivateAVFoundationCF::takeRequestForKeyURI(const String& keyURI)
 {
     if (!m_avfWrapper)
@@ -1832,7 +1832,7 @@ void AVFWrapper::processShouldWaitForLoadingOfResource(void* context)
 
 bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestRef avRequest)
 {
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
     RetainPtr<CFURLRequestRef> urlRequest = AVCFAssetResourceLoadingRequestGetURLRequest(avRequest);
     RetainPtr<CFURLRef> requestURL = CFURLRequestGetURL(urlRequest.get());
     RetainPtr<CFStringRef> schemeRef = adoptCF(CFURLCopyScheme(requestURL.get()));
@@ -2029,7 +2029,7 @@ void AVFWrapper::updateVideoLayerGravity()
     // FIXME: <rdar://problem/14884340>
 }
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
 void AVFWrapper::setRequestForKey(const String& keyURI, AVCFAssetResourceLoadingRequestRef avRequest)
 {
     auto requestsIterator = m_keyURIToRequestMap.find(keyURI);
