@@ -237,13 +237,6 @@
                 ]
             },
             {
-                "name": "setShowPaintRects",
-                "description": "Requests that backend shows paint rectangles",
-                "parameters": [
-                    { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
-                ]
-            },
-            {
                 "name": "getScriptExecutionStatus",
                 "description": "Determines if scripts can be executed in the page.",
                 "returns": [

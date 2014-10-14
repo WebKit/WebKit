@@ -1,5 +1,23 @@
 2014-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: paint flashing mode should be disabled when remote inspecting legacy iOS versions
+        https://bugs.webkit.org/show_bug.cgi?id=137575
+
+        Reviewed by Simon Fraser.
+
+        Remove setShowPaintRects from the legacy iOS protocol definitions.
+        The methods were unimplemented by the backends, so they should
+        not advertise supporting it.
+
+        * UserInterface/Protocol/Legacy/6.0/InspectorWebBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/InspectorWeb-iOS-8.0.json:
+
+2014-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Processing Instruction Nodes appear poorly in DOM Tree
         https://bugs.webkit.org/show_bug.cgi?id=137681
 
