@@ -1,3 +1,18 @@
+2014-10-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add test coverage for the more complex cases of :not()
+        https://bugs.webkit.org/show_bug.cgi?id=137671
+
+        Reviewed by Andreas Kling.
+
+        Those tests cover the future CSS JIT support of :not(). I'll to the implementation
+        split over multiple patch, better put the tests first.
+
+        * fast/selectors/not-backtracking-expected.txt: Added.
+        * fast/selectors/not-backtracking.html: Added.
+        * fast/selectors/not-boundaries-expected.txt: Added.
+        * fast/selectors/not-boundaries.html: Added.
+
 2014-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Implement :visited pseudo class
