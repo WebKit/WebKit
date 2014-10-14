@@ -4859,6 +4859,18 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:NSFontItalicTrait weight:STANDARD_BOLD_WEIGHT size:12.0f];
 }
 
+static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL bold, int pointSize)
+{
+    // Find the font the same way the rendering code would later if it encountered this CSS.
+    FontDescription fontDescription;
+    fontDescription.setItalic(italic);
+    fontDescription.setWeight(bold ? FontWeight900 : FontWeight500);
+    fontDescription.setSpecifiedSize(pointSize);
+    FontCachePurgePreventer purgePreventer;
+    RefPtr<SimpleFontData> simpleFontData = fontCache().getCachedFontData(fontDescription, familyName, false, WebCore::FontCache::DoNotRetain);
+    return [simpleFontData->platformData().font() fontName];
+}
+
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
 {
     // Since there's no way to directly ask NSFontManager what style change it's going to do
@@ -4893,18 +4905,9 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         // The family name may not be specific enough to get us the font specified.
         // In some cases, the only way to get exactly what we are looking for is to use
         // the Postscript name.
-        
-        // Find the font the same way the rendering code would later if it encountered this CSS.
-        FontDescription fontDescription;
-        fontDescription.setItalic(aIsItalic);
-        fontDescription.setWeight(aIsBold ? FontWeight900 : FontWeight500);
-        fontDescription.setSpecifiedSize(aPointSize);
-        FontCachePurgePreventer purgePreventer;
-        RefPtr<SimpleFontData> simpleFontData = fontCache().getCachedFontData(fontDescription, aFamilyName, false, WebCore::FontCache::DoNotRetain);
-
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
-        if (![[simpleFontData->platformData().font() fontName] isEqualToString:[a fontName]])
+        if (![fontNameForDescription(aFamilyName, aIsItalic, aIsBold, aPointSize) isEqualToString:[a fontName]])
             familyNameForCSS = [a fontName];
 
         // FIXME: Need more sophisticated escaping code if we want to handle family names
