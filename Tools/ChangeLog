@@ -1,3 +1,16 @@
+2014-10-13  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayer::characteristicChanged() is not called when new tracks are found in SourceBufferPrivateAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=137533
+
+        Reviewed by Andy Estes.
+
+        Follow up patch; bail out of the test early (without failing) if the platform does not support MSE.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::isMSEEnabledCallback):
+        (TestWebKitAPI::TEST):
+
 2014-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Implement a page load profiling tool

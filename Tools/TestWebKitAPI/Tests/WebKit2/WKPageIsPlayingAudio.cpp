@@ -27,6 +27,9 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JavaScriptCore.h>
+#include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
@@ -38,11 +41,26 @@
 
 namespace TestWebKitAPI {
 
+static bool isMSEEnabledChanged;
+static bool isMSEEnabled;
 static bool didFinishLoad;
 static bool isPlayingAudioChanged;
 
 static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error, void*)
 {
+}
+
+static void isMSEEnabledCallback(WKSerializedScriptValueRef serializedResultValue, WKErrorRef error, void*)
+{
+    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
+
+    JSValueRef resultValue = WKSerializedScriptValueDeserialize(serializedResultValue, scriptContext, 0);
+    EXPECT_TRUE(JSValueIsBoolean(scriptContext, resultValue));
+
+    isMSEEnabledChanged = true;
+    isMSEEnabled = JSValueToBoolean(scriptContext, resultValue);
+
+    JSGlobalContextRelease(scriptContext);
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef, const void*)
@@ -110,6 +128,13 @@ TEST(WebKit2, MSEIsPlayingAudio)
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&didFinishLoad);
+
+    // Bail out of the test early if the platform does not support MSE.
+    isMSEEnabledChanged = false;
+    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("window.MediaSource !== undefined").get(), 0, isMSEEnabledCallback);
+    Util::run(&isMSEEnabledChanged);
+    if (!isMSEEnabled)
+        return;
 
     EXPECT_FALSE(WKPageIsPlayingAudio(webView.page()));
     isPlayingAudioChanged = false;
