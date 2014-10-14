@@ -1157,10 +1157,25 @@ RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderSty
     updateTokenContent(operatorString);
 }
 
+void RenderMathMLOperator::setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag flag, const AtomicString& attributeValue)
+{
+    unsigned short oldOperatorFlags = m_operatorFlags;
+
+    setOperatorFlagFromAttributeValue(flag, attributeValue);
+
+    if (oldOperatorFlags != m_operatorFlags)
+        setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
 {
+    setOperatorFlagFromAttributeValue(flag, element().fastGetAttribute(name));
+}
+
+void RenderMathMLOperator::setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag flag, const AtomicString& attributeValue)
+{
     ASSERT(!isAnonymous());
-    const AtomicString& attributeValue = element().fastGetAttribute(name);
+
     if (attributeValue == "true")
         m_operatorFlags |= flag;
     else if (attributeValue == "false")
