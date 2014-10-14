@@ -1,3 +1,18 @@
+2014-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove unnecessary logging from SimpleFontData
+        https://bugs.webkit.org/show_bug.cgi?id=137699
+
+        Reviewed by Andreas Kling.
+
+        Because of web fonts, fonts that don't have a glyph page 0 are common and expected. Printing out a
+        message is not helpful, especially if you're not dealing with a font-related piece of WebKit.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit):
+
 2014-10-14  Martin Hock  <mhock@apple.com>
 
         Update ViewportConfiguration whenever its size attributes change
