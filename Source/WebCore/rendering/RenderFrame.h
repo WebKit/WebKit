@@ -46,8 +46,6 @@ private:
     virtual void updateFromElement() override;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderFrame, isFrame())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrame, isFrame())

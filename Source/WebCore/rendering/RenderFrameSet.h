@@ -126,8 +126,6 @@ private:
     bool m_isChildResizing;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderFrameSet, isFrameSet())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrameSet, isFrameSet())

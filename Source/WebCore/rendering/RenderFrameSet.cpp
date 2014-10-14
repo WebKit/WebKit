@@ -409,10 +409,10 @@ void RenderFrameSet::computeEdgeInfo()
     for (size_t r = 0; r < rows; ++r) {
         for (size_t c = 0; c < cols; ++c) {
             FrameEdgeInfo edgeInfo;
-            if (child->isFrameSet())
-                edgeInfo = toRenderFrameSet(child)->edgeInfo();
+            if (is<RenderFrameSet>(*child))
+                edgeInfo = downcast<RenderFrameSet>(*child).edgeInfo();
             else
-                edgeInfo = toRenderFrame(child)->edgeInfo();
+                edgeInfo = downcast<RenderFrame>(*child).edgeInfo();
             fillFromEdgeInfo(edgeInfo, r, c);
             child = child->nextSibling();
             if (!child)
@@ -554,11 +554,11 @@ void RenderFrameSet::positionFramesWithFlattening()
 
     // calculate frameset height based on actual content height to eliminate scrolling
     bool out = false;
-    for (int r = 0; r < rows && !out; r++) {
+    for (int r = 0; r < rows && !out; ++r) {
         int extra = 0;
         int height = m_rows.m_sizes[r];
 
-        for (int c = 0; c < cols; c++) {
+        for (int c = 0; c < cols; ++c) {
             IntRect oldFrameRect = snappedIntRect(child->frameRect());
 
             int width = m_cols.m_sizes[c];
@@ -575,10 +575,10 @@ void RenderFrameSet::positionFramesWithFlattening()
 
             child->setNeedsLayout();
 
-            if (child->isFrameSet())
-                toRenderFrameSet(child)->layout();
+            if (is<RenderFrameSet>(*child))
+                downcast<RenderFrameSet>(*child).layout();
             else
-                toRenderFrame(child)->layoutWithFlattening(fixedWidth, fixedHeight);
+                downcast<RenderFrame>(*child).layoutWithFlattening(fixedWidth, fixedHeight);
 
             if (child->height() > m_rows.m_sizes[r])
                 m_rows.m_sizes[r] = child->height();
@@ -603,9 +603,9 @@ void RenderFrameSet::positionFramesWithFlattening()
     int yPos = 0;
     out = false;
     child = firstChildBox();
-    for (int r = 0; r < rows && !out; r++) {
+    for (int r = 0; r < rows && !out; ++r) {
         xPos = 0;
-        for (int c = 0; c < cols; c++) {
+        for (int c = 0; c < cols; ++c) {
             // ensure the rows and columns are filled
             IntRect oldRect = snappedIntRect(child->frameRect());
 
@@ -618,10 +618,10 @@ void RenderFrameSet::positionFramesWithFlattening()
 
                 // update to final size
                 child->setNeedsLayout();
-                if (child->isFrameSet())
-                    toRenderFrameSet(child)->layout();
+                if (is<RenderFrameSet>(*child))
+                    downcast<RenderFrameSet>(*child).layout();
                 else
-                    toRenderFrame(child)->layoutWithFlattening(true, true);
+                    downcast<RenderFrame>(*child).layoutWithFlattening(true, true);
             }
 
             xPos += m_cols.m_sizes[c] + borderThickness;

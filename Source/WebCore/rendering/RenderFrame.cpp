@@ -45,8 +45,8 @@ FrameEdgeInfo RenderFrame::edgeInfo() const
 
 void RenderFrame::updateFromElement()
 {
-    if (parent() && parent()->isFrameSet())
-        toRenderFrameSet(parent())->notifyFrameEdgeInfoChanged();
+    if (is<RenderFrameSet>(parent()))
+        downcast<RenderFrameSet>(*parent()).notifyFrameEdgeInfoChanged();
 }
 
 } // namespace WebCore
