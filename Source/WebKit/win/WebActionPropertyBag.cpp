@@ -111,6 +111,7 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
     if (!pszPropName)
         return E_POINTER;
 
+    WTFLogAlways("pVar Pointer Value: %p", pVar);
     VariantClear(pVar);
 
     if (isEqual(pszPropName, WebActionNavigationTypeKey)) {

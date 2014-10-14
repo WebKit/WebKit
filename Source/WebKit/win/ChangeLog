@@ -1,3 +1,10 @@
+2014-10-14  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Add some logging to debug random crashing when running layout tests on Windows.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+
 2014-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Implement a page load profiling tool
