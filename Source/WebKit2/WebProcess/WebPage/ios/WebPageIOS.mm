@@ -1956,21 +1956,20 @@ void WebPage::performActionOnElement(uint32_t action)
         return;
 
     if (static_cast<SheetAction>(action) == SheetAction::Copy) {
-        if (element->renderer()->isRenderImage()) {
+        if (is<RenderImage>(*element->renderer())) {
             Element* linkElement = containingLinkElement(element);
         
             if (!linkElement)
-                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, toRenderImage(element->renderer())->cachedImage()->url(), String());
+                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, downcast<RenderImage>(*element->renderer()).cachedImage()->url(), String());
             else
                 m_interactionNode->document().frame()->editor().copyURL(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))), linkElement->textContent());
         } else if (element->isLink()) {
             m_interactionNode->document().frame()->editor().copyURL(element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr))), element->textContent());
         }
     } else if (static_cast<SheetAction>(action) == SheetAction::SaveImage) {
-        if (!element->renderer()->isRenderImage())
+        if (!is<RenderImage>(*element->renderer()))
             return;
-        CachedImage* cachedImage = toRenderImage(element->renderer())->cachedImage();
-        if (cachedImage) {
+        if (CachedImage* cachedImage = downcast<RenderImage>(*element->renderer()).cachedImage()) {
             SharedMemory::Handle handle;
             RefPtr<SharedBuffer> buffer = cachedImage->resourceBuffer()->sharedBuffer();
             if (buffer) {

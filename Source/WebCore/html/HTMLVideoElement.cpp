@@ -82,7 +82,7 @@ void HTMLVideoElement::didAttachRenderers()
             m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
         m_imageLoader->updateFromElement();
         if (renderer())
-            toRenderImage(renderer())->imageResource().setCachedImage(m_imageLoader->image());
+            downcast<RenderImage>(*renderer()).imageResource().setCachedImage(m_imageLoader->image());
     }
 }
 
@@ -116,7 +116,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (renderer())
-                toRenderImage(renderer())->imageResource().setCachedImage(0);
+                downcast<RenderImage>(*renderer()).imageResource().setCachedImage(nullptr);
         }
     }
 #if ENABLE(IOS_AIRPLAY)

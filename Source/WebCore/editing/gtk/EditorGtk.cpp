@@ -93,11 +93,11 @@ static const AtomicString& elementURL(Element& element)
 
 static bool getImageForElement(Element& element, RefPtr<Image>& image)
 {
-    auto renderer = element.renderer();
-    if (!renderer || !renderer->isRenderImage())
+    auto* renderer = element.renderer();
+    if (!is<RenderImage>(renderer))
         return false;
 
-    CachedImage* cachedImage = toRenderImage(*renderer).cachedImage();
+    CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return false;
 

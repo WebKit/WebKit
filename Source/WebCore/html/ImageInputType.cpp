@@ -108,10 +108,10 @@ RenderPtr<RenderElement> ImageInputType::createInputRenderer(PassRef<RenderStyle
 
 void ImageInputType::altAttributeChanged()
 {
-    RenderImage* image = toRenderImage(element().renderer());
-    if (!image)
+    auto* renderer = downcast<RenderImage>(element().renderer());
+    if (!renderer)
         return;
-    image->updateAltText();
+    renderer->updateAltText();
 }
 
 void ImageInputType::srcAttributeChanged()
@@ -128,7 +128,7 @@ void ImageInputType::attach()
     HTMLImageLoader* imageLoader = element().imageLoader();
     imageLoader->updateFromElement();
 
-    RenderImage* renderer = toRenderImage(element().renderer());
+    auto* renderer = downcast<RenderImage>(element().renderer());
     if (!renderer)
         return;
 

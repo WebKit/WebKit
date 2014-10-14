@@ -86,14 +86,12 @@ void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, c
 
 static WebCore::CachedImage* cachedImage(Element& element)
 {
-    RenderObject* renderer = element.renderer();
-    if (!renderer)
-        return 0;
-    if (!renderer->isRenderImage())
-        return 0;
-    WebCore::CachedImage* image = toRenderImage(renderer)->cachedImage();
+    auto* renderer = element.renderer();
+    if (!is<WebCore::RenderImage>(renderer))
+        return nullptr;
+    WebCore::CachedImage* image = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!image || image->errorOccurred()) 
-        return 0;
+        return nullptr;
     return image;
 }
 

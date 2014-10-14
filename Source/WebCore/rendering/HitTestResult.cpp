@@ -290,16 +290,16 @@ String HitTestResult::altDisplayString() const
 Image* HitTestResult::image() const
 {
     if (!m_innerNonSharedNode)
-        return 0;
+        return nullptr;
     
-    auto renderer = m_innerNonSharedNode->renderer();
-    if (renderer && renderer->isRenderImage()) {
-        RenderImage* image = toRenderImage(renderer);
-        if (image->cachedImage() && !image->cachedImage()->errorOccurred())
-            return image->cachedImage()->imageForRenderer(image);
+    auto* renderer = m_innerNonSharedNode->renderer();
+    if (is<RenderImage>(renderer)) {
+        auto& image = downcast<RenderImage>(*renderer);
+        if (image.cachedImage() && !image.cachedImage()->errorOccurred())
+            return image.cachedImage()->imageForRenderer(&image);
     }
 
-    return 0;
+    return nullptr;
 }
 
 IntRect HitTestResult::imageRect() const

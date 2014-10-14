@@ -63,10 +63,10 @@ void RenderImageControls::updateLogicalWidth()
     RenderBox::updateLogicalWidth();
 
     RenderElement* renderer = element()->shadowHost()->renderer();
-    if (!renderer->isRenderImage())
+    if (!is<RenderImage>(*renderer))
         return;
 
-    setLogicalWidth(toRenderImage(renderer)->logicalWidth());
+    setLogicalWidth(downcast<RenderImage>(*renderer).logicalWidth());
 }
 
 void RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
@@ -74,10 +74,10 @@ void RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutU
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 
     RenderElement* renderer = element()->shadowHost()->renderer();
-    if (!renderer->isRenderImage())
+    if (!is<RenderImage>(*renderer))
         return;
 
-    computedValues.m_extent = toRenderImage(renderer)->logicalHeight();
+    computedValues.m_extent = downcast<RenderImage>(*renderer).logicalHeight();
 }
 
 PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)

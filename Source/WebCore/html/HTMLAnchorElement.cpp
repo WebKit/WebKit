@@ -166,9 +166,9 @@ static void appendServerMapMousePosition(StringBuilder& url, Event* event)
     if (!imageElement.isServerMap())
         return;
 
-    if (!imageElement.renderer() || !imageElement.renderer()->isRenderImage())
+    if (!is<RenderImage>(imageElement.renderer()))
         return;
-    RenderImage& renderer = toRenderImage(*imageElement.renderer());
+    auto& renderer = downcast<RenderImage>(*imageElement.renderer());
 
     // FIXME: This should probably pass true for useTransforms.
     FloatPoint absolutePosition = renderer.absoluteToLocal(FloatPoint(downcast<MouseEvent>(*event).pageX(), downcast<MouseEvent>(*event).pageY()));

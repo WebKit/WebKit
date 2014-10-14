@@ -133,15 +133,15 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
 #endif
     if (candidate.density >= 0)
         m_imageDevicePixelRatio = 1 / candidate.density;
-    if (renderer() && renderer()->isImage())
-        toRenderImage(renderer())->setImageDevicePixelRatio(m_imageDevicePixelRatio);
+    if (is<RenderImage>(renderer()))
+        downcast<RenderImage>(*renderer()).setImageDevicePixelRatio(m_imageDevicePixelRatio);
 }
 
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
-        if (renderer() && renderer()->isRenderImage())
-            toRenderImage(renderer())->updateAltText();
+        if (is<RenderImage>(renderer()))
+            downcast<RenderImage>(*renderer()).updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
         unsigned sourceSize = 0;
 #if ENABLE(PICTURE_SIZES)
@@ -227,7 +227,7 @@ bool HTMLImageElement::canStartSelection() const
 
 void HTMLImageElement::didAttachRenderers()
 {
-    if (!renderer() || !renderer()->isRenderImage())
+    if (!is<RenderImage>(renderer()))
         return;
     if (m_imageLoader.hasPendingBeforeLoadEvent())
         return;
@@ -236,8 +236,8 @@ void HTMLImageElement::didAttachRenderers()
     updateImageControls();
 #endif
 
-    RenderImage* renderImage = toRenderImage(renderer());
-    RenderImageResource& renderImageResource = renderImage->imageResource();
+    auto& renderImage = downcast<RenderImage>(*renderer());
+    RenderImageResource& renderImageResource = renderImage.imageResource();
     if (renderImageResource.hasImage())
         return;
     renderImageResource.setCachedImage(m_imageLoader.image());
@@ -245,7 +245,7 @@ void HTMLImageElement::didAttachRenderers()
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
     if (!m_imageLoader.image() && !renderImageResource.cachedImage())
-        renderImage->setImageSizeForAltText();
+        renderImage.setImageSizeForAltText();
 }
 
 Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode& insertionPoint)
@@ -507,11 +507,11 @@ void HTMLImageElement::createImageControls()
 
     ensureUserAgentShadowRoot().appendChild(imageControls);
 
-    RenderObject* renderObject = renderer();
+    auto* renderObject = renderer();
     if (!renderObject)
         return;
 
-    toRenderImage(renderObject)->setHasShadowControls(true);
+    downcast<RenderImage>(*renderObject).setHasShadowControls(true);
 }
 
 void HTMLImageElement::destroyImageControls()
@@ -525,11 +525,11 @@ void HTMLImageElement::destroyImageControls()
         shadowRoot->removeChild(node);
     }
 
-    RenderObject* renderObject = renderer();
+    auto* renderObject = renderer();
     if (!renderObject)
         return;
 
-    toRenderImage(renderObject)->setHasShadowControls(false);
+    downcast<RenderImage>(*renderObject).setHasShadowControls(false);
 }
 
 bool HTMLImageElement::hasImageControls() const

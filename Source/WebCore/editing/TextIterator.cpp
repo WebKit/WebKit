@@ -760,8 +760,8 @@ bool TextIterator::handleReplacedElement()
     m_positionStartOffset = 0;
     m_positionEndOffset = 1;
 
-    if ((m_behavior & TextIteratorEmitsImageAltText) && renderer.isRenderImage()) {
-        String altText = toRenderImage(renderer).altText();
+    if ((m_behavior & TextIteratorEmitsImageAltText) && is<RenderImage>(renderer)) {
+        String altText = downcast<RenderImage>(renderer).altText();
         if (unsigned length = altText.length()) {
             m_lastCharacter = altText[length - 1];
             m_copyableText.set(WTF::move(altText));

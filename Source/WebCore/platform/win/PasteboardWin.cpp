@@ -723,14 +723,14 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
 void Pasteboard::writeImage(Element& element, const URL&, const String&)
 {
-    if (!(element.renderer() && element.renderer()->isRenderImage()))
+    if (!is<RenderImage>(element.renderer()))
         return;
 
-    RenderImage* renderer = toRenderImage(element.renderer());
-    CachedImage* cachedImage = renderer->cachedImage();
+    auto& renderer = downcast<RenderImage>(*element.renderer());
+    CachedImage* cachedImage = renderer.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
-    Image* image = cachedImage->imageForRenderer(renderer);
+    Image* image = cachedImage->imageForRenderer(&renderer);
     ASSERT(image);
 
     clear();
@@ -859,14 +859,14 @@ static CachedImage* getCachedImage(Element& element)
 {
     // Attempt to pull CachedImage from element
     RenderObject* renderer = element.renderer();
-    if (!renderer || !renderer->isRenderImage())
-        return 0;
+    if (!is<RenderImage>(renderer))
+        return nullptr;
 
-    RenderImage* image = toRenderImage(renderer);
+    auto* image = downcast<RenderImage>(renderer);
     if (image->cachedImage() && !image->cachedImage()->errorOccurred())
         return image->cachedImage();
 
-    return 0;
+    return nullptr;
 }
 
 static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& title, CachedImage* image)

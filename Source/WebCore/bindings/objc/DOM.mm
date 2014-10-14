@@ -651,12 +651,12 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
     WebCore::RenderObject* renderer = core(self)->renderer();
-    if (!renderer || !renderer->isRenderImage())
+    if (!is<RenderImage>(renderer))
         return nil;
-    WebCore::CachedImage* cachedImage = toRenderImage(renderer)->cachedImage();
+    WebCore::CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(toRenderImage(renderer))->getNSImage();
+    return cachedImage->imageForRenderer(renderer)->getNSImage();
 }
 #endif
 
@@ -687,10 +687,10 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSData *)_imageTIFFRepresentation
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
-    auto renderer = core(self)->renderer();
-    if (!renderer || !renderer->isRenderImage())
+    auto* renderer = core(self)->renderer();
+    if (!is<RenderImage>(renderer))
         return nil;
-    WebCore::CachedImage* cachedImage = toRenderImage(renderer)->cachedImage();
+    WebCore::CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
     return (NSData *)cachedImage->imageForRenderer(renderer)->getTIFFRepresentation();

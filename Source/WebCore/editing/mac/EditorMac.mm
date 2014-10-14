@@ -401,15 +401,13 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
 {
-    auto renderer = imageElement.renderer();
-    if (!renderer || !renderer->isRenderImage())
+    auto* renderer = imageElement.renderer();
+    if (!is<RenderImage>(renderer))
         return;
 
-    CachedImage* tentativeCachedImage = toRenderImage(renderer)->cachedImage();
-    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred()) {
-        tentativeCachedImage = 0;
+    CachedImage* tentativeCachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
         return;
-    }
 
     image = tentativeCachedImage->imageForRenderer(renderer);
     if (!image)

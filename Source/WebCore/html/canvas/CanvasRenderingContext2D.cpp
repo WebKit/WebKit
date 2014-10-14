@@ -1282,8 +1282,8 @@ static LayoutSize size(HTMLImageElement* image, ImageSizeType sizeType)
     if (CachedImage* cachedImage = image->cachedImage()) {
         size = cachedImage->imageSizeForRenderer(image->renderer(), 1.0f); // FIXME: Not sure about this.
 
-        if (sizeType == ImageSizeAfterDevicePixelRatio && image->renderer() && image->renderer()->isRenderImage() && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
-            size.scale(toRenderImage(image->renderer())->imageDevicePixelRatio());
+        if (sizeType == ImageSizeAfterDevicePixelRatio && is<RenderImage>(image->renderer()) && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
+            size.scale(downcast<RenderImage>(*image->renderer()).imageDevicePixelRatio());
     }
     return size;
 }

@@ -1279,8 +1279,8 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         textOrder.append(AccessibilityText(ariaLabel, AlternativeText));
     
     if (usesAltTagForTextComputation()) {
-        if (renderer() && renderer()->isRenderImage()) {
-            String renderAltText = toRenderImage(renderer())->altText();
+        if (is<RenderImage>(renderer())) {
+            String renderAltText = downcast<RenderImage>(*renderer()).altText();
 
             // RenderImage will return title as a fallback from altText, but we don't want title here because we consider that in helpText.
             if (!renderAltText.isEmpty() && renderAltText != getAttribute(titleAttr)) {

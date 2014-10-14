@@ -317,21 +317,21 @@ void ImageLoader::notifyFinished(CachedResource* resource)
 
 RenderImageResource* ImageLoader::renderImageResource()
 {
-    auto renderer = element().renderer();
+    auto* renderer = element().renderer();
     if (!renderer)
         return nullptr;
 
     // We don't return style generated image because it doesn't belong to the ImageLoader.
     // See <https://bugs.webkit.org/show_bug.cgi?id=42840>
-    if (renderer->isRenderImage() && !toRenderImage(*renderer).isGeneratedContent())
-        return &toRenderImage(*renderer).imageResource();
+    if (is<RenderImage>(*renderer) && !downcast<RenderImage>(*renderer).isGeneratedContent())
+        return &downcast<RenderImage>(*renderer).imageResource();
 
-    if (renderer->isSVGImage())
-        return &toRenderSVGImage(renderer)->imageResource();
+    if (is<RenderSVGImage>(*renderer))
+        return &downcast<RenderSVGImage>(*renderer).imageResource();
 
 #if ENABLE(VIDEO)
-    if (renderer->isVideo())
-        return &toRenderVideo(*renderer).imageResource();
+    if (is<RenderVideo>(*renderer))
+        return &downcast<RenderVideo>(*renderer).imageResource();
 #endif
 
     return nullptr;

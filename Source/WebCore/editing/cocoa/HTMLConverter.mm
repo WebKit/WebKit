@@ -2531,9 +2531,9 @@ static NSFileWrapper *fileWrapperForElement(Element* element)
             wrapper = fileWrapperForURL(loader, URL);
     }
     if (!wrapper) {
-        RenderImage* renderer = toRenderImage(element->renderer());
-        if (renderer->cachedImage() && !renderer->cachedImage()->errorOccurred()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->imageForRenderer(renderer)->getTIFFRepresentation())];
+        auto& renderer = downcast<RenderImage>(*element->renderer());
+        if (renderer.cachedImage() && !renderer.cachedImage()->errorOccurred()) {
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer.cachedImage()->imageForRenderer(&renderer)->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];
         }

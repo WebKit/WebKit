@@ -134,11 +134,9 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
 static Image* imageFromImageElementNode(Node& node)
 {
     RenderObject* renderer = node.renderer();
-    if (!renderer)
+    if (!is<RenderImage>(renderer))
         return nullptr;
-    if (!renderer->isRenderImage())
-        return nullptr;
-    CachedImage* image = toRenderImage(*renderer).cachedImage();
+    CachedImage* image = downcast<RenderImage>(*renderer).cachedImage();
     if (!image || image->errorOccurred())
         return nullptr;
 

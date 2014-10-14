@@ -660,10 +660,10 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 static CachedImage* getCachedImage(Element& element)
 {
     RenderObject* renderer = element.renderer();
-    if (!renderer || !renderer->isRenderImage())
-        return 0;
-    RenderImage* image = toRenderImage(renderer);
-    return image->cachedImage();
+    if (!is<RenderImage>(renderer))
+        return nullptr;
+    auto& image = downcast<RenderImage>(*renderer);
+    return image.cachedImage();
 }
 
 static Image* getImage(Element& element)
@@ -673,7 +673,7 @@ static Image* getImage(Element& element)
     // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
     // which would be empty when asking the cached BitmapImages.
     return (cachedImage && !cachedImage->errorOccurred()) ?
-        cachedImage->image() : 0;
+        cachedImage->image() : nullptr;
 }
 
 static void selectElement(Element& element)

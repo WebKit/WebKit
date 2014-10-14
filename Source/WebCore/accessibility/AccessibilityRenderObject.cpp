@@ -2799,10 +2799,10 @@ void AccessibilityRenderObject::clearChildren()
 void AccessibilityRenderObject::addImageMapChildren()
 {
     RenderBoxModelObject* cssBox = renderBoxModelObject();
-    if (!cssBox || !cssBox->isRenderImage())
+    if (!is<RenderImage>(cssBox))
         return;
     
-    HTMLMapElement* map = toRenderImage(cssBox)->imageMap();
+    HTMLMapElement* map = downcast<RenderImage>(*cssBox).imageMap();
     if (!map)
         return;
 
@@ -2859,10 +2859,10 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
 
 AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
 {
-    if (!m_renderer || !m_renderer->isRenderImage())
+    if (!is<RenderImage>(m_renderer))
         return nullptr;
     
-    CachedImage* cachedImage = toRenderImage(m_renderer)->cachedImage();
+    CachedImage* cachedImage = downcast<RenderImage>(*m_renderer).cachedImage();
     if (!cachedImage)
         return nullptr;
     

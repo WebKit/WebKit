@@ -150,8 +150,8 @@ std::unique_ptr<Shape> ShapeOutsideInfo::createShapeForImage(StyleImage* styleIm
     styleImage->setContainerSizeForRenderer(&m_renderer, imageSize, m_renderer.style().effectiveZoom());
 
     const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_referenceBoxLogicalSize);
-    const LayoutRect& imageRect = m_renderer.isRenderImage()
-        ? toRenderImage(&m_renderer)->replacedContentRect(m_renderer.intrinsicSize())
+    const LayoutRect& imageRect = is<RenderImage>(m_renderer)
+        ? downcast<RenderImage>(m_renderer).replacedContentRect(m_renderer.intrinsicSize())
         : LayoutRect(LayoutPoint(), imageSize);
 
     ASSERT(!styleImage->isPendingImage());

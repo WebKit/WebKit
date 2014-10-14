@@ -1,3 +1,17 @@
+2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderImage
+        https://bugs.webkit.org/show_bug.cgi?id=137683
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for RenderImage.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::cachedImage):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+
 2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][CMake] Non-ninja build is broken since r174422

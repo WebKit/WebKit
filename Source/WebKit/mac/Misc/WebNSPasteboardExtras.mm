@@ -220,13 +220,13 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 {
     Element* element = core(domElement);
     if (!element)
-        return 0;
+        return nullptr;
     
-    RenderObject* renderer = element->renderer();
-    RenderImage* imageRenderer = toRenderImage(renderer);
-    if (!imageRenderer->cachedImage() || imageRenderer->cachedImage()->errorOccurred()) 
-        return 0;        
-    return imageRenderer->cachedImage();
+    ASSERT(element->renderer());
+    auto& imageRenderer = downcast<RenderImage>(*element->renderer());
+    if (!imageRenderer.cachedImage() || imageRenderer.cachedImage()->errorOccurred())
+        return nullptr;
+    return imageRenderer.cachedImage();
 }
 
 - (void)_web_writeImage:(NSImage *)image
@@ -271,12 +271,12 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
 
     NSString *extension = @"";
-    if (RenderObject* renderer = core(element)->renderer()) {
-        if (renderer->isRenderImage()) {
-            if (CachedImage* image = toRenderImage(renderer)->cachedImage()) {
+    if (auto* renderer = core(element)->renderer()) {
+        if (is<RenderImage>(*renderer)) {
+            if (CachedImage* image = downcast<RenderImage>(*renderer).cachedImage()) {
                 extension = image->image()->filenameExtension();
                 if (![extension length])
-                    return 0;
+                    return nullptr;
             }
         }
     }
