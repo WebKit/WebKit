@@ -1,3 +1,18 @@
+2014-10-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [Mac] DRT stderr logging after the test completes gets attributed to the next test
+
+        Reviewed by Alexey Proskuryakov.
+        
+        DRT would send "#EOF" to stderr just after doing so to stdout, which cause any later
+        logging to stderr to get associated with the next test.
+        
+        Fix by logging #EOF to stderr later, after we've completely finished with this test.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpTestResults):
+        (runTest):
+
 2014-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening. Ignore Visual Studio *.sdf temporary files.

@@ -1644,10 +1644,8 @@ void dumpTestResults()
         // This is a speculative fix for: https://bugs.webkit.org/show_bug.cgi?id=32339
         invalidateAnyPreviousWaitToDumpWatchdog();
 
-        if (printSeparators) {
+        if (printSeparators)
             puts("#EOF");       // terminate the content block
-            fputs("#EOF\n", stderr);
-        }            
     }
 
     if (dumpPixelsForCurrentTest && gTestRunner->generatePixelResults())
@@ -1655,9 +1653,7 @@ void dumpTestResults()
         dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
 
     puts("#EOF");   // terminate the (possibly empty) pixels block
-
     fflush(stdout);
-    fflush(stderr);
 
     done = YES;
     CFRunLoopStop(CFRunLoopGetMain());
@@ -1933,6 +1929,9 @@ static void runTest(const string& inputLine)
 
     if (gcBetweenTests)
         [WebCoreStatistics garbageCollectJavaScriptObjects];
+
+    fputs("#EOF\n", stderr);
+    fflush(stderr);
 }
 
 void displayWebView()
