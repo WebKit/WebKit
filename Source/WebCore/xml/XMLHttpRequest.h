@@ -194,7 +194,11 @@ private:
     void changeState(State newState);
     void callReadyStateChangeListener();
     void dropProtection();
-    void internalAbort();
+
+    // Returns false when cancelling the loader within internalAbort() triggers an event whose callback creates a new loader. 
+    // In that case, the function calling internalAbort should exit.
+    bool internalAbort();
+
     void clearResponse();
     void clearResponseBuffers();
     void clearRequest();
