@@ -1,3 +1,11 @@
+2014-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Adding myself to the watchlist to CachedFont
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-10-14  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL][GTK] Make it possible to get verbose output with ninja

@@ -296,7 +296,8 @@
                         r"|LayoutTests/media/media-source/",
         },
         "MacAndIOSTextLayoutAndRendering": {
-            "filename": r"Source/WebCore/rendering/.*Inline.*Box\.(h|cpp)"
+            "filename": r"Source/WebCore/loader/cache/CachedFont\.(h|cpp)"
+                        r"|Source/WebCore/rendering/.*Inline.*Box\.(h|cpp)"
                         r"|Source/WebCore/rendering/InlineIterator\.h"
                         r"|Source/WebCore/rendering/InlineBlockLineLayout\.cpp"
                         r"|Source/WebCore/rendering/RenderCombineText\.(h|cpp)"
