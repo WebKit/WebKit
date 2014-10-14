@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
         for (i = 0; uriArguments[i]; i++)
             createBrowserWindow(uriArguments[i], webkitSettings);
     } else
-        createBrowserWindow("http://www.webkitgtk.org/", webkitSettings);
+        createBrowserWindow(BROWSER_DEFAULT_URL, webkitSettings);
 
     g_clear_object(&webkitSettings);
 
