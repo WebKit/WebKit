@@ -1,3 +1,13 @@
+2014-10-14  Matthew Mirman  <mmirman@apple.com>
+
+        Removes references to LLVMJIT which is no longer part of LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=137708
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/LLVMForJSC.xcconfig: removed -lLLVMJIT
+        * llvm/LLVMAPIFunctions.h: removed LinkInJIT
+
 2014-10-14  peavo@outlook.com  <peavo@outlook.com>
 
         [Win32] Thunk is not implemented.
