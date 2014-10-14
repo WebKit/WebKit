@@ -1,3 +1,52 @@
+2014-10-14  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed gardening following r174585.
+
+        * platform/win/TestExpectations:
+        * platform/win/editing/inserting/4960120-1-expected.txt: Added.
+        * platform/win/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/win/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/win/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/win/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/win/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/win/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/win/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/win/fast/block/positioning/inline-block-relposition-expected.txt: Added.
+        * platform/win/fast/css/resize-corner-tracking-expected.png: Added.
+        * platform/win/fast/css/resize-corner-tracking-expected.txt: Added.
+        * platform/win/fast/css/text-input-with-webkit-border-radius-expected.txt: Added.
+        * platform/win/fast/dom/html-link-element-activation-behavior-url-is-null-expected.txt: Added.
+        * platform/win/fast/dynamic/positioned-movement-with-positioned-children-expected.txt: Added.
+        * platform/win/fast/events/shadow-event-path-2-expected.txt: Added.
+        * platform/win/fast/forms/003-expected.txt: Added.
+        * platform/win/fast/forms/004-expected.txt: Added.
+        * platform/win/fast/forms/button-default-title-expected.txt: Added.
+        * platform/win/fast/forms/button-generated-content-expected.png: Added.
+        * platform/win/fast/forms/button-generated-content-expected.txt: Added.
+        * platform/win/fast/forms/menulist-clip-expected.png: Added.
+        * platform/win/fast/forms/menulist-clip-expected.txt: Added.
+        * platform/win/fast/forms/menulist-deselect-update-expected.txt: Added.
+        * platform/win/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/win/fast/forms/menulist-style-color-expected.txt: Added.
+        * platform/win/fast/forms/menulist-width-change-expected.txt: Added.
+        * platform/win/fast/forms/option-script-expected.txt: Added.
+        * platform/win/fast/forms/option-text-clip-expected.png: Added.
+        * platform/win/fast/forms/option-text-clip-expected.txt: Added.
+        * platform/win/fast/forms/select-writing-direction-natural-expected.png: Added.
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+        * platform/win/fast/forms/textarea-scrollbar-expected.png: Added.
+        * platform/win/fast/forms/textarea-scrollbar-expected.txt: Added.
+        * platform/win/fast/repaint/control-clip-expected.png: Added.
+        * platform/win/fast/repaint/control-clip-expected.txt: Added.
+        * platform/win/fast/repaint/selection-gap-fixed-child-expected.txt: Added.
+        * platform/win/fast/repaint/selection-gap-flipped-fixed-child-expected.txt: Added.
+        * platform/win/fast/table/append-cells2-expected.txt: Added.
+        * platform/win/fast/table/remove-td-display-none-expected.txt: Added.
+        * platform/win/fast/text/atsui-rtl-override-selection-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug30559-expected.txt: Added.
+
 2014-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some compositing tests that are sensitive to the visible rect, and skip
