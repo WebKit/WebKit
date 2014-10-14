@@ -1,3 +1,13 @@
+2014-10-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Fix the make build after r174683
+        https://bugs.webkit.org/show_bug.cgi?id=137703
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (buildCMakeGeneratedProject):
+
 2014-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Adding myself to the watchlist to CachedFont

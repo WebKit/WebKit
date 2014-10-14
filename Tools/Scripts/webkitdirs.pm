@@ -1829,7 +1829,7 @@ sub buildCMakeGeneratedProject($)
         $command = "$buildPath/build.sh";
         @args = ($makeArgs);
     }
-    push @args, "-v" if $ENV{VERBOSE};
+    push @args, "-v" if ($ENV{VERBOSE} && canUseNinja());
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
