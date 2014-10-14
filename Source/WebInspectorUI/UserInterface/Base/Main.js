@@ -163,8 +163,12 @@ WebInspector.loaded = function()
     this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
-    if (this.showJavaScriptTypeInformationSetting.value)
+    if (this.showJavaScriptTypeInformationSetting.value && RuntimeAgent && RuntimeAgent.enableTypeProfiler)
         RuntimeAgent.enableTypeProfiler();
+
+    this.showPaintRectsSetting = new WebInspector.Setting("show-paint-rects", false);
+    if (this.showPaintRectsSetting.value && PageAgent && PageAgent.setShowPaintRects)
+        PageAgent.setShowPaintRects(true);
 
     this.mouseCoords = {
         x: 0,

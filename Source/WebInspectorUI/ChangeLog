@@ -1,5 +1,23 @@
 2014-10-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Paint Flashing button does not match page state after reload
+        https://bugs.webkit.org/show_bug.cgi?id=137680
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Make paint flashing a frontend setting. Enable it when the inspector
+        is opened if it was previously enabled.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype._togglePaintFlashing):
+        (WebInspector.DOMTreeContentView.prototype._showPaintRectsSettingChanged):
+        Have the paint flashing button always match the global setting.
+
+2014-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve appearance of alpha color swatches
         https://bugs.webkit.org/show_bug.cgi?id=137627
 
