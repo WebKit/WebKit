@@ -72,6 +72,7 @@ function installDependenciesWithApt {
         libxss-dev \
         libxt-dev \
         libxtst-dev \
+        ninja-build \
         ragel \
         ruby \
         subversion \

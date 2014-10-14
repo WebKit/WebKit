@@ -1760,8 +1760,8 @@ sub generateBuildSystemFromCMakeProject
     chdir($buildPath) or die;
 
     # For GTK+ we try to be smart about when to rerun cmake, so that we can have faster incremental builds.
-    my $willUseNinja = isGtk() && canUseNinja();
-    if (isGtk() && -e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
+    my $willUseNinja = canUseNinja();
+    if (-e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
         return 0;
     }
 

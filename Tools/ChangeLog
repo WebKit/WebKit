@@ -1,3 +1,14 @@
+2014-10-14  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [EFL] Make it possible to use ninja for EFL build too
+        https://bugs.webkit.org/show_bug.cgi?id=137605
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+        * efl/install-dependencies:
+
 2014-10-14  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [GTK] Minibrowser : Add home buton and keyboard support for home page load
