@@ -2,12 +2,12 @@ Box
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
-  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
   (contentsScale 2.00)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
-      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
       (contentsScale 2.00)
       (children 1
         (GraphicsLayer

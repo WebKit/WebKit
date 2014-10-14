@@ -7,12 +7,12 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 807.00 600.00)
-  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
   (contentsScale 2.00)
   (children 1
     (GraphicsLayer
       (bounds 807.00 600.00)
-      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
       (contentsScale 2.00)
       (children 6
         (GraphicsLayer
@@ -61,7 +61,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
           (position 9.00 135.00)
           (bounds 798.00 20.00)
           (drawsContent 1)
-          (visible rect 0.00, 0.00 311.00 x 20.00)
+          (visible rect 0.00, 0.00 791.00 x 20.00)
           (contentsScale 2.00)
         )
       )

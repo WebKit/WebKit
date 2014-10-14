@@ -2,19 +2,19 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 1508.00 1516.00)
-  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
   (contentsScale 2.00)
   (children 1
     (GraphicsLayer
       (bounds 1508.00 1516.00)
-      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
       (contentsScale 2.00)
       (children 2
         (GraphicsLayer
           (position 10.00 10.00)
           (bounds 360.00 210.00)
           (drawsContent 1)
-          (visible rect 0.00, 0.00 310.00 x 210.00)
+          (visible rect 0.00, 0.00 360.00 x 210.00)
           (contentsScale 2.00)
           (children 1
             (GraphicsLayer
@@ -25,7 +25,7 @@
                 (GraphicsLayer
                   (anchor 0.00 0.00)
                   (bounds 300.00 150.00)
-                  (visible rect 0.00, 0.00 280.00 x 150.00)
+                  (visible rect 0.00, 0.00 300.00 x 150.00)
                   (contentsScale 2.00)
                   (children 1
                     (GraphicsLayer
@@ -35,14 +35,14 @@
                         (GraphicsLayer
                           (anchor 0.00 0.00)
                           (bounds 1508.00 1516.00)
-                          (visible rect 0.00, 0.00 280.00 x 150.00)
+                          (visible rect 0.00, 0.00 300.00 x 150.00)
                           (contentsScale 2.00)
                           (children 1
                             (GraphicsLayer
                               (bounds 1508.00 1516.00)
                               (usingTiledLayer 1)
                               (drawsContent 1)
-                              (visible rect 0.00, 0.00 280.00 x 150.00)
+                              (visible rect 0.00, 0.00 300.00 x 150.00)
                               (contentsScale 2.00)
                               (children 1
                                 (GraphicsLayer

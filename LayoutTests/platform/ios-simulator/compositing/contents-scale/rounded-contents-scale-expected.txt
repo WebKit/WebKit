@@ -1,19 +1,19 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
-  (visible rect 0.00, 0.00 320.00 x 460.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
   (contentsScale 2.00)
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
-      (visible rect 0.00, 0.00 320.00 x 460.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
       (contentsScale 2.00)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 784.00 512.00)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.78 0.51 1.00 -0.00] [0.00 0.00 0.00 1.00])
-          (visible rect 0.00, 0.00 312.00 x 452.00)
+          (visible rect 0.00, 0.00 784.00 x 512.00)
           (contentsScale 2.00)
           (children 6
             (GraphicsLayer
@@ -56,7 +56,7 @@
               (contentsOpaque 1)
               (drawsContent 1)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 100.00 1.00])
-              (visible rect 0.00, 0.00 102.00 x 33.60)
+              (visible rect 0.00, 0.00 102.00 x 102.00)
               (contentsScale 2.00)
             )
             (GraphicsLayer
@@ -65,7 +65,7 @@
               (contentsOpaque 1)
               (drawsContent 1)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 150.00 1.00])
-              (visible rect 0.00, 0.00 0.00 x 0.00)
+              (visible rect 0.00, 0.00 102.00 x 4.40)
               (contentsScale 2.00)
             )
           )

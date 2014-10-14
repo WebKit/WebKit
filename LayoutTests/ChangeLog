@@ -1,3 +1,38 @@
+2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some compositing tests that are sensitive to the visible rect, and skip
+        tests that rely on media loading.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/compositing/columns/hittest-composited-in-paginated-expected.txt:
+        * platform/ios-simulator/compositing/contents-scale/animating-expected.txt:
+        * platform/ios-simulator/compositing/contents-scale/rounded-contents-scale-expected.txt:
+        * platform/ios-simulator/compositing/contents-scale/scaled-ancestor-expected.txt:
+        * platform/ios-simulator/compositing/contents-scale/simple-scale-expected.txt:
+        * platform/ios-simulator/compositing/contents-scale/z-translate-expected.txt:
+        * platform/ios-simulator/compositing/geometry/partial-layout-update-expected.txt:
+        * platform/ios-simulator/compositing/geometry/root-layer-update-expected.txt:
+        * platform/ios-simulator/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt:
+        * platform/ios-simulator/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * platform/ios-simulator/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+        * platform/ios-simulator/compositing/overflow/overflow-positioning-expected.txt:
+        * platform/ios-simulator/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/ios-simulator/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/ios-simulator/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/ios-simulator/compositing/tiling/tiled-layer-resize-expected.txt:
+        * platform/ios-simulator/compositing/transitions/singular-scale-transition-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/2d-transformed-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/3d-transform-style-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/3d-transformed-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/animated-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/animated-from-none-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/flipped-preserve-3d-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/iframe-and-layers-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/nested-transform-expected.txt:
+        * platform/ios-simulator/compositing/visible-rect/scrolled-expected.txt:
+
 2014-10-14  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r174567): [GTK] Layout Tests platform/gtk/accessibility/aria-table-hierarchy.html and platform/gtk/accessibility/table-hierarchy.html fail

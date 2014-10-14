@@ -1,2 +1,18 @@
-CONSOLE MESSAGE: line 12: TypeError: null is not an object (evaluating 'document.elementFromPoint(500, 200).classList')
-Layer tree goes here in DRT
+Element at 500, 200: composited box
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 810.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 810.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 428.00 130.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

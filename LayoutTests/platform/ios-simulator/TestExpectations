@@ -12,6 +12,22 @@ batterystatus
 # no plug-ins on iOS
 compositing/plugins
 
+# tests that rely on media loading
+compositing/geometry/clipped-video-controller.html [ Skip ]
+compositing/geometry/video-fixed-scrolling.html [ Skip ]
+compositing/geometry/video-opacity-overlay.html [ Skip ]
+compositing/regions/floated-region-with-transformed-child.html [ Skip ]
+compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
+compositing/regions/transform-transparent-positioned-video-inside-region.html [ Skip ]
+compositing/regions/video-in-overflow-region.html [ Skip ]
+compositing/self-painting-layers2.html [ Skip ]
+compositing/video-page-visibility.html [ Skip ]
+compositing/video/video-background-color.html [ Skip ]
+compositing/video/video-object-fit.html [ Skip ]
+compositing/video/video-poster.html [ Skip ]
+compositing/video/video-reflection.html [ Skip ]
+compositing/visibility/visibility-simple-video-layer.html [ Skip ]
+
 # no fullscreen API on iOS
 fullscreen
 http/tests/fullscreen
