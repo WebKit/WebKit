@@ -1,3 +1,56 @@
+2014-10-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Refactor AirPlay monitoring code
+        https://bugs.webkit.org/show_bug.cgi?id=137645
+        <rdar://problem/18444817>
+
+        Reviewed by Jer Noble.
+
+        Refactor AirPlay route change monitoring code:
+        + Have MediaSessionManager register/unregister for route changes depending on the state of
+            all sessions so it does the right thing when there is more than one media element.
+        + Make HTMLMediaElement unregister with MediaSession as soon as the media player is cleared
+            because there can be no wireless playback without a player.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call mediaSession->setHasPlaybackTargetAvailabilityListeners
+            when there are target availability changed listeners.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Ditto.
+        (WebCore::HTMLMediaElement::wirelessRoutesAvailableDidChange): New, media session client method.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::HTMLMediaSession): Initialize m_hasPlaybackTargetAvailabilityListeners.
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners): Remember whether or not
+            the client has a target availability listener and tell the media session manager to reconfigure
+            itself instead of telling it to start or stop listening for route changes so it does the 
+            right thing when there is more than one media element.
+        * html/HTMLMediaSession.h:
+        (WebCore::HTMLMediaSession::requiresPlaybackTargetRouteMonitoring): Return true when the client 
+            has a target availability listener, false otherwise.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::wirelessRoutesAvailableDidChange): Inform the client that routes have changed.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSession::requiresPlaybackTargetRouteMonitoring):
+        (WebCore::MediaSessionClient::wirelessRoutesAvailableDidChange):
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::wirelessRoutesAvailableChanged): Implement it.
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::configureWireLessTargetMonitoring):
+        (WebCore::MediaSessionManager::hasWirelessTargetsAvailable):
+        (WebCore::MediaSessionManager::sessions):
+        (WebCore::MediaSessionManager::startMonitoringAirPlayRoutes): Deleted.
+        (WebCore::MediaSessionManager::stopMonitoringAirPlayRoutes): Deleted.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::configureWireLessTargetMonitoring): Start or stop monitoring
+            for route changes depending on client state.
+        (WebCore::MediaSessionManageriOS::startMonitoringAirPlayRoutes): Deleted.
+        (WebCore::MediaSessionManageriOS::stopMonitoringAirPlayRoutes): Deleted.
+
 2014-10-13  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Return value of createImageSourceOptions() is leaked in ImageSourceCG

@@ -88,7 +88,10 @@ public:
 #endif
 
 private:
+    virtual bool requiresPlaybackTargetRouteMonitoring() const { return m_hasPlaybackTargetAvailabilityListeners; }
+
     BehaviorRestrictions m_restrictions;
+    bool m_hasPlaybackTargetAvailabilityListeners;
 };
 
 }

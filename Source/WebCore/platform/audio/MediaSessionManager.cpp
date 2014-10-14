@@ -282,7 +282,10 @@ void MediaSessionManager::applicationWillEnterForeground() const
 
 void MediaSessionManager::wirelessRoutesAvailableChanged()
 {
-    notImplemented();
+    LOG(Media, "MediaSessionManager::wirelessRoutesAvailableChanged");
+    Vector<MediaSession*> sessions = m_sessions;
+    for (auto* session : sessions)
+        session->wirelessRoutesAvailableDidChange();
 }
 
 #if !PLATFORM(COCOA)

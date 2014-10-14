@@ -396,7 +396,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(IOS_AIRPLAY)
-    if (!hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
 #endif
 
@@ -4638,6 +4638,11 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     closeMediaSource();
 #endif
 
+#if ENABLE(IOS_AIRPLAY)
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+        m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+#endif
+
     m_player.clear();
 
     stopPeriodicTimers();
@@ -4782,6 +4787,11 @@ void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
 {
     return m_mediaSession->currentPlaybackTargetIsWireless(*this);
+}
+
+void HTMLMediaElement::wirelessRoutesAvailableDidChange()
+{
+    enqueuePlaybackTargetAvailabilityChangedEvent();
 }
 
 void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*)

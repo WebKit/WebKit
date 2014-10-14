@@ -149,20 +149,27 @@ void MediaSessionManageriOS::resetRestrictions()
 }
 
 #if ENABLE(IOS_AIRPLAY)
-
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {
     return [m_objcObserver hasWirelessTargetsAvailable];
 }
 
-void MediaSessionManageriOS::startMonitoringAirPlayRoutes()
+void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 {
-    [m_objcObserver startMonitoringAirPlayRoutes];
-}
+    Vector<MediaSession*> sessions = this->sessions();
+    bool requiresMonitoring = false;
 
-void MediaSessionManageriOS::stopMonitoringAirPlayRoutes()
-{
-    [m_objcObserver stopMonitoringAirPlayRoutes];
+    for (auto* session : sessions) {
+        if (session->requiresPlaybackTargetRouteMonitoring()) {
+            requiresMonitoring = true;
+            break;
+        }
+    }
+
+    if (requiresMonitoring)
+        [m_objcObserver startMonitoringAirPlayRoutes];
+    else
+        [m_objcObserver stopMonitoringAirPlayRoutes];
 }
 #endif
     

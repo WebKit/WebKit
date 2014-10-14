@@ -77,6 +77,7 @@ std::unique_ptr<HTMLMediaSession> HTMLMediaSession::create(MediaSessionClient& c
 HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
     : MediaSession(client)
     , m_restrictions(NoRestrictions)
+    , m_hasPlaybackTargetAvailabilityListeners(false)
 {
 }
 
@@ -247,10 +248,8 @@ void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMedia
     LOG(Media, "HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners - hasListeners %s", hasListeners ? "TRUE" : "FALSE");
     UNUSED_PARAM(element);
 
-    if (hasListeners)
-        MediaSessionManager::sharedManager().startMonitoringAirPlayRoutes();
-    else
-        MediaSessionManager::sharedManager().stopMonitoringAirPlayRoutes();
+    m_hasPlaybackTargetAvailabilityListeners = hasListeners;
+    MediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 }
 #endif
 

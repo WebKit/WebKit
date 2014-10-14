@@ -107,6 +107,9 @@ public:
     bool canReceiveRemoteControlCommands() const;
     void didReceiveRemoteControlCommand(RemoteControlCommandType);
 
+    virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
+    void wirelessRoutesAvailableDidChange() const;
+
 protected:
     MediaSessionClient& client() const { return m_client; }
 
@@ -146,6 +149,8 @@ public:
 
     virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics) const = 0;
     virtual void mediaStateDidChange() { }
+
+    virtual void wirelessRoutesAvailableDidChange() { }
 
 protected:
     virtual ~MediaSessionClient() { }
