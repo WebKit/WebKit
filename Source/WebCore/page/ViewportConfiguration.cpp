@@ -82,6 +82,7 @@ void ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutS
         return;
 
     m_minimumLayoutSize = minimumLayoutSize;
+    updateConfiguration();
 }
 
 void ViewportConfiguration::setMinimumLayoutSizeForMinimalUI(const FloatSize& minimumLayoutSizeForMinimalUI)
@@ -90,6 +91,7 @@ void ViewportConfiguration::setMinimumLayoutSizeForMinimalUI(const FloatSize& mi
         return;
 
     m_minimumLayoutSizeForMinimalUI = minimumLayoutSizeForMinimalUI;
+    updateConfiguration();
 }
 
 const FloatSize& ViewportConfiguration::activeMinimumLayoutSizeInScrollViewCoordinates() const
