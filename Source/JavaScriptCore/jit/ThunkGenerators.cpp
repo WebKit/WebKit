@@ -808,6 +808,31 @@ double jsRound(double d)
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
+#elif CPU(X86) && COMPILER(MSVC) && OS(WINDOWS)
+
+// MSVC does not accept floor, etc, to be called directly from inline assembly, so we need to wrap these functions.
+static double (_cdecl *floorFunction)(double) = floor;
+static double (_cdecl *ceilFunction)(double) = ceil;
+static double (_cdecl *expFunction)(double) = exp;
+static double (_cdecl *logFunction)(double) = log;
+static double (_cdecl *jsRoundFunction)(double) = jsRound;
+
+#define defineUnaryDoubleOpWrapper(function) \
+    extern "C" __declspec(naked) MathThunkCallingConvention function##Thunk(MathThunkCallingConvention) \
+    { \
+        __asm \
+        { \
+        __asm sub esp, 20 \
+        __asm movsd mmword ptr [esp], xmm0  \
+        __asm call function##Function \
+        __asm fstp qword ptr [esp] \
+        __asm movsd xmm0, mmword ptr [esp] \
+        __asm add esp, 20 \
+        __asm ret \
+        } \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
 #else
 
 #define defineUnaryDoubleOpWrapper(function) \
