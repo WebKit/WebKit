@@ -3269,6 +3269,7 @@ void Document::updateViewportUnitsOnResize()
     }
 }
 
+#if ENABLE(VIDEO)
 void Document::registerMediaSession(MediaSession& mediaSession)
 {
     m_mediaSessions.add(&mediaSession);
@@ -3299,6 +3300,7 @@ void Document::updateIsPlayingAudio()
     if (page())
         page()->updateIsPlayingAudio();
 }
+#endif
 
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 {

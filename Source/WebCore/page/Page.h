@@ -436,8 +436,10 @@ public:
     WEBCORE_EXPORT void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
+#if ENABLE(VIDEO)
     bool isPlayingAudio() const { return m_isPlayingAudio; }
     void updateIsPlayingAudio();
+#endif
 
 private:
     WEBCORE_EXPORT void initGroup();

@@ -1289,10 +1289,12 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
+#if ENABLE(VIDEO)
     void registerMediaSession(MediaSession&);
     void unregisterMediaSession(MediaSession&);
     bool isPlayingAudio() const { return m_isPlayingAudio; }
     void updateIsPlayingAudio();
+#endif
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
