@@ -2141,9 +2141,6 @@ webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
 
-webkit.org/b/137697 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure ]
-webkit.org/b/137697 platform/gtk/accessibility/table-hierarchy.html [ Failure ]
-
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 

@@ -1,3 +1,19 @@
+2014-10-14  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION(r174567): [GTK] Layout Tests platform/gtk/accessibility/aria-table-hierarchy.html and platform/gtk/accessibility/table-hierarchy.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=137697
+
+        These tests were overlooked when updating tests to reflect the correct
+        mapping for ColumnHeaderRole and RowHeaderRole in ATK.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/TestExpectations: Remove two failing tests.
+        * platform/gtk/accessibility/aria-table-hierarchy-expected.txt: Updated expectations.
+        * platform/gtk/accessibility/aria-table-hierarchy.html: Updated in-test shouldBe values for headers.
+        * platform/gtk/accessibility/table-hierarchy-expected.txt: Updated expectations.
+        * platform/gtk/accessibility/table-hierarchy.html: Updated in-test shouldBe values for headers.
+
 2014-10-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

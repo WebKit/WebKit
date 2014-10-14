@@ -33,8 +33,8 @@ PASS children is 2
 PASS table1.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table1.childAtIndex(i).role is 'AXRole: AXCell'
 PASS children is 6
-PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
-PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(0).role is 'AXRole: AXRowHeader'
+PASS table2.childAtIndex(1).role is 'AXRole: AXRowHeader'
 PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
@@ -43,8 +43,8 @@ PASS children is 2
 PASS table3.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table3.childAtIndex(i).role is 'AXRole: AXCell'
 PASS children is 6
-PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
-PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(0).role is 'AXRole: AXRowHeader'
+PASS table4.childAtIndex(1).role is 'AXRole: AXRowHeader'
 PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
 PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
