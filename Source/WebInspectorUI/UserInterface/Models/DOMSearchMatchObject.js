@@ -97,6 +97,10 @@ WebInspector.DOMSearchMatchObject.prototype = {
         case Node.CDATA_SECTION_NODE:
             return WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName;
 
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
+            return WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
+
         default:
             console.error("Unknown DOM node type: ", this._domNode.nodeType());
             return WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName;
@@ -109,13 +113,11 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
     switch (domNode.nodeType()) {
     case Node.ELEMENT_NODE:
         var title = "<" + domNode.nodeNameInCorrectCase();
-
-        for (var i = 0; i < domNode.attributes().length; ++i) {
-            title += " " + domNode.attributes()[i].name;
-            if (domNode.attributes()[i].value.length)
-                title += "=\"" + domNode.attributes()[i].value + "\"";
+        for (var attribute of domNode.attributes()) {
+            title += " " + attribute.name;
+            if (attribute.value.length)
+                title += "=\"" + attribute.value + "\"";
         }
-
         return title + ">";
 
     case Node.TEXT_NODE:
@@ -140,6 +142,12 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
 
     case Node.CDATA_SECTION_NODE:
         return "<![CDATA[" + domNode + "]]>";
+
+    case Node.PROCESSING_INSTRUCTION_NODE:
+        var data = domNode.nodeValue();
+        var dataString = data.length ? " " + data : "";
+        var title = "<?" + domNode.nodeNameInCorrectCase() + dataString + "?>";
+        return title;
 
     default:
         console.error("Unknown DOM node type: ", domNode.nodeType());

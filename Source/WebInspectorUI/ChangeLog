@@ -1,3 +1,29 @@
+2014-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Processing Instruction Nodes appear poorly in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=137681
+
+        Reviewed by Timothy Hatcher.
+
+        Handle processing instruction node types in more places. The
+        backend sends the contents as a pure string, not as attribute
+        pairs, so just include the string in the UI.
+
+        * UserInterface/Models/DOMSearchMatchObject.js:
+        (WebInspector.DOMSearchMatchObject.prototype._generateClassName):
+        (WebInspector.DOMSearchMatchObject.titleForDOMNode):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        Display the value in the UI.
+
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        (WebInspector.DOMTreeElementPathComponent):
+        Include an icon like DOCTYPE.
+
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.syntax-highlighted .html-processing-instruction):
+        Style gray like a DOCTYPE.
+
 2014-10-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Paint Flashing button does not match page state after reload

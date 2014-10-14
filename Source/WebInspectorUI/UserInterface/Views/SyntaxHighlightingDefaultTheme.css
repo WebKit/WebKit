@@ -90,7 +90,8 @@
 }
 
 .cm-s-default .cm-m-xml.cm-meta,
-.syntax-highlighted .html-doctype {
+.syntax-highlighted .html-doctype,
+.syntax-highlighted .html-processing-instruction {
     color: rgb(192, 192, 192);
 }
 

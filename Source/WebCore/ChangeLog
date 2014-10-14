@@ -1,3 +1,15 @@
+2014-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Processing Instruction Nodes appear poorly in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=137681
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        Include the nodeName, localName, and nodeValue (string data)
+        properties for processing instruction nodes.
+
 2014-10-14  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderFrame / RenderFrameSet

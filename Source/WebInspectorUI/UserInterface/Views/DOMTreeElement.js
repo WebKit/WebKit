@@ -1205,6 +1205,15 @@ WebInspector.DOMTreeElement.prototype = {
                 var cdataElement = info.titleDOM.createChild("span", "html-text-node");
                 cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue() + "]]>"));
                 break;
+
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                var processingInstructionElement = info.titleDOM.createChild("span", "html-processing-instruction");
+                var data = node.nodeValue();
+                var dataString = data.length ? " " + data : "";
+                var title = "<?" + node.nodeNameInCorrectCase() + dataString + "?>";
+                processingInstructionElement.appendChild(document.createTextNode(title));
+                break;
+
             default:
                 var defaultElement = info.titleDOM.appendChild(document.createTextNode(node.nodeNameInCorrectCase().collapseWhitespace()));
         }

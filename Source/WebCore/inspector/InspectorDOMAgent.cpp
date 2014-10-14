@@ -1233,6 +1233,10 @@ PassRefPtr<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode
     String nodeValue;
 
     switch (node->nodeType()) {
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        nodeName = node->nodeName();
+        localName = node->localName();
+        FALLTHROUGH;
     case Node::TEXT_NODE:
     case Node::COMMENT_NODE:
     case Node::CDATA_SECTION_NODE:
