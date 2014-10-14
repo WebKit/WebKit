@@ -3658,6 +3658,11 @@ static inline IMP getMethod(id o, SEL s)
         if (rect.isEmpty())
             continue;
 
+        // Note that these rectangles are in the coordinate system of the document (inside the WebHTMLView), which is not
+        // the same as the coordinate system of the WebView. If you want to do comparisons with locations in the WebView,
+        // you must convert between the two using WAKView's convertRect:toView: selector. This will take care of scaling
+        // and translations (which are relevant for right-to-left column layout).
+
         // The event region wants this points in this order:
         //  p2------p3
         //  |       |

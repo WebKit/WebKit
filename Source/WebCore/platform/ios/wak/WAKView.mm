@@ -754,7 +754,20 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 {
     NSMutableString *description = [NSMutableString stringWithFormat:@"<%@: WAK: %p (WK: %p); ", [self class], self, viewRef];
 
+    float scale = [self scale];
+    if (scale != 1)
+        [description appendFormat:@"scale = %g ", scale];
+
+    CGPoint origin = WKViewGetOrigin(viewRef);
+    if (origin.x || origin.y)
+        [description appendFormat:@"origin = (%g %g) ", origin.x, origin.y];
+
+    CGRect bounds = [self bounds];
     CGRect frame = [self frame];
+
+    if (frame.origin.x != bounds.origin.x || frame.origin.y != bounds.origin.y || frame.size.width != bounds.size.width || frame.size.height != bounds.size.height)
+        [description appendFormat:@"bounds = (%g %g; %g %g) ", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
+
     [description appendFormat:@"frame = (%g %g; %g %g)>", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
 
     return description;

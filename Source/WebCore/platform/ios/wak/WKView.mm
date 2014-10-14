@@ -143,6 +143,16 @@ CGRect WKViewGetFrame (WKViewRef view)
     return WKViewConvertRectToSuperview(view, view->bounds);
 }
 
+CGPoint WKViewGetOrigin(WKViewRef view)
+{
+    if (!view) {
+        WKError("invalid parameter");
+        return CGPointZero;
+    }
+
+    return view->origin;
+}
+
 static void _WKViewRecursivelyInvalidateGState(WKViewRef view)
 {
     if (!view) {

@@ -112,6 +112,8 @@ void WKViewSetBoundsSize (WKViewRef view, CGSize newSize);
 
 WEBCORE_EXPORT CGRect WKViewGetFrame (WKViewRef view);
 
+CGPoint WKViewGetOrigin(WKViewRef);
+
 WEBCORE_EXPORT void WKViewSetScale (WKViewRef view, float scale);
 WEBCORE_EXPORT float WKViewGetScale (WKViewRef view);
 CGAffineTransform _WKViewGetTransform(WKViewRef view);

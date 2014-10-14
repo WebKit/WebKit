@@ -1,3 +1,18 @@
+2014-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve debug description of WAKViews
+        https://bugs.webkit.org/show_bug.cgi?id=137716
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * platform/ios/wak/WAKView.mm:
+        (-[WAKView description]):
+        * platform/ios/wak/WKView.h:
+        * platform/ios/wak/WKView.mm:
+        (WKViewGetOrigin):
+
 2014-10-14  Chris Dumez  <cdumez@apple.com>
 
         Introduce an isCSSAnimated flag on RenderElement for performance
