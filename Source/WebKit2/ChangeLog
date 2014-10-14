@@ -1,3 +1,13 @@
+2014-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Hide the find indicator when starting a swipe
+        https://bugs.webkit.org/show_bug.cgi?id=137711
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+
 2014-10-14  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderImage
