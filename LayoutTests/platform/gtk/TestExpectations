@@ -107,7 +107,7 @@ Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass 
 
 # Mac Safari under certain circumstances automatically places
 # a caret in editable document even when none was requested programatically.
-editing/selection/designmode-no-caret.html [ WontFix Missing ]
+editing/selection/designmode-no-caret.html [ Skip ]
 
 # These tests require loading a PDF as an image, which we do not support (via Chromium).
 fast/images/pdf-as-image-landscape.html [ WontFix Failure ]
@@ -443,17 +443,6 @@ webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnly
 
 webkit.org/b/133806 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
 
-webkit.org/b/137615 css3/selectors3/html/css3-modsel-61.html [ Failure ]
-webkit.org/b/137615 css3/selectors3/html/css3-modsel-83.html [ Failure ]
-webkit.org/b/137615 css3/selectors3/xhtml/css3-modsel-61.xml [ Failure ]
-webkit.org/b/137615 css3/selectors3/xhtml/css3-modsel-83.xml [ Failure ]
-webkit.org/b/137615 css3/selectors3/xml/css3-modsel-61.xml [ Failure ]
-webkit.org/b/137615 css3/selectors3/xml/css3-modsel-83.xml [ Failure ]
-webkit.org/b/137615 fast/selectors/061.html [ Failure ]
-webkit.org/b/137615 fast/selectors/083.html [ Failure ]
-
-webkit.org/b/137618 mathml/opentype/horizontal.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -696,6 +685,7 @@ webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events.
 webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure Pass ]
 
 webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
+webkit.org/b/118460 media/video-duration-known-after-eos.html [ Timeout Pass ]
 
 webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Failure Pass ]
 
@@ -1161,6 +1151,8 @@ webkit.org/b/135531 fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Time
 webkit.org/b/136069 fast/forms/mailto/formenctype-attribute-input-2.html [ Timeout Pass ]
 
 webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout Pass ]
+
+webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2146,6 +2138,14 @@ webkit.org/b/136673 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
+
+webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
+
+webkit.org/b/137697 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure ]
+webkit.org/b/137697 platform/gtk/accessibility/table-hierarchy.html [ Failure ]
+
+# Incomplete implementation of eventSender causes this test to fail
+webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
