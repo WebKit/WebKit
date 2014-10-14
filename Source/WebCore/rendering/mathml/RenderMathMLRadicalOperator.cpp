@@ -72,12 +72,12 @@ void RenderMathMLRadicalOperator::stretchTo(LayoutUnit heightAboveBaseline, Layo
     RenderMathMLOperator::stretchTo(heightAboveBaseline, depthBelowBaseline);
 }
 
-void RenderMathMLRadicalOperator::SetOperatorProperties()
+void RenderMathMLRadicalOperator::setOperatorProperties()
 {
-    RenderMathMLOperator::SetOperatorProperties();
+    RenderMathMLOperator::setOperatorProperties();
     // We remove spacing around the radical symbol.
-    m_leadingSpace = 0;
-    m_trailingSpace = 0;
+    setLeadingSpace(0);
+    setTrailingSpace(0);
 }
 
 void RenderMathMLRadicalOperator::computePreferredLogicalWidths()
@@ -174,32 +174,6 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     line.addLineTo(dipLeftPoint);
 
     info.context->strokePath(line);
-}
-
-LayoutUnit RenderMathMLRadicalOperator::trailingSpaceError()
-{
-    const auto& primaryFontData = style().font().primaryFont();
-    if (!primaryFontData || !primaryFontData->mathData())
-        return 0;
-
-    // For OpenType MATH font, the layout is based on RenderMathOperator for which the preferred width is sometimes overestimated (bug https://bugs.webkit.org/show_bug.cgi?id=130326).
-    // Hence we determine the error in the logical width with respect to the actual width of the glyph(s) used to paint the radical.
-    LayoutUnit width = logicalWidth();
-
-    if (m_stretchyData.mode() == DrawNormal) {
-        GlyphData data = style().font().glyphDataForCharacter(m_operator, !style().isLeftToRightDirection());
-        return width - advanceForGlyph(data);
-    }
-
-    if (m_stretchyData.mode() == DrawSizeVariant)
-        return width - advanceForGlyph(m_stretchyData.variant());
-
-    float assemblyWidth = advanceForGlyph(m_stretchyData.top());
-    assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.bottom()));
-    assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.extension()));
-    if (m_stretchyData.middle().glyph)
-        assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.middle()));
-    return width - assemblyWidth;
 }
 
 }

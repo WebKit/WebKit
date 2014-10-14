@@ -1139,7 +1139,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<Rende
     : RenderMathMLToken(element, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
-    , m_operator(0)
+    , m_textContent(0)
     , m_isVertical(true)
 {
     updateTokenContent();
@@ -1149,7 +1149,7 @@ RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderSty
     : RenderMathMLToken(document, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
-    , m_operator(0)
+    , m_textContent(0)
     , m_isVertical(true)
     , m_operatorForm(form)
     , m_operatorFlags(flags)
@@ -1196,10 +1196,10 @@ void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOper
     m_trailingSpace = entry->rspace * style().font().size() / 18;
 }
 
-void RenderMathMLOperator::SetOperatorProperties()
+void RenderMathMLOperator::setOperatorProperties()
 {
     // We determine the stretch direction (default is vertical).
-    m_isVertical = !(tryBinarySearch<const UChar, UChar>(MathMLOperatorDictionary::horizontalOperators, WTF_ARRAY_LENGTH(MathMLOperatorDictionary::horizontalOperators), m_operator, MathMLOperatorDictionary::ExtractKeyHorizontal));
+    m_isVertical = !(tryBinarySearch<const UChar, UChar>(MathMLOperatorDictionary::horizontalOperators, WTF_ARRAY_LENGTH(MathMLOperatorDictionary::horizontalOperators), m_textContent, MathMLOperatorDictionary::ExtractKeyHorizontal));
 
     // We determine the form of the operator.
     bool explicitForm = true;
@@ -1235,16 +1235,16 @@ void RenderMathMLOperator::SetOperatorProperties()
     m_minSize = style().font().size(); // This sets minsize to "1em".
     m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
 
-    if (m_operator) {
+    if (m_textContent) {
         // Then we try to find the default values from the operator dictionary.
-        if (const MathMLOperatorDictionary::Entry* entry = tryBinarySearch<const MathMLOperatorDictionary::Entry, MathMLOperatorDictionary::Key>(MathMLOperatorDictionary::dictionary, MATHML_OPDICT_SIZE, MathMLOperatorDictionary::Key(m_operator, m_operatorForm), MathMLOperatorDictionary::ExtractKey))
+        if (const MathMLOperatorDictionary::Entry* entry = tryBinarySearch<const MathMLOperatorDictionary::Entry, MathMLOperatorDictionary::Key>(MathMLOperatorDictionary::dictionary, MATHML_OPDICT_SIZE, MathMLOperatorDictionary::Key(m_textContent, m_operatorForm), MathMLOperatorDictionary::ExtractKey))
             setOperatorPropertiesFromOpDictEntry(entry);
         else if (!explicitForm) {
             // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
             // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where the inner parenthesis should not be considered infix.
-            if (const MathMLOperatorDictionary::Entry* entry = tryBinarySearch<const MathMLOperatorDictionary::Entry, UChar>(MathMLOperatorDictionary::dictionary, MATHML_OPDICT_SIZE, m_operator, MathMLOperatorDictionary::ExtractChar)) {
+            if (const MathMLOperatorDictionary::Entry* entry = tryBinarySearch<const MathMLOperatorDictionary::Entry, UChar>(MathMLOperatorDictionary::dictionary, MATHML_OPDICT_SIZE, m_textContent, MathMLOperatorDictionary::ExtractChar)) {
                 // If the previous entry is another form for that operator, we move to that entry. Note that it only remains at most two forms so we don't need to move any further.
-                if (entry != MathMLOperatorDictionary::dictionary && (entry-1)->character == m_operator)
+                if (entry != MathMLOperatorDictionary::dictionary && (entry-1)->character == m_textContent)
                     entry--;
                 m_operatorForm = entry->form; // We override the form previously determined.
                 setOperatorPropertiesFromOpDictEntry(entry);
@@ -1287,7 +1287,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     m_stretchHeightAboveBaseline = heightAboveBaseline;
     m_stretchDepthBelowBaseline = depthBelowBaseline;
 
-    SetOperatorProperties();
+    setOperatorProperties();
     if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
         // We make the operator stretch symmetrically above and below the axis.
         // FIXME: We should read the axis from the MATH table (https://bugs.webkit.org/show_bug.cgi?id=122297). For now, we use the same value as in RenderMathMLFraction::firstLineBaseline().
@@ -1318,7 +1318,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
 
     m_stretchWidth = width;
 
-    SetOperatorProperties();
+    setOperatorProperties();
 
     updateStyle();
 }
@@ -1351,12 +1351,12 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    SetOperatorProperties();
+    setOperatorProperties();
     if (!shouldAllowStretching()) {
         RenderMathMLToken::computePreferredLogicalWidths();
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
-            GlyphData data = style().font().glyphDataForCharacter(m_operator, false);
+            GlyphData data = style().font().glyphDataForCharacter(m_textContent, false);
             float glyphWidth = advanceForGlyph(data);
             ASSERT(glyphWidth <= m_minPreferredLogicalWidth);
             m_minPreferredLogicalWidth -= glyphWidth;
@@ -1365,7 +1365,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
-    GlyphData data = style().font().glyphDataForCharacter(m_operator, !style().isLeftToRightDirection());
+    GlyphData data = style().font().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
     float maximumGlyphWidth = advanceForGlyph(data);
     if (!m_isVertical) {
         if (maximumGlyphWidth < stretchSize())
@@ -1376,12 +1376,12 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     }
     if (isLargeOperatorInDisplayStyle()) {
         // Large operators in STIX Word have incorrect advance width, causing misplacement of superscript, so we use the glyph bound instead (http://sourceforge.net/p/stixfonts/tracking/49/).
-        StretchyData largeOperator = getDisplayStyleLargeOperator(m_operator);
+        StretchyData largeOperator = getDisplayStyleLargeOperator(m_textContent);
         if (largeOperator.mode() == DrawSizeVariant)
             maximumGlyphWidth = boundsForGlyph(largeOperator.variant()).width();
     } else {
         // FIXME: some glyphs (e.g. the one for "FRACTION SLASH" in the STIX Math font or large operators) have a width that depends on the height, resulting in large gaps (https://bugs.webkit.org/show_bug.cgi?id=130326).
-        findStretchyData(m_operator, &maximumGlyphWidth);
+        findStretchyData(m_textContent, &maximumGlyphWidth);
     }
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
 }
@@ -1402,8 +1402,8 @@ void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
     // We verify whether the operator text can be represented by a single UChar.
     // FIXME: This does not handle surrogate pairs (https://bugs.webkit.org/show_bug.cgi?id=122296).
     // FIXME: This does not handle <mo> operators with multiple characters (https://bugs.webkit.org/show_bug.cgi?id=124828).
-    m_operator = textContent.length() == 1 ? textContent[0] : 0;
-    SetOperatorProperties();
+    m_textContent = textContent.length() == 1 ? textContent[0] : 0;
+    setOperatorProperties();
     updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -1422,13 +1422,13 @@ void RenderMathMLOperator::updateTokenContent()
 
 void RenderMathMLOperator::updateFromElement()
 {
-    SetOperatorProperties();
+    setOperatorProperties();
     RenderMathMLToken::updateFromElement();
 }
 
 void RenderMathMLOperator::updateOperatorProperties()
 {
-    SetOperatorProperties();
+    setOperatorProperties();
     if (!isEmpty())
         updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
@@ -1436,7 +1436,7 @@ void RenderMathMLOperator::updateOperatorProperties()
 
 bool RenderMathMLOperator::shouldAllowStretching() const
 {
-    return m_operator && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
+    return m_textContent && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
 }
 
 bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart> assemblyParts, StretchyData& stretchyData) const
@@ -1680,14 +1680,14 @@ void RenderMathMLOperator::updateStyle()
         return;
 
     if (m_isVertical && isLargeOperatorInDisplayStyle())
-        m_stretchyData = getDisplayStyleLargeOperator(m_operator);
+        m_stretchyData = getDisplayStyleLargeOperator(m_textContent);
     else {
         // We do not stretch if the base glyph is large enough.
-        GlyphData baseGlyph = style().font().glyphDataForCharacter(m_operator, !style().isLeftToRightDirection());
+        GlyphData baseGlyph = style().font().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
         float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceForGlyph(baseGlyph);
         if (stretchSize() <= baseSize)
             return;
-        m_stretchyData = findStretchyData(m_operator, nullptr);
+        m_stretchyData = findStretchyData(m_textContent, nullptr);
     }
 
     if (m_isVertical && m_stretchyData.mode() == DrawSizeVariant) {
@@ -1980,7 +1980,33 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
         return;
     RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }
-    
+
+LayoutUnit RenderMathMLOperator::trailingSpaceError()
+{
+    const auto& primaryFontData = style().font().primaryFont();
+    if (!primaryFontData || !primaryFontData->mathData())
+        return 0;
+
+    // For OpenType MATH font, the layout is based on RenderMathOperator for which the preferred width is sometimes overestimated (bug https://bugs.webkit.org/show_bug.cgi?id=130326).
+    // Hence we determine the error in the logical width with respect to the actual width of the glyph(s) used to paint the operator.
+    LayoutUnit width = logicalWidth();
+
+    if (m_stretchyData.mode() == DrawNormal) {
+        GlyphData data = style().font().glyphDataForCharacter(textContent(), !style().isLeftToRightDirection());
+        return width - advanceForGlyph(data);
+    }
+
+    if (m_stretchyData.mode() == DrawSizeVariant)
+        return width - advanceForGlyph(m_stretchyData.variant());
+
+    float assemblyWidth = advanceForGlyph(m_stretchyData.top());
+    assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.bottom()));
+    assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.extension()));
+    if (m_stretchyData.middle().glyph)
+        assemblyWidth = std::max(assemblyWidth, advanceForGlyph(m_stretchyData.middle()));
+    return width - assemblyWidth;
+}
+
 }
 
 #endif

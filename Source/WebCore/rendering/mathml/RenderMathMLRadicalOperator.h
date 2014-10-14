@@ -40,12 +40,11 @@ public:
     virtual void computePreferredLogicalWidths() override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     virtual void paint(PaintInfo&, const LayoutPoint& paintOffset) override;
-    LayoutUnit trailingSpaceError();
 
 private:
     virtual bool isRenderMathMLRadicalOperator() const override { return true; }
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLRadicalOperator (anonymous)" : "RenderMathMLRadicalOperator"; }
-    void SetOperatorProperties() override;
+    void setOperatorProperties() override;
 };
 
 } // namespace WebCore

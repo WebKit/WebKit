@@ -1,5 +1,51 @@
 2014-10-14  Alejandro G. Castro  <alex@igalia.com>
 
+        Multiple refactors in RenderMathMLOperator
+        https://bugs.webkit.org/show_bug.cgi?id=137611
+
+        Reviewed by Darin Adler.
+
+        The changes include:
+        - Rename m_operator to m_textContent.
+        - Make most of the functions private, we needed to create some
+        public member functions to be able to make the some funtions private
+        and move trailingSpaceError to RenderMathMLOperator.
+        - Fix incorrect capitalization of setOperatorProperties function.
+        - Make all data members private and move them to the end of the
+        class defition.
+
+        No new tests as no change in functionality.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::setOperatorProperties): Renamed,
+        incorrect capitalization
+        (WebCore::RenderMathMLOperator::stretchTo):
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLOperator::rebuildTokenContent):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::updateOperatorProperties):
+        (WebCore::RenderMathMLOperator::shouldAllowStretching):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        (WebCore::RenderMathMLOperator::trailingSpaceError):
+        (WebCore::RenderMathMLOperator::SetOperatorProperties): Deleted.
+        (WebCore::RenderMathMLOperator::advanceForGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::updateTokenContent): Deleted.
+        (WebCore::RenderMathMLOperator::getGlyphAssemblyFallBack): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::setLeadingSpace): Added.
+        (WebCore::RenderMathMLOperator::setTrailingSpace):  Added.
+        (WebCore::RenderMathMLOperator::textContent): Added.
+        (WebCore::RenderMathMLOperator::isInvisibleOperator):
+        * rendering/mathml/RenderMathMLRadicalOperator.cpp:
+        (WebCore::RenderMathMLRadicalOperator::setOperatorProperties):
+        Renamed, incorrect capitalization
+        (WebCore::RenderMathMLRadicalOperator::SetOperatorProperties): Deleted.
+        (WebCore::RenderMathMLRadicalOperator::trailingSpaceError): Deleted.
+        * rendering/mathml/RenderMathMLRadicalOperator.h:
+
+2014-10-14  Alejandro G. Castro  <alex@igalia.com>
+
         Changes in the stretchy attribute do not update rendering
         https://bugs.webkit.org/show_bug.cgi?id=136883
 

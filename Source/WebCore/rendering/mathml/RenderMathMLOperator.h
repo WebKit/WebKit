@@ -35,7 +35,7 @@
 #include "SimpleFontData.h"
 
 namespace WebCore {
-    
+
 namespace MathMLOperatorDictionary {
 
 enum Form { Infix, Prefix, Postfix };
@@ -80,30 +80,22 @@ public:
     void updateTokenContent() override final;
     void updateOperatorProperties();
     void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
+    LayoutUnit trailingSpaceError();
 
 protected:
-    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
-    virtual bool isRenderMathMLOperator() const override { return true; }
-    // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
-    bool isInvisibleOperator() const { return 0x2061 <= m_operator && m_operator <= 0x2064; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual void setOperatorProperties();
     virtual void computePreferredLogicalWidths() override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
-    virtual int firstLineBaseline() const override;
-    virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
-    void rebuildTokenContent(const String& operatorString);
-    void updateFromElement() override;
-
-    bool shouldAllowStretching() const;
-
-    FloatRect boundsForGlyph(const GlyphData&) const;
-    float heightForGlyph(const GlyphData&) const;
     float advanceForGlyph(const GlyphData&) const;
+    void setLeadingSpace(LayoutUnit leadingSpace) { m_leadingSpace = leadingSpace; }
+    void setTrailingSpace(LayoutUnit trailingSpace) { m_trailingSpace = trailingSpace; }
+    UChar textContent() const { return m_textContent; }
 
+private:
     enum DrawMode {
         DrawNormal, DrawSizeVariant, DrawGlyphAssembly
     };
+
     class StretchyData {
     public:
         DrawMode mode() const { return m_mode; }
@@ -148,15 +140,34 @@ protected:
                 break;
             }
         }
+
     private:
         DrawMode m_mode;
         // FIXME: For OpenType fonts with a MATH table all the glyphs are from the same font, so we would only need to store the glyph indices here.
         GlyphData m_data[4];
     };
+
+    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
+    virtual bool isRenderMathMLOperator() const override { return true; }
+    // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
+    bool isInvisibleOperator() const { return 0x2061 <= m_textContent && m_textContent <= 0x2064; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+
+    virtual int firstLineBaseline() const override;
+    virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
+    void rebuildTokenContent(const String& operatorString);
+    void updateFromElement() override;
+
+    bool shouldAllowStretching() const;
+
+    FloatRect boundsForGlyph(const GlyphData&) const;
+    float heightForGlyph(const GlyphData&) const;
+
     bool getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart>, StretchyData&) const;
     StretchyData getDisplayStyleLargeOperator(UChar) const;
     StretchyData findStretchyData(UChar, float* maximumGlyphWidth);
-    
+
     enum GlyphPaintTrimming {
         TrimTop,
         TrimBottom,
@@ -171,25 +182,23 @@ protected:
     void fillWithHorizontalExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
     void paintVerticalGlyphAssembly(PaintInfo&, const LayoutPoint&);
     void paintHorizontalGlyphAssembly(PaintInfo&, const LayoutPoint&);
+    void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
+    void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
+    void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
 
     LayoutUnit m_stretchHeightAboveBaseline;
     LayoutUnit m_stretchDepthBelowBaseline;
     LayoutUnit m_stretchWidth;
 
-    UChar m_operator;
+    UChar m_textContent;
     bool m_isVertical;
-    StretchyData m_stretchyData;
     MathMLOperatorDictionary::Form m_operatorForm;
     unsigned short m_operatorFlags;
     LayoutUnit m_leadingSpace;
     LayoutUnit m_trailingSpace;
     LayoutUnit m_minSize;
     LayoutUnit m_maxSize;
-
-    void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
-    void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
-    void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
-    virtual void SetOperatorProperties();
+    StretchyData m_stretchyData;
 };
 
 } // namespace WebCore
