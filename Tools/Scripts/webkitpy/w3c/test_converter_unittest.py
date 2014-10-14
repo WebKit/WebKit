@@ -54,6 +54,8 @@ class W3CTestConverterTest(unittest.TestCase):
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
         prop_list = converter.prefixed_properties
         self.assertTrue(prop_list, 'No prefixed properties found')
+        property_values_list = converter.prefixed_property_values
+        self.assertTrue(property_values_list, 'No prefixed property values found')
 
     def test_convert_for_webkit_nothing_to_convert(self):
         """ Tests convert_for_webkit() using a basic test that has nothing to convert """
@@ -104,8 +106,9 @@ CONTENT OF TEST
         converted = converter.output()
 
         self.verify_conversion_happened(converted)
-        self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 1, 1)
+        self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 1, 1)
         self.verify_prefixed_properties(converted, [])
+        self.verify_prefixed_property_values(converted, [])
 
     def test_convert_for_webkit_properties_only(self):
         """ Tests convert_for_webkit() using a test that has 2 prefixed properties: 1 in a style block + 1 inline style """
@@ -116,31 +119,32 @@ CONTENT OF TEST
 <script src="/resources/testharness.js"></script>
 <style type="text/css">
 
-#block1 { @test0@: propvalue; }
+#block1 { @test0@: @propvalue0@; }
 
 </style>
 </head>
 <body>
-<div id="elem1" style="@test1@: propvalue;"></div>
+<div id="elem1" style="@test1@: @propvalue1@;"></div>
 </body>
 </html>
 """
         fake_dir_path = self.fake_dir_path('harnessandprops')
         converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
-        test_content = self.generate_test_content(converter.prefixed_properties, 1, test_html)
+        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 1, test_html)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converter.feed(test_content[1])
+            converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
         finally:
             oc.restore_output()
 
         self.verify_conversion_happened(converted)
-        self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 1, 1)
+        self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 1, 1)
         self.verify_prefixed_properties(converted, test_content[0])
+        self.verify_prefixed_property_values(converted, test_content[1])
 
     def test_convert_for_webkit_harness_and_properties(self):
         """ Tests convert_for_webkit() using a basic JS test that uses testharness.js and testharness.css and has 4 prefixed properties: 3 in a style block + 1 inline style """
@@ -151,14 +155,14 @@ CONTENT OF TEST
 <script src="/resources/testharness.js"></script>
 <style type="text/css">
 
-#block1 { @test0@: propvalue; }
-#block2 { @test1@: propvalue; }
-#block3 { @test2@: propvalue; }
+#block1 { @test0@: @propvalue0@; }
+#block2 { @test1@: @propvalue1@; }
+#block3 { @test2@: @propvalue2@; }
 
 </style>
 </head>
 <body>
-<div id="elem1" style="@test3@: propvalue;"></div>
+<div id="elem1" style="@test3@: @propvalue3@;"></div>
 </body>
 </html>
 """
@@ -168,16 +172,17 @@ CONTENT OF TEST
         oc = OutputCapture()
         oc.capture_output()
         try:
-            test_content = self.generate_test_content(converter.prefixed_properties, 2, test_html)
-            converter.feed(test_content[1])
+            test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 2, test_html)
+            converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
         finally:
             oc.restore_output()
 
         self.verify_conversion_happened(converted)
-        self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 1, 1)
+        self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 1, 1)
         self.verify_prefixed_properties(converted, test_content[0])
+        self.verify_prefixed_property_values(converted, test_content[1])
 
     def test_convert_test_harness_paths(self):
         """ Tests convert_testharness_paths() with a test that uses all three testharness files """
@@ -201,7 +206,7 @@ CONTENT OF TEST
             oc.restore_output()
 
         self.verify_conversion_happened(converted)
-        self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 2, 1)
+        self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 2, 1)
 
     def test_convert_prefixed_properties(self):
         """ Tests convert_prefixed_properties() file that has 20 properties requiring the -webkit- prefix:
@@ -219,60 +224,62 @@ CONTENT OF TEST
 }
 
 .block2 {
-    @test0@: propvalue;
+    @test0@: @propvalue0@;
 }
 
-.block3{@test1@: propvalue;}
+.block3{@test1@: @propvalue1@;}
 
-.block4 { @test2@:propvalue; }
+.block4 { @test2@:@propvalue2@; }
 
-.block5{ @test3@ :propvalue; }
+.block5{ @test3@ :@propvalue3@; }
 
-#block6 {    @test4@   :   propvalue;  }
+#block6 {    @test4@   :   @propvalue4@   ;  }
 
 #block7
 {
-    @test5@: propvalue;
+    @test5@: @propvalue5@;
 }
 
-#block8 { @test6@: propvalue; }
+#block8 { @test6@: @propvalue6@ }
 
 #block9:pseudo
 {
 
-    @test7@: propvalue;
+    @test7@: @propvalue7@;
     @test8@:  propvalue propvalue propvalue;;
+    propname:
+@propvalue8@;
 }
 
 ]]></style>
 </head>
 <body>
-    <div id="elem1" style="@test9@: propvalue;"></div>
-    <div id="elem2" style="propname: propvalue; @test10@ : propvalue; propname:propvalue;"></div>
-    <div id="elem2" style="@test11@: propvalue; @test12@ : propvalue; @test13@   :propvalue;"></div>
-    <div id="elem3" style="@test14@:propvalue"></div>
+    <div id="elem1" style="@test9@: @propvalue9@;"></div>
+    <div id="elem2" style="propname: propvalue; @test10@ : @propvalue10@; propname:propvalue;"></div>
+    <div id="elem2" style="@test11@: @propvalue11@; @test12@ : @propvalue12@; @test13@   :   @propvalue13@   ;"></div>
+    <div id="elem3" style="@test14@:@propvalue14@"></div>
 </body>
 <style type="text/css"><![CDATA[
 
-.block10{ @test15@: propvalue; }
-.block11{ @test16@: propvalue; }
-.block12{ @test17@: propvalue; }
+.block10{ @test15@: @propvalue15@; }
+.block11{ @test16@: @propvalue16@; }
+.block12{ @test17@: @propvalue17@; }
 #block13:pseudo
 {
-    @test18@: propvalue;
-    @test19@: propvalue;
+    @test18@: @propvalue18@;
+    @test19@: @propvalue19@;
 }
 
 ]]></style>
 </html>
 """
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
-        test_content = self.generate_test_content(converter.prefixed_properties, 20, test_html)
+        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 20, test_html)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converter.feed(test_content[1])
+            converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
         finally:
@@ -280,12 +287,13 @@ CONTENT OF TEST
 
         self.verify_conversion_happened(converted)
         self.verify_prefixed_properties(converted, test_content[0])
+        self.verify_prefixed_property_values(converted, test_content[1])
 
     def verify_conversion_happened(self, converted):
         self.assertTrue(converted, "conversion didn't happen")
 
     def verify_no_conversion_happened(self, converted, original):
-        self.assertEqual(converted[1], original, 'test should not have been converted')
+        self.assertEqual(converted[2], original, 'test should not have been converted')
 
     def verify_test_harness_paths(self, converter, converted, test_path, num_src_paths, num_href_paths):
         if isinstance(converted, basestring):
@@ -306,24 +314,34 @@ CONTENT OF TEST
     def verify_prefixed_properties(self, converted, test_properties):
         self.assertEqual(len(set(converted[0])), len(set(test_properties)), 'Incorrect number of properties converted')
         for test_prop in test_properties:
-            self.assertTrue((test_prop in converted[1]), 'Property ' + test_prop + ' not found in converted doc')
+            self.assertTrue((test_prop in converted[2]), 'Property ' + test_prop + ' not found in converted doc')
 
-    def generate_test_content(self, full_property_list, num_test_properties, html):
-        """Inserts properties requiring a -webkit- prefix into the content, replacing \'@testXX@\' with a property."""
-        test_properties = []
+    def verify_prefixed_property_values(self, converted, test_property_values):
+        self.assertEqual(len(set(converted[1])), len(set(test_property_values)), 'Incorrect number of property values converted ' + str(len(set(converted[1]))) + ' vs ' + str(len(set(test_property_values))))
+        for test_value in test_property_values:
+            self.assertTrue((test_value in converted[2]), 'Property value ' + test_value + ' not found in converted doc')
+
+    def generate_test_content_properties_and_values(self, full_property_list, fully_property_values_list, num_test_properties_and_values, html):
+        """Inserts properties requiring a -webkit- prefix into the content, replacing \'@testXX@\' with a property and \'@propvalueXX@\' with a value."""
+        test_content_properties = self.generate_test_content(full_property_list, num_test_properties_and_values, 'test', html)
+        test_content_property_values = self.generate_test_content(fully_property_values_list, num_test_properties_and_values, 'propvalue', test_content_properties[1])
+        return (test_content_properties[0], test_content_property_values[0], test_content_property_values[1])
+
+    def generate_test_content(self, full_list, num_test, suffix, html):
+        test_list = []
         count = 0
-        while count < num_test_properties:
-            test_properties.append(full_property_list[count])
+        while count < num_test:
+            test_list.append(full_list[count])
             count += 1
 
-        # Replace the tokens in the testhtml with the test properties. Walk backward
-        # through the list to replace the double-digit tokens first
-        index = len(test_properties) - 1
+        # Replace the tokens in the testhtml with the test properties or values.
+        # Walk backward through the list to replace the double-digit tokens first.
+        index = len(test_list) - 1
         while index >= 0:
             # Use the unprefixed version
-            test_prop = test_properties[index].replace('-webkit-', '')
+            test = test_list[index].replace('-webkit-', '')
             # Replace the token
-            html = html.replace('@test' + str(index) + '@', test_prop)
+            html = html.replace('@' + suffix + str(index) + '@', test)
             index -= 1
 
-        return (test_properties, html)
+        return (test_list, html)

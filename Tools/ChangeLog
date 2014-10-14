@@ -1,3 +1,42 @@
+2014-10-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        import-w3c-tests doesn't prefix property values
+        https://bugs.webkit.org/show_bug.cgi?id=137600
+
+        Reviewed by Bem Jones-Bey.
+
+        Some property values are prefixed in WebKit. Modified the W3C import
+        script in order to prefix property values and not only properties.
+        The patch re-uses most of the already existent logic to prefix
+        properties.
+
+        * Scripts/webkitpy/w3c/test_converter.py: Read prefixed property values
+        from CSSValueKeywords.in and adapt converter to modify both properties
+        and property values.
+        (convert_for_webkit):
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.output):
+        (_W3CTestConverter.read_webkit_prefixed_css_property_list):
+        (_W3CTestConverter):
+        (_W3CTestConverter.add_webkit_prefix_to_unprefixed_properties_and_values):
+        (_W3CTestConverter.add_webkit_prefix_following_regex):
+        (_W3CTestConverter.convert_reference_relpaths):
+        (_W3CTestConverter.convert_style_data):
+        (_W3CTestConverter.convert_attributes_if_needed):
+        (_W3CTestConverter.add_webkit_prefix_to_unprefixed_properties): Deleted.
+        * Scripts/webkitpy/w3c/test_converter_unittest.py: Updated unit test to
+        include checks for property values too.
+        (W3CTestConverterTest.test_read_prefixed_property_list):
+        (verify_no_conversion_happened):
+        (verify_prefixed_properties):
+        (verify_prefixed_property_values):
+        (generate_test_content_properties_and_values):
+        (generate_test_content):
+        * Scripts/webkitpy/w3c/test_importer.py: Modified importer to manage
+        prefixed property values and inform about them.
+        (TestImporter.import_tests):
+        (TestImporter.write_import_log):
+
 2014-10-13  Jer Noble  <jer.noble@apple.com>
 
         MediaPlayer::characteristicChanged() is not called when new tracks are found in SourceBufferPrivateAVFObjC
