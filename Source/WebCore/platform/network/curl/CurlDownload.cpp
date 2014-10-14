@@ -38,9 +38,6 @@
 
 using namespace WebCore;
 
-template<> struct CrossThreadCopierBase<false, false, CurlDownload*> : public CrossThreadCopierPassThrough<CurlDownload*> {
-};
-
 namespace WebCore {
 
 // CurlDownloadManager -------------------------------------------------------------------
