@@ -197,48 +197,6 @@
             ]
         },
         {
-            "name": "canShowDebugBorders",
-            "description": "Tells if backend supports debug borders on layers",
-            "returns": [
-                { "name": "show", "type": "boolean", "description": "True if the debug borders can be shown" }
-            ]
-        },
-        {
-            "name": "setShowDebugBorders",
-            "description": "Requests that backend shows debug borders on layers",
-            "parameters": [
-                { "name": "show", "type": "boolean", "description": "True for showing debug borders" }
-            ]
-        },
-        {
-            "name": "canShowFPSCounter",
-            "description": "Tells if backend supports a FPS counter display",
-            "returns": [
-                { "name": "show", "type": "boolean", "description": "True if the FPS count can be shown" }
-            ]
-        },
-        {
-            "name": "setShowFPSCounter",
-            "description": "Requests that backend shows the FPS counter",
-            "parameters": [
-                { "name": "show", "type": "boolean", "description": "True for showing the FPS counter" }
-            ]
-        },
-        {
-            "name": "canContinuouslyPaint",
-            "description": "Tells if backend supports continuous painting",
-            "returns": [
-                { "name": "value", "type": "boolean", "description": "True if continuous painting is available" }
-            ]
-        },
-        {
-            "name": "setContinuousPaintingEnabled",
-            "description": "Requests that backend enables continuous painting",
-            "parameters": [
-                { "name": "enabled", "type": "boolean", "description": "True for enabling cointinuous painting" }
-            ]
-        },
-        {
             "name": "getScriptExecutionStatus",
             "description": "Determines if scripts can be executed in the page.",
             "returns": [

@@ -109,12 +109,6 @@ public:
     virtual void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>&) override;
     virtual void setDocumentContent(ErrorString&, const String& frameId, const String& html) override;
     virtual void setShowPaintRects(ErrorString&, bool show) override;
-    virtual void canShowDebugBorders(ErrorString&, bool*) override;
-    virtual void setShowDebugBorders(ErrorString&, bool show) override;
-    virtual void canShowFPSCounter(ErrorString&, bool*) override;
-    virtual void setShowFPSCounter(ErrorString&, bool show) override;
-    virtual void canContinuouslyPaint(ErrorString&, bool*) override;
-    virtual void setContinuousPaintingEnabled(ErrorString&, bool enabled) override;
     virtual void getScriptExecutionStatus(ErrorString&, Inspector::InspectorPageBackendDispatcherHandler::Result*) override;
     virtual void setScriptExecutionDisabled(ErrorString&, bool) override;
     virtual void setTouchEmulationEnabled(ErrorString&, bool) override;

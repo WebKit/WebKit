@@ -1,3 +1,28 @@
+2014-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused stale Page protocol methods
+        https://bugs.webkit.org/show_bug.cgi?id=137678
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::canShowDebugBorders): Deleted.
+        (WebCore::InspectorClient::setShowDebugBorders): Deleted.
+        (WebCore::InspectorClient::canShowFPSCounter): Deleted.
+        (WebCore::InspectorClient::setShowFPSCounter): Deleted.
+        (WebCore::InspectorClient::canContinuouslyPaint): Deleted.
+        (WebCore::InspectorClient::setContinuousPaintingEnabled): Deleted.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::canShowDebugBorders): Deleted.
+        (WebCore::InspectorPageAgent::setShowDebugBorders): Deleted.
+        (WebCore::InspectorPageAgent::canShowFPSCounter): Deleted.
+        (WebCore::InspectorPageAgent::setShowFPSCounter): Deleted.
+        (WebCore::InspectorPageAgent::canContinuouslyPaint): Deleted.
+        (WebCore::InspectorPageAgent::setContinuousPaintingEnabled): Deleted.
+        * inspector/InspectorPageAgent.h:
+        * inspector/protocol/Page.json:
+
 2014-10-13  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Refactor AirPlay monitoring code

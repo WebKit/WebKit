@@ -379,10 +379,7 @@ void InspectorPageAgent::disable(ErrorString&)
     ErrorString unused;
     setScriptExecutionDisabled(unused, m_originalScriptExecutionDisabled);
     setShowPaintRects(unused, false);
-    setShowDebugBorders(unused, false);
-    setShowFPSCounter(unused, false);
     setEmulatedMedia(unused, emptyString());
-    setContinuousPaintingEnabled(unused, false);
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString&, const String& source, String* identifier)
@@ -658,44 +655,6 @@ void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
         return;
 
     m_overlay->setShowingPaintRects(show);
-}
-
-void InspectorPageAgent::canShowDebugBorders(ErrorString&, bool* outParam)
-{
-    *outParam = m_client->canShowDebugBorders();
-}
-
-void InspectorPageAgent::setShowDebugBorders(ErrorString&, bool show)
-{
-    m_client->setShowDebugBorders(show);
-    if (mainFrame() && mainFrame()->view())
-        mainFrame()->view()->invalidate();
-}
-
-void InspectorPageAgent::canShowFPSCounter(ErrorString&, bool* outParam)
-{
-    *outParam = m_client->canShowFPSCounter();
-}
-
-void InspectorPageAgent::setShowFPSCounter(ErrorString&, bool show)
-{
-    m_client->setShowFPSCounter(show);
-
-    if (mainFrame() && mainFrame()->view())
-        mainFrame()->view()->invalidate();
-}
-
-void InspectorPageAgent::canContinuouslyPaint(ErrorString&, bool* outParam)
-{
-    *outParam = m_client->canContinuouslyPaint();
-}
-
-void InspectorPageAgent::setContinuousPaintingEnabled(ErrorString&, bool enabled)
-{
-    m_client->setContinuousPaintingEnabled(enabled);
-
-    if (!enabled && mainFrame() && mainFrame()->view())
-        mainFrame()->view()->invalidate();
 }
 
 void InspectorPageAgent::getScriptExecutionStatus(ErrorString&, InspectorPageBackendDispatcherHandler::Result* status)

@@ -1,3 +1,15 @@
+2014-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve appearance of alpha color swatches
+        https://bugs.webkit.org/show_bug.cgi?id=137627
+
+        Reviewed by Andreas Kling.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/InspectorWeb-iOS-8.0.json:
+
 2014-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve appearance of alpha color swatches
