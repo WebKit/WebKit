@@ -1,3 +1,24 @@
+2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Avoid unnecessary dictionary lookup in ImageSource::isSizeAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=137701
+
+        Reviewed by Simon Fraser.
+
+        The CG implementation of ImageSource::isSizeAvailable() was looking up
+        both the width and the height keys in the dictionary before determining
+        if the size is available. We can abort early and return false if the
+        first key (the width) is missing, thus avoiding an extra dictionary
+        lookup in this case.
+
+        This is a small win but ImageSource::isSizeAvailable() is called quite
+        frequently during page loads
+
+        No new tests, no behavior change.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::isSizeAvailable):
+
 2014-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove unnecessary logging from SimpleFontData

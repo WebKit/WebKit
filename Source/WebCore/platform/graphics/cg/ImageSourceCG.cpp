@@ -181,20 +181,16 @@ SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale) const
 
 bool ImageSource::isSizeAvailable()
 {
-    bool result = false;
-    CGImageSourceStatus imageSourceStatus = CGImageSourceGetStatus(m_decoder);
-
     // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
-    if (imageSourceStatus >= kCGImageStatusIncomplete) {
-        RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions().get()));
-        if (image0Properties) {
-            CFNumberRef widthNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelWidth);
-            CFNumberRef heightNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelHeight);
-            result = widthNumber && heightNumber;
-        }
-    }
-    
-    return result;
+    if (CGImageSourceGetStatus(m_decoder) < kCGImageStatusIncomplete)
+        return false;
+
+    RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions().get()));
+    if (!image0Properties)
+        return false;
+
+    return CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelWidth)
+        && CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelHeight);
 }
 
 static ImageOrientation orientationFromProperties(CFDictionaryRef imageProperties)
