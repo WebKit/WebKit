@@ -5,6 +5,7 @@
     padding: 0;
     margin-bottom: 1rem;
     outline: none;
+    position: relative;
 }
 .chart-pane header {
     background: #fff;
@@ -47,6 +48,50 @@
     position: absolute;
     left: 0.55rem;
     top: 0.55rem;
+}
+
+.chart-pane a.search-button {
+    display: inline-block;
+    position: absolute;
+    right: 0.55rem;
+    top: 0.55rem;
+}
+
+.search-pane {
+    position: absolute;
+    right: 0rem;
+    top: 1.7rem;
+    border: 1px solid #bbb;
+    padding: 0;
+    border-radius: 0.5rem;
+    display: table;
+    background: white;
+}
+
+.search-pane.hidden {
+    display: none;
+}
+
+.search-pane input {
+    display: table-cell;
+    vertical-align: middle;
+    outline: none;
+    border: none;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.search-pane .repositories {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 0.5rem;
+}
+
+.search-pane input:focus {
+    background-color: rgb(249, 242, 228);
 }
 
 .chart-pane .body {
@@ -220,6 +265,13 @@
     stroke: #f93;
     stroke-width: 2px;
     fill: #f93;
+}
+
+.chart .highlight {
+    stroke: #39f;
+    stroke-dasharray: 4, 4;
+    stroke-width: 1px;
+    fill: none;
 }
 
 .chart .extent {

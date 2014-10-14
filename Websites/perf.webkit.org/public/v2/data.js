@@ -1,22 +1,30 @@
 // We don't use DS.Model for these object types because we can't afford to process millions of them.
 
-function FetchCommitsForTimeRange(repository, from, to)
+var CommitLogs = {
+    _cachedCommitsByRepository: {}
+};
+
+CommitLogs.fetchForTimeRange = function (repository, from, to, keyword)
 {
-    var url = '../api/commits/' + repository.get('id') + '/' + from + '-' + to;
-
-    var cachedCommits = FetchCommitsForTimeRange._cachedCommitsByRepository[repository];
-    if (!cachedCommits) {
-        cachedCommits = {commitsByRevision: {}, commitsByTime: []};
-        FetchCommitsForTimeRange._cachedCommitsByRepository[repository] = cachedCommits;
+    var params = [];
+    if (from && to) {
+        params.push(['from', from]);
+        params.push(['to', to]);
     }
+    if (keyword)
+        params.push(['keyword', keyword]);
 
-    if (cachedCommits) {
-        var startCommit = cachedCommits.commitsByRevision[from];
-        var endCommit = cachedCommits.commitsByRevision[to];
-        if (startCommit && endCommit) {
-            return new Ember.RSVP.Promise(function (resolve) {
-                resolve(cachedCommits.commitsByTime.slice(startCommit.index, endCommit.index + 1)) });
-        }
+    // FIXME: We should be able to use the cache if all commits in the range have been cached.
+    var useCache = from && to && !keyword;
+
+    var url = '../api/commits/' + repository + '/?' + params.map(function (keyValue) {
+        return encodeURIComponent(keyValue[0]) + '=' + encodeURIComponent(keyValue[1]);
+    }).join('&');
+
+    if (useCache) {
+        var cachedCommitsForRange = CommitLogs._cachedCommitsBetween(repository, from, to);
+        if (cachedCommitsForRange)
+            return new Ember.RSVP.Promise(function (resolve) { resolve(cachedCommitsForRange); });
     }
 
     console.log('Fecthing ' + url);
@@ -28,25 +36,52 @@ function FetchCommitsForTimeRange(repository, from, to)
                 return;
             }
 
-            data.commits.forEach(function (commit) {
-                if (cachedCommits.commitsByRevision[commit.revision])
-                    return;
-                commit.time = new Date(commit.time.replace(' ', 'T'));
-                cachedCommits.commitsByRevision[commit.revision] = commit;
-                cachedCommits.commitsByTime.push(commit);
-            });
+            var fetchedCommits = data.commits;
+            fetchedCommits.forEach(function (commit) { commit.time = new Date(commit.time.replace(' ', 'T')); });
 
-            cachedCommits.commitsByTime.sort(function (a, b) { return a.time - b.time; });
-            cachedCommits.commitsByTime.forEach(function (commit, index) { commit.index = index; });
+            if (useCache)
+                CommitLogs._cacheConsecutiveCommits(repository, from, to, fetchedCommits);
 
-            resolve(data.commits);
+            resolve(fetchedCommits);
         }).fail(function (xhr, status, error) {
             reject(xhr.status + (error ? ', ' + error : ''));
         })
     });
 }
 
-FetchCommitsForTimeRange._cachedCommitsByRepository = {};
+CommitLogs._cachedCommitsBetween = function (repository, from, to)
+{
+    var cachedCommits = this._cachedCommitsByRepository[repository];
+    if (!cachedCommits)
+        return null;
+
+    var startCommit = cachedCommits.commitsByRevision[from];
+    var endCommit = cachedCommits.commitsByRevision[to];
+    if (!startCommit || !endCommit)
+        return null;
+
+    return cachedCommits.commitsByTime.slice(startCommit.cacheIndex, endCommit.cacheIndex + 1);
+}
+
+CommitLogs._cacheConsecutiveCommits = function (repository, from, to, consecutiveCommits)
+{
+    var cachedCommits = this._cachedCommitsByRepository[repository];
+    if (!cachedCommits) {
+        cachedCommits = {commitsByRevision: {}, commitsByTime: []};
+        this._cachedCommitsByRepository[repository] = cachedCommits;
+    }
+
+    consecutiveCommits.forEach(function (commit) {
+        if (cachedCommits.commitsByRevision[commit.revision])
+            return;
+        cachedCommits.commitsByRevision[commit.revision] = commit;
+        cachedCommits.commitsByTime.push(commit);
+    });
+
+    cachedCommits.commitsByTime.sort(function (a, b) { return a.time - b.time; });
+    cachedCommits.commitsByTime.forEach(function (commit, index) { commit.cacheIndex = index; });
+}
+
 
 function Measurement(rawData)
 {
@@ -70,6 +105,15 @@ function Measurement(rawData)
     this._formattedRevisions = undefined;
 }
 
+Measurement.prototype.commitTimeForRepository = function (repositoryName)
+{
+    var revisions = this._raw['revisions'];
+    var rawData = revisions[repositoryName];
+    if (!rawData)
+        return null;
+    return new Date(rawData[1]);
+}
+
 Measurement.prototype.formattedRevisions = function (previousMeasurement)
 {
     var revisions = this._raw['revisions'];
@@ -77,13 +121,8 @@ Measurement.prototype.formattedRevisions = function (previousMeasurement)
     var formattedRevisions = {};
     for (var repositoryName in revisions) {
         var currentRevision = revisions[repositoryName][0];
-        var commitTimeInPOSIX = revisions[repositoryName][1];
-
         var previousRevision = previousRevisions ? previousRevisions[repositoryName][0] : null;
-
         var formatttedRevision = this._formatRevisionRange(previousRevision, currentRevision);
-        if (commitTimeInPOSIX)
-            formatttedRevision['commitTime'] = new Date(commitTimeInPOSIX);
         formattedRevisions[repositoryName] = formatttedRevision;
     }
 

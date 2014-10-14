@@ -135,9 +135,12 @@
                     {{metric.label}}
                     - {{ platform.name}}</h2>
                     <a href="#" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
+                    {{if App.Manifest.repositoriesWithReportedCommits}}
+                        <a href="#" title="Search" class="search-button" {{action "toggleSearch"}}>{{partial "search-button"}}</a>
+                    {{/if}}
                 </header>
 
-                <div {{bind-attr class=":body showingDetails"}}>
+                <div class="body">
                     <div class="svg-container">
                     {{#if chartData}}
                         {{interactive-chart
@@ -147,6 +150,7 @@
                             currentItem=currentItem
                             currentTime=sharedTime
                             selectedItem=selectedItem
+                            highlightedItems=highlightedItems
                             selection=timeRange
                             sharedSelection=sharedSelection
                             selectionChanged="rangeChanged"
@@ -177,6 +181,16 @@
                         {{/if}}
                     </div>
                 </div>
+
+                <form {{bind-attr class=":search-pane showingSearchPane::hidden"}}>
+                    <span class="repositories">
+                        {{view Ember.Select content=App.Manifest.repositoriesWithReportedCommits
+                            optionLabelPath='content.id'
+                            selection=commitSearchRepository}}
+                    </span>
+                    {{input action="searchCommit" placeholder="Name or email" value=commitSearchKeyword}}
+                </form>
+
             </section>
         {{/each}}
     </script>
@@ -258,11 +272,20 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="close-button">
-        <svg class="close-button" viewBox="0 0 100 100">
+        <svg class="close-button icon-button" viewBox="0 0 100 100">
             <g stroke="black" stroke-width="10">
                 <circle cx="50" cy="50" r="45" fill="transparent"/>
                 <polygon points="30,30 70,70" />
                 <polygon points="30,70 70,30" />
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="search-button">
+        <svg class="search-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" stroke-width="15">
+                <circle cx="60" cy="40" r="30" fill="transparent"/>
+                <line x1="10" y1="90" x2="40" y2="60"/>
             </g>
         </svg>
     </script>

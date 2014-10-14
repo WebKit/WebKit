@@ -287,9 +287,36 @@ App.Pane = Ember.Object.extend({
     metricId: null,
     metric: null,
     selectedItem: null,
-    init: function ()
-    {
-        this._super();
+    searchCommit: function (repository, keyword) {
+        var self = this;
+        var repositoryName = repository.get('id');
+        CommitLogs.fetchForTimeRange(repositoryName, null, null, keyword).then(function (commits) {
+            if (self.isDestroyed || !self.get('chartData') || !commits.length)
+                return;
+            var currentRuns = self.get('chartData').current.timeSeriesByCommitTime().series();
+            if (!currentRuns.length)
+                return;
+
+            var highlightedItems = {};
+            var commitIndex = 0;
+            for (var runIndex = 0; runIndex < currentRuns.length && commitIndex < commits.length; runIndex++) {
+                var measurement = currentRuns[runIndex].measurement;
+                var commitTime = measurement.commitTimeForRepository(repositoryName);
+                if (!commitTime)
+                    continue;
+                if (commits[commitIndex].time <= commitTime) {
+                    highlightedItems[measurement.id()] = true;
+                    do {
+                        commitIndex++;
+                    } while (commitIndex < commits.length && commits[commitIndex].time <= commitTime);
+                }
+            }
+
+            self.set('highlightedItems', highlightedItems);
+        }, function () {
+            // FIXME: Report errors
+            this.set('highlightedItems', {});
+        });
     },
     _fetch: function () {
         var platformId = this.get('platformId');
@@ -646,6 +673,19 @@ App.PaneController = Ember.ObjectController.extend({
         {
             this.parentController.removePane(this.get('model'));
         },
+        toggleSearch: function ()
+        {
+            if (!App.Manifest.repositoriesWithReportedCommits)
+                return;
+            var model = this.get('model');
+            if (!model.get('commitSearchRepository'))
+                model.set('commitSearchRepository', App.Manifest.repositoriesWithReportedCommits[0]);
+            this.toggleProperty('showingSearchPane');
+        },
+        searchCommit: function () {
+            var model = this.get('model');
+            model.searchCommit(model.get('commitSearchRepository'), model.get('commitSearchKeyword'));                
+        },
         zoomed: function (selection)
         {
             this.set('mainPlotDomain', selection ? selection : this.get('overviewDomain'));
@@ -843,7 +883,12 @@ App.InteractiveChartComponent = Ember.Component.extend({
         if (this._areas)
             this._areas.forEach(function (area) { area.remove(); });
         this._areas = [];
+        if (this._dots)
+            this._dots.forEach(function (dot) { dots.remove(); });
         this._dots = [];
+        if (this._highlights)
+            this._highlights.forEach(function (highlight) { _highlights.remove(); });
+        this._highlights = [];
 
         this._currentTimeSeries = chartData.current.timeSeriesByCommitTime();
         this._currentTimeSeriesData = this._currentTimeSeries.series();
@@ -1018,6 +1063,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("cx", function(measurement) { return xScale(measurement.time); })
                 .attr("cy", function(measurement) { return yScale(measurement.value); });
         });
+        this._updateHighlightPositions();
 
         if (this._brush) {
             if (selection)
@@ -1044,6 +1090,19 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .style("text-anchor", "start")
             .style("z-index", "100")
             .text(this._yAxisUnit);
+    },
+    _updateHighlightPositions: function () {
+        var xScale = this._x;
+        var yScale = this._y;
+        var y2 = this._margin.top + this._contentHeight;
+        this._highlights.forEach(function (highlight) {
+            highlight
+                .attr("y1", 0)
+                .attr("y2", y2)
+                .attr("y", function(measurement) { return yScale(measurement.value); })
+                .attr("x1", function(measurement) { return xScale(measurement.time); })
+                .attr("x2", function(measurement) { return xScale(measurement.time); });
+        });
     },
     _computeXAxisDomain: function (timeSeries)
     {
@@ -1317,6 +1376,26 @@ App.InteractiveChartComponent = Ember.Component.extend({
             }
         }
     }.observes('selectedItem').on('init'),
+    _highlightedItemsChanged: function () {
+        if (!this._margin)
+            return;
+
+        var highlightedItems = this.get('highlightedItems');
+
+        var data = this._currentTimeSeriesData.filter(function (item) { return highlightedItems[item.measurement.id()]; });
+
+        if (this._highlights)
+            this._highlights.forEach(function (highlight) { highlight.remove(); });
+
+        this._highlights.push(this._clippedContainer
+            .selectAll(".highlight")
+                .data(data)
+            .enter().append("line")
+                .attr("class", "highlight"));
+
+        this._updateHighlightPositions();
+
+    }.observes('highlightedItems'),
     _updateCurrentItemIndicators: function ()
     {
         if (!this._currentItemLine)
@@ -1412,18 +1491,21 @@ App.CommitsViewerComponent = Ember.Component.extend({
             return;
 
         var self = this;
-        FetchCommitsForTimeRange(repository, from, to).then(function (commits) {
+        CommitLogs.fetchForTimeRange(repository.get('id'), from, to).then(function (commits) {
+            if (self.isDestroyed)
+                return;
             self.set('commits', commits.map(function (commit) {
                 return Ember.Object.create({
                     repository: repository,
                     revision: commit.revision,
                     url: repository.urlForRevision(commit.revision),
-                    author: commit.author.name || commit.author.email,
+                    author: commit.authorName || commit.authorEmail,
                     message: commit.message ? commit.message.substr(0, 75) : null,
                 });
             }));
         }, function () {
-            self.set('commits', []);
+            if (!self.isDestroyed)
+                self.set('commits', []);
         })
     }.observes('repository').observes('revisionInfo').on('init'),
 });

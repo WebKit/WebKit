@@ -1,5 +1,65 @@
 2014-10-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New perf dashboard should have an ability to search commits by a keyword
+        https://bugs.webkit.org/show_bug.cgi?id=137675
+
+        Reviewed by Geoffrey Garen.
+
+        /api/commits/ now accepts query parameters to search a commit by a keyword. Its output format changed to
+        include "authorEmail" and "authorName" directly as columns instead of including an "author" object.
+        This API change allows fetch_commits_between to generate results without processing Postgres query results.
+
+        In the front end side, we've added a search pane in pane controller, and the interactive chart component
+        now has a concept of highlighted items which is used to indicate commits found by the search pane.
+
+        * public/api/commits.php:
+        (main): Extract query parameters: keyword, from, and to and use that to fetch appropriate commits.
+        (fetch_commits_between): Moved some code from main. Now takes a search term as the third argument.
+        We look for a commit if its author name or email contains the keyword or if its revision matches the keyword.
+        (format_commit): Renamed from format_commits. Now only formats one commit.
+
+        * public/include/db.php:
+        (Database::query_and_fetch_all): Now returns array() when the query results is empty (instead of false).
+
+        * public/v2/app.css: Renamed .close-button to .icon-button since it's used by a search button as well.
+
+        * public/v2/app.js:
+        (App.Pane.searchCommit): Added. Finds the commits by a search term and assigns 'highlightedItems',
+        which is a hash table that contains highlighted items' measurements' ids as keys.
+        (App.PaneController.actions.toggleSearch): Toggles the visibility of the search pane. Also sets
+        the default commit repository.
+        (App.PaneController.actions.searchCommit): Delegates the work to App.Pane.searchCommit.
+        (App.InteractiveChartComponent._constructGraphIfPossible): Fixed a bug that we weren't removing old this._dots.
+        Added the code to initialize this._highlights.
+        (App.InteractiveChartComponent._updateDimensionsIfNeeded): Updates dimensions of highlight lines.
+        (App.InteractiveChartComponent._updateHighlightPositions): Added. Ditto.
+        (App.InteractiveChartComponent._highlightedItemsChanged): Adds vertical lines for highlighted items and deletes
+        the existing lines for the old highlighted items.
+        (App.CommitsViewerComponent.commitsChanged): Updated the code per JSON API change mentioned above.
+        Also fixed a bug that the code tries to update the commits viewer even if the viewer had already been destroyed. 
+
+        * public/v2/chart-pane.css: Added style for the search pane and the search button.
+
+        * public/v2/data.js: Turned FetchCommitsForTimeRange into a class: CommitLogs.
+        (CommitLogs): Added.
+        (CommitLogs.fetchForTimeRange): Renamed from FetchCommitsForTimeRange. Takes a search term as an argument.
+        (CommitLogs._cachedCommitsBetween): Extracted from FetchCommitsForTimeRange.
+        (CommitLogs._cacheConsecutiveCommits): Ditto.
+        (FetchCommitsForTimeRange._cachedCommitsByRepository): Deleted.
+        (Measurement.prototype.commitTimeForRepository): Extracted from formattedRevisions.
+        (Measurement.prototype.formattedRevisions): Uses formattedRevisions. Deleted the unused code for commitTime.
+
+        * public/v2/index.html: Added the search pane and the search button. Also removed the unused attribute binding
+        for showingDetails since this property is no longer used.
+
+        * public/v2/manifest.js:
+        (App.Manifest.repositories): Added.
+        (App.Manifest.repositoriesWithReportedCommits): Ditto. Used by App.PaneController.actions.toggleSearch to find
+        the default repository to search.
+        (App.Manifest._fetchedManifest): Populates repositories and repositoriesWithReportedCommits.
+
+2014-10-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix after r174555.
 
         * public/include/manifest.php:

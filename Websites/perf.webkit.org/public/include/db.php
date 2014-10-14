@@ -185,10 +185,12 @@ class Database
 
     function query_and_fetch_all($query, $params = array()) {
         if (!$this->connection)
-            return false;
+            return NULL;
         $result = pg_query_params($this->connection, $query, $params);
         if (!$result)
-            return false;
+            return NULL;
+        if (pg_num_rows($result) == 0)
+            return array();
         return pg_fetch_all($result);
     }
 

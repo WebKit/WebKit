@@ -147,6 +147,8 @@ App.Manifest = Ember.Controller.extend({
     _platformById: {},
     _metricById: {},
     _builderById: {},
+    repositories: null,
+    repositoriesWithReportedCommits: null,
     _repositoryById: {},
     _fetchPromise: null,
     fetch: function ()
@@ -190,8 +192,12 @@ App.Manifest = Ember.Controller.extend({
             self._builderById[builder.get('id')] = builder;
         });
 
-        store.all('repository').forEach(function (repository) {
+        var repositories = store.all('repository');
+        repositories.forEach(function (repository) {
             self._repositoryById[repository.get('id')] = repository;
         });
+        this.set('repositories', repositories);
+        this.set('repositoriesWithReportedCommits',
+            repositories.filter(function (repository) { return repository.get('hasReportedCommits'); }));
     }
 }).create();

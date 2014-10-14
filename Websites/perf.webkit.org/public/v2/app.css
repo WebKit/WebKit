@@ -115,14 +115,14 @@ body {
 }
 
 
-.close-button {
+.icon-button {
     width: 1rem;
     height: 1rem;
 }
-.close-button g {
+.icon-button g {
     stroke: #ccc;
 }
-.close-button:hover g {
+.icon-button:hover g {
     stroke: #666;
 }
 
