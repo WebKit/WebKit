@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 FAIL src should be http:///. Was http:/.
 FAIL src should be https:///. Was https:/.
-PASS src is expected
-PASS src is expected
-PASS src is expected
-PASS src is expected
+FAIL src should be ftp:///. Was ftp://.
+FAIL src should be gopher:///. Was gopher://.
+FAIL src should be ws:///. Was ws://.
+FAIL src should be wss:///. Was wss://.
 PASS src is expected
 PASS src is expected
 PASS src is expected
