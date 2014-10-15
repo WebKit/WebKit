@@ -1,3 +1,17 @@
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Unskip fast/sub-pixel directory.
+        https://bugs.webkit.org/show_bug.cgi?id=137732
+
+        Reviewed by Simon Fraser.
+
+        Unskip tests.
+
+        * TestExpectations:
+        * fast/sub-pixel/inline-block-with-padding-expected.txt: minor adjustment.
+        * fast/sub-pixel/zoomed-em-border-expected.html: minor adjustment.
+        * platform/mac/TestExpectations: we still have to skip couple of tests.
+
 2014-10-14  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (Safari 7.1/8.0): Border-radius and overflow hidden renders incorrectly.

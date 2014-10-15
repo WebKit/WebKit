@@ -881,9 +881,6 @@ webkit.org/b/103857 fast/events/mouse-cursor-change.html
 # Reference test fast/sub-pixel/float-wrap-zoom.html fails
 webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ Pass ImageOnlyFailure ]
 
-# Disabling subpixel layout on mac, https://bugs.webkit.org/show_bug.cgi?id=114999
-fast/sub-pixel
-
 # Some tests need to be rebaselined still after disabling subpixel layout
 # http://bugs.webkit.org/show_bug.cgi?id=115292
 webkit.org/b/115292 css1/units/rounding.html
@@ -1041,6 +1038,9 @@ webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
 [ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ Pass ImageOnlyFailure ]
 # clipping filter effects when region is present. 
 webkit.org/b/133523 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
+
+webkit.org/b/136419 fast/sub-pixel/block-with-margin-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/137729 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 # End of subpixel failures.
 
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
