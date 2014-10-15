@@ -213,13 +213,9 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    RenderElement* p = downcast<RenderBlock>(*child).inlineElementContinuation();
-    while (is<RenderInline>(p)) {
-        if (p->isInFlowPositioned()) {
-            RenderInline& renderInline = downcast<RenderInline>(*p);
-            offset += renderInline.offsetForInFlowPosition();
-        }
-        p = p->parent();
+    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineElementContinuation(); is<RenderInline>(parent); parent = parent->parent()) {
+        if (parent->isInFlowPositioned())
+            offset += downcast<RenderInline>(*parent).offsetForInFlowPosition();
     }
     return offset;
 }

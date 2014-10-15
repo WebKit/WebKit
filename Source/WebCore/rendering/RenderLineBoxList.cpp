@@ -312,22 +312,22 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     return false;
 }
 
-void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* container, RenderObject* child)
+void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& container, RenderObject& child)
 {
-    ASSERT(container->isRenderInline() || container->isRenderBlockFlow());
-    if (!container->parent() || (container->isRenderBlockFlow() && container->selfNeedsLayout()))
+    ASSERT(is<RenderInline>(container) || is<RenderBlockFlow>(container));
+    if (!container.parent() || (is<RenderBlockFlow>(container) && container.selfNeedsLayout()))
         return;
 
-    RenderInline* inlineContainer = container->isRenderInline() ? toRenderInline(container) : 0;
+    RenderInline* inlineContainer = is<RenderInline>(container) ? &downcast<RenderInline>(container) : nullptr;
     InlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBoxIncludingCulling() : firstLineBox();
 
     // If we have no first line box, then just bail early.
     if (!firstBox) {
         // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
         // is already dirty.
-        if (container->isInline() && !container->ancestorLineBoxDirty()) {
-            container->parent()->dirtyLinesFromChangedChild(container);
-            container->setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+        if (container.isInline() && !container.ancestorLineBoxDirty()) {
+            container.parent()->dirtyLinesFromChangedChild(container);
+            container.setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
         }
         return;
     }
@@ -337,7 +337,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
     // parent's first line box.
     RootInlineBox* box = nullptr;
     RenderObject* current;
-    for (current = child->previousSibling(); current; current = current->previousSibling()) {
+    for (current = child.previousSibling(); current; current = current->previousSibling()) {
         if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
@@ -367,7 +367,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
             // This isn't good enough, since we won't locate the root line box that encloses the removed
             // <br>. We have to just over-invalidate a bit and go up to our parent.
             if (!inlineContainer->ancestorLineBoxDirty()) {
-                inlineContainer->parent()->dirtyLinesFromChangedChild(inlineContainer);
+                inlineContainer->parent()->dirtyLinesFromChangedChild(*inlineContainer);
                 inlineContainer->setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
             }
             return;
@@ -394,9 +394,9 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
         // If |child| has been inserted before the first element in the linebox, but after collapsed leading
         // space, the search for |child|'s linebox will go past the leading space to the previous linebox and select that
         // one as |box|. If we hit that situation here, dirty the |box| actually containing the child too. 
-        bool insertedAfterLeadingSpace = box->lineBreakObj() == child->previousSibling();
-        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (current && current->isBR())
-            || insertedAfterLeadingSpace || isIsolated(container->style().unicodeBidi())))
+        bool insertedAfterLeadingSpace = box->lineBreakObj() == child.previousSibling();
+        if (adjacentBox && (adjacentBox->lineBreakObj() == &child || child.isBR() || (current && current->isBR())
+            || insertedAfterLeadingSpace || isIsolated(container.style().unicodeBidi())))
             adjacentBox->markDirty();
     }
 }

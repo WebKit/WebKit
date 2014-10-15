@@ -3795,7 +3795,7 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
     FontCachePurgePreventer fontCachePurgePreventer;
 
     // m_nodeToDraw is used to draw only one element (and its descendants)
-    RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
+    RenderObject* renderer = m_nodeToDraw ? m_nodeToDraw->renderer() : nullptr;
     RenderLayer* rootLayer = renderView->layer();
 
 #ifndef NDEBUG
@@ -3804,12 +3804,12 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
 
     // To work around http://webkit.org/b/135106, ensure that the paint root isn't an inline with culled line boxes.
     // FIXME: This can cause additional content to be included in the snapshot, so remove this once that bug is fixed.
-    while (eltRenderer && eltRenderer->isRenderInline() && !toRenderInline(eltRenderer)->firstLineBox())
-        eltRenderer = eltRenderer->parent();
+    while (is<RenderInline>(renderer) && !downcast<RenderInline>(*renderer).firstLineBox())
+        renderer = renderer->parent();
 
-    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, eltRenderer);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer);
     if (rootLayer->containsDirtyOverlayScrollbars())
-        rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, eltRenderer);
+        rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
 
     didPaintContents(context, dirtyRect, paintingState);
 }

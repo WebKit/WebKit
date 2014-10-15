@@ -97,43 +97,43 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
         renderer->absoluteQuads(highlight->quads);
         for (size_t i = 0; i < highlight->quads.size(); ++i)
             contentsQuadToCoordinateSystem(mainView, containingView, highlight->quads[i], coordinateSystem);
-    } else if (renderer->isBox() || renderer->isRenderInline()) {
+    } else if (is<RenderBox>(*renderer) || is<RenderInline>(*renderer)) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
         LayoutRect borderBox;
         LayoutRect marginBox;
 
-        if (renderer->isBox()) {
-            RenderBox* renderBox = toRenderBox(renderer);
+        if (is<RenderBox>(*renderer)) {
+            auto& renderBox = downcast<RenderBox>(*renderer);
 
-            LayoutBoxExtent margins(renderBox->marginTop(), renderBox->marginRight(), renderBox->marginBottom(), renderBox->marginLeft());
+            LayoutBoxExtent margins(renderBox.marginTop(), renderBox.marginRight(), renderBox.marginBottom(), renderBox.marginLeft());
 
-            if (!renderBox->isOutOfFlowPositioned() && region) {
+            if (!renderBox.isOutOfFlowPositioned() && region) {
                 RenderBox::LogicalExtentComputedValues computedValues;
-                renderBox->computeLogicalWidthInRegion(computedValues, region);
-                margins.mutableLogicalLeft(renderBox->style().writingMode()) = computedValues.m_margins.m_start;
-                margins.mutableLogicalRight(renderBox->style().writingMode()) = computedValues.m_margins.m_end;
+                renderBox.computeLogicalWidthInRegion(computedValues, region);
+                margins.mutableLogicalLeft(renderBox.style().writingMode()) = computedValues.m_margins.m_start;
+                margins.mutableLogicalRight(renderBox.style().writingMode()) = computedValues.m_margins.m_end;
             }
 
-            paddingBox = renderBox->clientBoxRectInRegion(region);
-            contentBox = LayoutRect(paddingBox.x() + renderBox->paddingLeft(), paddingBox.y() + renderBox->paddingTop(),
-                paddingBox.width() - renderBox->paddingLeft() - renderBox->paddingRight(), paddingBox.height() - renderBox->paddingTop() - renderBox->paddingBottom());
-            borderBox = LayoutRect(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
-                paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
+            paddingBox = renderBox.clientBoxRectInRegion(region);
+            contentBox = LayoutRect(paddingBox.x() + renderBox.paddingLeft(), paddingBox.y() + renderBox.paddingTop(),
+                paddingBox.width() - renderBox.paddingLeft() - renderBox.paddingRight(), paddingBox.height() - renderBox.paddingTop() - renderBox.paddingBottom());
+            borderBox = LayoutRect(paddingBox.x() - renderBox.borderLeft(), paddingBox.y() - renderBox.borderTop(),
+                paddingBox.width() + renderBox.borderLeft() + renderBox.borderRight(), paddingBox.height() + renderBox.borderTop() + renderBox.borderBottom());
             marginBox = LayoutRect(borderBox.x() - margins.left(), borderBox.y() - margins.top(),
                 borderBox.width() + margins.left() + margins.right(), borderBox.height() + margins.top() + margins.bottom());
         } else {
-            RenderInline* renderInline = toRenderInline(renderer);
+            auto& renderInline = downcast<RenderInline>(*renderer);
 
             // RenderInline's bounding box includes paddings and borders, excludes margins.
-            borderBox = renderInline->linesBoundingBox();
-            paddingBox = LayoutRect(borderBox.x() + renderInline->borderLeft(), borderBox.y() + renderInline->borderTop(),
-                borderBox.width() - renderInline->borderLeft() - renderInline->borderRight(), borderBox.height() - renderInline->borderTop() - renderInline->borderBottom());
-            contentBox = LayoutRect(paddingBox.x() + renderInline->paddingLeft(), paddingBox.y() + renderInline->paddingTop(),
-                paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
+            borderBox = renderInline.linesBoundingBox();
+            paddingBox = LayoutRect(borderBox.x() + renderInline.borderLeft(), borderBox.y() + renderInline.borderTop(),
+                borderBox.width() - renderInline.borderLeft() - renderInline.borderRight(), borderBox.height() - renderInline.borderTop() - renderInline.borderBottom());
+            contentBox = LayoutRect(paddingBox.x() + renderInline.paddingLeft(), paddingBox.y() + renderInline.paddingTop(),
+                paddingBox.width() - renderInline.paddingLeft() - renderInline.paddingRight(), paddingBox.height() - renderInline.paddingTop() - renderInline.paddingBottom());
             // Ignore marginTop and marginBottom for inlines.
-            marginBox = LayoutRect(borderBox.x() - renderInline->marginLeft(), borderBox.y(),
-                borderBox.width() + renderInline->horizontalMarginExtent(), borderBox.height());
+            marginBox = LayoutRect(borderBox.x() - renderInline.marginLeft(), borderBox.y(),
+                borderBox.width() + renderInline.horizontalMarginExtent(), borderBox.height());
         }
 
         FloatQuad absContentQuad;

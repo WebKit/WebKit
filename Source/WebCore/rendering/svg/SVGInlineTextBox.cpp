@@ -338,8 +338,8 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 
     // Finally, paint the outline if any.
-    if (renderer().style().hasOutline() && parentRenderer.isRenderInline())
-        toRenderInline(parentRenderer).paintOutline(paintInfo, paintOffset);
+    if (renderer().style().hasOutline() && is<RenderInline>(parentRenderer))
+        downcast<RenderInline>(parentRenderer).paintOutline(paintInfo, paintOffset);
 
     ASSERT(!m_paintingResource);
 }

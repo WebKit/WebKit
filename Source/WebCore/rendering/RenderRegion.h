@@ -113,9 +113,9 @@ public:
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
     LayoutRect layoutOverflowRectForBox(const RenderBox*);
-    LayoutRect visualOverflowRectForBox(const RenderBoxModelObject*);
+    LayoutRect visualOverflowRectForBox(const RenderBoxModelObject&);
     LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox*);
-    LayoutRect visualOverflowRectForBoxForPropagation(const RenderBoxModelObject*);
+    LayoutRect visualOverflowRectForBoxForPropagation(const RenderBoxModelObject&);
 
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
     

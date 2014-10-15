@@ -105,8 +105,8 @@ inline bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
         return true;
 
     bool rendererIsEmptyInline = false;
-    if (it.renderer()->isRenderInline()) {
-        const RenderInline& inlineRenderer = toRenderInline(*it.renderer());
+    if (is<RenderInline>(*it.renderer())) {
+        const auto& inlineRenderer = downcast<RenderInline>(*it.renderer());
         if (!alwaysRequiresLineBox(inlineRenderer) && !requiresLineBoxForContent(inlineRenderer, lineInfo))
             return false;
         rendererIsEmptyInline = isEmptyInline(inlineRenderer);
@@ -126,12 +126,12 @@ inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child)
     // will work for the common cases
     RenderElement* containerBlock = child.container();
     LayoutUnit blockHeight = block.logicalHeight();
-    if (containerBlock->isRenderInline()) {
+    if (is<RenderInline>(*containerBlock)) {
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
         // inline so that we can obtain the value later.
-        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, false));
-        toRenderInline(containerBlock)->layer()->setStaticBlockPosition(blockHeight);
+        downcast<RenderInline>(*containerBlock).layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, false));
+        downcast<RenderInline>(*containerBlock).layer()->setStaticBlockPosition(blockHeight);
     }
     block.updateStaticInlinePositionForChild(child, blockHeight);
     child.layer()->setStaticBlockPosition(blockHeight);

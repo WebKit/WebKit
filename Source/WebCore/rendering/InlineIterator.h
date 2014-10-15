@@ -288,31 +288,31 @@ static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement& root, R
     return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
 }
 
-static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, InlineBidiResolver* resolver = 0)
+static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, InlineBidiResolver* resolver = nullptr)
 {
-    RenderObject* o = root.firstChild();
-    if (!o)
+    RenderObject* renderer = root.firstChild();
+    if (!renderer)
         return nullptr;
 
-    if (o->isRenderInline()) {
-        notifyObserverEnteredObject(resolver, o);
-        if (!isEmptyInline(toRenderInline(*o)))
-            o = bidiNextSkippingEmptyInlines(root, o, resolver);
+    if (is<RenderInline>(*renderer)) {
+        notifyObserverEnteredObject(resolver, renderer);
+        if (!isEmptyInline(downcast<RenderInline>(*renderer)))
+            renderer = bidiNextSkippingEmptyInlines(root, renderer, resolver);
         else {
             // Never skip empty inlines.
             if (resolver)
                 resolver->commitExplicitEmbedding();
-            return o; 
+            return renderer;
         }
     }
 
     // FIXME: Unify this with the bidiNext call above.
-    if (o && !isIteratorTarget(o))
-        o = bidiNextSkippingEmptyInlines(root, o, resolver);
+    if (renderer && !isIteratorTarget(renderer))
+        renderer = bidiNextSkippingEmptyInlines(root, renderer, resolver);
 
     if (resolver)
         resolver->commitExplicitEmbedding();
-    return o;
+    return renderer;
 }
 
 // FIXME: This method needs to be renamed when bidiNext finds a good name.

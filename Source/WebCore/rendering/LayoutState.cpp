@@ -53,8 +53,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
 
     if (renderer->isOutOfFlowPositioned() && !fixed) {
         if (RenderElement* container = renderer->container()) {
-            if (container->isInFlowPositioned() && container->isRenderInline())
-                m_paintOffset += toRenderInline(container)->offsetForInFlowPositionedInline(renderer);
+            if (container->isInFlowPositioned() && is<RenderInline>(*container))
+                m_paintOffset += downcast<RenderInline>(*container).offsetForInFlowPositionedInline(renderer);
         }
     }
 

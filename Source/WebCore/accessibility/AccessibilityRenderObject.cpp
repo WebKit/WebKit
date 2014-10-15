@@ -170,11 +170,11 @@ static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
     auto continuation = renderer.continuation();
 
     while (continuation) {
-        if (continuation->isRenderBlock())
+        if (is<RenderBlock>(*continuation))
             return continuation;
         if (RenderObject* child = continuation->firstChild())
             return child;
-        continuation = toRenderInline(continuation)->continuation();
+        continuation = downcast<RenderInline>(*continuation).continuation();
     }
 
     return nullptr;

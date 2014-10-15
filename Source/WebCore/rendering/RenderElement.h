@@ -85,7 +85,7 @@ public:
 
     virtual RenderElement* hoverAncestor() const;
 
-    virtual void dirtyLinesFromChangedChild(RenderObject*) { }
+    virtual void dirtyLinesFromChangedChild(RenderObject&) { }
 
     bool ancestorLineBoxDirty() const { return m_ancestorLineBoxDirty; }
     void setAncestorLineBoxDirty(bool f = true);

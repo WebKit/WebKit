@@ -1446,7 +1446,7 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
                 break;
             continue;
         }
-        LayoutRect childVisualOverflowRect = region->visualOverflowRectForBoxForPropagation(child);
+        LayoutRect childVisualOverflowRect = region->visualOverflowRectForBoxForPropagation(*child);
         childVisualOverflowRect.move(delta);
         region->addVisualOverflowForBox(box, childVisualOverflowRect);
 

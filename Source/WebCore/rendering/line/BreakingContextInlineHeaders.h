@@ -286,8 +286,8 @@ inline LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = 
     unsigned lineDepth = 1;
     LayoutUnit extraWidth = 0;
     RenderElement* parent = child->parent();
-    while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
-        const RenderInline& parentAsRenderInline = toRenderInline(*parent);
+    while (is<RenderInline>(*parent) && lineDepth++ < cMaxLineDepth) {
+        const auto& parentAsRenderInline = downcast<RenderInline>(*parent);
         if (!isEmptyInline(parentAsRenderInline)) {
             checkStartEdge = checkStartEdge && shouldAddBorderPaddingMargin(previousInFlowSibling(child));
             if (checkStartEdge)
@@ -373,7 +373,7 @@ inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderO
 
 inline void BreakingContext::handleEmptyInline()
 {
-    RenderInline& flowBox = toRenderInline(*m_current.renderer());
+    RenderInline& flowBox = downcast<RenderInline>(*m_current.renderer());
 
     // This should only end up being called on empty inlines
     ASSERT(isEmptyInline(flowBox));

@@ -284,7 +284,7 @@ void RenderNamedFlowThread::regionChangedWritingMode(RenderRegion* region)
 
 LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(const RenderBox& box, RenderNamedFlowFragment& fragment) const
 {
-    LayoutRect visualOverflowRect = fragment.visualOverflowRectForBox(&box);
+    LayoutRect visualOverflowRect = fragment.visualOverflowRectForBox(box);
     LayoutUnit initialLogicalX = style().isHorizontalWritingMode() ? visualOverflowRect.x() : visualOverflowRect.y();
 
     // The visual overflow rect returned by visualOverflowRectForBox is already flipped but the

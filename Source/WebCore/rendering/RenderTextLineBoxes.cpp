@@ -109,7 +109,7 @@ void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
 {
     if (!m_first) {
         if (renderer.parent())
-            renderer.parent()->dirtyLinesFromChangedChild(&renderer);
+            renderer.parent()->dirtyLinesFromChangedChild(renderer);
         return;
     }
     for (auto box = m_first; box; box = box->nextTextBox())
@@ -683,7 +683,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
     
     // If the text node is empty, dirty the line where new text will be inserted.
     if (!m_first && renderer.parent()) {
-        renderer.parent()->dirtyLinesFromChangedChild(&renderer);
+        renderer.parent()->dirtyLinesFromChangedChild(renderer);
         dirtiedLines = true;
     }
     return dirtiedLines;

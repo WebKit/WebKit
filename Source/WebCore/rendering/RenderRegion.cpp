@@ -156,7 +156,7 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     if (shouldClipFlowThreadContent())
         return flowThreadPortionRect;
 
-    LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(m_flowThread) : layoutOverflowRectForBox(m_flowThread);
+    LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(*m_flowThread) : layoutOverflowRectForBox(m_flowThread);
 
     // We are interested about the outline size only when computing the visual overflow.
     LayoutUnit outlineSize = overflowType == VisualOverflow ? LayoutUnit(maximalOutlineSize(PaintPhaseOutline)) : LayoutUnit();
@@ -523,16 +523,16 @@ LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
     return overflow->layoutOverflowRect();
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBoxModelObject* box)
+LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBoxModelObject& box)
 {
-    if (box->isRenderInline()) {
-        const RenderInline* inlineBox = toRenderInline(box);
-        return inlineBox->linesVisualOverflowBoundingBoxInRegion(this);
+    if (is<RenderInline>(box)) {
+        const RenderInline& inlineBox = downcast<RenderInline>(box);
+        return inlineBox.linesVisualOverflowBoundingBoxInRegion(this);
     }
 
-    if (box->isBox()) {
+    if (is<RenderBox>(box)) {
         RefPtr<RenderOverflow> overflow;
-        ensureOverflowForBox(toRenderBox(box), overflow, true);
+        ensureOverflowForBox(&downcast<RenderBox>(box), overflow, true);
 
         ASSERT(overflow);
         return overflow->visualOverflowRect();
@@ -563,7 +563,7 @@ LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox*
     return rect;
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject* box)
+LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject& box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
     flowThread()->flipForWritingModeLocalCoordinates(rect);

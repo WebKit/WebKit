@@ -74,7 +74,7 @@ RenderReplaced::~RenderReplaced()
 void RenderReplaced::willBeDestroyed()
 {
     if (!documentBeingDestroyed() && parent())
-        parent()->dirtyLinesFromChangedChild(this);
+        parent()->dirtyLinesFromChangedChild(*this);
 
     RenderBox::willBeDestroyed();
 }

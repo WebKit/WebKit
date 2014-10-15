@@ -2047,7 +2047,7 @@ void RenderObject::insertedIntoTree()
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
 
     if (!isFloating() && parent()->childrenInline())
-        parent()->dirtyLinesFromChangedChild(this);
+        parent()->dirtyLinesFromChangedChild(*this);
     
     // We have to unset the current layout RenderFlowThread here, since insertedIntoTree() can happen in
     // the middle of layout but for objects inside a nested flow thread that is still being populated. This

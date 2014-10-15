@@ -107,7 +107,7 @@ void RenderInline::willBeDestroyed()
                     box->removeFromParent();
             }
         } else if (parent()) 
-            parent()->dirtyLinesFromChangedChild(this);
+            parent()->dirtyLinesFromChangedChild(*this);
     }
 
     m_lineBoxes.deleteLineBoxes();
@@ -217,7 +217,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         return;
 
     RenderStyle* parentStyle = &parent()->style();
-    RenderInline* parentRenderInline = parent()->isRenderInline() ? toRenderInline(parent()) : 0;
+    RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
     bool checkFonts = document().inNoQuirksMode();
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     bool alwaysCreateLineBoxes = (parentRenderInline && parentRenderInline->alwaysCreateLineBoxes())
@@ -1107,27 +1107,27 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
 
     // We need to add in the in-flow position offsets of any inlines (including us) up to our
     // containing block.
-    RenderBlock* cb = containingBlock();
-    for (const RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb;
+    RenderBlock* containingBlock = this->containingBlock();
+    for (const RenderElement* inlineFlow = this; is<RenderInline>(inlineFlow) && inlineFlow != containingBlock;
          inlineFlow = inlineFlow->parent()) {
          if (inlineFlow == repaintContainer) {
             hitRepaintContainer = true;
             break;
         }
         if (inlineFlow->style().hasInFlowPosition() && inlineFlow->hasLayer())
-            repaintRect.move(toRenderInline(inlineFlow)->layer()->offsetForInFlowPosition());
+            repaintRect.move(downcast<RenderInline>(*inlineFlow).layer()->offsetForInFlowPosition());
     }
 
     LayoutUnit outlineSize = style().outlineSize();
     repaintRect.inflate(outlineSize);
 
-    if (hitRepaintContainer || !cb)
+    if (hitRepaintContainer || !containingBlock)
         return repaintRect;
 
-    if (cb->hasOverflowClip())
-        cb->applyCachedClipAndScrollOffsetForRepaint(repaintRect);
+    if (containingBlock->hasOverflowClip())
+        containingBlock->applyCachedClipAndScrollOffsetForRepaint(repaintRect);
 
-    cb->computeRectForRepaint(repaintContainer, repaintRect);
+    containingBlock->computeRectForRepaint(repaintContainer, repaintRect);
 
     if (outlineSize) {
         for (auto& child : childrenOfType<RenderElement>(*this))

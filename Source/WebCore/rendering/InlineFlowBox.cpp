@@ -219,7 +219,7 @@ void InlineFlowBox::deleteLine()
 
 void InlineFlowBox::removeLineBoxFromRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes().removeLineBox(this);
+    downcast<RenderInline>(renderer()).lineBoxes().removeLineBox(this);
 }
 
 void InlineFlowBox::extractLine()
@@ -232,7 +232,7 @@ void InlineFlowBox::extractLine()
 
 void InlineFlowBox::extractLineBoxFromRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes().extractLineBox(this);
+    downcast<RenderInline>(renderer()).lineBoxes().extractLineBox(this);
 }
 
 void InlineFlowBox::attachLine()
@@ -245,7 +245,7 @@ void InlineFlowBox::attachLine()
 
 void InlineFlowBox::attachLineBoxToRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes().attachLineBox(this);
+    downcast<RenderInline>(renderer()).lineBoxes().attachLineBox(this);
 }
 
 void InlineFlowBox::adjustPosition(float dx, float dy)
@@ -300,7 +300,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
 
     // The root inline box never has borders/margins/padding.
     if (parent()) {
-        const auto& inlineFlow = toRenderInline(renderer());
+        const auto& inlineFlow = downcast<RenderInline>(renderer());
 
         bool ltr = renderer().style().isLeftToRightDirection();
 
@@ -1007,29 +1007,29 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     // Check children first.
     // We need to account for culled inline parents of the hit-tested nodes, so that they may also get included in area-based hit-tests.
-    RenderElement* culledParent = 0;
-    for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if (curr->renderer().isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) {
-            RenderElement* newParent = 0;
+    RenderElement* culledParent = nullptr;
+    for (InlineBox* child = lastChild(); child; child = child->prevOnLine()) {
+        if (is<RenderText>(child->renderer()) || !child->boxModelObject()->hasSelfPaintingLayer()) {
+            RenderElement* newParent = nullptr;
             // Culled parents are only relevant for area-based hit-tests, so ignore it in point-based ones.
             if (locationInContainer.isRectBasedTest()) {
-                newParent = curr->renderer().parent();
+                newParent = child->renderer().parent();
                 if (newParent == &renderer())
-                    newParent = 0;
+                    newParent = nullptr;
             }
             // Check the culled parent after all its children have been checked, to do this we wait until
             // we are about to test an element with a different parent.
             if (newParent != culledParent) {
                 if (!newParent || !newParent->isDescendantOf(culledParent)) {
                     while (culledParent && culledParent != &renderer() && culledParent != newParent) {
-                        if (culledParent->isRenderInline() && toRenderInline(culledParent)->hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
+                        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
                             return true;
                         culledParent = culledParent->parent();
                     }
                 }
                 culledParent = newParent;
             }
-            if (curr->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom)) {
+            if (child->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom)) {
                 renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
                 return true;
             }
@@ -1037,7 +1037,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
     // Check any culled ancestor of the final children tested.
     while (culledParent && culledParent != &renderer()) {
-        if (culledParent->isRenderInline() && toRenderInline(culledParent)->hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
+        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
             return true;
         culledParent = culledParent->parent();
     }
@@ -1103,9 +1103,9 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (renderer().style().visibility() == VISIBLE && renderer().hasOutline() && !isRootInlineBox()) {
-                RenderInline& inlineFlow = toRenderInline(renderer());
+                RenderInline& inlineFlow = downcast<RenderInline>(renderer());
 
-                RenderBlock* cb = 0;
+                RenderBlock* containingBlock = nullptr;
                 bool containingBlockPaintsContinuationOutline = inlineFlow.continuation() || inlineFlow.isInlineElementContinuation();
                 if (containingBlockPaintsContinuationOutline) {           
                     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=54690. We currently don't reconnect inline continuations
@@ -1115,8 +1115,8 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                     if (!enclosingAnonymousBlock->isAnonymousBlock())
                         containingBlockPaintsContinuationOutline = false;
                     else {
-                        cb = enclosingAnonymousBlock->containingBlock();
-                        for (auto box = &renderer(); box != cb; box = &box->parent()->enclosingBoxModelObject()) {
+                        containingBlock = enclosingAnonymousBlock->containingBlock();
+                        for (auto box = &renderer(); box != containingBlock; box = &box->parent()->enclosingBoxModelObject()) {
                             if (box->hasSelfPaintingLayer()) {
                                 containingBlockPaintsContinuationOutline = false;
                                 break;
@@ -1128,7 +1128,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 if (containingBlockPaintsContinuationOutline) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
-                    cb->addContinuationWithOutline(toRenderInline(renderer().element()->renderer()));
+                    containingBlock->addContinuationWithOutline(downcast<RenderInline>(renderer().element()->renderer()));
                 } else if (!inlineFlow.isInlineElementContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }
