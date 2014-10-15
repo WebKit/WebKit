@@ -1,3 +1,22 @@
+2014-10-13  David Farler  <dfarler@apple.com>
+
+        [iOS] LayoutTestRelay: Detect broken pipe when reading simulator app's stdout and stderr.
+        https://bugs.webkit.org/show_bug.cgi?id=137662
+
+        Reviewed by Darin Adler.
+
+        The layout test harness can close LayoutTestRelay's subprocess
+        stdout and stderr in the case of a timeout or if a run is
+        cancelled and the FIFOs are cleaned up. If LayoutTestRelay
+        finds that no one is listening to its stdout/stderr (broken
+        pipe), then just exit(1), there is nothing to report.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController didReceiveStdoutData:]):
+        Add @try/@catch for NSFileHandleOperationException.
+        (-[LTRelayController didReceiveStderrData:]):
+        Add @try/@catch for NSFileHandleOperationException.
+
 2014-10-15  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [GTK] Minibrowser : Add keyboard support for zoom in , zoom out and default zoom in GTK Minibrowser

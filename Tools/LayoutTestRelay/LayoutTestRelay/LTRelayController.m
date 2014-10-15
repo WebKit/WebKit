@@ -105,12 +105,26 @@
 
 - (void)didReceiveStdoutData:(NSData *)data
 {
-    [[self standardOutput] writeData:data];
+    @try {
+        [[self standardOutput] writeData:data];
+    } @catch (NSException *exception) {
+        // NSFileHandleOperationException
+        // Broken pipe - the test harness stopped listening to us,
+        // probably because we timed out or a run was canceled.
+        exit(EXIT_FAILURE);
+    }
 }
 
 - (void)didReceiveStderrData:(NSData *)data
 {
-    [[self standardError] writeData:data];
+    @try {
+        [[self standardError] writeData:data];
+    } @catch (NSException *exception) {
+        // NSFileHandleOperationException
+        // Broken pipe - the test harness stopped listening to us,
+        // probably because we timed out or a run was canceled.
+        exit(EXIT_FAILURE);
+    }
 }
 
 - (void)didDisconnect
