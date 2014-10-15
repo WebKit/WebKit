@@ -32,7 +32,7 @@
     function notifyCallback(element, notification) {  
         notifyName = notification;
         document.getElementById("notifications").innerHTML += "Notification: " + notifyName + "<br>";
-        if (notifyCount == 3) {
+        if (notifyCount == 4) {
             accessibilityController.removeNotificationListener();
             window.testRunner.notifyDone();
         }

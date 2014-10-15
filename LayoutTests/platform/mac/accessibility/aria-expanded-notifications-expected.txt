@@ -9,6 +9,7 @@ PASS addedNotification is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+Notification: AXLoadComplete
 Notification: AXRowCountChanged
 Notification: AXRowCollapsed
 Notification: AXRowCountChanged
