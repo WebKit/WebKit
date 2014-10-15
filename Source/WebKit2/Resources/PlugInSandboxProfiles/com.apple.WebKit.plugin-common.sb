@@ -143,6 +143,7 @@
     (literal "/private/var/run/resolv.conf")
 
     (subpath "/Library/Frameworks")
+    (subpath "/Library/Managed Preferences")
     (subpath "/private/var/db/mds")
 
     (regex #"^/Library/Preferences/com\.apple\.security")
