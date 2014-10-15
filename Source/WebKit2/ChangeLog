@@ -1,3 +1,16 @@
+2014-10-15  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] "Plug-in will handle load" error isn't declared in the modern API
+        https://bugs.webkit.org/show_bug.cgi?id=137747
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKError.mm: Define _WKLegacyErrorDomain.
+        * UIProcess/API/Cocoa/WKErrorInternal.h: Changed to import WKErrorPrivate.h.
+        * UIProcess/API/Cocoa/WKErrorPrivate.h: Added. Declares _WKLegacyErrorDomain
+        and _WKLegacyErrorPlugInWillHandleLoad.
+        * WebKit2.xcodeproj/project.pbxproj: Added new private header.
+
 2014-10-15  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for TransformOperation subclasses

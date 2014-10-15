@@ -33,6 +33,7 @@
 #import <wtf/text/WTFString.h>
 
 NSString * const WKErrorDomain = @"WKErrorDomain";
+NSString * const _WKLegacyErrorDomain = @"WebKitErrorDomain";
 
 static NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 {
