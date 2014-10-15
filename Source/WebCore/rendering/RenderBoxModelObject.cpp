@@ -2637,8 +2637,8 @@ bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    auto o = container();
-    if (!o)
+    RenderElement* container = this->container();
+    if (!container)
         return;
     
     // FIXME: This code is wrong for named flow threads since it only works for content in the first region.
@@ -2646,21 +2646,21 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     // geometry to actually get a better result.
     // The point inside a box that's inside a region has its coordinates relative to the region,
     // not the FlowThread that is its container in the RenderObject tree.
-    if (isBox() && o->isOutOfFlowRenderFlowThread()) {
+    if (is<RenderBox>(*this) && container->isOutOfFlowRenderFlowThread()) {
         RenderRegion* startRegion = nullptr;
         RenderRegion* endRegion = nullptr;
-        if (toRenderFlowThread(o)->getRegionRangeForBox(toRenderBox(this), startRegion, endRegion))
-            o = startRegion;
+        if (downcast<RenderFlowThread>(*container).getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion))
+            container = startRegion;
     }
 
-    o->mapAbsoluteToLocalPoint(mode, transformState);
+    container->mapAbsoluteToLocalPoint(mode, transformState);
 
-    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint());
 
-    bool preserve3D = mode & UseTransforms && (o->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
+    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
-        getTransformFromContainer(o, containerOffset, t);
+        getTransformFromContainer(container, containerOffset, t);
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
     } else
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);

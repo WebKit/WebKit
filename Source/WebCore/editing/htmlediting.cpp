@@ -1294,10 +1294,10 @@ LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caret
 
     // Compute an offset between the renderer and the caretPainter.
     while (renderer != caretPainter) {
-        RenderObject* containerObject = renderer->container();
+        RenderElement* containerObject = renderer->container();
         if (!containerObject)
             return LayoutRect();
-        localRect.move(renderer->offsetFromContainer(containerObject, localRect.location()));
+        localRect.move(renderer->offsetFromContainer(*containerObject, localRect.location()));
         renderer = containerObject;
     }
 

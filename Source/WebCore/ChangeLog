@@ -1,3 +1,49 @@
+2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Have offsetFromContainer() / offsetFromAncestorContainer() take a RenderElement&
+        https://bugs.webkit.org/show_bug.cgi?id=137728
+
+        Reviewed by Benjamin Poulain.
+
+        Have offsetFromContainer() / offsetFromAncestorContainer() take a RenderElement&
+        instead of a RenderObject*. The argument passed is never null and the type
+        should be a RenderElement as the argument is a container.
+
+        No new tests, no behavior change.
+
+        * editing/htmlediting.cpp:
+        (WebCore::localCaretRectInRendererForCaretPainting):
+        * page/GestureTapHighlighter.cpp:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::pushMappingToContainer):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::pushMappingToContainer):
+        * rendering/RenderInline.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::offsetFromContainer):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::offsetFromContainer):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::offsetFromAncestorContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::convertToPaintingRect):
+
 2014-10-14  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r159208): Crash when clicking scrubber after navigating away/back to video

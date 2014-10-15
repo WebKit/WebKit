@@ -681,7 +681,8 @@ FloatRect RenderThemeMac::convertToPaintingRect(const RenderObject& inputRendere
     const RenderObject* renderer = &partRenderer;
     while (renderer && renderer != &inputRenderer) {
         RenderElement* containingRenderer = renderer->container();
-        offsetFromInputRenderer -= roundedIntSize(renderer->offsetFromContainer(containingRenderer, LayoutPoint()));
+        ASSERT(containingRenderer);
+        offsetFromInputRenderer -= roundedIntSize(renderer->offsetFromContainer(*containingRenderer, LayoutPoint()));
         renderer = containingRenderer;
     }
     // If the input renderer was not a container, something went wrong

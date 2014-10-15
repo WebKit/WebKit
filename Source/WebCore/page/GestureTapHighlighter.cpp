@@ -64,11 +64,11 @@ AffineTransform localToAbsoluteTransform(const RenderObject* o)
     LayoutPoint referencePoint;
 
     while (o) {
-        RenderObject* nextContainer = o->container();
+        RenderElement* nextContainer = o->container();
         if (!nextContainer)
             break;
 
-        LayoutSize containerOffset = o->offsetFromContainer(nextContainer, referencePoint);
+        LayoutSize containerOffset = o->offsetFromContainer(*nextContainer, referencePoint);
         TransformationMatrix t;
         o->getTransformFromContainer(nextContainer, containerOffset, t);
 

@@ -608,21 +608,20 @@ void RenderMultiColumnFlowThread::computeLineGridPaginationOrigin(LayoutState& l
     }
 }
 
-LayoutSize RenderMultiColumnFlowThread::offsetFromContainer(RenderObject* enclosingContainer, const LayoutPoint& physicalPoint, bool* offsetDependsOnPoint) const
+LayoutSize RenderMultiColumnFlowThread::offsetFromContainer(RenderElement& enclosingContainer, const LayoutPoint& physicalPoint, bool* offsetDependsOnPoint) const
 {
-    ASSERT(enclosingContainer == container());
+    ASSERT(&enclosingContainer == container());
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint = true;
     
     LayoutPoint translatedPhysicalPoint(physicalPoint);
-    RenderRegion* region = physicalTranslationFromFlowToRegion(translatedPhysicalPoint);
-    if (region)
+    if (RenderRegion* region = physicalTranslationFromFlowToRegion(translatedPhysicalPoint))
         translatedPhysicalPoint.moveBy(region->topLeftLocation());
     
     LayoutSize offset(translatedPhysicalPoint.x(), translatedPhysicalPoint.y());
-    if (enclosingContainer->isBox())
-        offset -= toRenderBox(enclosingContainer)->scrolledContentOffset();
+    if (is<RenderBox>(enclosingContainer))
+        offset -= downcast<RenderBox>(enclosingContainer).scrolledContentOffset();
     return offset;
 }
     
@@ -638,7 +637,7 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
     LayoutSize candidateContainerOffset;
     
     for (const auto& columnSet : childrenOfType<RenderMultiColumnSet>(*parent())) {
-        candidateContainerOffset = columnSet.offsetFromContainer(parent(), LayoutPoint());
+        candidateContainerOffset = columnSet.offsetFromContainer(*parent(), LayoutPoint());
         
         candidatePoint = transformPoint - candidateContainerOffset;
         candidateColumnSet = &columnSet;

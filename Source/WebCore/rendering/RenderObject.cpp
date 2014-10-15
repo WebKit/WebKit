@@ -1851,36 +1851,36 @@ FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, con
     return transformState.lastPlanarPoint();
 }
 
-LayoutSize RenderObject::offsetFromContainer(RenderObject* o, const LayoutPoint&, bool* offsetDependsOnPoint) const
+LayoutSize RenderObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
-    ASSERT(o == container());
+    ASSERT(&container == this->container());
 
     LayoutSize offset;
-    if (o->isBox())
-        offset -= toRenderBox(o)->scrolledContentOffset();
+    if (is<RenderBox>(container))
+        offset -= downcast<RenderBox>(container).scrolledContentOffset();
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = o->isRenderFlowThread();
+        *offsetDependsOnPoint = is<RenderFlowThread>(container);
 
     return offset;
 }
 
-LayoutSize RenderObject::offsetFromAncestorContainer(RenderObject* container) const
+LayoutSize RenderObject::offsetFromAncestorContainer(RenderElement& container) const
 {
     LayoutSize offset;
     LayoutPoint referencePoint;
     const RenderObject* currContainer = this;
     do {
-        auto nextContainer = currContainer->container();
+        RenderElement* nextContainer = currContainer->container();
         ASSERT(nextContainer);  // This means we reached the top without finding container.
         if (!nextContainer)
             break;
         ASSERT(!currContainer->hasTransform());
-        LayoutSize currentOffset = currContainer->offsetFromContainer(nextContainer, referencePoint);
+        LayoutSize currentOffset = currContainer->offsetFromContainer(*nextContainer, referencePoint);
         offset += currentOffset;
         referencePoint.move(currentOffset);
         currContainer = nextContainer;
-    } while (currContainer != container);
+    } while (currContainer != &container);
 
     return offset;
 }

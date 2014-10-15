@@ -1912,8 +1912,8 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     bool containerSkipped;
-    auto o = container(repaintContainer, &containerSkipped);
-    if (!o)
+    RenderElement* container = this->container(repaintContainer, &containerSkipped);
+    if (!container)
         return;
 
     bool isFixedPos = style().position() == FixedPosition;
@@ -1928,12 +1928,12 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (wasFixed)
         *wasFixed = mode & IsFixed;
     
-    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint(transformState.mappedPoint()));
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
     
-    bool preserve3D = mode & UseTransforms && (o->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
+    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
-        getTransformFromContainer(o, containerOffset, t);
+        getTransformFromContainer(container, containerOffset, t);
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
     } else
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
@@ -1941,7 +1941,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (containerSkipped) {
         // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
         // to just subtract the delta between the repaintContainer and o.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(o);
+        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
         return;
     }
@@ -1950,10 +1950,10 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
 
     // For fixed positioned elements inside out-of-flow named flows, we do not want to
     // map their position further to regions based on their coordinates inside the named flows.
-    if (!o->isOutOfFlowRenderFlowThread() || !fixedPositionedWithNamedFlowContainingBlock())
-        o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    if (!container->isOutOfFlowRenderFlowThread() || !fixedPositionedWithNamedFlowContainingBlock())
+        container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     else
-        o->mapLocalToContainer(toRenderLayerModelObject(o), transformState, mode, wasFixed);
+        container->mapLocalToContainer(toRenderLayerModelObject(container), transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -1961,9 +1961,9 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    auto container = this->container(ancestorToStopAt, &ancestorSkipped);
+    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
     if (!container)
-        return 0;
+        return nullptr;
 
     bool isFixedPos = style().position() == FixedPosition;
     bool hasTransform = hasLayer() && layer()->transform();
@@ -1972,11 +1972,11 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     if (ancestorSkipped) {
         // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
         // to just subtract the delta between the ancestor and o.
-        adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(container);
+        adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(*container);
     }
 
     bool offsetDependsOnPoint = false;
-    LayoutSize containerOffset = offsetFromContainer(container, LayoutPoint(), &offsetDependsOnPoint);
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
 
     bool preserve3D = container->style().preserves3D() || style().preserves3D();
     if (shouldUseTransformFromContainer(container)) {
@@ -2007,10 +2007,10 @@ void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }
 
-LayoutSize RenderBox::offsetFromContainer(RenderObject* renderer, const LayoutPoint&, bool* offsetDependsOnPoint) const
+LayoutSize RenderBox::offsetFromContainer(RenderElement& renderer, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     // A region "has" boxes inside it without being their container. 
-    ASSERT(renderer == container() || is<RenderRegion>(*renderer));
+    ASSERT(&renderer == container() || is<RenderRegion>(renderer));
 
     LayoutSize offset;    
     if (isInFlowPositioned())
@@ -2019,14 +2019,14 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* renderer, const LayoutPo
     if (!isInline() || isReplaced())
         offset += topLeftLocationOffset();
 
-    if (is<RenderBox>(*renderer))
-        offset -= downcast<RenderBox>(*renderer).scrolledContentOffset();
+    if (is<RenderBox>(renderer))
+        offset -= downcast<RenderBox>(renderer).scrolledContentOffset();
 
-    if (style().position() == AbsolutePosition && renderer->isInFlowPositioned() && is<RenderInline>(*renderer))
-        offset += downcast<RenderInline>(*renderer).offsetForInFlowPositionedInline(this);
+    if (style().position() == AbsolutePosition && renderer.isInFlowPositioned() && is<RenderInline>(renderer))
+        offset += downcast<RenderInline>(renderer).offsetForInFlowPositionedInline(this);
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint |= is<RenderFlowThread>(*renderer);
+        *offsetDependsOnPoint |= is<RenderFlowThread>(renderer);
 
     return offset;
 }
@@ -2225,7 +2225,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
 
     if (containerSkipped) {
         // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(renderer);
+        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*renderer);
         rect.move(-containerOffset);
         return;
     }

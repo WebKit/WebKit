@@ -319,11 +319,11 @@ void RenderTableCell::setOverrideLogicalContentHeightFromRowHeight(LayoutUnit ro
     setOverrideLogicalContentHeight(std::max<LayoutUnit>(0, rowHeight - borderAndPaddingLogicalHeight()));
 }
 
-LayoutSize RenderTableCell::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const
+LayoutSize RenderTableCell::offsetFromContainer(RenderElement& container, const LayoutPoint& point, bool* offsetDependsOnPoint) const
 {
-    ASSERT(o == container());
+    ASSERT(&container == this->container());
 
-    LayoutSize offset = RenderBlockFlow::offsetFromContainer(o, point, offsetDependsOnPoint);
+    LayoutSize offset = RenderBlockFlow::offsetFromContainer(container, point, offsetDependsOnPoint);
     if (parent())
         offset -= parentBox()->locationOffset();
 
