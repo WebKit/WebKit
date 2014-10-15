@@ -2,6 +2,14 @@
 
         [Mac] Unreviewed gardening.
 
+        Unskip some subpixel related tests.
+
+        * platform/mac/TestExpectations:
+
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
         css3/flexbox/flex-rounding.html passes now that subpixel is on.
 
         * platform/mac/TestExpectations:

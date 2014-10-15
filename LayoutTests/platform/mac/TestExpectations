@@ -880,13 +880,9 @@ webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ Pass ImageOnlyFailure 
 
 # Some tests need to be rebaselined still after disabling subpixel layout
 # http://bugs.webkit.org/show_bug.cgi?id=115292
-webkit.org/b/115292 css1/units/rounding.html
 webkit.org/b/115292 fast/block/float/overhanging-tall-block.html
-webkit.org/b/115292 fast/events/clientXY-in-zoom-and-scroll.html
 webkit.org/b/115292 fast/events/constructors/mouse-event-constructor.html
 webkit.org/b/115292 fast/events/constructors/wheel-event-constructor.html
-webkit.org/b/115292 fast/forms/range/slider-mouse-events.html
-webkit.org/b/115292 fast/overflow/infiniteRecursionGuard.html
 webkit.org/b/115292 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 webkit.org/b/115292 editing/selection/vertical-lr-ltr-extend-line-backward-br.html
 webkit.org/b/115292 editing/selection/vertical-lr-ltr-extend-line-forward-br.html
@@ -900,7 +896,6 @@ webkit.org/b/115292 fast/text/orientation-sideways.html
 webkit.org/b/115292 fast/writing-mode/Kusa-Makura-background-canvas.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-lr.html
 webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html
-webkit.org/b/115292 fast/writing-mode/vertical-baseline-alignment.html
 webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
 
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
