@@ -189,8 +189,8 @@ bool ImageSource::isSizeAvailable()
     if (!image0Properties)
         return false;
 
-    return CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelWidth)
-        && CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelHeight);
+    return CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelWidth)
+        && CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelHeight);
 }
 
 static ImageOrientation orientationFromProperties(CFDictionaryRef imageProperties)

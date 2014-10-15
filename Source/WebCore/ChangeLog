@@ -1,3 +1,19 @@
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Use CFDictionaryContainsKey() in ImageSource::isSizeAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=137723
+
+        Reviewed by Simon Fraser.
+
+        Use CFDictionaryContainsKey() in ImageSource::isSizeAvailable() instead
+        of CFDictionaryGetValue() as we are not actually interested in the
+        value.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::isSizeAvailable):
+
 2014-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Use modern loops in subtrees selection code
