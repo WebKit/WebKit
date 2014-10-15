@@ -1,3 +1,28 @@
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
+        Rebaselining.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/mac/fast/events/constructors/mouse-event-constructor-expected.txt: Added.
+        * platform/mac/fast/events/constructors/wheel-event-constructor-expected.txt: Added.
+        * platform/mac/fast/text/international/hindi-spacing-expected.txt:
+        * platform/mac/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/mac/fast/text/orientation-sideways-expected.txt:
+        * platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+
 2014-10-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Going back is broken for VoiceOver

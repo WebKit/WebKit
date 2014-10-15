@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (108,10) size 36x163 [color=#A52A2A]
           RenderText {#text} at (5,0) size 28x156
             text run at (5,0) width 156: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-      RenderBlock {DIV} at (0,407) size 144x168
+      RenderBlock {DIV} at (0,406) size 144x169
         RenderBlock {DIV} at (0,0) size 36x168
           RenderText {#text} at (6,0) size 24x159
             text run at (6,0) width 159: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"

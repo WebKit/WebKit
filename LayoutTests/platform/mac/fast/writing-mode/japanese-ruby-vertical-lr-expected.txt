@@ -6,14 +6,14 @@ layer at (0,0) size 107x600
       RenderText {#text} at (10,0) size 40x227
         text run at (10,0) width 227: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
       RenderRuby (inline) {RUBY} at (0,0) size 40x201
-        RenderRubyRun (anonymous) at (0,227) size 60x80
+        RenderRubyRun (anonymous) at (0,226) size 60x81
           RenderRubyText {RT} at (46,0) size 30x80
             RenderText {#text} at (4,0) size 21x80
               text run at (4,0) width 80: "\x{3053}\x{3046}\x{304B}\x{304F}"
           RenderRubyBase (anonymous) at (0,0) size 60x80
             RenderText {#text} at (10,0) size 40x80
               text run at (10,0) width 80: "\x{653B}\x{6BBB}"
-        RenderRubyRun (anonymous) at (0,307) size 60x120
+        RenderRubyRun (anonymous) at (0,306) size 60x121
           RenderRubyText {RT} at (46,0) size 30x120
             RenderText {#text} at (4,2) size 21x116
               text run at (4,2) width 116: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}"
