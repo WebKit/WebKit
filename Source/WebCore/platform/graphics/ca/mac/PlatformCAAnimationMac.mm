@@ -199,19 +199,19 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationMac::copy() const
     animation->setFillMode(fillMode());
     animation->setRemovedOnCompletion(isRemovedOnCompletion());
     animation->setAdditive(isAdditive());
-    animation->copyTimingFunctionFrom(this);
+    animation->copyTimingFunctionFrom(*this);
     animation->setValueFunction(valueFunction());
 
-    setHasExplicitBeginTime(toPlatformCAAnimationMac(animation.get())->platformAnimation(), hasExplicitBeginTime(platformAnimation()));
+    setHasExplicitBeginTime(downcast<PlatformCAAnimationMac>(*animation).platformAnimation(), hasExplicitBeginTime(platformAnimation()));
     
     // Copy the specific Basic or Keyframe values.
     if (animationType() == Keyframe) {
-        animation->copyValuesFrom(this);
-        animation->copyKeyTimesFrom(this);
-        animation->copyTimingFunctionsFrom(this);
+        animation->copyValuesFrom(*this);
+        animation->copyKeyTimesFrom(*this);
+        animation->copyTimingFunctionsFrom(*this);
     } else {
-        animation->copyFromValueFrom(this);
-        animation->copyToValueFrom(this);
+        animation->copyFromValueFrom(*this);
+        animation->copyToValueFrom(*this);
     }
     
     return animation;
@@ -309,9 +309,9 @@ void PlatformCAAnimationMac::setTimingFunction(const TimingFunction* value, bool
     [m_animation setTimingFunction:toCAMediaTimingFunction(value, reverse)];
 }
 
-void PlatformCAAnimationMac::copyTimingFunctionFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyTimingFunctionFrom(const PlatformCAAnimation& value)
 {
-    [m_animation setTimingFunction:[toPlatformCAAnimationMac(value)->m_animation.get() timingFunction]];
+    [m_animation setTimingFunction:[downcast<PlatformCAAnimationMac>(value).m_animation.get() timingFunction]];
 }
 
 bool PlatformCAAnimationMac::isRemovedOnCompletion() const
@@ -393,12 +393,12 @@ void PlatformCAAnimationMac::setFromValue(const FilterOperation* operation, int 
     [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:value.get()];
 }
 
-void PlatformCAAnimationMac::copyFromValueFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyFromValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value->animationType() != Basic)
+    if (animationType() != Basic || value.animationType() != Basic)
         return;
         
-    CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(toPlatformCAAnimationMac(value)->m_animation.get());
+    CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(downcast<PlatformCAAnimationMac>(value).m_animation.get());
     [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:[otherAnimation fromValue]];
 }
 
@@ -450,12 +450,12 @@ void PlatformCAAnimationMac::setToValue(const FilterOperation* operation, int in
     [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:value.get()];
 }
 
-void PlatformCAAnimationMac::copyToValueFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyToValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value->animationType() != Basic)
+    if (animationType() != Basic || value.animationType() != Basic)
         return;
         
-    CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(toPlatformCAAnimationMac(value)->m_animation.get());
+    CABasicAnimation* otherAnimation = static_cast<CABasicAnimation*>(downcast<PlatformCAAnimationMac>(value).m_animation.get());
     [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:[otherAnimation toValue]];
 }
 
@@ -536,12 +536,12 @@ void PlatformCAAnimationMac::setValues(const Vector<RefPtr<FilterOperation>>& va
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setValues:array];
 }
 
-void PlatformCAAnimationMac::copyValuesFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyValuesFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Keyframe || value->animationType() != Keyframe)
+    if (animationType() != Keyframe || value.animationType() != Keyframe)
         return;
         
-    CAKeyframeAnimation* otherAnimation = static_cast<CAKeyframeAnimation*>(toPlatformCAAnimationMac(value)->m_animation.get());
+    CAKeyframeAnimation* otherAnimation = static_cast<CAKeyframeAnimation*>(downcast<PlatformCAAnimationMac>(value).m_animation.get());
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setValues:[otherAnimation values]];
 }
 
@@ -555,9 +555,9 @@ void PlatformCAAnimationMac::setKeyTimes(const Vector<float>& value)
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setKeyTimes:array];
 }
 
-void PlatformCAAnimationMac::copyKeyTimesFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyKeyTimesFrom(const PlatformCAAnimation& value)
 {
-    CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(toPlatformCAAnimationMac(value)->m_animation.get());
+    CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(downcast<PlatformCAAnimationMac>(value).m_animation.get());
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setKeyTimes:[other keyTimes]];
 }
 
@@ -571,8 +571,8 @@ void PlatformCAAnimationMac::setTimingFunctions(const Vector<const TimingFunctio
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:array];
 }
 
-void PlatformCAAnimationMac::copyTimingFunctionsFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationMac::copyTimingFunctionsFrom(const PlatformCAAnimation& value)
 {
-    CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(toPlatformCAAnimationMac(value)->m_animation.get());
+    CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(downcast<PlatformCAAnimationMac>(value).m_animation.get());
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:[other timingFunctions]];
 }

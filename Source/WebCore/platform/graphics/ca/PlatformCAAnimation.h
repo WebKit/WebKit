@@ -31,6 +31,7 @@
 #include "FloatPoint3D.h"
 #include "TransformationMatrix.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ public:
     virtual void setFillMode(FillModeType) = 0;
     
     virtual void setTimingFunction(const TimingFunction*, bool reverse = false) = 0;
-    virtual void copyTimingFunctionFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyTimingFunctionFrom(const PlatformCAAnimation&) = 0;
 
     virtual bool isRemovedOnCompletion() const = 0;
     virtual void setRemovedOnCompletion(bool) = 0;
@@ -94,14 +95,14 @@ public:
     virtual void setFromValue(const FloatPoint3D&) = 0;
     virtual void setFromValue(const WebCore::Color&) = 0;
     virtual void setFromValue(const FilterOperation*, int internalFilterPropertyIndex) = 0;
-    virtual void copyFromValueFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyFromValueFrom(const PlatformCAAnimation&) = 0;
 
     virtual void setToValue(float) = 0;
     virtual void setToValue(const WebCore::TransformationMatrix&) = 0;
     virtual void setToValue(const FloatPoint3D&) = 0;
     virtual void setToValue(const WebCore::Color&) = 0;
     virtual void setToValue(const FilterOperation*, int internalFilterPropertyIndex) = 0;
-    virtual void copyToValueFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyToValueFrom(const PlatformCAAnimation&) = 0;
 
     // Keyframe-animation properties.
     virtual void setValues(const Vector<float>&) = 0;
@@ -109,13 +110,13 @@ public:
     virtual void setValues(const Vector<FloatPoint3D>&) = 0;
     virtual void setValues(const Vector<WebCore::Color>&) = 0;
     virtual void setValues(const Vector<RefPtr<FilterOperation>>&, int internalFilterPropertyIndex) = 0;
-    virtual void copyValuesFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyValuesFrom(const PlatformCAAnimation&) = 0;
 
     virtual void setKeyTimes(const Vector<float>&) = 0;
-    virtual void copyKeyTimesFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyKeyTimesFrom(const PlatformCAAnimation&) = 0;
 
     virtual void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) = 0;
-    virtual void copyTimingFunctionsFrom(const PlatformCAAnimation*) = 0;
+    virtual void copyTimingFunctionsFrom(const PlatformCAAnimation&) = 0;
 
     void setActualStartTimeIfNeeded(CFTimeInterval t)
     {
@@ -135,9 +136,11 @@ private:
     AnimationType m_type;
 };
 
-#define PLATFORM_CAANIMATION_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::PlatformCAAnimation, object, object->predicate, object.predicate)
+} // namespace WebCore
 
-}
+#define SPECIALIZE_TYPE_TRAITS_CAANIMATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::PlatformCAAnimation& animation) { return animation.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PlatformCAAnimation_h

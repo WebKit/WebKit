@@ -52,7 +52,7 @@ public:
     virtual const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
     virtual void adoptSublayers(PlatformCALayer& source) override;
 
-    virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) override;
+    virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
     virtual void removeAnimationForKey(const String& key) override;
     virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;

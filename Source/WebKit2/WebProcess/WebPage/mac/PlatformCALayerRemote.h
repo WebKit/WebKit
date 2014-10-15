@@ -66,7 +66,7 @@ public:
     virtual const WebCore::PlatformCALayerList* customSublayers() const override { return nullptr; }
     virtual void adoptSublayers(WebCore::PlatformCALayer& source) override;
 
-    virtual void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation*) override;
+    virtual void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
     virtual void removeAnimationForKey(const String& key) override;
     virtual PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;

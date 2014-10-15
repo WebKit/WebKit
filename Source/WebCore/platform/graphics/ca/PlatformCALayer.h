@@ -127,7 +127,7 @@ public:
     // Any sublayers previously in the current layer are removed.
     virtual void adoptSublayers(PlatformCALayer& source) = 0;
 
-    virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) = 0;
+    virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) = 0;
     virtual void removeAnimationForKey(const String& key) = 0;
     virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
 

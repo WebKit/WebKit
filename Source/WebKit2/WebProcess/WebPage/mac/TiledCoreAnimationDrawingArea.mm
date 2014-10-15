@@ -673,7 +673,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
             drawingArea->applyTransientZoomToPage(scale, origin);
     }];
 
-    zoomLayer->addAnimationForKey("transientZoomCommit", renderViewAnimation.get());
+    zoomLayer->addAnimationForKey("transientZoomCommit", *renderViewAnimation);
 
     if (shadowCALayer) {
         FloatRect shadowBounds = shadowLayerBoundsForFrame(frameView, scale);

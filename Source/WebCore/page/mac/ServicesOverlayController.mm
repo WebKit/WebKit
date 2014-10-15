@@ -178,7 +178,7 @@ void ServicesOverlayController::Highlight::fadeIn()
     [animation setToValue:@1];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
-    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", platformAnimation.get());
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", *platformAnimation);
 }
 
 void ServicesOverlayController::Highlight::fadeOut()
@@ -196,7 +196,7 @@ void ServicesOverlayController::Highlight::fadeOut()
     }];
 
     RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
-    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", platformAnimation.get());
+    downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", *platformAnimation);
     [CATransaction commit];
 }
 

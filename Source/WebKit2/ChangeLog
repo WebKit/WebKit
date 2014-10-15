@@ -1,3 +1,29 @@
+2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for PlatformCAAnimation subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137722
+
+        Reviewed by Simon Fraser.
+
+        Use is<>() / downcast<>() for PlatformCAAnimation subclasses and clean
+        up the surrounding code.
+
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::copy):
+        (WebKit::PlatformCAAnimationRemote::copyTimingFunctionFrom):
+        (WebKit::PlatformCAAnimationRemote::copyFromValueFrom):
+        (WebKit::PlatformCAAnimationRemote::copyToValueFrom):
+        (WebKit::PlatformCAAnimationRemote::copyValuesFrom):
+        (WebKit::PlatformCAAnimationRemote::copyKeyTimesFrom):
+        (WebKit::PlatformCAAnimationRemote::copyTimingFunctionsFrom):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::addAnimationForKey):
+        (WebKit::PlatformCALayerRemote::animationStarted):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+
 2014-10-14  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r165356): Issues with Japanese text input

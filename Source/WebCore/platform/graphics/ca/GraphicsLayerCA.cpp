@@ -549,11 +549,11 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
     switch (operation) {
     case Move:
         fromLayer->removeAnimationForKey(animationIdentifier);
-        toLayer->addAnimationForKey(animationIdentifier, anim.get());
+        toLayer->addAnimationForKey(animationIdentifier, *anim);
         break;
 
     case Copy:
-        toLayer->addAnimationForKey(animationIdentifier, anim.get());
+        toLayer->addAnimationForKey(animationIdentifier, *anim);
         break;
     }
 }
@@ -2109,7 +2109,7 @@ void GraphicsLayerCA::updateAnimations()
     if ((numAnimations = m_uncomittedAnimations.size())) {
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& pendingAnimation = m_uncomittedAnimations[i];
-            setAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_name, pendingAnimation.m_index, pendingAnimation.m_subIndex, pendingAnimation.m_timeOffset);
+            setAnimationOnLayer(*pendingAnimation.m_animation, pendingAnimation.m_property, pendingAnimation.m_name, pendingAnimation.m_index, pendingAnimation.m_subIndex, pendingAnimation.m_timeOffset);
             
             AnimationsMap::iterator it = m_runningAnimations.find(pendingAnimation.m_name);
             if (it == m_runningAnimations.end()) {
@@ -2141,12 +2141,12 @@ bool GraphicsLayerCA::isRunningTransformAnimation() const
     return false;
 }
 
-void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation* caAnim, AnimatedPropertyID property, const String& animationName, int index, int subIndex, double timeOffset)
+void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation& caAnim, AnimatedPropertyID property, const String& animationName, int index, int subIndex, double timeOffset)
 {
     PlatformCALayer* layer = animatedLayer(property);
 
     if (timeOffset)
-        caAnim->setBeginTime(CACurrentMediaTime() - timeOffset);
+        caAnim.setBeginTime(CACurrentMediaTime() - timeOffset);
 
     String animationID = animationIdentifier(animationName, property, index, subIndex);
 
@@ -2221,7 +2221,7 @@ void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const
     newAnim->setSpeed(0);
     newAnim->setTimeOffset(timeOffset);
     
-    layer->addAnimationForKey(animationID, newAnim.get()); // This will replace the running animation.
+    layer->addAnimationForKey(animationID, *newAnim); // This will replace the running animation.
 
     // Pause the animations on the clones too.
     if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
@@ -2230,7 +2230,7 @@ void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const
             // Skip immediate replicas, since they move with the original.
             if (m_replicaLayer && isReplicatedRootClone(it->key))
                 continue;
-            it->value->addAnimationForKey(animationID, newAnim.get());
+            it->value->addAnimationForKey(animationID, *newAnim);
         }
     }
 }

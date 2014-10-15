@@ -190,18 +190,18 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimationWin::copy() const
     animation->setFillMode(fillMode());
     animation->setRemovedOnCompletion(isRemovedOnCompletion());
     animation->setAdditive(isAdditive());
-    animation->copyTimingFunctionFrom(this);
+    animation->copyTimingFunctionFrom(*this);
     if (valueFunction())
         animation->setValueFunction(valueFunction());
     
     // Copy the specific Basic or Keyframe values
     if (animationType() == Keyframe) {
-        animation->copyValuesFrom(this);
-        animation->copyKeyTimesFrom(this);
-        animation->copyTimingFunctionsFrom(this);
+        animation->copyValuesFrom(*this);
+        animation->copyKeyTimesFrom(*this);
+        animation->copyTimingFunctionsFrom(*this);
     } else {
-        animation->copyFromValueFrom(this);
-        animation->copyToValueFrom(this);
+        animation->copyFromValueFrom(*this);
+        animation->copyToValueFrom(*this);
     }
     
     return animation;
@@ -297,9 +297,9 @@ void PlatformCAAnimationWin::setTimingFunction(const TimingFunction* value, bool
     CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value, reverse).get());
 }
 
-void PlatformCAAnimationWin::copyTimingFunctionFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyTimingFunctionFrom(const PlatformCAAnimation& value)
 {
-    CACFTimingFunctionRef timingFunc = CACFAnimationGetTimingFunction(toPlatformCAAnimationWin(value)->m_animation.get());
+    CACFTimingFunctionRef timingFunc = CACFAnimationGetTimingFunction(downcast<PlatformCAAnimationWin>(value).m_animation.get());
     if (timingFunc)
         CACFAnimationSetTimingFunction(m_animation.get(), timingFunc);
 }
@@ -379,12 +379,12 @@ void PlatformCAAnimationWin::setFromValue(const FilterOperation*, int)
     // FIXME: Hardware filter animation not implemented on Windows
 }
 
-void PlatformCAAnimationWin::copyFromValueFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyFromValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value->animationType() != Basic)
+    if (animationType() != Basic || value.animationType() != Basic)
         return;
     
-    CACFAnimationSetFromValue(m_animation.get(), CACFAnimationGetFromValue(toPlatformCAAnimationWin(value)->platformAnimation()));
+    CACFAnimationSetFromValue(m_animation.get(), CACFAnimationGetFromValue(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
 void PlatformCAAnimationWin::setToValue(float value)
@@ -430,12 +430,12 @@ void PlatformCAAnimationWin::setToValue(const FilterOperation*, int)
     // FIXME: Hardware filter animation not implemented on Windows
 }
 
-void PlatformCAAnimationWin::copyToValueFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyToValueFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Basic || value->animationType() != Basic)
+    if (animationType() != Basic || value.animationType() != Basic)
         return;
         
-    CACFAnimationSetToValue(m_animation.get(), CACFAnimationGetToValue(toPlatformCAAnimationWin(value)->platformAnimation()));
+    CACFAnimationSetToValue(m_animation.get(), CACFAnimationGetToValue(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
 // Keyframe-animation properties.
@@ -502,12 +502,12 @@ void PlatformCAAnimationWin::setValues(const Vector<RefPtr<FilterOperation> >&, 
     // FIXME: Hardware filter animation not implemented on Windows
 }
 
-void PlatformCAAnimationWin::copyValuesFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyValuesFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Keyframe || value->animationType() != Keyframe)
+    if (animationType() != Keyframe || value.animationType() != Keyframe)
         return;
     
-    CACFAnimationSetValues(m_animation.get(), CACFAnimationGetValues(toPlatformCAAnimationWin(value)->platformAnimation()));
+    CACFAnimationSetValues(m_animation.get(), CACFAnimationGetValues(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
 void PlatformCAAnimationWin::setKeyTimes(const Vector<float>& value)
@@ -524,12 +524,12 @@ void PlatformCAAnimationWin::setKeyTimes(const Vector<float>& value)
     CACFAnimationSetKeyTimes(m_animation.get(), array.get());
 }
 
-void PlatformCAAnimationWin::copyKeyTimesFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyKeyTimesFrom(const PlatformCAAnimation& value)
 {
     if (animationType() != Keyframe)
         return;
 
-    CACFAnimationSetKeyTimes(m_animation.get(), CACFAnimationGetKeyTimes(toPlatformCAAnimationWin(value)->platformAnimation()));
+    CACFAnimationSetKeyTimes(m_animation.get(), CACFAnimationGetKeyTimes(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
 void PlatformCAAnimationWin::setTimingFunctions(const Vector<const TimingFunction*>& value, bool reverse)
@@ -547,9 +547,9 @@ void PlatformCAAnimationWin::setTimingFunctions(const Vector<const TimingFunctio
     CACFAnimationSetTimingFunctions(m_animation.get(), array.get());
 }
 
-void PlatformCAAnimationWin::copyTimingFunctionsFrom(const PlatformCAAnimation* value)
+void PlatformCAAnimationWin::copyTimingFunctionsFrom(const PlatformCAAnimation& value)
 {
-    CACFAnimationSetTimingFunctions(m_animation.get(), CACFAnimationGetTimingFunctions(toPlatformCAAnimationWin(value)->platformAnimation()));
+    CACFAnimationSetTimingFunctions(m_animation.get(), CACFAnimationGetTimingFunctions(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
 #endif // PLATFORM(WIN)

@@ -309,12 +309,12 @@ void PlatformCALayerWin::adoptSublayers(PlatformCALayer& source)
     setSublayers(sublayers);
 }
 
-void PlatformCALayerWin::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
+void PlatformCALayerWin::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
 {
     // Add it to the animation list
-    m_animations.add(key, animation);
+    m_animations.add(key, &animation);
 
-    CACFLayerAddAnimation(m_layer.get(), key.createCFString().get(), toPlatformCAAnimationWin(animation)->platformAnimation());
+    CACFLayerAddAnimation(m_layer.get(), key.createCFString().get(), downcast<PlatformCAAnimationWin>(animation).platformAnimation());
     setNeedsCommit();
 
     // Tell the host about it so we can fire the start animation event

@@ -453,7 +453,7 @@ void PlatformCALayerMac::adoptSublayers(PlatformCALayer& source)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
+void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
 {
     // Add the delegate
     if (!m_delegate) {
@@ -462,7 +462,7 @@ void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimati
         [webAnimationDelegate setOwner:this];
     }
     
-    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(toPlatformCAAnimationMac(animation)->platformAnimation());
+    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(downcast<PlatformCAAnimationMac>(animation).platformAnimation());
     if (![propertyAnimation delegate])
         [propertyAnimation setDelegate:static_cast<id>(m_delegate.get())];
      

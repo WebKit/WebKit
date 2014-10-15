@@ -321,15 +321,15 @@ void PlatformCALayerRemote::adoptSublayers(PlatformCALayer& source)
     setSublayers(layersToMove);
 }
 
-void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
+void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
 {
-    auto addResult = m_animations.set(key, animation);
+    auto addResult = m_animations.set(key, &animation);
     if (addResult.isNewEntry)
-        m_properties.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, toPlatformCAAnimationRemote(animation)->properties()));
+        m_properties.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, downcast<PlatformCAAnimationRemote>(animation).properties()));
     else {
         for (auto& keyAnimationPair : m_properties.addedAnimations) {
             if (keyAnimationPair.first == key) {
-                keyAnimationPair.second = toPlatformCAAnimationRemote(animation)->properties();
+                keyAnimationPair.second = downcast<PlatformCAAnimationRemote>(animation).properties();
                 break;
             }
         }
@@ -364,7 +364,7 @@ void PlatformCALayerRemote::animationStarted(const String& key, CFTimeInterval b
 {
     auto it = m_animations.find(key);
     if (it != m_animations.end())
-        toPlatformCAAnimationRemote(it->value.get())->didStart(beginTime);
+        downcast<PlatformCAAnimationRemote>(*it->value).didStart(beginTime);
     
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(key, beginTime);
