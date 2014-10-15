@@ -272,7 +272,9 @@
         (literal "/Library/Preferences/edu.mit.Kerberos")
         (literal "/private/etc/krb5.conf")
         (literal "/private/etc/services")
-        (literal "/private/etc/host"))
+        (literal "/private/etc/host")
+        (subpath "/Library/KerberosPlugins/GSSAPI")
+        (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins"))
 
 (if (defined? 'vnode-type)
         (deny file-write-create (vnode-type SYMLINK)))
