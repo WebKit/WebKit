@@ -1,3 +1,27 @@
+2014-10-15  Andrei Bucur  <abucur@adobe.com>
+
+        [Multicol] Start adding performance tests for the multi-column implementation
+        https://bugs.webkit.org/show_bug.cgi?id=137687
+
+        Reviewed by Mihnea Ovidenie.
+
+        This patch creates a Multicol folder inside the Layout performance tests suite. It adds only two tests
+        as described below.
+
+        The tests are skipped until the implementation stabilizes.
+
+        * Layout/Multicol/MulticolManyColumns.html: Added.
+        This test verifies the performance of the multi-column implementation with two nested multi-column
+        containers, the first having 20 columns and the second 10 columns.
+
+        * Layout/Multicol/MulticolNested.html: Added.
+        This test verifies the performance of nesting multi-column containers in the presence
+        of floats.
+
+        * Layout/Multicol/resources/multicol-content-many-columns.html: Added.
+        * Layout/Multicol/resources/multicol-content-nested.html: Added.
+        * Skipped: Skip the Multicol folder for now.
+
 2014-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         It should be fun and easy to run every possible JavaScript benchmark from the command line

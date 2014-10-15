@@ -85,3 +85,6 @@ Speedometer/InteractiveRunner.html
 
 # We skip Shapes tests for now: https://bugs.webkit.org/show_bug.cgi?id=128188
 Layout/Shapes
+
+# We skip the multicolumn tests for now: https://bugs.webkit.org/show_bug.cgi?id=137687
+Layout/Multicol
