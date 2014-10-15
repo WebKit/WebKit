@@ -67,8 +67,8 @@ private:
     OperationType m_type;
 };
 
-TRANSFORMOPERATION_TYPE_CASTS(SkewTransformOperation, isSkewTransformOperationType());
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::SkewTransformOperation, isSkewTransformOperationType())
 
 #endif // SkewTransformOperation_h

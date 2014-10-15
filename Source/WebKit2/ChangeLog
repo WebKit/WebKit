@@ -1,3 +1,16 @@
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for TransformOperation subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137731
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for TransformOperation subclasses and clean
+        up the surrounding code.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TransformOperations>::encode):
+
 2014-10-15  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Allow some Kerberos related paths in sandbox

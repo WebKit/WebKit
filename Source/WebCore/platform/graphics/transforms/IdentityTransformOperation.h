@@ -62,8 +62,8 @@ private:
 
 };
 
-TRANSFORMOPERATION_TYPE_CASTS(IdentityTransformOperation, type() == TransformOperation::IDENTITY);
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::IdentityTransformOperation, type() == WebCore::TransformOperation::IDENTITY)
 
 #endif // IdentityTransformOperation_h

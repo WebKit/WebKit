@@ -65,8 +65,8 @@ private:
     Length m_p;
 };
 
-TRANSFORMOPERATION_TYPE_CASTS(PerspectiveTransformOperation, type() == TransformOperation::PERSPECTIVE);
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::PerspectiveTransformOperation, type() == WebCore::TransformOperation::PERSPECTIVE)
 
 #endif // PerspectiveTransformOperation_h

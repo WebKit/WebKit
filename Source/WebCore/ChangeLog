@@ -1,5 +1,51 @@
 2014-10-15  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for TransformOperation subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137731
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for TransformOperation subclasses and clean
+        up the surrounding code.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::validateTransformOperations):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::getTransformFunctionValue):
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::operator==):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        (WebCore::MatrixTransformOperation::operator==):
+        (WebCore::MatrixTransformOperation::blend):
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::PerspectiveTransformOperation::operator==):
+        (WebCore::PerspectiveTransformOperation::blend):
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::operator==):
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::ScaleTransformOperation::operator==):
+        (WebCore::ScaleTransformOperation::blend):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        (WebCore::SkewTransformOperation::operator==):
+        (WebCore::SkewTransformOperation::blend):
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::operator==):
+        (WebCore::TranslateTransformOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for RenderTextControl / RenderTextControlSingleLine
         https://bugs.webkit.org/show_bug.cgi?id=137727
 

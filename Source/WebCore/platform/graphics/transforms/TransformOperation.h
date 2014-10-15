@@ -29,6 +29,7 @@
 #include "TransformationMatrix.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -101,9 +102,11 @@ public:
     }
 };
 
-#define TRANSFORMOPERATION_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, WebCore::TransformOperation, value, value->predicate, value.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::TransformOperation& operation) { return operation.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // TransformOperation_h

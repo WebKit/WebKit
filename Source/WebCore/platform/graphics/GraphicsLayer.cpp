@@ -521,8 +521,8 @@ int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueLis
     }
 
     // Keyframes are valid, check for big rotations.    
-    double lastRotAngle = 0.0;
-    double maxRotAngle = -1.0;
+    double lastRotationAngle = 0.0;
+    double maxRotationAngle = -1.0;
         
     for (size_t j = 0; j < firstVal.operations().size(); ++j) {
         TransformOperation::OperationType type = firstVal.operations().at(j)->type();
@@ -532,23 +532,23 @@ int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueLis
             type == TransformOperation::ROTATE_Y ||
             type == TransformOperation::ROTATE_Z ||
             type == TransformOperation::ROTATE_3D) {
-            lastRotAngle = toRotateTransformOperation(firstVal.operations().at(j).get())->angle();
+            lastRotationAngle = downcast<RotateTransformOperation>(*firstVal.operations().at(j)).angle();
             
-            if (maxRotAngle < 0)
-                maxRotAngle = fabs(lastRotAngle);
+            if (maxRotationAngle < 0)
+                maxRotationAngle = fabs(lastRotationAngle);
             
             for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
                 const TransformOperations& val = operationsAt(valueList, i);
-                double rotAngle = val.operations().isEmpty() ? 0 : (toRotateTransformOperation(val.operations().at(j).get())->angle());
-                double diffAngle = fabs(rotAngle - lastRotAngle);
-                if (diffAngle > maxRotAngle)
-                    maxRotAngle = diffAngle;
-                lastRotAngle = rotAngle;
+                double rotationAngle = val.operations().isEmpty() ? 0 : downcast<RotateTransformOperation>(*val.operations().at(j)).angle();
+                double diffAngle = fabs(rotationAngle - lastRotationAngle);
+                if (diffAngle > maxRotationAngle)
+                    maxRotationAngle = diffAngle;
+                lastRotationAngle = rotationAngle;
             }
         }
     }
     
-    hasBigRotation = maxRotAngle >= 180.0;
+    hasBigRotation = maxRotationAngle >= 180.0;
     
     return firstIndex;
 }

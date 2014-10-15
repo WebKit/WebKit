@@ -63,8 +63,8 @@ private:
     TransformationMatrix m_matrix;
 };
 
-TRANSFORMOPERATION_TYPE_CASTS(Matrix3DTransformOperation, type() == TransformOperation::MATRIX_3D);
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::Matrix3DTransformOperation, type() == WebCore::TransformOperation::MATRIX_3D)
 
 #endif // Matrix3DTransformOperation_h

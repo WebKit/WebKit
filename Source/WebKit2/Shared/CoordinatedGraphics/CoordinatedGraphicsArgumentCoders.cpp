@@ -171,8 +171,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
 void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const TransformOperations& transformOperations)
 {
     encoder << static_cast<uint32_t>(transformOperations.size());
-    for (size_t i = 0; i < transformOperations.size(); ++i) {
-        const TransformOperation* operation = transformOperations.at(i);
+    for (const auto& operation : transformOperations.operations()) {
         encoder.encodeEnum(operation->type());
 
         switch (operation->type()) {
@@ -180,43 +179,51 @@ void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const 
         case TransformOperation::SCALE_Y:
         case TransformOperation::SCALE:
         case TransformOperation::SCALE_Z:
-        case TransformOperation::SCALE_3D:
-            encoder << toScaleTransformOperation(operation)->x();
-            encoder << toScaleTransformOperation(operation)->y();
-            encoder << toScaleTransformOperation(operation)->z();
+        case TransformOperation::SCALE_3D: {
+            const auto& scaleOperation = downcast<ScaleTransformOperation>(*operation);
+            encoder << scaleOperation.x();
+            encoder << scaleOperation.y();
+            encoder << scaleOperation.z();
             break;
+        }
         case TransformOperation::TRANSLATE_X:
         case TransformOperation::TRANSLATE_Y:
         case TransformOperation::TRANSLATE:
         case TransformOperation::TRANSLATE_Z:
-        case TransformOperation::TRANSLATE_3D:
-            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->x());
-            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->y());
-            ArgumentCoder<Length>::encode(encoder, toTranslateTransformOperation(operation)->z());
+        case TransformOperation::TRANSLATE_3D: {
+            const auto& translateOperation = downcast<TranslateTransformOperation>(*operation);
+            ArgumentCoder<Length>::encode(encoder, translateOperation.x());
+            ArgumentCoder<Length>::encode(encoder, translateOperation.y());
+            ArgumentCoder<Length>::encode(encoder, translateOperation.z());
             break;
+        }
         case TransformOperation::ROTATE:
         case TransformOperation::ROTATE_X:
         case TransformOperation::ROTATE_Y:
-        case TransformOperation::ROTATE_3D:
-            encoder << toRotateTransformOperation(operation)->x();
-            encoder << toRotateTransformOperation(operation)->y();
-            encoder << toRotateTransformOperation(operation)->z();
-            encoder << toRotateTransformOperation(operation)->angle();
+        case TransformOperation::ROTATE_3D: {
+            const auto& rotateOperation = downcast<RotateTransformOperation>(*operation);
+            encoder << rotateOperation.x();
+            encoder << rotateOperation.y();
+            encoder << rotateOperation.z();
+            encoder << rotateOperation.angle();
             break;
+        }
         case TransformOperation::SKEW_X:
         case TransformOperation::SKEW_Y:
-        case TransformOperation::SKEW:
-            encoder << toSkewTransformOperation(operation)->angleX();
-            encoder << toSkewTransformOperation(operation)->angleY();
+        case TransformOperation::SKEW: {
+            const auto& skewOperation = downcast<SkewTransformOperation>(*operation);
+            encoder << skewOperation.angleX();
+            encoder << skewOperation.angleY();
             break;
+        }
         case TransformOperation::MATRIX:
-            ArgumentCoder<TransformationMatrix>::encode(encoder, toMatrixTransformOperation(operation)->matrix());
+            ArgumentCoder<TransformationMatrix>::encode(encoder, downcast<MatrixTransformOperation>(*operation).matrix());
             break;
         case TransformOperation::MATRIX_3D:
-            ArgumentCoder<TransformationMatrix>::encode(encoder, toMatrix3DTransformOperation(operation)->matrix());
+            ArgumentCoder<TransformationMatrix>::encode(encoder, downcast<Matrix3DTransformOperation>(*operation).matrix());
             break;
         case TransformOperation::PERSPECTIVE:
-            ArgumentCoder<Length>::encode(encoder, toPerspectiveTransformOperation(operation)->perspective());
+            ArgumentCoder<Length>::encode(encoder, downcast<PerspectiveTransformOperation>(*operation).perspective());
             break;
         case TransformOperation::IDENTITY:
             break;

@@ -89,8 +89,8 @@ private:
     double m_f;
 };
 
-TRANSFORMOPERATION_TYPE_CASTS(MatrixTransformOperation, type() == TransformOperation::MATRIX);
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::MatrixTransformOperation, type() == WebCore::TransformOperation::MATRIX)
 
 #endif // MatrixTransformOperation_h

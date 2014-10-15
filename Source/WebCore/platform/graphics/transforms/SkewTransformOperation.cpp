@@ -26,11 +26,11 @@
 
 namespace WebCore {
 
-bool SkewTransformOperation::operator==(const TransformOperation& o) const
+bool SkewTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(o))
+    if (!isSameType(other))
         return false;
-    const SkewTransformOperation& s = toSkewTransformOperation(o);
+    const SkewTransformOperation& s = downcast<SkewTransformOperation>(other);
     return m_angleX == s.m_angleX && m_angleY == s.m_angleY;
 }
 
@@ -42,7 +42,7 @@ PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOper
     if (blendToIdentity)
         return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, progress), WebCore::blend(m_angleY, 0.0, progress), m_type);
     
-    const SkewTransformOperation* fromOp = toSkewTransformOperation(from);
+    const SkewTransformOperation* fromOp = downcast<SkewTransformOperation>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
     return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, progress), WebCore::blend(fromAngleY, m_angleY, progress), m_type);

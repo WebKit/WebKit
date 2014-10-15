@@ -25,11 +25,11 @@
 
 namespace WebCore {
 
-bool TranslateTransformOperation::operator==(const TransformOperation& o) const
+bool TranslateTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(o))
+    if (!isSameType(other))
         return false;
-    const TranslateTransformOperation& t = toTranslateTransformOperation(o);
+    const TranslateTransformOperation& t = downcast<TranslateTransformOperation>(other);
     return m_x == t.m_x && m_y == t.m_y && m_z == t.m_z;
 }
 
@@ -42,7 +42,7 @@ PassRefPtr<TransformOperation> TranslateTransformOperation::blend(const Transfor
     if (blendToIdentity)
         return TranslateTransformOperation::create(zeroLength.blend(m_x, progress), zeroLength.blend(m_y, progress), zeroLength.blend(m_z, progress), m_type);
 
-    const TranslateTransformOperation* fromOp = toTranslateTransformOperation(from);
+    const TranslateTransformOperation* fromOp = downcast<TranslateTransformOperation>(from);
     Length fromX = fromOp ? fromOp->m_x : zeroLength;
     Length fromY = fromOp ? fromOp->m_y : zeroLength;
     Length fromZ = fromOp ? fromOp->m_z : zeroLength;

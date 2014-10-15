@@ -26,11 +26,11 @@
 
 namespace WebCore {
 
-bool MatrixTransformOperation::operator==(const TransformOperation& o) const
+bool MatrixTransformOperation::operator==(const TransformOperation& other) const
 {
-    if (!isSameType(o))
+    if (!isSameType(other))
         return false;
-    const MatrixTransformOperation& m = toMatrixTransformOperation(o);
+    const MatrixTransformOperation& m = downcast<MatrixTransformOperation>(other);
     return m_a == m.m_a && m_b == m.m_b && m_c == m.m_c && m_d == m.m_d && m_e == m.m_e && m_f == m.m_f;
 }
 
@@ -40,11 +40,10 @@ PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOp
         return this;
 
     // convert the TransformOperations into matrices
-    FloatSize size;
     TransformationMatrix fromT;
     TransformationMatrix toT(m_a, m_b, m_c, m_d, m_e, m_f);
     if (from) {
-        const MatrixTransformOperation& m = toMatrixTransformOperation(*from);
+        const MatrixTransformOperation& m = downcast<MatrixTransformOperation>(*from);
         fromT.setMatrix(m.m_a, m.m_b, m.m_c, m.m_d, m.m_e, m.m_f);
     }
     
