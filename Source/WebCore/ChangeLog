@@ -1,3 +1,32 @@
+2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Fix inefficiencies in ResourceResponse::platformLazyInit(InitLevel)
+        https://bugs.webkit.org/show_bug.cgi?id=137721
+
+        Reviewed by Geoffrey Garen.
+
+        There were several inefficiencies with the Mac implementation of
+        ResourceResponse::platformLazyInit(InitLevel):
+        1. We end up initializing uncommon fields even if called with
+           'CommonFieldsOnly' initLevel.
+        2. If called with 'AllFields' initLevel (and if currently
+           uninitialized), we end up populating m_httpHeaderFields twice, once
+           with only the common headers, then a second time with ALL the
+           headers. We can skip the common-header case in this case to avoid
+           wasting CPU time.
+
+        This patch addresses both inefficiencies and cleans up the code a
+        little bit to reduce variable scope and to use fast enumeration of
+        header names.
+
+        As a result, we spend almost twice as little time in platformLazyInit()
+        when loading msn.com (~30ms -> ~18ms).
+
+        No new tests, no behavior change.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2014-10-14  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (Safari 7.1/8.0): Border-radius and overflow hidden renders incorrectly.

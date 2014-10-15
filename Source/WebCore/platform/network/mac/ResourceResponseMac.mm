@@ -135,12 +135,13 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
 
             m_httpStatusCode = [httpResponse statusCode];
-
-            NSDictionary *headers = [httpResponse allHeaderFields];
             
-            for (unsigned i = 0; i < WTF_ARRAY_LENGTH(commonHeaderFields); ++i) {
-                if (NSString* headerValue = [headers objectForKey:commonHeaderFields[i]])
-                    m_httpHeaderFields.set(String(commonHeaderFields[i]), headerValue);
+            if (initLevel < AllFields) {
+                NSDictionary *headers = [httpResponse allHeaderFields];
+                for (unsigned i = 0; i < WTF_ARRAY_LENGTH(commonHeaderFields); ++i) {
+                    if (NSString* headerValue = [headers objectForKey:commonHeaderFields[i]])
+                        m_httpHeaderFields.set(String(commonHeaderFields[i]), headerValue);
+                }
             }
         } else
             m_httpStatusCode = 0;
@@ -148,21 +149,18 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         [pool drain];
     }
 
-    if (m_initLevel < AllFields) {
+    if (m_initLevel < AllFields && initLevel == AllFields) {
         if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
-
-            RetainPtr<NSString> httpStatusLine = adoptNS(wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
-            if (httpStatusLine)
+            if (RetainPtr<NSString> httpStatusLine = adoptNS(wkCopyNSURLResponseStatusLine(httpResponse)))
                 m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
             else
-                m_httpStatusText = "OK";
+                m_httpStatusText = AtomicString("OK", AtomicString::ConstructFromLiteral);
 
             NSDictionary *headers = [httpResponse allHeaderFields];
-            NSEnumerator *e = [headers keyEnumerator];
-            while (NSString *name = [e nextObject])
+            for (NSString *name in headers)
                 m_httpHeaderFields.set(String(name), [headers objectForKey:name]);
             
             [pool drain];
