@@ -16,7 +16,6 @@ require_once('manifest.php');
 <ul>
     <li><a href="/admin/platforms">Platforms</a></li>
     <li><a href="/admin/tests">Tests</a></li>
-    <li><a href="/admin/jobs">Jobs</a></li>
     <li><a href="/admin/aggregators">Aggregators</a></li>
     <li><a href="/admin/builders">Builders</a></li>
     <li><a href="/admin/repositories">Repositories</a></li>
@@ -90,15 +89,6 @@ function regenerate_manifest() {
     }
 
     return TRUE;
-}
-
-function add_job($type, $payload = null) {
-    global $db;
-
-    if ($db->insert_row('jobs', 'job', array('type' => $type, 'payload' => $payload)))
-        notice("Added a job of type $type");
-    else
-        notice("Failed to add job of type $type");
 }
 
 class AdministrativePage {

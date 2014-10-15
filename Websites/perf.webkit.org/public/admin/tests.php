@@ -43,10 +43,8 @@ if ($action == 'dashboard') {
                 array('test' => $id, 'name' => $_POST['metric_name'], 'aggregator' => $aggregator));
             if (!$metric_id)
                 notice("Could not insert the new metric for test $id");
-            else {
-                add_job('aggregate', '{"metricIds": [ ' . $metric_id . ']}');
-                notice("Inserted the metric for test $id");
-            }
+            else
+                notice("Inserted the metric for test $id. Aggregation for $metric_id is needed.");
         }
     } else if (array_key_exists('metric_id', $_POST))
         regenerate_manifest();

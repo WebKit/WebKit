@@ -11,7 +11,6 @@ DROP TABLE repositories CASCADE;
 DROP TABLE platforms CASCADE;
 DROP TABLE test_metrics CASCADE;
 DROP TABLE tests CASCADE;
-DROP TABLE jobs CASCADE;
 DROP TABLE reports CASCADE;
 DROP TABLE tracker_repositories CASCADE;
 DROP TABLE bug_trackers CASCADE;
@@ -118,17 +117,6 @@ CREATE TABLE run_iterations (
     iteration_value double precision,
     iteration_relative_time float,
     PRIMARY KEY (iteration_run, iteration_order));
-
-CREATE TABLE jobs (
-    job_id serial PRIMARY KEY,
-    job_type varchar(64) NOT NULL,
-    job_created_at timestamp NOT NULL DEFAULT NOW(),
-    job_started_at timestamp,
-    job_started_by_pid integer,
-    job_completed_at timestamp,
-    job_attempts integer NOT NULL DEFAULT 0,
-    job_payload text,
-    job_log text);
 
 CREATE TABLE reports (
     report_id serial PRIMARY KEY,
