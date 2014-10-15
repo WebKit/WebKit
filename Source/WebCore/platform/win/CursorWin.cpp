@@ -34,7 +34,6 @@
 #include "SystemInfo.h"
 
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/win/GDIObject.h>
 
 #include <windows.h>

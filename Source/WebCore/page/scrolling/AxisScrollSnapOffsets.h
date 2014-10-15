@@ -29,7 +29,6 @@
 #if ENABLE(CSS_SCROLL_SNAP)
 
 #include "ScrollTypes.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

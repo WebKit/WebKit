@@ -28,8 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <wtf/PassOwnPtr.h>
-
 namespace JSC { namespace DFG {
 
 ExitProfile::ExitProfile() { }

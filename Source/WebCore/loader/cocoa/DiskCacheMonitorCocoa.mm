@@ -33,7 +33,6 @@
 #import "SharedBuffer.h"
 #import <wtf/MainThread.h>
 #import <wtf/OwnPtr.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 

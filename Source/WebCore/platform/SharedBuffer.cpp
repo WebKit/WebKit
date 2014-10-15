@@ -28,7 +28,6 @@
 #include "SharedBuffer.h"
 
 #include <algorithm>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
 
 namespace WebCore {

@@ -30,7 +30,6 @@
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 

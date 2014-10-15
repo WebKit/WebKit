@@ -30,7 +30,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "ScrollTypes.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

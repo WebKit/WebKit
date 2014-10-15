@@ -31,7 +31,6 @@
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

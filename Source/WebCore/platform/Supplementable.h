@@ -30,7 +30,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 #if !ASSERT_DISABLED
 #include <wtf/Threading.h>

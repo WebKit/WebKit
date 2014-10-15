@@ -53,7 +53,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
 
