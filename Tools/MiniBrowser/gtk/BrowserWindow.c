@@ -76,6 +76,7 @@ static const char *defaultWindowTitle = "WebKitGTK+ MiniBrowser";
 static const char *miniBrowserAboutScheme = "minibrowser-about";
 static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
+static const gdouble defaultZoomLevel = 1;
 static const gdouble zoomStep = 1.2;
 static gint windowCount = 0;
 
@@ -501,14 +502,23 @@ static gboolean inspectorWasClosed(WebKitWebInspector *inspectorWindow, BrowserW
 
 static void zoomInCallback(BrowserWindow *window)
 {
-    gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
-    webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+    if (browserWindowCanZoomIn(window)) {
+        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
+        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+    }
 }
 
 static void zoomOutCallback(BrowserWindow *window)
 {
-    gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) / zoomStep;
-    webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+    if (browserWindowCanZoomOut(window)) {
+        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) / zoomStep;
+        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+    }
+}
+
+static void defaultZoomCallback(BrowserWindow *window)
+{
+    webkit_web_view_set_zoom_level(window->webView, defaultZoomLevel);
 }
 
 static void searchCallback(BrowserWindow *window)
@@ -645,6 +655,20 @@ static void browser_window_init(BrowserWindow *window)
     /* Load home page */ 
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_Home, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(loadHomePage), window, NULL));
+
+    /* Zoom in, zoom out and default zoom*/
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_equal, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(zoomInCallback), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_KP_Add, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(zoomInCallback), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_minus, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(zoomOutCallback), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_KP_Subtract, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(zoomOutCallback), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_0, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(defaultZoomCallback), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_KP_0, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(defaultZoomCallback), window, NULL));
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
