@@ -42,7 +42,7 @@ public:
     static void start(const char* name, PassRefPtr<DispatchQueue> dispatchQueue)
     {
         // The DispatchQueueThreadContext instance will be passed to the thread function and deleted in it.
-        createThread(reinterpret_cast<WTF::ThreadFunction>(&ThreadContext::function), new ThreadContext(dispatchQueue), name);
+        detachThread(createThread(reinterpret_cast<WTF::ThreadFunction>(&ThreadContext::function), new ThreadContext(dispatchQueue), name));
     }
 
 private:

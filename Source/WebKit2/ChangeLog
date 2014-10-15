@@ -1,3 +1,23 @@
+2014-10-14  Joonghun Park  <jh718.park@samsung.com>
+
+        [WK2][EFL] Fix the problem that threads created by a DispatchQueueEfl are not destroyed
+        even after the DispatchQueueEfl has been destructed
+        https://bugs.webkit.org/show_bug.cgi?id=137195
+
+        Reviewed by Gyuyoung Kim.
+
+        Linux and Unix System's pthreads are created in joinable state by default.
+        If threads aren't destructed explicitly, it will be still live
+        until process which created the thread is dead.
+        Besides it may cause out of capacity range of thread creation in a process.
+        It is one of hidden defects.
+        This patch calls detachThread() to detach thread immediately after it is created.
+        So the thread can be destroyed as soon as the thread's ThreadContext::function()
+        returns.
+
+        * Platform/efl/DispatchQueueEfl.cpp:
+        (DispatchQueue::ThreadContext::start):
+
 2014-10-14  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for PlatformCAAnimation subclasses
