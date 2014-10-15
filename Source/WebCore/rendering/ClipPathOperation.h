@@ -34,6 +34,7 @@
 #include "Path.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -166,13 +167,15 @@ private:
     CSSBoxType m_referenceBox;
 };
 
-#define CLIP_PATH_OPERATION_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, ClipPathOperation, operation, operation->type() == ClipPathOperation::predicate, operation.type() == ClipPathOperation::predicate)
-
-CLIP_PATH_OPERATION_CASTS(ReferenceClipPathOperation, Reference)
-CLIP_PATH_OPERATION_CASTS(ShapeClipPathOperation, Shape)
-CLIP_PATH_OPERATION_CASTS(BoxClipPathOperation, Box)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::ClipPathOperation& operation) { return operation.type() == WebCore::predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ReferenceClipPathOperation, ClipPathOperation::Reference)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ShapeClipPathOperation, ClipPathOperation::Shape)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(BoxClipPathOperation, ClipPathOperation::Box)
 
 #endif // ClipPathOperation_h

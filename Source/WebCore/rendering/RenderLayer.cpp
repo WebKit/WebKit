@@ -3925,23 +3925,23 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 
     RenderStyle& style = renderer().style();
     ASSERT(style.clipPath());
-    if (style.clipPath()->type() == ClipPathOperation::Shape) {
-        ShapeClipPathOperation& clippingPath = toShapeClipPathOperation(*(style.clipPath()));
+    if (is<ShapeClipPathOperation>(*style.clipPath())) {
+        const auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
 
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, offsetFromRoot, rootRelativeBounds);
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds);
         context->save();
-        context->clipPath(clippingPath.pathForReferenceRect(referenceBox), clippingPath.windRule());
+        context->clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
         return true;
     }
 
-    if (style.clipPath()->type() == ClipPathOperation::Box && renderer().isBox()) {
-        BoxClipPathOperation& clippingPath = toBoxClipPathOperation(*(style.clipPath()));
+    if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
+        const auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
 
-        RoundedRect shapeRect = computeRoundedRectForBoxShape(clippingPath.referenceBox(), toRenderBox(renderer()));
+        RoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer()));
         shapeRect.move(offsetFromRoot);
 
         context->save();
-        context->clipPath(clippingPath.pathForReferenceRect(shapeRect), RULE_NONZERO);
+        context->clipPath(clipPath.pathForReferenceRect(shapeRect), RULE_NONZERO);
         return true;
     }
 

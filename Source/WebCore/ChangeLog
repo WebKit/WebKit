@@ -1,5 +1,28 @@
 2014-10-15  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for ClipPathOperation subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137733
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use is<>() / downcast<>() for ClipPathOperation subclasses.
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        * rendering/ClipPathOperation.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
         [Mac] Use CFDictionaryContainsKey() in ImageSource::isSizeAvailable()
         https://bugs.webkit.org/show_bug.cgi?id=137723
 

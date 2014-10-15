@@ -2453,10 +2453,10 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (style().clipPath()) {
         switch (style().clipPath()->type()) {
         case ClipPathOperation::Shape: {
-            ShapeClipPathOperation* clipPath = toShapeClipPathOperation(style().clipPath());
+            const auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
 
             LayoutRect referenceBoxRect;
-            switch (clipPath->referenceBox()) {
+            switch (clipPath.referenceBox()) {
             case CSSBoxType::MarginBox:
                 referenceBoxRect = marginBoxRect();
                 break;
@@ -2475,7 +2475,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             case CSSBoxType::ViewBox:
                 referenceBoxRect = borderBoxRect();
             }
-            if (!clipPath->pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath->windRule()))
+            if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath.windRule()))
                 return false;
             break;
         }

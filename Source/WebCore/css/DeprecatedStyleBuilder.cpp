@@ -2163,7 +2163,7 @@ public:
                 return;
             operation = BoxClipPathOperation::create(referenceBox);
         } else
-            toShapeClipPathOperation(operation.get())->setReferenceBox(referenceBox);
+            downcast<ShapeClipPathOperation>(*operation).setReferenceBox(referenceBox);
         setValue(styleResolver->style(), operation.release());
     }
     static PropertyHandler createHandler()

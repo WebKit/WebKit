@@ -2852,19 +2852,19 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             ClipPathOperation* operation = style->clipPath();
             if (!operation)
                 return cssValuePool().createIdentifierValue(CSSValueNone);
-            if (operation->type() == ClipPathOperation::Reference) {
-                ReferenceClipPathOperation& referenceOperation = toReferenceClipPathOperation(*operation);
+            if (is<ReferenceClipPathOperation>(*operation)) {
+                const auto& referenceOperation = downcast<ReferenceClipPathOperation>(*operation);
                 return CSSPrimitiveValue::create(referenceOperation.url(), CSSPrimitiveValue::CSS_URI);
             }
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            if (operation->type() == ClipPathOperation::Shape) {
-                ShapeClipPathOperation& shapeOperation = toShapeClipPathOperation(*operation);
+            if (is<ShapeClipPathOperation>(*operation)) {
+                const auto& shapeOperation = downcast<ShapeClipPathOperation>(*operation);
                 list->append(valueForBasicShape(style.get(), shapeOperation.basicShape()));
                 if (shapeOperation.referenceBox() != BoxMissing)
                     list->append(cssValuePool().createValue(shapeOperation.referenceBox()));
             }
-            if (operation->type() == ClipPathOperation::Box) {
-                BoxClipPathOperation& boxOperation = toBoxClipPathOperation(*operation);
+            if (is<BoxClipPathOperation>(*operation)) {
+                const auto& boxOperation = downcast<BoxClipPathOperation>(*operation);
                 list->append(cssValuePool().createValue(boxOperation.referenceBox()));
             }
             return list.release();
