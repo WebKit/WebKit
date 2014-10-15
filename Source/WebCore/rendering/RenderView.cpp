@@ -878,7 +878,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     splitSelectionBetweenSubtrees(start, startPos, end, endPos, blockRepaintMode);
 }
 
-void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
+void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, int startPos, const RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Compute the visible selection end points for each of the subtrees.
     RenderSubtreesMap renderSubtreesMap;
@@ -921,16 +921,16 @@ void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos
 void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap, SelectionRepaintMode blockRepaintMode)
 {
     SubtreeOldSelectionDataMap oldSelectionDataMap;
-    for (auto it = renderSubtreesMap.begin(); it != renderSubtreesMap.end(); ++it) {
-        SelectionSubtreeRoot& subtreeSelectionData = it->value;
+    for (auto& subtreeSelectionInfo : renderSubtreesMap) {
+        SelectionSubtreeRoot& subtreeSelectionData = subtreeSelectionInfo.value;
         if (hasRenderNamedFlowThreads())
             subtreeSelectionData.adjustForVisibleSelection(document());
 
         std::unique_ptr<OldSelectionData> oldSelectionData = std::make_unique<OldSelectionData>();
-        clearSubtreeSelection(*it->key, blockRepaintMode, *oldSelectionData);
-        oldSelectionDataMap.set(it->key, WTF::move(oldSelectionData));
+        SelectionSubtreeRoot& root = *subtreeSelectionInfo.key;
+        clearSubtreeSelection(root, blockRepaintMode, *oldSelectionData);
+        oldSelectionDataMap.set(&root, WTF::move(oldSelectionData));
 
-        SelectionSubtreeRoot& root = *it->key;
         root.setSelectionStart(subtreeSelectionData.selectionStart());
         root.setSelectionStartPos(subtreeSelectionData.selectionStartPos());
         root.setSelectionEnd(subtreeSelectionData.selectionEnd());
@@ -941,14 +941,14 @@ void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap
     // This needs to be done after the previous loop updated the selectionStart/End
     // parameters of all subtrees because we're going to be climbing up the containing
     // block chain and we might end up in a different selection subtree.
-    for (auto it = renderSubtreesMap.begin(); it != renderSubtreesMap.end(); ++it) {
-        SelectionSubtreeRoot subtreeSelectionData = it->value;
-        OldSelectionData& oldSelectionData = *oldSelectionDataMap.get(it->key);
-        applySubtreeSelection(*it->key, subtreeSelectionData.selectionStart(), subtreeSelectionData.selectionEnd(), subtreeSelectionData.selectionEndPos(), blockRepaintMode, oldSelectionData);
+    for (auto& subtreeSelectionInfo : renderSubtreesMap) {
+        SelectionSubtreeRoot& subtreeSelectionData = subtreeSelectionInfo.value;
+        OldSelectionData& oldSelectionData = *oldSelectionDataMap.get(subtreeSelectionInfo.key);
+        applySubtreeSelection(*subtreeSelectionInfo.key, subtreeSelectionData.selectionStart(), subtreeSelectionData.selectionEnd(), subtreeSelectionData.selectionEndPos(), blockRepaintMode, oldSelectionData);
     }
 }
 
-void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, SelectionRepaintMode blockRepaintMode, OldSelectionData& oldSelectionData)
+void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, SelectionRepaintMode blockRepaintMode, OldSelectionData& oldSelectionData) const
 {
     // Record the old selected objects.  These will be used later
     // when we compare against the new selected objects.
@@ -982,12 +982,11 @@ void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         os = selectionIterator.next();
     }
 
-    auto oldObjectsEnd = oldSelectionData.selectedObjects.end();
-    for (auto i = oldSelectionData.selectedObjects.begin(); i != oldObjectsEnd; ++i)
-        i->key->setSelectionStateIfNeeded(SelectionNone);
+    for (const auto& selectedObjectInfo : oldSelectionData.selectedObjects)
+        selectedObjectInfo.key->setSelectionStateIfNeeded(SelectionNone);
 }
 
-void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject* start, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode, const OldSelectionData& oldSelectionData)
+void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, RenderObject* start, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode, const OldSelectionData& oldSelectionData)
 {
     // Update the selection status of all objects between selectionStart and selectionEnd
     if (start && start == end)
@@ -1052,11 +1051,10 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
         return;
 
     // Have any of the old selected objects changed compared to the new selection?
-    auto oldObjectsEnd = oldSelectionData.selectedObjects.end();
-    for (auto it = oldSelectionData.selectedObjects.begin(); it != oldObjectsEnd; ++it) {
-        RenderObject* obj = it->key;
+    for (const auto& selectedObjectInfo : oldSelectionData.selectedObjects) {
+        RenderObject* obj = selectedObjectInfo.key;
         RenderSelectionInfo* newInfo = newSelectedObjects.get(obj);
-        RenderSelectionInfo* oldInfo = it->value.get();
+        RenderSelectionInfo* oldInfo = selectedObjectInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
             || (root.selectionStart() == obj && oldSelectionData.selectionStartPos != root.selectionStartPos())
             || (root.selectionEnd() == obj && oldSelectionData.selectionEndPos != root.selectionEndPos())) {
@@ -1069,16 +1067,14 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
     }
 
     // Any new objects that remain were not found in the old objects dict, and so they need to be updated.
-    auto newObjectsEnd = newSelectedObjects.end();
-    for (auto it = newSelectedObjects.begin(); it != newObjectsEnd; ++it)
-        it->value->repaint();
+    for (const auto& selectedObjectInfo : newSelectedObjects)
+        selectedObjectInfo.value->repaint();
 
     // Have any of the old blocks changed?
-    auto oldBlocksEnd = oldSelectionData.selectedBlocks.end();
-    for (auto it = oldSelectionData.selectedBlocks.begin(); it != oldBlocksEnd; ++it) {
-        RenderBlock* block = it->key;
+    for (const auto& selectedBlockInfo : oldSelectionData.selectedBlocks) {
+        RenderBlock* block = selectedBlockInfo.key;
         RenderBlockSelectionInfo* newInfo = newSelectedBlocks.get(block);
-        RenderBlockSelectionInfo* oldInfo = it->value.get();
+        RenderBlockSelectionInfo* oldInfo = selectedBlockInfo.value.get();
         if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
             oldInfo->repaint();
             if (newInfo) {
@@ -1089,9 +1085,8 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
     }
 
     // Any new blocks that remain were not found in the old blocks dict, and so they need to be updated.
-    auto newBlocksEnd = newSelectedBlocks.end();
-    for (auto it = newSelectedBlocks.begin(); it != newBlocksEnd; ++it)
-        it->value->repaint();
+    for (const auto& selectedBlockInfo : newSelectedBlocks)
+        selectedBlockInfo.value->repaint();
 }
 
 void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const

@@ -1,3 +1,19 @@
+2014-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Use modern loops in subtrees selection code
+        https://bugs.webkit.org/show_bug.cgi?id=137688
+
+        Reviewed by Andreas Kling.
+
+        No new tests as no change in functionality.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        (WebCore::RenderView::updateSelectionForSubtrees):
+        (WebCore::RenderView::clearSubtreeSelection):
+        (WebCore::RenderView::applySubtreeSelection):
+        * rendering/RenderView.h:
+
 2014-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up unnecessary PassOwnPtr.h inclusion
