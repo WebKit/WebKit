@@ -2,6 +2,14 @@
 
         [Mac] Unreviewed gardening.
 
+        Rebaselining.
+
+        * css3/flexbox/flex-rounding.html:
+
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
         Unskip some subpixel related tests.
 
         * platform/mac/TestExpectations:
