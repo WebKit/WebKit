@@ -1,3 +1,32 @@
+2014-10-15  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Add --json flag to test-webkitpy to emit JSON formatted test results
+        to stdout
+        https://bugs.webkit.org/show_bug.cgi?id=137353
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        Adds the read method to MockFile to allow the stdout of test_webkitpy
+        to be redirected without causing erroneous test failures.
+        In particular,
+        webkitpy.port.server_process_unittest.TestServerProcess.test_broken_pipe
+        and
+        webkitpy.port.server_process_unittest.TestServerProcess.test_cleanup
+        because when redirecting to a file, the
+        _wait_for_data_and_update_buffers_using_select method in 
+        server_process.py will find that there is a read file descriptor in
+        its call to select.select, which eventually leads to it calling read()
+        on the MockFile object.
+        (MockFile.read):
+        * Scripts/webkitpy/test/main.py:
+        Adds the _print_results_as_json method and the --json flag which
+        determines whether _print_results_as_json will get called.
+        (Tester._parse_args):
+        (Tester._print_results_as_json):
+        (Tester._print_results_as_json.result_dict_from_tuple):
+        (Tester._run_tests):
+
 2014-10-13  David Farler  <dfarler@apple.com>
 
         [iOS] LayoutTestRelay: Detect broken pipe when reading simulator app's stdout and stderr.
