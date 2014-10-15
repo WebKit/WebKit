@@ -87,8 +87,6 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderTextControl, isTextControl())
-
 // Renderer for our inner container, for <search> and others.
 // We can't use RenderFlexibleBox directly, because flexboxes have a different
 // baseline definition, and then inputs of different types wouldn't line up

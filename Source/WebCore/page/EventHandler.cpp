@@ -3690,11 +3690,11 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 
 void EventHandler::capsLockStateMayHaveChanged()
 {
-    Document* d = m_frame.document();
-    if (Element* element = d->focusedElement()) {
-        if (RenderObject* r = element->renderer()) {
-            if (r->isTextField())
-                toRenderTextControlSingleLine(r)->capsLockStateMayHaveChanged();
+    Document* document = m_frame.document();
+    if (auto* element = document->focusedElement()) {
+        if (auto* renderer = element->renderer()) {
+            if (is<RenderTextControlSingleLine>(*renderer))
+                downcast<RenderTextControlSingleLine>(*renderer).capsLockStateMayHaveChanged();
         }
     }
 }

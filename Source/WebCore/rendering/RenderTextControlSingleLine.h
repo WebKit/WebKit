@@ -97,8 +97,6 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
     return inputElement().innerBlockElement();
 }
 
-RENDER_OBJECT_TYPE_CASTS(RenderTextControlSingleLine, isTextField())
-
 // ----------------------------
 
 class RenderTextControlInnerBlock final : public RenderBlockFlow {

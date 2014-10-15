@@ -74,8 +74,8 @@ PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document& do
 
 PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer(RenderStyle&)
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowHost()->renderer());
-    return parentRenderer->createInnerBlockStyle(&parentRenderer->style());
+    RenderTextControlSingleLine& parentRenderer = downcast<RenderTextControlSingleLine>(*shadowHost()->renderer());
+    return parentRenderer.createInnerBlockStyle(&parentRenderer.style());
 }
 
 // ---------------------------

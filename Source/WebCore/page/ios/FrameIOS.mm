@@ -293,7 +293,7 @@ static Node* ancestorRespondingToScrollWheelEvents(const HitTestResult& hitTestR
         if (!renderer)
             continue;
 
-        if ((renderer->isTextField() || renderer->isTextArea()) && toRenderTextControl(renderer)->canScroll()) {
+        if ((renderer->isTextField() || renderer->isTextArea()) && downcast<RenderTextControl>(*renderer).canScroll()) {
             scrollingAncestor = node;
             continue;
         }

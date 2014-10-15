@@ -573,25 +573,24 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (WebVisiblePosition *)startPosition
 {
-    Node *node = core(self);
-    RenderObject *object = node->renderer();
-    if (!object || !object->isTextControl())
+    Node* node = core(self);
+    RenderObject* object = node->renderer();
+    if (!is<RenderTextControl>(object))
         return [super startPosition];
     
-    RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(0);
+    VisiblePosition visiblePosition = downcast<RenderTextControl>(*object).textFormControlElement().visiblePositionForIndex(0);
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-    Node *node = core(self);
-    RenderObject *object = node->renderer();
-    if (!object || !object->isTextControl())
+    Node* node = core(self);
+    RenderObject* object = node->renderer();
+    if (!is<RenderTextControl>(object))
         return [super endPosition];
     
-    RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(textControl->textFormControlElement().value().length());
+    RenderTextControl& textControl = downcast<RenderTextControl>(*object);
+    VisiblePosition visiblePosition = textControl.textFormControlElement().visiblePositionForIndex(textControl.textFormControlElement().value().length());
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
@@ -601,25 +600,24 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (WebVisiblePosition *)startPosition
 {
-    Node *node = core(self);
-    RenderObject *object = node->renderer();
+    Node* node = core(self);
+    RenderObject* object = node->renderer();
     if (!object) 
         return [super startPosition];
     
-    RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(0);
+    VisiblePosition visiblePosition = downcast<RenderTextControl>(*object).textFormControlElement().visiblePositionForIndex(0);
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-    Node *node = core(self);
-    RenderObject *object = node->renderer();
+    Node* node = core(self);
+    RenderObject* object = node->renderer();
     if (!object) 
         return [super endPosition];
     
-    RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(textControl->textFormControlElement().value().length());
+    RenderTextControl& textControl = downcast<RenderTextControl>(*object);
+    VisiblePosition visiblePosition = textControl.textFormControlElement().visiblePositionForIndex(textControl.textFormControlElement().value().length());
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
