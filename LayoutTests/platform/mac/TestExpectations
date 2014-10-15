@@ -411,9 +411,6 @@ webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
-# This test depends on subpixel layout.
-webkit.org/b/92352 css3/flexbox/flex-rounding.html [ Failure ]
-
 # <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion
 fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
