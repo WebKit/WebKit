@@ -35,7 +35,6 @@
 #include <time.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -269,17 +268,18 @@ protected:
 
     class CachedResourceCallback {
     public:
-        static PassOwnPtr<CachedResourceCallback> schedule(CachedResource* resource, CachedResourceClient* client) { return adoptPtr(new CachedResourceCallback(resource, client)); }
+        CachedResourceCallback(CachedResource*, CachedResourceClient*);
+
+        static std::unique_ptr<CachedResourceCallback> schedule(CachedResource* resource, CachedResourceClient* client) { return std::make_unique<CachedResourceCallback>(resource, client); }
         void cancel();
     private:
-        CachedResourceCallback(CachedResource*, CachedResourceClient*);
         void timerFired(Timer<CachedResourceCallback>&);
 
         CachedResource* m_resource;
         CachedResourceClient* m_client;
         Timer<CachedResourceCallback> m_callbackTimer;
     };
-    HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback>> m_clientsAwaitingCallback;
+    HashMap<CachedResourceClient*, std::unique_ptr<CachedResourceCallback>> m_clientsAwaitingCallback;
 
     ResourceRequest m_resourceRequest;
     SessionID m_sessionID;

@@ -514,11 +514,11 @@ bool CachedResource::addClientToSet(CachedResourceClient* client)
 
 void CachedResource::removeClient(CachedResourceClient* client)
 {
-    OwnPtr<CachedResourceCallback> callback = m_clientsAwaitingCallback.take(client);
+    auto callback = m_clientsAwaitingCallback.take(client);
     if (callback) {
         ASSERT(!m_clients.contains(client));
         callback->cancel();
-        callback.clear();
+        callback = nullptr;
     } else {
         ASSERT(m_clients.contains(client));
         m_clients.remove(client);

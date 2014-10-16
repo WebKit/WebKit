@@ -1,5 +1,19 @@
 2014-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Use std::unique_ptr for CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=137736
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior change.
+
+        * loader/cache/CachedResource.cpp: Use std::unique_ptr instead of PassOwnPtr|OwnPtr.
+        (WebCore::CachedResource::removeClient):
+        * loader/cache/CachedResource.h: Set ctor from private to public.
+        (WebCore::CachedResource::CachedResourceCallback::schedule):
+
+2014-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Move TextCodec classes to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=137738
 
