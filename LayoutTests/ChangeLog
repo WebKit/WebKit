@@ -1,3 +1,20 @@
+2014-10-15  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173674
+
+    2014-09-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Make spelling tests more reliable by using a word that is misspelled everywhere
+            https://bugs.webkit.org/show_bug.cgi?id=136865
+
+            Reviewed by Simon Fraser.
+
+            Some platforms recognize "wellcome" as spelled correctly.
+
+            * editing/spelling/context-menu-suggestions.html:
+            * editing/spelling/spelling-with-punctuation-selection-expected.txt:
+            * editing/spelling/spelling-with-punctuation-selection.html:
+
 2014-08-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Skip some tests that test features disabled on the branch.

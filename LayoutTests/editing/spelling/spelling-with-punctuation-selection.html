@@ -15,22 +15,22 @@ description("Punctuation marks should be treated as whitespace: spelling should 
     + "To test manually, type 'wellcome!' and select 'wellcome!'. "
     + "The test succeeds when 'wellcome' has spelling marker.");
 
-initSpellTest("destination", "wellcome!", function(textNode) {
+initSpellTest("destination", "welllcome!", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("spellingMarkerRange.toString()", "welllcome");
     shouldBeEqualToString("window.getSelection().toString()", "");
 
     // Select the text "wellcome!" with the exclamation mark.
     var range = document.createRange();
     range.setStart(textNode, 0);
-    range.setEnd(textNode, 9);
+    range.setEnd(textNode, 10);
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
 
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome!");
+    shouldBeEqualToString("window.getSelection().toString()", "welllcome!");
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "welllcome", finishJSTest);
 });
 
 </script>

@@ -4,11 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became different from 0
-PASS spellingMarkerRange.toString() is "wellcome"
+PASS spellingMarkerRange.toString() is "welllcome"
 PASS window.getSelection().toString() is ""
-PASS window.getSelection().toString() is "wellcome!"
-PASS spellingMarkerRange.toString() became "wellcome"
+PASS window.getSelection().toString() is "welllcome!"
+PASS spellingMarkerRange.toString() became "welllcome"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-wellcome!
+welllcome!
