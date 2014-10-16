@@ -65,7 +65,7 @@ void GraphicsContext3D::releaseShaderCompiler()
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
-    callGLReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
+    ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 }
 
 void GraphicsContext3D::validateAttributes()
@@ -356,22 +356,9 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
-    callGLReadPixels(x, y, width, height, format, type, static_cast<unsigned char*>(data));
-
+    ::glReadPixels(x, y, width, height, format, type, data);
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-}
-
-void GraphicsContext3D::callGLReadPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, unsigned char* pixels)
-{
-    ::glReadPixels(x, y, width, height, format, type, pixels);
-    int totalBytes = width*height*4;
-    // FIXME: There is a bug with the NVIDIA drivers where if alpha is off,
-    // readPixels returns 0 for the alpha channel instead of 255.
-    if (getExtensions()->isNVIDIA() && !m_attrs.alpha) {
-        for (int i = 0; i < totalBytes; i += 4)
-            pixels[i+3] = 255;
-    }
 }
 
 }

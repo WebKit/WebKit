@@ -989,7 +989,6 @@ private:
     // backbuffer.
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
-    void callGLReadPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, unsigned char* pixels);
 
 #if PLATFORM(IOS)
     bool setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
