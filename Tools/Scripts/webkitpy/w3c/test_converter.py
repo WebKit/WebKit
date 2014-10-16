@@ -179,11 +179,12 @@ class _W3CTestConverter(HTMLParser):
                 new_style = self.convert_style_data(attr[1])
                 converted = re.sub(attr[1], new_style, converted)
 
-        src_tags = ('script', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')
+        src_tags = ('script', 'style', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')
         if tag in src_tags and self.reference_support_info is not None and  self.reference_support_info != {}:
             for attr_name, attr_value in attrs:
                 if attr_name == 'src':
-                    converted = self.convert_reference_relpaths(attr_value)
+                    new_path = self.convert_reference_relpaths(attr_value)
+                    converted = re.sub(attr_value, new_path, converted)
 
         self.converted_data.append(converted)
 

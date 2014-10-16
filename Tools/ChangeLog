@@ -1,3 +1,21 @@
+2014-10-15  Rebecca Hauck  <rhauck@adobe.com>
+
+        import-w3c-test rewrites relative src paths in ref files incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=137586
+
+        This patch fixes a bug in test_converter.py where src paths were getting 
+        rewritten as ../../some-path instead of <script src="../../some-path>". 
+        It also adds support for rewriting src paths in style  elements, which was 
+        missing before and it adds tests for this case.
+
+        Reviewed by Bem Jones-Bey.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.convert_attributes_if_needed):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (test_convert_attributes_if_needed):
+        (verify_reference_relative_paths):
+
 2014-10-15  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Add --json flag to test-webkitpy to emit JSON formatted test results

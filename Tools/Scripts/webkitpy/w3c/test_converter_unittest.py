@@ -289,6 +289,34 @@ CONTENT OF TEST
         self.verify_prefixed_properties(converted, test_content[0])
         self.verify_prefixed_property_values(converted, test_content[1])
 
+    def test_convert_attributes_if_needed(self):
+        """ Tests convert_attributes_if_needed() using a reference file that has some relative src paths """
+
+        test_html = """<html>
+<head>
+<script src="../../some-script.js"></script>
+<style src="../../../some-style.css"></style>
+</head>
+<body>
+<img src="../../../../some-image.jpg">
+</body>
+</html>
+"""
+        test_reference_support_info = {'reference_relpath': '../', 'files': ['../../some-script.js', '../../../some-style.css', '../../../../some-image.jpg'], 'elements': ['script', 'style', 'img']}
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, test_reference_support_info)
+
+        oc = OutputCapture()
+        oc.capture_output()
+        try:
+            converter.feed(test_html)
+            converter.close()
+            converted = converter.output()
+        finally:
+            oc.restore_output()
+
+        self.verify_conversion_happened(converted)
+        self.verify_reference_relative_paths(converted, test_reference_support_info)
+
     def verify_conversion_happened(self, converted):
         self.assertTrue(converted, "conversion didn't happen")
 
@@ -320,6 +348,15 @@ CONTENT OF TEST
         self.assertEqual(len(set(converted[1])), len(set(test_property_values)), 'Incorrect number of property values converted ' + str(len(set(converted[1]))) + ' vs ' + str(len(set(test_property_values))))
         for test_value in test_property_values:
             self.assertTrue((test_value in converted[2]), 'Property value ' + test_value + ' not found in converted doc')
+
+    def verify_reference_relative_paths(self, converted, reference_support_info):
+        idx = 0
+        for path in reference_support_info['files']:
+            expected_path = re.sub(reference_support_info['reference_relpath'], '', path, 1)
+            element = reference_support_info['elements'][idx]
+            expected_tag = '<' + element + ' src=\"' + expected_path + '\">'
+            self.assertTrue(expected_tag in converted[2], 'relative path ' + path + ' was not converted correcty')
+            idx += 1
 
     def generate_test_content_properties_and_values(self, full_property_list, fully_property_values_list, num_test_properties_and_values, html):
         """Inserts properties requiring a -webkit- prefix into the content, replacing \'@testXX@\' with a property and \'@propvalueXX@\' with a value."""
