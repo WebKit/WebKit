@@ -42,7 +42,6 @@ namespace WebCore {
 
 FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
-    , m_currentRenderFlowThread(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
     , m_flowThreadsWithAutoLogicalHeightRegions(0)
 {

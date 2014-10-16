@@ -1311,9 +1311,11 @@ void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
     if (!m_flowThreadController)
         return;
 
-    RenderFlowThread* currentFlowThread = m_flowThreadController->currentRenderFlowThread();
+    RenderFlowThread* currentFlowThread = object.flowThreadContainingBlock();
     if (!currentFlowThread)
         return;
+
+    m_layoutState->setCurrentRenderFlowThread(currentFlowThread);
 
     currentFlowThread->pushFlowThreadLayoutState(object);
 }
@@ -1323,7 +1325,7 @@ void RenderView::popLayoutStateForCurrentFlowThread()
     if (!m_flowThreadController)
         return;
 
-    RenderFlowThread* currentFlowThread = m_flowThreadController->currentRenderFlowThread();
+    RenderFlowThread* currentFlowThread = m_layoutState->currentRenderFlowThread();
     if (!currentFlowThread)
         return;
 
