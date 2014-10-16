@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl -wT
 # -*- Mode: perl; indent-tabs-mode: nil -*-
 #
 # The contents of this file are subject to the Mozilla Public
@@ -24,9 +24,12 @@ use warnings;
 
 # MTAs may call this script from any directory, but it should always
 # run from this one so that it can find its modules.
+use Cwd qw(abs_path);
+use File::Basename qw(dirname);
 BEGIN {
-    require File::Basename;
-    chdir(File::Basename::dirname($0)); 
+    # Untaint the abs_path.
+    my ($a) = abs_path($0) =~ /^(.*)$/;
+    chdir dirname($a);
 }
 
 use lib qw(. lib);
@@ -39,15 +42,19 @@ use Email::MIME::Attachment::Stripper;
 use Getopt::Long qw(:config bundling);
 use Pod::Usage;
 use Encode;
+use Scalar::Util qw(blessed);
 
 use Bugzilla;
-use Bugzilla::Bug qw(ValidateBugID);
-use Bugzilla::Constants qw(USAGE_MODE_EMAIL);
+use Bugzilla::Attachment;
+use Bugzilla::Bug;
+use Bugzilla::BugMail;
+use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Mailer;
+use Bugzilla::Token;
 use Bugzilla::User;
 use Bugzilla::Util;
-use Bugzilla::Token;
+use Bugzilla::Hook;
 
 #############
 # Constants #
@@ -69,15 +76,22 @@ sub parse_mail {
     debug_print('Parsing Email');
     $input_email = Email::MIME->new($mail_text);
     
-    my %fields;
+    my %fields = %{ $switch{'default'} || {} };
+    Bugzilla::Hook::process('email_in_before_parse', { mail => $input_email,
+                                                       fields => \%fields });
 
-    # Email::Address->parse returns an array
-    my ($reporter) = Email::Address->parse($input_email->header('From'));
-    $fields{'reporter'} = $reporter->address;
     my $summary = $input_email->header('Subject');
-    if ($summary =~ /\[Bug (\d+)\](.*)/i) {
+    if ($summary =~ /\[\S+ (\d+)\](.*)/i) {
         $fields{'bug_id'} = $1;
         $summary = trim($2);
+    }
+
+    # Ignore automatic replies.
+    # XXX - Improve the way to detect such subjects in different languages.
+    my $auto_submitted = $input_email->header('Auto-Submitted') || '';
+    if ($summary =~ /out of( the)? office/i || $auto_submitted eq 'auto-replied') {
+        debug_print("Automatic reply detected: $summary");
+        exit;
     }
 
     my ($body, $attachments) = get_body_and_attachments($input_email);
@@ -104,19 +118,8 @@ sub parse_mail {
             # Otherwise, we stop parsing fields on the first blank line.
             $line = trim($line);
             last if !$line;
-            
-            if ($line =~ /^@(\S+)\s*=\s*(.*)\s*/) {
+            if ($line =~ /^\@(\w+)\s*(?:=|\s|$)\s*(.*)\s*/) {
                 $current_field = lc($1);
-                # It's illegal to pass the reporter field as you could
-                # override the "From:" field of the message and bypass
-                # authentication checks, such as PGP.
-                if ($current_field eq 'reporter') {
-                    # We reset the $current_field variable to something
-                    # post_bug and process_bug will ignore, in case the
-                    # attacker splits the reporter field on several lines.
-                    $current_field = 'illegal_field';
-                    next;
-                }
                 $fields{$current_field} = $2;
             }
             else {
@@ -125,6 +128,10 @@ sub parse_mail {
         }
     }
 
+    %fields = %{ Bugzilla::Bug::map_fields(\%fields) };
+
+    my ($reporter) = Email::Address->parse($input_email->header('From'));
+    $fields{'reporter'} = $reporter->address;
 
     # The summary line only affects us if we're doing a post_bug.
     # We have to check it down here because there might have been
@@ -141,30 +148,47 @@ sub parse_mail {
     }
     $fields{'comment'} = $comment;
 
+    my %override = %{ $switch{'override'} || {} };
+    foreach my $key (keys %override) {
+        $fields{$key} = $override{$key};
+    }
+
     debug_print("Parsed Fields:\n" . Dumper(\%fields), 2);
 
     return \%fields;
 }
 
-sub post_bug {
-    my ($fields_in) = @_;
-    my %fields = %$fields_in;
+sub check_email_fields {
+    my ($fields) = @_;
 
+    my ($retval, $non_conclusive_fields) =
+      Bugzilla::User::match_field({
+        'assigned_to'   => { 'type' => 'single' },
+        'qa_contact'    => { 'type' => 'single' },
+        'cc'            => { 'type' => 'multi'  },
+        'newcc'         => { 'type' => 'multi'  }
+      }, $fields, MATCH_SKIP_CONFIRM);
+
+    if ($retval != USER_MATCH_SUCCESS) {
+        ThrowUserError('user_match_too_many', {fields => $non_conclusive_fields});
+    }
+}
+
+sub post_bug {
+    my ($fields) = @_;
     debug_print('Posting a new bug...');
 
-    my $cgi = Bugzilla->cgi;
-    foreach my $field (keys %fields) {
-        $cgi->param(-name => $field, -value => $fields{$field});
-    }
+    my $user = Bugzilla->user;
 
-    $cgi->param(-name => 'inbound_email', -value => 1);
+    check_email_fields($fields);
 
-    require 'post_bug.cgi';
+    my $bug = Bugzilla::Bug->create($fields);
+    debug_print("Created bug " . $bug->id);
+    return ($bug, $bug->comments->[0]);
 }
 
 sub process_bug {
     my ($fields_in) = @_; 
-
     my %fields = %$fields_in;
 
     my $bug_id = $fields{'bug_id'};
@@ -173,8 +197,7 @@ sub process_bug {
 
     debug_print("Updating Bug $fields{id}...");
 
-    ValidateBugID($bug_id);
-    my $bug = new Bugzilla::Bug($bug_id);
+    my $bug = Bugzilla::Bug->check($bug_id);
 
     if ($fields{'bug_status'}) {
         $fields{'knob'} = $fields{'bug_status'};
@@ -198,14 +221,63 @@ sub process_bug {
         $fields{'removecc'} = 1;
     }
 
+    check_email_fields(\%fields);
+
     my $cgi = Bugzilla->cgi;
     foreach my $field (keys %fields) {
         $cgi->param(-name => $field, -value => $fields{$field});
     }
-    $cgi->param('longdesclength', scalar $bug->longdescs);
+    $cgi->param('longdesclength', scalar @{ $bug->comments });
     $cgi->param('token', issue_hash_token([$bug->id, $bug->delta_ts]));
 
     require 'process_bug.cgi';
+    debug_print("Bug processed.");
+
+    my $added_comment;
+    if (trim($fields{'comment'})) {
+        $added_comment = $bug->comments->[-1];
+    }
+    return ($bug, $added_comment);
+}
+
+sub handle_attachments {
+    my ($bug, $attachments, $comment) = @_;
+    return if !$attachments;
+    debug_print("Handling attachments...");
+    my $dbh = Bugzilla->dbh;
+    $dbh->bz_start_transaction();
+    my ($update_comment, $update_bug);
+    foreach my $attachment (@$attachments) {
+        my $data = delete $attachment->{payload};
+        debug_print("Inserting Attachment: " . Dumper($attachment), 2);
+        $attachment->{content_type} ||= 'application/octet-stream';
+        my $obj = Bugzilla::Attachment->create({
+            bug         => $bug,
+            description => $attachment->{filename},
+            filename    => $attachment->{filename},
+            mimetype    => $attachment->{content_type},
+            data        => $data,
+        });
+        # If we added a comment, and our comment does not already have a type,
+        # and this is our first attachment, then we make the comment an 
+        # "attachment created" comment.
+        if ($comment and !$comment->type and !$update_comment) {
+            $comment->set_all({ type       => CMT_ATTACHMENT_CREATED, 
+                                extra_data => $obj->id });
+            $update_comment = 1;
+        }
+        else {
+            $bug->add_comment('', { type => CMT_ATTACHMENT_CREATED,
+                                    extra_data => $obj->id });
+            $update_bug = 1;
+        }
+    }
+    # We only update the comments and bugs at the end of the transaction,
+    # because doing so modifies bugs_fulltext, which is a non-transactional
+    # table.
+    $bug->update() if $update_bug;
+    $comment->update() if $update_comment;
+    $dbh->bz_commit_transaction();
 }
 
 ######################
@@ -226,7 +298,7 @@ sub get_body_and_attachments {
 
     my $body;
     my $attachments = [];
-    if ($ct =~ /^multipart\/alternative/i) {
+    if ($ct =~ /^multipart\/(alternative|signed)/i) {
         $body = get_text_alternative($email);
     }
     else {
@@ -301,7 +373,8 @@ sub die_handler {
     # In Template-Toolkit, [% RETURN %] is implemented as a call to "die".
     # But of course, we really don't want to actually *die* just because
     # the user-error or code-error template ended. So we don't really die.
-    return if $msg->isa('Template::Exception') && $msg->type eq 'return';
+    return if blessed($msg) && $msg->isa('Template::Exception')
+              && $msg->type eq 'return';
 
     # If this is inside an eval, then we should just act like...we're
     # in an eval (instead of printing the error and exiting).
@@ -330,7 +403,7 @@ sub die_handler {
 
 $SIG{__DIE__} = \&die_handler;
 
-GetOptions(\%switch, 'help|h', 'verbose|v+');
+GetOptions(\%switch, 'help|h', 'verbose|v+', 'default=s%', 'override=s%');
 $switch{'verbose'} ||= 0;
 
 # Print the help message if that switch was selected.
@@ -338,10 +411,13 @@ pod2usage({-verbose => 0, -exitval => 1}) if $switch{'help'};
 
 Bugzilla->usage_mode(USAGE_MODE_EMAIL);
 
-
 my @mail_lines = <STDIN>;
 my $mail_text = join("", @mail_lines);
 my $mail_fields = parse_mail($mail_text);
+
+Bugzilla::Hook::process('email_in_after_parse', { fields => $mail_fields });
+
+my $attachments = delete $mail_fields->{'attachments'};
 
 my $username = $mail_fields->{'reporter'};
 # If emailsuffix is in use, we have to remove it from the email address.
@@ -349,17 +425,29 @@ if (my $suffix = Bugzilla->params->{'emailsuffix'}) {
     $username =~ s/\Q$suffix\E$//i;
 }
 
-my $user = Bugzilla::User->new({ name => $username })
-    || ThrowUserError('invalid_username', { name => $username });
-
+my $user = Bugzilla::User->check($username);
 Bugzilla->set_user($user);
 
+my ($bug, $comment);
 if ($mail_fields->{'bug_id'}) {
-    process_bug($mail_fields);
+    ($bug, $comment) = process_bug($mail_fields);
 }
 else {
-    post_bug($mail_fields);
+    ($bug, $comment) = post_bug($mail_fields);
 }
+
+handle_attachments($bug, $attachments, $comment);
+
+# This is here for post_bug and handle_attachments, so that when posting a bug
+# with an attachment, any comment goes out as an attachment comment.
+#
+# Eventually this should be sending the mail for process_bug, too, but we have
+# to wait for $bug->update() to be fully used in email_in.pl first. So
+# currently, process_bug.cgi does the mail sending for bugs, and this does
+# any mail sending for attachments after the first one.
+Bugzilla::BugMail::Send($bug->id, { changer => Bugzilla->user });
+debug_print("Sent bugmail");
+
 
 __END__
 
@@ -369,13 +457,22 @@ email_in.pl - The Bugzilla Inbound Email Interface
 
 =head1 SYNOPSIS
 
- ./email_in.pl [-vvv] < email.txt
+./email_in.pl [-vvv] [--default name=value] [--override name=value] < email.txt
 
- Reads an email on STDIN (the standard input).
+Reads an email on STDIN (the standard input).
 
-  Options:
-    --verbose (-v) - Make the script print more to STDERR.
-                     Specify multiple times to print even more.
+Options:
+
+   --verbose (-v)        - Make the script print more to STDERR.
+                           Specify multiple times to print even more.
+
+   --default name=value  - Specify defaults for field values, like
+                           product=TestProduct. Can be specified multiple
+                           times to specify defaults for multiple fields.
+
+   --override name=value - Override field values specified in the email,
+                           like product=TestProduct. Can be specified
+                           multiple times to override multiple fields.
 
 =head1 DESCRIPTION
 
@@ -389,9 +486,9 @@ The script expects to read an email with the following format:
  From: account@domain.com
  Subject: Bug Summary
 
- @product = ProductName
- @component = ComponentName
- @version = 1.0
+ @product ProductName
+ @component ComponentName
+ @version 1.0
 
  This is a bug description. It will be entered into the bug exactly as
  written here.
@@ -402,39 +499,25 @@ The script expects to read an email with the following format:
  This is a signature line, and will be removed automatically, It will not
  be included in the bug description.
 
-The C<@> labels can be any valid field name in Bugzilla that can be
-set on C<enter_bug.cgi>. For the list of required field names, see 
-L<Bugzilla::WebService::Bug/Create>. Note, that there is some difference
-in the names of the required input fields between web and email interfaces, 
-as listed below:
-
-=over
-
-=item *
-
-C<platform> in web is C<@rep_platform> in email
-
-=item *
-
-C<severity> in web is C<@bug_severity> in email
-
-=back
-
-For the list of all field names, see the C<fielddefs> table in the database. 
+For the list of valid field names for the C<@> fields, including
+a list of which ones are required, see L<Bugzilla::WebService::Bug/create>.
+(Note, however, that you cannot specify C<@description> as a field--
+you just add a comment by adding text after the C<@> fields.)
 
 The values for the fields can be split across multiple lines, but
 note that a newline will be parsed as a single space, for the value.
 So, for example:
 
- @short_desc = This is a very long
+ @summary This is a very long
  description
 
 Will be parsed as "This is a very long description".
 
-If you specify C<@short_desc>, it will override the summary you specify
+If you specify C<@summary>, it will override the summary you specify
 in the Subject header.
 
-C<account@domain.com> must be a valid Bugzilla account.
+C<account@domain.com> (the value of the C<From> header) must be a valid
+Bugzilla account.
 
 Note that signatures must start with '-- ', the standard signature
 border.
@@ -451,11 +534,11 @@ Your subject starts with [Bug 123456] -- then it modifies bug 123456.
 
 =item *
 
-You include C<@bug_id = 123456> in the first lines of the email.
+You include C<@id 123456> in the first lines of the email.
 
 =back
 
-If you do both, C<@bug_id> takes precedence.
+If you do both, C<@id> takes precedence.
 
 You send your email in the same format as for creating a bug, except
 that you only specify the fields you want to change. If the very
@@ -464,7 +547,7 @@ will be assumed that you are only adding a comment to the bug.
 
 Note that when updating a bug, the C<Subject> header is ignored,
 except for getting the bug ID. If you want to change the bug's summary,
-you have to specify C<@short_desc> as one of the fields to change.
+you have to specify C<@summary> as one of the fields to change.
 
 Please remember not to include any extra text in your emails, as that
 text will also be added as a comment. This includes any text that your
@@ -474,8 +557,6 @@ another email.
 =head3 Adding/Removing CCs
 
 To add CCs, you can specify them in a comma-separated list in C<@cc>.
-For backward compatibility, C<@newcc> can also be used. If both are
-present, C<@cc> takes precedence.
 
 To remove CCs, specify them as a comma-separated list in C<@removecc>.
 
@@ -488,8 +569,6 @@ not send you anything.
 If any part of your request fails, all of it will fail. No partial
 changes will happen.
 
-There is no attachment support yet.
-
 =head1 CAUTION
 
 The script does not do any validation that the user is who they say
@@ -500,12 +579,8 @@ and only allow access to the inbound email system from people you trust.
 
 =head1 LIMITATIONS
 
-Note that the email interface has the same limitations as the
-normal Bugzilla interface. So, for example, you cannot reassign
-a bug and change its status at the same time.
-
 The email interface only accepts emails that are correctly formatted
-perl RFC2822. If you send it an incorrectly formatted message, it
+per RFC2822. If you send it an incorrectly formatted message, it
 may behave in an unpredictable fashion.
 
 You cannot send an HTML mail along with attachments. If you do, Bugzilla

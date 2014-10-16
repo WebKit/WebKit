@@ -35,9 +35,13 @@ use base qw(Exporter);
 
 # For bz_locations
 use File::Basename;
+use Memoize;
 
 @Bugzilla::Constants::EXPORT = qw(
     BUGZILLA_VERSION
+
+    REMOTE_FILE
+    LOCAL_FILE
 
     bz_locations
 
@@ -55,9 +59,9 @@ use File::Basename;
     AUTH_LOGINFAILED
     AUTH_DISABLED
     AUTH_NO_SUCH_USER
+    AUTH_LOCKOUT
 
     USER_PASSWORD_MIN_LENGTH
-    USER_PASSWORD_MAX_LENGTH
 
     LOGIN_OPTIONAL
     LOGIN_NORMAL
@@ -79,9 +83,9 @@ use File::Basename;
 
     DEFAULT_COLUMN_LIST
     DEFAULT_QUERY_NAME
+    DEFAULT_MILESTONE
 
-    QUERY_LIST
-    LIST_OF_BUGS
+    SAVE_NUM_SEARCHES
 
     COMMENT_COLS
     COMMENT_COLS_WRAP
@@ -90,26 +94,25 @@ use File::Basename;
     CMT_NORMAL
     CMT_DUPE_OF
     CMT_HAS_DUPE
-    CMT_POPULAR_VOTES
-    CMT_MOVED_TO
+    CMT_ATTACHMENT_CREATED
+    CMT_ATTACHMENT_UPDATED
 
     THROW_ERROR
     
     RELATIONSHIPS
-    REL_ASSIGNEE REL_QA REL_REPORTER REL_CC REL_VOTER REL_GLOBAL_WATCHER
+    REL_ASSIGNEE REL_QA REL_REPORTER REL_CC REL_GLOBAL_WATCHER
     REL_ANY
     
     POS_EVENTS
     EVT_OTHER EVT_ADDED_REMOVED EVT_COMMENT EVT_ATTACHMENT EVT_ATTACHMENT_DATA
     EVT_PROJ_MANAGEMENT EVT_OPENED_CLOSED EVT_KEYWORD EVT_CC EVT_DEPEND_BLOCK
-    
+    EVT_BUG_CREATED
+
     NEG_EVENTS
     EVT_UNCONFIRMED EVT_CHANGED_BY_ME 
         
     GLOBAL_EVENTS
     EVT_FLAG_REQUESTED EVT_REQUESTED_FLAG
-
-    FULLTEXT_BUGLIST_LIMIT
 
     ADMIN_GROUP_NAME
     PER_PRODUCT_PRIVILEGES
@@ -123,15 +126,31 @@ use File::Basename;
     FIELD_TYPE_MULTI_SELECT
     FIELD_TYPE_TEXTAREA
     FIELD_TYPE_DATETIME
+    FIELD_TYPE_BUG_ID
+    FIELD_TYPE_BUG_URLS
+    FIELD_TYPE_KEYWORDS
+
+    EMPTY_DATETIME_REGEX
+
+    ABNORMAL_SELECTS
+
+    TIMETRACKING_FIELDS
 
     USAGE_MODE_BROWSER
     USAGE_MODE_CMDLINE
-    USAGE_MODE_WEBSERVICE
+    USAGE_MODE_XMLRPC
     USAGE_MODE_EMAIL
+    USAGE_MODE_JSON
+    USAGE_MODE_TEST
 
     ERROR_MODE_WEBPAGE
     ERROR_MODE_DIE
     ERROR_MODE_DIE_SOAP_FAULT
+    ERROR_MODE_JSON_RPC
+    ERROR_MODE_TEST
+
+    COLOR_ERROR
+    COLOR_SUCCESS
 
     INSTALLATION_MODE_INTERACTIVE
     INSTALLATION_MODE_NON_INTERACTIVE
@@ -139,19 +158,44 @@ use File::Basename;
     DB_MODULE
     ROOT_USER
     ON_WINDOWS
+    ON_ACTIVESTATE
 
     MAX_TOKEN_AGE
     MAX_LOGINCOOKIE_AGE
+    MAX_SUDO_TOKEN_AGE
+    MAX_LOGIN_ATTEMPTS
+    LOGIN_LOCKOUT_INTERVAL
+    MAX_STS_AGE
 
     SAFE_PROTOCOLS
+    LEGAL_CONTENT_TYPES
 
     MIN_SMALLINT
     MAX_SMALLINT
+    MAX_INT_32
 
     MAX_LEN_QUERY_NAME
+    MAX_CLASSIFICATION_SIZE
+    MAX_PRODUCT_SIZE
     MAX_MILESTONE_SIZE
     MAX_COMPONENT_SIZE
+    MAX_FIELD_VALUE_SIZE
     MAX_FREETEXT_LENGTH
+    MAX_BUG_URL_LENGTH
+    MAX_POSSIBLE_DUPLICATES
+
+    PASSWORD_DIGEST_ALGORITHM
+    PASSWORD_SALT_LENGTH
+    
+    CGI_URI_LIMIT
+
+    PRIVILEGES_REQUIRED_NONE
+    PRIVILEGES_REQUIRED_REPORTER
+    PRIVILEGES_REQUIRED_ASSIGNEE
+    PRIVILEGES_REQUIRED_EMPOWERED
+
+    AUDIT_CREATE
+    AUDIT_REMOVE
 );
 
 @Bugzilla::Constants::EXPORT_OK = qw(contenttypes);
@@ -159,7 +203,11 @@ use File::Basename;
 # CONSTANTS
 #
 # Bugzilla version
-use constant BUGZILLA_VERSION => "3.2.3";
+use constant BUGZILLA_VERSION => "4.2.1";
+
+# Location of the remote and local XML files to track new releases.
+use constant REMOTE_FILE => 'http://updates.bugzilla.org/bugzilla-update.xml';
+use constant LOCAL_FILE  => 'bugzilla-update.xml'; # Relative to datadir.
 
 # These are unique values that are unlikely to match a string or a number,
 # to be used in criteria for match() functions and other things. They start
@@ -212,10 +260,10 @@ use constant AUTH_ERROR => 2;
 use constant AUTH_LOGINFAILED => 3;
 use constant AUTH_DISABLED => 4;
 use constant AUTH_NO_SUCH_USER  => 5;
+use constant AUTH_LOCKOUT => 6;
 
-# The minimum and maximum lengths a password must have.
-use constant USER_PASSWORD_MIN_LENGTH => 3;
-use constant USER_PASSWORD_MAX_LENGTH => 16;
+# The minimum length a password must have.
+use constant USER_PASSWORD_MIN_LENGTH => 6;
 
 use constant LOGIN_OPTIONAL => 0;
 use constant LOGIN_NORMAL => 1;
@@ -224,18 +272,6 @@ use constant LOGIN_REQUIRED => 2;
 use constant LOGOUT_ALL => 0;
 use constant LOGOUT_CURRENT => 1;
 use constant LOGOUT_KEEP_CURRENT => 2;
-
-use constant contenttypes =>
-  {
-   "html"=> "text/html" , 
-   "rdf" => "application/rdf+xml" , 
-   "atom"=> "application/atom+xml" ,
-   "xml" => "application/xml" , 
-   "js"  => "application/x-javascript" , 
-   "csv" => "text/csv" ,
-   "png" => "image/png" ,
-   "ics" => "text/calendar" ,
-  };
 
 use constant GRANT_DIRECT => 0;
 use constant GRANT_REGEXP => 2;
@@ -249,20 +285,23 @@ use constant MAILTO_GROUP => 1;
 
 # The default list of columns for buglist.cgi
 use constant DEFAULT_COLUMN_LIST => (
-    "bug_severity", "priority", "op_sys","assigned_to",
-    "bug_status", "resolution", "short_desc"
+    "product", "component", "assigned_to",
+    "bug_status", "resolution", "short_desc", "changeddate"
 );
 
 # Used by query.cgi and buglist.cgi as the named-query name
 # for the default settings.
 use constant DEFAULT_QUERY_NAME => '(Default query)';
 
-# The possible types for saved searches.
-use constant QUERY_LIST => 0;
-use constant LIST_OF_BUGS => 1;
+# The default "defaultmilestone" created for products.
+use constant DEFAULT_MILESTONE => '---';
 
-# The column width (cols attribute) of HTML textareas for inputting comments.
+# How many of the user's most recent searches to save.
+use constant SAVE_NUM_SEARCHES => 10;
+
+# The column width for comment textareas and comments in bugmails.
 use constant COMMENT_COLS => 80;
+#if WEBKIT_CHANGES
 # The column width at which to wrap comments prior to display -- using
 # Perl's Text::Wrap::wrap().  Only Bugzilla/Util.pm's wrap_comment() method
 # uses this constant.
@@ -273,6 +312,7 @@ use constant COMMENT_COLS => 80;
 # "white-space: pre-wrap" in the CSS to do line-wrapping instead.  We
 # arbitrarily choose 8000, which is enough for a 100-line paragraph.
 use constant COMMENT_COLS_WRAP => 8000;
+#endif // WEBKIT_CHANGES
 # Used in _check_comment(). Gives the max length allowed for a comment.
 use constant MAX_COMMENT_LENGTH => 65535;
 
@@ -280,8 +320,10 @@ use constant MAX_COMMENT_LENGTH => 65535;
 use constant CMT_NORMAL => 0;
 use constant CMT_DUPE_OF => 1;
 use constant CMT_HAS_DUPE => 2;
-use constant CMT_POPULAR_VOTES => 3;
-use constant CMT_MOVED_TO => 4;
+# Type 3 was CMT_POPULAR_VOTES, which moved to the Voting extension.
+# Type 4 was CMT_MOVED_TO, which moved to the OldBugMove extension.
+use constant CMT_ATTACHMENT_CREATED => 5;
+use constant CMT_ATTACHMENT_UPDATED => 6;
 
 # Determine whether a validation routine should return 0 or throw
 # an error when the validation fails.
@@ -291,11 +333,20 @@ use constant REL_ASSIGNEE           => 0;
 use constant REL_QA                 => 1;
 use constant REL_REPORTER           => 2;
 use constant REL_CC                 => 3;
-use constant REL_VOTER              => 4;
+# REL 4 was REL_VOTER, before it was moved ino an extension.
 use constant REL_GLOBAL_WATCHER     => 5;
 
-use constant RELATIONSHIPS => REL_ASSIGNEE, REL_QA, REL_REPORTER, REL_CC, 
-                              REL_VOTER, REL_GLOBAL_WATCHER;
+# We need these strings for the X-Bugzilla-Reasons header
+# Note: this hash uses "," rather than "=>" to avoid auto-quoting of the LHS.
+# This should be accessed through Bugzilla::BugMail::relationships() instead
+# of being accessed directly.
+use constant RELATIONSHIPS => {
+    REL_ASSIGNEE      , "AssignedTo",
+    REL_REPORTER      , "Reporter",
+    REL_QA            , "QAcontact",
+    REL_CC            , "CC",
+    REL_GLOBAL_WATCHER, "GlobalWatcher"
+};
                               
 # Used for global events like EVT_FLAG_REQUESTED
 use constant REL_ANY                => 100;
@@ -316,11 +367,12 @@ use constant EVT_OPENED_CLOSED      => 6;
 use constant EVT_KEYWORD            => 7;
 use constant EVT_CC                 => 8;
 use constant EVT_DEPEND_BLOCK       => 9;
+use constant EVT_BUG_CREATED        => 10;
 
 use constant POS_EVENTS => EVT_OTHER, EVT_ADDED_REMOVED, EVT_COMMENT, 
                            EVT_ATTACHMENT, EVT_ATTACHMENT_DATA, 
                            EVT_PROJ_MANAGEMENT, EVT_OPENED_CLOSED, EVT_KEYWORD,
-                           EVT_CC, EVT_DEPEND_BLOCK;
+                           EVT_CC, EVT_DEPEND_BLOCK, EVT_BUG_CREATED;
 
 use constant EVT_UNCONFIRMED        => 50;
 use constant EVT_CHANGED_BY_ME      => 51;
@@ -333,10 +385,6 @@ use constant EVT_FLAG_REQUESTED     => 100; # Flag has been requested of me
 use constant EVT_REQUESTED_FLAG     => 101; # I have requested a flag
 
 use constant GLOBAL_EVENTS => EVT_FLAG_REQUESTED, EVT_REQUESTED_FLAG;
-
-#  Number of bugs to return in a buglist when performing
-#  a fulltext search.
-use constant FULLTEXT_BUGLIST_LIMIT => 200;
 
 # Default administration group name.
 use constant ADMIN_GROUP_NAME => 'admin';
@@ -362,28 +410,84 @@ use constant FIELD_TYPE_SINGLE_SELECT => 2;
 use constant FIELD_TYPE_MULTI_SELECT => 3;
 use constant FIELD_TYPE_TEXTAREA  => 4;
 use constant FIELD_TYPE_DATETIME  => 5;
+use constant FIELD_TYPE_BUG_ID  => 6;
+use constant FIELD_TYPE_BUG_URLS => 7;
+use constant FIELD_TYPE_KEYWORDS => 8;
+
+use constant EMPTY_DATETIME_REGEX => qr/^[0\-:\sA-Za-z]+$/; 
+
+# See the POD for Bugzilla::Field/is_abnormal to see why these are listed
+# here.
+use constant ABNORMAL_SELECTS => {
+    classification => 1,
+    component      => 1,
+    product        => 1,
+};
+
+# The fields from fielddefs that are blocked from non-timetracking users.
+# work_time is sometimes called actual_time.
+use constant TIMETRACKING_FIELDS =>
+    qw(estimated_time remaining_time work_time actual_time
+       percentage_complete deadline);
 
 # The maximum number of days a token will remain valid.
 use constant MAX_TOKEN_AGE => 3;
 # How many days a logincookie will remain valid if not used.
 use constant MAX_LOGINCOOKIE_AGE => 30;
+# How many seconds (default is 6 hours) a sudo cookie remains valid.
+use constant MAX_SUDO_TOKEN_AGE => 21600;
+
+# Maximum failed logins to lock account for this IP
+use constant MAX_LOGIN_ATTEMPTS => 5;
+# If the maximum login attempts occur during this many minutes, the
+# account is locked.
+use constant LOGIN_LOCKOUT_INTERVAL => 30;
+
+# The maximum number of seconds the Strict-Transport-Security header
+# will remain valid. Default is one week.
+use constant MAX_STS_AGE => 604800;
 
 # Protocols which are considered as safe.
 use constant SAFE_PROTOCOLS => ('afs', 'cid', 'ftp', 'gopher', 'http', 'https',
-                                'irc', 'mid', 'news', 'nntp', 'prospero', 'telnet',
-                                'view-source', 'wais');
+                                'irc', 'ircs', 'mid', 'news', 'nntp', 'prospero',
+                                'telnet', 'view-source', 'wais');
+
+# Valid MIME types for attachments.
+use constant LEGAL_CONTENT_TYPES => ('application', 'audio', 'image', 'message',
+                                     'model', 'multipart', 'text', 'video');
+
+use constant contenttypes =>
+  {
+   "html"=> "text/html" ,
+   "rdf" => "application/rdf+xml" ,
+   "atom"=> "application/atom+xml" ,
+   "xml" => "application/xml" ,
+   "js"  => "application/x-javascript" ,
+   "json"=> "application/json" ,
+   "csv" => "text/csv" ,
+   "png" => "image/png" ,
+   "ics" => "text/calendar" ,
+  };
 
 # Usage modes. Default USAGE_MODE_BROWSER. Use with Bugzilla->usage_mode.
 use constant USAGE_MODE_BROWSER    => 0;
 use constant USAGE_MODE_CMDLINE    => 1;
-use constant USAGE_MODE_WEBSERVICE => 2;
+use constant USAGE_MODE_XMLRPC     => 2;
 use constant USAGE_MODE_EMAIL      => 3;
+use constant USAGE_MODE_JSON       => 4;
+use constant USAGE_MODE_TEST       => 5;
 
 # Error modes. Default set by Bugzilla->usage_mode (so ERROR_MODE_WEBPAGE
 # usually). Use with Bugzilla->error_mode.
 use constant ERROR_MODE_WEBPAGE        => 0;
 use constant ERROR_MODE_DIE            => 1;
 use constant ERROR_MODE_DIE_SOAP_FAULT => 2;
+use constant ERROR_MODE_JSON_RPC       => 3;
+use constant ERROR_MODE_TEST           => 4;
+
+# The ANSI colors of messages that command-line scripts use
+use constant COLOR_ERROR => 'red';
+use constant COLOR_SUCCESS => 'green';
 
 # The various modes that checksetup.pl can run in.
 use constant INSTALLATION_MODE_INTERACTIVE => 0;
@@ -391,17 +495,21 @@ use constant INSTALLATION_MODE_NON_INTERACTIVE => 1;
 
 # Data about what we require for different databases.
 use constant DB_MODULE => {
-    'mysql' => {db => 'Bugzilla::DB::Mysql', db_version => '4.1.2',
+    # MySQL 5.0.15 was the first production 5.0.x release.
+    'mysql' => {db => 'Bugzilla::DB::Mysql', db_version => '5.0.15',
                 dbd => { 
                     package => 'DBD-mysql',
                     module  => 'DBD::mysql',
                     # Disallow development versions
                     blacklist => ['_'],
-                    # For UTF-8 support
-                    version => '4.00',
+                    # For UTF-8 support. 4.001 makes sure that blobs aren't
+                    # marked as UTF-8.
+                    version => '4.001',
                 },
                 name => 'MySQL'},
-    'pg'    => {db => 'Bugzilla::DB::Pg', db_version => '8.00.0000',
+    # Also see Bugzilla::DB::Pg::bz_check_server_version, which has special
+    # code to require DBD::Pg 2.17.2 for PostgreSQL 9 and above.
+    'pg'    => {db => 'Bugzilla::DB::Pg', db_version => '8.03.0000',
                 dbd => {
                     package => 'DBD-Pg',
                     module  => 'DBD::Pg',
@@ -415,20 +523,38 @@ use constant DB_MODULE => {
                      version => '1.19',
                 },
                 name => 'Oracle'},
+     # SQLite 3.6.22 fixes a WHERE clause problem that may affect us.
+    sqlite => {db => 'Bugzilla::DB::Sqlite', db_version => '3.6.22',
+               dbd => {
+                   package => 'DBD-SQLite',
+                   module  => 'DBD::SQLite',
+                   # 1.29 is the version that contains 3.6.22.
+                   version => '1.29',
+               },
+               name => 'SQLite'},
 };
+
+# True if we're on Win32.
+use constant ON_WINDOWS => ($^O =~ /MSWin32/i) ? 1 : 0;
+# True if we're using ActiveState Perl (as opposed to Strawberry) on Windows.
+use constant ON_ACTIVESTATE => eval { &Win32::BuildNumber };
 
 # The user who should be considered "root" when we're giving
 # instructions to Bugzilla administrators.
-use constant ROOT_USER => $^O =~ /MSWin32/i ? 'Administrator' : 'root';
-
-# True if we're on Win32.
-use constant ON_WINDOWS => ($^O =~ /MSWin32/i);
+use constant ROOT_USER => ON_WINDOWS ? 'Administrator' : 'root';
 
 use constant MIN_SMALLINT => -32768;
 use constant MAX_SMALLINT => 32767;
+use constant MAX_INT_32 => 2147483647;
 
 # The longest that a saved search name can be.
 use constant MAX_LEN_QUERY_NAME => 64;
+
+# The longest classification name allowed.
+use constant MAX_CLASSIFICATION_SIZE => 64;
+
+# The longest product name allowed.
+use constant MAX_PRODUCT_SIZE => 64;
 
 # The longest milestone name allowed.
 use constant MAX_MILESTONE_SIZE => 20;
@@ -436,8 +562,46 @@ use constant MAX_MILESTONE_SIZE => 20;
 # The longest component name allowed.
 use constant MAX_COMPONENT_SIZE => 64;
 
+# The maximum length for values of <select> fields.
+use constant MAX_FIELD_VALUE_SIZE => 64;
+
 # Maximum length allowed for free text fields.
 use constant MAX_FREETEXT_LENGTH => 255;
+
+# The longest a bug URL in a BUG_URLS field can be.
+use constant MAX_BUG_URL_LENGTH => 255;
+
+# The largest number of possible duplicates that Bug::possible_duplicates
+# will return.
+use constant MAX_POSSIBLE_DUPLICATES => 25;
+
+# This is the name of the algorithm used to hash passwords before storing
+# them in the database. This can be any string that is valid to pass to
+# Perl's "Digest" module. Note that if you change this, it won't take
+# effect until a user changes his password.
+use constant PASSWORD_DIGEST_ALGORITHM => 'SHA-256';
+# How long of a salt should we use? Note that if you change this, none
+# of your users will be able to log in until they reset their passwords.
+use constant PASSWORD_SALT_LENGTH => 8;
+
+# Certain scripts redirect to GET even if the form was submitted originally
+# via POST such as buglist.cgi. This value determines whether the redirect
+# can be safely done or not based on the web server's URI length setting.
+use constant CGI_URI_LIMIT => 8000;
+
+# If the user isn't allowed to change a field, we must tell him who can.
+# We store the required permission set into the $PrivilegesRequired
+# variable which gets passed to the error template.
+
+use constant PRIVILEGES_REQUIRED_NONE      => 0;
+use constant PRIVILEGES_REQUIRED_REPORTER  => 1;
+use constant PRIVILEGES_REQUIRED_ASSIGNEE  => 2;
+use constant PRIVILEGES_REQUIRED_EMPOWERED => 3;
+
+# Special field values used in the audit_log table to mean either
+# "we just created this object" or "we just deleted this object".
+use constant AUDIT_CREATE => '__create__';
+use constant AUDIT_REMOVE => '__remove__';
 
 sub bz_locations {
     # We know that Bugzilla/Constants.pm must be in %INC at this point.
@@ -466,6 +630,7 @@ sub bz_locations {
         $datadir = "data";
     }
 
+    $datadir = "$libpath/$datadir";
     # We have to return absolute paths for mod_perl. 
     # That means that if you modify these paths, they must be absolute paths.
     return {
@@ -475,20 +640,26 @@ sub bz_locations {
         # make sure this still points to the CGIs.
         'cgi_path'    => $libpath,
         'templatedir' => "$libpath/template",
+        'template_cache' => "$datadir/template",
         'project'     => $project,
         'localconfig' => "$libpath/$localconfig",
-        'datadir'     => "$libpath/$datadir",
-        'attachdir'   => "$libpath/$datadir/attachments",
+        'datadir'     => $datadir,
+        'attachdir'   => "$datadir/attachments",
         'skinsdir'    => "$libpath/skins",
+        'graphsdir'   => "$libpath/graphs",
         # $webdotdir must be in the web server's tree somewhere. Even if you use a 
         # local dot, we output images to there. Also, if $webdotdir is 
         # not relative to the bugzilla root directory, you'll need to 
         # change showdependencygraph.cgi to set image_url to the correct 
         # location.
         # The script should really generate these graphs directly...
-        'webdotdir'   => "$libpath/$datadir/webdot",
+        'webdotdir'   => "$datadir/webdot",
         'extensionsdir' => "$libpath/extensions",
     };
 }
+
+# This makes us not re-compute all the bz_locations data every time it's
+# called.
+BEGIN { memoize('bz_locations') };
 
 1;

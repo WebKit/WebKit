@@ -70,6 +70,7 @@ use lib qw(. lib);
 
 
 use Bugzilla;
+use Bugzilla::Object;
 use Bugzilla::Bug;
 use Bugzilla::Product;
 use Bugzilla::Version;
@@ -87,25 +88,23 @@ use Bugzilla::Status;
 
 use MIME::Base64;
 use MIME::Parser;
-use Date::Format;
 use Getopt::Long;
 use Pod::Usage;
 use XML::Twig;
-
-# We want to capture errors and handle them here rather than have the Template
-# code barf all over the place.
-Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_CMDLINE);
 
 my $debug = 0;
 my $mail  = '';
 my $attach_path = '';
 my $help  = 0;
+my ($default_product_name, $default_component_name);
 
 my $result = GetOptions(
     "verbose|debug+" => \$debug,
     "mail|sendmail!" => \$mail,
     "attach_path=s"  => \$attach_path,
-    "help|?"         => \$help
+    "help|?"         => \$help,
+    "product=s"      => \$default_product_name,
+    "component=s"    => \$default_component_name,
 );
 
 pod2usage(0) if $help;
@@ -122,6 +121,9 @@ my $dbh = Bugzilla->dbh;
 my $params = Bugzilla->params;
 my ($timestamp) = $dbh->selectrow_array("SELECT NOW()");
 
+$default_product_name = '' if !defined $default_product_name;
+$default_component_name = '' if !defined $default_component_name;
+
 ###############################################################################
 # Helper sub routines                                                         #
 ###############################################################################
@@ -131,7 +133,7 @@ sub MailMessage {
     my $subject    = shift;
     my $message    = shift;
     my @recipients = @_;
-    my $from   = $params->{"moved-from-address"};
+    my $from   = $params->{"mailfrom"};
     $from =~ s/@/\@/g;
 
     foreach my $to (@recipients){
@@ -171,7 +173,7 @@ sub flag_handler {
     my (
         $name,            $status,      $setter_login,
         $requestee_login, $exporterid,  $bugid,
-        $productid,       $componentid, $attachid
+        $componentid,     $productid,   $attachid
       )
       = @_;
 
@@ -321,22 +323,8 @@ sub init() {
     }
     Error( "no maintainer", "REOPEN", $exporter ) unless ($maintainer);
     Error( "no exporter",   "REOPEN", $exporter ) unless ($exporter);
-    Error( "bug importing is disabled here", undef, $exporter ) unless ( $params->{"move-enabled"} );
     Error( "invalid exporter: $exporter", "REOPEN", $exporter ) if ( !login_to_id($exporter) );
     Error( "no urlbase set", "REOPEN", $exporter ) unless ($urlbase);
-    my $def_product =
-        new Bugzilla::Product( { name => $params->{"moved-default-product"} } )
-        || Error("an invalid default product was defined for the target DB. " .
-                  $params->{"maintainer"} . " needs to fix the definitions of " .
-                 "moved-default-product. \n", "REOPEN", $exporter);
-    my $def_component = new Bugzilla::Component(
-        {
-            product => $def_product,
-            name    => $params->{"moved-default-component"}
-        })
-    || Error("an invalid default component was defined for the target DB. " .
-             $params->{"maintainer"} . " needs to fix the definitions of " .
-             "moved-default-component.\n", "REOPEN", $exporter);
 }
     
 
@@ -505,21 +493,17 @@ sub process_bug {
         }
     }
 
-    my @long_descs;
-    my $private = 0;
-
     # Parse long descriptions
+    my @long_descs;
     foreach my $comment ( $bug->children('long_desc') ) {
         Debug( "Parsing Long Description", DEBUG_LEVEL );
-        my %long_desc;
-        $long_desc{'who'}       = $comment->field('who');
-        $long_desc{'bug_when'}  = $comment->field('bug_when');
-        $long_desc{'isprivate'} = $comment->{'att'}->{'isprivate'} || 0;
+        my %long_desc = ( who       => $comment->field('who'),
+                          bug_when  => $comment->field('bug_when'),
+                          isprivate => $comment->{'att'}->{'isprivate'} || 0 );
 
-        # if one of the comments is private we need to set this flag
-        if ( $long_desc{'isprivate'} && $exporter->in_group($params->{'insidergroup'})) {
-            $private = 1;
-        }
+        # If the exporter is not in the insidergroup, keep the comment public.
+        $long_desc{isprivate} = 0 unless $exporter->is_insider;
+
         my $data = $comment->field('thetext');
         if ( defined $comment->first_child('thetext')->{'att'}->{'encoding'}
             && $comment->first_child('thetext')->{'att'}->{'encoding'} =~
@@ -528,6 +512,8 @@ sub process_bug {
             $data = decode_base64($data);
         }
 
+        # For backwards-compatibility with Bugzillas before 3.6:
+        #
         # If we leave the attachment ID in the comment it will be made a link
         # to the wrong attachment. Since the new attachment ID is unknown yet
         # let's strip it out for now. We will make a comment with the right ID
@@ -540,42 +526,22 @@ sub process_bug {
         my $url = $urlbase . "show_bug.cgi?id=";
         $data =~ s/([Bb]ugs?\s*\#?\s*(\d+))/$url$2/g;
 
+        # Keep the original commenter if possible, else we will fall back
+        # to the exporter account.
+        $long_desc{whoid} = login_to_id($long_desc{who});
+
+        if (!$long_desc{whoid}) {
+            $data = "The original author of this comment is $long_desc{who}.\n\n" . $data;
+        }
+
         $long_desc{'thetext'} = $data;
         push @long_descs, \%long_desc;
     }
 
-    # instead of giving each comment its own item in the longdescs
-    # table like it should have, lets cat them all into one big
-    # comment otherwise we would have to lie often about who
-    # authored the comment since commenters in one bugzilla probably
-    # don't have accounts in the other one.
-    # If one of the comments is private the whole comment will be
-    # private since we don't want to expose these unnecessarily
-    sub by_date { my @a; my @b; $a->{'bug_when'} cmp $b->{'bug_when'}; }
-    my @sorted_descs     = sort by_date @long_descs;
-    my $long_description = "";
-    for ( my $z = 0 ; $z <= $#sorted_descs ; $z++ ) {
-        if ( $z == 0 ) {
-            $long_description .= "\n\n\n---- Reported by ";
-        }
-        else {
-            $long_description .= "\n\n\n---- Additional Comments From ";
-        }
-        $long_description .= "$sorted_descs[$z]->{'who'} ";
-        $long_description .= "$sorted_descs[$z]->{'bug_when'}";
-        $long_description .= " ----";
-        $long_description .= "\n\n";
-        $long_description .= "THIS COMMENT IS PRIVATE \n"
-          if ( $sorted_descs[$z]->{'isprivate'} );
-        $long_description .= $sorted_descs[$z]->{'thetext'};
-        $long_description .= "\n";
-    }
+    my @sorted_descs = sort { $a->{'bug_when'} cmp $b->{'bug_when'} } @long_descs;
 
-    my $comments;
-
-    $comments .= "\n\n--- Bug imported by $exporter_login ";
-    $comments .= time2str( "%Y-%m-%d %H:%M", time ) . " ";
-    $comments .= $params->{'timezone'};
+    my $comments = "\n\n--- Bug imported by $exporter_login ";
+    $comments .= format_time(scalar localtime(time()), '%Y-%m-%d %R %Z') . " ";
     $comments .= " ---\n\n";
     $comments .= "This bug was previously known as _bug_ $bug_fields{'bug_id'} at ";
     $comments .= $urlbase . "show_bug.cgi?id=" . $bug_fields{'bug_id'} . "\n";
@@ -623,12 +589,12 @@ sub process_bug {
     # Timestamps
     push( @query, "creation_ts" );
     push( @values,
-        format_time( $bug_fields{'creation_ts'}, "%Y-%m-%d %X" )
+        format_time( $bug_fields{'creation_ts'}, "%Y-%m-%d %T" )
           || $timestamp );
 
     push( @query, "delta_ts" );
     push( @values,
-        format_time( $bug_fields{'delta_ts'}, "%Y-%m-%d %X" )
+        format_time( $bug_fields{'delta_ts'}, "%Y-%m-%d %T" )
           || $timestamp );
 
     # Bug Access
@@ -638,48 +604,33 @@ sub process_bug {
     push( @query,  "reporter_accessible" );
     push( @values, $bug_fields{'reporter_accessible'} ? 1 : 0 );
 
-    # Product and Component if there is no valid default product and
-    # component defined in the parameters, we wouldn't be here
-    my $def_product =
-      new Bugzilla::Product( { name => $params->{"moved-default-product"} } );
-    my $def_component = new Bugzilla::Component(
-        {
-            product => $def_product,
-            name    => $params->{"moved-default-component"}
-        }
-    );
-    my $product;
-    my $component;
+    my $product = new Bugzilla::Product(
+        { name => $bug_fields{'product'} || '' });
+    if (!$product) {
+        $err .= "Unknown Product " . $bug_fields{'product'} . "\n";
+        $err .= "   Using default product set at the command line.\n";
+        $product = new Bugzilla::Product({ name => $default_product_name })
+            or Error("an invalid default product was defined for the target"
+                     . " DB. " . $params->{"maintainer"} . " needs to specify "
+                     . "--product when calling importxml.pl", "REOPEN", 
+                     $exporter);
+    }
+    my $component = new Bugzilla::Component({
+        product => $product, name => $bug_fields{'component'} || '' });
+    if (!$component) {
+        $err .= "Unknown Component " . $bug_fields{'component'} . "\n";
+        $err .= "   Using default product and component set ";
+        $err .= "at the command line.\n";
 
-    if ( defined $bug_fields{'product'} ) {
-        $product = new Bugzilla::Product( { name => $bug_fields{'product'} } );
-        unless ($product) {
-            $product = $def_product;
-            $err .= "Unknown Product " . $bug_fields{'product'} . "\n";
-            $err .= "   Using default product set in Parameters \n";
+        $product = new Bugzilla::Product({ name => $default_product_name });
+        $component = new Bugzilla::Component({
+           name => $default_component_name, product => $product });
+        if (!$component) {
+            Error("an invalid default component was defined for the target" 
+                  . " DB. ".  $params->{"maintainer"} . " needs to specify " 
+                  . "--component when calling importxml.pl", "REOPEN", 
+                  $exporter);
         }
-    }
-    else {
-        $product = $def_product;
-    }
-    if ( defined $bug_fields{'component'} ) {
-        $component = new Bugzilla::Component(
-            {
-                product => $product,
-                name    => $bug_fields{'component'}
-            }
-        );
-        unless ($component) {
-            $component = $def_component;
-            $product   = $def_product;
-            $err .= "Unknown Component " . $bug_fields{'component'} . "\n";
-            $err .= "   Using default product and component set ";
-            $err .= "in Parameters \n";
-        }
-    }
-    else {
-        $component = $def_component;
-        $product   = $def_product;
     }
 
     my $prod_id = $product->id;
@@ -808,13 +759,12 @@ sub process_bug {
 
     # Process time fields
     if ( $params->{"timetrackinggroup"} ) {
-        my $date = format_time( $bug_fields{'deadline'}, "%Y-%m-%d" )
-          || undef;
+        my $date = validate_date( $bug_fields{'deadline'} ) ? $bug_fields{'deadline'} : undef;
         push( @values, $date );
         push( @query,  "deadline" );
         if ( defined $bug_fields{'estimated_time'} ) {
             eval {
-                Bugzilla::Bug::ValidateTime($bug_fields{'estimated_time'}, "e");
+                Bugzilla::Object::_validate_time($bug_fields{'estimated_time'}, "e");
             };
             if (!$@){
                 push( @values, $bug_fields{'estimated_time'} );
@@ -823,7 +773,7 @@ sub process_bug {
         }
         if ( defined $bug_fields{'remaining_time'} ) {
             eval {
-                Bugzilla::Bug::ValidateTime($bug_fields{'remaining_time'}, "r");
+                Bugzilla::Object::_validate_time($bug_fields{'remaining_time'}, "r");
             };
             if (!$@){
                 push( @values, $bug_fields{'remaining_time'} );
@@ -832,7 +782,7 @@ sub process_bug {
         }
         if ( defined $bug_fields{'actual_time'} ) {
             eval {
-                Bugzilla::Bug::ValidateTime($bug_fields{'actual_time'}, "a");
+                Bugzilla::Object::_validate_time($bug_fields{'actual_time'}, "a");
             };
             if ($@){
                 $bug_fields{'actual_time'} = 0.0;
@@ -904,8 +854,6 @@ sub process_bug {
     }
 
     # Status & Resolution
-    my $has_res = defined($bug_fields{'resolution'});
-    my $has_status = defined($bug_fields{'bug_status'});
     my $valid_res = check_field('resolution',  
                                   scalar $bug_fields{'resolution'}, 
                                   undef, ERR_LEVEL );
@@ -918,7 +866,7 @@ sub process_bug {
     
     # Check everconfirmed 
     my $everconfirmed;
-    if ($product->votes_to_confirm) {
+    if ($product->allows_unconfirmed) {
         $everconfirmed = $bug_fields{'everconfirmed'} || 0;
     }
     else {
@@ -932,9 +880,9 @@ sub process_bug {
     # that might not yet be in the database we have no way of populating
     # this table. Change the resolution instead.
     if ( $valid_res  && ( $bug_fields{'resolution'} eq "DUPLICATE" ) ) {
-        $resolution = "MOVED";
+        $resolution = "INVALID";
         $err .= "This bug was marked DUPLICATE in the database ";
-        $err .= "it was moved from.\n    Changing resolution to \"MOVED\"\n";
+        $err .= "it was moved from.\n    Changing resolution to \"INVALID\"\n";
     } 
 
     # If there is at least 1 initial bug status different from UNCO, use it,
@@ -947,7 +895,7 @@ sub process_bug {
         $initial_status = $bug_statuses[0]->name;
     }
     else {
-        @bug_statuses = @{Bugzilla::Status->get_all()};
+        @bug_statuses = Bugzilla::Status->get_all();
         # Exclude UNCO and inactive bug statuses.
         @bug_statuses = grep { $_->is_active && $_->name ne 'UNCONFIRMED'} @bug_statuses;
         my @open_statuses = grep { $_->is_open } @bug_statuses;
@@ -960,10 +908,10 @@ sub process_bug {
         }
     }
 
-    if($has_status){
+    if ($status) {
         if($valid_status){
             if($is_open){
-                if($has_res){
+                if ($resolution) {
                     $err .= "Resolution set on an open status.\n";
                     $err .= "   Dropping resolution $resolution\n";
                     $resolution = undef;
@@ -985,7 +933,6 @@ sub process_bug {
                     if($status eq "UNCONFIRMED"){
                         $err .= "Bug Status was UNCONFIRMED but everconfirmed was true\n";
                         $err .= "   Setting status to $initial_status\n";
-                        $err .= "Resetting votes to 0\n" if ( $bug_fields{'votes'} );
                         $status = $initial_status;
                     }
                 }
@@ -998,7 +945,7 @@ sub process_bug {
                 }
             }
             else{ # $is_open is false
-               if(!$has_res){
+               if (!$resolution) {
                    $err .= "Missing Resolution. Setting status to ";
                    if($everconfirmed){
                        $status = $initial_status;
@@ -1009,10 +956,10 @@ sub process_bug {
                        $err .= "UNCONFIRMED\n";
                    }
                }
-               if(!$valid_res){
+               elsif (!$valid_res) {
                    $err .= "Unknown resolution \"$resolution\".\n";
-                   $err .= "   Setting resolution to MOVED\n";
-                   $resolution = "MOVED";
+                   $err .= "   Setting resolution to INVALID\n";
+                   $resolution = "INVALID";
                }
             }   
         }
@@ -1028,9 +975,8 @@ sub process_bug {
             $err .=  $bug_fields{'bug_status'} . "\".\n";
             $resolution = undef;
         }
-                
     }
-    else{ #has_status is false
+    else {
         if($everconfirmed){  
             $status = $initial_status;
         }
@@ -1041,8 +987,8 @@ sub process_bug {
         $err .= "   Previous status was unknown\n";
         $resolution = undef;
     }
-                                 
-    if (defined $resolution){
+
+    if ($resolution) {
         push( @query,  "resolution" );
         push( @values, $resolution );
     }
@@ -1166,15 +1112,6 @@ sub process_bug {
                 $keywordseen{$keyword_obj->id} = 1;
             }
         }
-        my ($keywordarray) = $dbh->selectcol_arrayref(
-            "SELECT d.name FROM keyworddefs d
-                    INNER JOIN keywords k 
-                    ON d.id = k.keywordid 
-                    WHERE k.bug_id = ? 
-                    ORDER BY d.name", undef, $id);
-        my $keywordstring = join( ", ", @{$keywordarray} );
-        $dbh->do( "UPDATE bugs SET keywords = ? WHERE bug_id = ?",
-            undef, $keywordstring, $id )
     }
 
     # Insert values of custom multi-select fields. They have already
@@ -1205,7 +1142,7 @@ sub process_bug {
             $err .= "No attachment ID specified, dropping attachment\n";
             next;
         }
-        if (!$exporter->in_group($params->{'insidergroup'}) && $att->{'isprivate'}){
+        if (!$exporter->is_insider && $att->{'isprivate'}) {
             $err .= "Exporter not in insidergroup and attachment marked private.\n";
             $err .= "   Marking attachment public\n";
             $att->{'isprivate'} = 0;
@@ -1256,19 +1193,21 @@ sub process_bug {
     # Clear the attachments array for the next bug
     @attachments = ();
 
-    # Insert longdesc and append any errors
+    # Insert comments and append any errors
     my $worktime = $bug_fields{'actual_time'} || 0.0;
-    $worktime = 0.0 if (!$exporter->in_group($params->{'timetrackinggroup'}));
-    $long_description .= "\n" . $comments;
-    if ($err) {
-        $long_description .= "\n$err\n";
+    $worktime = 0.0 if (!$exporter->is_timetracker);
+    $comments .= "\n$err\n" if $err;
+
+    my $sth_comment =
+      $dbh->prepare('INSERT INTO longdescs (bug_id, who, bug_when, isprivate,
+                                            thetext, work_time)
+                     VALUES (?, ?, ?, ?, ?, ?)');
+
+    foreach my $c (@sorted_descs) {
+        $sth_comment->execute($id, $c->{whoid} || $exporterid, $c->{bug_when},
+                              $c->{isprivate}, $c->{thetext}, 0);
     }
-    trick_taint($long_description);
-    $dbh->do("INSERT INTO longdescs 
-                     (bug_id, who, bug_when, work_time, isprivate, thetext) 
-                     VALUES (?,?,?,?,?,?)", undef,
-        $id, $exporterid, $timestamp, $worktime, $private, $long_description
-    );
+    $sth_comment->execute($id, $exporterid, $timestamp, 0, $comments, $worktime);
     Bugzilla::Bug->new($id)->_sync_fulltext('new_bug');
 
     # Add this bug to each group of which its product is a member.
@@ -1291,7 +1230,7 @@ sub process_bug {
     }
     Debug( $log, OK_LEVEL );
     push(@logs, $log);
-    Bugzilla::BugMail::Send( $id, { 'changer' => $exporter_login } ) if ($mail);
+    Bugzilla::BugMail::Send( $id, { 'changer' => $exporter } ) if ($mail);
 
     # done with the xml data. Lets clear it from memory
     $twig->purge;
@@ -1352,31 +1291,38 @@ importxml - Import bugzilla bug data from xml.
 
 =head1 SYNOPSIS
 
-    importxml.pl [options] [file ...]
-
- Options:
-       -? --help        brief help message
-       -v --verbose     print error and debug information. 
-                        Multiple -v increases verbosity
-       -m --sendmail    send mail to recipients with log of bugs imported
-       --attach_path    The path to the attachment files.
-                        (Required if encoding="filename" is used for attachments.)
+ importxml.pl [options] [file ...]
 
 =head1 OPTIONS
 
-=over 8
+=over
 
 =item B<-?>
 
-    Print a brief help message and exits.
+Print a brief help message and exit.
 
 =item B<-v>
 
-    Print error and debug information. Mulltiple -v increases verbosity
+Print error and debug information. Mulltiple -v increases verbosity
 
-=item B<-m>
+=item B<-m> B<--sendmail>
 
-    Send mail to exporter with a log of bugs imported and any errors.
+Send mail to exporter with a log of bugs imported and any errors.
+
+=item B<--attach_path>
+
+The path to the attachment files. (Required if encoding="filename"
+is used for attachments.)
+
+=item B<--product=name>
+
+The product to put the bug in if the product specified in the
+XML doesn't exist.
+
+=item B<--component=name>
+
+The component to put the bug in if the component specified in the
+XML doesn't exist.
 
 =back
 

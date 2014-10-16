@@ -36,7 +36,7 @@ use strict;
 use Bugzilla::Config::Common;
 use Bugzilla::Status;
 
-$Bugzilla::Config::BugChange::sortkey = "03";
+our $sortkey = 500;
 
 sub get_param_list {
   my $class = shift;
@@ -81,19 +81,7 @@ sub get_param_list {
   },
 
   {
-   name => 'commentonclearresolution',
-   type => 'b',
-   default => 0
-  },
-
-  {
    name => 'commentonchange_resolution',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonreassignbycomponent',
    type => 'b',
    default => 0
   },

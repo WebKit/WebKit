@@ -34,7 +34,8 @@
     [% errortext FILTER html %]: [% INCLUDE bug_list badbugs = badbugs %]
 
   [% ELSIF san_tag == "bug_check_repair" %]
-    <a href="sanitycheck.cgi?[% param FILTER url_quote %]=1">[% text FILTER html %]</a>.
+    <a href="sanitycheck.cgi?[% param FILTER uri %]=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">[% text FILTER html %]</a>.
 
   [% ELSIF san_tag == "bug_check_creation_date" %]
     Checking for [% terms.bugs %] with no creation date (which makes them invisible).
@@ -80,12 +81,6 @@
 
   [% ELSIF san_tag == "bug_check_status_everconfirmed_error_text2" %]
     [% terms.Bugs %] with confirmed status but don't have everconfirmed set
-
-  [% ELSIF san_tag == "bug_check_votes_everconfirmed" %]
-    Checking votes/everconfirmed
-
-  [% ELSIF san_tag == "bug_check_votes_everconfirmed_error_text" %]
-    [% terms.Bugs %] that have enough votes to be confirmed but haven't been
 
   [% ELSIF san_tag == "bug_check_control_values" %]
     Checking for bad values in group_control_map
@@ -142,11 +137,13 @@
     [% END %]
 
   [% ELSIF san_tag == "cross_check_attachment_has_references" %]
-    <a href="sanitycheck.cgi?remove_invalid_attach_references=1">Remove
+    <a href="sanitycheck.cgi?remove_invalid_attach_references=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Remove
     invalid references to non existent attachments.</a>
 
   [% ELSIF san_tag == "cross_check_bug_has_references" %]
-    <a href="sanitycheck.cgi?remove_invalid_bug_references=1">Remove
+    <a href="sanitycheck.cgi?remove_invalid_bug_references=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Remove
     invalid references to non existent [% terms.bugs %].</a>
 
   [% ELSIF san_tag == "double_cross_check_to" %]
@@ -169,6 +166,12 @@
       [% END %]
     [% END %]
 
+  [% ELSIF san_tag == "everconfirmed_start" %]
+    OK, now fixing everconfirmed.
+
+  [% ELSIF san_tag == "everconfirmed_end" %]
+    everconfirmed fixed.
+
   [% ELSIF san_tag == "flag_check_start" %]
     Checking for flags being in the wrong product/component.
 
@@ -186,7 +189,8 @@
     [%+ PROCESS bug_link bug_id = bug_id %].
 
   [% ELSIF san_tag == "flag_fix" %]
-    <a href="sanitycheck.cgi?remove_invalid_flags=1">Click
+    <a href="sanitycheck.cgi?remove_invalid_flags=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Click
     here to delete invalid flags</a>
 
   [% ELSIF san_tag == "group_control_map_entries_creation" %]
@@ -222,23 +226,6 @@
   [% ELSIF san_tag == "keyword_check_duplicated_ids" %]
     Duplicate keyword IDs found in [% PROCESS bug_link bug_id = id %].
 
-  [% ELSIF san_tag == "keyword_cache_start" %]
-    Checking cached keywords.
-
-  [% ELSIF san_tag == "keyword_cache_alert" %]
-    [% badbugs.size FILTER none %] [%+ terms.bugs %] found with
-    incorrect keyword cache: [% INCLUDE bug_list badbugs = badbugs %]
-
-  [% ELSIF san_tag == "keyword_cache_fixing" %]
-    OK, now fixing keyword cache.
-
-  [% ELSIF san_tag == "keyword_cache_fixed" %]
-    Keyword cache fixed.
-
-  [% ELSIF san_tag == "keyword_cache_rebuild" %]
-    <a href="sanitycheck.cgi?rebuildkeywordcache=1">Click here to
-    rebuild the keyword cache</a>.
-
   [% ELSIF san_tag == "profile_login_start" %]
     Checking profile logins.
 
@@ -267,26 +254,8 @@
     half an hour: [% INCLUDE bug_list badbugs = badbugs %]
 
   [% ELSIF san_tag == "unsent_bugmail_fix" %]
-    <a href="sanitycheck.cgi?rescanallBugMail=1">Send these mails</a>.
-
-  [% ELSIF san_tag == "vote_cache_rebuild_start" %]
-    OK, now rebuilding vote cache.
-
-  [% ELSIF san_tag == "vote_cache_rebuild_end" %]
-    Vote cache has been rebuilt.
-
-  [% ELSIF san_tag == "vote_cache_rebuild_fix" %]
-    <a href="sanitycheck.cgi?rebuildvotecache=1">Click here to
-    rebuild the vote cache</a>
-
-  [% ELSIF san_tag == "vote_cache_alert" %]
-    Bad vote cache for [% PROCESS bug_link bug_id = id %]
-
-  [% ELSIF san_tag == "vote_count_start" %]
-    Checking cached vote counts.
-
-  [% ELSIF san_tag == "vote_count_alert" %]
-    Bad vote sum for [% terms.bug %] [%+ id FILTER html %].
+    <a href="sanitycheck.cgi?rescanallBugMail=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Send these mails</a>.
 
   [% ELSIF san_tag == "whines_obsolete_target_deletion_start" %]
     OK, now removing non-existent users/groups from whines.
@@ -304,14 +273,31 @@
     [% END %]
 
   [% ELSIF san_tag == "whines_obsolete_target_fix" %]
-    <a href="sanitycheck.cgi?remove_old_whine_targets=1">Click here to
+    <a href="sanitycheck.cgi?remove_old_whine_targets=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Click here to
     remove old users/groups</a>
+
+  [% ELSE %]
+    [% message = Hook.process("statuses") %]
+
+    [% IF message %]
+      [% message FILTER none %]
+    [% ELSE %]
+      The status message string <code>[% san_tag FILTER html %]</code>
+      was not found. Please send email to [% Param("maintainer") %] describing
+      the steps taken to obtain this message.
+    [% END %]
 
   [% END %]
 [% END %]
 
-[% san_message FILTER html %]
-
+[% USE Bugzilla %]
+[% IF Bugzilla.usage_mode == constants.USAGE_MODE_CMDLINE %]
+  [% san_message FILTER none %]
+[% ELSE %]
+  [%# Avoid the txt filter in message.txt.tmpl. %]
+  [% san_message FILTER html %]
+[% END %]
 
 [% BLOCK bug_list %]
   [% FOREACH bug_id = badbugs %]
@@ -319,12 +305,12 @@
      # which itself calls this template again, generating a recursion error.
      # I doubt having a tooltip with the bug status and summary is so
      # important here anyway, as you can click the "(as buglist)" link. %]
-    <a href="show_bug.cgi?id=[% bug_id FILTER url_quote %]">[% bug_id FILTER html %]</a>
+    <a href="show_bug.cgi?id=[% bug_id FILTER uri %]">[% bug_id FILTER html %]</a>
     [% ", " IF !loop.last %]
   [% END %]
-  (<a href="buglist.cgi?bug_id=[% badbugs.join(",") FILTER url_quote %]">as [% terms.bug %] list</a>).
+  (<a href="buglist.cgi?bug_id=[% badbugs.join(",") FILTER uri %]">as [% terms.bug %] list</a>).
 [% END %]
 
 [% BLOCK bug_link %]
-  <a href="show_bug.cgi?id=[% bug_id FILTER url_quote %]">[% terms.bug %] [%+ bug_id FILTER html %]</a>
+  <a href="show_bug.cgi?id=[% bug_id FILTER uri %]">[% terms.bug %] [%+ bug_id FILTER html %]</a>
 [% END %]

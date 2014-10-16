@@ -36,7 +36,7 @@ use strict;
 use Bugzilla::Config::Common;
 use Bugzilla::Field;
 
-$Bugzilla::Config::BugFields::sortkey = "04";
+our $sortkey = 600;
 
 sub get_param_list {
   my $class = shift;
@@ -49,12 +49,6 @@ sub get_param_list {
   my @param_list = (
   {
    name => 'useclassification',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'showallproducts',
    type => 'b',
    default => 0
   },
@@ -78,15 +72,15 @@ sub get_param_list {
   },
 
   {
-   name => 'usevotes',
+   name => 'usebugaliases',
    type => 'b',
    default => 0
   },
 
   {
-   name => 'usebugaliases',
+   name => 'use_see_also',
    type => 'b',
-   default => 0
+   default => 1
   },
 
   {

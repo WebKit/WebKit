@@ -31,14 +31,6 @@
   style_urls = ['skins/standard/admin.css']
 %]
 
-[% IF classification %]
-  [% classification_url_part = BLOCK %]&amp;classification=
-    [%- classification.name FILTER url_quote %]
-  [%- END %]
-[% ELSE %]
-  [% classification_url_part = "" %]
-[% END %]
-
 <table border="1" cellpadding="4" cellspacing="0">
   <tr bgcolor="#6666FF">
     <th valign="top" align="left">Field</th>
@@ -66,8 +58,7 @@
   <tr>
     <td valign="top">Product:</td>
     <td valign="top">
-      <a href="editproducts.cgi?product=[% product.name FILTER url_quote %]
-         [%- classification_url_part %]">
+      <a href="editproducts.cgi?product=[% product.name FILTER uri %]">
         [% product.name FILTER html %]
       </a>
     </td>
@@ -102,10 +93,10 @@
   <tr>
     <td>Closed for [% terms.bugs %]:</td>
     <td>
-      [% IF product.disallownew %]
-        closed
-      [% ELSE %]
+      [% IF product.is_active %]
         open
+      [% ELSE %]
+        closed
       [% END %]
     </td>
   </tr>
@@ -113,8 +104,7 @@
   <tr>
     <td>
       [% IF product.components.size > 0 %]
-        <a href="editcomponents.cgi?product=[% product.name FILTER url_quote %]
-           [%- classification_url_part %]"
+        <a href="editcomponents.cgi?product=[% product.name FILTER uri %]"
            title="Edit components for product '[% product.name FILTER html %]'">
           Components:
         </a>
@@ -148,8 +138,7 @@
   <tr>
     <td>
       [% IF product.versions.size > 0 %]
-        <a href="editversions.cgi?product=[%- product.name FILTER url_quote %]
-           [%- classification_url_part %]">
+        <a href="editversions.cgi?product=[%- product.name FILTER uri %]">
           Versions:
         </a>
       [% ELSE %]
@@ -172,8 +161,7 @@
     <tr>
       <td valign="top">
         [% IF product.milestones.size > 0 %]
-          <a href="editmilestones.cgi?product=[%- product.name FILTER url_quote %]
-             [%- classification_url_part -%]">
+          <a href="editmilestones.cgi?product=[%- product.name FILTER uri %]">
             Milestones:
           </a>
         [% ELSE %]
@@ -196,10 +184,8 @@
     <td>[% terms.Bugs %]:</td>
     <td>
       [% IF product.bug_count %]
-        <a href="buglist.cgi?product=[%- product.name FILTER url_quote %]
-           [%- classification_url_part %]"
-           title="List of [% terms.bugs %] for product '
-           [%- product.name FILTER html %]'">
+        <a href="buglist.cgi?product=[% product.name FILTER uri %]"
+           title="List of [% terms.bugs %] for product '[% product.name FILTER html %]'">
           [% product.bug_count FILTER html %]
         </a>
       [% ELSE %]
@@ -262,12 +248,15 @@
   <p>Do you really want to delete this product?</p>
 
   <form method="post" action="editproducts.cgi">
+    <input type="checkbox" id="delete_series" name="delete_series" value=1>
+    <label for="delete_series">
+      Delete all related series (you can also delete them later, by visiting
+      the <a href="chart.cgi?category=[% product.name FILTER html %]">New Charts page</a>.)
+    </label><p>
     <input type="submit" id="delete" value="Yes, delete">
     <input type="hidden" name="action" value="delete">
     <input type="hidden" name="product" value="[% product.name FILTER html %]">
     <input type="hidden" name="token" value="[% token FILTER html %]">
-    <input type="hidden" name="classification"
-           value="[% classification.name FILTER html %]">
   </form>
 
 [% END %]

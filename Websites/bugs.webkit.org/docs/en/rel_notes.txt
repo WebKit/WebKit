@@ -3019,10 +3019,10 @@ known to us after the Bugzilla 2.14 release.
 *** USERS UPGRADING FROM 2.8 OR EARLIER ***
 *******************************************
 
-Release notes were not compiled for versions of Bugzilla before
-2.12.
+This version of Bugzilla cannot upgrade from version 2.8 (released
+November 19, 1999). You will first have to upgrade to Bugzilla 3.6 and
+then upgrade to the latest release.
 
-The file 'UPGRADING-pre-2.8' contains instructions you may
-need to perform in addition to running 'checksetup.pl' if you
-are running a pre 2.8 version.
-
+If you are upgrading from a version earlier than 2.8, See the 
+PGRADING-pre-2.8 file in Bugzilla 3.0 for information
+on upgrading from a version that is earlier than 2.8.

@@ -49,7 +49,7 @@
     <th>&nbsp;</th>
     [% FOREACH status = statuses %]
       <th class="col-header[% status.is_open ? " open-status" : " closed-status" %]">
-        [% status.name FILTER html %]
+        [% display_value("bug_status", status.name) FILTER html %]
       </th>
     [% END %]
   </tr>
@@ -59,7 +59,7 @@
   [% FOREACH status = p.merge(statuses) %]
     <tr class="highlight">
       <th align="right" class="[% status.is_open ? "open-status" : "closed-status" %]">
-        [% status.name FILTER html %]
+        [% display_value("bug_status", status.name) FILTER html %]
       </th>
 
       [% FOREACH new_status = statuses %]
@@ -82,7 +82,7 @@
 <p align="center">
   <input type="hidden" name="action" value="update_comment">
   <input type="hidden" name="token" value="[% token FILTER html %]">
-  <input type="submit" value="Commit Changes"> -
+  <input type="submit" id="update_comment" value="Commit Changes"> -
   <a href="editworkflow.cgi?action=edit_comment">Cancel Changes</a> -
   <a href="editworkflow.cgi">View Current Workflow</a>
 </p>

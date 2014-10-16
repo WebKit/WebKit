@@ -1,5 +1,4 @@
 <!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> -->
-<!-- $Id$ -->
 
 <appendix id="troubleshooting">
 <title>Troubleshooting</title>
@@ -22,7 +21,7 @@
     <para>If you have made it all the way through
     <xref linkend="installation"/> (Installation) and
     <xref linkend="configuration"/> (Configuration) but accessing the Bugzilla
-    URL doesn't work, the first thing to do is to check your webserver error
+    URL doesn't work, the first thing to do is to check your web server error
     log. For Apache, this is often located at
     <filename>/etc/logs/httpd/error_log</filename>. The error messages
     you see may be self-explanatory enough to enable you to diagnose and
@@ -32,7 +31,7 @@
 
     <para>
       Bugzilla can also log all user-based errors (and many code-based errors)
-      that occur, without polluting the web server error log.  To enable
+      that occur, without polluting the web server's error log.  To enable
       Bugzilla error logging, create a file that Bugzilla can write to, named
       <filename>errorlog</filename>, in the Bugzilla <filename>data</filename>
       directory.  Errors will be logged as they occur, and will include the type
@@ -45,10 +44,10 @@
   </section>
         
   <section id="trbl-testserver">
-  <title>The Apache webserver is not serving Bugzilla pages</title>
+  <title>The Apache web server is not serving Bugzilla pages</title>
     <para>After you have run <command>checksetup.pl</command> twice,
     run <command>testserver.pl http://yoursite.yourdomain/yoururl</command>
-    to confirm that your webserver is configured properly for
+    to confirm that your web server is configured properly for
     Bugzilla.
     </para>
     <programlisting>
@@ -75,9 +74,9 @@ TEST-OK Webserver is preventing fetch of http://landfill.bugzilla.org/bugzilla-t
         </para>
       </listitem>
       <listitem>
-	<para>The permissions on your library directories are set incorrectly.
-	They must, at the very least, be readable by the webserver user or
-	group. It is recommended that they be world readable.
+        <para>The permissions on your library directories are set incorrectly.
+        They must, at the very least, be readable by the web server user or
+        group. It is recommended that they be world readable.
         </para>
       </listitem>
     </orderedlist>
@@ -139,55 +138,12 @@ TEST-OK Webserver is preventing fetch of http://landfill.bugzilla.org/bugzilla-t
     </para>
   </section>    
 
-  <section id="trouble-filetemp">
-  <title>Your vendor has not defined Fcntl macro O_NOINHERIT</title>
-
-    <para>This is caused by a bug in the version of
-    <productname>File::Temp</productname> that is distributed with perl
-    5.6.0. Many minor variations of this error have been reported:
-    </para>
-
-    <programlisting>Your vendor has not defined Fcntl macro O_NOINHERIT, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 208.
-
-Your vendor has not defined Fcntl macro O_EXLOCK, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 210.
-
-Your vendor has not defined Fcntl macro O_TEMPORARY, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 233.</programlisting>
-
-    <para>Numerous people have reported that upgrading to version 5.6.1
-    or higher solved the problem for them. A less involved fix is to apply
-    the following patch, which is also
-    available as a <ulink url="../xml/filetemp.patch">patch file</ulink>.
-    </para>
-
-    <programlisting><![CDATA[--- File/Temp.pm.orig   Thu Feb  6 16:26:00 2003
-+++ File/Temp.pm        Thu Feb  6 16:26:23 2003
-@@ -205,6 +205,7 @@
-     # eg CGI::Carp
-     local $SIG{__DIE__} = sub {};
-     local $SIG{__WARN__} = sub {};
-+    local *CORE::GLOBAL::die = sub {};
-     $bit = &$func();
-     1;
-   };
-@@ -226,6 +227,7 @@
-     # eg CGI::Carp
-     local $SIG{__DIE__} = sub {};
-     local $SIG{__WARN__} = sub {};
-+    local *CORE::GLOBAL::die = sub {};
-     $bit = &$func();
-     1;
-   };]]></programlisting>
-  </section>
-
   <section id="trbl-relogin-everyone">
   <title>Everybody is constantly being forced to relogin</title>
   
   <para>The most-likely cause is that the <quote>cookiepath</quote> parameter
   is not set correctly in the Bugzilla configuration.  You can change this (if
-  you're a Bugzilla administrator) from the editparams.cgi page via the web.
+  you're a Bugzilla administrator) from the editparams.cgi page via the web interface.
   </para>
 
   <para>The value of the cookiepath parameter should be the actual directory
@@ -255,35 +211,6 @@ at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 233.</programlisting>
     browser (this is true starting with Bugzilla 2.18 and Bugzilla 2.16.5).
     </para>
   </section>
-
-  <section id="trbl-relogin-some">
-  <title>Some users are constantly being forced to relogin</title>
-
-    <para>First, make sure cookies are enabled in the user's browser.
-    </para>
-
-    <para>If that doesn't fix the problem, it may be that the user's ISP
-     implements a rotating proxy server. This causes the user's effective IP
-     address (the address which the Bugzilla server perceives him coming from)
-     to change periodically. Since Bugzilla cookies are tied to a specific IP
-     address, each time the effective address changes, the user will have to
-     log in again.
-     </para>
-
-     <para>If you are using 2.18 (or later), there is a
-     parameter called <quote>loginnetmask</quote>, which you can use to set
-     the number of bits of the user's IP address to require to be matched when
-     authenticating the cookies. If you set this to something less than 32,
-     then the user will be given a checkbox for <quote>Restrict this login to
-     my IP address</quote> on the login screen, which defaults to checked. If
-     they leave the box checked, Bugzilla will behave the same as it did
-     before, requiring an exact match on their IP address to remain logged in.
-     If they uncheck the box, then only the left side of their IP address (up
-     to the number of bits you specified in the parameter) has to match to
-     remain logged in.
-     </para>
-
-   </section>
 
   <section id="trbl-index">
   <title><filename>index.cgi</filename> doesn't show up unless specified in the URL</title>

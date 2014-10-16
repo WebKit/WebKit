@@ -40,8 +40,9 @@
    title = "User Preferences"
    subheader = filtered_login
    style_urls = ['skins/standard/admin.css']
-   javascript_urls = ['js/util.js']
+   javascript_urls = ['js/util.js', 'js/field.js']
    doc_section = "userpreferences.html"
+   yui = ['autocomplete']
  %]
 
 [% tabs = [{ name => "settings", label => "General Preferences",
@@ -50,10 +51,12 @@
               link => "userprefs.cgi?tab=email", saveable => "1" },
             { name => "saved-searches", label => "Saved Searches", 
               link => "userprefs.cgi?tab=saved-searches", saveable => "1" },
-            { name => "account", label => "Name and Password",
+            { name => "account", label => "Account Information",
               link => "userprefs.cgi?tab=account", saveable => "1" },
             { name => "permissions", label => "Permissions", 
               link => "userprefs.cgi?tab=permissions", saveable => "0" } ] %]
+
+[% Hook.process('tabs') %]
 
 [% FOREACH tab IN tabs %]
   [% IF tab.name == current_tab_name %]

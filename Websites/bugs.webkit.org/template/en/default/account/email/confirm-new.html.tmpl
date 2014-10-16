@@ -16,7 +16,7 @@
 [%# INTERFACE:
   # token: string. The token to be used in the user account creation.
   # email: email address of the user account.
-  # date: creation date of the token.
+  # expiration_ts: expiration date of the token.
   #%]
 
 [% title = BLOCK %]Create a new user account for '[% email FILTER html %]'[% END %]
@@ -24,12 +24,11 @@
            title = title
            onload = "document.forms['confirm_account_form'].realname.focus();" %]
 
-[% expiration_ts = date + (constants.MAX_TOKEN_AGE * 86400) %]
-<div>
+<p>
   To create your account, you must enter a password in the form below.
   Your email address and Real Name (if provided) will be shown with
   changes you make.
-</div>
+</p>
 
 <form id="confirm_account_form" method="post" action="token.cgi">
   <input type="hidden" name="t" value="[% token FILTER html %]">
@@ -45,7 +44,10 @@
     </tr>
     <tr>
       <th align="right"><label for="passwd1">Type your password</label>:</th>
-      <td><input type="password" id="passwd1" name="passwd1" value=""></td>
+      <td>
+        <input type="password" id="passwd1" name="passwd1" value="">
+        (minimum [% constants.USER_PASSWORD_MIN_LENGTH FILTER none %] characters)
+      </td>
     </tr>
     <tr>
       <th align="right"><label for="passwd2">Confirm your password</label>:</th>
@@ -53,14 +55,14 @@
     </tr>
     <tr>
       <th align="right">&nbsp;</th>
-      <td><input type="submit" id="confirm" value="Send"></td>
+      <td><input type="submit" id="confirm" value="Create"></td>
     </tr>
   </table>
 </form>
 
 <p>
   This account will not be created if this form is not completed by
-  <u>[%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]</u>.
+  <u>[% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]</u>.
 </p>
 
 <p>

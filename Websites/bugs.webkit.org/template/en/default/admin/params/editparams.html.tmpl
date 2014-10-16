@@ -27,7 +27,7 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% curpanel = -1 %]
-[% panels = panels.sort('sortkey') %]
+[% panels = panels.nsort('sortkey') %]
 
 [% FOREACH panel = panels %]
   [% PROCESS "admin/params/${panel.name}.html.tmpl"
@@ -56,7 +56,7 @@
    title = title
    message = message
    style_urls = ['skins/standard/params.css']
-   javascript_urls = ['js/params.js']
+   javascript_urls = ['js/params.js', 'js/util.js']
    doc_section = "parameters.html"
 %]
 
@@ -73,12 +73,13 @@
         [% FOREACH panel = panels %]
           <tr>
             [% IF panel.current %]
+              [% Hook.process("current_panel") %]
               <td class="selected_section">
                 <span title="[% panel.desc FILTER html %]">[% panel.title FILTER html %]</span>
               </td>
             [% ELSE %]
               <td>
-                <a href="editparams.cgi?section=[% panel.name FILTER url_quote %]"
+                <a href="editparams.cgi?section=[% panel.name FILTER uri %]"
                    title="[% panel.desc FILTER html %]">[% panel.title FILTER html %]</a>
               </td>
             [% END %]
@@ -111,8 +112,7 @@
           <input type="hidden" name="section" value="[% current_panel.name FILTER html %]">
           <input type="hidden" name="action" value="save">
           <input type="hidden" name="token" value="[% token FILTER html %]">
-          <input type="reset" value="Reset form">
-          <input type="submit" name="action" value="Save Changes">
+          <input type="submit" id="save-params" value="Save Changes">
         </form>
       [% END %]
     </td>

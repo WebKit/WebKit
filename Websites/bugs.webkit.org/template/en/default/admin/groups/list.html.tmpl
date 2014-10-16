@@ -66,68 +66,60 @@
   ]
 %]
 
-[% overrides.is_active_bug_group = [ {
-     match_value => "0"
-     match_field => 'is_active_bug_group'
-     override_content => 1
-     content => "&nbsp;"
-   },
-   {
-     match_value => "1"
-     match_field => 'is_active_bug_group'
-     override_content => 1
-     content => "X"
-   }]
-   overrides.userregexp = [ {
-     match_value => ""
-     match_field => 'userregexp'
-     override_content => 1
-     content => "&nbsp;"
-   }]
-   overrides.action = [ {
-     match_value => Param("chartgroup")
-     match_field => 'name'
-     override_content => 1
-     content => "(used as the 'chartgroup')"
-   },
-   {
-     match_value => Param("insidergroup")
-     match_field => 'name'
-     override_content => 1
-     content => "(used as the 'insidergroup')"
-   },
-   {
-     match_value => Param("timetrackinggroup")
-     match_field => 'name'
-     override_content => 1
-     content => "(used as the 'timetrackinggroup')"
-   },
-   {
-     match_value => Param("querysharegroup")
-     match_field => 'name'
-     override_content => 1
-     content => "(used as the 'querysharegroup')"
-   },
-   {
-     match_value => "1"
-     match_field => 'isbuggroup'
-     override_content => 1
-     content => "Delete"
-     override_contentlink => 1
-     contentlink => del_contentlink
-   }]
-   overrides.type = [ {
-     match_value => "0"
-     match_field => 'isbuggroup'
-     override_content => 1
-     content => "system"
-   },
-   {
-     match_value => "1"
-     match_field => 'isbuggroup'
-     override_content => 1
-     content => "user"
-   }]
+[% overrides.is_active_bug_group = {
+     'is_active_bug_group' => {
+       "0" => {
+          override_content => 1
+          content => "&nbsp;"
+       }
+       "1" => {
+          override_content => 1
+          content => "X"
+       }
+     }
+   }
+
+   overrides.userregexp = {
+     'userregexp' => {
+       "" => {
+         override_content => 1
+         content => "&nbsp;"
+       }
+     }
+   } 
+%]
+
+[% FOREACH group IN ["chartgroup", "insidergroup", "timetrackinggroup", "querysharegroup"] %]
+  [% special_group = Param(group) %]
+
+  [% IF special_group %]
+    [% overrides.action.name.$special_group = {
+         override_content => 1
+         content => "(used as the '$group')"
+       }
+    %]
+  [% END %]
+[% END %]
+
+[% overrides.action.isbuggroup = {
+     "1" => {
+         override_content => 1
+         content => "Delete"
+         override_contentlink => 1
+         contentlink => del_contentlink
+     }
+   }
+
+   overrides.type.isbuggroup = {
+     "0" => {
+         override_content => 1
+         content => "system"
+     }
+     "1" => {
+         override_content => 1
+         content => "user"
+     }
+   }
 %] 
 
 [% PROCESS admin/table.html.tmpl

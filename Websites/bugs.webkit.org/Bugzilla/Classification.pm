@@ -13,77 +13,120 @@
 # The Original Code is the Bugzilla Bug Tracking System.
 #
 # Contributor(s): Tiago R. Mello <timello@async.com.br>
-#
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
 
 package Bugzilla::Classification;
 
+use Bugzilla::Constants;
+use Bugzilla::Field;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Product;
+
+use base qw(Bugzilla::Field::ChoiceInterface Bugzilla::Object);
 
 ###############################
 ####    Initialization     ####
 ###############################
 
+use constant DB_TABLE => 'classifications';
+use constant LIST_ORDER => 'sortkey, name';
+
 use constant DB_COLUMNS => qw(
-    classifications.id
-    classifications.name
-    classifications.description
-    classifications.sortkey
+    id
+    name
+    description
+    sortkey
 );
 
-our $columns = join(", ", DB_COLUMNS);
+use constant UPDATE_COLUMNS => qw(
+    name
+    description
+    sortkey
+);
+
+use constant VALIDATORS => {
+    name        => \&_check_name,
+    description => \&_check_description,
+    sortkey     => \&_check_sortkey,
+};
+
+###############################
+####     Constructors     #####
+###############################
+sub remove_from_db {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    ThrowUserError("classification_not_deletable") if ($self->id == 1);
+
+    $dbh->bz_start_transaction();
+    # Reclassify products to the default classification, if needed.
+    $dbh->do("UPDATE products SET classification_id = 1
+              WHERE classification_id = ?", undef, $self->id);
+
+    $self->SUPER::remove_from_db();
+
+    $dbh->bz_commit_transaction();
+
+}
+
+###############################
+####      Validators       ####
+###############################
+
+sub _check_name {
+    my ($invocant, $name) = @_;
+
+    $name = trim($name);
+    $name || ThrowUserError('classification_not_specified');
+
+    if (length($name) > MAX_CLASSIFICATION_SIZE) {
+        ThrowUserError('classification_name_too_long', {'name' => $name});
+    }
+
+    my $classification = new Bugzilla::Classification({name => $name});
+    if ($classification && (!ref $invocant || $classification->id != $invocant->id)) {
+        ThrowUserError("classification_already_exists", { name => $classification->name });
+    }
+    return $name;
+}
+
+sub _check_description {
+    my ($invocant, $description) = @_;
+
+    $description  = trim($description || '');
+    return $description;
+}
+
+sub _check_sortkey {
+    my ($invocant, $sortkey) = @_;
+
+    $sortkey ||= 0;
+    my $stored_sortkey = $sortkey;
+    if (!detaint_natural($sortkey) || $sortkey > MAX_SMALLINT) {
+        ThrowUserError('classification_invalid_sortkey', { 'sortkey' => $stored_sortkey });
+    }
+    return $sortkey;
+}
+
+#####################################
+# Implement Bugzilla::Field::Choice #
+#####################################
+
+use constant FIELD_NAME => 'classification';
+use constant is_default => 0;
+use constant is_active => 1;
 
 ###############################
 ####       Methods         ####
 ###############################
 
-sub new {
-    my $invocant = shift;
-    my $class = ref($invocant) || $invocant;
-    my $self = {};
-    bless($self, $class);
-    return $self->_init(@_);
-}
-
-sub _init {
-    my $self = shift;
-    my ($param) = @_;
-    my $dbh = Bugzilla->dbh;
-
-    my $id = $param unless (ref $param eq 'HASH');
-    my $classification;
-
-    if (defined $id) {
-        detaint_natural($id)
-          || ThrowCodeError('param_must_be_numeric',
-                            {function => 'Bugzilla::Classification::_init'});
-
-        $classification = $dbh->selectrow_hashref(qq{
-            SELECT $columns FROM classifications
-            WHERE id = ?}, undef, $id);
-
-    } elsif (defined $param->{'name'}) {
-
-        trick_taint($param->{'name'});
-        $classification = $dbh->selectrow_hashref(qq{
-            SELECT $columns FROM classifications
-            WHERE name = ?}, undef, $param->{'name'});
-    } else {
-        ThrowCodeError('bad_arg',
-            {argument => 'param',
-             function => 'Bugzilla::Classification::_init'});
-    }
-
-    return undef unless (defined $classification);
-
-    foreach my $field (keys %$classification) {
-        $self->{$field} = $classification->{$field};
-    }
-    return $self;
-}
+sub set_name        { $_[0]->set('name', $_[1]); }
+sub set_description { $_[0]->set('description', $_[1]); }
+sub set_sortkey     { $_[0]->set('sortkey', $_[1]); }
 
 sub product_count {
     my $self = shift;
@@ -116,45 +159,8 @@ sub products {
 ####      Accessors        ####
 ###############################
 
-sub id          { return $_[0]->{'id'};          }
-sub name        { return $_[0]->{'name'};        }
 sub description { return $_[0]->{'description'}; }
 sub sortkey     { return $_[0]->{'sortkey'};     }
-
-###############################
-####      Subroutines      ####
-###############################
-
-sub get_all_classifications {
-    my $dbh = Bugzilla->dbh;
-
-    my $ids = $dbh->selectcol_arrayref(q{
-        SELECT id FROM classifications ORDER BY sortkey, name});
-
-    my @classifications;
-    foreach my $id (@$ids) {
-        push @classifications, new Bugzilla::Classification($id);
-    }
-    return @classifications;
-}
-
-sub check_classification {
-    my ($class_name) = @_;
-
-    unless ($class_name) {
-        ThrowUserError("classification_not_specified");
-    }
-
-    my $classification =
-        new Bugzilla::Classification({name => $class_name});
-
-    unless ($classification) {
-        ThrowUserError("classification_doesnt_exist",
-                       { name => $class_name });
-    }
-    
-    return $classification;
-}
 
 1;
 
@@ -174,38 +180,24 @@ Bugzilla::Classification - Bugzilla classification class.
     my $id = $classification->id;
     my $name = $classification->name;
     my $description = $classification->description;
+    my $sortkey = $classification->sortkey;
     my $product_count = $classification->product_count;
     my $products = $classification->products;
 
-    my $hash_ref = Bugzilla::Classification::get_all_classifications();
-    my $classification = $hash_ref->{1};
-
-    my $classification =
-        Bugzilla::Classification::check_classification('AcmeClass');
-
 =head1 DESCRIPTION
 
-Classification.pm represents a Classification object.
+Classification.pm represents a classification object. It is an
+implementation of L<Bugzilla::Object>, and thus provides all methods
+that L<Bugzilla::Object> provides.
+
+The methods that are specific to C<Bugzilla::Classification> are listed
+below.
 
 A Classification is a higher-level grouping of Products.
 
 =head1 METHODS
 
 =over
-
-=item C<new($param)>
-
- Description: The constructor is used to load an existing
-              classification by passing a classification
-              id or classification name using a hash.
-
- Params:      $param - If you pass an integer, the integer is the
-                      classification_id from the database that we
-                      want to read in. If you pass in a hash with
-                      'name' key, then the value of the name key
-                      is the name of a classification from the DB.
-
- Returns:     A Bugzilla::Classification object.
 
 =item C<product_count()>
 
@@ -223,29 +215,6 @@ A Classification is a higher-level grouping of Products.
  Params:      none.
 
  Returns:     A reference to an array of Bugzilla::Product objects.
-
-=back
-
-=head1 SUBROUTINES
-
-=over
-
-=item C<get_all_classifications()>
-
- Description: Returns all classifications.
-
- Params:      none.
-
- Returns:     Bugzilla::Classification object list.
-
-=item C<check_classification($classification_name)>
-
- Description: Checks if the classification name passed in is a
-              valid classification.
-
- Params:      $classification_name - String with a classification name.
-
- Returns:     Bugzilla::Classification object.
 
 =back
 

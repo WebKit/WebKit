@@ -28,14 +28,14 @@
 [%# Template Initialization                                                  #%]
 [%############################################################################%]
 
-[% PROCESS global/variables.none.tmpl %]
+[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% title = "$terms.Bug List" %]
 [% IF searchname || defaultsavename %]
   [% title = title _ ": " _ (searchname OR defaultsavename) FILTER html %]
 [% END %]
 
-[% qorder = order FILTER url_quote IF order %]
+[% qorder = order FILTER uri IF order %]
 
 
 [%############################################################################%]
@@ -46,34 +46,28 @@
   title = title
   style = style
   atomlink = "buglist.cgi?$urlquerypart&title=$title&ctype=atom" 
-  javascript_urls = [ "js/util.js", "js/field.js",
-                      "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
-  style_urls = [ "skins/standard/buglist.css", "skins/standard/yui/calendar.css" ]
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript_urls = [ "js/util.js", "js/field.js" ]
+  style_urls = [ "skins/standard/buglist.css" ]
   doc_section = "query.html#list"
 %]
 
-<div class="bz_query_head" align="center">
+<div class="bz_query_head">
   <span class="bz_query_timestamp">
-    [% IF Param('timezone') %]
-      <b>[% time2str("%a %b %e %Y %T %Z", currenttime, Param('timezone')) %]</b><br>
-    [% ELSE %]
-      <b>[% time2str("%a %b %e %Y %T", currenttime) %]</b><br>
-    [% END %]
+    [% currenttime FILTER time('%a %b %e %Y %T %Z') FILTER html %]<br>
   </span>
 
   [% IF debug %]
-    <p class="bz_query_debug">
-      [% FOREACH debugline = debugdata %]
-        [% debugline FILTER html %]<br>
-      [% END %]
-    </p>
     <p class="bz_query">[% query FILTER html %]</p>
+    [% IF query_explain.defined %]
+      <pre class="bz_query_explain">[% query_explain FILTER html %]</pre>
+    [% END %]
   [% END %]
 
   [% IF user.settings.display_quips.value == 'on' %]
     [% DEFAULT quip = "$terms.Bugzilla would like to put a random quip here, but no one has entered any." %]
     <span class="bz_quip">
-      <a href="quips.cgi"><i>[% quip FILTER html %]</i></a>
+      <a href="quips.cgi"><em>[% quip FILTER html %]</em></a>
     </span>
   [% END %]
 
@@ -86,6 +80,29 @@
   </h2>
 [% END %]
 
+[% SET shown_types = [
+  'notequals', 'regexp', 'notregexp', 'lessthan', 'lessthaneq', 
+  'greaterthan', 'greaterthaneq', 'changedbefore', 'changedafter', 
+  'changedfrom', 'changedto', 'changedby', 'notsubstring', 'nowords',
+  'nowordssubstr', 'notmatches',
+] %]
+<ul class="search_description">
+[% FOREACH desc_item = search_description %]
+  <li>
+    <strong>[% field_descs.${desc_item.field} FILTER html %]:</strong>
+    [% IF shown_types.contains(desc_item.type) || debug %]
+      ([% search_descs.${desc_item.type} FILTER html %])
+    [% END %]
+    [% FOREACH val IN desc_item.value.split(',') %]
+      [%+ display_value(desc_item.field, val) FILTER html %][% ',' UNLESS loop.last %]
+    [% END %]
+    [% IF debug %]
+      (<code>[% desc_item.term FILTER html %]</code>)
+   [% END %]
+  </li>
+[% END %]
+</ul>
+
 <hr>
 
 [%############################################################################%]
@@ -93,9 +110,7 @@
 [%############################################################################%]
 
 [% IF bugs.size > 9 %]
-  <span class="bz_result_count">
-    [% bugs.size %] [%+ terms.bugs %] found.
-  </span>
+  [% PROCESS num_results %]
 [% END %]
 
 [%############################################################################%]
@@ -117,15 +132,19 @@
 [%# Succeeding Status Line                                                   #%]
 [%############################################################################%]
 
-<span class="bz_result_count">
-  [% IF bugs.size == 0 %]
-    [% terms.zeroSearchResults %].
-  [% ELSIF bugs.size == 1 %]
-    One [% terms.bug %] found.
-  [% ELSE %]
-    [% bugs.size %] [%+ terms.bugs %] found.
-  [% END %]
-</span>
+[% PROCESS num_results %]
+
+[% IF bugs.size == 0 %]
+  <ul class="zero_result_links">
+    <li>[% PROCESS enter_bug_link %]</li>
+    [% IF one_product.defined %]
+      <li><a href="enter_bug.cgi">File a new [% terms.bug %] in a
+        different product</a></li>
+    [% END %]
+    <li><a href="[% PROCESS edit_search_url %]">Edit this search</a></li>
+    <li><a href="query.cgi">Start a new search</a></li>
+  </ul>
+[% END %]
 
 <br>
 
@@ -163,11 +182,19 @@
             <input type="submit" value="XML" id="xml">
         </form>
 
-        [% IF user.in_group(Param('timetrackinggroup')) %]
+        [% IF user.is_timetracker %]
           <form method="post" action="summarize_time.cgi">
             <input type="hidden" name="id" value="[% buglist_joined FILTER html %]">
             <input type="submit" id="timesummary" value="Time Summary">
           </form>
+          [% IF time_summary_limited %]
+            <small>
+              Time Summary will only include the [% terms.bugs %] shown above. In order to
+              to see a time summary for all [% terms.bugs %] found by the search, you can
+              <a href="buglist.cgi?[% urlquerypart FILTER html %]
+                       [%- "&order=$qorder" FILTER html IF order %]&limit=0">
+                Show all search results</a>.</small>
+          [% END %]
         [% END %]
       </td>
       
@@ -175,7 +202,7 @@
       
       <td valign="middle" class="bz_query_links">
         <a href="buglist.cgi?
-        [% urlquerypart FILTER html %]&amp;ctype=csv">CSV</a> |
+        [% urlquerypart FILTER html %]&amp;ctype=csv&amp;human=1">CSV</a> |
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;title=
         [%- title FILTER html %]&amp;ctype=atom">Feed</a> |
@@ -183,7 +210,7 @@
         [% urlquerypart FILTER html %]&amp;ctype=ics">iCalendar</a> |
         <a href="colchange.cgi?
         [% urlquerypart FILTER html %]&amp;query_based_on=
-          [% defaultsavename OR searchname FILTER url_quote %]">Change&nbsp;Columns</a> |
+          [% defaultsavename OR searchname FILTER uri %]">Change&nbsp;Columns</a> |
 
         [% IF bugs.size > 1 && caneditbugs && !dotweak %]
           <a href="buglist.cgi?[% urlquerypart FILTER html %]
@@ -192,7 +219,7 @@
           |
         [% END %]
 
-        [% IF bugowners %]
+        [% IF bugowners && user.id %]
           <a href="mailto:
             [% bugowners FILTER html %]">Send&nbsp;Mail&nbsp;to&nbsp;[% terms.Bug %]&nbsp;Assignees</a> |
         [% END %]
@@ -203,19 +230,15 @@
     [% END %]
     
     <td valign="middle" class="bz_query_edit">
-      [% editqueryname = searchname OR defaultsavename OR '' %]
-      <a href="query.cgi?[% urlquerypart FILTER html %]
-      [% IF editqueryname != '' %]&amp;known_name=
-        [% editqueryname FILTER url_quote %]
-      [% END %]">Edit&nbsp;Search</a>
+      <a href="[% PROCESS edit_search_url %]">Edit&nbsp;Search</a>
     </td>
       
     [% IF searchtype == "saved" %]
       <td valign="middle" nowrap="nowrap" class="bz_query_forget">
         |
         <a href="buglist.cgi?cmdtype=dorem&amp;remaction=forget&amp;namedcmd=
-                [% searchname FILTER url_quote %]&amp;token=
-                [% issue_hash_token([search_id, searchname]) FILTER url_quote %]">
+                [% searchname FILTER uri %]&amp;token=
+                [% issue_hash_token([search_id, searchname]) FILTER uri %]">
           Forget&nbsp;Search&nbsp;'[% searchname FILTER html %]'</a>
       </td>
     [% ELSE %]
@@ -228,18 +251,18 @@
                  value="[% urlquerypart FILTER html %][% "&order=$qorder" FILTER html IF order %]">
           <input type="hidden" name="cmdtype" value="doit">
           <input type="hidden" name="remtype" value="asnamed">
+          <input type="hidden" name="token" value="[% issue_hash_token(['savedsearch']) FILTER html %]">
           <input type="text" id="save_newqueryname" name="newqueryname" size="20"
-                 value="[% defaultsavename FILTER html %]"> 
+                 title="New query name" value="[% defaultsavename FILTER html %]"> 
         </form> 
       </td>
     [% END %]  
   </tr>
 </table>
 
-[% IF cgi.param('product').size == 1 && cgi.param('product') != "" %]
+[% IF one_product.defined && bugs.size %]
   <p class="bz_query_single_product">
-    <a href="enter_bug.cgi?product=[% cgi.param('product') FILTER url_quote %]">File
-      a new [% terms.bug %] in the "[% cgi.param('product') FILTER html %]" product</a>
+    [% PROCESS enter_bug_link %]
   </p>
 [% END %]
 
@@ -248,3 +271,44 @@
 [%############################################################################%]
 
 [% PROCESS global/footer.html.tmpl %]
+
+[%##########%]
+[%# Blocks #%]
+[%##########%]
+
+[% BLOCK edit_search_url %]
+  [% editqueryname = searchname OR defaultsavename OR '' %]
+  query.cgi?[% urlquerypart FILTER html %]
+    [%- IF editqueryname != '' %]&amp;known_name=
+      [%- editqueryname FILTER uri %]
+    [% END %]
+[% END %]
+
+[% BLOCK enter_bug_link %]
+  <a href="enter_bug.cgi
+           [%- IF one_product.defined %]?product=
+             [%- one_product.name FILTER uri %][% END %]">File
+    a new [% terms.bug %]
+   [% IF one_product.defined %]
+     in the "[% one_product.name FILTER html %]" product
+   [% END %]</a>
+[% END %]
+
+[% BLOCK num_results %]
+  <span class="bz_result_count">
+    [% IF bugs.size == 0 %]
+      <span class="zero_results">[% terms.zeroSearchResults %].</span>
+    [% ELSIF default_limited AND bugs.size >= Param('default_search_limit') %]
+      This result was limited to [% Param('default_search_limit') FILTER html %]
+      [%+ terms.bugs %].
+      <a href="buglist.cgi?[% urlquerypart FILTER html %]
+              [%- "&order=$qorder" FILTER html IF order %]&limit=0">See
+        all search results for this query</a>.
+      [% time_summary_limited = 1 %]
+    [% ELSIF bugs.size == 1 %]
+      One [% terms.bug %] found.
+    [% ELSE %]
+      [% bugs.size %] [%+ terms.bugs %] found.
+    [% END %]
+  </span>
+[% END %]

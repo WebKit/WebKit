@@ -51,14 +51,14 @@ doing the impersonating has the appropriate privileges.
 </p>
 
 <p id="message">
-  [% IF user.groups.bz_sudoers %]
+  [% IF user.in_group('bz_sudoers') %]
     You are a member of the <b>bz_sudoers</b> group.  You may use this 
     feature to impersonate others.
   [% ELSE %]
     You are not a member of an appropriate group.  You may not use this 
     feature.
   [% END %]
-  [% IF user.groups.bz_sudo_protect %]
+  [% IF user.in_group('bz_sudo_protect') %]
     <br>
     You are a member of the <b>bz_sudo_protect</b> group.  Other people will 
     not be able to use this feature to impersonate you.

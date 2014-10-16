@@ -51,21 +51,16 @@
       //-->
     </script>
 
-    [%# Get existing lists of bugs for this user %]
-    [% lists_of_bugs = [] %]
-    [% FOREACH q = user.queries %]
-      [% NEXT UNLESS q.bug_ids_only %]
-      [% lists_of_bugs.push(q.name) %]
-    [% END %]
     <div class="label"></div>
     <ul class="links"><li class="form">
       <form id="list_of_bugs" action="buglist.cgi" method="get">
         <input type="hidden" name="cmdtype" value="doit">
         <input type="hidden" name="remtype" value="asnamed">
         <input type="hidden" name="list_of_bugs" value="1">
+        <input type="hidden" name="token" value="[% issue_hash_token(['savedsearch']) FILTER html %]">
         <select id="lob_action" name="action" onchange="update_text();">
           <option value="add">Add</option>
-          [% IF lists_of_bugs.size %]
+          [% IF user.tags.size %]
             <option value="remove">Remove</option>
           [% END %]
         </select>
@@ -76,15 +71,15 @@
           the named tag
         [% END %]
 
-        [% IF lists_of_bugs.size %]
+        [% IF user.tags.size %]
           <select id="lob_oldqueryname" name="oldqueryname">
-            [% FOREACH query = lists_of_bugs %]
-              <option value="[% query FILTER html %]">[% query FILTER html %]</option>
+            [% FOREACH tag = user.tags.keys %]
+              <option value="[% tag FILTER html %]">[% tag FILTER html %]</option>
             [% END %]
           </select>
         [% END %]
         <span id="lob_new_query_text">
-          [% " or create and add the tag" IF lists_of_bugs.size %]
+          [% " or create and add the tag" IF user.tags.size %]
           <input class="txt" type="text" id="lob_newqueryname"
                  size="20" maxlength="64" name="newqueryname"
                  onkeyup="manage_old_lists();">

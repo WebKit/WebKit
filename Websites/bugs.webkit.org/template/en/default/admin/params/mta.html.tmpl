@@ -45,13 +45,15 @@
   mailfrom => "The email address of the $terms.Bugzilla mail daemon.  Some email systems " _
               "require this to be a valid email address.",
 
-  sendmailnow => "Sites using anything older than version 8.12 of 'sendmail' " _
-                 "can achieve a significant performance increase in the " _
-                 "UI -- at the cost of delaying the sending of mail -- by " _
-                 "disabling this parameter. Sites using 'sendmail' 8.12 or " _
-                 "higher should leave this on, as they will see no benefit from " _
-                 "turning it off. Sites using an MTA other than 'sendmail' " _
-                 "<b>must</b> leave it on, or no $terms.bug mail will be sent.",
+  use_mailer_queue => "In a large $terms.Bugzilla installation, updating"
+    _ " $terms.bugs can be very slow, because $terms.Bugzilla sends all"
+    _ " email at once. If you enable this parameter, $terms.Bugzilla will"
+    _ " queue all mail and then send it in the background. This requires"
+    _ " that you have installed certain Perl modules (as listed by"
+    _ " <kbd>checksetup.pl</kbd> for this feature), and that you are"
+    _ " running the <code>jobqueue.pl</code> daemon (otherwise your mail"
+    _ " won't get sent). This affects all mail sent by $terms.Bugzilla,"
+    _ " not just $terms.bug updates.",
 
   smtpserver => "The SMTP server address (if using SMTP for mail delivery).",
 
@@ -66,7 +68,7 @@
                 " $terms.Bugzilla and your SMTP server. You can use this to" _
                 " troubleshoot email problems.",
 
-  whinedays => "The number of days that we'll let a $terms.bug sit untouched in a NEW " _
+  whinedays => "The number of days that we'll let a $terms.bug sit untouched in a CONFIRMED " _
                "state before our cronjob will whine at the owner.<br> " _
                "Set to 0 to disable whining.",
 

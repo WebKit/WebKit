@@ -29,11 +29,14 @@ use strict;
 use lib 't';
 use base qw(Exporter);
 @Support::Templates::EXPORT = 
-         qw(@languages @include_paths %include_path @referenced_files 
-            %actual_files $num_actual_files);
-use vars qw(@languages @include_paths %include_path @referenced_files 
-            %actual_files $num_actual_files);
+         qw(@languages @include_paths $english_default_include_path
+         %include_path @referenced_files %actual_files $num_actual_files);
+use vars qw(@languages @include_paths $english_default_include_path
+            %include_path @referenced_files %actual_files $num_actual_files);
 
+use Bugzilla;
+use Bugzilla::Constants;
+use Bugzilla::Install::Util qw(template_include_path);
 use Support::Files;
 
 use File::Find;
@@ -48,6 +51,10 @@ use File::Spec;
 # All include paths
 @include_paths = ();
 
+# English default include path
+$english_default_include_path =
+    File::Spec->catdir(bz_locations()->{'templatedir'}, 'en', 'default');
+
 # Files which are referenced in the cgi files
 @referenced_files = ();
 
@@ -57,30 +64,9 @@ use File::Spec;
 # total number of actual_files
 $num_actual_files = 0;
 
-# Scan for the template available languages and include paths
-{
-    opendir(DIR, "template") || die "Can't open  'template': $!";
-    my @files = grep { /^[a-z-]+$/i } readdir(DIR);
-    closedir DIR;
-
-    foreach my $langdir (@files) {
-        next if($langdir =~ /^CVS$/i);
-
-        my $path = File::Spec->catdir('template', $langdir, 'custom');
-        my @dirs = ();
-        push(@dirs, $path) if(-d $path);
-        $path = File::Spec->catdir('template', $langdir, 'extension');
-        push(@dirs, $path) if(-d $path);
-        $path = File::Spec->catdir('template', $langdir, 'default');
-        push(@dirs, $path) if(-d $path);
-
-        next if(scalar(@dirs) == 0);
-        push(@languages, $langdir);
-        push(@include_paths, @dirs);
-        $include_path{$langdir} = join(":",@dirs);
-    }
-}
-
+# Set the template available languages and include paths
+@languages = @{ Bugzilla->languages };
+@include_paths = @{ template_include_path({ language => Bugzilla->languages }) };
 
 my @files;
 

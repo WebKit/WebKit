@@ -36,6 +36,9 @@ use Bugzilla::Error;
 use Bugzilla::User;
 use Bugzilla::Group;
 use Bugzilla::Token;
+use Bugzilla::Whine::Schedule;
+use Bugzilla::Whine::Query;
+use Bugzilla::Whine;
 
 # require the user to have logged in
 my $user = Bugzilla->login(LOGIN_REQUIRED);
@@ -53,10 +56,8 @@ my $userid   = $user->id;
 my $token    = $cgi->param('token');
 my $sth; # database statement handle
 
-# $events is a hash ref, keyed by event id, that stores the active user's
-# events.  It starts off with:
-#  'subject' - the subject line for the email message
-#  'body'    - the text to be sent at the top of the message
+# $events is a hash ref of Bugzilla::Whine objects keyed by event id,
+# that stores the active user's events.
 #
 # Eventually, it winds up with:
 #  'queries'  - array ref containing hashes of:
@@ -104,20 +105,11 @@ if ($cgi->param('update')) {
                 # otherwise we could simply delete whatever matched that ID.
                 #
                 # schedules
-                $sth = $dbh->prepare("SELECT whine_schedules.id " .
-                                     "FROM whine_schedules " .
-                                     "LEFT JOIN whine_events " .
-                                     "ON whine_events.id = " .
-                                     "whine_schedules.eventid " .
-                                     "WHERE whine_events.id = ? " .
-                                     "AND whine_events.owner_userid = ?");
-                $sth->execute($eventid, $userid);
-                my @ids = @{$sth->fetchall_arrayref};
+                my $schedules = Bugzilla::Whine::Schedule->match({ eventid => $eventid });
                 $sth = $dbh->prepare("DELETE FROM whine_schedules "
                     . "WHERE id=?");
-                for (@ids) {
-                    my $delete_id = $_->[0];
-                    $sth->execute($delete_id);
+                foreach my $schedule (@$schedules) {                    
+                    $sth->execute($schedule->id);
                 }
 
                 # queries
@@ -129,7 +121,7 @@ if ($cgi->param('update')) {
                                      "WHERE whine_events.id = ? " .
                                      "AND whine_events.owner_userid = ?");
                 $sth->execute($eventid, $userid);
-                @ids = @{$sth->fetchall_arrayref};
+                my @ids = @{$sth->fetchall_arrayref};
                 $sth = $dbh->prepare("DELETE FROM whine_queries " .
                                      "WHERE id=?");
                 for (@ids) {
@@ -143,20 +135,22 @@ if ($cgi->param('update')) {
                 $sth->execute($eventid, $userid);
             }
             else {
-                # check the subject and body for changes
+                # check the subject, body and mailifnobugs for changes
                 my $subject = ($cgi->param("event_${eventid}_subject") or '');
                 my $body    = ($cgi->param("event_${eventid}_body")    or '');
+                my $mailifnobugs = $cgi->param("event_${eventid}_mailifnobugs") ? 1 : 0;
 
                 trick_taint($subject) if $subject;
                 trick_taint($body)    if $body;
 
-                if ( ($subject ne $events->{$eventid}->{'subject'})
-                  || ($body    ne $events->{$eventid}->{'body'}) ) {
+                if ( ($subject ne $events->{$eventid}->subject)
+                  || ($mailifnobugs != $events->{$eventid}->mail_if_no_bugs)
+                  || ($body    ne $events->{$eventid}->body) ) {
 
                     $sth = $dbh->prepare("UPDATE whine_events " .
-                                         "SET subject=?, body=? " .
+                                         "SET subject=?, body=?, mailifnobugs=? " .
                                          "WHERE id=?");
-                    $sth->execute($subject, $body, $eventid);
+                    $sth->execute($subject, $body, $mailifnobugs, $eventid);
                 }
 
                 # add a schedule
@@ -181,13 +175,10 @@ if ($cgi->param('update')) {
             # to be altered or deleted
 
             # Check schedules for changes
-            $sth = $dbh->prepare("SELECT id " .
-                                 "FROM whine_schedules " .
-                                 "WHERE eventid=?");
-            $sth->execute($eventid);
+            my $schedules = Bugzilla::Whine::Schedule->match({ eventid => $eventid });
             my @scheduleids = ();
-            while (my ($sid) = $sth->fetchrow_array) {
-                push @scheduleids, $sid;
+            foreach my $schedule (@$schedules) {
+                push @scheduleids, $schedule->id;
             }
 
             # we need to double-check all of the user IDs in mailto to make
@@ -201,7 +192,7 @@ if ($cgi->param('update')) {
                 }
             }
             if (scalar %{$arglist}) {
-                &Bugzilla::User::match_field($cgi, $arglist);
+                Bugzilla::User::match_field($arglist);
             }
 
             for my $sid (@scheduleids) {
@@ -238,7 +229,6 @@ if ($cgi->param('update')) {
                     # get an id for the mailto address
                     if ($can_mail_others && $mailto) {
                         if ($mailto_type == MAILTO_USER) {
-                            # The user login has already been validated.
                             $mailto_id = login_to_id($mailto);
                         }
                         elsif ($mailto_type == MAILTO_GROUP) {
@@ -277,16 +267,9 @@ if ($cgi->param('update')) {
             }
 
             # Check queries for changes
-            $sth = $dbh->prepare("SELECT id " .
-                                 "FROM whine_queries " .
-                                 "WHERE eventid=?");
-            $sth->execute($eventid);
-            my @queries = ();
-            while (my ($qid) = $sth->fetchrow_array) {
-                push @queries, $qid;
-            }
-
-            for my $qid (@queries) {
+            my $queries = Bugzilla::Whine::Query->match({ eventid => $eventid });
+            for my $query (@$queries) {
+                my $qid = $query->id;
                 if ($cgi->param("remove_query_$qid")) {
 
                     $sth = $dbh->prepare("SELECT whine_queries.id " .
@@ -364,55 +347,43 @@ $events = get_events($userid);
 #
 # build the whine list by event id
 for my $event_id (keys %{$events}) {
-
     $events->{$event_id}->{'schedule'} = [];
     $events->{$event_id}->{'queries'} = [];
 
     # schedules
-    $sth = $dbh->prepare("SELECT run_day, run_time, mailto_type, mailto, id " .
-                         "FROM whine_schedules " .
-                         "WHERE eventid=?");
-    $sth->execute($event_id);
-    for my $row (@{$sth->fetchall_arrayref}) {
-        my $mailto_type = $row->[2];
+    my $schedules = Bugzilla::Whine::Schedule->match({ eventid => $event_id });
+    foreach my $schedule (@$schedules) {
+        my $mailto_type = $schedule->mailto_is_group ? MAILTO_GROUP 
+                                                     : MAILTO_USER;
         my $mailto = '';
         if ($mailto_type == MAILTO_USER) {
-            my $mailto_user = new Bugzilla::User($row->[3]);
-            $mailto = $mailto_user->login;
+            $mailto = $schedule->mailto->login;
         }
         elsif ($mailto_type == MAILTO_GROUP) {
-            $sth = $dbh->prepare("SELECT name FROM groups WHERE id=?");
-            $sth->execute($row->[3]);
-            $mailto = $sth->fetch->[0];
-            $mailto = "" unless Bugzilla::Group::ValidateGroupName(
-                                $mailto, ($user));
+            $mailto = $schedule->mailto->name;
         }
-        my $this_schedule = {
-            'day'         => $row->[0],
-            'time'        => $row->[1],
-            'mailto_type' => $mailto_type,
-            'mailto'      => $mailto,
-            'id'          => $row->[4],
-        };
-        push @{$events->{$event_id}->{'schedule'}}, $this_schedule;
+
+        push @{$events->{$event_id}->{'schedule'}},
+             {
+                 'day'         => $schedule->run_day,
+                 'time'        => $schedule->run_time,
+                 'mailto_type' => $mailto_type,
+                 'mailto'      => $mailto,
+                 'id'          => $schedule->id,
+             };
     }
 
     # queries
-    $sth = $dbh->prepare("SELECT query_name, title, sortkey, id, " .
-                         "onemailperbug " .
-                         "FROM whine_queries " .
-                         "WHERE eventid=? " .
-                         "ORDER BY sortkey");
-    $sth->execute($event_id);
-    for my $row (@{$sth->fetchall_arrayref}) {
-        my $this_query = {
-            'name'          => $row->[0],
-            'title'         => $row->[1],
-            'sort'          => $row->[2],
-            'id'            => $row->[3],
-            'onemailperbug' => $row->[4],
-        };
-        push @{$events->{$event_id}->{'queries'}}, $this_query;
+    my $queries = Bugzilla::Whine::Query->match({ eventid => $event_id });
+    for my $query (@$queries) {
+        push @{$events->{$event_id}->{'queries'}}, 
+             {
+                 'name'          => $query->name,
+                 'title'         => $query->title,
+                 'sort'          => $query->sortkey,
+                 'id'            => $query->id,
+                 'onemailperbug' => $query->one_email_per_bug,
+             };
     }
 }
 
@@ -427,27 +398,18 @@ while (my ($query) = $sth->fetchrow_array) {
     push @{$vars->{'available_queries'}}, $query;
 }
 $vars->{'token'} = issue_session_token('edit_whine');
+$vars->{'local_timezone'} = Bugzilla->local_timezone->short_name_for_datetime(DateTime->now());
 
 $template->process("whine/schedule.html.tmpl", $vars)
   || ThrowTemplateError($template->error());
 
-# get_events takes a userid and returns a hash, keyed by event ID, containing
-# the subject and body of each event that user owns
+# get_events takes a userid and returns a hash of
+# Bugzilla::Whine objects keyed by event ID.
 sub get_events {
     my $userid = shift;
-    my $dbh = Bugzilla->dbh;
-    my $events = {};
+    my $event_rows = Bugzilla::Whine->match({ owner_userid => $userid });
+    my %events = map { $_->{id} => $_ } @$event_rows;
 
-    my $sth = $dbh->prepare("SELECT DISTINCT id, subject, body " .
-                            "FROM whine_events " .
-                            "WHERE owner_userid=?");
-    $sth->execute($userid);
-    while (my ($ev, $sub, $bod) = $sth->fetchrow_array) {
-        $events->{$ev} = {
-            'subject' => $sub || '',
-            'body' => $bod || '',
-        };
-    }
-    return $events;
+    return \%events;
 }
 

@@ -32,6 +32,9 @@ use fields qw(
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
+use Bugzilla::Mailer;
+use Bugzilla::Util qw(datetime_from);
+use Bugzilla::User::Setting ();
 use Bugzilla::Auth::Login::Stack;
 use Bugzilla::Auth::Verify::Stack;
 use Bugzilla::Auth::Persist::Cookie;
@@ -83,7 +86,7 @@ sub login {
 
     # Make sure the user isn't disabled.
     my $user = $login_info->{user};
-    if ($user->disabledtext) {
+    if (!$user->is_enabled) {
         return $self->_handle_login_result({ failure => AUTH_DISABLED,
                                               user    => $user }, $type);
     }
@@ -131,6 +134,12 @@ sub user_can_create_account {
            && $getter->user_can_create_account;
 }
 
+sub extern_id_used {
+    my ($self) = @_;
+    return $self->{_info_getter}->extern_id_used
+           ||  $self->{_verifier}->extern_id_used;
+}
+
 sub can_change_email {
     return $_[0]->user_can_create_account;
 }
@@ -143,12 +152,22 @@ sub _handle_login_result {
     my $fail_code = $result->{failure};
 
     if (!$fail_code) {
-        if ($self->{_info_getter}->{successful}->requires_persistence) {
+        # We don't persist logins over GET requests in the WebService,
+        # because the persistance information can't be re-used again.
+        # (See Bugzilla::WebService::Server::JSONRPC for more info.)
+        if ($self->{_info_getter}->{successful}->requires_persistence
+            and !Bugzilla->request_cache->{auth_no_automatic_login}) 
+        {
             $self->{_persister}->persist_login($user);
         }
     }
     elsif ($fail_code == AUTH_ERROR) {
-        ThrowCodeError($result->{error}, $result->{details});
+        if ($result->{user_error}) {
+            ThrowUserError($result->{user_error}, $result->{details});
+        }
+        else {
+            ThrowCodeError($result->{error}, $result->{details});
+        }
     }
     elsif ($fail_code == AUTH_NODATA) {
         $self->{_info_getter}->fail_nodata($self) 
@@ -162,7 +181,10 @@ sub _handle_login_result {
     # the password was just wrong. (This makes it harder for a cracker
     # to find account names by brute force)
     elsif ($fail_code == AUTH_LOGINFAILED or $fail_code == AUTH_NO_SUCH_USER) {
-        ThrowUserError("invalid_username_or_password");
+        my $remaining_attempts = MAX_LOGIN_ATTEMPTS 
+                                 - ($result->{failure_count} || 0);
+        ThrowUserError("invalid_username_or_password", 
+                       { remaining => $remaining_attempts });
     }
     # The account may be disabled
     elsif ($fail_code == AUTH_DISABLED) {
@@ -172,6 +194,41 @@ sub _handle_login_result {
         # and throw a user error
         ThrowUserError("account_disabled",
             {'disabled_reason' => $result->{user}->disabledtext});
+    }
+    elsif ($fail_code == AUTH_LOCKOUT) {
+        my $attempts = $user->account_ip_login_failures;
+
+        # We want to know when the account will be unlocked. This is 
+        # determined by the 5th-from-last login failure (or more/less than
+        # 5th, if MAX_LOGIN_ATTEMPTS is not 5).
+        my $determiner = $attempts->[scalar(@$attempts) - MAX_LOGIN_ATTEMPTS];
+        my $unlock_at = datetime_from($determiner->{login_time}, 
+                                      Bugzilla->local_timezone);
+        $unlock_at->add(minutes => LOGIN_LOCKOUT_INTERVAL);
+
+        # If we were *just* locked out, notify the maintainer about the
+        # lockout.
+        if ($result->{just_locked_out}) {
+            # We're sending to the maintainer, who may be not a Bugzilla 
+            # account, but just an email address. So we use the
+            # installation's default language for sending the email.
+            my $default_settings = Bugzilla::User::Setting::get_defaults();
+            my $template = Bugzilla->template_inner(
+                               $default_settings->{lang}->{default_value});
+            my $vars = {
+                locked_user => $user,
+                attempts    => $attempts,
+                unlock_at   => $unlock_at,
+            };
+            my $message;
+            $template->process('email/lockout.txt.tmpl', $vars, \$message)
+                || ThrowTemplateError($template->error);
+            MessageToMTA($message);
+        }
+
+        $unlock_at->set_time_zone($user->timezone);
+        ThrowUserError('account_locked', 
+            { ip_addr => $determiner->{ip_addr}, unlock_at => $unlock_at });
     }
     # If we get here, then we've run out of options, which shouldn't happen.
     else {
@@ -234,6 +291,11 @@ various fields to be used in the error message.
 
 An incorrect username or password was given.
 
+The hashref may also contain a C<failure_count> element, which specifies
+how many times the account has failed to log in within the lockout
+period (see L</AUTH_LOCKOUT>). This is used to warn the user when
+he is getting close to being locked out.
+
 =head2 C<AUTH_NO_SUCH_USER>
 
 This is an optional more-specific version of C<AUTH_LOGINFAILED>.
@@ -250,6 +312,15 @@ should never be communicated to the user, for security reasons.
 
 The user successfully logged in, but their account has been disabled.
 Usually this is throw only by C<Bugzilla::Auth::login>.
+
+=head2 C<AUTH_LOCKOUT>
+
+The user's account is locked out after having failed to log in too many
+times within a certain period of time (as specified by
+L<Bugzilla::Constants/LOGIN_LOCKOUT_INTERVAL>).
+
+The hashref will also contain a C<user> element, representing the
+L<Bugzilla::User> whose account is locked out.
 
 =head1 LOGIN TYPES
 
@@ -332,6 +403,10 @@ Description: Tells you whether or not users are allowed to manually create
 Params:      None
 Returns:     C<true> if users are allowed to create new Bugzilla accounts,
              C<false> otherwise.
+
+=item C<extern_id_used>
+
+Description: Whether or not current login system uses extern_id.
 
 =item C<can_change_email>
 

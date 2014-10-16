@@ -48,7 +48,7 @@ whose names start with _ or are specifically noted as being private.
 
 =cut
 
-use Bugzilla::User;
+use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::Group;
@@ -59,57 +59,151 @@ use base qw(Bugzilla::Object);
 ####    Initialization     ####
 ###############################
 
-=begin private
-
-=head1 PRIVATE VARIABLES/CONSTANTS
-
-=over
-
-=item C<DB_COLUMNS>
-
-basic sets of columns and tables for getting flag types from the
-database.
-
-=back
-
-=cut
+use constant DB_TABLE => 'flagtypes';
+use constant LIST_ORDER => 'sortkey, name';
 
 use constant DB_COLUMNS => qw(
-    flagtypes.id
-    flagtypes.name
-    flagtypes.description
-    flagtypes.cc_list
-    flagtypes.target_type
-    flagtypes.sortkey
-    flagtypes.is_active
-    flagtypes.is_requestable
-    flagtypes.is_requesteeble
-    flagtypes.is_multiplicable
-    flagtypes.grant_group_id
-    flagtypes.request_group_id
+    id
+    name
+    description
+    cc_list
+    target_type
+    sortkey
+    is_active
+    is_requestable
+    is_requesteeble
+    is_multiplicable
+    grant_group_id
+    request_group_id
 );
 
-=pod
+use constant UPDATE_COLUMNS => qw(
+    name
+    description
+    cc_list
+    sortkey
+    is_active
+    is_requestable
+    is_requesteeble
+    is_multiplicable
+    grant_group_id
+    request_group_id
+);
 
-=over
+use constant VALIDATORS => {
+    name             => \&_check_name,
+    description      => \&_check_description,
+    cc_list          => \&_check_cc_list,
+    target_type      => \&_check_target_type,
+    sortkey          => \&_check_sortey,
+    is_active        => \&Bugzilla::Object::check_boolean,
+    is_requestable   => \&Bugzilla::Object::check_boolean,
+    is_requesteeble  => \&Bugzilla::Object::check_boolean,
+    is_multiplicable => \&Bugzilla::Object::check_boolean,
+    grant_group      => \&_check_group,
+    request_group    => \&_check_group,
+};
 
-=item C<DB_TABLE>
+use constant UPDATE_VALIDATORS => {
+    grant_group_id   => \&_check_group,
+    request_group_id => \&_check_group,
+};
+###############################
 
-Which database(s) is the data coming from?
+sub create {
+    my $class = shift;
+    my $dbh = Bugzilla->dbh;
 
-Note: when adding tables to DB_TABLE, make sure to include the separator
-(i.e. words like "LEFT OUTER JOIN") before the table name, since tables take
-multiple separators based on the join type, and therefore it is not possible
-to join them later using a single known separator.
+    $dbh->bz_start_transaction();
 
-=back
+    $class->check_required_create_fields(@_);
+    my $params = $class->run_create_validators(@_);
+    # In the DB, only the first character of the target type is stored.
+    $params->{target_type} = substr($params->{target_type}, 0, 1);
 
-=end private
+    # Extract everything which is not a valid column name.
+    $params->{grant_group_id} = delete $params->{grant_group};
+    $params->{request_group_id} = delete $params->{request_group};
+    my $inclusions = delete $params->{inclusions};
+    my $exclusions = delete $params->{exclusions};
 
-=cut
+    my $flagtype = $class->insert_create_data($params);
 
-use constant DB_TABLE => 'flagtypes';
-use constant LIST_ORDER => 'flagtypes.sortkey, flagtypes.name';
+    $flagtype->set_clusions({ inclusions => $inclusions,
+                              exclusions => $exclusions });
+    $flagtype->update();
+
+    $dbh->bz_commit_transaction();
+    return $flagtype;
+}
+
+sub update {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    my $flag_id = $self->id;
+
+    $dbh->bz_start_transaction();
+    my $changes = $self->SUPER::update(@_);
+
+    # Update the flaginclusions and flagexclusions tables.
+    foreach my $category ('inclusions', 'exclusions') {
+        next unless delete $self->{"_update_$category"};
+
+        $dbh->do("DELETE FROM flag$category WHERE type_id = ?", undef, $flag_id);
+
+        my $sth = $dbh->prepare("INSERT INTO flag$category
+                                (type_id, product_id, component_id) VALUES (?, ?, ?)");
+
+        foreach my $prod_comp (values %{$self->{$category}}) {
+            my ($prod_id, $comp_id) = split(':', $prod_comp);
+            $prod_id ||= undef;
+            $comp_id ||= undef;
+            $sth->execute($flag_id, $prod_id, $comp_id);
+        }
+        $changes->{$category} = [0, 1];
+    }
+
+    # Clear existing flags for bugs/attachments in categories no longer on
+    # the list of inclusions or that have been added to the list of exclusions.
+    my $flag_ids = $dbh->selectcol_arrayref('SELECT DISTINCT flags.id
+                                               FROM flags
+                                         INNER JOIN bugs
+                                                 ON flags.bug_id = bugs.bug_id
+                                          LEFT JOIN flaginclusions AS i
+                                                 ON (flags.type_id = i.type_id
+                                                     AND (bugs.product_id = i.product_id
+                                                          OR i.product_id IS NULL)
+                                                     AND (bugs.component_id = i.component_id
+                                                          OR i.component_id IS NULL))
+                                              WHERE flags.type_id = ?
+                                                AND i.type_id IS NULL',
+                                             undef, $self->id);
+    Bugzilla::Flag->force_retarget($flag_ids);
+
+    $flag_ids = $dbh->selectcol_arrayref('SELECT DISTINCT flags.id
+                                            FROM flags
+                                      INNER JOIN bugs
+                                              ON flags.bug_id = bugs.bug_id
+                                      INNER JOIN flagexclusions AS e
+                                              ON flags.type_id = e.type_id
+                                           WHERE flags.type_id = ?
+                                             AND (bugs.product_id = e.product_id
+                                                  OR e.product_id IS NULL)
+                                             AND (bugs.component_id = e.component_id
+                                                  OR e.component_id IS NULL)',
+                                          undef, $self->id);
+    Bugzilla::Flag->force_retarget($flag_ids);
+
+    # Silently remove requestees from flags which are no longer
+    # specifically requestable.
+    if (!$self->is_requesteeble) {
+        $dbh->do('UPDATE flags SET requestee_id = NULL WHERE type_id = ?',
+                  undef, $self->id);
+    }
+
+    $dbh->bz_commit_transaction();
+    return $changes;
+}
 
 ###############################
 ####      Accessors      ######
@@ -180,9 +274,150 @@ sub sortkey          { return $_[0]->{'sortkey'};          }
 sub request_group_id { return $_[0]->{'request_group_id'}; }
 sub grant_group_id   { return $_[0]->{'grant_group_id'};   }
 
+################################
+# Validators
+################################
+
+sub _check_name {
+    my ($invocant, $name) = @_;
+
+    $name = trim($name);
+    ($name && $name !~ /[\s,]/ && length($name) <= 50)
+      || ThrowUserError('flag_type_name_invalid', { name => $name });
+    return $name;
+}
+
+sub _check_description {
+    my ($invocant, $desc) = @_;
+
+    $desc = trim($desc);
+    $desc || ThrowUserError('flag_type_description_invalid');
+    return $desc;
+}
+
+sub _check_cc_list {
+    my ($invocant, $cc_list) = @_;
+
+    length($cc_list) <= 200
+      || ThrowUserError('flag_type_cc_list_invalid', { cc_list => $cc_list });
+
+    my @addresses = split(/[,\s]+/, $cc_list);
+    # We do not call Util::validate_email_syntax because these
+    # addresses do not require to match 'emailregexp' and do not
+    # depend on 'emailsuffix'. So we limit ourselves to a simple
+    # sanity check:
+    # - match the syntax of a fully qualified email address;
+    # - do not contain any illegal character.
+    foreach my $address (@addresses) {
+        ($address =~ /^[\w\.\+\-=]+@[\w\.\-]+\.[\w\-]+$/
+           && $address !~ /[\\\(\)<>&,;:"\[\] \t\r\n\P{ASCII}]/)
+          || ThrowUserError('illegal_email_address',
+                            {addr => $address, default => 1});
+    }
+    return $cc_list;
+}
+
+sub _check_target_type {
+    my ($invocant, $target_type) = @_;
+
+    ($target_type eq 'bug' || $target_type eq 'attachment')
+      || ThrowCodeError('flag_type_target_type_invalid', { target_type => $target_type });
+    return $target_type;
+}
+
+sub _check_sortey {
+    my ($invocant, $sortkey) = @_;
+
+    (detaint_natural($sortkey) && $sortkey <= MAX_SMALLINT)
+      || ThrowUserError('flag_type_sortkey_invalid', { sortkey => $sortkey });
+    return $sortkey;
+}
+
+sub _check_group {
+    my ($invocant, $group) = @_;
+    return unless $group;
+
+    trick_taint($group);
+    $group = Bugzilla::Group->check($group);
+    return $group->id;
+}
+
 ###############################
 ####       Methods         ####
 ###############################
+
+sub set_name             { $_[0]->set('name', $_[1]); }
+sub set_description      { $_[0]->set('description', $_[1]); }
+sub set_cc_list          { $_[0]->set('cc_list', $_[1]); }
+sub set_sortkey          { $_[0]->set('sortkey', $_[1]); }
+sub set_is_active        { $_[0]->set('is_active', $_[1]); }
+sub set_is_requestable   { $_[0]->set('is_requestable', $_[1]); }
+sub set_is_specifically_requestable { $_[0]->set('is_requesteeble', $_[1]); }
+sub set_is_multiplicable { $_[0]->set('is_multiplicable', $_[1]); }
+sub set_grant_group      { $_[0]->set('grant_group_id', $_[1]); }
+sub set_request_group    { $_[0]->set('request_group_id', $_[1]); }
+
+sub set_clusions {
+    my ($self, $list) = @_;
+    my $user = Bugzilla->user;
+    my %products;
+    my $params = {};
+
+    # If the user has editcomponents privs, then we only need to make sure
+    # that the product exists.
+    if ($user->in_group('editcomponents')) {
+        $params->{allow_inaccessible} = 1;
+    }
+
+    foreach my $category (keys %$list) {
+        my %clusions;
+        my %clusions_as_hash;
+
+        foreach my $prod_comp (@{$list->{$category} || []}) {
+            my ($prod_id, $comp_id) = split(':', $prod_comp);
+            my $prod_name = '__Any__';
+            my $comp_name = '__Any__';
+            # Does the product exist?
+            if ($prod_id) {
+                detaint_natural($prod_id)
+                  || ThrowCodeError('param_must_be_numeric',
+                                    { function => 'Bugzilla::FlagType::set_clusions' });
+
+                if (!$products{$prod_id}) {
+                    $params->{id} = $prod_id;
+                    $products{$prod_id} = Bugzilla::Product->check($params);
+                    $user->in_group('editcomponents', $prod_id)
+                      || ThrowUserError('product_access_denied', $params);
+                }
+                $prod_name = $products{$prod_id}->name;
+
+                # Does the component belong to this product?
+                if ($comp_id) {
+                    detaint_natural($comp_id)
+                      || ThrowCodeError('param_must_be_numeric',
+                                        { function => 'Bugzilla::FlagType::set_clusions' });
+
+                    my ($component) = grep { $_->id == $comp_id } @{$products{$prod_id}->components}
+                                        or ThrowUserError('product_unknown_component',
+                                                          { product => $prod_name, comp_id => $comp_id });
+                    $comp_name = $component->name;
+                }
+                else {
+                    $comp_id = 0;
+                }
+            }
+            else {
+                $prod_id = 0;
+                $comp_id = 0;
+            }
+            $clusions{"$prod_name:$comp_name"} = "$prod_id:$comp_id";
+            $clusions_as_hash{$prod_id}->{$comp_id} = 1;
+        }
+        $self->{$category} = \%clusions;
+        $self->{"${category}_as_hash"} = \%clusions_as_hash;
+        $self->{"_update_$category"} = 1;
+    }
+}
 
 =pod
 
@@ -223,6 +458,7 @@ explicitly excluded from the flagtype.
 
 sub grant_list {
     my $self = shift;
+    require Bugzilla::User;
     my @custusers;
     my @allusers = @{Bugzilla->user->get_userlist};
     foreach my $user (@allusers) {
@@ -264,15 +500,33 @@ sub flag_count {
 sub inclusions {
     my $self = shift;
 
-    $self->{'inclusions'} ||= get_clusions($self->id, 'in');
-    return $self->{'inclusions'};
+    if (!defined $self->{inclusions}) {
+        ($self->{inclusions}, $self->{inclusions_as_hash}) = get_clusions($self->id, 'in');
+    }
+    return $self->{inclusions};
+}
+
+sub inclusions_as_hash {
+    my $self = shift;
+
+    $self->inclusions unless defined $self->{inclusions_as_hash};
+    return $self->{inclusions_as_hash};
 }
 
 sub exclusions {
     my $self = shift;
 
-    $self->{'exclusions'} ||= get_clusions($self->id, 'ex');
-    return $self->{'exclusions'};
+    if (!defined $self->{exclusions}) {
+        ($self->{exclusions}, $self->{exclusions_as_hash}) = get_clusions($self->id, 'ex');
+    }
+    return $self->{exclusions};
+}
+
+sub exclusions_as_hash {
+    my $self = shift;
+
+    $self->exclusions unless defined $self->{exclusions_as_hash};
+    return $self->{exclusions_as_hash};
 }
 
 ######################################################################
@@ -300,17 +554,18 @@ sub get_clusions {
     my $dbh = Bugzilla->dbh;
 
     my $list =
-        $dbh->selectall_arrayref("SELECT products.id, products.name, " .
-                                 "       components.id, components.name " . 
-                                 "FROM flagtypes, flag${type}clusions " . 
-                                 "LEFT OUTER JOIN products " .
-                                 "  ON flag${type}clusions.product_id = products.id " . 
-                                 "LEFT OUTER JOIN components " .
-                                 "  ON flag${type}clusions.component_id = components.id " . 
-                                 "WHERE flagtypes.id = ? " .
-                                 " AND flag${type}clusions.type_id = flagtypes.id",
+        $dbh->selectall_arrayref("SELECT products.id, products.name,
+                                         components.id, components.name
+                                    FROM flagtypes
+                              INNER JOIN flag${type}clusions
+                                      ON flag${type}clusions.type_id = flagtypes.id
+                               LEFT JOIN products
+                                      ON flag${type}clusions.product_id = products.id
+                               LEFT JOIN components
+                                      ON flag${type}clusions.component_id = components.id
+                                   WHERE flagtypes.id = ?",
                                  undef, $id);
-    my %clusions;
+    my (%clusions, %clusions_as_hash);
     foreach my $data (@$list) {
         my ($product_id, $product_name, $component_id, $component_name) = @$data;
         $product_id ||= 0;
@@ -318,8 +573,9 @@ sub get_clusions {
         $component_id ||= 0;
         $component_name ||= "__Any__";
         $clusions{"$product_name:$component_name"} = "$product_id:$component_id";
+        $clusions_as_hash{$product_id}->{$component_id} = 1;
     }
-    return \%clusions;
+    return (\%clusions, \%clusions_as_hash);
 }
 
 =pod
@@ -423,15 +679,13 @@ sub sqlify_criteria {
         my $is_active = $criteria->{is_active} ? "1" : "0";
         push(@criteria, "flagtypes.is_active = $is_active");
     }
-    if ($criteria->{product_id} && $criteria->{'component_id'}) {
+    if ($criteria->{product_id}) {
         my $product_id = $criteria->{product_id};
-        my $component_id = $criteria->{component_id};
         
         # Add inclusions to the query, which simply involves joining the table
         # by flag type ID and target product/component.
         push(@$tables, "INNER JOIN flaginclusions AS i ON flagtypes.id = i.type_id");
         push(@criteria, "(i.product_id = $product_id OR i.product_id IS NULL)");
-        push(@criteria, "(i.component_id = $component_id OR i.component_id IS NULL)");
         
         # Add exclusions to the query, which is more complicated.  First of all,
         # we do a LEFT JOIN so we don't miss flag types with no exclusions.
@@ -439,9 +693,19 @@ sub sqlify_criteria {
         # component.  However, since we want flag types that *aren't* on the
         # exclusions list, we add a WHERE criteria to use only records with
         # NULL exclusion type, i.e. without any exclusions.
-        my $join_clause = "flagtypes.id = e.type_id " .
-                          "AND (e.product_id = $product_id OR e.product_id IS NULL) " .
-                          "AND (e.component_id = $component_id OR e.component_id IS NULL)";
+        my $join_clause = "flagtypes.id = e.type_id ";
+
+        my $addl_join_clause = "";
+        if ($criteria->{component_id}) {
+            my $component_id = $criteria->{component_id};
+            push(@criteria, "(i.component_id = $component_id OR i.component_id IS NULL)");
+            $join_clause .= "AND (e.component_id = $component_id OR e.component_id IS NULL) ";
+        }
+        else {
+            $addl_join_clause = "AND e.component_id IS NULL OR (i.component_id = e.component_id) ";
+        }
+        $join_clause .= "AND ((e.product_id = $product_id $addl_join_clause) OR e.product_id IS NULL)";
+
         push(@$tables, "LEFT JOIN flagexclusions AS e ON ($join_clause)");
         push(@criteria, "e.type_id IS NULL");
     }

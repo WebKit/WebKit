@@ -70,8 +70,8 @@
                           <dt>RADIUS</dt>
                           <dd>
                             RADIUS authentication using a RADIUS server.
-                            This method is experimental; please see the
-                            $terms.Bugzilla documentation for more information.
+                            Please see the $terms.Bugzilla documentation for
+                            more information.
                             Using this method requires
                             <a href=\"?section=radius\">additional
                             parameters</a> to be set.
@@ -103,11 +103,6 @@
                       </li>
                     </ul>",
 
-  loginnetmask => "The number of bits for the netmask used if a user chooses to " _
-                  "allow a login to be valid for more than a single IP. Setting " _
-                  "this to 32 disables this feature.<br> " _
-                  "Note that enabling this may decrease the security of your system.",
-
   requirelogin => "If this option is set, all access to the system beyond the " _
                   "front page will require a login. No anonymous users will " _
                   "be permitted.",
@@ -125,10 +120,22 @@
                  "the <tt>emailregexp</tt> param to only allow local usernames, " _
                  "but you want the mail to be delivered to username@my.local.hostname.",
 
-  createemailregexp => "This defines the regexp to use for email addresses that are " _
+  createemailregexp => "This defines the (case-insensitive) regexp to use for email addresses that are " _
                        "permitted to self-register using a 'New Account' feature. The " _
                        "default (.*) permits any account matching the emailregexp " _
                        "to be created. If this parameter is left blank, no users " _
                        "will be permitted to create their own accounts and all accounts " _
-                       "will have to be created by an administrator." }
+                       "will have to be created by an administrator.",
+
+  password_complexity =>
+    "Set the complexity required for passwords. In all cases must the passwords " _
+    "be at least ${constants.USER_PASSWORD_MIN_LENGTH} characters long." _
+    "<ul><li>no_constraints - No complexity required.</li>" _
+    "<li>mixed_letters - Passwords must contain at least one UPPER and one lower " _
+    "case letter.</li>" _
+    "<li>letters_numbers - Passwords must contain at least one UPPER and one " _
+    "lower case letter and a number.</li>" _
+    "<li>letters_numbers_specialchars - Passwords must contain at least one " _
+    "UPPER or one lower case letter, a number and a special character.</li></ul>"
+  }
 %]

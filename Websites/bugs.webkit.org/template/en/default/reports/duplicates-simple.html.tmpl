@@ -15,7 +15,9 @@
   # Copyright (C) 1998 Netscape Communications Corporation. All
   # Rights Reserved.
   #
-  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # Contributor(s): 
+  #  Gervase Markham <gerv@gerv.net>
+  #  Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
@@ -24,20 +26,26 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
-  [% IF product %]
-    [% title = "Most Frequently Reported $terms.Bugs for $product" %]
+  [% IF product.size %]
+    [% title = BLOCK %]
+      Most Frequently Reported [% terms.Bugs %] for [% product.join(', ') FILTER html %]
+    [% END %]
   [% ELSE %]
     [% title = "Most Frequently Reported $terms.Bugs" %]
   [% END%]
 
   <head>
     <title>[% title FILTER html %]</title>
+    <link href="[% 'skins/standard/global.css' FILTER mtime %]"
+          rel="stylesheet" type="text/css">
+    <link href="[% 'skins/standard/duplicates.css' FILTER mtime %]"
+          rel="stylesheet" type="text/css">
   </head>
 
   <body>
     [% PROCESS "reports/duplicates-table.html.tmpl" %]
   </body>
-
 </html>

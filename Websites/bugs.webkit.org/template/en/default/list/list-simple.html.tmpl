@@ -39,7 +39,8 @@
   <head>
     <title>[% title FILTER html %]</title>
     <base href="[% urlbase FILTER html %]">
-    <link href="skins/standard/buglist.css" rel="stylesheet" type="text/css">
+    <link href="[% 'skins/standard/buglist.css' FILTER mtime %]" 
+          rel="stylesheet" type="text/css">
   </head>
 
   <body>

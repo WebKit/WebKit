@@ -78,8 +78,8 @@ no-one else appears to have reported it, then:</p>
           it?
     (e.g. Linux, Windows XP, Mac OS X.)<br>
     If you know the [% terms.bug %] happens on more than one type of 
-    operating system, choose "All". 
-    If your OS isn't listed, choose Other.</p>
+    operating system, choose <em>[% display_value("op_sys", "All") FILTER html %]</em>. 
+    If your OS isn't listed, choose <em>[% display_value("op_sys", "Other") FILTER html %]</em>.</p>
 
     <p><b>Summary:</b> How would you describe the [% terms.bug %], in 
     approximately 60 or fewer characters?<br>

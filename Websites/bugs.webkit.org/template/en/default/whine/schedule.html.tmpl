@@ -72,11 +72,7 @@
 </p>
 
 <p>
-  [% IF Param("timezone") %]
-    All times are server local time ([% Param("timezone") FILTER upper %]).
-  [% ELSE %]
-    All times are server local time.
-  [% END %]
+  All times are server local time ([% local_timezone FILTER html %]).
 </p>
 
 <form method="post" action="editwhines.cgi">
@@ -125,6 +121,16 @@
          cols           = 80
          defaultcontent = event.value.body
        %]
+    </td>
+  </tr>
+
+  <tr>
+    <td valign="top" align="right">
+      Send a message even if there are no [% terms.bugs %] in the search result:
+    </td>
+    <td colspan="2">
+      <input type="checkbox" name="event_[% event.key %]_mailifnobugs"
+        [%- IF event.value.mailifnobugs == 1 %] checked [% END %]>
     </td>
   </tr>
 

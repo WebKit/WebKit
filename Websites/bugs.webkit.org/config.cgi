@@ -20,6 +20,7 @@
 #
 # Contributor(s): Terry Weissman <terry@mozilla.org>
 #                 Myk Melez <myk@mozilla.org>
+#                 Frank Becker <Frank@Frank-Becker.de>
 
 ################################################################################
 # Script Initialization
@@ -34,8 +35,11 @@ use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Keyword;
+use Bugzilla::Product;
 use Bugzilla::Status;
 use Bugzilla::Field;
+
+use Digest::MD5 qw(md5_base64);
 
 my $user = Bugzilla->login(LOGIN_OPTIONAL);
 my $cgi  = Bugzilla->cgi;
@@ -45,6 +49,9 @@ my $cgi  = Bugzilla->cgi;
 if (Bugzilla->params->{'requirelogin'} && !$user->id) {
     display_data();
 }
+
+# Get data from the shadow DB as they don't change very often.
+Bugzilla->switch_to_shadow_db;
 
 # Pass a bunch of Bugzilla configuration to the templates.
 my $vars = {};
@@ -56,14 +63,13 @@ $vars->{'keyword'}    = [map($_->name, Bugzilla::Keyword->get_all)];
 $vars->{'resolution'} = get_legal_field_values('resolution');
 $vars->{'status'}    = get_legal_field_values('bug_status');
 $vars->{'custom_fields'} =
-  [ grep {$_->type == FIELD_TYPE_SINGLE_SELECT || $_->type == FIELD_TYPE_MULTI_SELECT}
-         Bugzilla->active_custom_fields ];
+    [ grep {$_->is_select} Bugzilla->active_custom_fields ];
 
 # Include a list of product objects.
 if ($cgi->param('product')) {
     my @products = $cgi->param('product');
     foreach my $product_name (@products) {
-        # We don't use check_product because config.cgi outputs mostly
+        # We don't use check() because config.cgi outputs mostly
         # in XML and JS and we don't want to display an HTML error
         # instead of that.
         my $product = new Bugzilla::Product({ name => $product_name });
@@ -73,6 +79,18 @@ if ($cgi->param('product')) {
     }
 } else {
     $vars->{'products'} = $user->get_selectable_products;
+}
+
+# We set the 2nd argument to 1 to also preload flag types.
+Bugzilla::Product::preload($vars->{'products'}, 1);
+
+# Allow consumers to specify whether or not they want flag data.
+if (defined $cgi->param('flags')) {
+    $vars->{'show_flags'} = $cgi->param('flags');
+}
+else {
+    # We default to sending flag data.
+    $vars->{'show_flags'} = 1;
 }
 
 # Create separate lists of open versus resolved statuses.  This should really
@@ -89,7 +107,7 @@ $vars->{'closed_status'} = \@closed_status;
 # Generate a list of fields that can be queried.
 my @fields = @{Bugzilla::Field->match({obsolete => 0})};
 # Exclude fields the user cannot query.
-if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
+if (!Bugzilla->user->is_timetracker) {
     @fields = grep { $_->name !~ /^(estimated_time|remaining_time|work_time|percentage_complete|deadline)$/ } @fields;
 }
 $vars->{'field'} = \@fields;
@@ -108,11 +126,41 @@ sub display_data {
     my $format = $template->get_format("config", scalar($cgi->param('format')),
                                        scalar($cgi->param('ctype')) || "js");
 
-    # Return HTTP headers.
-    print "Content-Type: $format->{'ctype'}\n\n";
-
-    # Generate the configuration file and return it to the user.
-    $template->process($format->{'template'}, $vars)
+    # Generate the configuration data.
+    my $output;
+    $template->process($format->{'template'}, $vars, \$output)
       || ThrowTemplateError($template->error());
+
+    # Wide characters cause md5_base64() to die.
+    my $digest_data = $output;
+    utf8::encode($digest_data) if utf8::is_utf8($digest_data);
+    my $digest = md5_base64($digest_data);
+
+    # ETag support.
+    my $if_none_match = $cgi->http('If-None-Match') || "";
+    my $found304;
+    my @if_none = split(/[\s,]+/, $if_none_match);
+    foreach my $if_none (@if_none) {
+        # remove quotes from begin and end of the string
+        $if_none =~ s/^\"//g;
+        $if_none =~ s/\"$//g;
+        if ($if_none eq $digest or $if_none eq '*') {
+            # leave the loop after the first match
+            $found304 = $if_none;
+            last;
+        }
+    }
+ 
+   if ($found304) {
+        print $cgi->header(-type => 'text/html',
+                           -ETag => $found304,
+                           -status => '304 Not Modified');
+    }
+    else {
+        # Return HTTP headers.
+        print $cgi->header (-ETag => $digest,
+                            -type => $format->{'ctype'});
+        print $output;
+    }
     exit;
 }

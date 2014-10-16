@@ -4,8 +4,6 @@
 #
 # Nick Barnes, Ravenbrook Limited, 2004-04-01.
 #
-# $Id$
-# 
 # Bugzilla email script for Bugzilla 2.17.4 and later.  Invoke this to send
 # bugmail for a bug which has been changed directly in the database.
 # This uses Bugzilla's own BugMail facility, and will email the
@@ -58,13 +56,14 @@ if ($changer !~ /$match/) {
     print STDERR "Changer \"$changer\" doesn't match email regular expression.\n";
     usage();
 }
-if(!login_to_id($changer)) {
-    print STDERR "\"$changer\" is not a login ID.\n";
+my $changer_user = new Bugzilla::User({ name => $changer });
+unless ($changer_user) {
+    print STDERR "\"$changer\" is not a valid user.\n";
     usage();
 }
 
 # Send the email.
-my $outputref = Bugzilla::BugMail::Send($bugnum, {'changer' => $changer });
+my $outputref = Bugzilla::BugMail::Send($bugnum, {'changer' => $changer_user });
 
 # Report the results.
 my $sent = scalar(@{$outputref->{sent}});

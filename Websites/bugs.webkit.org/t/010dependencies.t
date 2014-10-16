@@ -21,14 +21,23 @@
 ## dependencies ##
 
 use strict;
-
-use lib 't';
+use lib qw(. lib t);
 
 use Support::Files;
 use Test::More qw(no_plan);
 
 my %mods;
 my %deps;
+
+use constant MODULE_REGEX => qr/
+    (?:(?:^\s*use)
+       |
+       (?:^require)
+    )\s+
+    ['"]?
+    ([\w:\.\\]+)
+/x;
+use constant BASE_REGEX => qr/^use base qw\(([^\)]+)/;
 
 # Extract all Perl modules.
 foreach my $file (@Support::Files::testitems) {
@@ -58,18 +67,19 @@ foreach my $module (keys %mods) {
       if ($line =~ /^package\s+([^;]);/) {
         $module = $1;
       }
-      elsif ($line =~ /^\s*(?:use|^require) *"?(Bugzilla.*?)"?(?:;|\s+qw[\(\{]|\s+\(\))/) {
-        my $used = $1;
-        $used =~ s#/#::#g;
-        $used =~ s#\.pm$##;
-        $used =~ s#\$module#[^:]+#;
-        $used =~ s#\${[^}]+}#[^:]+#;
-        $used =~ s#[" ]##g;
-        my $exclude = "";
-        if    ($used eq 'Bugzilla::Auth::Login::[^:]+' ) { $exclude = 'Bugzilla::Auth::Login::Stack'  }
-        elsif ($used eq 'Bugzilla::Auth::Verify::[^:]+') { $exclude = 'Bugzilla::Auth::Verify::Stack' }
-        elsif ($used eq 'Bugzilla::Config::[^:]+'      ) { $exclude = 'Bugzilla::Config::Common'      }
-        push(@use, grep(/^$used$/, grep(!/^$exclude$/, keys %mods)));
+      elsif ($line =~ BASE_REGEX or $line =~ MODULE_REGEX) {
+        my $used_string = $1;
+        # "use base" can have multiple modules
+        my @used_array = split(/\s+/, $used_string);
+        foreach my $used (@used_array) {
+            next if $used !~ /^Bugzilla/;
+            $used =~ s#/#::#g;
+            $used =~ s#\.pm$##;
+            $used =~ s#\$module#[^:]+#;
+            $used =~ s#\${[^}]+}#[^:]+#;
+            $used =~ s#[" ]##g;
+            push(@use, grep(/^\Q$used\E$/, keys %mods));
+        }
       }
     }
     close (SOURCE);

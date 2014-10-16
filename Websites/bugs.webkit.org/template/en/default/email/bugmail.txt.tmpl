@@ -1,0 +1,76 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): André Batosti <batosti@async.com.br>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
+  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
+  #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+[% PROCESS "global/reason-descs.none.tmpl" %]
+
+[% isnew = bug.lastdiffed ? 0 : 1 %]
+
+[%+ PROCESS generate_diffs -%]
+
+[% FOREACH comment = new_comments %]
+
+[%- IF comment.count %]
+--- Comment #[% comment.count %] from [% comment.author.identity %] ---
+[% END %]
+[%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) %]
+[% END %]
+
+-- [%# Protect the trailing space of the signature marker %]
+You are receiving this mail because:
+[% SET reason_lines = [] %]
+[% FOREACH reason = reasons %]
+  [% reason_lines.push(reason_descs.$reason) IF reason_descs.$reason %]
+[% END %]
+[% FOREACH reason = reasons_watch %]
+  [% reason_lines.push(watch_reason_descs.$reason)
+       IF watch_reason_descs.$reason %]
+[% END %]
+[%+ reason_lines.join("\n") %]
+
+[% BLOCK generate_diffs %]
+  [% urlbase %]show_bug.cgi?id=[% bug.id %]
+
+[%+ last_changer = 0 %]
+  [% FOREACH change = diffs %]
+    [% IF !isnew && changer.id != last_changer %]
+      [% last_changer = changer.id %]
+      [% IF change.blocker %]
+        [% terms.Bug %] [%+ bug.id %] depends on [% terms.bug %] [%+ change.blocker.id %], which changed state.
+
+[%+ terms.Bug %] [%+ change.blocker.id %] Summary: [% change.blocker.short_desc %]
+[%+ urlbase %]show_bug.cgi?id=[% change.blocker.id %]
+      [% ELSE %]
+        [%~ changer.identity %] changed:
+      [% END %]
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+[%+ END %][%# End of IF. This indentation is intentional! ~%]
+    [% PROCESS "email/bugmail-common.txt.tmpl"%]
+    [%~ IF isnew %]
+      [% format_columns(2, field_label _ ":", new_value) -%]
+    [% ELSE %]
+      [% format_columns(3, field_label, old_value, new_value) -%]
+    [% END %]
+  [% END -%]
+[% END %]

@@ -27,6 +27,7 @@
                                    style_urls = ['skins/standard/global.css'] %]
 
 <div class="throw_error">
+<!--reason=[%reason FILTER html %]-->
   [% IF reason == "expired_token" %]
     Your changes have been rejected because you exceeded the time limit
     of [% constants.MAX_TOKEN_AGE FILTER html %] days before submitting your

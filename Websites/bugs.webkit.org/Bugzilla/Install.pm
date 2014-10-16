@@ -26,6 +26,8 @@ package Bugzilla::Install;
 
 use strict;
 
+use Bugzilla::Component;
+use Bugzilla::Config qw(:admin);
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Group;
@@ -34,6 +36,24 @@ use Bugzilla::User;
 use Bugzilla::User::Setting;
 use Bugzilla::Util qw(get_text);
 use Bugzilla::Version;
+
+use constant STATUS_WORKFLOW => (
+    [undef, 'UNCONFIRMED'],
+    [undef, 'CONFIRMED'],
+    [undef, 'IN_PROGRESS'],
+    ['UNCONFIRMED', 'CONFIRMED'],
+    ['UNCONFIRMED', 'IN_PROGRESS'],
+    ['UNCONFIRMED', 'RESOLVED'],
+    ['CONFIRMED',   'IN_PROGRESS'],
+    ['CONFIRMED',   'RESOLVED'],
+    ['IN_PROGRESS', 'CONFIRMED'],
+    ['IN_PROGRESS', 'RESOLVED'],
+    ['RESOLVED',    'UNCONFIRMED'],
+    ['RESOLVED',    'CONFIRMED'],
+    ['RESOLVED',    'VERIFIED'],
+    ['VERIFIED',    'UNCONFIRMED'],
+    ['VERIFIED',    'CONFIRMED'],
+);
 
 sub SETTINGS {
     return {
@@ -62,7 +82,17 @@ sub SETTINGS {
                             default => ${Bugzilla->languages}[0] },
     # 2007-07-02 altlist@gmail.com -- Bug 225731
     quote_replies      => { options => ['quoted_reply', 'simple_reply', 'off'],
-                            default => "quoted_reply" }
+                            default => "quoted_reply" },
+    # 2009-02-01 mozilla@matt.mchenryfamily.org -- Bug 398473
+    comment_box_position => { options => ['before_comments', 'after_comments'],
+                              default => 'before_comments' },
+    # 2008-08-27 LpSolit@gmail.com -- Bug 182238
+    timezone           => { subclass => 'Timezone', default => 'local' },
+    # 2011-02-07 dkl@mozilla.com -- Bug 580490
+    quicksearch_fulltext => { options => ['on', 'off'], default => 'on' },
+    # 2011-06-21 glob@mozilla.com -- Bug 589128
+    email_format       => { options => ['html', 'text_only'],
+                            default => 'html' },
     }
 };
 
@@ -105,14 +135,29 @@ use constant SYSTEM_GROUPS => (
         description => 'Can confirm a bug or mark it a duplicate'
     },
     {
-        name        => 'bz_canusewhines',
-        description => 'User can configure whine reports for self'
+        name         => 'bz_canusewhineatothers',
+        description  => 'Can configure whine reports for other users',
+    },
+    {
+        name         => 'bz_canusewhines',
+        description  => 'User can configure whine reports for self',
+        # inherited_by means that users in the groups listed below are
+        # automatically members of bz_canusewhines.
+        inherited_by => ['editbugs', 'bz_canusewhineatothers'],
     },
     {
         name        => 'bz_sudoers',
-        description => 'Can perform actions as other users'
+        description => 'Can perform actions as other users',
     },
-    # There are also other groups created in update_system_groups.
+    {
+        name         => 'bz_sudo_protect',
+        description  => 'Can not be impersonated by other users',
+        inherited_by => ['bz_sudoers'],
+    },
+    {
+        name         => 'bz_quip_moderators',
+        description  => 'Can moderate quips',
+    },
 );
 
 use constant DEFAULT_CLASSIFICATION => {
@@ -124,7 +169,10 @@ use constant DEFAULT_PRODUCT => {
     name => 'TestProduct',
     description => 'This is a test product.'
         . ' This ought to be blown away and replaced with real stuff in a'
-        . ' finished installation of bugzilla.'
+        . ' finished installation of bugzilla.',
+    version => Bugzilla::Version::DEFAULT_VERSION,
+    classification => 'Unclassified',
+    defaultmilestone => DEFAULT_MILESTONE,
 };
 
 use constant DEFAULT_COMPONENT => {
@@ -135,134 +183,115 @@ use constant DEFAULT_COMPONENT => {
 };
 
 sub update_settings {
+    my $dbh = Bugzilla->dbh;
+    # If we're setting up settings for the first time, we want to be quieter.
+    my $any_settings = $dbh->selectrow_array(
+        'SELECT 1 FROM setting ' . $dbh->sql_limit(1));
+    if (!$any_settings) {
+        print get_text('install_setting_setup'), "\n";
+    }
+
     my %settings = %{SETTINGS()};
     foreach my $setting (keys %settings) {
         add_setting($setting,
                     $settings{$setting}->{options}, 
                     $settings{$setting}->{default},
-                    $settings{$setting}->{subclass});
+                    $settings{$setting}->{subclass}, undef,
+                    !$any_settings);
     }
 }
 
 sub update_system_groups {
     my $dbh = Bugzilla->dbh;
 
+    $dbh->bz_start_transaction();
+
+    # If there is no editbugs group, this is the first time we're
+    # adding groups.
+    my $editbugs_exists = new Bugzilla::Group({ name => 'editbugs' });
+    if (!$editbugs_exists) {
+        print get_text('install_groups_setup'), "\n";
+    }
+
     # Create most of the system groups
     foreach my $definition (SYSTEM_GROUPS) {
         my $exists = new Bugzilla::Group({ name => $definition->{name} });
-        $definition->{isbuggroup} = 0;
-        Bugzilla::Group->create($definition) unless $exists;
-    }
-
-    # Certain groups need something done after they are created. We do
-    # that here.
-
-    # Make sure people who can whine at others can also whine.
-    if (!new Bugzilla::Group({name => 'bz_canusewhineatothers'})) {
-        my $whineatothers = Bugzilla::Group->create({
-            name        => 'bz_canusewhineatothers',
-            description => 'Can configure whine reports for other users',
-            isbuggroup  => 0 });
-        my $whine = new Bugzilla::Group({ name => 'bz_canusewhines' });
-
-        $dbh->do('INSERT INTO group_group_map (grantor_id, member_id) 
-                       VALUES (?,?)', undef, $whine->id, $whineatothers->id);
-    }
-
-    # Make sure sudoers are automatically protected from being sudoed.
-    if (!new Bugzilla::Group({name => 'bz_sudo_protect'})) {
-        my $sudo_protect = Bugzilla::Group->create({
-            name        => 'bz_sudo_protect',
-            description => 'Can not be impersonated by other users',
-            isbuggroup  => 0 });
-        my $sudo = new Bugzilla::Group({ name => 'bz_sudoers' });
-        $dbh->do('INSERT INTO group_group_map (grantor_id, member_id) 
-                       VALUES (?,?)', undef, $sudo_protect->id, $sudo->id);
-    }
-
-    # Re-evaluate all regexps, to keep them up-to-date.
-    my $sth = $dbh->prepare(
-        "SELECT profiles.userid, profiles.login_name, groups.id, 
-                groups.userregexp, user_group_map.group_id
-           FROM (profiles CROSS JOIN groups)
-                LEFT JOIN user_group_map
-                ON user_group_map.user_id = profiles.userid
-                   AND user_group_map.group_id = groups.id
-                   AND user_group_map.grant_type = ?
-          WHERE userregexp != '' OR user_group_map.group_id IS NOT NULL");
-
-    my $sth_add = $dbh->prepare(
-        "INSERT INTO user_group_map (user_id, group_id, isbless, grant_type)
-              VALUES (?, ?, 0, " . GRANT_REGEXP . ")");
-
-    my $sth_del = $dbh->prepare(
-        "DELETE FROM user_group_map
-          WHERE user_id  = ? AND group_id = ? AND isbless = 0 
-                AND grant_type = " . GRANT_REGEXP);
-
-    $sth->execute(GRANT_REGEXP);
-    while (my ($uid, $login, $gid, $rexp, $present) = $sth->fetchrow_array()) {
-        if ($login =~ m/$rexp/i) {
-            $sth_add->execute($uid, $gid) unless $present;
-        } else {
-            $sth_del->execute($uid, $gid) if $present;
+        if (!$exists) {
+            $definition->{isbuggroup} = 0;
+            $definition->{silently} = !$editbugs_exists;
+            my $inherited_by = delete $definition->{inherited_by};
+            my $created = Bugzilla::Group->create($definition);
+            # Each group in inherited_by is automatically a member of this
+            # group.
+            if ($inherited_by) {
+                foreach my $name (@$inherited_by) {
+                    my $member = Bugzilla::Group->check($name);
+                    $dbh->do('INSERT INTO group_group_map (grantor_id, 
+                                          member_id) VALUES (?,?)',
+                             undef, $created->id, $member->id);
+                }
+            }
         }
     }
 
+    $dbh->bz_commit_transaction();
+}
+
+sub create_default_classification {
+    my $dbh = Bugzilla->dbh;
+
+    # Make the default Classification if it doesn't already exist.
+    if (!$dbh->selectrow_array('SELECT 1 FROM classifications')) {
+        print get_text('install_default_classification',
+                       { name => DEFAULT_CLASSIFICATION->{name} }) . "\n";
+        Bugzilla::Classification->create(DEFAULT_CLASSIFICATION);
+    }
 }
 
 # This function should be called only after creating the admin user.
 sub create_default_product {
     my $dbh = Bugzilla->dbh;
 
-    # Make the default Classification if it doesn't already exist.
-    if (!$dbh->selectrow_array('SELECT 1 FROM classifications')) {
-        my $class = DEFAULT_CLASSIFICATION;
-        print get_text('install_default_classification', 
-                       { name => $class->{name} }) . "\n";
-        $dbh->do('INSERT INTO classifications (name, description)
-                       VALUES (?, ?)',
-                 undef, $class->{name}, $class->{description});
-    }
-
     # And same for the default product/component.
     if (!$dbh->selectrow_array('SELECT 1 FROM products')) {
-        my $default_prod = DEFAULT_PRODUCT;
         print get_text('install_default_product', 
-                       { name => $default_prod->{name} }) . "\n";
+                       { name => DEFAULT_PRODUCT->{name} }) . "\n";
 
-        $dbh->do(q{INSERT INTO products (name, description)
-                        VALUES (?,?)}, 
-                 undef, $default_prod->{name}, $default_prod->{description});
+        my $product = Bugzilla::Product->create(DEFAULT_PRODUCT);
 
-        my $product = new Bugzilla::Product({name => $default_prod->{name}});
-
-        # The default version.
-        Bugzilla::Version::create(Bugzilla::Version::DEFAULT_VERSION, $product);
-
-        # And we automatically insert the default milestone.
-        $dbh->do(q{INSERT INTO milestones (product_id, value, sortkey)
-                        SELECT id, defaultmilestone, 0
-                          FROM products});
-
-        # Get the user who will be the owner of the Product.
-        # We pick the admin with the lowest id, or we insert
-        # an invalid "0" into the database, just so that we can
-        # create the component.
+        # Get the user who will be the owner of the Component.
+        # We pick the admin with the lowest id, which is probably the
+        # admin checksetup.pl just created.
         my $admin_group = new Bugzilla::Group({name => 'admin'});
         my ($admin_id)  = $dbh->selectrow_array(
             'SELECT user_id FROM user_group_map WHERE group_id = ?
            ORDER BY user_id ' . $dbh->sql_limit(1),
-            undef, $admin_group->id) || 0;
- 
-        my $default_comp = DEFAULT_COMPONENT;
+            undef, $admin_group->id);
+        my $admin = Bugzilla::User->new($admin_id);
 
-        $dbh->do("INSERT INTO components (name, product_id, description,
-                                          initialowner)
-                       VALUES (?, ?, ?, ?)", undef, $default_comp->{name},
-                 $product->id, $default_comp->{description}, $admin_id);
+        Bugzilla::Component->create({
+            %{ DEFAULT_COMPONENT() }, product => $product,
+            initialowner => $admin->login });
     }
 
+}
+
+sub init_workflow {
+    my $dbh = Bugzilla->dbh;
+    my $has_workflow = $dbh->selectrow_array('SELECT 1 FROM status_workflow');
+    return if $has_workflow;
+
+    print get_text('install_workflow_init'), "\n";
+
+    my %status_ids = @{ $dbh->selectcol_arrayref(
+        'SELECT value, id FROM bug_status', {Columns=>[1,2]}) };
+
+    foreach my $pair (STATUS_WORKFLOW) {
+        my $old_id = $pair->[0] ? $status_ids{$pair->[0]} : undef;
+        my $new_id = $status_ids{$pair->[1]};
+        $dbh->do('INSERT INTO status_workflow (old_status, new_status)
+                       VALUES (?,?)', undef, $old_id, $new_id);
+    }
 }
 
 sub create_admin {
@@ -272,7 +301,7 @@ sub create_admin {
 
     my $admin_group = new Bugzilla::Group({ name => 'admin' });
     my $admin_inheritors = 
-        Bugzilla::User->flatten_group_membership($admin_group->id);
+        Bugzilla::Group->flatten_group_membership($admin_group->id);
     my $admin_group_ids = join(',', @$admin_inheritors);
 
     my ($admin_count) = $dbh->selectrow_array(
@@ -325,14 +354,12 @@ sub make_admin {
     $user = ref($user) ? $user 
             : new Bugzilla::User(login_to_id($user, THROW_ERROR));
 
-    my $admin_group = new Bugzilla::Group({ name => 'admin' });
-
-    # Admins get explicit membership and bless capability for the admin group
-    $dbh->selectrow_array("SELECT id FROM groups WHERE name = 'admin'");
-
     my $group_insert = $dbh->prepare(
         'INSERT INTO user_group_map (user_id, group_id, isbless, grant_type)
               VALUES (?, ?, ?, ?)');
+
+    # Admins get explicit membership and bless capability for the admin group
+    my $admin_group = new Bugzilla::Group({ name => 'admin' });
     # These are run in an eval so that we can ignore the error of somebody
     # already being granted these things.
     eval { 
@@ -349,7 +376,15 @@ sub make_admin {
         $group_insert->execute($user->id, $editusers->id, 0, GRANT_DIRECT); 
     };
 
-    print "\n", get_text('install_admin_created', { user => $user }), "\n";
+    # If there is no maintainer set, make this user the maintainer.
+    if (!Bugzilla->params->{'maintainer'}) {
+        SetParam('maintainer', $user->email);
+        write_params();
+    }
+
+    if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+        print "\n", get_text('install_admin_created', { user => $user }), "\n";
+    }
 }
 
 sub _prompt_for_password {
@@ -440,9 +475,14 @@ Params:      none
 
 Returns:     nothing.
 
+=item C<create_default_classification>
+
+Creates the default "Unclassified" L<Classification|Bugzilla::Classification>
+if it doesn't already exist
+
 =item C<create_default_product()>
 
-Description: Creates the default product and classification if
+Description: Creates the default product and component if
              they don't exist.
 
 Params:      none

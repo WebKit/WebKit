@@ -31,14 +31,16 @@
 
 [% IF target == "enter_bug.cgi" %]
   [% title = "Enter $terms.Bug" %]
-  [% subheader = BLOCK %]First, you must pick a product on which to enter [% terms.abug %]. [% END %]
+  [% h2 = BLOCK %]First, you must pick a product on which to enter [% terms.abug %]: [% END %]
 [% ELSIF target == "describecomponents.cgi" %]
-  [% title = "$terms.Bugzilla Component Descriptions" %]
-  [% subheader = "Please specify the product whose components you want described." %]
+  [% title = "Browse" %]
+  [% h2 = "Select a product category to browse:" %]
 [% END %]
 
 [% DEFAULT title = "Choose a Product" %]
 [% PROCESS global/header.html.tmpl %]
+
+<h2>[% h2 FILTER html %]</h2>
 
 <table>
 
@@ -53,9 +55,9 @@
   [% FOREACH p = c.products %]
     <tr>
       <th align="right" valign="top">
-        <a href="[% target %]?product=[% p.name FILTER url_quote -%]
-              [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
-              [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
+        <a href="[% target %]?product=[% p.name FILTER uri -%]
+              [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER uri %][% END -%] 
+              [%- IF format %]&amp;format=[% format FILTER uri %][% END %]">
         [% p.name FILTER html FILTER no_break %]</a>:&nbsp;
       </th>
 

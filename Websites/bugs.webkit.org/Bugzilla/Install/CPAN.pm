@@ -21,15 +21,48 @@
 package Bugzilla::Install::CPAN;
 use strict;
 use base qw(Exporter);
-our @EXPORT = qw(set_cpan_config install_module BZ_LIB);
+our @EXPORT = qw(
+    BZ_LIB
+
+    check_cpan_requirements 
+    set_cpan_config
+    install_module 
+);
 
 use Bugzilla::Constants;
+use Bugzilla::Install::Requirements qw(have_vers);
 use Bugzilla::Install::Util qw(bin_loc install_string);
 
+use Config;
 use CPAN;
 use Cwd qw(abs_path);
 use File::Path qw(rmtree);
 use List::Util qw(shuffle);
+
+# These are required for install-module.pl to be able to install
+# all modules properly.
+use constant REQUIREMENTS => (
+    {
+        module  => 'CPAN',
+        package => 'CPAN',
+        version => '1.81',
+    },
+    {
+        # When Module::Build isn't installed, the YAML module allows
+        # CPAN to read META.yml to determine that Module::Build first
+        # needs to be installed to compile a module.
+        module  => 'YAML',
+        package => 'YAML',
+        version => 0,
+    },
+    {
+        # Many modules on CPAN are now built with Dist::Zilla, which
+        # unfortunately means they require this version of EU::MM to install.
+        module  => 'ExtUtils::MakeMaker',
+        package => 'ExtUtils-MakeMaker',
+        version => '6.31',
+    },
+);
 
 # We need the absolute path of ext_libpath, because CPAN chdirs around
 # and so we can't use a relative directory.
@@ -46,13 +79,16 @@ use constant CPAN_DEFAULTS => {
     auto_commit => 0,
     # We always force builds, so there's no reason to cache them.
     build_cache => 0,
+    build_requires_install_policy => 'yes',
     cache_metadata => 1,
+    colorize_output => 1,
+    colorize_print => 'bold',
     index_expire => 1,
     scan_cache => 'atstart',
 
     inhibit_startup_message => 1,
-    mbuild_install_build_command => './Build',
 
+    bzip2 => bin_loc('bzip2'),
     curl => bin_loc('curl'),
     gzip => bin_loc('gzip'),
     links => bin_loc('links'),
@@ -67,13 +103,64 @@ use constant CPAN_DEFAULTS => {
         http://cpan.pair.com/
         http://mirror.hiwaay.net/CPAN/
         ftp://ftp.dc.aleron.net/pub/CPAN/
-        http://perl.secsup.org/
-        http://mirrors.kernel.org/cpan/)],
+        http://mirrors.kernel.org/cpan/
+        http://mirrors2.kernel.org/cpan/)],
 };
 
+sub check_cpan_requirements {
+    my ($original_dir, $original_args) = @_;
+
+    _require_compiler();
+
+    my @install;
+    foreach my $module (REQUIREMENTS) {
+        my $installed = have_vers($module, 1);
+        push(@install, $module) if !$installed;
+    }
+
+    return if !@install;
+
+    my $restart_required;
+    foreach my $module (@install) {
+        $restart_required = 1 if $module->{module} eq 'CPAN';
+        install_module($module->{module}, 1);
+    }
+
+    if ($restart_required) {
+        chdir $original_dir;
+        exec($^X, $0, @$original_args);
+    }
+}
+
+sub _require_compiler {
+    my @errors;
+
+    my $cc_name = $Config{cc};
+    my $cc_exists = bin_loc($cc_name);
+
+    if (!$cc_exists) {
+        push(@errors, install_string('install_no_compiler'));
+    }
+
+    my $make_name = $CPAN::Config->{make};
+    my $make_exists = bin_loc($make_name);
+
+    if (!$make_exists) {
+        push(@errors, install_string('install_no_make'));
+    }
+
+    die @errors if @errors;
+}
+
 sub install_module {
-    my ($name, $notest) = @_;
+    my ($name, $test) = @_;
     my $bzlib = BZ_LIB;
+
+    # Make Module::AutoInstall install all dependencies and never prompt.
+    local $ENV{PERL_AUTOINSTALL} = '--alldeps';
+    # This makes Net::SSLeay not prompt the user, if it gets installed.
+    # It also makes any other MakeMaker prompts accept their defaults.
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
 
     # Certain modules require special stuff in order to not prompt us.
     my $original_makepl = $CPAN::Config->{makepl_arg};
@@ -85,21 +172,34 @@ sub install_module {
     elsif ($name eq 'XML::Twig') {
         $CPAN::Config->{makepl_arg} = "-n $original_makepl";
     }
-    elsif ($name eq 'Net::LDAP') {
-        $CPAN::Config->{makepl_arg} .= " --skipdeps";
-    }
     elsif ($name eq 'SOAP::Lite') {
         $CPAN::Config->{makepl_arg} .= " --noprompt";
     }
 
     my $module = CPAN::Shell->expand('Module', $name);
+    if (!$module) {
+        die install_string('no_such_module', { module => $name }) . "\n";
+    }
+    my $version = $module->cpan_version;
+    my $module_name = $name;
+
+    if ($name eq 'LWP::UserAgent' && $^V lt v5.8.8) {
+        # LWP 6.x requires Perl 5.8.8 or newer.
+        # As PAUSE only indexes the very last version of each module,
+        # we have to specify the path to the tarball ourselves.
+        $name = 'GAAS/libwww-perl-5.837.tar.gz';
+        # This tarball contains LWP::UserAgent 5.835.
+        $version = '5.835';
+    }
+
     print install_string('install_module', 
-              { module => $name, version => $module->cpan_version }) . "\n";
-    if ($notest) {
-        CPAN::Shell->notest('install', $name);
+              { module => $module_name, version => $version }) . "\n";
+
+    if ($test) {
+        CPAN::Shell->force('install', $name);
     }
     else {
-        CPAN::Shell->force('install', $name);
+        CPAN::Shell->notest('install', $name);
     }
 
     # If it installed any binaries in the Bugzilla directory, delete them.
@@ -137,7 +237,7 @@ sub set_cpan_config {
 
         # If we can't make one, we finally try to use the Bugzilla directory.
         if (!-w $dir) {
-            print "WARNING: Using the Bugzilla directory as the CPAN home.\n";
+            print STDERR install_string('cpan_bugzilla_home'), "\n";
             $dir = "$bzlib/.cpan";
         }
     }
@@ -152,6 +252,8 @@ sub set_cpan_config {
     
     # Unless specified, we install the modules into the Bugzilla directory.
     if (!$do_global) {
+        require Config;
+
         $CPAN::Config->{makepl_arg} .= " LIB=\"$bzlib\""
             . " INSTALLMAN1DIR=\"$bzlib/man/man1\""
             . " INSTALLMAN3DIR=\"$bzlib/man/man3\""
@@ -162,7 +264,10 @@ sub set_cpan_config {
             # INSTALLDIRS=perl is set because that makes sure that MakeMaker
             # always uses the directories we've specified here.
             . " INSTALLDIRS=perl";
-        $CPAN::Config->{mbuild_arg} = "--install_base \"$bzlib\"";
+        $CPAN::Config->{mbuild_arg} = " --install_base \"$bzlib\""
+            . " --install_path lib=\"$bzlib\""
+            . " --install_path arch=\"$bzlib/$Config::Config{archname}\"";
+        $CPAN::Config->{mbuild_install_arg} = $CPAN::Config->{mbuild_arg};
 
         # When we're not root, sometimes newer versions of CPAN will
         # try to read/modify things that belong to root, unless we set
@@ -213,7 +318,7 @@ Bugzilla::Install::CPAN - Routines to install Perl modules from CPAN.
  use Bugzilla::Install::CPAN;
 
  set_cpan_config();
- install_module('Module::Name', 1);
+ install_module('Module::Name');
 
 =head1 DESCRIPTION
 
@@ -240,8 +345,9 @@ Installs a module from CPAN. Takes two arguments:
 =item C<$name> - The name of the module, just like you'd pass to the
 C<install> command in the CPAN shell.
 
-=item C<$notest> - If true, we skip running tests on this module. This
-can greatly speed up the installation time.
+=item C<$test> - If true, we run tests on this module before installing,
+but we still force the install if the tests fail. This is only used
+when we internally install a newer CPAN module.
 
 =back
 

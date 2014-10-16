@@ -49,44 +49,6 @@ my $buffer = $cgi->query_string();
 my $user = Bugzilla->login();
 my $userid = $user->id;
 
-# Backwards compatibility hack -- if there are any of the old QUERY_*
-# cookies around, and we are logged in, then move them into the database
-# and nuke the cookie. This is required for Bugzilla 2.8 and earlier.
-if ($userid) {
-    my @oldquerycookies;
-    foreach my $i ($cgi->cookie()) {
-        if ($i =~ /^QUERY_(.*)$/) {
-            push(@oldquerycookies, [$1, $i, $cgi->cookie($i)]);
-        }
-    }
-    if (defined $cgi->cookie('DEFAULTQUERY')) {
-        push(@oldquerycookies, [DEFAULT_QUERY_NAME, 'DEFAULTQUERY',
-                                $cgi->cookie('DEFAULTQUERY')]);
-    }
-    if (@oldquerycookies) {
-        foreach my $ref (@oldquerycookies) {
-            my ($name, $cookiename, $value) = (@$ref);
-            if ($value) {
-                # If the query name contains invalid characters, don't import.
-                $name =~ /[<>&]/ && next;
-                trick_taint($name);
-                $dbh->bz_start_transaction();
-                my $query = $dbh->selectrow_array(
-                    "SELECT query FROM namedqueries " .
-                     "WHERE userid = ? AND name = ?",
-                     undef, ($userid, $name));
-                if (!$query) {
-                    $dbh->do("INSERT INTO namedqueries " .
-                            "(userid, name, query) VALUES " .
-                            "(?, ?, ?)", undef, ($userid, $name, $value));
-                }
-                $dbh->bz_commit_transaction();
-            }
-            $cgi->remove_cookie($cookiename);
-        }
-    }
-}
-
 if ($cgi->param('nukedefaultquery')) {
     if ($userid) {
         $dbh->do("DELETE FROM namedqueries" .
@@ -95,6 +57,9 @@ if ($cgi->param('nukedefaultquery')) {
     }
     $buffer = "";
 }
+
+# We are done with changes committed to the DB.
+$dbh = Bugzilla->switch_to_shadow_db;
 
 my $userdefaultquery;
 if ($userid) {
@@ -110,64 +75,46 @@ local our %default;
 # Items which are single-valued, the template should only reference [0]
 # and ignore any multiple values.
 sub PrefillForm {
-    my ($buf) = (@_);
+    my ($buf) = @_;
     my $cgi = Bugzilla->cgi;
     $buf = new Bugzilla::CGI($buf);
     my $foundone = 0;
 
-    # Nothing must be undef, otherwise the template complains.
-    foreach my $name ("bug_status", "resolution", "assigned_to",
-                      "rep_platform", "priority", "bug_severity",
-                      "classification", "product", "reporter", "op_sys",
-                      "component", "version", "chfield", "chfieldfrom",
-                      "chfieldto", "chfieldvalue", "target_milestone",
-                      "email", "emailtype", "emailreporter",
-                      "emailassigned_to", "emailcc", "emailqa_contact",
-                      "emaillongdesc", "content",
-                      "changedin", "votes", "short_desc", "short_desc_type",
-                      "long_desc", "long_desc_type", "bug_file_loc",
-                      "bug_file_loc_type", "status_whiteboard",
-                      "status_whiteboard_type", "bug_id",
-                      "bugidtype", "keywords", "keywords_type",
-                      "deadlinefrom", "deadlineto",
-                      "x_axis_field", "y_axis_field", "z_axis_field",
-                      "chart_format", "cumulate", "x_labels_vertical",
-                      "category", "subcategory", "name", "newcategory",
-                      "newsubcategory", "public", "frequency") 
-    {
-        $default{$name} = [];
+    # If there are old-style boolean charts in the URL (from an old saved
+    # search or from an old link on the web somewhere) then convert them
+    # to the new "custom search" format so that the form is populated
+    # properly.
+    my $any_boolean_charts = grep { /^field-?\d+/ } $buf->param();
+    if ($any_boolean_charts) {
+        my $search = new Bugzilla::Search(params => scalar $buf->Vars);
+        $search->boolean_charts_to_custom_search($buf);
     }
- 
-    # we won't prefill the boolean chart data from this query if
-    # there are any being submitted via params
-    my $prefillcharts = (grep(/^field-/, $cgi->param)) ? 0 : 1;
- 
+
+    # Query parameters that don't represent form fields on this page.
+    my @skip = qw(format query_format list_id columnlist);
+
     # Iterate over the URL parameters
     foreach my $name ($buf->param()) {
+        next if grep { $_ eq $name } @skip;
+        $foundone = 1;
         my @values = $buf->param($name);
-
-        # If the name begins with the string 'field', 'type', 'value', or
-        # 'negate', then it is part of the boolean charts. Because
-        # these are built different than the rest of the form, we need
-        # to store these as parameters. We also need to indicate that
-        # we found something so the default query isn't added in if
-        # all we have are boolean chart items.
-        if ($name =~ m/^(?:field|type|value|negate)/) {
-            $cgi->param(-name => $name, -value => $values[0]) if ($prefillcharts);
-            $foundone = 1;
+        
+        # If the name is a single letter followed by numbers, it's part
+        # of Custom Search. We store these as an array of hashes.
+        if ($name =~ /^([[:lower:]])(\d+)$/) {
+            $default{'custom_search'}->[$2]->{$1} = $values[0];
         }
         # If the name ends in a number (which it does for the fields which
         # are part of the email searching), we use the array
         # positions to show the defaults for that number field.
-        elsif ($name =~ m/^(.+)(\d)$/ && defined($default{$1})) {
-            $foundone = 1;
+        elsif ($name =~ /^(\w+)(\d)$/) {
             $default{$1}->[$2] = $values[0];
         }
-        elsif (exists $default{$name}) {
-            $foundone = 1;
-            push (@{$default{$name}}, @values);
+        else {
+            push (@{ $default{$name} }, @values);
         }
     }
+
     return $foundone;
 }
 
@@ -181,10 +128,6 @@ if (!PrefillForm($buffer)) {
     }
 }
 
-if (!scalar(@{$default{'chfieldto'}}) || $default{'chfieldto'}->[0] eq "") {
-    $default{'chfieldto'} = ["Now"];
-}
-
 # if using groups for entry, then we don't want people to see products they 
 # don't have access to. Remove them from the list.
 my @selectable_products = sort {lc($a->name) cmp lc($b->name)} 
@@ -195,6 +138,9 @@ Bugzilla::Product::preload(\@selectable_products);
 my %components;
 my %versions;
 my %milestones;
+
+# Exclude products with no components.
+@selectable_products = grep { scalar @{$_->components} } @selectable_products;
 
 foreach my $product (@selectable_products) {
     $components{$_->name} = 1 foreach (@{$product->components});
@@ -222,13 +168,6 @@ if (Bugzilla->params->{'usetargetmilestone'}) {
     $vars->{'target_milestone'} = \@milestones;
 }
 
-$vars->{'have_keywords'} = Bugzilla::Keyword::keyword_count();
-
-my $legal_resolutions = get_legal_field_values('resolution');
-push(@$legal_resolutions, "---"); # Oy, what a hack.
-# Another hack - this array contains "" for some reason. See bug 106589.
-$vars->{'resolution'} = [grep ($_, @$legal_resolutions)];
-
 my @chfields;
 
 push @chfields, "[Bug creation]";
@@ -246,28 +185,28 @@ foreach my $val (editable_bug_fields()) {
     push @chfields, $val;
 }
 
-if (Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
+if (Bugzilla->user->is_timetracker) {
     push @chfields, "work_time";
 } else {
+    @chfields = grep($_ ne "deadline", @chfields);
     @chfields = grep($_ ne "estimated_time", @chfields);
     @chfields = grep($_ ne "remaining_time", @chfields);
 }
 @chfields = (sort(@chfields));
 $vars->{'chfield'} = \@chfields;
-$vars->{'bug_status'} = get_legal_field_values('bug_status');
-$vars->{'rep_platform'} = get_legal_field_values('rep_platform');
-$vars->{'op_sys'} = get_legal_field_values('op_sys');
-$vars->{'priority'} = get_legal_field_values('priority');
-$vars->{'bug_severity'} = get_legal_field_values('bug_severity');
+$vars->{'bug_status'} = Bugzilla::Field->new({name => 'bug_status'})->legal_values;
+$vars->{'rep_platform'} = Bugzilla::Field->new({name => 'rep_platform'})->legal_values;
+$vars->{'op_sys'} = Bugzilla::Field->new({name => 'op_sys'})->legal_values;
+$vars->{'priority'} = Bugzilla::Field->new({name => 'priority'})->legal_values;
+$vars->{'bug_severity'} = Bugzilla::Field->new({name => 'bug_severity'})->legal_values;
+$vars->{'resolution'} = Bugzilla::Field->new({name => 'resolution'})->legal_values;
 
 # Boolean charts
-my @fields = Bugzilla->get_fields({ obsolete => 0 });
+my @fields = @{ Bugzilla->fields({ obsolete => 0 }) };
 
 # If we're not in the time-tracking group, exclude time-tracking fields.
-if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
-    foreach my $tt_field (qw(estimated_time remaining_time work_time
-                             percentage_complete deadline))
-    {
+if (!Bugzilla->user->is_timetracker) {
+    foreach my $tt_field (TIMETRACKING_FIELDS) {
         @fields = grep($_->name ne $tt_field, @fields);
     }
 }
@@ -275,43 +214,6 @@ if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
 @fields = sort {lc($a->description) cmp lc($b->description)} @fields;
 unshift(@fields, { name => "noop", description => "---" });
 $vars->{'fields'} = \@fields;
-
-# Creating new charts - if the cmd-add value is there, we define the field
-# value so the code sees it and creates the chart. It will attempt to select
-# "xyzzy" as the default, and fail. This is the correct behaviour.
-foreach my $cmd (grep(/^cmd-/, $cgi->param)) {
-    if ($cmd =~ /^cmd-add(\d+)-(\d+)-(\d+)$/) {
-        $cgi->param(-name => "field$1-$2-$3", -value => "xyzzy");
-    }
-}
-
-if (!$cgi->param('field0-0-0')) {
-    $cgi->param(-name => 'field0-0-0', -value => "xyzzy");
-}
-
-# Create data structure of boolean chart info. It's an array of arrays of
-# arrays - with the inner arrays having three members - field, type and
-# value.
-my @charts;
-for (my $chart = 0; $cgi->param("field$chart-0-0"); $chart++) {
-    my @rows;
-    for (my $row = 0; $cgi->param("field$chart-$row-0"); $row++) {
-        my @cols;
-        for (my $col = 0; $cgi->param("field$chart-$row-$col"); $col++) {
-            my $value = $cgi->param("value$chart-$row-$col");
-            if (!defined($value)) {
-                $value = '';
-            }
-            push(@cols, { field => $cgi->param("field$chart-$row-$col"),
-                          type => $cgi->param("type$chart-$row-$col") || 'noop',
-                          value => $value });
-        }
-        push(@rows, \@cols);
-    }
-    push(@charts, {'rows' => \@rows, 'negate' => scalar($cgi->param("negate$chart")) });
-}
-
-$default{'charts'} = \@charts;
 
 # Named queries
 if ($userid) {
@@ -343,7 +245,15 @@ if (($cgi->param('query_format') || $cgi->param('format') || "")
     $vars->{'category'} = Bugzilla::Chart::getVisibleSeries();
 }
 
+if ($cgi->param('format') && $cgi->param('format') =~ /^report-(table|graph)$/) {
+    # Get legal custom fields for tabular and graphical reports.
+    my @custom_fields_for_reports =
+      grep { $_->type == FIELD_TYPE_SINGLE_SELECT } Bugzilla->active_custom_fields;
+    $vars->{'custom_fields'} = \@custom_fields_for_reports;
+}
+
 $vars->{'known_name'} = $cgi->param('known_name');
+$vars->{'columnlist'} = $cgi->param('columnlist');
 
 
 # Add in the defaults.

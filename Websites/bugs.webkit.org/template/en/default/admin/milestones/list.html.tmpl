@@ -37,11 +37,11 @@
 %]
 
 [% edit_contentlink = BLOCK %]editmilestones.cgi?action=edit&amp;product=
-  [%- product.name FILTER url_quote %]&amp;milestone=%%name%%[% END %]
+  [%- product.name FILTER uri %]&amp;milestone=%%name%%[% END %]
 [% delete_contentlink = BLOCK %]editmilestones.cgi?action=del&amp;product=
-  [%- product.name FILTER url_quote %]&amp;milestone=%%name%%[% END %]
+  [%- product.name FILTER uri %]&amp;milestone=%%name%%[% END %]
 [% bug_count_contentlink = BLOCK %]buglist.cgi?target_milestone=%%name%%&amp;product=
-  [%- product.name FILTER url_quote %][% END %]
+  [%- product.name FILTER uri %][% END %]
 
 
 [% columns = [
@@ -53,6 +53,11 @@
      { 
        name => "sortkey"
        heading => "Sortkey"
+     },
+     {
+       name => "isactive"
+       heading => "Active"
+       yesno_field => 1
      }
    ]
 %]
@@ -77,17 +82,16 @@
      })
 %]
 
-[%# We want to override the usual 'Delete' link for the default
-    milestone %]
-[% overrides.action = [ {
-     match_value => product.default_milestone
-     match_field => 'name'
+[%# We want to override the usual 'Delete' link for the default milestone %]
+[% overrides.action.name.${product.default_milestone} = {
      override_content => 1
      content => "(Default milestone)"
      override_contentlink => 1
      contentlink => undef
-   } ]
+   } 
 %] 
+
+[% Hook.process('before_table') %]
 
 [% PROCESS admin/table.html.tmpl
      columns = columns
@@ -97,7 +101,7 @@
 
 [% IF ! showbugcounts %]
 
-  <p><a href="editmilestones.cgi?product=[% product.name FILTER url_quote %]&amp;showbugcounts=1">
+  <p><a href="editmilestones.cgi?product=[% product.name FILTER uri %]&amp;showbugcounts=1">
       Redisplay table with [% terms.bug %] counts (slower)</a></p>
 
 [% END %]

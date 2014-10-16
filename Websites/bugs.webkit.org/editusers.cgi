@@ -64,6 +64,9 @@ my $token          = $cgi->param('token');
 $vars->{'editusers'} = $editusers;
 mirrorListSelectionValues();
 
+Bugzilla::Hook::process('admin_editusers_action',
+    { vars => $vars, user => $user, action => $action });
+
 ###########################################################################
 if ($action eq 'search') {
     # Allow to restrict the search to any group the user is allowed to bless.
@@ -74,10 +77,10 @@ if ($action eq 'search') {
 ###########################################################################
 } elsif ($action eq 'list') {
     my $matchvalue    = $cgi->param('matchvalue') || '';
-    my $matchstr      = $cgi->param('matchstr');
+    my $matchstr      = trim($cgi->param('matchstr'));
     my $matchtype     = $cgi->param('matchtype');
     my $grouprestrict = $cgi->param('grouprestrict') || '0';
-    my $query = 'SELECT DISTINCT userid, login_name, realname, disabledtext ' .
+    my $query = 'SELECT DISTINCT userid, login_name, realname, is_enabled ' .
                 'FROM profiles';
     my @bindValues;
     my $nextCondition;
@@ -136,30 +139,35 @@ if ($action eq 'search') {
             } else {
                 $expr = "profiles.login_name";
             }
+
+            if ($matchtype =~ /^(regexp|notregexp|exact)$/) {
+                $matchstr ||= '.';
+            }
+            else {
+                $matchstr = '' unless defined $matchstr;
+            }
+            # We can trick_taint because we use the value in a SELECT only,
+            # using a placeholder.
+            trick_taint($matchstr);
+
             if ($matchtype eq 'regexp') {
-                $query .= $dbh->sql_regexp($expr, '?');
-                $matchstr = '.' unless $matchstr;
+                $query .= $dbh->sql_regexp($expr, '?', 0, $dbh->quote($matchstr));
             } elsif ($matchtype eq 'notregexp') {
-                $query .= $dbh->sql_not_regexp($expr, '?');
-                $matchstr = '.' unless $matchstr;
+                $query .= $dbh->sql_not_regexp($expr, '?', 0, $dbh->quote($matchstr));
             } elsif ($matchtype eq 'exact') {
                 $query .= $expr . ' = ?';
-                $matchstr = '.' unless $matchstr;
             } else { # substr or unknown
                 $query .= $dbh->sql_istrcmp($expr, '?', 'LIKE');
                 $matchstr = "%$matchstr%";
             }
             $nextCondition = 'AND';
-            # We can trick_taint because we use the value in a SELECT only,
-            # using a placeholder.
-            trick_taint($matchstr);
             push(@bindValues, $matchstr);
         }
 
         # Handle selection by group.
         if ($grouprestrict eq '1') {
             my $grouplist = join(',',
-                @{Bugzilla::User->flatten_group_membership($group->id)});
+                @{Bugzilla::Group->flatten_group_membership($group->id)});
             $query .= " $nextCondition ugm.group_id IN($grouplist) ";
         }
         $query .= ' ORDER BY profiles.login_name';
@@ -198,12 +206,19 @@ if ($action eq 'search') {
 
     check_token_data($token, 'add_user');
 
+    # When e.g. the 'Env' auth method is used, the password field
+    # is not displayed. In that case, set the password to *.
+    my $password = $cgi->param('password');
+    $password = '*' if !defined $password;
+
     my $new_user = Bugzilla::User->create({
         login_name    => scalar $cgi->param('login'),
-        cryptpassword => scalar $cgi->param('password'),
+        cryptpassword => $password,
         realname      => scalar $cgi->param('name'),
         disabledtext  => scalar $cgi->param('disabledtext'),
-        disable_mail  => scalar $cgi->param('disable_mail')});
+        disable_mail  => scalar $cgi->param('disable_mail'),
+        extern_id     => scalar $cgi->param('extern_id'),
+        });
 
     userDataToVars($new_user->id);
 
@@ -238,7 +253,7 @@ if ($action eq 'search') {
 
     # Update profiles table entry; silently skip doing this if the user
     # is not authorized.
-    my %changes;
+    my $changes = {};
     if ($editusers) {
         $otherUser->set_login($cgi->param('login'));
         $otherUser->set_name($cgi->param('name'));
@@ -246,7 +261,9 @@ if ($action eq 'search') {
             if $cgi->param('password');
         $otherUser->set_disabledtext($cgi->param('disabledtext'));
         $otherUser->set_disable_mail($cgi->param('disable_mail'));
-        %changes = %{$otherUser->update()};
+        $otherUser->set_extern_id($cgi->param('extern_id'))
+            if defined($cgi->param('extern_id'));
+        $changes = $otherUser->update();
     }
 
     # Update group settings.
@@ -276,9 +293,9 @@ if ($action eq 'search') {
     #      would allow to display a friendlier error message on page reloads.
     userDataToVars($otherUserID);
     my $permissions = $vars->{'permissions'};
-    foreach (@{$user->bless_groups()}) {
-        my $id = $$_{'id'};
-        my $name = $$_{'name'};
+    foreach my $blessable (@{$user->bless_groups()}) {
+        my $id = $blessable->id;
+        my $name = $blessable->name;
 
         # Change memberships.
         my $groupid = $cgi->param("group_$id") || 0;
@@ -334,7 +351,7 @@ if ($action eq 'search') {
     delete_token($token);
 
     $vars->{'message'} = 'account_updated';
-    $vars->{'changed_fields'} = [keys %changes];
+    $vars->{'changed_fields'} = [keys %$changes];
     $vars->{'groups_added_to'} = \@groupsAddedTo;
     $vars->{'groups_removed_from'} = \@groupsRemovedFrom;
     $vars->{'groups_granted_rights_to_bless'} = \@groupsGrantedRightsToBless;
@@ -414,9 +431,6 @@ if ($action eq 'search') {
     $vars->{'series'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM series WHERE creator = ?',
         undef, $otherUserID);
-    $vars->{'votes'} = $dbh->selectrow_array(
-        'SELECT COUNT(*) FROM votes WHERE who = ?',
-        undef, $otherUserID);
     $vars->{'watch'}{'watched'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM watch WHERE watched = ?',
         undef, $otherUserID);
@@ -476,35 +490,36 @@ if ($action eq 'search') {
     my $sth_set_bug_timestamp =
         $dbh->prepare('UPDATE bugs SET delta_ts = ? WHERE bug_id = ?');
 
-    # Reference removals which need LogActivityEntry.
-    my $statement_flagupdate = 'UPDATE flags set requestee_id = NULL
-                                 WHERE bug_id = ?
-                                   AND attach_id %s
-                                   AND requestee_id = ?';
-    my $sth_flagupdate_attachment =
-        $dbh->prepare(sprintf($statement_flagupdate, '= ?'));
-    my $sth_flagupdate_bug =
-        $dbh->prepare(sprintf($statement_flagupdate, 'IS NULL'));
+    my $sth_updateFlag = $dbh->prepare('INSERT INTO bugs_activity
+                  (bug_id, attach_id, who, bug_when, fieldid, removed, added)
+                  VALUES (?, ?, ?, ?, ?, ?, ?)');
 
-    my $buglist = $dbh->selectall_arrayref('SELECT DISTINCT bug_id, attach_id
-                                              FROM flags
-                                             WHERE requestee_id = ?',
-                                           undef, $otherUserID);
+    # Flags
+    my $flag_ids =
+      $dbh->selectcol_arrayref('SELECT id FROM flags WHERE requestee_id = ?',
+                                undef, $otherUserID);
 
-    foreach (@$buglist) {
-        my ($bug_id, $attach_id) = @$_;
-        my @old_summaries = Bugzilla::Flag->snapshot($bug_id, $attach_id);
-        if ($attach_id) {
-            $sth_flagupdate_attachment->execute($bug_id, $attach_id, $otherUserID);
+    my $flags = Bugzilla::Flag->new_from_list($flag_ids);
+
+    $dbh->do('UPDATE flags SET requestee_id = NULL, modification_date = ?
+              WHERE requestee_id = ?', undef, ($timestamp, $otherUserID));
+
+    # We want to remove the requestee but leave the requester alone,
+    # so we have to log these changes manually.
+    my %bugs;
+    push(@{$bugs{$_->bug_id}->{$_->attach_id || 0}}, $_) foreach @$flags;
+    my $fieldid = get_field_id('flagtypes.name');
+    foreach my $bug_id (keys %bugs) {
+        foreach my $attach_id (keys %{$bugs{$bug_id}}) {
+            my @old_summaries = Bugzilla::Flag->snapshot($bugs{$bug_id}->{$attach_id});
+            $_->_set_requestee() foreach @{$bugs{$bug_id}->{$attach_id}};
+            my @new_summaries = Bugzilla::Flag->snapshot($bugs{$bug_id}->{$attach_id});
+            my ($removed, $added) =
+              Bugzilla::Flag->update_activity(\@old_summaries, \@new_summaries);
+            $sth_updateFlag->execute($bug_id, $attach_id || undef, $userid,
+                                     $timestamp, $fieldid, $removed, $added);
         }
-        else {
-            $sth_flagupdate_bug->execute($bug_id, $otherUserID);
-        }
-        my @new_summaries = Bugzilla::Flag->snapshot($bug_id, $attach_id);
-        # Let update_activity do all the dirty work, including setting
-        # the bug timestamp.
-        Bugzilla::Flag::update_activity($bug_id, $attach_id, $timestamp,
-                                        \@old_summaries, \@new_summaries);
+        $sth_set_bug_timestamp->execute($timestamp, $bug_id);
         $updatedbugs{$bug_id} = 1;
     }
 
@@ -523,18 +538,15 @@ if ($action eq 'search') {
              $otherUserID);
     $dbh->do('DELETE FROM profiles_activity WHERE userid = ? OR who = ?', undef,
              ($otherUserID, $otherUserID));
-    $dbh->do('UPDATE quips SET userid = NULL where userid = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM user_group_map WHERE user_id = ?', undef,
              $otherUserID);
-    $dbh->do('DELETE FROM votes WHERE who = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM watch WHERE watcher = ? OR watched = ?', undef,
              ($otherUserID, $otherUserID));
 
     # Deletions in referred tables which need LogActivityEntry.
-    $buglist = $dbh->selectcol_arrayref('SELECT bug_id FROM cc
-                                          WHERE who = ?',
-                                        undef, $otherUserID);
+    my $buglist = $dbh->selectcol_arrayref('SELECT bug_id FROM cc WHERE who = ?',
+                                            undef, $otherUserID);
     $dbh->do('DELETE FROM cc WHERE who = ?', undef, $otherUserID);
     foreach my $bug_id (@$buglist) {
         LogActivityEntry($bug_id, 'cc', $otherUser->login, '', $userid,
@@ -642,7 +654,7 @@ if ($action eq 'search') {
     # Send mail about what we've done to bugs.
     # The deleted user is not notified of the changes.
     foreach (keys(%updatedbugs)) {
-        Bugzilla::BugMail::Send($_, {'changer' => $user->login} );
+        Bugzilla::BugMail::Send($_, {'changer' => $user} );
     }
 
 ###########################################################################
@@ -652,7 +664,7 @@ if ($action eq 'search') {
     $vars->{'profile_changes'} = $dbh->selectall_arrayref(
         "SELECT profiles.login_name AS who, " .
                 $dbh->sql_date_format('profiles_activity.profiles_when') . " AS activity_when,
-                fielddefs.description AS what,
+                fielddefs.name AS what,
                 profiles_activity.oldvalue AS removed,
                 profiles_activity.newvalue AS added
          FROM profiles_activity
@@ -670,8 +682,7 @@ if ($action eq 'search') {
 
 ###########################################################################
 } else {
-    $vars->{'action'} = $action;
-    ThrowCodeError('action_unrecognized', $vars);
+    ThrowUserError('unknown_action', {action => $action});
 }
 
 exit;

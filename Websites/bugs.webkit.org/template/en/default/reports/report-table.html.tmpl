@@ -17,6 +17,8 @@
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
   #                 <rdean@cambianetworks.com>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
+  #                 Guy Pyrzak <guy.parzak@gmail.com>
   #%]
 
 [%# INTERFACE:
@@ -34,17 +36,112 @@
 
 [% col_field_disp = field_descs.$col_field || col_field %]
 [% row_field_disp = field_descs.$row_field || row_field %]
-  
+
+[% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %][% END %]
 [% IF tbl == "-total-" %]
-  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %]
-  [% "&amp;$tbl_vals" IF tbl_vals %][% END %]
-[% ELSE %]
-  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %]&amp;
-  [% tbl_field FILTER url_quote %]=[% tbl FILTER url_quote %][% END %]
+  [% IF tbl_vals %]
+    [% urlbase = urlbase _ "&amp;" _ tbl_vals %]
+  [% END %]
+[% ELSIF tbl_field %]
+  [% urlbase = BLOCK %][% urlbase %]&amp;[% tbl_field FILTER uri %]=[% tbl FILTER uri %][% END %]
 [% END %]
 
+<script type="text/javascript">
+YAHOO.util.Event.addListener(window, "load", function() {
+  this.Linkify = function(elLiner, oRecord, oColumn, oData) {
+    if (oData == 0)
+      elLiner.innerHTML = ".";
+    else if (oRecord.getData("row_title") == "Total")
+      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% col_field FILTER js %]="
+                          + oColumn.field + "[% '&amp;' _ row_vals IF row_vals %]'>"
+                          + oData + "</a>";
+    else
+      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% row_field FILTER js %]="
+                          + oRecord.getData("row_title").replace(/\s+$/,"")
+                          + "&amp;[% col_field FILTER js %]=" + oColumn.field
+                          + "'>" + oData + "</a>";
+  };
+
+  this.LinkifyTotal = function(elLiner, oRecord, oColumn, oData) {
+    if (oData == 0)
+      elLiner.innerHTML = ".";
+    else if (oRecord.getData("row_title") == "Total")
+      elLiner.innerHTML = "<a href='[% urlbase %][% '&amp;' _ row_vals IF row_vals %]
+                          [%~ '&amp;' _ col_vals IF col_vals %]'>"
+                          + oData + "</a>";
+    else
+      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% row_field FILTER js %]="
+                          + oRecord.getData("row_title").replace(/\s+$/,"")
+                          + "[% '&amp;' _ col_vals IF col_vals %]'>" + oData + "</a>";
+
+    YAHOO.util.Dom.addClass(elLiner.parentNode, "ttotal");
+  };
+
+  var totalRowFormatter = function( elTr, oRecord ) {
+      if ( oRecord.getData('row_title') == "Total" ) {
+          YAHOO.util.Dom.addClass( elTr, 'ttotal' );
+      }
+      return true;
+  };
+
+  var totalNumberSorter = function( a, b, desc, field ){
+    var a_value = a.getData(field);
+    var b_value = b.getData(field);
+    var a_total_test = a.getData("row_title");
+    var b_total_test = b.getData("row_title");
+    var comp_result = YAHOO.util.Sort.compare(a_value, b_value, desc);
+    if( a_total_test == "Total" ){
+      comp_result = 1;
+    }else if( b_total_test == "Total" ){
+      comp_result = -1;
+    }
+    return comp_result;
+  };
+
+
+  var myColumnDefs = [
+        {key:"row_title", label:"", sortable:true, sortOptions: { sortFunction:totalNumberSorter }},
+        [% FOREACH col = col_names %]
+          {key:"[% col FILTER js %]", label:"[% display_value(col_field, col) FILTER js %]", sortable:true,
+           formatter:this.Linkify, sortOptions: { defaultDir: YAHOO.widget.DataTable.CLASS_DESC, sortFunction:totalNumberSorter }},
+        [% END %]
+        {key:"total", label:"Total", sortable:true, formatter:this.LinkifyTotal,
+         sortOptions: { defaultDir: YAHOO.widget.DataTable.CLASS_DESC, sortFunction:totalNumberSorter }}
+      ];
+  this.parseString = function(str) {
+    return YAHOO.lang.trim(str);
+  };
+
+  this.parseNumber = function(str) {
+    if (str.match(/^\s*\.\s*$/m))
+      return 0;
+
+    // Do not use <\/a>$. For some reason, IE6 doesn't understand it.
+    // We use [^\d]+$ instead.
+    var res = str.match(/>(\d+)[^\d]+$/m);
+    if (res && res[1])
+      return parseFloat(res[1]);
+  };
+
+  this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("tabular_report"));
+  this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+  this.myDataSource.responseSchema = {
+    fields: [
+      {key:"row_title", parser:this.parseString},
+      [% FOREACH col = col_names %]
+        {key:"[% col FILTER js %]", parser:this.parseNumber},
+      [% END %]
+      {key:"total", parser:this.parseNumber}
+    ]
+  };
+  this.myDataTable = new YAHOO.widget.DataTable("tabular_report_container_
+                         [% tbl FILTER js %]", myColumnDefs, this.myDataSource, 
+                         {formatRow: totalRowFormatter});
+});
+</script>
+
 [% IF tbl_field %]
-  <h2>[% tbl_disp FILTER html %]</h2>
+  <h2>[% tbl_disp FILTER email FILTER html %]</h2>
 [% END %]
 
 <table>
@@ -67,58 +164,48 @@
 [% col_idx = 0 %]
 [% row_idx = 0 %]
 [% grand_total = 0 %]
-
-<table border="1">
+<div id="tabular_report_container_[% tbl FILTER js %]">
+<table id="tabular_report" border="1">
   [% IF col_field %]
+    <thead>
     <tr>
-      <td class="[% classes.$row_idx.$col_idx %]">
-      </td>
+      <th class="[% classes.$row_idx.$col_idx %]">
+      </th>
       [% FOREACH col = col_names %]
         [% col_totals.$col = 0 %]
         [% NEXT IF col == "" %]
         
         [% col_idx = 1 - col_idx %]
-        <td class="[% classes.$row_idx.$col_idx %]">
-          [% IF col_field == 'bug_status' %]
-            [% get_status(col) FILTER html FILTER replace('^ $','&nbsp;') %]
-          [% ELSIF col_field == 'resolution' %]
-            [% get_resolution(col) FILTER html FILTER replace('^ $','&nbsp;') %]
-          [% ELSE %]
-            [% col FILTER html FILTER replace('^ $','&nbsp;') %]
-          [% END %]
-        </td>
+        <th class="[% classes.$row_idx.$col_idx %]">
+          [% PROCESS value_display value = col field = col_field %]
+        </th>
       [% END %]
-      <td class="ttotal">
+      <th class="ttotal">
         Total
-      </td>
+      </th>
     </tr>
+    </thead>
   [% END %]
-  
+  <tbody>
   [% FOREACH row = row_names %]
     [% row_total = 0 %]
     
     [% row_idx = 1 - row_idx %]
     <tr>
       <td class="[% classes.$row_idx.$col_idx %]" align="right">
-        [% IF row_field == 'bug_status' %]
-          [% get_status(row) FILTER html FILTER replace('^ $','&nbsp;') %]
-        [% ELSIF row_field == 'resolution' %]
-          [% get_resolution(row) FILTER html FILTER replace('^ $','&nbsp;') %]
-        [% ELSE %]
-          [% row FILTER html FILTER replace('^ $','&nbsp;') %]
-        [% END %]
+        [% PROCESS value_display value = row field = row_field %]
       </td>
       [% FOREACH col = col_names %]
         [% row_total = row_total + data.$tbl.$col.$row %]
         [% NEXT IF col == "" %]
-        [% col_totals.$col = col_totals.$col + data.$tbl.$col.$row %]
+        [% col_totals.$col = (col_totals.$col || 0) + data.$tbl.$col.$row %]
         
         [% col_idx = 1 - col_idx %]
         <td class="[% classes.$row_idx.$col_idx %]" align="center">
           [% IF data.$tbl.$col.$row AND data.$tbl.$col.$row > 0 %]
             <a href="[% urlbase %]&amp;
-              [% row_field FILTER url_quote %]=[% row FILTER url_quote %]&amp;
-              [% col_field FILTER url_quote %]=[% col FILTER url_quote %]">
+              [% row_field FILTER uri %]=[% row FILTER uri %]&amp;
+              [% col_field FILTER uri %]=[% col FILTER uri %]">
               [% data.$tbl.$col.$row %]</a>
           [% ELSE %]
             .
@@ -127,40 +214,50 @@
       [% END %] 
       <td class="ttotal" align="right">
         <a href="[% urlbase %]&amp;
-          [% row_field FILTER url_quote %]=[% row FILTER url_quote %]
+          [% row_field FILTER uri %]=[% row FILTER uri %]
           [% "&amp;$col_vals" IF col_vals %]">
         [% row_total %]</a>
         [% grand_total = grand_total + row_total %]
       </td>
     </tr>
   [% END %]
-  
-  <tr>
-    [% row_idx = 1 - row_idx %]
-    <td class="ttotal">
-      Total
-    </td>
-    [% FOREACH col = col_names %]
-      [% NEXT IF col == "" %]
+    <tr>
+      [% row_idx = 1 - row_idx %]
+      <td class="ttotal">
+        Total
+      </td>
+      [% FOREACH col = col_names %]
+        [% NEXT IF col == "" %]
       
-      <td class="ttotal" align="center">
-        <a href="[% urlbase %]&amp;
-          [% col_field FILTER url_quote %]=[% col FILTER url_quote %]
-          [% "&amp;$row_vals" IF row_vals %]">
-        [% col_totals.$col %]</a>
-      </td> 
-    [% END %]
-    <td class="ttotal" align="right">
-      <strong>
-        <a href="[% urlbase %]
-          [% "&amp;$row_vals" IF row_vals %]
-          [% "&amp;$col_vals" IF col_vals %]">[% grand_total %]</a>
-      </strong>
+        <td class="ttotal" align="center">
+          <a href="[% urlbase %]&amp;
+            [% col_field FILTER uri %]=[% col FILTER uri %]
+            [% "&amp;$row_vals" IF row_vals %]">
+          [% col_totals.$col %]</a>
+        </td>
+      [% END %]
+      <td class="ttotal" align="right">
+        <strong>
+          <a href="[% urlbase %]
+            [% "&amp;$row_vals" IF row_vals %]
+            [% "&amp;$col_vals" IF col_vals %]">[% grand_total %]</a>
+        </strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      
     </td>
   </tr>
 </table>
 
-      
-    </td>
-  </tr>
-</table>    
+[% BLOCK value_display %]
+  [% SET disp_value = display_value(field, value) %]
+  [% IF field == 'assigned_to' OR field == 'reporter'
+           OR field == 'qa_contact'
+  %]
+    [% disp_value = value FILTER email %]
+  [% END %]
+  [% disp_value FILTER html FILTER replace('^ $','&nbsp;') %]
+[% END %] 

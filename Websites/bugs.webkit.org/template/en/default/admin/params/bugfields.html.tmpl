@@ -28,22 +28,20 @@
                        "specific classification. But you must have 'editclassification' " _
                        "permissions enabled in order to edit classifications.",
 
-  showallproducts => "If this is on and useclassification is set, $terms.Bugzilla will add a " _
-                     "'All' link in the 'New $terms.Bug' page to list all available products.",
-
   usetargetmilestone => "Do you wish to use the Target Milestone field?",
 
   useqacontact => "Do you wish to use the QA Contact field?",
 
   usestatuswhiteboard => "Do you wish to use the Status Whiteboard field?",
 
-  usevotes => "Do you wish to allow users to vote for ${terms.bugs}? Note that in order " _
-              "for this to be effective, you will have to change the maximum " _
-              "votes allowed in a product to be non-zero in " _
-              "<a href=\"editproducts.cgi\">the product edit page</a>.",
-
   usebugaliases => "Do you wish to use $terms.bug aliases, which allow you to assign " _
                    "$terms.bugs an easy-to-remember name by which you can refer to them?",
+
+  use_see_also => 
+    "Do you wish to use the See Also field? It allows you refer to"
+    _ " $terms.bugs in other installations. Even if you disable this field,"
+    _ " $terms.bug relationships (URLs) already set on $terms.bugs will"
+    _ " still appear and can be removed.",
 
   defaultpriority => "This is the priority that newly entered $terms.bugs are set to.",
 

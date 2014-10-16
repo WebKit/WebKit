@@ -27,10 +27,10 @@
       <input size="64" maxlength="255" name="login" 
              id="login" value="[% otheruser.login FILTER html %]" />
       [% IF editform %]
-        [% IF !otheruser.groups.bz_sudo_protect %]
+        [% IF !otheruser.in_group('bz_sudo_protect') %]
           <br />
           <a href="relogin.cgi?action=prepare-sudo&amp;target_login=
-          [%- otheruser.login FILTER url_quote %]">Impersonate this user</a>
+          [%- otheruser.login FILTER uri %]">Impersonate this user</a>
         [% END %]
       [% END %]
     [% ELSE %]
@@ -38,6 +38,19 @@
     [% END %]
   </td>
 </tr>
+[% IF default_authorizer.extern_id_used %]
+  <tr>
+    <th><label for="extern_id">External Login ID:</label></th>
+    <td>
+      [% IF editusers %]
+        <input size="64" maxlength="64" name="extern_id"
+               id="extern_id" value="[% otheruser.extern_id FILTER html %]">
+      [% ELSE %]
+        [% otheruser.extern_id FILTER html %]
+      [% END %]
+    </td>
+  </tr>
+[% END %]
 <tr>
   <th><label for="name">Real name:</label></th>
   <td>
@@ -61,9 +74,8 @@
   <tr>
     <th><label for="password">Password:</label></th>
     <td>
-      <input type="password" size="16" maxlength="16" name="password"
-             autocomplete="off"
-             id="password" value="" />
+      <input type="password" size="16" name="password" id="password"
+             value="" autocomplete="off" />
       [% IF editform %]<br />
         (Enter new password to change.)
       [% END %]

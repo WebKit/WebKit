@@ -14,16 +14,15 @@
   #%]
 
 [%# INTERFACE:
-  # value: string; The field value we are editing.
-  # sortkey: number; Sortkey of the field value we are editing.
-  # field: object; The field this value belongs to.
+  # value: Bugzilla::Field::Choice; The field value we are editing.
+  # field: Bugzilla::Field; The field this value belongs to.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]
-  Edit Value '[% value FILTER html %]' for the '[% field.description FILTER html %]'
-  ([% field.name FILTER html %]) field
+  Edit Value '[% value.name FILTER html %]' for the 
+  '[% field.description FILTER html %]' ([% field.name FILTER html %]) field
 [% END %]
 [% PROCESS global/header.html.tmpl
   title = title
@@ -33,32 +32,76 @@
   <table border="0" cellpadding="4" cellspacing="0">
 
     <tr>
-      <th valign="top"><label for="value">Field Value:</label></th>
+      <th valign="top" align="right">
+        <label for="value_new">Field Value:</label>
+      </th>
       <td>
-        [% IF is_static %]
-          <input type="hidden" name="value" value="[% value FILTER html %]">
-          [% value FILTER html %]
+        [% IF value.is_static %]
+          <input type="hidden" name="value_new" id="value_new"
+                 value="[% value.name FILTER html %]">
+            [%- value.name FILTER html %]
         [% ELSE %]
-          <input id="value" size="20" maxlength="60" name="value" value="
-          [%- value FILTER html %]">
+          <input id="value_new" name="value_new" size="20"
+                 maxlength="[% constants.MAX_FIELD_VALUE_SIZE FILTER none %]"
+                 value="[% value.name FILTER html %]">
         [% END %]
       </td>
     </tr>
     <tr>
       <th align="right"><label for="sortkey">Sortkey:</label></th>
-      <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
-      [%- sortkey FILTER html %]"></td>
+      <td><input id="sortkey" size="6" maxlength="6" name="sortkey" 
+                 value="[%- value.sortkey FILTER html %]"></td>
     </tr>
     [% IF field.name == "bug_status" %]
       <tr>
         <th align="right"><label for="is_open">Status Type:</label></th>
-        <td>[% IF is_open %]Open[% ELSE %]Closed[% END %]</td>
+        <td>[% IF value.is_open %]Open[% ELSE %]Closed[% END %]</td>
       </tr>
     [% END %]
+    [% IF field.value_field %]
+      <tr>
+        <th align="right">
+          <label for="visibility_value_id">Only appears when
+           [%+ field.value_field.description FILTER html %] is set to:
+          </label>
+        </th>
+        <td>
+          <select name="visibility_value_id" id="visibility_value_id">
+            <option></option>
+            [% FOREACH field_value = field.value_field.legal_values %]
+              [% NEXT IF field_value.name == '' %]
+              <option value="[% field_value.id FILTER none %]"
+               [% ' selected="selected"' 
+                  IF field_value.id == value.visibility_value.id %]>
+                [% IF field.value_field.name == 'component' %]
+                  [% field_value.product.name FILTER html %]:
+                [% END %]
+                [% field_value.name FILTER html -%]
+              </option>
+            [% END %]
+          </select>
+          <small>(Leave unset to have this value always appear.)</small>
+        </td>
+      </tr>
+    [% END %]
+    <tr>
+      <th align="right"><label for="is_active">Enabled for [% terms.bugs %]:</label></th>
+      <td><input id="is_active" name="is_active" type="checkbox" value="1" 
+           [%+ 'checked="checked"' IF value.is_active %]
+           [%+ 'disabled="disabled"' IF value.is_default OR value.is_static %]>
+           [% IF value.is_default %]
+             This value is selected as default in the parameters for this field. It cannot be disabled.
+           [% ELSIF value.is_static %]
+             This value is non-deletable and cannot be disabled.
+           [% END %]
+           [% IF !(value.is_default OR value.is_static) %]
+             <input id="defined_is_active" name="defined_is_active"
+                    type="hidden" value="1">
+           [% END %]
+      </td>
+    </tr>
   </table>
-
-  <input type="hidden" name="valueold" value="[% value FILTER html %]">
-  <input type="hidden" name="sortkeyold" value="[% sortkey FILTER html %]">
+  <input type="hidden" name="value" value="[% value.name FILTER html %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="field" value="[% field.name FILTER html %]">
   <input type="hidden" name="token" value="[% token FILTER html %]">

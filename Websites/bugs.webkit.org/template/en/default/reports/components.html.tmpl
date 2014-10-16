@@ -16,17 +16,22 @@
   # Rights Reserved.
   #
   # Contributor(s): Bradley Baetz <bbaetz@student.usyd.edu.au>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
-  # product: object. The product for which we want to display component descriptions.
+  # product: object. The product for which we want to display component
+  # descriptions.
   #%]
 
 [% title = BLOCK %]
   Components for [% product.name FILTER html %]
 [% END %]
 
-[% PROCESS global/header.html.tmpl title = title %]
+[% PROCESS global/header.html.tmpl 
+  style_urls = [ "skins/standard/reports.css" ]
+  title = title 
+%]
 
 [% IF Param("useqacontact") %]
   [% numcols = 3 %]
@@ -34,27 +39,39 @@
   [% numcols = 2 %]
 [% END %]
 
-<p>
-  [% product.description FILTER html_light %]
-</p>
-
-<table>
+<table cellpadding="0" cellspacing="0" id="components_header_table">
   <tr>
-    <th align="left">Component</th>
-    <th align="left">Default Assignee</th>
+    <td class="instructions">
+      Select a component to see open [% terms.bugs %] in that component:
+    </td>
+    <td class="product_container">
+      <span class="product_name">[% product.name FILTER html %]</span>
+      <div class="product_desc">
+        [% product.description FILTER html_light %]
+      </div>
+    </td>
+  </tr>
+</table>
+
+<span class="components_header">Components</span>
+
+<table summary="Components table"
+       class="component_table" cellspacing="0" cellpadding="0">
+  <thead>
+  <tr>
+    <th>&nbsp;</th>
+    <th>Default Assignee</th>
     [% IF Param("useqacontact") %]
-      <th align="left">Default QA Contact</th>
+      <th>Default QA Contact</th>
     [% END %]
   </tr>
+  </thead>
 
+  <tbody>
   [% FOREACH comp = product.components %]
     [% INCLUDE describe_comp %]
   [% END %]
-  <tr>
-    <td colspan="[% numcols %]">
-      <hr>
-    </td>
-  </tr>
+  </tbody>
 </table>
 
 [% PROCESS global/footer.html.tmpl %]
@@ -64,28 +81,24 @@
 [%############################################################################%]
 
 [% BLOCK describe_comp %]
-  <tr>
-    <td colspan="[% numcols %]">
-      <hr>
+  <tr id="[% comp.name FILTER html %]">
+    <td rowspan="2" class="component_name">
+      <a href="buglist.cgi?product=
+               [%- product.name FILTER uri %]&amp;component=
+               [%- comp.name FILTER uri %]&amp;resolution=---">
+      [% comp.name FILTER html %]</a>
     </td>
-  </tr>
-  <tr>
-    <td rowspan="2">
-      <a name="[% comp.name FILTER html %]">[% comp.name FILTER html %]</a>
-    </td>
-    <td>
-      <a href="mailto:[% comp.default_assignee.email FILTER html %]">
-      [% comp.default_assignee.login FILTER html %]</a>
+    <td class="component_assignee">
+      [% INCLUDE global/user.html.tmpl who = comp.default_assignee %]
     </td>
     [% IF Param("useqacontact") %]
-      <td>
-        <a href="mailto:[% comp.default_qa_contact.email FILTER html %]">
-        [% comp.default_qa_contact.login FILTER html %]</a>
+      <td class="component_qa_contact">
+        [% INCLUDE global/user.html.tmpl who = comp.default_qa_contact %]
       </td>
     [% END %]
   </tr>
   <tr>
-    <td colspan="[% numcols - 1 %]">
+    <td colspan="[% numcols - 1 %]" class="component_description">
       [% comp.description FILTER html_light %]
     </td>
   </tr>

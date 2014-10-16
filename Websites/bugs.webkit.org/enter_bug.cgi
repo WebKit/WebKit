@@ -22,6 +22,7 @@
 #                 Joe Robins <jmrobins@tgix.com>
 #                 Gervase Markham <gerv@gerv.net>
 #                 Shane H. W. Travis <travis@sedsystems.ca>
+#                 Nitish Bezzala <nbezzala@yahoo.com>
 
 ##############################################################################
 #
@@ -152,15 +153,10 @@ if ($product_name eq '') {
         $product = $enterable_products[0];
     }
 }
-else {
-    # Do not use Bugzilla::Product::check_product() here, else the user
-    # could know whether the product doesn't exist or is not accessible.
-    $product = new Bugzilla::Product({'name' => $product_name});
-}
 
 # We need to check and make sure that the user has permission
 # to enter a bug against this product.
-$user->can_enter_product($product ? $product->name : $product_name, THROW_ERROR);
+$product = $user->can_enter_product($product || $product_name, THROW_ERROR);
 
 ##############################################################################
 # Useful Subroutines
@@ -199,44 +195,54 @@ sub pickplatform {
         # no choice is valid, we return "Other".
         for ($ENV{'HTTP_USER_AGENT'}) {
         #PowerPC
-            /\(.*PowerPC.*\)/i && do {@platform = "Macintosh"; last;};
-            /\(.*PPC.*\)/ && do {@platform = "Macintosh"; last;};
-            /\(.*AIX.*\)/ && do {@platform = "Macintosh"; last;};
+            /\(.*PowerPC.*\)/i && do {push @platform, ("PowerPC", "Macintosh");};
+        #AMD64, Intel x86_64
+            /\(.*amd64.*\)/ && do {push @platform, ("AMD64", "x86_64", "PC");};
+            /\(.*x86_64.*\)/ && do {push @platform, ("AMD64", "x86_64", "PC");};
+        #Intel Itanium
+            /\(.*IA64.*\)/ && do {push @platform, "IA64";};
         #Intel x86
-            /\(.*Intel.*\)/ && do {@platform = "PC"; last;};
-            /\(.*[ix0-9]86.*\)/ && do {@platform = "PC"; last;};
+            /\(.*Intel.*\)/ && do {push @platform, ("IA32", "x86", "PC");};
+            /\(.*[ix0-9]86.*\)/ && do {push @platform, ("IA32", "x86", "PC");};
         #Versions of Windows that only run on Intel x86
-            /\(.*Win(?:dows |)[39M].*\)/ && do {@platform = "PC"; last};
-            /\(.*Win(?:dows |)16.*\)/ && do {@platform = "PC"; last;};
+            /\(.*Win(?:dows |)[39M].*\)/ && do {push @platform, ("IA32", "x86", "PC");};
+            /\(.*Win(?:dows |)16.*\)/ && do {push @platform, ("IA32", "x86", "PC");};
         #Sparc
-            /\(.*sparc.*\)/ && do {@platform = "Sun"; last;};
-            /\(.*sun4.*\)/ && do {@platform = "Sun"; last;};
+            /\(.*sparc.*\)/ && do {push @platform, ("Sparc", "Sun");};
+            /\(.*sun4.*\)/ && do {push @platform, ("Sparc", "Sun");};
         #Alpha
-            /\(.*AXP.*\)/i && do {@platform = "DEC"; last;};
-            /\(.*[ _]Alpha.\D/i && do {@platform = "DEC"; last;};
-            /\(.*[ _]Alpha\)/i && do {@platform = "DEC"; last;};
+            /\(.*AXP.*\)/i && do {push @platform, ("Alpha", "DEC");};
+            /\(.*[ _]Alpha.\D/i && do {push @platform, ("Alpha", "DEC");};
+            /\(.*[ _]Alpha\)/i && do {push @platform, ("Alpha", "DEC");};
         #MIPS
-            /\(.*IRIX.*\)/i && do {@platform = "SGI"; last;};
-            /\(.*MIPS.*\)/i && do {@platform = "SGI"; last;};
+            /\(.*IRIX.*\)/i && do {push @platform, ("MIPS", "SGI");};
+            /\(.*MIPS.*\)/i && do {push @platform, ("MIPS", "SGI");};
         #68k
-            /\(.*68K.*\)/ && do {@platform = "Macintosh"; last;};
-            /\(.*680[x0]0.*\)/ && do {@platform = "Macintosh"; last;};
+            /\(.*68K.*\)/ && do {push @platform, ("68k", "Macintosh");};
+            /\(.*680[x0]0.*\)/ && do {push @platform, ("68k", "Macintosh");};
         #HP
-            /\(.*9000.*\)/ && do {@platform = "HP"; last;};
+            /\(.*9000.*\)/ && do {push @platform, ("PA-RISC", "HP");};
         #ARM
-#            /\(.*ARM.*\) && do {$platform = "ARM";};
+            /\(.*ARM.*\)/ && do {push @platform, ("ARM", "PocketPC");};
+        #PocketPC intentionally before PowerPC
+            /\(.*Windows CE.*PPC.*\)/ && do {push @platform, ("ARM", "PocketPC");};
+        #PowerPC
+            /\(.*PPC.*\)/ && do {push @platform, ("PowerPC", "Macintosh");};
+            /\(.*AIX.*\)/ && do {push @platform, ("PowerPC", "Macintosh");};
         #Stereotypical and broken
-            /\(.*Macintosh.*\)/ && do {@platform = "Macintosh"; last;};
-            /\(.*Mac OS [89].*\)/ && do {@platform = "Macintosh"; last;};
-            /\(Win.*\)/ && do {@platform = "PC"; last;};
-            /\(.*Win(?:dows[ -])NT.*\)/ && do {@platform = "PC"; last;};
-            /\(.*OSF.*\)/ && do {@platform = "DEC"; last;};
-            /\(.*HP-?UX.*\)/i && do {@platform = "HP"; last;};
-            /\(.*IRIX.*\)/i && do {@platform = "SGI"; last;};
-            /\(.*(SunOS|Solaris).*\)/ && do {@platform = "Sun"; last;};
+            /\(.*Windows CE.*\)/ && do {push @platform, ("ARM", "PocketPC");};
+            /\(.*Macintosh.*\)/ && do {push @platform, ("68k", "Macintosh");};
+            /\(.*Mac OS [89].*\)/ && do {push @platform, ("68k", "Macintosh");};
+            /\(.*Win64.*\)/ && do {push @platform, "IA64";};
+            /\(Win.*\)/ && do {push @platform, ("IA32", "x86", "PC");};
+            /\(.*Win(?:dows[ -])NT.*\)/ && do {push @platform, ("IA32", "x86", "PC");};
+            /\(.*OSF.*\)/ && do {push @platform, ("Alpha", "DEC");};
+            /\(.*HP-?UX.*\)/i && do {push @platform, ("PA-RISC", "HP");};
+            /\(.*IRIX.*\)/i && do {push @platform, ("MIPS", "SGI");};
+            /\(.*(SunOS|Solaris).*\)/ && do {push @platform, ("Sparc", "Sun");};
         #Braindead old browsers who didn't follow convention:
-            /Amiga/ && do {@platform = "Macintosh"; last;};
-            /WinMosaic/ && do {@platform = "PC"; last;};
+            /Amiga/ && do {push @platform, ("68k", "Macintosh");};
+            /WinMosaic/ && do {push @platform, ("IA32", "x86", "PC");};
         }
     }
 
@@ -257,7 +263,7 @@ sub pickos {
         # item in @os that is a valid platform choice. If
         # no choice is valid, we return "Other".
         for ($ENV{'HTTP_USER_AGENT'}) {
-            /\(.*IRIX.*\)/ && do {push @os, "IRIX"; };
+            /\(.*IRIX.*\)/ && do {push @os, "IRIX";};
             /\(.*OSF.*\)/ && do {push @os, "OSF/1";};
             /\(.*Linux.*\)/ && do {push @os, "Linux";};
             /\(.*Solaris.*\)/ && do {push @os, "Solaris";};
@@ -288,6 +294,8 @@ sub pickos {
             /\(.*VMS.*\)/ && do {push @os, "OpenVMS";};
             /\(.*Win.*\)/ && do {
               /\(.*Windows XP.*\)/ && do {push @os, "Windows XP";};
+              /\(.*Windows NT 6\.2.*\)/ && do {push @os, "Windows 8";};
+              /\(.*Windows NT 6\.1.*\)/ && do {push @os, "Windows 7";};
               /\(.*Windows NT 6\.0.*\)/ && do {push @os, "Windows Vista";};
               /\(.*Windows NT 5\.2.*\)/ && do {push @os, "Windows Server 2003";};
               /\(.*Windows NT 5\.1.*\)/ && do {push @os, "Windows XP";};
@@ -302,8 +310,19 @@ sub pickos {
               /\(.*Windows.*NT.*\)/ && do {push @os, "Windows NT";};
             };
             /\(.*Mac OS X.*\)/ && do {
-              /\(.*Intel.*Mac OS X 10.5.*\)/ && do {push @os, "Mac OS X 10.5";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.7.*\)/ && do {push @os, "Mac OS X 10.7";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.6.*\)/ && do {push @os, "Mac OS X 10.6";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.5.*\)/ && do {push @os, "Mac OS X 10.5";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.4.*\)/ && do {push @os, "Mac OS X 10.4";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.3.*\)/ && do {push @os, "Mac OS X 10.3";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.2.*\)/ && do {push @os, "Mac OS X 10.2";};
+              /\(.*Mac OS X (?:|Mach-O |\()10.1.*\)/ && do {push @os, "Mac OS X 10.1";};
+        # Unfortunately, OS X 10.4 was the first to support Intel. This is
+        # fallback support because some browsers refused to include the OS
+        # Version.
               /\(.*Intel.*Mac OS X.*\)/ && do {push @os, "Mac OS X 10.4";};
+        # OS X 10.3 is the most likely default version of PowerPC Macs
+        # OS X 10.0 is more for configurations which didn't setup 10.x versions
               /\(.*Mac OS X.*\)/ && do {push @os, ("Mac OS X 10.3", "Mac OS X 10.0", "Mac OS X");};
             };
             /\(.*32bit.*\)/ && do {push @os, "Windows 95";};
@@ -351,8 +370,8 @@ my $has_canconfirm = $user->in_group('canconfirm', $product->id);
 $cloned_bug_id = $cgi->param('cloned_bug_id');
 
 if ($cloned_bug_id) {
-    ValidateBugID($cloned_bug_id);
-    $cloned_bug = new Bugzilla::Bug($cloned_bug_id);
+    $cloned_bug = Bugzilla::Bug->check($cloned_bug_id);
+    $cloned_bug_id = $cloned_bug->id;
 }
 
 if (scalar(@{$product->components}) == 1) {
@@ -369,8 +388,6 @@ $vars->{'bug_severity'}          = get_legal_field_values('bug_severity');
 $vars->{'rep_platform'}          = get_legal_field_values('rep_platform');
 $vars->{'op_sys'}                = get_legal_field_values('op_sys');
 
-$vars->{'use_keywords'}          = 1 if Bugzilla::Keyword::keyword_count();
-
 $vars->{'assigned_to'}           = formvalue('assigned_to');
 $vars->{'assigned_to_disabled'}  = !$has_editbugs;
 $vars->{'cc_disabled'}           = 0;
@@ -380,13 +397,25 @@ $vars->{'qa_contact_disabled'}  = !$has_editbugs;
 
 $vars->{'cloned_bug_id'}         = $cloned_bug_id;
 
-$vars->{'token'}             = issue_session_token('createbug:');
+$vars->{'token'} = issue_session_token('create_bug');
 
 
 my @enter_bug_fields = grep { $_->enter_bug } Bugzilla->active_custom_fields;
 foreach my $field (@enter_bug_fields) {
-    $vars->{$field->name} = formvalue($field->name);
+    my $cf_name = $field->name;
+    my $cf_value = $cgi->param($cf_name);
+    if (defined $cf_value) {
+        if ($field->type == FIELD_TYPE_MULTI_SELECT) {
+            $cf_value = [$cgi->param($cf_name)];
+        }
+        $default{$cf_name} = $vars->{$cf_name} = $cf_value;
+    }
 }
+
+# This allows the Field visibility and value controls to work with the
+# Classification and Product fields as a parent.
+$default{'classification'} = $product->classification->name;
+$default{'product'} = $product->name;
 
 if ($cloned_bug_id) {
 
@@ -399,14 +428,19 @@ if ($cloned_bug_id) {
     $vars->{'short_desc'}     = $cloned_bug->short_desc;
     $vars->{'bug_file_loc'}   = $cloned_bug->bug_file_loc;
     $vars->{'keywords'}       = $cloned_bug->keywords;
-    $vars->{'dependson'}      = $cloned_bug_id;
-    $vars->{'blocked'}        = "";
+    $vars->{'dependson'}      = join (", ", $cloned_bug_id, @{$cloned_bug->dependson});
+    $vars->{'blocked'}        = join (", ", @{$cloned_bug->blocked});
     $vars->{'deadline'}       = $cloned_bug->deadline;
+    $vars->{'estimated_time'} = $cloned_bug->estimated_time;
 
     if (defined $cloned_bug->cc) {
         $vars->{'cc'}         = join (", ", @{$cloned_bug->cc});
     } else {
         $vars->{'cc'}         = formvalue('cc');
+    }
+    
+    if ($cloned_bug->reporter->id != $user->id) {
+        $vars->{'cc'} = join (", ", $cloned_bug->reporter->login, $vars->{'cc'}); 
     }
 
     foreach my $field (@enter_bug_fields) {
@@ -417,18 +451,17 @@ if ($cloned_bug_id) {
     # We need to ensure that we respect the 'insider' status of
     # the first comment, if it has one. Either way, make a note
     # that this bug was cloned from another bug.
-    # We cannot use $cloned_bug->longdescs because this method
-    # depends on the "comment_sort_order" user pref, and we
-    # really want the first comment of the bug.
-    my $bug_desc = Bugzilla::Bug::GetComments($cloned_bug_id, 'oldest_to_newest');
-    my $isprivate = $bug_desc->[0]->{'isprivate'};
+    my $bug_desc = $cloned_bug->comments({ order => 'oldest_to_newest' })->[0];
+    my $isprivate = $bug_desc->is_private;
 
-    $vars->{'comment'}        = "";
-    $vars->{'commentprivacy'} = 0;
+    $vars->{'comment'} = "";
+    $vars->{'comment_is_private'} = 0;
 
     if (!$isprivate || Bugzilla->user->is_insider) {
-        $vars->{'comment'}        = $bug_desc->[0]->{'body'};
-        $vars->{'commentprivacy'} = $isprivate;
+        # We use "body" to avoid any format_comment text, which would be
+        # pointless to clone.
+        $vars->{'comment'} = $bug_desc->body;
+        $vars->{'comment_is_private'} = $isprivate;
     }
 
 } # end of cloned bug entry form
@@ -441,17 +474,19 @@ else {
     $default{'rep_platform'}  = pickplatform();
     $default{'op_sys'}        = pickos();
 
+    $vars->{'alias'}          = formvalue('alias');
     $vars->{'short_desc'}     = formvalue('short_desc');
     $vars->{'bug_file_loc'}   = formvalue('bug_file_loc', "http://");
     $vars->{'keywords'}       = formvalue('keywords');
     $vars->{'dependson'}      = formvalue('dependson');
     $vars->{'blocked'}        = formvalue('blocked');
     $vars->{'deadline'}       = formvalue('deadline');
+    $vars->{'estimated_time'} = formvalue('estimated_time');
 
     $vars->{'cc'}             = join(', ', $cgi->param('cc'));
 
     $vars->{'comment'}        = formvalue('comment');
-    $vars->{'commentprivacy'} = formvalue('commentprivacy');
+    $vars->{'comment_is_private'} = formvalue('comment_is_private');
 
 } # end of normal/bookmarked entry form
 
@@ -469,23 +504,26 @@ else {
 #
 # Eventually maybe each product should have a "current version"
 # parameter.
-$vars->{'version'} = [map($_->name, @{$product->versions})];
+$vars->{'version'} = $product->versions;
+
+my $version_cookie = $cgi->cookie("VERSION-" . $product->name);
 
 if ( ($cloned_bug_id) &&
      ($product->name eq $cloned_bug->product ) ) {
     $default{'version'} = $cloned_bug->version;
 } elsif (formvalue('version')) {
     $default{'version'} = formvalue('version');
-} elsif (defined $cgi->cookie("VERSION-" . $product->name) &&
-    lsearch($vars->{'version'}, $cgi->cookie("VERSION-" . $product->name)) != -1) {
-    $default{'version'} = $cgi->cookie("VERSION-" . $product->name);
+} elsif (defined $version_cookie
+         and grep { $_->name eq $version_cookie } @{ $vars->{'version'} })
+{
+    $default{'version'} = $version_cookie;
 } else {
-    $default{'version'} = $vars->{'version'}->[$#{$vars->{'version'}}];
+    $default{'version'} = $vars->{'version'}->[$#{$vars->{'version'}}]->name;
 }
 
 # Get list of milestones.
 if ( Bugzilla->params->{'usetargetmilestone'} ) {
-    $vars->{'target_milestone'} = [map($_->name, @{$product->milestones})];
+    $vars->{'target_milestone'} = $product->milestones;
     if (formvalue('target_milestone')) {
        $default{'target_milestone'} = formvalue('target_milestone');
     } else {
@@ -494,100 +532,54 @@ if ( Bugzilla->params->{'usetargetmilestone'} ) {
 }
 
 # Construct the list of allowable statuses.
-my $initial_statuses = Bugzilla::Status->can_change_to();
+my @statuses = @{ Bugzilla::Status->can_change_to() };
 # Exclude closed states from the UI, even if the workflow allows them.
 # The back-end code will still accept them, though.
-@$initial_statuses = grep { $_->is_open } @$initial_statuses;
+@statuses = grep { $_->is_open } @statuses;
 
-my @status = map { $_->name } @$initial_statuses;
-# UNCONFIRMED is illegal if votes_to_confirm = 0.
-@status = grep {$_ ne 'UNCONFIRMED'} @status unless $product->votes_to_confirm;
-scalar(@status) || ThrowUserError('no_initial_bug_status');
+# UNCONFIRMED is illegal if allows_unconfirmed is false.
+if (!$product->allows_unconfirmed) {
+    @statuses = grep { $_->name ne 'UNCONFIRMED' } @statuses;
+}
+scalar(@statuses) || ThrowUserError('no_initial_bug_status');
 
 # If the user has no privs...
 unless ($has_editbugs || $has_canconfirm) {
     # ... use UNCONFIRMED if available, else use the first status of the list.
-    my $bug_status = (grep {$_ eq 'UNCONFIRMED'} @status) ? 'UNCONFIRMED' : $status[0];
-    @status = ($bug_status);
+    my ($unconfirmed) = grep { $_->name eq 'UNCONFIRMED' } @statuses;
+
+    # Because of an apparent Perl bug, "$unconfirmed || $statuses[0]" doesn't
+    # work, so we're using an "?:" operator. See bug 603314 for details.
+    @statuses = ($unconfirmed ? $unconfirmed : $statuses[0]);
 }
 
-$vars->{'bug_status'} = \@status;
+$vars->{'bug_status'} = \@statuses;
 
 # Get the default from a template value if it is legitimate.
 # Otherwise, and only if the user has privs, set the default
 # to the first confirmed bug status on the list, if available.
 
-if (formvalue('bug_status') && (lsearch(\@status, formvalue('bug_status')) >= 0)) {
+my $picked_status = formvalue('bug_status');
+if ($picked_status and grep($_->name eq $picked_status, @statuses)) {
     $default{'bug_status'} = formvalue('bug_status');
-} elsif (scalar @status == 1) {
-    $default{'bug_status'} = $status[0];
+} elsif (scalar @statuses == 1) {
+    $default{'bug_status'} = $statuses[0]->name;
 }
 else {
-    $default{'bug_status'} = ($status[0] ne 'UNCONFIRMED') ? $status[0] : $status[1];
+    $default{'bug_status'} = ($statuses[0]->name ne 'UNCONFIRMED') 
+                             ? $statuses[0]->name : $statuses[1]->name;
 }
 
-my $grouplist = $dbh->selectall_arrayref(
-                  q{SELECT DISTINCT groups.id, groups.name, groups.description,
-                                    membercontrol, othercontrol
-                      FROM groups
-                 LEFT JOIN group_control_map
-                        ON group_id = id AND product_id = ?
-                     WHERE isbuggroup != 0 AND isactive != 0
-                  ORDER BY description}, undef, $product->id);
-
-my @groups;
-
-foreach my $row (@$grouplist) {
-    my ($id, $groupname, $description, $membercontrol, $othercontrol) = @$row;
-    # Only include groups if the entering user will have an option.
-    next if ((!$membercontrol) 
-               || ($membercontrol == CONTROLMAPNA) 
-               || ($membercontrol == CONTROLMAPMANDATORY)
-               || (($othercontrol != CONTROLMAPSHOWN) 
-                    && ($othercontrol != CONTROLMAPDEFAULT)
-                    && (!Bugzilla->user->in_group($groupname)))
-             );
-    my $check;
-
-    # If this is a cloned bug, 
-    # AND the product for this bug is the same as for the original
-    #   THEN set a group's checkbox if the original also had it on
-    # ELSE IF this is a bookmarked template
-    #   THEN set a group's checkbox if was set in the bookmark
-    # ELSE
-    #   set a groups's checkbox based on the group control map
-    #
-    if ( ($cloned_bug_id) &&
-         ($product->name eq $cloned_bug->product ) ) {
-        foreach my $i (0..(@{$cloned_bug->groups} - 1) ) {
-            if ($cloned_bug->groups->[$i]->{'bit'} == $id) {
-                $check = $cloned_bug->groups->[$i]->{'ison'};
-            }
-        }
-    }
-    elsif(formvalue("maketemplate") ne "") {
-        $check = formvalue("bit-$id", 0);
-    }
-    else {
-        # Checkbox is checked by default if $control is a default state.
-        $check = (($membercontrol == CONTROLMAPDEFAULT)
-                 || (($othercontrol == CONTROLMAPDEFAULT)
-                      && (!Bugzilla->user->in_group($groupname))));
-    }
-
-    my $group = 
-    {
-        'bit' => $id , 
-        'checked' => $check , 
-        'description' => $description 
-    };
-
-    push @groups, $group;        
+my @groups = $cgi->param('groups');
+if ($cloned_bug) {
+    my @clone_groups = map { $_->name } @{ $cloned_bug->groups_in };
+    # It doesn't matter if there are duplicate names, since all we check
+    # for in the template is whether or not the group is set.
+    push(@groups, @clone_groups);
 }
+$default{'groups'} = \@groups;
 
-$vars->{'group'} = \@groups;
-
-Bugzilla::Hook::process("enter_bug-entrydefaultvars", { vars => $vars });
+Bugzilla::Hook::process('enter_bug_entrydefaultvars', { vars => $vars });
 
 $vars->{'default'} = \%default;
 

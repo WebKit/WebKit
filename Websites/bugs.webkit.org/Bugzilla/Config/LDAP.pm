@@ -35,7 +35,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::LDAP::sortkey = "09";
+our $sortkey = 1000;
 
 sub get_param_list {
   my $class = shift;

@@ -65,7 +65,7 @@
         There are no permission bits set on your account.
       [% END %]
 
-      [% IF user.groups.editusers %]
+      [% IF user.in_group('editusers') %]
         <br>
         You have editusers privileges.  You can turn on and off
         all permissions for all users.
@@ -83,7 +83,7 @@
           </table>
       [% END %]
 
-      [% IF user.groups.bz_sudoers %]
+      [% IF user.in_group('bz_sudoers') %]
         <br>
         You are a member of the <b>bz_sudoers</b> group, so you can 
         <a href="relogin.cgi?action=prepare-sudo">impersonate someone else</a>.

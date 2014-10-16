@@ -50,14 +50,26 @@
   #   keys are column names from columns subhashes name field.
   #
   # overrides:
-  #   Provides a method for overriding individual table cells. This is
-  #   a hash, whose key is the column name, so the column must be
-  #   named for one of it's cells to be overwritten. The hash value is
-  #   an array. Each item in this array is a hash specifying
-  #   row-matching criteria, and any overridden values. The
-  #   row-matching criteria consist of keys:
-  #     match_field: The name of the row value we want to match
-  #     match_value: The value to match against
+  # Example:
+  #     overrides {                           # first hash
+  #       column_name_to_be_overwriten => {   # second hash
+  #         name_of_row_to_match_against => { # third hash
+  #           value_to_match_against => {     # fourth hash
+  #             content => "some contents"
+  #             override_content => 1
+  #           }
+  #         }
+  #       }
+  #     }
+  #
+  #   Provides a method for overriding individual table cells. This is a hash
+  #   (1), whose key is the column name, so the column must be named for
+  #   one of it's cells to be overwritten. The hash value is another hash
+  #   (2). The keys of that second hash are the name of the row to match
+  #   against. The second hash then again points to another hash. Within this
+  #   third hash (3), the keys represent values to match against. The item
+  #   contains a fourth hash (4) specifying overridden values.
+  #   
   #   Each column value mentioned in the 'columns' documentation above
   #   can be overwritten (apart from name and heading). To override a
   #   table-cell value 'xxx', specify a new 'xxx' value, and specify a
@@ -98,30 +110,30 @@
          yesno_field = c.yesno_field
        %]
 
-      [%# Are there any specific overrides for this column? %]
-      [% FOREACH override = overrides.${c.name} %]
+      [%# Get any specific "important" overrides for this c.name and row.name ? %]
+      [% SET important = overrides.${c.name}.name.${row.name} %]
 
-        [%# Is the override for this row? %]
-        [% IF override.match_value == row.${override.match_field} %]
+      [% IF important %]
 
-          [% SET contentlink = override.contentlink 
-             IF override.override_contentlink %]
-          [% SET content = override.content
-             IF override.override_content %]
-          [% SET content_use_field = override.content_use_field
-             IF override.override_content_use_field %]
-          [% SET align = override.align
-             IF override.override_align %]
-          [% SET class = override.class
-             IF override.override_class %]
-          [% SET allow_html_content = override.allow_html_content
-             IF override.override_allow_html_content %]
-          [% SET yesno_field = override.yesno_field
-             IF override.override_yesno_field %]
+          [% FOREACH key IN important.keys %]
+             [% SET ${key} = important.${key} %]
+          [% END %]
 
-          [% LAST %]
+      [% ELSE %]
 
-        [% END %]
+          [%# Are there any specific overrides for this column? %]
+          [% FOREACH match_field = overrides.${c.name}.keys %]
+     
+              [% override = overrides.${c.name}.${match_field}.${row.$match_field} %]
+              [% NEXT UNLESS override %]
+
+              [% FOREACH key IN override.keys %]
+                  [% SET ${key} = override.${key} %]
+              [% END %]
+
+              [% LAST %]
+
+          [% END %]
       [% END %]
 
       <td [% IF align %] align="[% align FILTER html %]" [% END %]
@@ -131,8 +143,8 @@
           [% link_uri = contentlink %]
           [% WHILE link_uri.search('%%(.+?)%%')%]
             [% FOREACH m = link_uri.match('%%(.+?)%%') %]
-              [% IF row.$m %]
-                [% replacement_value = FILTER url_quote; row.$m; END %]
+              [% IF row.$m.defined %]
+                [% replacement_value = FILTER uri; row.$m; END %]
               [% ELSE %]
                 [% replacement_value = "" %]
               [% END %]

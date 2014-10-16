@@ -35,7 +35,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::ShadowDB::sortkey = "13";
+our $sortkey = 1500;
 
 sub get_param_list {
   my $class = shift;

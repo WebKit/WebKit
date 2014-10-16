@@ -34,6 +34,7 @@ use Bugzilla::Search;
 use Bugzilla::User;
 use Bugzilla::Mailer;
 use Bugzilla::Util;
+use Bugzilla::Group;
 
 # create some handles that we'll need
 my $template = Bugzilla->template;
@@ -64,7 +65,8 @@ my $sth_next_scheduled_event = $dbh->prepare(
     " whine_schedules.eventid, " .
     " whine_events.owner_userid, " .
     " whine_events.subject, " .
-    " whine_events.body " .
+    " whine_events.body, " .
+    " whine_events.mailifnobugs " .
     "FROM whine_schedules " .
     "LEFT JOIN whine_events " .
     " ON whine_events.id = whine_schedules.eventid " .
@@ -148,20 +150,22 @@ while (my ($schedule_id, $day, $time) = $sched_h->fetchrow_array) {
         # A time greater than now means it still has to run today
         elsif ($time >= $now_hour) {
             # set it to today + number of hours
-            $sth = $dbh->prepare("UPDATE whine_schedules " .
-                                 "SET run_next = CURRENT_DATE + " .
-                                 $dbh->sql_interval('?', 'HOUR') .
-                                 " WHERE id = ?");
+            $sth = $dbh->prepare(
+                "UPDATE whine_schedules " .
+                   "SET run_next = " .
+                        $dbh->sql_date_math('CURRENT_DATE', '+', '?', 'HOUR') .
+                " WHERE id = ?");
             $sth->execute($time, $schedule_id);
         }
         # the target time is less than the current time
         else { # set it for the next applicable day
             $day = &get_next_date($day);
+            my $run_next = $dbh->sql_date_math('(' 
+                . $dbh->sql_date_math('CURRENT_DATE', '+', '?', 'DAY')
+                . ')', '+', '?', 'HOUR');
             $sth = $dbh->prepare("UPDATE whine_schedules " .
-                                 "SET run_next = (CURRENT_DATE + " .
-                                 $dbh->sql_interval('?', 'DAY') . ") + " .
-                                 $dbh->sql_interval('?', 'HOUR') .
-                                 " WHERE id = ?");
+                                    "SET run_next = $run_next
+                                   WHERE id = ?");
             $sth->execute($day, $time, $schedule_id);
         }
 
@@ -174,11 +178,12 @@ while (my ($schedule_id, $day, $time) = $sched_h->fetchrow_array) {
         # midnight
         my $target_time = ($time =~ /^\d+$/) ? $time : 0;
 
+       my $run_next = $dbh->sql_date_math('(' 
+            . $dbh->sql_date_math('CURRENT_DATE', '+', '?', 'DAY') 
+            . ')', '+', '?', 'HOUR');
         $sth = $dbh->prepare("UPDATE whine_schedules " .
-                             "SET run_next = (CURRENT_DATE + " .
-                             $dbh->sql_interval('?', 'DAY') . ") + " .
-                             $dbh->sql_interval('?', 'HOUR') .
-                             " WHERE id = ?");
+                                "SET run_next = $run_next
+                               WHERE id = ?");
         $sth->execute($target_date, $target_time, $schedule_id);
     }
 }
@@ -199,6 +204,7 @@ $sched_h->finish();
 #   users   - array of user objects for recipients
 #   subject - Subject line for the email
 #   body    - the text inserted above the bug lists
+#   mailifnobugs - send message even if there are no query or query results
 
 sub get_next_event {
     my $event = {};
@@ -213,7 +219,7 @@ sub get_next_event {
         my $fetched = $sth_next_scheduled_event->fetch;
         $sth_next_scheduled_event->finish;
         return undef unless $fetched;
-        my ($eventid, $owner_id, $subject, $body) = @{$fetched};
+        my ($eventid, $owner_id, $subject, $body, $mailifnobugs) = @{$fetched};
 
         my $owner = Bugzilla::User->new($owner_id);
 
@@ -250,7 +256,7 @@ sub get_next_event {
                         $groupname, $owner);
                     if ($group_id) {
                         my $glist = join(',',
-                            @{Bugzilla::User->flatten_group_membership(
+                            @{Bugzilla::Group->flatten_group_membership(
                             $group_id)});
                         $sth = $dbh->prepare("SELECT user_id FROM " .
                                              "user_group_map " .
@@ -281,6 +287,7 @@ sub get_next_event {
                     'mailto'  => \@users,
                     'subject' => $subject,
                     'body'    => $body,
+                    'mailifnobugs' => $mailifnobugs,
             };
         }
     }
@@ -295,6 +302,7 @@ sub get_next_event {
 #   mailto  (array of user objects for mail targets)
 #   subject (subject line for message)
 #   body    (text blurb at top of message)
+#   mailifnobugs (send message even if there are no query or query results)
 while (my $event = get_next_event) {
 
     my $eventid = $event->{'eventid'};
@@ -315,12 +323,14 @@ while (my $event = get_next_event) {
         # run the queries for this schedule
         my $queries = run_queries($args);
 
-        # check to make sure there is something to output
-        my $there_are_bugs = 0;
-        for my $query (@{$queries}) {
-            $there_are_bugs = 1 if scalar @{$query->{'bugs'}};
+        # If mailifnobugs is false, make sure there is something to output
+        if (!$event->{'mailifnobugs'}) {
+            my $there_are_bugs = 0;
+            for my $query (@{$queries}) {
+                $there_are_bugs = 1 if scalar @{$query->{'bugs'}};
+            }
+            next unless $there_are_bugs;
         }
-        next unless $there_are_bugs;
 
         $args->{'queries'} = $queries;
 
@@ -357,7 +367,7 @@ sub mail {
     # Don't send mail to someone whose bugmail notification is disabled.
     return if $addressee->email_disabled;
 
-    my $template = Bugzilla->template_inner($addressee->settings->{'lang'}->{'value'});
+    my $template = Bugzilla->template_inner($addressee->setting('lang'));
     my $msg = ''; # it's a temporary variable to hold the template output
     $args->{'alternatives'} ||= [];
 
@@ -388,7 +398,6 @@ sub mail {
     $template->process("whine/multipart-mime.txt.tmpl", $args, \$msg)
         or die($template->error());
 
-    Bugzilla->template_inner("");
     MessageToMTA($msg);
 
     delete $args->{'boundary'};
@@ -424,16 +433,15 @@ sub run_queries {
         next unless $savedquery;    # silently ignore missing queries
 
         # Execute the saved query
-        my @searchfields = (
-            'bugs.bug_id',
-            'bugs.bug_severity',
-            'bugs.priority',
-            'bugs.rep_platform',
-            'bugs.assigned_to',
-            'bugs.bug_status',
-            'bugs.resolution',
-            'bugs.short_desc',
-            'map_assigned_to.login_name',
+        my @searchfields = qw(
+            bug_id
+            bug_severity
+            priority
+            rep_platform
+            assigned_to
+            bug_status
+            resolution
+            short_desc
         );
         # A new Bugzilla::CGI object needs to be created to allow
         # Bugzilla::Search to execute a saved query.  It's exceedingly weird,
@@ -441,10 +449,18 @@ sub run_queries {
         my $searchparams = new Bugzilla::CGI($savedquery);
         my $search = new Bugzilla::Search(
             'fields' => \@searchfields,
-            'params' => $searchparams,
+            'params' => scalar $searchparams->Vars,
             'user'   => $args->{'recipient'}, # the search runs as the recipient
         );
-        my $sqlquery = $search->getSQL();
+        # If a query fails for whatever reason, it shouldn't kill the script.
+        my $sqlquery = eval { $search->sql };
+        if ($@) {
+            print STDERR get_text('whine_query_failed', { query_name => $thisquery->{'name'},
+                                                          author => $args->{'author'},
+                                                          reason => $@ }) . "\n";
+            next;
+        }
+
         $sth = $dbh->prepare($sqlquery);
         $sth->execute;
 
@@ -579,21 +595,22 @@ sub reset_timer {
         my $target_time = ($run_time =~ /^\d+$/) ? $run_time : 0;
 
         my $nextdate = &get_next_date($run_day);
-
+        my $run_next = $dbh->sql_date_math('('
+            . $dbh->sql_date_math('CURRENT_DATE', '+', '?', 'DAY')
+            . ')', '+', '?', 'HOUR');
         $sth = $dbh->prepare("UPDATE whine_schedules " .
-                             "SET run_next = (CURRENT_DATE + " .
-                             $dbh->sql_interval('?', 'DAY') . ") + " .
-                             $dbh->sql_interval('?', 'HOUR') .
-                             " WHERE id = ?");
+                                "SET run_next = $run_next
+                               WHERE id = ?");
         $sth->execute($nextdate, $target_time, $schedule_id);
         return;
     }
 
     if ($minute_offset > 0) {
         # Scheduling is done in terms of whole minutes.
-        my $next_run = $dbh->selectrow_array('SELECT NOW() + ' .
-                                             $dbh->sql_interval('?', 'MINUTE'),
-                                             undef, $minute_offset);
+        
+        my $next_run = $dbh->selectrow_array(
+            'SELECT ' . $dbh->sql_date_math('NOW()', '+', '?', 'MINUTE'),
+            undef, $minute_offset);
         $next_run = format_time($next_run, "%Y-%m-%d %R");
 
         $sth = $dbh->prepare("UPDATE whine_schedules " .

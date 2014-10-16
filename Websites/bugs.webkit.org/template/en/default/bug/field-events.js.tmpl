@@ -1,0 +1,57 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is the San Jose State 
+  # University Foundation. Portions created by the Initial Developer
+  # are Copyright (C) 2008 the Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# INTERFACE:
+  #   field: a Bugzilla::Field object
+  #   product: (optional) a Bugzilla::Product object. When specified,
+  #            components are restricted to this product.
+  #%]
+
+[% FOREACH controlled_field = field.controls_visibility_of %]
+  showFieldWhen('[% controlled_field.name FILTER js %]',
+                '[% field.name FILTER js %]', [
+  [%- FOREACH visibility_value = controlled_field.visibility_values -%]
+    '[%- visibility_value.name FILTER js -%]'[% "," UNLESS loop.last %]
+  [%- END %]
+  ]);
+[% END %]
+
+[% legal_values = [] %]
+[% IF field.name == "component" AND product %]
+  [% legal_values = product.components %]
+[% ELSE %]
+  [% legal_values = field.legal_values %]
+[% END %]
+
+[% FOREACH legal_value = legal_values %]
+  [% FOREACH controlled_field = legal_value.controlled_values.keys %]
+    [% SET cont_ids = [] %]
+    [% FOREACH val = legal_value.controlled_values.$controlled_field %]
+      [% cont_ids.push(val.id) %]
+    [% END %]
+    [% NEXT IF !cont_ids.size %]
+    showValueWhen('[% controlled_field FILTER js %]',
+                  [[% cont_ids.join(',') FILTER js %]],
+                  '[% field.name FILTER js %]',
+                  [% legal_value.id FILTER js %]);
+  [% END %]
+[% END %]
+[% IF field.name == 'classification' %]
+  YAHOO.util.Event.on('product', 'change', setClassification);
+[% END %]

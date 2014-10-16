@@ -19,18 +19,14 @@
   #                 Joel Peshkin <bugreport@peshkin.net>
   #                 Jacob Steenhagen <jake@bugzilla.org>
   #                 Vlad Dascalu <jocuri@softhome.net>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
-  # gid: number. The group ID.
-  # name: string. The name of the group.
-  # description: string. The description of the group.
-  # hasusers: boolean int. True if the group includes users in it.
-  # hasbugs: boolean int. True if the group includes bugs in it.
-  # hasproduct: boolean int. True if the group is binded to a product.
-  # hasflags: boolean int. True if the group is used by a flag type.
-  # shared_queries: int. Number of saved searches being shared with this group.
-  # buglist: string. The list of bugs included in this group.
+  # group: A Bugzilla::Group object representing the group that is
+  #        about to be deleted.
+  # shared_queries: int; The number of queries being shared with this
+  #                 group.
   #%]
 
 
@@ -46,29 +42,43 @@
     <th>Description</th>
   </tr>
   <tr>
-    <td>[% gid FILTER html %]</td>
-    <td>[% name FILTER html %]</td>
-    <td>[% description FILTER html_light %]</td>
+    <td>[% group.id FILTER html %]</td>
+    <td>[% group.name FILTER html %]</td>
+    <td>[% group.description FILTER html_light %]</td>
   </tr>
 </table>
 
 <form method="post" action="editgroups.cgi">
-  [% IF hasusers %]
-    <p><b>One or more users belong to this group. You cannot delete
-    this group while there are users in it.</b>
+  [% IF group.members_non_inherited.size %]
+    <p><b>[% group.members_non_inherited.size FILTER html %] users belong
+      directly to this group. You cannot delete this group while there are
+      users in it.</b>
 
-    <br><a href="editusers.cgi?action=list&groupid=[% gid FILTER html %]&grouprestrict=1">Show
-    me which users</a> - <input type="checkbox" name="removeusers">Remove
-    all users from this group for me.</p>
+    <br><a href="editusers.cgi?action=list&amp;groupid=
+                 [%- group.id FILTER uri %]&amp;grouprestrict=1">Show
+    me which users</a> - <label><input type="checkbox" name="removeusers">Remove
+    all users from this group for me.</label></p>
   [% END %]
 
-  [% IF hasbugs %]
-    <p><b>One or more [% terms.bug %] reports are visible only to this group.
-    You cannot delete this group while any [% terms.bugs %] are using it.</b>
+  [% IF group.granted_by_direct(constants.GROUP_MEMBERSHIP).size %]
+    <p><b>Members of this group inherit membership in the following groups:</b></p>
+    <ul>
+      [% FOREACH grantor = group.granted_by_direct(constants.GROUP_MEMBERSHIP) %]
+        <li>[% grantor.name FILTER html %]</li>
+      [% END %]
+    </ul>
+  [% END %]
 
-    <br><a href="buglist.cgi?bug_id=[% buglist FILTER html %]">Show me
-    which [% terms.bugs %]</a> - <input type="checkbox" name="removebugs">Remove
-    all [% terms.bugs %] from this group restriction for me.</p>
+  [% IF group.bugs.size %]
+    <p><b>[% group.bugs.size FILTER html %] [%+ terms.bug %] reports are
+     visible only to this group. You cannot delete this group while any 
+     [%+ terms.bugs %] are using it.</b>
+
+    <br><a href="buglist.cgi?field0-0-0=bug_group&amp;type0-0-0=equals&amp;value0-0-0=
+                 [%- group.name FILTER uri %]">Show me
+    which [% terms.bugs %]</a> - 
+    <label><input type="checkbox" name="removebugs">Remove
+    all [% terms.bugs %] from this group restriction for me.</label></p>
 
     <p><b>NOTE:</b> It's quite possible to make confidential [% terms.bugs %]
     public by checking this box.  It is <B>strongly</B> suggested
@@ -76,21 +86,63 @@
     the box.</p>
   [% END %]
 
-  [% IF hasproduct %]
-    <p><b>This group is tied to the <U>[% name FILTER html %]</U> product.
-    You cannot delete this group while it is tied to a product.</b>
+  [% IF group.products.size %]
+    <p><b>This group is tied to the following products:</b></p>
+    [% SET any_hidden = 0 %]
+    <ul>
+      [% FOREACH data = group.products %]
 
-    <br><input type="checkbox" name="unbind">Delete this group anyway,
-    and make the product <U>[% name FILTER html %]</U> publicly visible.</p>
+        [% SET active = [] %]
+        [% FOREACH control = data.controls.keys.sort %]
+          [% NEXT IF !data.controls.$control %]
+          [% IF control == 'othercontrol' OR control == 'membercontrol' %]
+            [% SWITCH data.controls.$control %]
+              [% CASE constants.CONTROLMAPMANDATORY %]
+                [% SET type = "Mandatory" %]
+              [% CASE constants.CONTROLMAPSHOWN %]
+                [% SET type = "Shown" %]
+              [% CASE constants.CONTROLMAPDEFAULT %]
+                [% SET type = "Default" %]
+            [% END %]
+            [% active.push("$control: $type") %]
+          [% ELSE %]
+            [% active.push(control) %]
+          [% END %]
+        [% END %]
+
+        [% SET hidden = 0 %]
+        [% IF data.controls.othercontrol == constants.CONTROLMAPMANDATORY
+              AND data.controls.membercontrol == constants.CONTROLMAPMANDATORY
+              AND data.controls.entry 
+        %]
+          [% SET hidden = 1 %]
+        [% END %]
+
+        <li><a href="editproducts.cgi?action=editgroupcontrols&amp;product=
+                    [%- data.product.name FILTER uri %]">
+          [%- data.product.name FILTER html %]</a>
+          ([% active.join(', ') FILTER html %])
+          [% IF hidden %]
+            <strong>WARNING: This product is currently hidden.
+            Deleting this group will make this product publicly visible.
+            </strong>
+          [% END %]</li>
+      [% END %]
+    </ul>
+
+    <p><label><input type="checkbox" name="unbind">Delete this group anyway,
+      and remove these controls.</label></p>
   [% END %]
   
-  [% IF hasflags %]
+  [% IF group.flag_types.size %]
     <p><b>This group restricts who can make changes to flags of certain types.
     You cannot delete this group while there are flag types using it.</b>
 
-    <br><a href="editflagtypes.cgi?action=list&group=[% gid FILTER html %]">Show
-    me which types</a> - <input type="checkbox" name="removeflags">Remove all
-    flag types from this group for me.</p>
+    <br><a href="editflagtypes.cgi?action=list&amp;group=
+                 [%- group.id FILTER uri %]">Show
+    me which types</a> - 
+    <label><input type="checkbox" name="removeflags">Remove all
+    flag types from this group for me.</label></p>
   [% END %]
 
   [% IF shared_queries %]
@@ -115,7 +167,9 @@
   <h2>Confirmation</h2>
 
   <p>Do you really want to delete this group?</p>
-  [% IF (hasusers || hasbugs || hasproduct || hasflags) %]
+  [% IF group.users.size || group.bugs.size || group.products.size 
+        || group.flags.size
+  %]
     <p><b>You must check all of the above boxes or correct the
           indicated problems first before you can proceed.</b></p>
   [% END %]
@@ -123,7 +177,7 @@
   <p>
     <input type="submit" id="delete" value="Yes, delete">
     <input type="hidden" name="action" value="delete">
-    <input type="hidden" name="group" value="[% gid FILTER html %]">
+    <input type="hidden" name="group" value="[% group.id FILTER html %]">
     <input type="hidden" name="token" value="[% token FILTER html %]">
   </p>
 </form>

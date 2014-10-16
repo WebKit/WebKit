@@ -36,7 +36,7 @@ use strict;
 use Bugzilla::Config::Common;
 use Bugzilla::Group;
 
-$Bugzilla::Config::GroupSecurity::sortkey = "07";
+our $sortkey = 900;
 
 sub get_param_list {
   my $class = shift;
@@ -44,12 +44,6 @@ sub get_param_list {
   my @param_list = (
   {
    name => 'makeproductgroups',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'useentrygroupdefault',
    type => 'b',
    default => 0
   },

@@ -31,13 +31,14 @@ package Bugzilla::Install::Localconfig;
 use strict;
 
 use Bugzilla::Constants;
-use Bugzilla::Install::Util qw(bin_loc);
-use Bugzilla::Util qw(generate_random_password);
+use Bugzilla::Install::Util qw(bin_loc install_string);
+use Bugzilla::Util qw(generate_random_password wrap_hard);
 
 use Data::Dumper;
 use File::Basename qw(dirname);
 use IO::File;
 use Safe;
+use Term::ANSIColor;
 
 use base qw(Exporter);
 
@@ -50,162 +51,69 @@ use constant LOCALCONFIG_VARS => (
     {
         name    => 'create_htaccess',
         default => 1,
-        desc    => <<EOT
-# If you are using Apache as your web server, Bugzilla can create .htaccess
-# files for you that will instruct Apache not to serve files that shouldn't
-# be accessed from the web browser (like your local configuration data and non-cgi
-# executable files).  For this to work, the directory your Bugzilla
-# installation is in must be within the jurisdiction of a <Directory> block
-# in the httpd.conf file that has 'AllowOverride Limit' in it.  If it has
-# 'AllowOverride All' or other options with Limit, that's fine.
-# (Older Apache installations may use an access.conf file to store these
-# <Directory> blocks.)
-# If this is set to 1, Bugzilla will create these files if they don't exist.
-# If this is set to 0, Bugzilla will not create these files.
-EOT
     },
     {
         name    => 'webservergroup',
         default => ON_WINDOWS ? '' : 'apache',
-        desc    => q{# This is the group your web server runs as.
-# If you have a Windows box, ignore this setting.
-# If you do not have access to the group your web server runs under,
-# set this to "". If you do set this to "", then your Bugzilla installation
-# will be _VERY_ insecure, because some files will be world readable/writable,
-# and so anyone who can get local access to your machine can do whatever they
-# want. You should only have this set to "" if this is a testing installation
-# and you cannot set this up any other way. YOU HAVE BEEN WARNED!
-# If you set this to anything other than "", you will need to run checksetup.pl
-# as} . ROOT_USER . qq{, or as a user who is a member of the specified group.\n}
+    },
+    {
+        name    => 'use_suexec',
+        default => 0,
     },
     {
         name    => 'db_driver',
         default => 'mysql',
-        desc    => <<EOT
-# What SQL database to use. Default is mysql. List of supported databases
-# can be obtained by listing Bugzilla/DB directory - every module corresponds
-# to one supported database and the name corresponds to a driver name.
-EOT
     },
     {
         name    => 'db_host',
-        default => 'localhost',
-        desc    => 
-            "# The DNS name of the host that the database server runs on.\n"
+        default => 'localhost',           
     },
     {
         name    => 'db_name',
         default => 'bugs',
-        desc    => "# The name of the database\n"
     },
     {
         name    => 'db_user',
         default => 'bugs',
-        desc    => "# Who we connect to the database as.\n"
     },
     {
         name    => 'db_pass',
         default => '',
-        desc    => <<EOT
-# Enter your database password here. It's normally advisable to specify
-# a password for your bugzilla database user.
-# If you use apostrophe (') or a backslash (\\) in your password, you'll
-# need to escape it by preceding it with a '\\' character. (\\') or (\\)
-# (Far simpler just not to use those characters.)
-EOT
     },
     {
         name    => 'db_port',
         default => 0,
-        desc    => <<EOT
-# Sometimes the database server is running on a non-standard port. If that's
-# the case for your database server, set this to the port number that your
-# database server is running on. Setting this to 0 means "use the default
-# port for my database server."
-EOT
     },
     {
         name    => 'db_sock',
         default => '',
-        desc    => <<EOT
-# MySQL Only: Enter a path to the unix socket for MySQL. If this is
-# blank, then MySQL's compiled-in default will be used. You probably
-# want that.
-EOT
     },
     {
         name    => 'db_check',
         default => 1,
-        desc    => <<EOT
-# Should checksetup.pl try to verify that your database setup is correct?
-# (with some combinations of database servers/Perl modules/moonphase this
-# doesn't work)
-EOT
     },
     {
         name    => 'index_html',
         default => 0,
-        desc    => <<EOT
-# With the introduction of a configurable index page using the
-# template toolkit, Bugzilla's main index page is now index.cgi.
-# Most web servers will allow you to use index.cgi as a directory
-# index, and many come preconfigured that way, but if yours doesn't
-# then you'll need an index.html file that provides redirection
-# to index.cgi. Setting \$index_html to 1 below will allow
-# checksetup.pl to create one for you if it doesn't exist.
-# NOTE: checksetup.pl will not replace an existing file, so if you
-#       wish to have checksetup.pl create one for you, you must
-#       make sure that index.html doesn't already exist
-EOT
     },
     {
         name    => 'cvsbin',
-        default => \&_get_default_cvsbin,
-        desc    => <<EOT
-# For some optional functions of Bugzilla (such as the pretty-print patch
-# viewer), we need the cvs binary to access files and revisions.
-# Because it's possible that this program is not in your path, you can specify
-# its location here.  Please specify the full path to the executable.
-EOT
+        default => sub { bin_loc('cvs') },
     },
     {
         name    => 'interdiffbin',
-        default => \&_get_default_interdiffbin,
-        desc    => <<EOT
-# For some optional functions of Bugzilla (such as the pretty-print patch
-# viewer), we need the interdiff binary to make diffs between two patches.
-# Because it's possible that this program is not in your path, you can specify
-# its location here.  Please specify the full path to the executable.
-EOT
+        default => sub { bin_loc('interdiff') },
     },
     {
         name    => 'diffpath',
-        default => \&_get_default_diffpath,
-        desc    => <<EOT
-# The interdiff feature needs diff, so we have to have that path.
-# Please specify the directory name only; do not use trailing slash.
-EOT
+        default => sub { dirname(bin_loc('diff')) },
     },
     {
         name    => 'site_wide_secret',
         # 64 characters is roughly the equivalent of a 384-bit key, which
         # is larger than anybody would ever be able to brute-force.
         default => sub { generate_random_password(64) },
-        desc    => <<EOT
-# This secret key is used by your installation for the creation and
-# validation of encrypted tokens to prevent unsolicited changes,
-# such as bug changes. A random string is generated by default.
-# It's very important that this key is kept secret. It also must be
-# very long.
-EOT
     },
-);
-
-use constant OLD_LOCALCONFIG_VARS => qw(
-    mysqlpath
-    contenttypes
-    pages
-    severities platforms opsys priorities
 );
 
 sub read_localconfig {
@@ -221,23 +129,31 @@ sub read_localconfig {
         $s->rdo($filename);
         if ($@ || $!) {
             my $err_msg = $@ ? $@ : $!;
-            die <<EOT;
-An error has occurred while reading your 'localconfig' file.  The text of 
-the error message is:
-
-$err_msg
-
-Please fix the error in your 'localconfig' file. Alternately, rename your
-'localconfig' file, rerun checksetup.pl, and re-enter your answers.
-
-  \$ mv -f localconfig localconfig.old
-  \$ ./checksetup.pl
-EOT
+            die install_string('error_localconfig_read',
+                    { error => $err_msg, localconfig => $filename }), "\n";
         }
 
-        my @vars = map($_->{name}, LOCALCONFIG_VARS);
-        push(@vars, OLD_LOCALCONFIG_VARS) if $include_deprecated;
-        foreach my $var (@vars) {
+        my @read_symbols;
+        if ($include_deprecated) {
+            # First we have to get the whole symbol table
+            my $safe_root = $s->root;
+            my %safe_package;
+            { no strict 'refs'; %safe_package = %{$safe_root . "::"}; }
+            # And now we read the contents of every var in the symbol table.
+            # However:
+            # * We only include symbols that start with an alphanumeric
+            #   character. This excludes symbols like "_<./localconfig"
+            #   that show up in some perls.
+            # * We ignore the INC symbol, which exists in every package.
+            # * Perl 5.10 imports a lot of random symbols that all
+            #   contain "::", and we want to ignore those.
+            @read_symbols = grep { /^[A-Za-z0-1]/ and !/^INC$/ and !/::/ }
+                                 (keys %safe_package);
+        }
+        else {
+            @read_symbols = map($_->{name}, LOCALCONFIG_VARS);
+        }
+        foreach my $var (@read_symbols) {
             my $glob = $s->varglob($var);
             # We can't get the type of a variable out of a Safe automatically.
             # We can only get the glob itself. So we figure out its type this
@@ -250,10 +166,10 @@ EOT
             if (defined $$glob) {
                 $localconfig{$var} = $$glob;
             }
-            elsif (defined @$glob) {
+            elsif (@$glob) {
                 $localconfig{$var} = \@$glob;
             }
-            elsif (defined %$glob) {
+            elsif (%$glob) {
                 $localconfig{$var} = \%$glob;
             }
         }
@@ -307,74 +223,62 @@ sub update_localconfig {
         if (!defined $value) {
             push(@new_vars, $name);
             $var->{default} = &{$var->{default}} if ref($var->{default}) eq 'CODE';
-            $localconfig->{$name} = $answer->{$name} || $var->{default};
+            if (exists $answer->{$name}) {
+                $localconfig->{$name} = $answer->{$name};
+            }
+            else {
+                $localconfig->{$name} = $var->{default};
+            }
         }
     }
 
-    my @old_vars;
-    foreach my $name (OLD_LOCALCONFIG_VARS) {
-        push(@old_vars, $name) if defined $localconfig->{$name};
+    if (!$localconfig->{'interdiffbin'} && $output) {
+        print "\n", install_string('patchutils_missing'), "\n";
     }
 
-    if (!$localconfig->{'interdiffbin'} && $output) {
-        print <<EOT
-
-OPTIONAL NOTE: If you want to be able to use the 'difference between two
-patches' feature of Bugzilla (which requires the PatchReader Perl module
-as well), you should install patchutils from:
-
-    http://cyberelk.net/tim/patchutils/
-
-EOT
+    my @old_vars;
+    foreach my $var (keys %$localconfig) {
+        push(@old_vars, $var) if !grep($_->{name} eq $var, LOCALCONFIG_VARS);
     }
 
     my $filename = bz_locations->{'localconfig'};
 
+    # Move any custom or old variables into a separate file.
     if (scalar @old_vars) {
+        my $filename_old = "$filename.old";
+        open(my $old_file, ">>:utf8", $filename_old) 
+            or die "$filename_old: $!";
+        local $Data::Dumper::Purity = 1;
+        foreach my $var (@old_vars) {
+            print $old_file Data::Dumper->Dump([$localconfig->{$var}], 
+                                               ["*$var"]) . "\n\n";
+        }
+        close $old_file;
         my $oldstuff = join(', ', @old_vars);
-        print <<EOT
-
-The following variables are no longer used in $filename, and
-should be removed: $oldstuff
-
-EOT
+        print install_string('lc_old_vars',
+            { localconfig => $filename, old_file => $filename_old,
+              vars => $oldstuff }), "\n";
     }
 
-    if (scalar @new_vars) {
-        my $filename = bz_locations->{'localconfig'};
-        my $fh = new IO::File($filename, '>>') || die "$filename: $!";
-        $fh->seek(0, SEEK_END);
-        foreach my $var (LOCALCONFIG_VARS) {
-            if (grep($_ eq $var->{name}, @new_vars)) {
-                print $fh "\n", $var->{desc},
-                      Data::Dumper->Dump([$localconfig->{$var->{name}}], 
-                                         ["*$var->{name}"]);
-            }
-        }
-        # When updating site_wide_secret to the new value, don't
-        # leave the old value behind.
-        if (grep { $_ eq 'site_wide_secret' } @new_vars) {
-            my $read = new IO::File($filename, '<') || die "$filename: $!";
-            my $text;
-            { local $/; $text = <$read> }
-            $read->close;
-            $text =~ s/^\$site_wide_secret = '\w{256}';$//ms;
-            my $write = new IO::File($filename, '>') || die "$filename: $!";
-            print $write $text;
-            $write->close;
-        }
+    # Re-write localconfig
+    open(my $fh, ">:utf8", $filename) or die "$filename: $!";
+    foreach my $var (LOCALCONFIG_VARS) {
+        my $name = $var->{name};
+        my $desc = install_string("localconfig_$name", { root => ROOT_USER });
+        chomp($desc);
+        # Make the description into a comment.
+        $desc =~ s/^/# /mg;
+        print $fh $desc, "\n",
+                  Data::Dumper->Dump([$localconfig->{$name}],
+                                     ["*$name"]), "\n";
+   }
 
+    if (@new_vars) {
         my $newstuff = join(', ', @new_vars);
-        print <<EOT;
-
-This version of Bugzilla contains some variables that you may want to 
-change and adapt to your local settings. Please edit the file 
-$filename and rerun checksetup.pl.
-
-The following variables are new to $filename since you last ran
-checksetup.pl:  $newstuff
-
-EOT
+        print "\n";
+        print colored(install_string('lc_new_vars', { localconfig => $filename,
+                                                      new_vars => wrap_hard($newstuff, 70) }),
+                      COLOR_ERROR), "\n";
         exit;
     }
 
@@ -382,13 +286,6 @@ EOT
     delete Bugzilla->request_cache->{localconfig};
 
     return { old_vars => \@old_vars, new_vars => \@new_vars };
-}
-
-sub _get_default_cvsbin       { return bin_loc('cvs') }
-sub _get_default_interdiffbin { return bin_loc('interdiff') }
-sub _get_default_diffpath {
-    my $diff_bin = bin_loc('diff');
-    return dirname($diff_bin);
 }
 
 1;
@@ -438,31 +335,46 @@ variables defined in localconfig, it will print out a warning.
 
 =over
 
-=item C<read_localconfig($include_deprecated)>
+=item C<read_localconfig>
 
-Description: Reads the localconfig file and returns all valid
-             values in a hashref.
+=over
 
-Params:      C<$include_deprecated> - C<true> if you want the returned
-                 hashref to also include variables listed in 
-                 C<OLD_LOCALCONFIG_VARS>, if they exist. Generally
-                 this is only for use by C<update_localconfig>.
+=item B<Description>
 
-Returns:     A hashref of the localconfig variables. If an array
-             is defined, it will be an arrayref in the returned hash. If a
-             hash is defined, it will be a hashref in the returned hash.
-             Only includes variables specified in C<LOCALCONFIG_VARS>
-             (and C<OLD_LOCALCONFIG_VARS> if C<$include_deprecated> is
-             specified).
+Reads the localconfig file and returns all valid values in a hashref.
 
-=item C<update_localconfig({ output =E<gt> 1 })>
+=item B<Params>
+
+=over
+
+=item C<$include_deprecated> 
+
+C<true> if you want the returned hashref to include *any* variable
+currently defined in localconfig, even if it doesn't exist in 
+C<LOCALCONFIG_VARS>. Generally this is is only for use 
+by L</update_localconfig>.
+
+=back
+
+=item B<Returns>
+
+A hashref of the localconfig variables. If an array is defined in
+localconfig, it will be an arrayref in the returned hash. If a
+hash is defined, it will be a hashref in the returned hash.
+Only includes variables specified in C<LOCALCONFIG_VARS>, unless
+C<$include_deprecated> is true.
+
+=back
+
+
+=item C<update_localconfig>
 
 Description: Adds any new variables to localconfig that aren't
              currently defined there. Also optionally prints out
              a message about vars that *should* be there and aren't.
              Exits the program if it adds any new vars.
 
-Params:      C<output> - C<true> if the function should display informational
+Params:      C<$output> - C<true> if the function should display informational
                  output and warnings. It will always display errors or
                  any message which would cause program execution to halt.
 

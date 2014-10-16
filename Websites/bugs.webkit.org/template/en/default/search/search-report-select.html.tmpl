@@ -26,22 +26,25 @@
 [% PROCESS "global/field-descs.none.tmpl" %]
 
 [% BLOCK select %]
-  [% rep_fields = ["classification", "product", "component", "version", "rep_platform",  
-                   "op_sys", "bug_status", "resolution", "bug_severity", 
-                   "priority", "target_milestone", "assigned_to",
-                   "reporter", "qa_contact", "votes" ] %]
+  [% Hook.process('rep_fields', 'search/search-report-select.html.tmpl') %]
 
   <select name="[% name FILTER html %]">
     <option value="">&lt;none&gt;</option>
     
-    [% FOREACH field = rep_fields %]
+    [% FOREACH field = report_columns.keys.sort %]
       [% NEXT IF field == "classification" AND !Param('useclassification') %]
       [% NEXT IF field == "target_milestone" AND !Param('usetargetmilestone') %]
       [% NEXT IF field == "qa_contact" AND !Param('useqacontact') %]
-      [% NEXT IF field == "votes" AND !Param('usevotes') %]      
       <option value="[% field FILTER html %]" 
         [% " selected" IF default.$name.0 == field %]>
         [% field_descs.$field || field FILTER html %]</option>
+    [% END %]
+
+    [%# Single-select fields are also valid column names. %]
+    [% FOREACH field = custom_fields %]
+      <option value="[% field.name FILTER html %]"
+        [% " selected" IF default.$name.0 == field.name %]>
+        [% field.description FILTER html %]</option>
     [% END %]
   </select>
 [% END %]

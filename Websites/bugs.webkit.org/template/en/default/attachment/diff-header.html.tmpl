@@ -30,176 +30,6 @@ Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
   [% END %]
 [% END %]
 
-[% style = BLOCK %]
-.file_head {
-  font-weight: bold;
-  font-size: 1em;
-  background-color: #c3c3c3;
-  border: 1px solid black;
-}
-
-.file_head a {
-  text-decoration: none; 
-  font-family: monospace; 
-  font-size: 1.1em;
-}
-
-.file_collapse {
-  display: none;
-}
-
-.section_head {
-  background-color: #f0f0f0;
-  border: 1px solid black;
-  text-align: left;
-}
-
-table.file_table {
-  table-layout: fixed;
-  width: 100%;
-  empty-cells: show;
-  border-spacing: 0px;
-  border-collapse: collapse;
-  /* draw border below last open context section in listing */
-  border-bottom: 1px solid black;
-}
-
-tbody.file pre {
-  display: inline;
-  white-space: pre-wrap; /* CSS 3 & CSS 2.1 */
-  white-space: -moz-pre-wrap; /* Gecko < 1.9.1 */
-  white-space: -o-pre-wrap; /* Opera 7 */
-  font-size: 0.9em;
-}
-
-tbody.file pre:empty {
-  display: block;
-}
-
-.changed {
-  background-color: lightblue;
-}
-
-.added {
-  background-color: lightgreen;
-}
-
-.removed {
-  background-color: #FFCC99;
-}
-
-.num {
-  background-color: #ffe9ae;
-  text-align:right;
-  padding: 0 0.3em;
-  width: 3em;
-}
-
-.warning {
-  color: red
-}
-[% END %]
-
-[%# SCRIPT FUNCTIONS %]
-[% javascript = BLOCK %]
-  function collapse_all() {
-    var elem = document.checkboxform.firstChild;
-    while (elem != null) {
-      if (elem.firstChild != null) {
-        var tbody = elem.firstChild.nextSibling;
-        if (tbody.className == 'file') {
-          tbody.className = 'file_collapse';
-          twisty = get_twisty_from_tbody(tbody);
-          twisty.firstChild.nodeValue = '(+)';
-          twisty.nextSibling.checked = false;
-        }
-      }
-      elem = elem.nextSibling;
-    }
-    return false;
-  }
-
-  function expand_all() {
-    var elem = document.checkboxform.firstChild;
-    while (elem != null) {
-      if (elem.firstChild != null) {
-        var tbody = elem.firstChild.nextSibling;
-        if (tbody.className == 'file_collapse') {
-          tbody.className = 'file';
-          twisty = get_twisty_from_tbody(tbody);
-          twisty.firstChild.nodeValue = '(-)';
-          twisty.nextSibling.checked = true;
-        }
-      }
-      elem = elem.nextSibling;
-    }
-    return false;
-  }
-
-  var current_restore_elem;
-
-  function restore_all() {
-    current_restore_elem = null;
-    incremental_restore();
-  }
-
-  function incremental_restore() {
-    if (!document.checkboxform.restore_indicator.checked) {
-      return;
-    }
-    var next_restore_elem;
-    if (current_restore_elem) {
-      next_restore_elem = current_restore_elem.nextSibling;
-    } else {
-      next_restore_elem = document.checkboxform.firstChild;
-    }
-    while (next_restore_elem != null) {
-      current_restore_elem = next_restore_elem;
-      if (current_restore_elem.firstChild != null) {
-        restore_elem(current_restore_elem.firstChild.nextSibling);
-      }
-      next_restore_elem = current_restore_elem.nextSibling;
-    }
-  }
-
-  function restore_elem(elem, alertme) {
-    if (elem.className == 'file_collapse') {
-      twisty = get_twisty_from_tbody(elem);
-      if (twisty.nextSibling.checked) {
-        elem.className = 'file';
-        twisty.firstChild.nodeValue = '(-)';
-      }
-    } else if (elem.className == 'file') {
-      twisty = get_twisty_from_tbody(elem);
-      if (!twisty.nextSibling.checked) {
-        elem.className = 'file_collapse';
-        twisty.firstChild.nodeValue = '(+)';
-      }
-    }
-  }
-
-  function twisty_click(twisty) {
-    tbody = get_tbody_from_twisty(twisty);
-    if (tbody.className == 'file') {
-      tbody.className = 'file_collapse';
-      twisty.firstChild.nodeValue = '(+)';
-      twisty.nextSibling.checked = false;
-    } else {
-      tbody.className = 'file';
-      twisty.firstChild.nodeValue = '(-)';
-      twisty.nextSibling.checked = true;
-    }
-    return false;
-  }
-
-  function get_tbody_from_twisty(twisty) {
-    return twisty.parentNode.parentNode.parentNode.nextSibling;
-  }
-  function get_twisty_from_tbody(tbody) {
-    return tbody.previousSibling.firstChild.nextSibling.firstChild.firstChild;
-  }
-[% END %]
-
 [% onload = 'restore_all(); document.checkboxform.restore_indicator.checked = true' %]
 
 [% BLOCK viewurl %]attachment.cgi?id=[% id %][% END %]
@@ -221,18 +51,16 @@ tbody.file pre:empty {
   [% subheader = BLOCK %]
     [% bugsummary FILTER html %]
   [% END %]
-  [% PROCESS global/header.html.tmpl doc_section = "attachments.html#patchviewer" %]
+  [% PROCESS global/header.html.tmpl doc_section = "attachments.html#patchviewer"
+                                     javascript_urls = "js/attachment.js"
+                                     style_urls = ['skins/standard/attachment.css'] %]
 [% ELSE %]
   <html>
   <head>
-  <style type="text/css">
-  [% style %]
-  </style>
-  <script type="text/javascript">
-  <!--
-  [% javascript %]
-  -->
-  </script>
+  <link href="[% 'skins/standard/attachment.css' FILTER mtime %]" 
+        rel="stylesheet" type="text/css">
+  <script src="[% 'js/attachment.js' FILTER mtime %]" 
+          type="text/javascript"></script>
   </head>
   <body onload="[% onload FILTER html %]">
 [% END %]
@@ -243,7 +71,8 @@ tbody.file pre:empty {
   [% IF headers %]
     <a href="[% PROCESS viewurl id=attachid %]">View</a>
     | <a href="[% PROCESS editurl id=attachid %]">Details</a>
-    | <a href="[% PROCESS diffurl id=attachid %]&amp;context=[% context FILTER url_quote %]&amp;collapsed=[% collapsed FILTER url_quote %]&amp;headers=[% headers FILTER url_quote %]&amp;format=raw">Raw&nbsp;Unified</a>
+    | <a href="[% PROCESS diffurl id=attachid %]&amp;context=[% context FILTER uri %]&amp;collapsed=[% collapsed FILTER uri %]&amp;headers=[% headers FILTER uri %]&amp;format=raw">Raw&nbsp;Unified</a>
+    | Return to [% "$terms.bug $bugid" FILTER bug_link(bugid) FILTER none %]
   [% END %]
   [% IF other_patches.size > 0 %]
     [% IF headers %] |[%END%]
@@ -267,6 +96,7 @@ tbody.file pre:empty {
 [% ELSE %]
   [% IF headers %]
     <a href="attachment.cgi?oldid=[% oldid %]&amp;newid=[% newid %]&amp;action=interdiff&amp;format=raw">Raw Unified</a>
+    | Return to [% "$terms.bug $bugid" FILTER bug_link(bugid) FILTER none %]
     |
   [% END %]
 [% END %]
@@ -287,12 +117,12 @@ tbody.file pre:empty {
   [% IF context == "patch" %]
     (<strong>Patch</strong> / 
   [% ELSE %]
-    (<a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER url_quote %]">Patch</a> / 
+    (<a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER uri %]">Patch</a> / 
   [% END %]
   [% IF context == "file" %]
     <strong>File</strong> /
   [% ELSE %]
-    <a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER url_quote %]&amp;context=file">File</a> / 
+    <a href="[% PROCESS diffurl id=attachid %]&amp;headers=[% headers FILTER uri %]&amp;context=file">File</a> / 
   [% END %]
 
   [% IF context == "patch" || context == "file" %]

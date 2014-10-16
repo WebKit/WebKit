@@ -1,0 +1,55 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Everything Solved, Inc.
+  # Portions created by the Initial Developer are Copyright (C) 2010
+  # the Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s): 
+  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[% IF error == "voting_must_be_nonnegative" %]
+    [% title = "Votes Must Be Non-negative" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    Only use non-negative numbers for your [% terms.bug %] votes.
+
+[% ELSIF error == "voting_product_illegal_votes" %]
+    [% title = "Votes Must Be Non-negative" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    '[% votes FILTER html %]' is an invalid value for the
+    <em>
+    [% IF field == "votesperuser" %]
+      Votes Per User
+    [% ELSIF field == "maxvotesperbug" %]
+      Maximum Votes Per [% terms.Bug %]
+    [% ELSIF field == "votestoconfirm" %]
+      Votes To Confirm
+    [% END %]
+    </em> field, which should contain a non-negative number.
+
+[% ELSIF error == "voting_too_many_votes_for_bug" %]
+    [% title = "Illegal Vote" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    You may only use at most [% max FILTER html %] votes for a single
+    [%+ terms.bug %] in the
+    <tt>[% product FILTER html %]</tt> product, but you are trying to
+    use [% votes FILTER html %].
+
+[% ELSIF error == "voting_too_many_votes_for_product" %]
+    [% title = "Illegal Vote" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    You tried to use [% votes FILTER html %] votes in the
+    <tt>[% product FILTER html %]</tt> product, which exceeds the maximum of
+    [%+ max FILTER html %] votes for this product.
+
+[% END %]

@@ -38,8 +38,7 @@ use CGI qw(-no_debug);
 
 use File::Spec;
 use Template;
-use Test::More tests => ( scalar(@referenced_files) * scalar(@languages)
-                        + $num_actual_files );
+use Test::More tests => ( scalar(@referenced_files) + $num_actual_files );
 
 # Capture the TESTOUT from Test::More or Test::Builder for printing errors.
 # This will handle verbosity for us automatically.
@@ -55,27 +54,17 @@ my $fh;
     }
 }
 
-# Checks whether one of the passed files exists
-sub existOnce {
-  foreach my $file (@_) {
-    return $file  if -e $file;
-  }
-  return 0;
-}
+# Check to make sure all templates that are referenced in Bugzilla
+# exist in the proper place in the English template directory.
+# All other languages may or may not include any template as Bugzilla will
+# fall back to English if necessary.
 
-# Check to make sure all templates that are referenced in
-# Bugzilla exist in the proper place.
-
-foreach my $lang (@languages) {
-    foreach my $file (@referenced_files) {
-        my @path = map(File::Spec->catfile($_, $file),
-                       split(':', $include_path{$lang} . ":" . $include_path{"en"}));
-        if (my $path = existOnce(@path)) {
-            ok(1, "$path exists");
-        } else {
-            ok(0, "$file cannot be located --ERROR");
-            print $fh "Looked in:\n  " . join("\n  ", @path) . "\n";
-        }
+foreach my $file (@referenced_files) {
+    my $path = File::Spec->catfile($english_default_include_path, $file);
+    if (-e $path) {
+        ok(1, "$path exists");
+    } else {
+        ok(0, "$path cannot be located --ERROR");
     }
 }
 
@@ -117,19 +106,17 @@ foreach my $include_path (@include_paths) {
 
     foreach my $file (@{$actual_files{$include_path}}) {
         my $path = File::Spec->catfile($include_path, $file);
-        if (-e $path) {
-            my ($data, $err) = $provider->fetch($file);
 
-            if (!$err) {
-                ok(1, "$file syntax ok");
-            }
-            else {
-                ok(0, "$file has bad syntax --ERROR");
-                print $fh $data . "\n";
-            }
+        # These are actual files, so there's no need to check for existence.
+
+        my ($data, $err) = $provider->fetch($file);
+
+        if (!$err) {
+            ok(1, "$path syntax ok");
         }
         else {
-            ok(1, "$path doesn't exist, skipping test");
+            ok(0, "$path has bad syntax --ERROR");
+            print $fh $data . "\n";
         }
     }
 }

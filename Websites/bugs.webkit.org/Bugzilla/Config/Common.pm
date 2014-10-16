@@ -34,8 +34,8 @@ package Bugzilla::Config::Common;
 
 use strict;
 
+use Email::Address;
 use Socket;
-use Time::Zone;
 
 use Bugzilla::Util;
 use Bugzilla::Constants;
@@ -48,10 +48,10 @@ use base qw(Exporter);
     qw(check_multi check_numeric check_regexp check_url check_group
        check_sslbase check_priority check_severity check_platform
        check_opsys check_shadowdb check_urlbase check_webdotbase
-       check_netmask check_user_verify_class check_image_converter
-       check_mail_delivery_method check_notification check_timezone check_utf8
-       check_bug_status check_smtp_auth 
-       check_maxattachmentsize
+       check_user_verify_class check_ip
+       check_mail_delivery_method check_notification check_utf8
+       check_bug_status check_smtp_auth check_theschwartz_available
+       check_maxattachmentsize check_email
 );
 
 # Checking functions for the various values
@@ -95,6 +95,14 @@ sub check_regexp {
     return $@;
 }
 
+sub check_email {
+    my ($value) = @_;
+    if ($value !~ $Email::Address::mailbox) {
+        return "must be a valid email address.";
+    }
+    return "";
+}
+
 sub check_sslbase {
     my $url = shift;
     if ($url ne '') {
@@ -121,6 +129,15 @@ sub check_sslbase {
     return "";
 }
 
+sub check_ip {
+    my $inbound_proxies = shift;
+    my @proxies = split(/[\s,]+/, $inbound_proxies);
+    foreach my $proxy (@proxies) {
+        validate_ip($proxy) || return "$proxy is not a valid IPv4 or IPv6 address";
+    }
+    return "";
+}
+
 sub check_utf8 {
     my $utf8 = shift;
     # You cannot turn off the UTF-8 parameter if you've already converted
@@ -136,7 +153,7 @@ sub check_utf8 {
 sub check_priority {
     my ($value) = (@_);
     my $legal_priorities = get_legal_field_values('priority');
-    if (lsearch($legal_priorities, $value) < 0) {
+    if (!grep($_ eq $value, @$legal_priorities)) {
         return "Must be a legal priority value: one of " .
             join(", ", @$legal_priorities);
     }
@@ -146,7 +163,7 @@ sub check_priority {
 sub check_severity {
     my ($value) = (@_);
     my $legal_severities = get_legal_field_values('bug_severity');
-    if (lsearch($legal_severities, $value) < 0) {
+    if (!grep($_ eq $value, @$legal_severities)) {
         return "Must be a legal severity value: one of " .
             join(", ", @$legal_severities);
     }
@@ -156,7 +173,7 @@ sub check_severity {
 sub check_platform {
     my ($value) = (@_);
     my $legal_platforms = get_legal_field_values('rep_platform');
-    if (lsearch(['', @$legal_platforms], $value) < 0) {
+    if (!grep($_ eq $value, '', @$legal_platforms)) {
         return "Must be empty or a legal platform value: one of " .
             join(", ", @$legal_platforms);
     }
@@ -166,7 +183,7 @@ sub check_platform {
 sub check_opsys {
     my ($value) = (@_);
     my $legal_OS = get_legal_field_values('op_sys');
-    if (lsearch(['', @$legal_OS], $value) < 0) {
+    if (!grep($_ eq $value, '', @$legal_OS)) {
         return "Must be empty or a legal operating system value: one of " .
             join(", ", @$legal_OS);
     }
@@ -176,7 +193,7 @@ sub check_opsys {
 sub check_bug_status {
     my $bug_status = shift;
     my @closed_bug_statuses = map {$_->name} closed_bug_statuses();
-    if (lsearch(\@closed_bug_statuses, $bug_status) < 0) {
+    if (!grep($_ eq $bug_status, @closed_bug_statuses)) {
         return "Must be a valid closed status: one of " . join(', ', @closed_bug_statuses);
     }
     return "";
@@ -249,21 +266,6 @@ sub check_webdotbase {
     return "";
 }
 
-sub check_netmask {
-    my ($mask) = @_;
-    my $res = check_numeric($mask);
-    return $res if $res;
-    if ($mask < 0 || $mask > 32) {
-        return "an IPv4 netmask must be between 0 and 32 bits";
-    }
-    # Note that if we changed the netmask from anything apart from 32, then
-    # existing logincookies which aren't for a single IP won't work
-    # any more. We can't know which ones they are, though, so they'll just
-    # take space until they're periodically cleared, later.
-
-    return "";
-}
-
 sub check_user_verify_class {
     # doeditparams traverses the list of params, and for each one it checks,
     # then updates. This means that if one param checker wants to look at 
@@ -273,39 +275,31 @@ sub check_user_verify_class {
     # the login method as LDAP, we won't notice, but all logins will fail.
     # So don't do that.
 
+    my $params = Bugzilla->params;
     my ($list, $entry) = @_;
     $list || return 'You need to specify at least one authentication mechanism';
     for my $class (split /,\s*/, $list) {
         my $res = check_multi($class, $entry);
         return $res if $res;
-        if ($class eq 'DB') {
-            # No params
-        }
-        elsif ($class eq 'RADIUS') {
-            eval "require Authen::Radius";
-            return "Error requiring Authen::Radius: '$@'" if $@;
-            return "RADIUS servername (RADIUS_server) is missing" unless Bugzilla->params->{"RADIUS_server"};
-            return "RADIUS_secret is empty" unless Bugzilla->params->{"RADIUS_secret"};
+        if ($class eq 'RADIUS') {
+            if (!Bugzilla->feature('auth_radius')) {
+                return "RADIUS support is not available. Run checksetup.pl"
+                       . " for more details";
+            }
+            return "RADIUS servername (RADIUS_server) is missing"
+                if !$params->{"RADIUS_server"};
+            return "RADIUS_secret is empty" if !$params->{"RADIUS_secret"};
         }
         elsif ($class eq 'LDAP') {
-            eval "require Net::LDAP";
-            return "Error requiring Net::LDAP: '$@'" if $@;
-            return "LDAP servername (LDAPserver) is missing" unless Bugzilla->params->{"LDAPserver"};
-            return "LDAPBaseDN is empty" unless Bugzilla->params->{"LDAPBaseDN"};
-        }
-        else {
-            return "Unknown user_verify_class '$class' in check_user_verify_class";
+            if (!Bugzilla->feature('auth_ldap')) {
+                return "LDAP support is not available. Run checksetup.pl"
+                       . " for more details";
+            }
+            return "LDAP servername (LDAPserver) is missing" 
+                if !$params->{"LDAPserver"};
+            return "LDAPBaseDN is empty" if !$params->{"LDAPBaseDN"};
         }
     }
-    return "";
-}
-
-sub check_image_converter {
-    my ($value, $hash) = @_;
-    if ($value == 1){
-       eval "require Image::Magick";
-       return "Error requiring Image::Magick: '$@'" if $@;
-    } 
     return "";
 }
 
@@ -313,7 +307,7 @@ sub check_mail_delivery_method {
     my $check = check_multi(@_);
     return $check if $check;
     my $mailer = shift;
-    if ($mailer eq 'sendmail' && $^O =~ /MSWin32/i) {
+    if ($mailer eq 'sendmail' and ON_WINDOWS) {
         # look for sendmail.exe 
         return "Failed to locate " . SENDMAIL_EXE
             unless -e SENDMAIL_EXE;
@@ -349,22 +343,28 @@ sub check_notification {
                "about the next stable release, you should select " .
                "'latest_stable_release' instead";
     }
-    return "";
-}
-
-sub check_timezone {
-    my $tz = shift;
-    unless (defined(tz_offset($tz))) {
-        return "must be empty or a legal timezone name, such as PDT or JST";
+    if ($option ne 'disabled' && !Bugzilla->feature('updates')) {
+        return "Some Perl modules are missing to get notifications about " .
+               "new releases. See the output of checksetup.pl for more information";
     }
     return "";
 }
 
 sub check_smtp_auth {
     my $username = shift;
-    if ($username) {
-        eval "require Authen::SASL";
-        return "Error requiring Authen::SASL: '$@'" if $@;
+    if ($username and !Bugzilla->feature('smtp_auth')) {
+        return "SMTP Authentication is not available. Run checksetup.pl for"
+               . " more details";
+    }
+    return "";
+}
+
+sub check_theschwartz_available {
+    my $use_queue = shift;
+    if ($use_queue && !Bugzilla->feature('jobqueue')) {
+        return "Using the job queue requires that you have certain Perl"
+               . " modules installed. See the output of checksetup.pl"
+               . " for more information";
     }
     return "";
 }
@@ -446,7 +446,9 @@ Bugzilla::Config::Common - Parameter checking functions
 
 =head1 DESCRIPTION
 
-All parameter checking functions are called with two parameters:
+All parameter checking functions are called with two parameters: the value to 
+check, and a hash with the details of the param (type, default etc.) as defined
+in the relevant F<Bugzilla::Config::*> package.
 
 =head2 Functions
 

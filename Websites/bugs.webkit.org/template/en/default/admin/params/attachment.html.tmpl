@@ -45,7 +45,7 @@
     _ " That is, a different domain name that resolves to this exact"
     _ " same $terms.Bugzilla installation.</p>"
     _ "<p>Note that if you have set the"
-    _ " <a href=\"editparams.cgi?section=core#cookiedomain\"><tt>cookiedomain</tt>"
+    _ " <a href=\"editparams.cgi?section=advanced#cookiedomain_desc\"><tt>cookiedomain</tt>"
     _" parameter</a>, you should set <tt>attachment_base</tt> to use a"
     _ " domain that would <em>not</em> be matched by"
     _ " <tt>cookiedomain</tt>.</p>"
@@ -60,27 +60,16 @@
   allow_attachment_deletion => "If this option is on, administrators will be able to delete " _
                                "the content of attachments.",
 
-  allow_attach_url => "If this option is on, it will be possible to " _
-                      "specify a URL when creating an attachment and " _
-                      "treat the URL itself as if it were an attachment.",
+  maxattachmentsize => "The maximum size (in kilobytes) of attachments to be stored " _
+                       "in the database. If a file larger than this size is attached " _
+                       "to ${terms.abug}, $terms.Bugzilla will look at the " _
+                       "<a href='#maxlocalattachment'><tt>maxlocalattachment</tt> parameter</a> " _
+                       "to determine if the file can be stored locally on the web server. " _
+                       "If the file size exceeds both limits, then the attachment is rejected. " _
+                       "Settings both parameters to 0 will prevent attaching files to ${terms.bugs}.",
 
-  maxpatchsize => "The maximum size (in kilobytes) of patches. $terms.Bugzilla will not " _
-                  "accept patches greater than this number of kilobytes in size. " _
-                  "To accept patches of any size (subject to the limitations of " _
-                  "your server software), set this value to zero.",
-
-  maxattachmentsize => "The maximum size (in kilobytes) of non-patch attachments. " _
-                       "$terms.Bugzilla will not accept attachments greater than this number " _
-                       "of kilobytes in size. To accept attachments of any size " _
-                       "(subject to the limitations of your server software), set this " _
-                       "value to zero.",
-
-  maxlocalattachment => "The maximum size (in megabytes) of attachments identified by " _
-                        "the user as 'Big Files' to be stored locally on the webserver. " _
-                        "If set to zero, attachments will never be kept on the local " _
-                        "filesystem.",
-
-  convert_uncompressed_images => "If this option is on, attachments with content type image/bmp " _
-                                 "will be converted to image/png and compressed before uploading to " _
-                                 "the database to conserve disk space." }
+  maxlocalattachment => "The maximum size (in megabytes) of attachments to be stored " _
+                        "locally on the web server. If set to a value lower than the " _
+                        "<a href='#maxattachmentsize'><tt>maxattachmentsize</tt> parameter</a>, " _
+                        "attachments will never be kept on the local filesystem." }
 %]

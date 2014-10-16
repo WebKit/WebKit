@@ -131,8 +131,10 @@ if ($action eq 'update') {
     my $keyword = new Bugzilla::Keyword($key_id)
         || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
-    $keyword->set_name($cgi->param('name'));
-    $keyword->set_description($cgi->param('description'));
+    $keyword->set_all({
+        name        => scalar $cgi->param('name'),
+        description => scalar $cgi->param('description'),
+    });
     my $changes = $keyword->update();
 
     delete_token($token);
@@ -167,14 +169,14 @@ if ($action eq 'delete') {
     my $keyword =  new Bugzilla::Keyword($key_id)
         || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
-    $dbh->do('DELETE FROM keywords WHERE keywordid = ?', undef, $keyword->id);
-    $dbh->do('DELETE FROM keyworddefs WHERE id = ?', undef, $keyword->id);
+    $keyword->remove_from_db();
 
     delete_token($token);
 
     print $cgi->header();
 
     $vars->{'message'} = 'keyword_deleted';
+    $vars->{'keyword'} = $keyword;
     $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 
     $template->process("admin/keywords/list.html.tmpl", $vars)
@@ -182,4 +184,4 @@ if ($action eq 'delete') {
     exit;
 }
 
-ThrowCodeError("action_unrecognized", $vars);
+ThrowUserError('unknown_action', {action => $action});

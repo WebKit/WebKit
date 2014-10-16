@@ -62,6 +62,10 @@
     [%# The name of the existing query will be passed to buglist.cgi. %]
     <input type="hidden" name="query_based_on" value="[% known_name FILTER html %]">
   [% END %]
+  [%# Preserve any custom column list that might be set. %]
+  [% IF columnlist %]
+    <input type="hidden" name="columnlist" value="[% columnlist FILTER html %]">
+  [% END %]
 </p>
 
 <p>

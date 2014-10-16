@@ -152,13 +152,13 @@ def ensure_defaults(data):
     if 'rep_platform' not in data:
         data['rep_platform'] = 'PC'
     if 'bug_status' not in data:
-        data['bug_status'] = 'NEW'
+        data['bug_status'] = 'CONFIRMED'
     if 'bug_severity' not in data:
         data['bug_severity'] = 'normal'
     if 'bug_file_loc' not in data:
         data['bug_file_loc'] = 'http://'        # Yes, Bugzilla needs this
     if 'priority' not in data:
-        data['priority'] = 'P2'
+        data['priority'] = 'Normal'
 
 def validate_fields(data):
     # Fields for validation

@@ -1,19 +1,92 @@
-* This README is no longer used to house installation instructions.  Instead,
-it contains pointers to where you may find the information you need.
+What is Bugzilla?
+=================
+Bugzilla is a free bug-tracking system that is developed by an active
+community of volunteers in the Mozilla community. You can install and
+use it without having to pay any license fee.
 
-* A quick installation guide is provided in the QUICKSTART file.
+Minimum requirements
+====================
+It can be installed on Windows, Mac OS X, Linux and other Unix flavors.
+Bugzilla is written in Perl, meaning that Perl must be installed on your system.
+You will also need a web server as well as a DB server (see below).
 
-* Complete installation instructions are found in docs/, with a
-variety of document types available.  Please refer to these documents
-when installing, configuring, and maintaining your Bugzilla
-installation.  A helpful starting point is docs/txt/Bugzilla-Guide.txt,
-or with a web browser at docs/html/index.html.
+Installation & Upgrading
+========================
+The documentation to install, upgrade, configure and use Bugzilla can be found
+in different formats:
+* docs/en/html/Bugzilla-Guide.html (HTML version)
+* docs/en/txt/Bugzilla-Guide.txt (text version)
+* docs/en/pdf/Bugzilla-Guide.pdf (PDF version)
 
-* Release notes for people upgrading to a new version of Bugzilla are
-available at docs/rel_notes.txt.
+If the documentation is missing, you can get it online by visiting
+http://www.bugzilla.org/docs/ from where you can select the documentation
+corresponding to the Bugzilla version you are installing.
 
-* If you wish to contribute to the documentation, please read docs/README.docs.
+Bugzilla Quick Start Guide
+==========================
+(or, how to get Bugzilla up and running in 10 steps)
+Christian Reis <kiko@async.com.br>
 
-* The Bugzilla web site is at "http://www.bugzilla.org/".  This site will
-contain the latest Bugzilla information, including how to report bugs and how
-to get help with Bugzilla.
+This express installation guide is for "normal" Bugzilla installations,
+which means a Linux or Unix system on which Apache, Perl, MySQL or PostgreSQL
+and a Sendmail compatible MTA are available. For other configurations, please
+see the "Installing Bugzilla" section of the Bugzilla Guide in the docs/ directory.
+
+1. Decide from which URL and directory under your webserver root you
+   will be serving the Bugzilla webpages.
+
+2. Unpack the distribution into the chosen directory (there is no copying or
+   installation involved).
+
+3. Run ./checksetup.pl, look for unsolved requirements, and install them.
+   You can run checksetup as many times as necessary to check if
+   everything required has been installed.
+
+   These will usually include assorted Perl modules, MySQL or PostgreSQL,
+   and a MTA.
+
+   After a successful dependency check, checksetup should complain that
+   localconfig needs to be edited.
+
+4. Edit the localconfig file, in particular the $webservergroup and
+   $db_* variables. In particular, $db_name and $db_user will define
+   your database setup in step 5.
+
+5. Create a user permission for the name supplied as $db_user with
+   read/write access to the database whose name is given by $db_name.
+
+   If you are not familiar with MySQL permissions, it's a good idea to
+   use the mysql_setpermission script that is installed with the MySQL
+   distribution, and be sure to read Bugzilla Security - MySQL section
+   in the Bugzilla Guide or PostgreSQL documentation.
+
+6. Run checksetup.pl once more; if all goes well, it should set up the
+   Bugzilla database for you. If not, return to step 5.
+
+   checksetup.pl should ask you, this time, for the administrator's
+   email address and password. These will be used for the initial
+   Bugzilla administrator account.
+
+7. Configure Apache (or install and configure, if you don't have it up
+   yet) to point to the Bugzilla directory. You can choose between
+   mod_cgi and mod_perl. The Bugzilla documentation has detailed information
+   for both modes.
+
+8. Visit the URL you chose for Bugzilla. Your browser should display the
+   default Bugzilla home page. You should then log in as the
+   administrator by following the "Log in" link and supplying the
+   account information you provided in step 6.
+
+9. Visit the "Parameters" page, as suggested by the page displayed to you.
+   Set up the relevant parameters for your local setup.
+
+10. That's it. If anything unexpected comes up:
+
+    - read the error message carefully,
+    - backtrack through the steps above,
+    - check the official installation guide.
+
+Support and installation questions should be directed to the
+support-bugzilla@lists.mozilla.org mailing list.
+
+Further support information is at http://www.bugzilla.org/support/

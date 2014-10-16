@@ -17,6 +17,7 @@
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
   #                 David D. Kilzer <ddkilzer@kilzer.net>
+  #                 Reed Loden <reed@reedloden.com>
   #%]
 
 [%# INTERFACE:
@@ -33,7 +34,6 @@
   #                  it was affected by an old Bugzilla bug.)
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
 [% PROCESS "global/field-descs.none.tmpl" %]
 
 [% PROCESS bug/time.html.tmpl %]
@@ -61,7 +61,7 @@
     [% FOREACH operation = operations %]
       <tr>
         <td rowspan="[% operation.changes.size %]" valign="top">
-          [% operation.who FILTER html %]
+          [% operation.who FILTER email FILTER html %]
         </td>
         <td rowspan="[% operation.changes.size %]" valign="top">
           [% operation.when FILTER time %]
@@ -73,50 +73,47 @@
                 <a href="attachment.cgi?id=[% change.attachid %]">
                 Attachment #[% change.attachid %]</a>
               [% END %]
-              [%+ change.field %]
-            </td>
-            <td>
-              [% IF change.removed.defined %]
-                [% IF change.fieldname == 'estimated_time' ||
-                      change.fieldname == 'remaining_time' ||
-                      change.fieldname == 'work_time' %]
-                  [% PROCESS formattimeunit time_unit=change.removed %]
-                [% ELSIF change.fieldname == 'bug_status' %]
-                  [% get_status(change.removed) FILTER html %]
-                [% ELSIF change.fieldname == 'resolution' %]
-                  [% get_resolution(change.removed) FILTER html %]
-                [% ELSIF change.fieldname == 'blocked' ||
-                         change.fieldname == 'dependson' %]
-                  [% change.removed FILTER bug_list_link FILTER none %]
-                [% ELSE %]
-                  [% change.removed FILTER html %]
-                [% END %]
+              [% IF change.comment.defined %]
+                 [% comment_desc = field_descs.${change.fieldname} %]
+                 [% comment_num = "Comment $change.comment.count" FILTER bug_link(bug.bug_id, comment_num => change.comment.count) %]
+                 [% comment_desc.replace('^(Comment )?', "$comment_num ") FILTER none %]
               [% ELSE %]
-                &nbsp;
+                [%+ field_descs.${change.fieldname} FILTER html %]
               [% END %]
             </td>
-            <td>
-              [% IF change.added.defined %]
-                [% IF change.fieldname == 'estimated_time' ||
-                      change.fieldname == 'remaining_time' ||
-                      change.fieldname == 'work_time' %]
-                  [% PROCESS formattimeunit time_unit=change.added %]
-                [% ELSIF change.fieldname == 'bug_status' %]
-                  [% get_status(change.added) FILTER html %]
-                [% ELSIF change.fieldname == 'resolution' %]
-                  [% get_resolution(change.added) FILTER html %]
-                [% ELSIF change.fieldname == 'blocked' ||
-                         change.fieldname == 'dependson' %]
-                  [% change.added FILTER bug_list_link FILTER none %]
-                [% ELSE %]
-                  [% change.added FILTER html %]
-                [% END %]
-              [% ELSE %]
-                &nbsp;
-              [% END %]
-            </td>
+            [% PROCESS change_column change_type = change.removed %]
+            [% PROCESS change_column change_type = change.added %]
         [% END %]
       </tr>
     [% END %]
   </table>
+[% ELSE %]
+  <p>
+    No changes have been made to this [% terms.bug %] yet.
+  </p>
+[% END %]
+
+[% BLOCK change_column %]
+  <td>
+    [% IF change_type.defined %]
+      [% IF change.fieldname == 'estimated_time' ||
+            change.fieldname == 'remaining_time' ||
+            change.fieldname == 'work_time' %]
+        [% PROCESS formattimeunit time_unit=change_type %]
+      [% ELSIF change.fieldname == 'blocked' ||
+               change.fieldname == 'dependson' %]
+        [% change_type FILTER bug_list_link FILTER none %]
+      [% ELSIF change.fieldname == 'assigned_to' ||
+               change.fieldname == 'reporter' ||
+               change.fieldname == 'qa_contact' ||
+               change.fieldname == 'cc' ||
+               change.fieldname == 'flagtypes.name' %]
+        [% display_value(change.fieldname, change_type) FILTER email FILTER html %]
+      [% ELSE %]
+        [% display_value(change.fieldname, change_type) FILTER html %]
+      [% END %]
+    [% ELSE %]
+      &nbsp;
+    [% END %]
+  </td>
 [% END %]

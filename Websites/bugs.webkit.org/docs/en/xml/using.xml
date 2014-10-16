@@ -332,9 +332,7 @@
         <para>
         <emphasis>Attachments:</emphasis>
           You can attach files (e.g. testcases or patches) to bugs. If there
-          are any attachments, they are listed in this section.  Attachments are
-          normally stored in the Bugzilla database, unless they are marked as
-          Big Files, which are stored directly on disk.
+          are any attachments, they are listed in this section.
         </para>
       </listitem>
 
@@ -365,10 +363,12 @@
     <title>Life Cycle of a Bug</title>
 
     <para>
-      The life cycle, also known as work flow, of a bug is currently hardcoded
-      into Bugzilla. <xref linkend="lifecycle-image"/> contains a graphical
-      representation of this life cycle. If you wish to customize this image for
-      your site, the <ulink url="../images/bzLifecycle.xml">diagram file</ulink>
+      The life cycle of a bug, also known as workflow, is customizable to match
+      the needs of your organization, see <xref linkend="bug_status_workflow"/>.
+      <xref linkend="lifecycle-image"/> contains a graphical representation of
+      the default workflow using the default bug statuses. If you wish to
+      customize this image for your site, the
+      <ulink url="../images/bzLifecycle.xml">diagram file</ulink>
       is available in <ulink url="http://www.gnome.org/projects/dia">Dia's</ulink>
       native XML format.
     </para>
@@ -659,16 +659,6 @@
         </member>
       </simplelist>
       </para>
-
-      <para>
-        If you would like to access the bug list from another program
-        it is often useful to have the list returned in something other
-        than HTML. By adding the ctype=type parameter into the bug list URL
-        you can specify several alternate formats. Besides the types described
-        above, the following formats are also supported: ECMAScript, also known
-        as JavaScript (ctype=js), and Resource Description Framework RDF/XML
-        (ctype=rdf).
-      </para>
     </section>
 
     <section id="individual-buglists">
@@ -862,26 +852,18 @@
     </para>
 
     <para>
-      If you have a really large attachment, something that does not need to
-      be recorded forever (as most attachments are), or something that is too
-      big for your database, you can mark your attachment as a
-      <quote>Big File</quote>, assuming the administrator of the installation
-      has enabled this feature.  Big Files are stored directly on disk instead
-      of in the database.  The maximum size of a <quote>Big File</quote> is
-      normally larger than the maximum size of a regular attachment. Independently
-      of the storage system used, an administrator can delete these attachments
-      at any time. Nevertheless, if these files are stored in the database, the
-      <quote>allow_attachment_deletion</quote> parameter (which is turned off
-      by default) must be enabled in order to delete them.
-    </para>
-
-    <para>
-      Also, if the administrator turned on the <quote>allow_attach_url</quote>
-      parameter, you can enter the URL pointing to the attachment instead of
+      Also, you can enter the URL pointing to the attachment instead of
       uploading the attachment itself. For example, this is useful if you want to
       point to an external application, a website or a very large file. Note that
       there is no guarantee that the source file will always be available, nor
       that its content will remain unchanged.
+    </para>
+
+    <para>
+      Another way to attach data is to paste text directly in the text field,
+      and Bugzilla will convert it into an attachment. This is pretty useful
+      when you do copy and paste, and you don't want to put the text in a temporary
+      file first.
     </para>
 
     <section id="patchviewer">
@@ -1383,7 +1365,18 @@
              Indicates user can configure whine reports for self.
             </para>
           </listitem>
-        </varlistentry>	 	
+        </varlistentry>
+
+        <varlistentry>
+          <term>
+             bz_quip_moderators
+          </term>
+          <listitem>
+            <para>
+             Indicates user can moderate quips.
+            </para>
+          </listitem>
+        </varlistentry>
  
         <varlistentry>
           <term>

@@ -29,11 +29,13 @@ use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Field;
+use Bugzilla::Search;
+
+use List::MoreUtils qw(uniq);
 
 my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
 my $vars = {};
-my $buffer = $cgi->query_string();
 
 # Go straight back to query.cgi if we are adding a boolean chart.
 if (grep(/^cmd-/, $cgi->param())) {
@@ -45,12 +47,7 @@ if (grep(/^cmd-/, $cgi->param())) {
     exit;
 }
 
-use Bugzilla::Search;
-
 Bugzilla->login();
-
-my $dbh = Bugzilla->switch_to_shadow_db();
-
 my $action = $cgi->param('action') || 'menu';
 
 if ($action eq "menu") {
@@ -60,6 +57,9 @@ if ($action eq "menu") {
       || ThrowTemplateError($template->error());
     exit;
 }
+
+# Sanitize the URL, to make URLs shorter.
+$cgi->clean_search_url;
 
 my $col_field = $cgi->param('x_axis_field') || '';
 my $row_field = $cgi->param('y_axis_field') || '';
@@ -95,6 +95,10 @@ if (defined $cgi->param('format') && $cgi->param('format') eq "table") {
     }
 }
 else {
+    if (!Bugzilla->feature('graphical_reports')) {
+        ThrowCodeError('feature_disabled', { feature => 'graphical_reports' });
+    }
+
     if ($row_field && !$col_field) {
         # 1D *charts* should be displayed horizontally (with an col_field only)
         $col_field = $row_field;
@@ -102,50 +106,35 @@ else {
     }
 }
 
-my %columns;
-$columns{'bug_severity'}     = "bugs.bug_severity";        
-$columns{'priority'}         = "bugs.priority";
-$columns{'rep_platform'}     = "bugs.rep_platform";
-$columns{'assigned_to'}      = "map_assigned_to.login_name";
-$columns{'reporter'}         = "map_reporter.login_name";
-$columns{'qa_contact'}       = "map_qa_contact.login_name";
-$columns{'bug_status'}       = "bugs.bug_status";
-$columns{'resolution'}       = "bugs.resolution";
-$columns{'component'}        = "map_components.name";
-$columns{'product'}          = "map_products.name";
-$columns{'classification'}   = "map_classifications.name";
-$columns{'version'}          = "bugs.version";
-$columns{'op_sys'}           = "bugs.op_sys";
-$columns{'votes'}            = "bugs.votes";
-$columns{'keywords'}         = "bugs.keywords";
-$columns{'target_milestone'} = "bugs.target_milestone";
-# One which means "nothing". Any number would do, really. It just gets SELECTed
-# so that we always select 3 items in the query.
-$columns{''}                 = "42217354";
+# Valid bug fields that can be reported on.
+my $valid_columns = Bugzilla::Search::REPORT_COLUMNS;
 
 # Validate the values in the axis fields or throw an error.
 !$row_field 
-  || ($columns{$row_field} && trick_taint($row_field))
+  || ($valid_columns->{$row_field} && trick_taint($row_field))
   || ThrowCodeError("report_axis_invalid", {fld => "x", val => $row_field});
 !$col_field 
-  || ($columns{$col_field} && trick_taint($col_field))
+  || ($valid_columns->{$col_field} && trick_taint($col_field))
   || ThrowCodeError("report_axis_invalid", {fld => "y", val => $col_field});
 !$tbl_field 
-  || ($columns{$tbl_field} && trick_taint($tbl_field))
+  || ($valid_columns->{$tbl_field} && trick_taint($tbl_field))
   || ThrowCodeError("report_axis_invalid", {fld => "z", val => $tbl_field});
 
-my @axis_fields = ($row_field, $col_field, $tbl_field);
-my @selectnames = map($columns{$_}, @axis_fields);
+my @axis_fields = grep { $_ } ($row_field, $col_field, $tbl_field);
 
 # Clone the params, so that Bugzilla::Search can modify them
 my $params = new Bugzilla::CGI($cgi);
-my $search = new Bugzilla::Search('fields' => \@selectnames, 
-                                  'params' => $params);
-my $query = $search->getSQL();
+my $search = new Bugzilla::Search(
+    fields => \@axis_fields, 
+    params => scalar $params->Vars,
+    allow_unlimited => 1,
+);
+my $query = $search->sql;
 
 $::SIG{TERM} = 'DEFAULT';
 $::SIG{PIPE} = 'DEFAULT';
 
+my $dbh = Bugzilla->switch_to_shadow_db();
 my $results = $dbh->selectall_arrayref($query);
 
 # We have a hash of hashes for the data itself, and a hash to hold the 
@@ -163,22 +152,10 @@ my $row_isnumeric = 1;
 my $tbl_isnumeric = 1;
 
 foreach my $result (@$results) {
-    my ($row, $col, $tbl) = @$result;
-
     # handle empty dimension member names
-    $row = ' ' if ($row eq '');
-    $col = ' ' if ($col eq '');
-    $tbl = ' ' if ($tbl eq '');
-
-    $row = "" if ($row eq $columns{''});
-    $col = "" if ($col eq $columns{''});
-    $tbl = "" if ($tbl eq $columns{''});
-    
-    # account for the fact that names may start with '_' or '.'.  Change this 
-    # so the template doesn't hide hash elements with those keys
-    $row =~ s/^([._])/ $1/;
-    $col =~ s/^([._])/ $1/;
-    $tbl =~ s/^([._])/ $1/;
+    my $row = check_value($row_field, $result);
+    my $col = check_value($col_field, $result);
+    my $tbl = check_value($tbl_field, $result);
 
     $data{$tbl}{$col}{$row}++;
     $names{"col"}{$col}++;
@@ -190,9 +167,9 @@ foreach my $result (@$results) {
     $tbl_isnumeric &&= ($tbl =~ /^-?\d+(\.\d+)?$/o);
 }
 
-my @col_names = @{get_names($names{"col"}, $col_isnumeric, $col_field)};
-my @row_names = @{get_names($names{"row"}, $row_isnumeric, $row_field)};
-my @tbl_names = @{get_names($names{"tbl"}, $tbl_isnumeric, $tbl_field)};
+my @col_names = get_names($names{"col"}, $col_isnumeric, $col_field);
+my @row_names = get_names($names{"row"}, $row_isnumeric, $row_field);
+my @tbl_names = get_names($names{"tbl"}, $tbl_isnumeric, $tbl_field);
 
 # The GD::Graph package requires a particular format of data, so once we've
 # gathered everything into the hashes and made sure we know the size of the
@@ -226,7 +203,7 @@ foreach my $tbl (@tbl_names) {
 $vars->{'col_field'} = $col_field;
 $vars->{'row_field'} = $row_field;
 $vars->{'tbl_field'} = $tbl_field;
-$vars->{'time'} = time();
+$vars->{'time'} = localtime(time());
 
 $vars->{'col_names'} = \@col_names;
 $vars->{'row_names'} = \@row_names;
@@ -272,10 +249,10 @@ if ($action eq "wrap") {
     # We need to keep track of the defined restrictions on each of the 
     # axes, because buglistbase, below, throws them away. Without this, we
     # get buglistlinks wrong if there is a restriction on an axis field.
-    $vars->{'col_vals'} = join("&", $buffer =~ /[&?]($col_field=[^&]+)/g);
-    $vars->{'row_vals'} = join("&", $buffer =~ /[&?]($row_field=[^&]+)/g);
-    $vars->{'tbl_vals'} = join("&", $buffer =~ /[&?]($tbl_field=[^&]+)/g);
-    
+    $vars->{'col_vals'} = get_field_restrictions($col_field);
+    $vars->{'row_vals'} = get_field_restrictions($row_field);
+    $vars->{'tbl_vals'} = get_field_restrictions($tbl_field);
+
     # We need a number of different variants of the base URL for different
     # URLs in the HTML.
     $vars->{'buglistbase'} = $cgi->canonicalise_query(
@@ -295,7 +272,7 @@ elsif ($action eq "plot") {
     $vars->{'data'} = \@image_data;
 }
 else {
-    ThrowCodeError("unknown_action", {action => $cgi->param('action')});
+    ThrowUserError('unknown_action', {action => $action});
 }
 
 my $format = $template->get_format("reports/report", $formatparam,
@@ -317,9 +294,9 @@ print $cgi->header(-type => $format->{'ctype'},
 if ($cgi->param('debug')) {
     require Data::Dumper;
     print "<pre>data hash:\n";
-    print Data::Dumper::Dumper(%data) . "\n\n";
+    print html_quote(Data::Dumper::Dumper(%data)) . "\n\n";
     print "data array:\n";
-    print Data::Dumper::Dumper(@image_data) . "\n\n</pre>";
+    print html_quote(Data::Dumper::Dumper(@image_data)) . "\n\n</pre>";
 }
 
 # All formats point to the same section of the documentation.
@@ -330,42 +307,55 @@ disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 $template->process("$format->{'template'}", $vars)
   || ThrowTemplateError($template->error());
 
-exit;
-
 
 sub get_names {
-    my ($names, $isnumeric, $field) = @_;
-  
-    # These are all the fields we want to preserve the order of in reports.
-    my %fields = ('priority'     => get_legal_field_values('priority'),
-                  'bug_severity' => get_legal_field_values('bug_severity'),
-                  'rep_platform' => get_legal_field_values('rep_platform'),
-                  'op_sys'       => get_legal_field_values('op_sys'),
-                  'bug_status'   => get_legal_field_values('bug_status'),
-                  'resolution'   => [' ', @{get_legal_field_values('resolution')}]);
+    my ($names, $isnumeric, $field_name) = @_;
+    my ($field, @sorted);
+    # _realname fields aren't real Bugzilla::Field objects, but they are a
+    # valid axis, so we don't vailidate them as Bugzilla::Field objects.
+    $field = Bugzilla::Field->check($field_name) 
+        if ($field_name && $field_name !~ /_realname$/);
     
-    my $field_list = $fields{$field};
-    my @sorted;
-    
-    if ($field_list) {
-        my @unsorted = keys %{$names};
-        
-        # Extract the used fields from the field_list, in the order they 
-        # appear in the field_list. This lets us keep e.g. severities in
-        # the normal order.
-        #
-        # This is O(n^2) but it shouldn't matter for short lists.
-        @sorted = map {lsearch(\@unsorted, $_) == -1 ? () : $_} @{$field_list};
+    if ($field && $field->is_select) {
+        foreach my $value (@{$field->legal_values}) {
+            push(@sorted, $value->name) if $names->{$value->name};
+        }
+        unshift(@sorted, ' ') if $field_name eq 'resolution';
+        @sorted = uniq @sorted;
     }  
     elsif ($isnumeric) {
         # It's not a field we are preserving the order of, so sort it 
         # numerically...
-        sub numerically { $a <=> $b }
-        @sorted = sort numerically keys(%{$names});
-    } else {
-        # ...or alphabetically, as appropriate.
-        @sorted = sort(keys(%{$names}));
+        @sorted = sort { $a <=> $b } keys %$names;
     }
-  
-    return \@sorted;
+    else {
+        # ...or alphabetically, as appropriate.
+        @sorted = sort keys %$names;
+    }
+    
+    return @sorted;
+}
+
+sub check_value {
+    my ($field, $result) = @_;
+
+    my $value;
+    if (!defined $field) {
+        $value = '';
+    }
+    elsif ($field eq '') {
+        $value = ' ';
+    }
+    else {
+        $value = shift @$result;
+        $value = ' ' if (!defined $value || $value eq '');
+    }
+    return $value;
+}
+
+sub get_field_restrictions {
+    my $field = shift;
+    my $cgi = Bugzilla->cgi;
+
+    return join('&', map {"$field=$_"} $cgi->param($field));
 }

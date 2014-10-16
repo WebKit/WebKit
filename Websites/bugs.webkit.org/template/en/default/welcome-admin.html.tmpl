@@ -41,31 +41,28 @@
   parameters for this installation; among others:</p>
 
   <ul>
-    <li><a href="editparams.cgi?section=core#maintainer">maintainer</a>, the person
-    responsible for this installation if something is running wrong.</li>
-
-    <li><a href="editparams.cgi?section=core#urlbase">urlbase</a>, which is the URL
+    <li><a href="editparams.cgi?section=core#urlbase_desc">urlbase</a>, which is the URL
     pointing to this installation and which will be used in emails (which is also the
     reason you see this page: as long as this parameter is not set, you will see this
     page again and again).</li>
 
-    <li><a href="editparams.cgi?section=core#cookiepath">cookiepath</a> is important
+    <li><a href="editparams.cgi?section=core#cookiepath_desc">cookiepath</a> is important
     for your browser to manage your cookies correctly.</li>
 
-    <li><a href="editparams.cgi?section=core#utf8">utf8</a> will let you encode all
-    texts into UTF-8, if desired (it is strongly recommended to keep this parameter
-    turned on).</li>
+    <li><a href="editparams.cgi?section=general#maintainer_desc">maintainer</a>,
+      the person responsible for this installation if something is
+      running wrongly.</li>
   </ul>
 
   <p>Also important are the following parameters:</p>
 
   <ul>
-    <li><a href="editparams.cgi?section=auth#requirelogin">requirelogin</a>, if turned
+    <li><a href="editparams.cgi?section=auth#requirelogin_desc">requirelogin</a>, if turned
     on, will protect your installation from users having no account on this installation.
     In other words, users who are not explicitly authenticated with a valid account
     cannot see any data. This is what you want if you want to keep your data private.</li>
 
-    <li><a href="editparams.cgi?section=auth#createemailregexp">createemailregexp</a>
+    <li><a href="editparams.cgi?section=auth#createemailregexp_desc">createemailregexp</a>
     defines which users are allowed to create an account on this installation. If set
     to ".*" (the default), everybody is free to create his own account. If set to
     "@mycompany.com$", only users having an account @mycompany.com will be allowed to
@@ -74,7 +71,7 @@
     installation, you must absolutely set this parameter to something different from
     the default.</li>
 
-    <li><a href="editparams.cgi?section=mta#mail_delivery_method">mail_delivery_method</a>
+    <li><a href="editparams.cgi?section=mta#mail_delivery_method_desc">mail_delivery_method</a>
     defines the method used to send emails, such as sendmail or SMTP. You have to set
     it correctly to send emails.</li>
   </ul>

@@ -42,8 +42,6 @@ my $result = GetOptions('verbose'  => \$verbose,
 
 pod2usage({-verbose => 1, -exitval => 1}) if $help;
 
-Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
-
 # Be sure a login name if given.
 $login || ThrowUserError('invalid_username');
 
@@ -113,4 +111,4 @@ user will receive an email with the results of the script run.
 
 This script provides a way of running a 'Sanity Check' on the database
 via either a CLI or cron. It is equivalent to calling sanitycheck.cgi
-via a web broswer.
+via a web browser.

@@ -31,8 +31,6 @@
   <input type="hidden" name="action" value="updategroupcontrols">
   <input type="hidden" name="product" value="[% product.name FILTER html %]">
   <input type="hidden" name="token" value="[% token FILTER html %]">
-  <input type="hidden" name="classification" 
-         value="[% classification.name FILTER html %]">
 
   <table id="form" cellspacing="0" cellpadding="4" border="1">
     <tr bgcolor="#6666ff">
@@ -46,23 +44,23 @@
       <th>editbugs</th>
       <th>[% terms.Bugs %]</th>
     </tr>
-    [% FOREACH group = groups %]
-      [% IF group.isactive == 0 AND group.bugcount > 0 %]
+    [% FOREACH group = product.group_controls(1).values.sort("name") %]
+      [% IF !group.group.isactive AND group.bug_count %]
         <tr bgcolor="#bbbbbb">
           <td>
-            [% group.name FILTER html %]
+            [% group.group.name FILTER html %]
           </td>
           <td align="center" colspan=7>
             Disabled
           </td>
           <td>
-            [% group.bugcount %]
+            [% group.bug_count FILTER html %]
           </td>
         <tr>
-      [% ELSIF group.isactive != 0 %]
+      [% ELSIF group.group.is_active %]
         <tr>
           <td>
-            [% group.name FILTER html %]
+            [% group.group.name FILTER html %]
           </td>
           <td>
             <input type=checkbox value=1 name=entry_[% group.id %]
@@ -70,48 +68,48 @@
           </td>
           <td>
             <select name="membercontrol_[% group.id %]">
-              <option value=[% const.CONTROLMAPNA %]
+              <option value=[% constants.CONTROLMAPNA %]
                 [% " selected=\"selected\""
-                  IF group.membercontrol == const.CONTROLMAPNA %]
+                  IF group.membercontrol == constants.CONTROLMAPNA %]
                 >NA
               </option>
-              <option value=[% const.CONTROLMAPSHOWN %]
+              <option value=[% constants.CONTROLMAPSHOWN %]
                 [% " selected=\"selected\""
-                  IF group.membercontrol == const.CONTROLMAPSHOWN %]
+                  IF group.membercontrol == constants.CONTROLMAPSHOWN %]
                 >Shown
               </option>
-              <option value=[% const.CONTROLMAPDEFAULT %]
+              <option value=[% constants.CONTROLMAPDEFAULT %]
                 [% " selected=\"selected\""
-                  IF group.membercontrol == const.CONTROLMAPDEFAULT %]
+                  IF group.membercontrol == constants.CONTROLMAPDEFAULT %]
                 >Default
               </option>
-              <option value=[% const.CONTROLMAPMANDATORY %]
+              <option value=[% constants.CONTROLMAPMANDATORY %]
                 [% " selected=\"selected\""
-                  IF group.membercontrol == const.CONTROLMAPMANDATORY %]
+                  IF group.membercontrol == constants.CONTROLMAPMANDATORY %]
                 >Mandatory
               </option>
             </select>
           </td>
           <td>
             <select name="othercontrol_[% group.id %]">
-              <option value=[% const.CONTROLMAPNA %]
+              <option value=[% constants.CONTROLMAPNA %]
                 [% " selected=\"selected\""
-                  IF group.othercontrol == const.CONTROLMAPNA %]
+                  IF group.othercontrol == constants.CONTROLMAPNA %]
                 >NA
               </option>
-              <option value=[% const.CONTROLMAPSHOWN %]
+              <option value=[% constants.CONTROLMAPSHOWN %]
                 [% " selected=\"selected\""
-                  IF group.othercontrol == const.CONTROLMAPSHOWN %]
+                  IF group.othercontrol == constants.CONTROLMAPSHOWN %]
                 >Shown
               </option>
-              <option value=[% const.CONTROLMAPDEFAULT %]
+              <option value=[% constants.CONTROLMAPDEFAULT %]
                 [% " selected=\"selected\""
-                  IF group.othercontrol == const.CONTROLMAPDEFAULT %]
+                  IF group.othercontrol == constants.CONTROLMAPDEFAULT %]
                 >Default
               </option>
-              <option value=[% const.CONTROLMAPMANDATORY %]
+              <option value=[% constants.CONTROLMAPMANDATORY %]
                 [% " selected=\"selected\""
-                  IF group.othercontrol == const.CONTROLMAPMANDATORY %]
+                  IF group.othercontrol == constants.CONTROLMAPMANDATORY %]
                 >Mandatory
               </option>
             </select>
@@ -133,7 +131,7 @@
             [% " checked=\"checked\"" IF group.editbugs %]>
           </td>
           <td>
-            [% group.bugcount %]
+            [% group.bug_count || 0 FILTER html %]
           </td>
         </tr>
       [% END %]

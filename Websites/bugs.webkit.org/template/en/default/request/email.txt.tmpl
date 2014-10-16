@@ -24,30 +24,34 @@
 
 [% bugidsummary = bug.bug_id _ ': ' _ bug.short_desc %]
 [% attidsummary = attachment.id _ ': ' _ attachment.description %]
+[% flagtype_name = flag ? flag.type.name : old_flag.type.name %]
 [% statuses = { '+' => "granted" , '-' => 'denied' , 'X' => "canceled" ,
                 '?' => "asked" } %]
 
 [% to_identity = "" %]
 [% on_behalf_of = 0 %]
-[% IF flag.status == '?' %]
+[% action = flag.status || 'X' %]
+
+[% IF flag && flag.status == '?' %]
   [% subject_status = "requested" %]
-  [% IF flag.setter.id == user.id %]
+  [% IF flag.setter_id == user.id %]
     [% to_identity = flag.requestee.identity _ " for" %]
   [% ELSE %]
     [% on_behalf_of = 1 %]
     [% IF flag.requestee %][% to_identity = " to " _ flag.requestee.identity %][% END %]
   [% END %]
 [% ELSE %]
-  [% IF flag.requester %]
-    [% to_identity = flag.requester.identity _ "'s request for" %]
+  [% IF old_flag && old_flag.status == '?' %]
+    [% to_identity = old_flag.setter.identity _ "'s request for" %]
   [% END %]
-  [% subject_status = statuses.${flag.status} %]
+  [% subject_status = statuses.$action %]
 [% END %]
 From: [% Param('mailfrom') %]
 To: [% to %]
-Subject: [% flag.type.name %] [%+ subject_status %]: [[% terms.Bug %] [%+ bug.bug_id %]] [% bug.short_desc %]
+Subject: [% flagtype_name %] [%+ subject_status %]: [[% terms.Bug %] [%+ bug.bug_id %]] [% bug.short_desc %]
 [%- IF attachment %] :
-  [Attachment [% attachment.id %]] [% attachment.description %][% END %]
+  [Attachment [% attachment.id %]] [% attachment.description FILTER clean_text %][% END %]
+Date: [% date %]
 X-Bugzilla-Type: request
 [%+ threadingmarker %]
 
@@ -55,10 +59,10 @@ X-Bugzilla-Type: request
 [%- FILTER bullet = wrap(80) -%]
 
 [% IF on_behalf_of %]
-[% user.identity %] has reassigned [% flag.setter.identity %]'s request for [% flag.type.name %]
+[% user.identity %] has reassigned [% flag.setter.identity %]'s request for [% flagtype_name %]
 [% to_identity %]:
 [% ELSE %]
-[% user.identity %] has [% statuses.${flag.status} %] [%+ to_identity %] [%+ flag.type.name %]:
+[% user.identity %] has [% statuses.$action %] [%+ to_identity %] [%+ flagtype_name %]:
 [% END %]
 
 [% terms.Bug %] [%+ bugidsummary %]
@@ -71,10 +75,14 @@ Attachment [% attidsummary %]
 [%- END %]
 [%+ urlbase %]attachment.cgi?id=[% attachment.id %]&action=edit
 [%- END %]
+
+[%- Hook.process('after_summary') -%]
+
 [%- FILTER bullet = wrap(80) %]
 
 [% USE Bugzilla %]
-[% IF Bugzilla.cgi.param("comment") && Bugzilla.cgi.param("comment").length > 0 %]
+[%-# .defined is necessary to avoid a taint issue in Perl < 5.10.1, see bug 509794. %]
+[% IF Bugzilla.cgi.param("comment").defined && Bugzilla.cgi.param("comment").length > 0 %]
 ------- Additional Comments from [% user.identity %]
 [%+ Bugzilla.cgi.param("comment") %]
 [% END %]

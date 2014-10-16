@@ -1,0 +1,15 @@
+[%# Note that error messages should generally be indented four spaces, like
+  # below, because when Bugzilla translates an error message into plain
+  # text, it takes four spaces off the beginning of the lines. 
+  #
+  # Note also that I prefixed my error name with "example", the name of my
+  # extension, so that I wouldn't conflict with other error names in
+  # Bugzilla or other extensions.
+  #%]
+[% IF error == "example_my_error" %]
+   [% title = "Example Error Title" %]
+   This is the error message! It contains <em>some html</em>.
+[% ELSIF error == "example_short_desc_invalid" %]
+  [% title = "Bad Summary" %]
+  The Summary must contain the word "example".
+[% END %]

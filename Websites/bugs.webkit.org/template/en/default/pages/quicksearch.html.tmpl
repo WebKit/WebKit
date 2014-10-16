@@ -10,180 +10,332 @@
   #
   # The Original Code is the Bugzilla Bug Tracking System.
   #
-  # Contributor(s): N.N.
-  #                 Marc Schumann <wurblzap@gmail.com>
+  # The Initial Developer of the Original Code is Everything Solved, Inc.
+  # Portions created by the Initial Developer are Copyright (C) 2009
+  # the Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s):
+  #   Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
+[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% INCLUDE global/header.html.tmpl
    title  = "$terms.Bugzilla QuickSearch",
-   style  = 'ul {margin-bottom: 2ex}
-             ul li {margin-top: 2ex}
-             ul li ul li {margin-top: 0}'
+   style_urls = ['skins/standard/page.css']         
    onload = 'document.forms[\'f\'].quicksearch.focus()'
  %]
 
-<p style="font-size: 80%">
-  If you are already familiar with the original
-  <a href="query.cgi">[% terms.Bugzilla %] Search Form</a>,
-  you may prefer <a href="page.cgi?id=quicksearchhack.html">this form</a>.
-</p>
+[% USE Bugzilla %]
 
-<p>
-  Type in one or more words (or word fragments) to search for:
-</p>
+<p>Type in one or more words (or pieces of words) to search for:</p>
 
 <form name="f" action="buglist.cgi" method="get"
       onsubmit="if (this.quicksearch.value == '')
                 { alert('Please enter one or more search terms first.');
                   return false; } return true;">
   <input type="text" size="40" name="quicksearch">
-  <input type="submit" value="Find" id="find">
+  <input type="submit" value="Search" id="find">
 </form>
 
-<h2>Getting Started</h2>
-
 <ul>
-  <li>
-    This is <strong>case-insensitive</strong> search:<br />
-    <ul>
-      <li><tt>table</tt>, <tt>Table</tt> and <tt>TABLE</tt> are all the same.</li>
-    </ul>
+  <li><a href="#basics">The Basics</a></li>
+  <li><a href="#basic_examples">Examples of Simple Queries</a></li>
+  <li><a href="#fields">Fields You Can Search On</a></li>
+  <li><a href="#advanced_features">Advanced Features</a></li>
+  <li><a href="#shortcuts">Advanced Shortcuts</a></li>
+  <li><a href="#advanced_examples">Examples of Complex Queries</a></li>
+</ul>
+
+<h2 id="basics">The Basics</h2>
+
+<ul class="qs_help">
+  <li>If you just put a word or series of words in the search box, 
+    [%+ terms.Bugzilla %] will search the 
+    [%+ field_descs.product FILTER html %],
+    [%+ field_descs.component FILTER html %], 
+    [%+ IF use_keywords %][%+ field_descs.keywords FILTER html %],[% END %]
+    [%+ IF Param('usebugaliases') %][% field_descs.alias FILTER html %],[% END %]
+    [%+ field_descs.short_desc FILTER html %], 
+    [%+ IF Param('usestatuswhiteboard') %][% field_descs.status_whiteboard FILTER html %],[% END %]
+    and [% field_descs.longdesc FILTER html %] fields for your word or words.</li>
+
+  <li>Typing just a <strong>number</strong> in the search box will take
+    you directly to the [% terms.bug %] with that ID. 
+    [% IF Param('usebugaliases') %]
+      Also, just typing the <strong>alias</strong> of [% terms.abug %]
+      will take you to that [% terms.bug %].
+    [% END %]
   </li>
-  <li>
-    This is <strong>all words as substrings</strong>
-    search.<br />
-    Therefore you should <strong>use stems</strong> to get better results:
+
+  <li>Adding more terms <strong>narrows down</strong> the search, it does not
+     expand it. (In other words, [% terms.Bugzilla %] searches for 
+     [%+ terms.bugs %] that match <em>all</em> your criteria, not
+     [%+ terms.bugs %] that match <em>any</em> of your criteria.)</li>
+
+  <li>Searching is <strong>case-insensitive</strong>. So <kbd>table</kbd>,
+    <kbd>Table</kbd>, and <kbd>TABLE</kbd> are all the same.</li>
+
+  <li>[% terms.Bugzilla %] does not just search for the exact word you put in,
+    but also for any word that <strong>contains</strong> that word.
+    So, for example, searching for "cat" would also find [% terms.bugs %]
+    that contain it as part of other words&mdash;for example, [% terms.abug %]
+    mentioning "<strong>cat</strong>ch" or "certifi<strong>cat</strong>e". It
+    will not find partial words in the [% field_descs.longdesc FILTER html %]
+    or [% field_descs.keywords FILTER html %] fields,
+    though&mdash;only full words are matched, there.</li>
+
+  <li>By default, only <strong>open</strong> [% terms.bugs %] are
+    searched. If you want to know how to also search closed [% terms.bugs %],
+    see the <a href="#shortcuts">Advanced Shortcuts</a> section.</li>
+
+  <li>If you want to search <strong>specific fields</strong>, you do it like
+    <kbd>field:value</kbd>, where <kbd>field</kbd> is one of the 
+    <a href="#fields">field names</a> lower down in this
+    document and <kbd>value</kbd> is the value you want to search for
+    in that field. If you put commas in the <kbd>value</kbd>, then it is
+    interpreted as a list of values, and [% terms.bugs %] that match
+    <em>any</em> of those values will be searched for.</li>
+</ul>
+
+<h2 id="basic_examples">Examples of Simple Queries</h2>
+
+<p>Here are some examples of how to write some simple queries.
+  <a href="#advanced_examples">Examples for more complex queries</a> can be
+  found lower in this page.</p>
+
+<ul class="qs_help">
+  <li>All open [% terms.bugs %] where userA@company.com is in the CC list
+    (no need to mention open [% terms.bugs %], this is the default):<br>
+    <kbd>cc:userA@company.com</kbd></li>
+  <li>All unconfirmed [% terms.bugs %] in product productA (putting the
+    [%+ terms.bug %] status at the first position make it being automagically
+    considered as [% terms.abug %] status):<br>
+    <kbd>UNCONFIRMED product:productA</kbd>
+  <li>All open and closed [% terms.bugs %] reported by userB@company.com
+    (we must specify ALL as the first word, else only open [% terms.bugs %]
+    are taken into account):<br>
+    <kbd>ALL reporter:userB@company.com</kbd>
+  <li>All open [% terms.bugs %] with severity blocker or critical with the
+    target milestone set to 2.5:<br>
+    <kbd>severity:blocker,critical milestone:2.5</kbd>
+  <li>All open [% terms.bugs %] in the component Research & Development
+    with priority P1 or P2 (we must use quotes for the component as its name
+    contains whitespaces):<br>
+    <kbd>component:"Research & Development" priority:P1,P2</kbd></li>
+</ul>
+
+<h2 id="fields">Fields You Can Search On</h2>
+
+<p>You can specify any of these fields like <kbd>field:value</kbd>
+  in the search box, to search on them. You can also abbreviate
+  the field name, as long as your abbreviation matches only one field name.
+  So, for example, searching on <kbd>stat:VERIFIED</kbd> will find all
+  [%+ terms.bugs %] in the <kbd>VERIFIED</kbd> status. Some fields have
+  multiple names, and you can use any of those names to search for them.</p>
+
+[% IF Bugzilla.active_custom_fields.size %]
+  [% SET first_field = Bugzilla.active_custom_fields.0 %]
+  <p>For custom fields, they can be used and abbreviated
+    based on the part of their name <em>after</em> the <kbd>cf_</kbd>
+    if you'd like, in addition to their standard name starting with
+    <kbd>cf_</kbd>. So for example, 
+    <kbd>[% first_field.name FILTER html %]</kbd> can be
+    referred to as 
+    <kbd>[% first_field.name.replace('^cf_') FILTER html %]</kbd>,
+    also. However, if this causes a conflict between the standard
+    [%+ terms.Bugzilla %] field names and the custom field names, the
+    standard field names always take precedence.</p>
+[% END %]
+
+[% SET field_table = {} %]
+[% FOREACH field = quicksearch_field_names.keys %]
+  [% description = field_descs.$field %]
+  [% field_table.$description = quicksearch_field_names.${field} %]
+[% END %]
+
+
+<table cellspacing="0" cellpadding="0" border="0" class="qs_fields">
+  <thead>
+    <tr>
+      <th class="field_name">Field</th>
+      <th class="field_nickname">Field Name(s) For Search</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% FOREACH desc = field_table.keys.sort %]
+      <tr>
+        <td class="field_name">[% desc FILTER html %]</td>
+        <td class="field_nickname">
+          [% FOREACH nickname = field_table.$desc %]
+            <kbd>[% nickname FILTER html %]</kbd>
+            [% ",&nbsp; " UNLESS loop.last %]
+          [% END %]
+      </tr>
+    [% END %]
+  </tbody>
+</table>
+
+<h2 id="advanced_features">Advanced Features</h2>
+
+<ul class="qs_help">
+  <li>If you want to search for a <strong>phrase</strong> or something that
+    contains spaces, commas, colons or quotes, you must put it in quotes, like:
+    <kbd>"yes, this is a phrase"</kbd>. You must also use quotes to search for
+    characters that would otherwise be interpreted specially by quicksearch.
+    For example, <kbd>"this|that"</kbd> would search for the literal string
+    <em>this|that</em> and would not be parsed as <kbd>"this OR that"</kbd>.
+    Also, <kbd>"-field:value"</kbd> would search for the literal phrase
+    <em>-field:value</em> and would not be parsed as
+    <kbd>"NOT field:value"</kbd>.</li>
+
+  <li>You can use <strong>AND</strong>, <strong>NOT</strong>,
+    and <strong>OR</strong> in searches. 
+
+    You can also use <kbd>-</kbd> to mean "NOT", and <kbd>|</kbd> to mean "OR".
+    There is no special character for "AND", because by default any search
+    terms that are separated by a space are joined by an "AND".
+    Examples:
     <ul>
       <li>
-        Use <tt>localiz</tt> instead of <tt>localize</tt> or
-        <tt>localization</tt>.
+        <strong>NOT</strong>:<br>
+        Use <kbd><strong>-</strong><em>summary:foo</em></kbd> to exclude 
+        [%+ terms.bugs %] with <kbd>foo</kbd> in the summary.<br>
+        <kbd><em>NOT summary:foo</em></kbd> would have the same effect.
       </li>
-     <li>
-       Use <tt>bookmark</tt> instead of <tt>bookmarks</tt> or
-       <tt>bookmarking</tt>.
-     </li>
-   </ul>
+      <li>
+        <strong>AND</strong>:<br>
+        <kbd><em>foo bar</em></kbd> searches for [% terms.bugs %] that contains
+        both <kbd>foo</kbd> and <kbd>bar</kbd>.<br>
+        <kbd><em>foo AND bar</em></kbd> would have the same effect.
+      </li>
+      <li>
+        <strong>OR</strong>:<br>
+        <kbd><em>foo<strong>|</strong>bar</em></kbd> would search
+        for [% terms.bugs %] that contain <kbd>foo</kbd> OR <kbd>bar</kbd>.<br>
+        <kbd><em>foo OR bar</em></kbd> would have the same effect.<br>
+      </li>
+    </ul>
+
+    <p>You cannot use | nor OR to enumerate possible values for a given field.
+      You must use commas instead. So <kbd>field:value1,value2</kbd> does what
+      you expect, but <kbd>field:value1|value2</kbd> would be treated as
+      <kbd>field:value1 OR value2</kbd>, which means value2 is not bound to
+      the given field.</p>
+
+    <p>OR has higher precedence than AND; AND is the top level operation.
+      For example:</p>
+    <p>Searching for <em><kbd>url|location bar|field -focus</kbd></em> means
+      (<kbd>url</kbd> OR <kbd>location</kbd>) AND (<kbd>bar</kbd> OR 
+      <kbd>field</kbd>) AND (NOT <kbd>focus</kbd>)</p>
   </li>
 </ul>
 
-<h2><a name="features">Features</a></h2>
+<h2 id="shortcuts">Advanced Shortcuts</h2>
 
-<ul>
-  <li>
-    Boolean operations: &ldquo;<tt>-foo</tt>&rdquo;&nbsp;(NOT),
-    &ldquo;<tt>foo&nbsp;bar</tt>&rdquo;&nbsp;(AND),
-    &ldquo;<tt>foo|bar</tt>&rdquo;&nbsp;(OR).
-    <ul>
-      <li>
-        <strong>NOT</strong>:<br />
-        Use <tt><b>-</b><i>foo</i></tt> to exclude [% terms.bugs %]
-        with <tt><i>foo</i></tt> in the summary.
-      </li>
-      <li>
-        <strong>AND</strong>:<br />
-        Space-separated words are treated as a conjunction.
-      </li>
-      <li>
-        <strong>OR</strong>:<br />
-        Within a word, "|"-separated parts denote alternatives.
-      </li>
-      <li>
-        Besides "|", a comma can be used to separate alternatives.
-      </li>
-      <li>
-        OR has higher precedence than AND; AND is the top level operation.
-      </li>
-    </ul>
-    <i>Example:</i>
-    <tt>url,location bar,field -focus</tt> means
-    (<tt>url</tt> OR <tt>location</tt>) AND (<tt>bar</tt> OR <tt>field</tt>)
-    AND (NOT <tt>focus</tt>)
-  </li>
-  <li>
-    Use <tt>+foo</tt> to search for [% terms.bugs %] where the
-    <strong>summary</strong> contains <tt>foo</tt> as a
-    <strong>substring</strong>.<br/>
-    Use <tt>#foo</tt> to search for [% terms.bugs %] where the
-    <strong>summary</strong> contains the <strong>word</strong> <tt>foo</tt>.
-    <ul>
-      <li>
-        <tt>+brow</tt> does not find all [% terms.bugs %] in the
-        <tt>Browser</tt> product.
-      </li>
-      <li>
-        <tt>#title</tt> does not find [% terms.bugs %] with <tt>titlebar</tt>
-        or <tt>titled</tt>.
-      </li>
-    </ul>
-    Phrases with special chars (space, comma, +, -, #, &hellip;) can be
-    <strong>quoted</strong>:
-    <ul>
-      <li>
-        <tt>"lock icon"</tt>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <strong>Open vs. Resolved [% terms.Bugs %]</strong>:<br />
-    By default, only open (i.e. unresolved) [% terms.bugs %] are shown.
-    Use <tt>+DUP</tt> as first word in your search to include duplicate
-    [%+ terms.bugs %] in your search,
-    <tt>FIXED</tt> to search for fixed [%+ terms.bugs %] only,
-    or <tt>ALL</tt> to search all [% terms.bugs %],
-    regardless of status or resolution.
-    Searching for duplicates is recommended if you can't find an open
-    [%+ terms.bug %] directly.
-    <ul>
-      <li>
-        <tt>+DUP,FIXED table border</tt>
-      </li>
-      <li>
-        <tt>ALL mouse wheel</tt>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <strong>Focus the Search with Products &amp;
-    Components</strong>:<br />
-    To search for [% terms.bugs %] in product "Foo Bar" only, add
-    <tt>:foo</tt> or <tt>:bar</tt> or both to your search.
-    You can do this with any substring of a
-    <a href="describecomponents.cgi">product or component</a> to focus the
-    search.
-  </li>
+<p>In addition to using <a href="#fields">field names</a> to search
+  specific fields, there are certain characters or words that you can
+  use as a "shortcut" for searching certain fields:</p>
+
+<table cellspacing="0" cellpadding="0" border="0" class="qs_fields">
+  <thead>
+    <tr>
+      <th class="field_name">Field</th>
+      <th class="field_nickname">Shortcut(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="field_name">[% field_descs.bug_status FILTER html %]</td>
+      <td class="field_nickname">
+        Make the <strong>first word</strong> of your search the name of any
+        status, or even an abbreviation of any status, and [% terms.bugs %]
+        in that status will be searched. <strong><kbd>ALL</kbd></strong>
+        is a special shortcut that means "all statuses".
+        <strong><kbd>OPEN</kbd></strong> is a special shortcut that means
+        "all open statuses".
+      </td>
+    </tr>
+    <tr>
+      <td class="field_name">[% field_descs.resolution FILTER html %]</td>
+      <td class="field_nickname">
+        Make the <strong>first word</strong> of your search the name of any
+        resolution, or even an abbreviation of any resolution, and 
+        [%+ terms.bugs %] with that resolution will be searched. For example,
+        making <kbd>FIX</kbd> the first word of your search will find all
+        [%+ terms.bugs %] with a resolution of <kbd>FIXED</kbd> .
+    </tr>
+    <tr>
+      <td class="field_name">[% field_descs.priority FILTER html %]</td>
+      <td class="field_nickname">"<strong>P1</strong>" (as a word anywhere in
+        the search) means "find [% terms.bugs %] with the highest priority. 
+        "P2" means the second-highest priority, and so on.
+        <p>Searching for "<strong>P1-3</strong>" will find [% terms.bugs %] in
+        any of the three highest priorities, and so on.</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="field_name">[% field_descs.assigned_to FILTER html %]</td>
+      <td class="field_nickname"><strong>@</strong><em>value</em></td>
+    </tr>
+    <tr>
+      <td class="field_name">[% field_descs.product FILTER html %] or
+        [%+ field_descs.component FILTER html %]</td>
+      <td class="field_nickname"><strong>:</strong><em>value</em></td>
+    </tr>
+    [% IF use_keywords %]
+      <tr>
+        <td class="field_name">[% field_descs.keywords FILTER html %]</td>
+        <td class="field_nickname"><strong>!</strong><em>value</em></td>
+      </tr>
+    [% END %]
+    <tr>
+      [% SET key = "flagtypes.name" %]
+      <td class="field_name">[% field_descs.$key FILTER html %]</td>
+      <td class="field_nickname">
+        <em>flag</em><strong>?</strong><em>requestee</em>
+      </td>
+    </tr>
+    <tr>
+      <td class="field_name">[% field_descs.longdesc FILTER html %]
+        or [% field_descs.short_desc FILTER html %]</td>
+      <td class="field_nickname">
+        <strong>#</strong><em>value</em>
+      </td>
+    </tr>
+    [% IF Param('usestatuswhiteboard') %]
+      <tr>
+        <td class="field_name">[% field_descs.short_desc FILTER html %]
+          or [% field_descs.status_whiteboard FILTER html %]</td>
+        <td class="field_nickname"><strong>[</strong><em>value</em></td>
+      </tr>
+    [% END %]
+  </tbody>
+</table>
+
+<h2 id="advanced_examples">Examples of Complex Queries</h2>
+
+<p>It is pretty easy to write rather complex queries without too much effort.
+  For very complex queries, you have to use the
+  <a href="query.cgi?format=advanced">Advanced Search</a> form.</p>
+
+<ul class="qs_help">
+  <li>All [% terms.bugs %] reported by userA@company.com or assigned to him
+    (the initial @ is a shortcut for the assignee, see the
+    <a href="#shortcuts">Advanced Shortcuts</a> section above):<br>
+    <kbd>ALL @userA@company.com OR reporter:userA@company.com</kbd></li>
+  <li>All open [% terms.bugs %] in product productA with either severity
+    blocker, critical or major, or with priority P1, or with the blocker+
+    flag set, and which are neither assigned to userB@company.com nor to
+    userC@company.com (we make the assumption that there are only two users
+    matching userB and userC, else we would write the whole login name):<br>
+    <kbd>:productA sev:blocker,critical,major OR pri:P1 OR flag:blocker+ -assign:userB,userC</kbd></li>
+  <li>All FIXED [% terms.bugs %] with the blocker+ flag set, but without
+    the approval+ nor approval? flags set:<br>
+    <kbd>FIXED flag:blocker+ -flag:approval+ -flag:approval?</kbd></li>
+  <li>[% terms.Bugs %] with <em>That's a "unusual" issue</em> in the
+    [%+ terms.bug %] summary (double quotes are escaped using <em>\"</em>):<br>
+    <kbd>summary:"That's a \"unusual\" issue"</kbd></li>
 </ul>
-
-<h2>More Tips</h2>
-
-<ul>
-  <li>
-    You can also use this tool to <strong>lookup</strong> a [% terms.bug %] by
-    its number:<br />
-    <ul>
-      <li><tt>12345</tt></li>
-    </ul>
-  </li>
-  <li>
-    A comma-separated list of [% terms.bug %] numbers gives you a list of these
-    [%+ terms.bugs %]:<br />
-    <ul>
-      <li><tt>12345,23456,34567</tt></li>
-    </ul>
-  </li>
-</ul>
-
-<p>
-  By default, the following fields are searched: Summary, Keywords, Product,
-  Component, Status Whiteboard. If a word looks like a part of a URL, that field
-  is included in the search, too.
-</p>
-<hr>
-
-<p>
-  Use the powerful <a href="query.cgi">[% terms.Bugzilla %] Search Form</a>
-  for advanced queries.
-</p>
 
 [% PROCESS global/footer.html.tmpl %]

@@ -25,17 +25,13 @@
 #                 Jean-Sebastien Guay <jean_seb@hybride.com>
 #                 Frédéric Buclin <LpSolit@gmail.com>
 
-# Run me out of cron at midnight to collect Bugzilla statistics.
-#
-# To run new charts for a specific date, pass it in on the command line in
-# ISO (2004-08-14) format.
-
-use AnyDBM_File;
 use strict;
-use IO::Handle;
-use Cwd;
-
 use lib qw(. lib);
+
+use Getopt::Long qw(:config bundling);
+use Pod::Usage;
+use List::Util qw(first);
+use Cwd;
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -45,37 +41,31 @@ use Bugzilla::Search;
 use Bugzilla::User;
 use Bugzilla::Product;
 use Bugzilla::Field;
+use Bugzilla::Install::Filesystem qw(fix_dir_permissions);
+
+my %switch;
+GetOptions(\%switch, 'help|h', 'regenerate');
+
+# Print the help message if that switch was selected.
+pod2usage({-verbose => 1, -exitval => 1}) if $switch{'help'};
 
 # Turn off output buffering (probably needed when displaying output feedback
 # in the regenerate mode).
 $| = 1;
 
+my $datadir = bz_locations()->{'datadir'};
+my $graphsdir = bz_locations()->{'graphsdir'};
+
 # Tidy up after graphing module
 my $cwd = Cwd::getcwd();
-if (chdir("graphs")) {
+if (chdir($graphsdir)) {
     unlink <./*.gif>;
     unlink <./*.png>;
     # chdir("..") doesn't work if graphs is a symlink, see bug 429378
     chdir($cwd);
 }
 
-# This is a pure command line script.
-Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
-
 my $dbh = Bugzilla->switch_to_shadow_db();
-
-
-# To recreate the daily statistics,  run "collectstats.pl --regenerate" .
-my $regenerate = 0;
-if ($#ARGV >= 0 && $ARGV[0] eq "--regenerate") {
-    shift(@ARGV);
-    $regenerate = 1;
-}
-
-my $datadir = bz_locations()->{'datadir'};
-
-my @myproducts = map {$_->name} Bugzilla::Product->get_all;
-unshift(@myproducts, "-All-");
 
 # As we can now customize statuses and resolutions, looking at the current list
 # of legal values only is not enough as some now removed statuses and resolutions
@@ -114,71 +104,74 @@ my @resolutions = @{$fields->{'resolution'}};
 # Exclude "" from the resolution list.
 @resolutions = grep {$_} @resolutions;
 
+# --regenerate was taking an enormous amount of time to query everything
+# per bug, per day. Instead, we now just get all the data out of the DB
+# at once and stuff it into some data structures.
+my (%bug_status, %bug_resolution, %removed);
+if ($switch{'regenerate'}) {
+    %bug_resolution = @{ $dbh->selectcol_arrayref(
+        'SELECT bug_id, resolution FROM bugs', {Columns=>[1,2]}) };
+    %bug_status = @{ $dbh->selectcol_arrayref(
+        'SELECT bug_id, bug_status FROM bugs', {Columns=>[1,2]}) };
+
+    my $removed_sth = $dbh->prepare(
+        q{SELECT bugs_activity.bug_id, bugs_activity.removed,}
+        . $dbh->sql_to_days('bugs_activity.bug_when')
+       . q{ FROM bugs_activity
+           WHERE bugs_activity.fieldid = ?
+        ORDER BY bugs_activity.bug_when});
+
+    %removed = (bug_status => {}, resolution => {});
+    foreach my $field (qw(bug_status resolution)) {
+        my $field_id = Bugzilla::Field->check($field)->id;
+        my $rows = $dbh->selectall_arrayref($removed_sth, undef, $field_id);
+        my $hash = $removed{$field};
+        foreach my $row (@$rows) {
+            my ($bug_id, $removed, $when) = @$row;
+            $hash->{$bug_id} ||= [];
+            push(@{ $hash->{$bug_id} }, { when    => int($when),
+                                          removed => $removed });
+        }
+    }
+}
+
 my $tstart = time;
+
+my @myproducts = Bugzilla::Product->get_all;
+unshift(@myproducts, "-All-");
+
+my $dir = "$datadir/mining";
+if (!-d $dir) {
+    mkdir $dir or die "mkdir $dir failed: $!";
+    fix_dir_permissions($dir);
+}
+
 foreach (@myproducts) {
-    my $dir = "$datadir/mining";
-
-    &check_data_dir ($dir);
-
-    if ($regenerate) {
-        &regenerate_stats($dir, $_);
+    if ($switch{'regenerate'}) {
+        regenerate_stats($dir, $_, \%bug_resolution, \%bug_status, \%removed);
     } else {
         &collect_stats($dir, $_);
     }
 }
+# Fix permissions for all files in mining/.
+fix_dir_permissions($dir);
+
 my $tend = time;
 # Uncomment the following line for performance testing.
 #print "Total time taken " . delta_time($tstart, $tend) . "\n";
 
-&calculate_dupes();
-
 CollectSeriesData();
-
-{
-    local $ENV{'GATEWAY_INTERFACE'} = 'cmdline';
-    local $ENV{'REQUEST_METHOD'} = 'GET';
-    local $ENV{'QUERY_STRING'} = 'ctype=rdf';
-
-    my $perl = $^X;
-    trick_taint($perl);
-
-    # Generate a static RDF file containing the default view of the duplicates data.
-    open(CGI, "$perl -T duplicates.cgi |")
-        || die "can't fork duplicates.cgi: $!";
-    open(RDF, ">$datadir/duplicates.tmp")
-        || die "can't write to $datadir/duplicates.tmp: $!";
-    my $headers_done = 0;
-    while (<CGI>) {
-        print RDF if $headers_done;
-        $headers_done = 1 if $_ eq "\r\n";
-    }
-    close CGI;
-    close RDF;
-}
-if (-s "$datadir/duplicates.tmp") {
-    rename("$datadir/duplicates.rdf", "$datadir/duplicates-old.rdf");
-    rename("$datadir/duplicates.tmp", "$datadir/duplicates.rdf");
-}
-
-sub check_data_dir {
-    my $dir = shift;
-
-    if (! -d $dir) {
-        mkdir $dir, 0755;
-        chmod 0755, $dir;
-    }
-}
 
 sub collect_stats {
     my $dir = shift;
     my $product = shift;
     my $when = localtime (time);
     my $dbh = Bugzilla->dbh;
-
     my $product_id;
-    if ($product ne '-All-') {
-        my $prod = Bugzilla::Product::check_product($product);
-        $product_id = $prod->id;
+
+    if (ref $product) {
+        $product_id = $product->id;
+        $product = $product->name;
     }
 
     # NB: Need to mangle the product for the filename, but use the real
@@ -200,6 +193,10 @@ sub collect_stats {
     else {
         open(DATA, '>>', $file)
           || ThrowCodeError('chart_file_open_fail', {'filename' => $file});
+    }
+
+    if (Bugzilla->params->{'utf8'}) {
+        binmode DATA, ':utf8';
     }
 
     # Now collect current data.
@@ -250,7 +247,6 @@ FIN
     }
     print DATA (join '|', @row) . "\n";
     close DATA;
-    chmod 0644, $file;
 }
 
 sub get_old_data {
@@ -258,6 +254,10 @@ sub get_old_data {
 
     open(DATA, '<', $file)
       || ThrowCodeError('chart_file_open_fail', {'filename' => $file});
+
+    if (Bugzilla->params->{'utf8'}) {
+        binmode DATA, ':utf8';
+    }
 
     my @data;
     my @columns;
@@ -295,85 +295,9 @@ sub get_old_data {
     return @data;
 }
 
-sub calculate_dupes {
-    my $dbh = Bugzilla->dbh;
-    my $rows = $dbh->selectall_arrayref("SELECT dupe_of, dupe FROM duplicates");
-
-    my %dupes;
-    my %count;
-    my $key;
-    my $changed = 1;
-
-    my $today = &today_dash;
-
-    # Save % count here in a date-named file
-    # so we can read it back in to do changed counters
-    # First, delete it if it exists, so we don't add to the contents of an old file
-    my $datadir = bz_locations()->{'datadir'};
-
-    if (my @files = <$datadir/duplicates/dupes$today*>) {
-        map { trick_taint($_) } @files;
-        unlink @files;
-    }
-   
-    dbmopen(%count, "$datadir/duplicates/dupes$today", 0644) || die "Can't open DBM dupes file: $!";
-
-    # Create a hash with key "a bug number", value "bug which that bug is a
-    # direct dupe of" - straight from the duplicates table.
-    foreach my $row (@$rows) {
-        my ($dupe_of, $dupe) = @$row;
-        $dupes{$dupe} = $dupe_of;
-    }
-
-    # Total up the number of bugs which are dupes of a given bug
-    # count will then have key = "bug number", 
-    # value = "number of immediate dupes of that bug".
-    foreach $key (keys(%dupes)) 
-    {
-        my $dupe_of = $dupes{$key};
-
-        if (!defined($count{$dupe_of})) {
-            $count{$dupe_of} = 0;
-        }
-
-        $count{$dupe_of}++;
-    }
-
-    # Now we collapse the dupe tree by iterating over %count until
-    # there is no further change.
-    while ($changed == 1)
-    {
-        $changed = 0;
-        foreach $key (keys(%count)) {
-            # if this bug is actually itself a dupe, and has a count...
-            if (defined($dupes{$key}) && $count{$key} > 0) {
-                # add that count onto the bug it is a dupe of,
-                # and zero the count; the check is to avoid
-                # loops
-                if ($count{$dupes{$key}} != 0) {
-                    $count{$dupes{$key}} += $count{$key};
-                    $count{$key} = 0;
-                    $changed = 1;
-                }
-            }
-        }
-    }
-
-    # Remove the values for which the count is zero
-    foreach $key (keys(%count))
-    {
-        if ($count{$key} == 0) {
-            delete $count{$key};
-        }
-    }
-   
-    dbmclose(%count);
-}
-
 # This regenerates all statistics from the database.
 sub regenerate_stats {
-    my $dir = shift;
-    my $product = shift;
+    my ($dir, $product, $bug_resolution, $bug_status, $removed) = @_;
 
     my $dbh = Bugzilla->dbh;
     my $when = localtime(time());
@@ -381,11 +305,12 @@ sub regenerate_stats {
 
     # NB: Need to mangle the product for the filename, but use the real
     # product name in the query
+    if (ref $product) {
+        $product = $product->name;
+    }
     my $file_product = $product;
     $file_product =~ s/\//-/gs;
     my $file = join '/', $dir, $file_product;
-
-    my @bugs;
 
     my $and_product = "";
     my $from_product = "";
@@ -402,7 +327,7 @@ sub regenerate_stats {
     # database was created, and the end date from the current day.
     # If there were no bugs in the search, return early.
     my $query = q{SELECT } .
-                $dbh->sql_to_days('creation_ts') . q{ AS start_day, } . 
+                $dbh->sql_to_days('creation_ts') . q{ AS start_day, } .
                 $dbh->sql_to_days('current_date') . q{ AS end_day, } . 
                 $dbh->sql_to_days("'1970-01-01'") . 
                  qq{ FROM bugs $from_product 
@@ -416,7 +341,6 @@ sub regenerate_stats {
     }
 
     if (open DATA, ">$file") {
-        DATA->autoflush(1);
         my $fields = join('|', ('DATE', @statuses, @resolutions));
         print DATA <<FIN;
 # Bugzilla Daily Bug Stats
@@ -429,6 +353,7 @@ sub regenerate_stats {
 FIN
         # For each day, generate a line of statistics.
         my $total_days = $end - $start;
+        my @bugs;
         for (my $day = $start + 1; $day <= $end; $day++) {
             # Some output feedback
             my $percent_done = ($day - $start - 1) * 100 / $total_days;
@@ -445,56 +370,25 @@ FIN
                         $and_product . q{ ORDER BY bug_id};
 
             my $bug_ids = $dbh->selectcol_arrayref($query, undef, @values);
-
             push(@bugs, @$bug_ids);
 
-            # For each bug that existed on that day, determine its status
-            # at the beginning of the day.  If there were no status
-            # changes on or after that day, the status was the same as it
-            # is today, which can be found in the bugs table.  Otherwise,
-            # the status was equal to the first "previous value" entry in
-            # the bugs_activity table for that bug made on or after that
-            # day.
             my %bugcount;
             foreach (@statuses) { $bugcount{$_} = 0; }
             foreach (@resolutions) { $bugcount{$_} = 0; }
             # Get information on bug states and resolutions.
-            $query = qq{SELECT bugs_activity.removed 
-                          FROM bugs_activity 
-                    INNER JOIN fielddefs 
-                            ON bugs_activity.fieldid = fielddefs.id 
-                         WHERE fielddefs.name = ? 
-                           AND bugs_activity.bug_id = ? 
-                           AND bugs_activity.bug_when >= } . 
-                           $dbh->sql_from_days($day) . 
-                    " ORDER BY bugs_activity.bug_when " . 
-                          $dbh->sql_limit(1);
-
-            my $sth_bug = $dbh->prepare($query);
-            my $sth_status = $dbh->prepare(q{SELECT bug_status 
-                                               FROM bugs 
-                                              WHERE bug_id = ?});
-            
-            my $sth_reso = $dbh->prepare(q{SELECT resolution 
-                                             FROM bugs 
-                                            WHERE bug_id = ?});
-
             for my $bug (@bugs) {
-                my $status = $dbh->selectrow_array($sth_bug, undef, 
-                                                       'bug_status', $bug);
-                unless ($status) {
-                    $status = $dbh->selectrow_array($sth_status, undef, $bug);
-                }
+                my $status = _get_value(
+                    $removed->{'bug_status'}->{$bug},
+                    $bug_status,  $day, $bug);
 
                 if (defined $bugcount{$status}) {
                     $bugcount{$status}++;
                 }
-                my $resolution = $dbh->selectrow_array($sth_bug, undef, 
-                                                         'resolution', $bug);
-                unless ($resolution) {
-                    $resolution = $dbh->selectrow_array($sth_reso, undef, $bug);
-                }
-                
+
+                my $resolution = _get_value(
+                    $removed->{'resolution'}->{$bug},
+                    $bug_resolution, $day, $bug);
+
                 if (defined $bugcount{$resolution}) {
                     $bugcount{$resolution}++;
                 }
@@ -508,15 +402,32 @@ FIN
             foreach (@resolutions) { print DATA "|$bugcount{$_}"; }
             print DATA "\n";
         }
-        
+
         # Finish up output feedback for this product.
         my $tend = time;
         print "\rRegenerating $product \[100.0\%] - " .
             delta_time($tstart, $tend) . "\n";
-            
+
         close DATA;
-        chmod 0640, $file;
     }
+}
+
+# A helper for --regenerate.
+# For each bug that exists on a day, we determine its status/resolution
+# at the beginning of the day.  If there were no status/resolution
+# changes on or after that day, the status was the same as it
+# is today (the "current" value).  Otherwise, the status was equal to the
+# first "previous value" entry in the bugs_activity table for that 
+# bug made on or after that day.
+sub _get_value {
+    my ($removed, $current, $day, $bug) = @_;
+
+    # Get the first change that's on or after this day.
+    my $item = first { $_->{when} >= $day } @{ $removed || [] };
+
+    # If there's no change on or after this day, then we just return the
+    # current value.
+    return $item ? $item->{removed} : $current->{$bug};
 }
 
 sub today {
@@ -555,7 +466,7 @@ sub CollectSeriesData {
     # (days_since_epoch + series_id) % frequency = 0. So they'll run every
     # <frequency> days, but the start date depends on the series_id.
     my $days_since_epoch = int(time() / (60 * 60 * 24));
-    my $today = $ARGV[0] || today_dash();
+    my $today = today_dash();
 
     # We save a copy of the main $dbh and then switch to the shadow and get
     # that one too. Remember, these may be the same.
@@ -589,10 +500,11 @@ sub CollectSeriesData {
         # Do not die if Search->new() detects invalid data, such as an obsolete
         # login name or a renamed product or component, etc.
         eval {
-            my $search = new Bugzilla::Search('params' => $cgi,
-                                              'fields' => ["bugs.bug_id"],
+            my $search = new Bugzilla::Search('params' => scalar $cgi->Vars,
+                                              'fields' => ["bug_id"],
+                                              'allow_unlimited' => 1,
                                               'user'   => $user);
-            my $sql = $search->getSQL();
+            my $sql = $search->sql;
             $data = $shadow_dbh->selectall_arrayref($sql);
         };
 
@@ -607,3 +519,39 @@ sub CollectSeriesData {
     }
 }
 
+__END__
+
+=head1 NAME
+
+collectstats.pl - Collect data about Bugzilla bugs.
+
+=head1 SYNOPSIS
+
+ ./collectstats.pl [--regenerate] [--help]
+
+Collects data about bugs to be used in Old and New Charts.
+
+=head1 OPTIONS
+
+=over
+
+=item B<--help>
+
+Print this help page.
+
+=item B<--regenerate>
+
+Recreate all the data about bugs, from day 1. This option is only relevant
+for Old Charts, and has no effect for New Charts.
+This option will overwrite all existing collected data and can take a huge
+amount of time. You normally don't need to use this option (do not use it
+in a cron job).
+
+=back
+
+=head1 DESCRIPTION
+
+This script collects data about all bugs for Old Charts, triaged by product
+and by bug status and resolution. It also collects data for New Charts, based
+on existing series. For New Charts, data is only collected once a series is
+defined; this script cannot recreate data prior to this date.

@@ -34,16 +34,23 @@ body {
     -moz-border-radius-topright: 5px;
 }
 
-#header .links {
+#header .links, #footer {
     background-color: #929bb1;
-    color: #f1dbc7;
+    color: #ddd;
+}
+
+#header {
     -moz-border-radius-bottomleft: 5px;
     -moz-border-radius-bottomright: 5px;
     border: none;
 }
 
-#header a {
+#header a, #footer a {
     color: white;
+    text-decoration: none;
+}
+#header a:hover, #footer a:hover {
+    text-decoration: underline;
 }
 
 /* body */
@@ -51,31 +58,17 @@ body {
 #bugzilla-body {
     background: #f0f0f0;
     color: black;
-    margin-top: 10px;
-    margin-bottom: 10px;
     border: 1px solid #747e93;
     padding: 10px;
     font-size: 10pt;
     -moz-border-radius: 5px;
 }
 
-a:link,
-a:link:hover {
-    color: #6169c0;
+a {
+    color: #6070cf;
 }
-
-a:visited {
-    color: #3d4a68;
-}
-
-a:link,
-a:visited {
-    text-decoration: none;
-}
-
-a:link:hover,
-a:visited:hover {
-    text-decoration: underline;
+a:hover {
+    color: #8090ef;
 }
 
 hr {
@@ -123,7 +116,9 @@ hr {
     border-top: 1px solid #c8c8ba;
 }
 
-/* comments */
+/************/
+/* Comments */
+/************/
 
 #comments th {
     font-size: 9pt;
@@ -155,24 +150,19 @@ hr {
     font-size: 9pt;
 }
 
-.bz_first_comment {
-}
-
-.bz_comment_head,
-.bz_first_comment_head {
+.bz_comment_head, .bz_first_comment_head {
     margin: 0; padding: 0;
     background-color: transparent;
     font-weight: bold;
 }
 
+.bz_comment_user {
+    margin-left: 0;
+}
+
 .bz_comment.bz_private {
     background-color: #f0e8e8;
     border-color: #f8c8ba;
-}
-
-.bz_comment_head i,
-.bz_first_comment_head i {
-    font-style: normal;
 }
 
 .comment_rule {
@@ -182,16 +172,9 @@ hr {
 /* footer */
 
 #footer {
-    background: #929bb1;
-    color: #f1dbc7;
     border: 1px solid #747e93;
     width: 100%;
-    font-size: 9pt;
     -moz-border-radius: 5px;
-}
-
-#footer a {
-    color: white;
 }
 
 #footer #links-actions,
@@ -201,22 +184,13 @@ hr {
     margin-top: 2ex;
 }
 
-#footer .label {
-    font-weight: bold;
-    color: #dddddd;
-}
-
 #footer .links {
     border-spacing: 30px;
-    padding-bottom: 2ex;
+    margin-bottom: 2ex;
 }
 
 .separator {
     color: #cccccc;
-}
-
-#footer li.form {
-    background-color: transparent;
 }
 
 /* tabs */

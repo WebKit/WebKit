@@ -61,7 +61,7 @@ var severity      = [ [% FOREACH x = severity %]'[% x FILTER js %]', [% END %] ]
 // =============
 
 [% FOREACH cf = custom_fields %]
-var [% cf.name FILTER js %] = [ [% FOREACH x = cf.legal_values %]'[% x FILTER js %]', [% END %] ];
+var [% cf.name FILTER js %] = [ [% FOREACH x = cf.legal_values %]'[% x.name FILTER js %]', [% END %] ];
 [% END %]
 
 

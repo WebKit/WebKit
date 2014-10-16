@@ -33,11 +33,11 @@
 %]
 
 [% edit_contentlink = BLOCK %]editversions.cgi?action=edit&amp;product=
-  [%- product.name FILTER url_quote %]&amp;version=%%name%%[% END %]
+  [%- product.name FILTER uri %]&amp;version=%%name%%[% END %]
 [% delete_contentlink = BLOCK %]editversions.cgi?action=del&amp;product=
-  [%- product.name FILTER url_quote %]&amp;version=%%name%%[% END %]
+  [%- product.name FILTER uri %]&amp;version=%%name%%[% END %]
 [% bug_count_contentlink = BLOCK %]buglist.cgi?version=%%name%%&amp;product=
-  [%- product.name FILTER url_quote %][% END %]
+  [%- product.name FILTER uri %][% END %]
 
 
 [% columns = [
@@ -45,6 +45,11 @@
        name => "name"
        heading => "Edit version..."
        contentlink => edit_contentlink
+     },
+     {
+       name => "isactive"
+       heading => "Active"
+       yesno_field => 1
      }
    ]
 %]
@@ -68,6 +73,8 @@
      })
 %]
 
+[% Hook.process('before_table') %]
+
 [% PROCESS admin/table.html.tmpl
      columns = columns
      data = product.versions
@@ -75,7 +82,7 @@
 
 [% IF ! showbugcounts %]
 
-  <p><a href="editversions.cgi?product=[% product.name FILTER url_quote %]&amp;showbugcounts=1">
+  <p><a href="editversions.cgi?product=[% product.name FILTER uri %]&amp;showbugcounts=1">
       Redisplay table with [% terms.bug %] counts (slower)</a></p>
 
 [% END %]

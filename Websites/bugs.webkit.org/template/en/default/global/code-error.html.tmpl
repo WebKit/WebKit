@@ -32,22 +32,12 @@
   # in this file; if you do not wish to change it, use the "none" filter.
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
+[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% DEFAULT title = "Internal Error" %]
 
 [% error_message = BLOCK %]
-  [% IF    error == "action_unrecognized" %]
-    [% docslinks = {'query.html' => "Searching for $terms.bugs",
-                    'query.html#list' => "$terms.Bug lists"} %]
-    I don't recognize the value (<em>[% action FILTER html %]</em>)
-    of the <em>action</em> variable.
-  
-  [% ELSIF error == "attachment_already_obsolete" %]
-    Attachment #[% attach_id FILTER html %] ([% description FILTER html %]) 
-    is already obsolete.
-
-  [% ELSIF error == "auth_invalid_email" %]
+  [% IF error == "auth_invalid_email" %]
     [% title = "Invalid Email Address" %]
     We received an email address (<b>[% addr FILTER html %]</b>)
     that didn't pass our syntax checking for a legal email address,
@@ -56,10 +46,9 @@
       A legal address must contain exactly one '@',
       and at least one '.' after the @.
     [% ELSE %]
-      [%+ Param('emailregexpdesc') %]
+      [%+ Param('emailregexpdesc') FILTER html_light %]
     [% END %]
-    It must also not contain any of these special characters:
-    <tt>\ ( ) &amp; &lt; &gt; , ; : &quot; [ ]</tt>, or any whitespace.
+    It also must not contain any illegal characters.
 
   [% ELSIF error == "authres_unhandled" %]
     The result value of [% value FILTER html %] was not handled by
@@ -101,12 +90,12 @@
   
   [% ELSIF error == "chart_file_open_fail" %]
     Unable to open the chart datafile <tt>[% filename FILTER html %]</tt>.
-  
-  [% ELSIF error == "chart_lines_not_installed" %]
-    [% admindocslinks = {'installation.html#install-perlmodules' => 'Installing Perl modules necessary for Charting'} %]
-    Charts will not work without the Chart::Lines Perl module being installed.
-    Run checksetup.pl for installation instructions.
-
+ 
+  [% ELSIF error == "column_alter_nonexistent_fk" %]
+    You attempted to modify the foreign key for 
+    [%+ table FILTER html %].[% column FILTER html %], but there is
+    no foreign key on that column.
+ 
   [% ELSIF error == "column_not_null_without_default" %]
     Failed adding the column [% name FILTER html %]:
     You cannot add a NOT NULL column with no default to an existing table
@@ -117,9 +106,26 @@
     without specifying a default or something for $set_nulls_to, because
     there are NULL values currently in it.
 
+  [% ELSIF error == "comment_extra_data_not_allowed" %]
+    You tried to set the <code>extra_data</code> field to 
+    '[% extra_data FILTER html %]' but comments of type [% type FILTER html %]
+    do not accept an <code>extra_data</code> argument.
+
+  [% ELSIF error == "comment_extra_data_required" %]
+    Comments of type [% type FILTER html %] require an <code>extra_data</code>
+    argument to be set.
+
+  [% ELSIF error == "comment_extra_data_not_numeric" %]
+    You tried to set the <code>extra_data</code> field to
+    '[% extra_data FILTER html %]' but comments of type [% type FILTER html %]
+    require a numeric <code>extra_data</code> argument.
+
+  [% ELSIF error == "comment_type_invalid" %]
+    '[% type FILTER html %]' is not a valid comment type.
+
   [% ELSIF error == "db_rename_conflict" %]
     Name conflict: Cannot rename [% old FILTER html %] to
-    [% new FILTER html %] because [% new FILTER html %] already exists.
+    [%+ new FILTER html %] because [% new FILTER html %] already exists.
 
   [% ELSIF error == "cookies_need_value" %]
     Every cookie must have a value.
@@ -136,27 +142,56 @@
       address.
     [% END %]
 
-  [% ELSIF error == "extension_invalid" %]
-    An error occurred processing hook [% name FILTER html %] in
-    extension [% extension FILTER html %]: [% errstr FILTER html %]
+  [% ELSIF error == "extension_disabled" %]
+    [% title = "Extension Disabled" %]
+    You cannot access this page because the extension '[% name FILTER html %]'
+    is disabled.
+
+  [% ELSIF error == "extension_must_be_subclass" %]
+    <code>[% package FILTER html %]</code> from 
+    <code>[% filename FILTER html %]</code> is not a subclass of
+    <code>[% class FILTER html %]</code>.
+
+  [% ELSIF error == "extension_must_return_name" %]
+    <code>[% extension FILTER html %]</code> returned
+    <code>[% returned FILTER html %]</code>, which is not a valid name
+    for an extension. Extensions must return their name, not <code>1</code>
+    or a number. See the documentation of
+    <a href="[% docs_urlbase FILTER html %]api/Bugzilla/Extension.html">Bugzilla::Extension</a>
+    for details.
+
+  [% ELSIF error == "extension_no_name" %]
+    We did not find a <code>NAME</code> method in 
+    <code>[% package FILTER html %]</code> (loaded from
+    <code>[% filename FILTER html %]</code>). This means that
+    the extension has one or more of the following problems:
+
+    <ul>
+      <li><code>[% filename FILTER html %]</code> did not define a
+        <code>[% package FILTER html %]</code> package.</li>
+      <li><code>[% package FILTER html %]</code> did not define a
+        <code>NAME</code> method (or the <code>NAME</code> method
+        returned an empty string).</li>
+    </ul>
 
   [% ELSIF error == "extern_id_conflict" %]
     The external ID '[% extern_id FILTER html %]' already exists
     in the database for '[% username FILTER html %]', but your
     account source says that '[% extern_user FILTER html %]' has that ID.
 
-  [% ELSIF error == "field_type_mismatch" %]
-    Cannot seem to handle <code>[% field FILTER html %]</code>
-    and <code>[% type FILTER html %]</code> together.
+  [% ELSIF error == "field_choice_must_use_type" %]
+    When you call a class method on <code>Bugzilla::Field::Choice</code>,
+    you must call <code>Bugzilla::Field::Choice-&gt;type('some_field')</code>
+    to generate the right class (you can't call class methods directly
+    on Bugzilla::Field::Choice).
 
   [% ELSIF error == "field_not_custom" %]
     '[% field.description FILTER html %]' ([% field.name FILTER html %])
     is not a custom field.
 
-  [% ELSIF error == "gd_not_installed" %]
-    [% admindocslinks = {'installation.html#install-perlmodules' => 'Installing Perl modules necessary for Charting'} %]
-    Charts will not work without the GD Perl module being installed.
-    Run checksetup.pl for installation instructions.
+  [% ELSIF error == "field_type_not_specified" %]
+    [% title = "Field Type Not Specified" %]
+    You must specify a type when creating a custom field.
 
   [% ELSIF error == "illegal_content_type_method" %]
     Your form submission got corrupted somehow.  The <em>content
@@ -168,25 +203,10 @@
   [% ELSIF error == "illegal_field" %]
     A legal [% field FILTER html %] was not set.
 
-  [% ELSIF error == "inactive_group" %]
-    Attempted to add [% terms.bug %] to the '[% name FILTER html %]'
-    group, which is not used for [% terms.bugs %].
-
   [% ELSIF error == "invalid_attach_id_to_obsolete" %]
      The attachment number of one of the attachments you wanted to obsolete,
-     [% attach_id FILTER html %], is invalid.
+     [%+ attach_id FILTER html %], is invalid.
           
-  [% ELSIF error == "invalid_column_name_cookie" %]
-    [% title = "Invalid Column Name" %]
-     The custom sort order specified in your cookie contains an invalid
-     column name <em>[% fragment FILTER html %]</em>. 
-     The cookie has been cleared.
-         
-  [% ELSIF error == "invalid_column_name_form" %]
-    [% title = "Invalid Column Name" %]
-     The custom sort order specified in your form submission contains an
-     invalid column name <em>[% fragment FILTER html %]</em>.
-
   [% ELSIF error == "invalid_customfield_type" %]
     [% title = "Invalid Field Type" %]
     The type <em>[% type FILTER html %]</em> is not a valid field type.
@@ -194,6 +214,12 @@
   [% ELSIF error == "invalid_dimensions" %]
     [% title = "Invalid Dimensions" %]
     The width or height specified is not a positive integer.
+
+  [% ELSIF error == "invalid_feature" %]
+    [% title = "Invalid Feature Name" %]
+    [% feature FILTER html %] is not a valid feature name. See
+    <code>OPTIONAL_MODULES</code> in 
+    <code>Bugzilla::Install::Requirements</code> for valid names.
 
   [% ELSIF error == "invalid_flag_association" %]
     [% title = "Invalid Flag Association" %]
@@ -209,6 +235,10 @@
     The series_id [% series_id FILTER html %] is not valid. It may be that
     this series has been deleted.
 
+  [% ELSIF error == "invalid_timestamp" %]
+    The entered timestamp <code>[% timestamp FILTER html %]</code> could not
+    be parsed into a valid date and time.
+
   [% ELSIF error == "invalid_webservergroup" %]
     There is no such group: [% group FILTER html %]. Check your $webservergroup
     setting in [% constants.bz_locations.localconfig FILTER html %].
@@ -217,37 +247,31 @@
     Attachment [% attach_id FILTER html %] ([% description FILTER html %]) 
     is attached to [% terms.bug %] [%+ attach_bug_id FILTER html %], 
     but you tried to flag it as obsolete while creating a new attachment to 
-    [% terms.bug %] [%+ my_bug_id FILTER html %].
+    [%+ terms.bug %] [%+ my_bug_id FILTER html %].
 
-  [% ELSIF error == "flags_not_available" %]
-    [% title = "Flag Editing not Allowed" %]
-    [% IF type == "b" %]
-      Flags cannot be set or changed when
-      changing several [% terms.bugs %] at once.
-    [% ELSE %]
-      References to existing flags when creating
-      a new attachment are invalid.
-    [% END %] 
+  [% ELSIF error == "feature_disabled" %]
+    The [% install_string("feature_$feature") FILTER html %] feature is not
+    available in this [% terms.Bugzilla %]. 
+    [% IF user.in_group('admin') %]
+      If you would like to enable this feature, please run 
+      <kbd>checksetup.pl</kbd> to see how to install the necessary
+      requirements for this feature.
+    [% END %]
+
+  [% ELSIF error == "flag_unexpected_object" %]
+    [% title = "Object Not Recognized" %]
+    Flags cannot be set for objects of type [% caller FILTER html %].
+    They can only be set for [% terms.bugs %] and attachments.
 
   [% ELSIF error == "flag_requestee_disabled" %]
     [% title = "Flag not Requestable from Specific Person" %]
     You can't ask a specific person for
     <em>[% type.name FILTER html %]</em>.
   
-  [% ELSIF error == "flag_status_invalid" %]
-    The flag status <em>[% status FILTER html %]</em>
-    [% IF id %]
-      for flag ID #[% id FILTER html %]
-    [% END %]
-    is invalid.
-
   [% ELSIF error == "flag_type_inactive" %]
     [% title = "Inactive Flag Type" %]
     The flag type [% type FILTER html %] is inactive and cannot be used
     to create new flags.
-
-  [% ELSIF error == "flag_type_nonexistent" %]
-    There is no flag type with the ID <em>[% id FILTER html %]</em>.
 
   [% ELSIF error == "flag_type_target_type_invalid" %]
     The target type was neither <em>[% terms.bug %]</em> nor <em>attachment</em>
@@ -271,6 +295,17 @@
       given.
     [% END %]
 
+  [% ELSIF error == "jobqueue_insert_failed" %]
+   [% title = "Job Queue Failure" %]
+    Inserting a <code>[% job FILTER html %]</code> job into the Job 
+    Queue failed with the following error: [% errmsg FILTER html %]
+
+  [% ELSIF error == "jobqueue_no_job_mapping" %]
+    <code>Bugzilla::JobQueue</code> has not been configured to handle
+    the job "[% job FILTER html %]".  You need to add this job type
+    to the <code>JOB_MAP</code> constant in <code>Bugzilla::JobQueue</code>,
+    perhaps by using the 'job_map' hook.
+
   [% ELSIF error == "ldap_bind_failed" %]
     Failed to bind to the LDAP server. The error message was: 
     <code>[% errstr FILTER html %]</code>
@@ -287,7 +322,11 @@
   [% ELSIF error == "ldap_search_error" %]
     An error occurred while trying to search LDAP for 
     &quot;[% username FILTER html %]&quot;: 
-   <code>[% errstr FILTER html %]</code>
+    [% IF errstr %]
+      <code>[% errstr FILTER html %]</code>
+    [% ELSE %]
+      Unable to find user in LDAP
+    [% END %]
 
   [% ELSIF error == "ldap_server_not_defined" %]
     The LDAP server for authentication has not been defined.
@@ -295,7 +334,7 @@
   [% ELSIF error == "mail_send_error" %]
     There was an error sending mail from '[% mail.header('From') FILTER html %]'
     to '[% mail.header('To') FILTER html %]':
-    [% msg FILTER html %]
+    [%+ msg FILTER html %]
 
   [% ELSIF error == "missing_bug_id" %]
     No [% terms.bug %] ID was given.
@@ -309,9 +348,10 @@
   [% ELSIF error == "need_quipid" %]
     A valid quipid is needed.
 
-  [% ELSIF error == "no_manual_moved" %]
-    You cannot set the resolution of [% terms.abug %] to MOVED without
-    moving the [% terms.bug %].
+  [% ELSIF error == "object_dep_sort_loop" %]
+    There is a loop in VALIDATOR_DEPENDENCIES involving
+    '[%+ field FILTER html %]'. Here are the fields we considered:
+    [%+ considered.join(', ') FILTER html %].
 
   [% ELSIF error == "param_invalid" %]
     [% title = "Invalid Parameter" %]
@@ -320,14 +360,30 @@
 
   [% ELSIF error == "param_must_be_numeric" %]
     [% title = "Invalid Parameter" %]
-    Invalid parameter passed to [% function FILTER html %].
-    It must be numeric.
+    Invalid parameter <code>[% param FILTER html %]</code> passed to 
+    <code>[% function FILTER html %]</code>: It must be numeric.
 
   [% ELSIF error == "param_required" %]
     [% title = "Missing Parameter" %]
     The function <code>[% function FILTER html %]</code> requires
     a <code>[% param FILTER html %]</code> argument, and that
     argument was not set.
+
+  [% ELSIF error == "params_required" %]
+    [% title = "Missing Parameter" %]
+    The function <code>[% function FILTER html %]</code> requires
+    that you set one of the following parameters:
+    <code>[% params.join(', ') FILTER html %]</code>
+
+  [% ELSIF error == "product_empty_group_controls" %]
+    [% title = "Missing Group Controls" %]
+    New settings must be defined to edit group controls for
+    the [% group.name FILTER html %] group.
+
+  [% ELSIF error == "product_illegal_group_control" %]
+    [% title = "Illegal Group Control" %]
+    '[% value FILTER html %]' is not a legal value for
+    the '[% field FILTER html %]' field.
 
   [% ELSIF error == "protection_violation" %]
     The function <code>[% function FILTER html %]</code> was called
@@ -349,12 +405,6 @@
     An error occurred while preparing for a RADIUS authentication request:
     <code>[% errstr FILTER html %]</code>.
 
-  [% ELSIF error == "unknown_comparison_type" %]
-    Specified comparison type is not supported.
-
-  [% ELSIF error == "request_queue_group_invalid" %]
-    The group field <em>[% group FILTER html %]</em> is invalid.
-
   [% ELSIF error == "report_axis_invalid" %]
     <em>[% val FILTER html %]</em> is not a valid value for 
     [%+ IF    fld == "x" %]the horizontal axis
@@ -362,9 +412,16 @@
     [%+ ELSIF fld == "z" %]the multiple tables/images
     [%+ ELSE %]a report axis[% END %] field.
 
+  [% ELSIF error == "search_cp_without_op" %]
+    Search argument f[% id FILTER html %] is "CP" but there is no
+    matching "OP" before it.
+
+  [% ELSIF error == "search_invalid_joiner" %]
+    '[% joiner FILTER html %]' is not a valid joiner for a search.
+
   [% ELSIF error == "setting_info_invalid" %]
     To create a new setting, you must supply a setting name, a list of 
-    value/sortindex pairs, and the devault value.
+    value/sortindex pairs, and the default value.
 
   [% ELSIF error == "setting_name_invalid" %]
     The setting name <em>[% name FILTER html %]</em> is not a valid
@@ -378,12 +435,6 @@
   [% ELSIF error == "setting_value_invalid" %]
     The value "<code>[% value FILTER html %]</code>" is not in the list of
     legal values for the <em>[% name FILTER html %]</em> setting.
-
-  [% ELSIF error == "soap_not_installed" %]
-    [% admindocslinks = {'installation.html#install-perlmodules' => 'Installing Perl modules'} %]
-    The XMLRPC interface will not work without the SOAP::Lite Perl module being
-    installed.
-    Run checksetup.pl for installation instructions.
 
   [% ELSIF error == "token_generation_error" %]
     Something is seriously wrong with the token generation system.
@@ -400,12 +451,8 @@
   [% ELSIF error == "undefined_field" %]
     Form field [% field FILTER html %] was not defined.
     
-  [% ELSIF error == "unknown_action" %]
-    [% IF action %]
-       Unknown action [% action FILTER html %]!
-    [% ELSE %]
-       I could not figure out what you wanted to do.
-    [% END %]
+  [% ELSIF error == "unknown_method" %]
+    The requested method '[% method FILTER html %]' was not found.
 
   [% ELSIF error == "usage_mode_invalid" %]
     '[% invalid_usage_mode FILTER html %]' is not a valid usage mode.
@@ -416,11 +463,6 @@
 
   [% ELSIF error == "not_in_transaction" %]
     Attempted to end transaction without starting one first.
-
-  [% ELSIF error == "comma_operator_deprecated" %]
-    [% title = "SQL query generator internal error" %]
-    There is an internal error in the SQL query generation code,
-    creating queries with implicit JOIN.
 
   [% ELSIF error == "invalid_post_bug_submit_action" %]
     Invalid setting for post_bug_submit_action
@@ -478,13 +520,14 @@
 
 <table cellpadding="20">
   <tr>
-    <td bgcolor="#ff0000">
-      <font size="+2">
-        [% error_message FILTER none %]
-      </font>
+    <td id="error_msg" class="throw_error">
+      [% error_message FILTER none %]
     </td>
   </tr>
 </table>
+
+<p>Traceback:</p>
+<pre>[% traceback FILTER html %]</pre>
 
 [% IF variables %]
   <pre>

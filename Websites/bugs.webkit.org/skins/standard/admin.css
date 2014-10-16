@@ -113,3 +113,15 @@ th.title {
     text-align: center;
     vertical-align: middle;
 }
+
+#edit_custom_field tr {
+    vertical-align: top;
+}
+
+#edit_custom_field th {
+    text-align: right;
+}
+
+#edit_custom_field th.narrow_label {
+    white-space: normal;
+}

@@ -42,7 +42,8 @@ use Bugzilla::Component;
 # Make sure the user is logged in.
 my $user = Bugzilla->login();
 my $cgi = Bugzilla->cgi;
-my $dbh = Bugzilla->dbh;
+# Force the script to run against the shadow DB. We already validated credentials.
+Bugzilla->switch_to_shadow_db;
 my $template = Bugzilla->template;
 my $action = $cgi->param('action') || '';
 
@@ -62,23 +63,21 @@ unless (defined $cgi->param('requestee')
     $fields->{'requestee'}->{'type'} = 'single';
 }
 
-Bugzilla::User::match_field($cgi, $fields);
+Bugzilla::User::match_field($fields);
 
 if ($action eq 'queue') {
     queue();
 }
 else {
-    my $flagtypes = $dbh->selectcol_arrayref('SELECT DISTINCT(name) FROM flagtypes
-                                              ORDER BY name');
+    my $flagtypes = get_flag_types();
     my @types = ('all', @$flagtypes);
 
     my $vars = {};
-    $vars->{'products'} = $user->get_selectable_products;
     $vars->{'types'} = \@types;
     $vars->{'requests'} = {};
 
     my %components;
-    foreach my $prod (@{$vars->{'products'}}) {
+    foreach my $prod (@{$user->get_selectable_products}) {
         foreach my $comp (@{$prod->components}) {
             $components{$comp->name} = 1;
         }
@@ -96,7 +95,6 @@ exit;
 
 sub queue {
     my $cgi = Bugzilla->cgi;
-    # There are some user privilege checks to do. We do them against the main DB.
     my $dbh = Bugzilla->dbh;
     my $template = Bugzilla->template;
     my $user = Bugzilla->user;
@@ -115,7 +113,7 @@ sub queue {
                 products.name, components.name,
                 flags.attach_id, attachments.description,
                 requesters.realname, requesters.login_name,
-                requestees.realname, requestees.login_name,
+                requestees.realname, requestees.login_name, COUNT(privs.group_id),
     " . $dbh->sql_date_format('flags.modification_date', '%Y.%m.%d %H:%i') .
     # Use the flags and flagtypes tables for information about the flags,
     # the bugs and attachments tables for target info, the profiles tables
@@ -142,7 +140,9 @@ sub queue {
            LEFT JOIN bug_group_map AS bgmap
                   ON bgmap.bug_id = bugs.bug_id
                  AND bgmap.group_id NOT IN (" .
-                     join(', ', (-1, values(%{$user->groups}))) . ")
+                     $user->groups_as_string . ")
+           LEFT JOIN bug_group_map AS privs
+                  ON privs.bug_id = bugs.bug_id
            LEFT JOIN cc AS ccmap
                   ON ccmap.who = $userid
                  AND ccmap.bug_id = bugs.bug_id
@@ -166,9 +166,7 @@ sub queue {
     $query .= " AND flags.status = '?' " unless $status;
 
     # The set of criteria by which we filter records to display in the queue.
-    # We now move to the shadow DB to query the DB.
     my @criteria = ();
-    $dbh = Bugzilla->switch_to_shadow_db;
 
     # A list of columns to exclude from the report because the report conditions
     # limit the data being displayed to exact matches for those columns.
@@ -210,7 +208,7 @@ sub queue {
     
     # Filter results by exact product or component.
     if (defined $cgi->param('product') && $cgi->param('product') ne "") {
-        my $product = Bugzilla::Product::check_product(scalar $cgi->param('product'));
+        my $product = Bugzilla::Product->check(scalar $cgi->param('product'));
         push(@criteria, "bugs.product_id = " . $product->id);
         push(@excluded_columns, 'product') unless $cgi->param('do_union');
         if (defined $cgi->param('component') && $cgi->param('component') ne "") {
@@ -296,28 +294,24 @@ sub queue {
           'attach_summary'  => $data[8] ,
           'requester'       => ($data[9] ? "$data[9] <$data[10]>" : $data[10]) , 
           'requestee'       => ($data[11] ? "$data[11] <$data[12]>" : $data[12]) , 
-          'created'         => $data[13]
+          'restricted'      => $data[13] ? 1 : 0,
+          'created'         => $data[14]
         };
         push(@requests, $request);
     }
 
     # Get a list of request type names to use in the filter form.
     my @types = ("all");
-    my $flagtypes = $dbh->selectcol_arrayref(
-                         "SELECT DISTINCT(name) FROM flagtypes ORDER BY name");
+    my $flagtypes = get_flag_types();
     push(@types, @$flagtypes);
 
-    # We move back to the main DB to get the list of products the user can see.
-    $dbh = Bugzilla->switch_to_main_db;
-
-    $vars->{'products'} = $user->get_selectable_products;
     $vars->{'excluded_columns'} = \@excluded_columns;
     $vars->{'group_field'} = $form_group;
     $vars->{'requests'} = \@requests;
     $vars->{'types'} = \@types;
 
     my %components;
-    foreach my $prod (@{$vars->{'products'}}) {
+    foreach my $prod (@{$user->get_selectable_products}) {
         foreach my $comp (@{$prod->components}) {
             $components{$comp->name} = 1;
         }
@@ -338,8 +332,7 @@ sub validateStatus {
     return if !defined $status;
 
     grep($status eq $_, qw(? +- + - all))
-      || ThrowCodeError("flag_status_invalid",
-                        { status => $status });
+      || ThrowUserError("flag_status_invalid", { status => $status });
     trick_taint($status);
     return $status;
 }
@@ -349,9 +342,19 @@ sub validateGroup {
     return if !defined $group;
 
     grep($group eq $_, qw(requester requestee category type))
-      || ThrowCodeError("request_queue_group_invalid", 
-                        { group => $group });
+      || ThrowUserError("request_queue_group_invalid", { group => $group });
     trick_taint($group);
     return $group;
 }
 
+# Returns all flag types which have at least one flag of this type.
+# If a flag type is inactive but still has flags, we want it.
+sub get_flag_types {
+    my $dbh = Bugzilla->dbh;
+    my $flag_types = $dbh->selectcol_arrayref('SELECT DISTINCT name
+                                                 FROM flagtypes
+                                                WHERE flagtypes.id IN
+                                                      (SELECT DISTINCT type_id FROM flags)
+                                             ORDER BY name');
+    return $flag_types;
+}

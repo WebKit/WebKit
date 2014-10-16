@@ -37,11 +37,15 @@
   <table border="0" cellpadding="4" cellspacing="0">
 
     <tr>
-      <th valign="top"><label for="version">Version:</label></th>
+      <th class="field_label"><label for="version">Version:</label></th>
       <td><input id="version" size="64" maxlength="64" name="version" value="
       [%- version.name FILTER html %]"></td>
     </tr>
-
+    <tr>
+      <th class="field_label"><label for="isactive">Enabled For [% terms.Bugs %]:</label></th>
+      <td><input id="isactive" name="isactive" type="checkbox" value="1"
+                 [% 'checked="checked"' IF version.isactive %]></td>
+    </tr>
   </table>
 
   <input type="hidden" name="versionold" value="[% version.name FILTER html %]">

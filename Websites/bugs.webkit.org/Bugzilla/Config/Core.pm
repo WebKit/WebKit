@@ -35,17 +35,9 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::Core::sortkey = "00";
+our $sortkey = 100;
 
-sub get_param_list {
-  my $class = shift;
-  my @param_list = (
-  {
-   name => 'maintainer',
-   type => 't',
-   default => 'THE MAINTAINER HAS NOT YET BEEN SET'
-  },
-
+use constant get_param_list => (
   {
    name => 'urlbase',
    type => 't',
@@ -54,10 +46,9 @@ sub get_param_list {
   },
 
   {
-   name => 'docs_urlbase',
-   type => 't',
-   default => 'docs/%lang%/html/',
-   checker => \&check_url
+   name => 'ssl_redirect',
+   type => 'b',
+   default => 0
   },
 
   {
@@ -68,66 +59,10 @@ sub get_param_list {
   },
 
   {
-   name => 'ssl',
-   type => 's',
-   choices => ['never', 'authenticated sessions', 'always'],
-   default => 'never'
-  },
-
-
-  {
-   name => 'cookiedomain',
-   type => 't',
-   default => ''
-  },
-
-  {
    name => 'cookiepath',
    type => 't',
    default => '/'
   },
-
-  {
-   name => 'timezone',
-   type => 't',
-   default => '',
-   checker => \&check_timezone
-  },
-
-  {
-   name => 'utf8',
-   type => 'b',
-   default => '0',
-   checker => \&check_utf8
-  },
-
-  {
-   name => 'shutdownhtml',
-   type => 'l',
-   default => ''
-  },
-
-  {
-   name => 'announcehtml',
-   type => 'l',
-   default => ''
-  },
-
-  {
-   name => 'proxy_url',
-   type => 't',
-   default => ''
-  },
-
-  {
-   name => 'upgrade_notification',
-   type => 's',
-   choices => ['development_snapshot', 'latest_stable_release',
-               'stable_branch_release', 'disabled'],
-   default => 'latest_stable_release',
-   checker => \&check_notification
-  } );
-  return @param_list;
-}
+);
 
 1;

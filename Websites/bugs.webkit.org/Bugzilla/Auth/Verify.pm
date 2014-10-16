@@ -25,6 +25,7 @@ use Bugzilla::User;
 use Bugzilla::Util;
 
 use constant user_can_create_account => 1;
+use constant extern_id_used => 0;
 
 sub new {
     my ($class, $login_type) = @_;
@@ -231,5 +232,13 @@ C<false>.
 
 Whether or not users can manually create accounts in this type of
 account source. Defaults to C<true>.
+
+=item C<extern_id_used>
+
+Whether or not this verifier method uses the extern_id field. If
+used, users with editusers permission will be be allowed to
+edit the extern_id for all users.
+
+The default value is C<false>.
 
 =back

@@ -52,7 +52,9 @@ use base qw(Bugzilla::DB);
 use constant BLOB_TYPE => { pg_type => DBD::Pg::PG_BYTEA };
 
 sub new {
-    my ($class, $user, $pass, $host, $dbname, $port) = @_;
+    my ($class, $params) = @_;
+    my ($user, $pass, $host, $dbname, $port) = 
+        @$params{qw(db_user db_pass db_host db_name db_port)};
 
     # The default database name for PostgreSQL. We have
     # to connect to SOME database, even if we have
@@ -60,7 +62,7 @@ sub new {
     $dbname ||= 'template1';
 
     # construct the DSN from the parameters we got
-    my $dsn = "DBI:Pg:dbname=$dbname";
+    my $dsn = "dbi:Pg:dbname=$dbname";
     $dsn .= ";host=$host" if $host;
     $dsn .= ";port=$port" if $port;
 
@@ -70,11 +72,14 @@ sub new {
 
     my $attrs = { pg_enable_utf8 => Bugzilla->params->{'utf8'} };
 
-    my $self = $class->db_new($dsn, $user, $pass, $attrs);
+    my $self = $class->db_new({ dsn => $dsn, user => $user, 
+                                pass => $pass, attrs => $attrs });
 
     # all class local variables stored in DBI derived class needs to have
     # a prefix 'private_'. See DBI documentation.
     $self->{private_bz_tables_locked} = "";
+    # Needed by TheSchwartz
+    $self->{private_bz_dsn} = $dsn;
 
     bless ($self, $class);
 
@@ -92,16 +97,45 @@ sub bz_last_key {
     return $last_insert_id;
 }
 
-sub sql_regexp {
-    my ($self, $expr, $pattern) = @_;
+sub sql_group_concat {
+    my ($self, $text, $separator, $sort) = @_;
+    $sort = 1 if !defined $sort;
+    $separator = $self->quote(', ') if !defined $separator;
+    my $sql = "array_accum($text)";
+    if ($sort) {
+        $sql = "array_sort($sql)";
+    }
+    return "array_to_string($sql, $separator)";
+}
 
-    return "$expr ~* $pattern";
+sub sql_istring {
+    my ($self, $string) = @_;
+
+    return "LOWER(${string}::text)";
+}
+
+sub sql_position {
+    my ($self, $fragment, $text) = @_;
+
+    return "POSITION(${fragment}::text IN ${text}::text)";
+}
+
+sub sql_regexp {
+    my ($self, $expr, $pattern, $nocheck, $real_pattern) = @_;
+    $real_pattern ||= $pattern;
+
+    $self->bz_check_regexp($real_pattern) if !$nocheck;
+
+    return "${expr}::text ~* $pattern";
 }
 
 sub sql_not_regexp {
-    my ($self, $expr, $pattern) = @_;
+    my ($self, $expr, $pattern, $nocheck, $real_pattern) = @_;
+    $real_pattern ||= $pattern;
 
-    return "$expr !~* $pattern" 
+    $self->bz_check_regexp($real_pattern) if !$nocheck;
+
+    return "${expr}::text !~* $pattern" 
 }
 
 sub sql_limit {
@@ -117,7 +151,7 @@ sub sql_limit {
 sub sql_from_days {
     my ($self, $days) = @_;
 
-    return "TO_TIMESTAMP(${days}::int, 'J')::date";
+    return "TO_TIMESTAMP('$days', 'J')::date";
 }
 
 sub sql_to_days {
@@ -143,10 +177,10 @@ sub sql_date_format {
     return "TO_CHAR($date, " . $self->quote($format) . ")";
 }
 
-sub sql_interval {
-    my ($self, $interval, $units) = @_;
+sub sql_date_math {
+    my ($self, $date, $operator, $interval, $units) = @_;
     
-    return "$interval * INTERVAL '1 $units'";
+    return "$date $operator $interval * INTERVAL '1 $units'";
 }
 
 sub sql_string_concat {
@@ -167,13 +201,60 @@ sub bz_sequence_exists {
     return $exists || 0;
 }
 
+sub bz_explain {
+    my ($self, $sql) = @_;
+    my $explain = $self->selectcol_arrayref("EXPLAIN ANALYZE $sql");
+    return join("\n", @$explain);
+}
+
 #####################################################################
 # Custom Database Setup
 #####################################################################
 
+sub bz_check_server_version {
+    my $self = shift;
+    my ($db) = @_;
+    my $server_version = $self->SUPER::bz_check_server_version(@_);
+    my ($major_version) = $server_version =~ /^(\d+)/;
+    # Pg 9 requires DBD::Pg 2.17.2 in order to properly read bytea values.
+    if ($major_version >= 9) {
+        local $db->{dbd}->{version} = '2.17.2';
+        local $db->{name} = $db->{name} . ' 9+';
+        Bugzilla::DB::_bz_check_dbd(@_);
+    }
+}
+
 sub bz_setup_database {
     my $self = shift;
     $self->SUPER::bz_setup_database(@_);
+
+    # Custom Functions
+    my $function = 'array_accum';
+    my $array_accum = $self->selectrow_array(
+        'SELECT 1 FROM pg_proc WHERE proname = ?', undef, $function);
+    if (!$array_accum) {
+        print "Creating function $function...\n";
+        $self->do("CREATE AGGREGATE array_accum (
+                       SFUNC = array_append,
+                       BASETYPE = anyelement,
+                       STYPE = anyarray,
+                       INITCOND = '{}' 
+                   )");
+    }
+
+   $self->do(<<'END');
+CREATE OR REPLACE FUNCTION array_sort(ANYARRAY)
+RETURNS ANYARRAY LANGUAGE SQL
+IMMUTABLE STRICT
+AS $$
+SELECT ARRAY(
+    SELECT $1[s.i] AS each_item
+    FROM
+        generate_series(array_lower($1,1), array_upper($1,1)) AS s(i)
+    ORDER BY each_item
+);
+$$;
+END
 
     # PostgreSQL doesn't like having *any* index on the thetext
     # field, because it can't have index data longer than 2770
@@ -201,15 +282,60 @@ sub bz_setup_database {
     $self->bz_add_index('products', 'products_name_lower_idx',
         {FIELDS => ['LOWER(name)'], TYPE => 'UNIQUE'});
 
-    # bz_rename_column didn't correctly rename the sequence.
-    if ($self->bz_column_info('fielddefs', 'id')
-        && $self->bz_sequence_exists('fielddefs_fieldid_seq')) 
-    {
-        print "Fixing fielddefs_fieldid_seq sequence...\n";
-        $self->do("ALTER TABLE fielddefs_fieldid_seq RENAME TO fielddefs_id_seq");
-        $self->do("ALTER TABLE fielddefs ALTER COLUMN id
-                    SET DEFAULT NEXTVAL('fielddefs_id_seq')");
+    # bz_rename_column and bz_rename_table didn't correctly rename
+    # the sequence.
+    $self->_fix_bad_sequence('fielddefs', 'id', 'fielddefs_fieldid_seq', 'fielddefs_id_seq');
+    # If the 'tags' table still exists, then bz_rename_table()
+    # will fix the sequence for us.
+    if (!$self->bz_table_info('tags')) {
+        my $res = $self->_fix_bad_sequence('tag', 'id', 'tags_id_seq', 'tag_id_seq');
+        # If $res is true, then the sequence has been renamed, meaning that
+        # the primary key must be renamed too.
+        if ($res) {
+            $self->do('ALTER INDEX tags_pkey RENAME TO tag_pkey');
+        }
     }
+
+    # Certain sequences got upgraded before we required Pg 8.3, and
+    # so they were not properly associated with their columns.
+    my @tables = $self->bz_table_list_real;
+    foreach my $table (@tables) {
+        my @columns = $self->bz_table_columns_real($table);
+        foreach my $column (@columns) {
+            # All our SERIAL pks have "id" in their name at the end.
+            next unless $column =~ /id$/;
+            my $sequence = "${table}_${column}_seq";
+            if ($self->bz_sequence_exists($sequence)) {
+                my $is_associated = $self->selectrow_array(
+                    'SELECT pg_get_serial_sequence(?,?)',
+                    undef, $table, $column);
+                next if $is_associated;
+                print "Fixing $sequence to be associated"
+                      . " with $table.$column...\n";
+                $self->do("ALTER SEQUENCE $sequence OWNED BY $table.$column");
+                # In order to produce an exactly identical schema to what
+                # a brand-new checksetup.pl run would produce, we also need
+                # to re-set the default on this column.
+                $self->do("ALTER TABLE $table
+                          ALTER COLUMN $column
+                           SET DEFAULT nextval('$sequence')");
+            }
+        }
+    }
+}
+
+sub _fix_bad_sequence {
+    my ($self, $table, $column, $old_seq, $new_seq) = @_;
+    if ($self->bz_column_info($table, $column)
+        && $self->bz_sequence_exists($old_seq))
+    {
+        print "Fixing $old_seq sequence...\n";
+        $self->do("ALTER SEQUENCE $old_seq RENAME TO $new_seq");
+        $self->do("ALTER TABLE $table ALTER COLUMN $column
+                    SET DEFAULT NEXTVAL('$new_seq')");
+        return 1;
+    }
+    return 0;
 }
 
 # Renames things that differ only in case.

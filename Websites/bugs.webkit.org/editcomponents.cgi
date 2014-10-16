@@ -118,7 +118,7 @@ if ($action eq 'add') {
 if ($action eq 'new') {
     check_token_data($token, 'add_component');
     # Do the user matching
-    Bugzilla::User::match_field ($cgi, {
+    Bugzilla::User::match_field ({
         'initialowner'     => { 'type' => 'single' },
         'initialqacontact' => { 'type' => 'single' },
         'initialcc'        => { 'type' => 'multi'  },
@@ -128,14 +128,19 @@ if ($action eq 'new') {
     my $default_qa_contact = trim($cgi->param('initialqacontact') || '');
     my $description        = trim($cgi->param('description')      || '');
     my @initial_cc         = $cgi->param('initialcc');
+    my $isactive           = $cgi->param('isactive');
 
-    my $component =
-      Bugzilla::Component->create({ name             => $comp_name,
-                                    product          => $product,
-                                    description      => $description,
-                                    initialowner     => $default_assignee,
-                                    initialqacontact => $default_qa_contact,
-                                    initial_cc       => \@initial_cc });
+    my $component = Bugzilla::Component->create({
+        name             => $comp_name,
+        product          => $product,
+        description      => $description,
+        initialowner     => $default_assignee,
+        initialqacontact => $default_qa_contact,
+        initial_cc       => \@initial_cc,
+        # XXX We should not be creating series for products that we
+        # didn't create series for.
+        create_series    => 1,
+   });
 
     $vars->{'message'} = 'component_created';
     $vars->{'comp'} = $component;
@@ -215,7 +220,7 @@ if ($action eq 'edit') {
 if ($action eq 'update') {
     check_token_data($token, 'edit_component');
     # Do the user matching
-    Bugzilla::User::match_field ($cgi, {
+    Bugzilla::User::match_field ({
         'initialowner'     => { 'type' => 'single' },
         'initialqacontact' => { 'type' => 'single' },
         'initialcc'        => { 'type' => 'multi'  },
@@ -226,7 +231,8 @@ if ($action eq 'update') {
     my $default_qa_contact    = trim($cgi->param('initialqacontact') || '');
     my $description           = trim($cgi->param('description')      || '');
     my @initial_cc            = $cgi->param('initialcc');
-
+    my $isactive              = $cgi->param('isactive');
+  
     my $component =
         Bugzilla::Component->check({ product => $product, name => $comp_old_name });
 
@@ -235,6 +241,7 @@ if ($action eq 'update') {
     $component->set_default_assignee($default_assignee);
     $component->set_default_qa_contact($default_qa_contact);
     $component->set_cc_list(\@initial_cc);
+    $component->set_is_active($isactive);
     my $changes = $component->update();
 
     $vars->{'message'} = 'component_updated';
@@ -248,7 +255,5 @@ if ($action eq 'update') {
     exit;
 }
 
-#
 # No valid action found
-#
-ThrowUserError('no_valid_action', {'field' => "component"});
+ThrowUserError('unknown_action', {action => $action});

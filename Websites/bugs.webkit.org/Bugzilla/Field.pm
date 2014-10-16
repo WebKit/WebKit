@@ -15,6 +15,7 @@
 # Contributor(s): Dan Mosedale <dmose@mozilla.org>
 #                 Frédéric Buclin <LpSolit@gmail.com>
 #                 Myk Melez <myk@mozilla.org>
+#                 Greg Hendricks <ghendricks@novell.com>
 
 =head1 NAME
 
@@ -27,7 +28,7 @@ Bugzilla::Field - a particular piece of information about bugs
   use Data::Dumper;
 
   # Display information about all fields.
-  print Dumper(Bugzilla->get_fields());
+  print Dumper(Bugzilla->fields());
 
   # Display information about non-obsolete custom fields.
   print Dumper(Bugzilla->active_custom_fields);
@@ -35,9 +36,9 @@ Bugzilla::Field - a particular piece of information about bugs
   use Bugzilla::Field;
 
   # Display information about non-obsolete custom fields.
-  # Bugzilla->get_fields() is a wrapper around Bugzilla::Field->match(),
-  # so both methods take the same arguments.
-  print Dumper(Bugzilla::Field->match({ obsolete => 0, custom => 1 }));
+  # Bugzilla->fields() is a wrapper around Bugzilla::Field->get_all(),
+  # with arguments which filter the fields before returning them.
+  print Dumper(Bugzilla->fields({ obsolete => 0, custom => 1 }));
 
   # Create or update a custom field or field definition.
   my $field = Bugzilla::Field->create(
@@ -73,9 +74,12 @@ use strict;
 use base qw(Exporter Bugzilla::Object);
 @Bugzilla::Field::EXPORT = qw(check_field get_field_id get_legal_field_values);
 
-use Bugzilla::Util;
 use Bugzilla::Constants;
 use Bugzilla::Error;
+use Bugzilla::Util;
+use List::MoreUtils qw(any);
+
+use Scalar::Util qw(blessed);
 
 ###############################
 ####    Initialization     ####
@@ -84,28 +88,49 @@ use Bugzilla::Error;
 use constant DB_TABLE   => 'fielddefs';
 use constant LIST_ORDER => 'sortkey, name';
 
-use constant DB_COLUMNS => (
-    'id',
-    'name',
-    'description',
-    'type',
-    'custom',
-    'mailhead',
-    'sortkey',
-    'obsolete',
-    'enter_bug',
+use constant DB_COLUMNS => qw(
+    id
+    name
+    description
+    type
+    custom
+    mailhead
+    sortkey
+    obsolete
+    enter_bug
+    buglist
+    visibility_field_id
+    value_field_id
+    reverse_desc
+    is_mandatory
+    is_numeric
 );
 
-use constant REQUIRED_CREATE_FIELDS => qw(name description);
-
 use constant VALIDATORS => {
-    custom      => \&_check_custom,
-    description => \&_check_description,
-    enter_bug   => \&_check_enter_bug,
-    mailhead    => \&_check_mailhead,
-    obsolete    => \&_check_obsolete,
-    sortkey     => \&_check_sortkey,
-    type        => \&_check_type,
+    custom       => \&_check_custom,
+    description  => \&_check_description,
+    enter_bug    => \&_check_enter_bug,
+    buglist      => \&Bugzilla::Object::check_boolean,
+    mailhead     => \&_check_mailhead,
+    name         => \&_check_name,
+    obsolete     => \&_check_obsolete,
+    reverse_desc => \&_check_reverse_desc,
+    sortkey      => \&_check_sortkey,
+    type         => \&_check_type,
+    value_field_id      => \&_check_value_field_id,
+    visibility_field_id => \&_check_visibility_field_id,
+    visibility_values => \&_check_visibility_values,
+    is_mandatory => \&Bugzilla::Object::check_boolean,
+    is_numeric   => \&_check_is_numeric,
+};
+
+use constant VALIDATOR_DEPENDENCIES => {
+    is_numeric => ['type'],
+    name => ['custom'],
+    type => ['custom'],
+    reverse_desc => ['type'],
+    value_field_id => ['type'],
+    visibility_values => ['visibility_field_id'],
 };
 
 use constant UPDATE_COLUMNS => qw(
@@ -114,79 +139,143 @@ use constant UPDATE_COLUMNS => qw(
     sortkey
     obsolete
     enter_bug
+    buglist
+    visibility_field_id
+    value_field_id
+    reverse_desc
+    is_mandatory
+    is_numeric
+    type
 );
 
 # How various field types translate into SQL data definitions.
 use constant SQL_DEFINITIONS => {
     # Using commas because these are constants and they shouldn't
     # be auto-quoted by the "=>" operator.
-    FIELD_TYPE_FREETEXT,      { TYPE => 'varchar(255)' },
+    FIELD_TYPE_FREETEXT,      { TYPE => 'varchar(255)', 
+                                NOTNULL => 1, DEFAULT => "''"},
     FIELD_TYPE_SINGLE_SELECT, { TYPE => 'varchar(64)', NOTNULL => 1,
                                 DEFAULT => "'---'" },
-    FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT' },
+    FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT', 
+                                NOTNULL => 1, DEFAULT => "''"},
     FIELD_TYPE_DATETIME,      { TYPE => 'DATETIME'   },
+    FIELD_TYPE_BUG_ID,        { TYPE => 'INT3'       },
 };
 
 # Field definitions for the fields that ship with Bugzilla.
 # These are used by populate_field_definitions to populate
 # the fielddefs table.
+# 'days_elapsed' is set in populate_field_definitions() itself.
 use constant DEFAULT_FIELDS => (
-    {name => 'bug_id',       desc => 'Bug #',      in_new_bugmail => 1},
-    {name => 'short_desc',   desc => 'Summary',    in_new_bugmail => 1},
-    {name => 'classification', desc => 'Classification', in_new_bugmail => 1},
-    {name => 'product',      desc => 'Product',    in_new_bugmail => 1},
-    {name => 'version',      desc => 'Version',    in_new_bugmail => 1},
-    {name => 'rep_platform', desc => 'Platform',   in_new_bugmail => 1},
-    {name => 'bug_file_loc', desc => 'URL',        in_new_bugmail => 1},
-    {name => 'op_sys',       desc => 'OS/Version', in_new_bugmail => 1},
-    {name => 'bug_status',   desc => 'Status',     in_new_bugmail => 1},
+    {name => 'bug_id',       desc => 'Bug #',      in_new_bugmail => 1,
+     buglist => 1, is_numeric => 1},
+    {name => 'short_desc',   desc => 'Summary',    in_new_bugmail => 1,
+     is_mandatory => 1, buglist => 1},
+    {name => 'classification', desc => 'Classification', in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'product',      desc => 'Product',    in_new_bugmail => 1,
+     is_mandatory => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'version',      desc => 'Version',    in_new_bugmail => 1,
+     is_mandatory => 1, buglist => 1},
+    {name => 'rep_platform', desc => 'Platform',   in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'bug_file_loc', desc => 'URL',        in_new_bugmail => 1,
+     buglist => 1},
+    {name => 'op_sys',       desc => 'OS/Version', in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'bug_status',   desc => 'Status',     in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
     {name => 'status_whiteboard', desc => 'Status Whiteboard',
-     in_new_bugmail => 1},
-    {name => 'keywords',     desc => 'Keywords',   in_new_bugmail => 1},
-    {name => 'resolution',   desc => 'Resolution'},
-    {name => 'bug_severity', desc => 'Severity',   in_new_bugmail => 1},
-    {name => 'priority',     desc => 'Priority',   in_new_bugmail => 1},
-    {name => 'component',    desc => 'Component',  in_new_bugmail => 1},
-    {name => 'assigned_to',  desc => 'AssignedTo', in_new_bugmail => 1},
-    {name => 'reporter',     desc => 'ReportedBy', in_new_bugmail => 1},
-    {name => 'votes',        desc => 'Votes'},
-    {name => 'qa_contact',   desc => 'QAContact',  in_new_bugmail => 1},
+     in_new_bugmail => 1, buglist => 1},
+    {name => 'keywords',     desc => 'Keywords',   in_new_bugmail => 1,
+     type => FIELD_TYPE_KEYWORDS, buglist => 1},
+    {name => 'resolution',   desc => 'Resolution',
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'bug_severity', desc => 'Severity',   in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'priority',     desc => 'Priority',   in_new_bugmail => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'component',    desc => 'Component',  in_new_bugmail => 1,
+     is_mandatory => 1,
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+    {name => 'assigned_to',  desc => 'AssignedTo', in_new_bugmail => 1,
+     buglist => 1},
+    {name => 'reporter',     desc => 'ReportedBy', in_new_bugmail => 1,
+     buglist => 1},
+    {name => 'qa_contact',   desc => 'QAContact',  in_new_bugmail => 1,
+     buglist => 1},
     {name => 'cc',           desc => 'CC',         in_new_bugmail => 1},
-    {name => 'dependson',    desc => 'Depends on', in_new_bugmail => 1},
-    {name => 'blocked',      desc => 'Blocks',     in_new_bugmail => 1},
+    {name => 'dependson',    desc => 'Depends on', in_new_bugmail => 1,
+     is_numeric => 1},
+    {name => 'blocked',      desc => 'Blocks',     in_new_bugmail => 1,
+     is_numeric => 1},
 
     {name => 'attachments.description', desc => 'Attachment description'},
     {name => 'attachments.filename',    desc => 'Attachment filename'},
     {name => 'attachments.mimetype',    desc => 'Attachment mime type'},
-    {name => 'attachments.ispatch',     desc => 'Attachment is patch'},
-    {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete'},
-    {name => 'attachments.isprivate',   desc => 'Attachment is private'},
+    {name => 'attachments.ispatch',     desc => 'Attachment is patch',
+     is_numeric => 1},
+    {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete',
+     is_numeric => 1},
+    {name => 'attachments.isprivate',   desc => 'Attachment is private',
+     is_numeric => 1},
     {name => 'attachments.submitter',   desc => 'Attachment creator'},
 
-    {name => 'target_milestone',      desc => 'Target Milestone'},
-    {name => 'creation_ts', desc => 'Creation date', in_new_bugmail => 1},
-    {name => 'delta_ts', desc => 'Last changed date', in_new_bugmail => 1},
+    {name => 'target_milestone',      desc => 'Target Milestone',
+     buglist => 1},
+    {name => 'creation_ts',           desc => 'Creation date',
+     buglist => 1},
+    {name => 'delta_ts',              desc => 'Last changed date',
+     buglist => 1},
     {name => 'longdesc',              desc => 'Comment'},
-    {name => 'longdescs.isprivate',   desc => 'Comment is private'},
-    {name => 'alias',                 desc => 'Alias'},
-    {name => 'everconfirmed',         desc => 'Ever Confirmed'},
-    {name => 'reporter_accessible',   desc => 'Reporter Accessible'},
-    {name => 'cclist_accessible',     desc => 'CC Accessible'},
-    {name => 'bug_group',             desc => 'Group'},
-    {name => 'estimated_time', desc => 'Estimated Hours', in_new_bugmail => 1},
-    {name => 'remaining_time',        desc => 'Remaining Hours'},
-    {name => 'deadline',              desc => 'Deadline', in_new_bugmail => 1},
+    {name => 'longdescs.isprivate',   desc => 'Comment is private',
+     is_numeric => 1},
+    {name => 'longdescs.count',       desc => 'Number of Comments',
+     buglist => 1, is_numeric => 1},
+    {name => 'alias',                 desc => 'Alias', buglist => 1},
+    {name => 'everconfirmed',         desc => 'Ever Confirmed',
+     is_numeric => 1},
+    {name => 'reporter_accessible',   desc => 'Reporter Accessible',
+     is_numeric => 1},
+    {name => 'cclist_accessible',     desc => 'CC Accessible',
+     is_numeric => 1},
+    {name => 'bug_group',             desc => 'Group', in_new_bugmail => 1},
+    {name => 'estimated_time',        desc => 'Estimated Hours',
+     in_new_bugmail => 1, buglist => 1, is_numeric => 1},
+    {name => 'remaining_time',        desc => 'Remaining Hours', buglist => 1,
+     is_numeric => 1},
+    {name => 'deadline',              desc => 'Deadline',
+     type => FIELD_TYPE_DATETIME, in_new_bugmail => 1, buglist => 1},
     {name => 'commenter',             desc => 'Commenter'},
-    {name => 'flagtypes.name',        desc => 'Flag'},
+    {name => 'flagtypes.name',        desc => 'Flags', buglist => 1},
     {name => 'requestees.login_name', desc => 'Flag Requestee'},
     {name => 'setters.login_name',    desc => 'Flag Setter'},
-    {name => 'work_time',             desc => 'Hours Worked'},
-    {name => 'percentage_complete',   desc => 'Percentage Complete'},
+    {name => 'work_time',             desc => 'Hours Worked', buglist => 1,
+     is_numeric => 1},
+    {name => 'percentage_complete',   desc => 'Percentage Complete',
+     buglist => 1, is_numeric => 1},
     {name => 'content',               desc => 'Content'},
     {name => 'attach_data.thedata',   desc => 'Attachment data'},
-    {name => 'attachments.isurl',     desc => 'Attachment is a URL'},
     {name => "owner_idle_time",       desc => "Time Since Assignee Touched"},
+    {name => 'see_also',              desc => "See Also",
+     type => FIELD_TYPE_BUG_URLS},
+    {name => 'tag',                   desc => 'Tags'},
 );
+
+################
+# Constructors #
+################
+
+# Override match to add is_select.
+sub match {
+    my $self = shift;
+    my ($params) = @_;
+    if (delete $params->{is_select}) {
+        $params->{type} = [FIELD_TYPE_SINGLE_SELECT, FIELD_TYPE_MULTI_SELECT];
+    }
+    return $self->SUPER::match(@_);
+}
 
 ##############
 # Validators #
@@ -203,10 +292,17 @@ sub _check_description {
 
 sub _check_enter_bug { return $_[1] ? 1 : 0; }
 
+sub _check_is_numeric {
+    my ($invocant, $value, undef, $params) = @_;
+    my $type = blessed($invocant) ? $invocant->type : $params->{type};
+    return 1 if $type == FIELD_TYPE_BUG_ID;
+    return $value ? 1 : 0;
+}
+
 sub _check_mailhead { return $_[1] ? 1 : 0; }
 
 sub _check_name {
-    my ($invocant, $name, $is_custom) = @_;
+    my ($class, $name, undef, $params) = @_;
     $name = lc(clean_text($name));
     $name || ThrowUserError('field_missing_name');
 
@@ -214,7 +310,7 @@ sub _check_name {
     my $name_regex = qr/^[\w\.]+$/;
     # Custom fields have more restrictive name requirements than
     # standard fields.
-    $name_regex = qr/^\w+$/ if $is_custom;
+    $name_regex = qr/^[a-zA-Z0-9_]+$/ if $params->{custom};
     # Custom fields can't be named just "cf_", and there is no normal
     # field named just "cf_".
     ($name =~ $name_regex && $name ne "cf_")
@@ -222,7 +318,7 @@ sub _check_name {
 
     # If it's custom, prepend cf_ to the custom field name to distinguish 
     # it from standard fields.
-    if ($name !~ /^cf_/ && $is_custom) {
+    if ($name !~ /^cf_/ && $params->{custom}) {
         $name = 'cf_' . $name;
     }
 
@@ -249,14 +345,86 @@ sub _check_sortkey {
 }
 
 sub _check_type {
-    my ($invocant, $type) = @_;
+    my ($invocant, $type, undef, $params) = @_;
     my $saved_type = $type;
     # The constant here should be updated every time a new,
     # higher field type is added.
-    (detaint_natural($type) && $type <= FIELD_TYPE_DATETIME)
+    (detaint_natural($type) && $type <= FIELD_TYPE_KEYWORDS)
       || ThrowCodeError('invalid_customfield_type', { type => $saved_type });
+
+    my $custom = blessed($invocant) ? $invocant->custom : $params->{custom};
+    if ($custom && !$type) {
+        ThrowCodeError('field_type_not_specified');
+    }
+
     return $type;
 }
+
+sub _check_value_field_id {
+    my ($invocant, $field_id, undef, $params) = @_;
+    my $is_select = $invocant->is_select($params);
+    if ($field_id && !$is_select) {
+        ThrowUserError('field_value_control_select_only');
+    }
+    return $invocant->_check_visibility_field_id($field_id);
+}
+
+sub _check_visibility_field_id {
+    my ($invocant, $field_id) = @_;
+    $field_id = trim($field_id);
+    return undef if !$field_id;
+    my $field = Bugzilla::Field->check({ id => $field_id });
+    if (blessed($invocant) && $field->id == $invocant->id) {
+        ThrowUserError('field_cant_control_self', { field => $field });
+    }
+    if (!$field->is_select) {
+        ThrowUserError('field_control_must_be_select',
+                       { field => $field });
+    }
+    return $field->id;
+}
+
+sub _check_visibility_values {
+    my ($invocant, $values, undef, $params) = @_;
+    my $field;
+    if (blessed $invocant) {
+        $field = $invocant->visibility_field;
+    }
+    elsif ($params->{visibility_field_id}) {
+        $field = $invocant->new($params->{visibility_field_id});
+    }
+    # When no field is set, no values are set.
+    return [] if !$field;
+
+    if (!scalar @$values) {
+        ThrowUserError('field_visibility_values_must_be_selected',
+                       { field => $field });
+    }
+
+    my @visibility_values;
+    my $choice = Bugzilla::Field::Choice->type($field);
+    foreach my $value (@$values) {
+        if (!blessed $value) {
+            $value = $choice->check({ id => $value });
+        }
+        push(@visibility_values, $value);
+    }
+
+    return \@visibility_values;
+}
+
+sub _check_reverse_desc {
+    my ($invocant, $reverse_desc, undef, $params) = @_;
+    my $type = blessed($invocant) ? $invocant->type : $params->{type};
+    if ($type != FIELD_TYPE_BUG_ID) {
+        return undef; # store NULL for non-reversible field types
+    }
+    
+    $reverse_desc = clean_text($reverse_desc);
+    return $reverse_desc;
+}
+
+sub _check_is_mandatory { return $_[1] ? 1 : 0; }
 
 =pod
 
@@ -361,22 +529,297 @@ sub enter_bug { return $_[0]->{enter_bug} }
 
 =over
 
-=item C<legal_values>
+=item C<buglist>
 
-A reference to an array with valid active values for this field.
+A boolean specifying whether or not this field is selectable
+as a display or order column in buglist.cgi
 
 =back
 
 =cut
 
+sub buglist { return $_[0]->{buglist} }
+
+=over
+
+=item C<is_select>
+
+True if this is a C<FIELD_TYPE_SINGLE_SELECT> or C<FIELD_TYPE_MULTI_SELECT>
+field. It is only safe to call L</legal_values> if this is true.
+
+=item C<legal_values>
+
+Valid values for this field, as an array of L<Bugzilla::Field::Choice>
+objects.
+
+=back
+
+=cut
+
+sub is_select {
+    my ($invocant, $params) = @_;
+    # This allows this method to be called by create() validators.
+    my $type = blessed($invocant) ? $invocant->type : $params->{type}; 
+    return ($type == FIELD_TYPE_SINGLE_SELECT 
+            || $type == FIELD_TYPE_MULTI_SELECT) ? 1 : 0 
+}
+
+=over
+
+=item C<is_abnormal>
+
+Most fields that have a C<SELECT> L</type> have a certain schema for
+the table that stores their values, the table has the same name as the field,
+and the field's legal values can be edited via F<editvalues.cgi>.
+
+However, some fields do not follow that pattern. Those fields are
+considered "abnormal".
+
+This method returns C<1> if the field is "abnormal", C<0> otherwise.
+
+=back
+
+=cut
+
+sub is_abnormal {
+    my $self = shift;
+    return ABNORMAL_SELECTS->{$self->name} ? 1 : 0;
+}
+
 sub legal_values {
     my $self = shift;
 
     if (!defined $self->{'legal_values'}) {
-        $self->{'legal_values'} = get_legal_field_values($self->name);
+        require Bugzilla::Field::Choice;
+        my @values = Bugzilla::Field::Choice->type($self)->get_all();
+        $self->{'legal_values'} = \@values;
     }
     return $self->{'legal_values'};
 }
+
+=pod
+
+=over
+
+=item C<is_timetracking>
+
+True if this is a time-tracking field that should only be shown to users
+in the C<timetrackinggroup>.
+
+=back
+
+=cut
+
+sub is_timetracking {
+    my ($self) = @_;
+    return grep($_ eq $self->name, TIMETRACKING_FIELDS) ? 1 : 0;
+}
+
+=pod
+
+=over
+
+=item C<visibility_field>
+
+What field controls this field's visibility? Returns a C<Bugzilla::Field>
+object representing the field that controls this field's visibility.
+
+Returns undef if there is no field that controls this field's visibility.
+
+=back
+
+=cut
+
+sub visibility_field {
+    my $self = shift;
+    if ($self->{visibility_field_id}) {
+        $self->{visibility_field} ||= 
+            $self->new($self->{visibility_field_id});
+    }
+    return $self->{visibility_field};
+}
+
+=pod
+
+=over
+
+=item C<visibility_values>
+
+If we have a L</visibility_field>, then what values does that field have to
+be set to in order to show this field? Returns a L<Bugzilla::Field::Choice>
+or undef if there is no C<visibility_field> set.
+
+=back
+
+=cut
+
+sub visibility_values {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    
+    return [] if !$self->{visibility_field_id};
+
+    if (!defined $self->{visibility_values}) {
+        my $visibility_value_ids =
+            $dbh->selectcol_arrayref("SELECT value_id FROM field_visibility
+                                      WHERE field_id = ?", undef, $self->id);
+
+        $self->{visibility_values} =
+            Bugzilla::Field::Choice->type($self->visibility_field)
+            ->new_from_list($visibility_value_ids);
+    }
+
+    return $self->{visibility_values};
+}
+
+=pod
+
+=over
+
+=item C<controls_visibility_of>
+
+An arrayref of C<Bugzilla::Field> objects, representing fields that this
+field controls the visibility of.
+
+=back
+
+=cut
+
+sub controls_visibility_of {
+    my $self = shift;
+    $self->{controls_visibility_of} ||= 
+        Bugzilla::Field->match({ visibility_field_id => $self->id });
+    return $self->{controls_visibility_of};
+}
+
+=pod
+
+=over
+
+=item C<value_field>
+
+The Bugzilla::Field that controls the list of values for this field.
+
+Returns undef if there is no field that controls this field's visibility.
+
+=back
+
+=cut
+
+sub value_field {
+    my $self = shift;
+    if ($self->{value_field_id}) {
+        $self->{value_field} ||= $self->new($self->{value_field_id});
+    }
+    return $self->{value_field};
+}
+
+=pod
+
+=over
+
+=item C<controls_values_of>
+
+An arrayref of C<Bugzilla::Field> objects, representing fields that this
+field controls the values of.
+
+=back
+
+=cut
+
+sub controls_values_of {
+    my $self = shift;
+    $self->{controls_values_of} ||=
+        Bugzilla::Field->match({ value_field_id => $self->id });
+    return $self->{controls_values_of};
+}
+
+=over
+
+=item C<is_visible_on_bug>
+
+See L<Bugzilla::Field::ChoiceInterface>.
+
+=back
+
+=cut
+
+sub is_visible_on_bug {
+    my ($self, $bug) = @_;
+
+    # Always return visible, if this field is not
+    # visibility controlled.
+    return 1 if !$self->{visibility_field_id};
+
+    my $visibility_values = $self->visibility_values;
+
+    return (any { $_->is_set_on_bug($bug) } @$visibility_values) ? 1 : 0;
+}
+
+=over
+
+=item C<is_relationship>
+
+Applies only to fields of type FIELD_TYPE_BUG_ID.
+Checks to see if a reverse relationship description has been set.
+This is the canonical condition to enable reverse link display,
+dependency tree display, and similar functionality.
+
+=back
+
+=cut
+
+sub is_relationship  {     
+    my $self = shift;
+    my $desc = $self->reverse_desc;
+    if (defined $desc && $desc ne "") {
+        return 1;
+    }
+    return 0;
+}
+
+=over
+
+=item C<reverse_desc>
+
+Applies only to fields of type FIELD_TYPE_BUG_ID.
+Describes the reverse relationship of this field.
+For example, if a BUG_ID field is called "Is a duplicate of",
+the reverse description would be "Duplicates of this bug".
+
+=back
+
+=cut
+
+sub reverse_desc { return $_[0]->{reverse_desc} }
+
+=over
+
+=item C<is_mandatory>
+
+a boolean specifying whether or not the field is mandatory;
+
+=back
+
+=cut
+
+sub is_mandatory { return $_[0]->{is_mandatory} }
+
+=over
+
+=item C<is_numeric>
+
+A boolean specifying whether or not this field logically contains
+numeric (integer, decimal, or boolean) values. By "logically contains" we
+mean that the user inputs numbers into the value of the field in the UI.
+This is mostly used by L<Bugzilla::Search>.
+
+=back
+
+=cut
+
+sub is_numeric { return $_[0]->{is_numeric} }
+
 
 =pod
 
@@ -400,15 +843,50 @@ They will throw an error if you try to set the values to something invalid.
 
 =item C<set_in_new_bugmail>
 
+=item C<set_buglist>
+
+=item C<set_reverse_desc>
+
+=item C<set_visibility_field>
+
+=item C<set_visibility_values>
+
+=item C<set_value_field>
+
+=item C<set_is_mandatory>
+
+
 =back
 
 =cut
 
 sub set_description    { $_[0]->set('description', $_[1]); }
 sub set_enter_bug      { $_[0]->set('enter_bug',   $_[1]); }
+sub set_is_numeric     { $_[0]->set('is_numeric',  $_[1]); }
 sub set_obsolete       { $_[0]->set('obsolete',    $_[1]); }
 sub set_sortkey        { $_[0]->set('sortkey',     $_[1]); }
 sub set_in_new_bugmail { $_[0]->set('mailhead',    $_[1]); }
+sub set_buglist        { $_[0]->set('buglist',     $_[1]); }
+sub set_reverse_desc    { $_[0]->set('reverse_desc', $_[1]); }
+sub set_visibility_field {
+    my ($self, $value) = @_;
+    $self->set('visibility_field_id', $value);
+    delete $self->{visibility_field};
+    delete $self->{visibility_values};
+}
+sub set_visibility_values {
+    my ($self, $value_ids) = @_;
+    $self->set('visibility_values', $value_ids);
+}
+sub set_value_field {
+    my ($self, $value) = @_;
+    $self->set('value_field_id', $value);
+    delete $self->{value_field};
+}
+sub set_is_mandatory { $_[0]->set('is_mandatory', $_[1]); }
+
+# This is only used internally by upgrade code in Bugzilla::Field.
+sub _set_type { $_[0]->set('type', $_[1]); }
 
 =pod
 
@@ -456,15 +934,13 @@ sub remove_from_db {
         $bugs_query = "SELECT COUNT(*) FROM bug_$name";
     }
     else {
-        $bugs_query = "SELECT COUNT(*) FROM bugs WHERE $name IS NOT NULL
-                                AND $name != ''";
+        $bugs_query = "SELECT COUNT(*) FROM bugs WHERE $name IS NOT NULL";
+        if ($self->type != FIELD_TYPE_BUG_ID && $self->type != FIELD_TYPE_DATETIME) {
+            $bugs_query .= " AND $name != ''";
+        }
         # Ignore the default single select value
         if ($self->type == FIELD_TYPE_SINGLE_SELECT) {
             $bugs_query .= " AND $name != '---'";
-        }
-        # Ignore blank dates.
-        if ($self->type == FIELD_TYPE_DATETIME) {
-            $bugs_query .= " AND $name != '00-00-00 00:00:00'";
         }
     }
 
@@ -483,9 +959,7 @@ sub remove_from_db {
         $dbh->bz_drop_column('bugs', $name);
     }
 
-    if ($type == FIELD_TYPE_SINGLE_SELECT
-        || $type == FIELD_TYPE_MULTI_SELECT)
-    {
+    if ($self->is_select) {
         # Delete the table that holds the legal values for this field.
         $dbh->bz_drop_field_tables($self);
     }
@@ -520,7 +994,12 @@ will be added to the C<bugs> table if it does not exist. Defaults to 0.
 =item C<enter_bug> - boolean - Whether this field is
 editable on the bug creation form. Defaults to 0.
 
+=item C<buglist> - boolean - Whether this field is
+selectable as a display or order column in bug lists. Defaults to 0.
+
 C<obsolete> - boolean - Whether this field is obsolete. Defaults to 0.
+
+C<is_mandatory> - boolean - Whether this field is mandatory. Defaults to 0.
 
 =back
 
@@ -530,9 +1009,25 @@ C<obsolete> - boolean - Whether this field is obsolete. Defaults to 0.
 
 sub create {
     my $class = shift;
-    my $field = $class->SUPER::create(@_);
-
+    my ($params) = @_;
     my $dbh = Bugzilla->dbh;
+
+    # This makes sure the "sortkey" validator runs, even if
+    # the parameter isn't sent to create().
+    $params->{sortkey} = undef if !exists $params->{sortkey};
+    $params->{type} ||= 0;
+    
+    $dbh->bz_start_transaction();
+    $class->check_required_create_fields(@_);
+    my $field_values      = $class->run_create_validators($params);
+    my $visibility_values = delete $field_values->{visibility_values};
+    my $field             = $class->insert_create_data($field_values);
+    
+    $field->set_visibility_values($visibility_values);
+    $field->_update_visibility_values();
+
+    $dbh->bz_commit_transaction();
+
     if ($field->custom) {
         my $name = $field->name;
         my $type = $field->type;
@@ -541,9 +1036,7 @@ sub create {
             $dbh->bz_add_column('bugs', $name, SQL_DEFINITIONS->{$type});
         }
 
-        if ($type == FIELD_TYPE_SINGLE_SELECT
-                || $type == FIELD_TYPE_MULTI_SELECT) 
-        {
+        if ($field->is_select) {
             # Create the table that holds the legal values for this field.
             $dbh->bz_add_field_tables($field);
         }
@@ -557,20 +1050,36 @@ sub create {
     return $field;
 }
 
-sub run_create_validators {
-    my $class = shift;
+sub update {
+    my $self = shift;
+    my $changes = $self->SUPER::update(@_);
     my $dbh = Bugzilla->dbh;
-    my $params = $class->SUPER::run_create_validators(@_);
-
-    $params->{name} = $class->_check_name($params->{name}, $params->{custom});
-    if (!exists $params->{sortkey}) {
-        $params->{sortkey} = $dbh->selectrow_array(
-            "SELECT MAX(sortkey) + 100 FROM fielddefs") || 100;
+    if ($changes->{value_field_id} && $self->is_select) {
+        $dbh->do("UPDATE " . $self->name . " SET visibility_value_id = NULL");
     }
-
-    return $params;
+    $self->_update_visibility_values();
+    return $changes;
 }
 
+sub _update_visibility_values {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    my @visibility_value_ids = map($_->id, @{$self->visibility_values});
+    $self->_delete_visibility_values();
+    for my $value_id (@visibility_value_ids) {
+        $dbh->do("INSERT INTO field_visibility (field_id, value_id)
+                  VALUES (?, ?)", undef, $self->id, $value_id);
+    }
+}
+
+sub _delete_visibility_values {
+    my ($self) = @_;
+    my $dbh = Bugzilla->dbh;
+    $dbh->do("DELETE FROM field_visibility WHERE field_id = ?",
+        undef, $self->id);
+    delete $self->{visibility_values};
+}
 
 =pod
 
@@ -625,6 +1134,10 @@ sub populate_field_definitions {
         if ($field) {
             $field->set_description($def->{desc});
             $field->set_in_new_bugmail($def->{in_new_bugmail});
+            $field->set_buglist($def->{buglist});
+            $field->_set_type($def->{type}) if $def->{type};
+            $field->set_is_mandatory($def->{is_mandatory});
+            $field->set_is_numeric($def->{is_numeric});
             $field->update();
         }
         else {
@@ -632,8 +1145,7 @@ sub populate_field_definitions {
                 $def->{mailhead} = $def->{in_new_bugmail};
                 delete $def->{in_new_bugmail};
             }
-            $def->{description} = $def->{desc};
-            delete $def->{desc};
+            $def->{description} = delete $def->{desc};
             Bugzilla::Field->create($def);
         }
     }
@@ -750,13 +1262,19 @@ sub check_field {
     my $dbh = Bugzilla->dbh;
 
     # If $legalsRef is undefined, we use the default valid values.
+    # Valid values for this check are all possible values. 
+    # Using get_legal_values would only return active values, but since
+    # some bugs may have inactive values set, we want to check them too. 
     unless (defined $legalsRef) {
-        $legalsRef = get_legal_field_values($name);
+        $legalsRef = Bugzilla::Field->new({name => $name})->legal_values;
+        my @values = map($_->name, @$legalsRef);
+        $legalsRef = \@values;
+
     }
 
     if (!defined($value)
-        || trim($value) eq ""
-        || lsearch($legalsRef, $value) < 0)
+        or trim($value) eq ""
+        or !grep { $_ eq $value } @$legalsRef)
     {
         return 0 if $no_warn; # We don't want an error to be thrown; return.
         trick_taint($name);

@@ -147,5 +147,5 @@ elsif ($action eq 'update_comment') {
     load_template('comment', 'workflow_updated');
 }
 else {
-    ThrowCodeError("action_unrecognized", {action => $action});
+    ThrowUserError('unknown_action', {action => $action});
 }

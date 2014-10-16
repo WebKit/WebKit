@@ -1,0 +1,77 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is NASA.
+  # Portions created by NASA are Copyright (C) 2008 
+  # San Jose State University Foundation. All Rights Reserved.
+  #
+  # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+// Disable a checkbox based on the state of another one.
+function toggleCheckbox(this_checkbox, other_checkbox_id) {
+    var other_checkbox = document.getElementById(other_checkbox_id);
+    other_checkbox.disabled = !this_checkbox.checked;
+}
+
+var select_values = new Array();
+[% USE Bugzilla %]
+[% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
+  select_values[[% sel_field.id FILTER js %]] = [
+  [% FOREACH legal_value = sel_field.legal_values %]
+    [%# Prefix components with the name of their product so that admins
+        know which component we're talking about. #%]
+    [% IF sel_field.name == 'component' %]
+      [% SET value_name = display_value('product', legal_value.product.name) _ ': '
+                          _ display_value(sel_field.name, legal_value.name) %]
+    [% ELSE %]
+      [% SET value_name = display_value(sel_field.name, legal_value.name) %]
+    [% END %]
+    [[% legal_value.id FILTER js %], '[% value_name FILTER js %]'][% ',' UNLESS loop.last %]
+  [% END %]
+  ];
+[% END %]
+
+function onChangeType(type_field) {
+    var value_field = document.getElementById('value_field_id');
+    if (type_field.value == [% constants.FIELD_TYPE_SINGLE_SELECT %]
+        || type_field.value == [% constants.FIELD_TYPE_MULTI_SELECT %])
+    {
+        value_field.disabled = false;
+    }
+    else {
+        value_field.disabled = true;
+    }
+
+   var reverse_desc = document.getElementById('reverse_desc');
+   if (type_field.value == [% constants.FIELD_TYPE_BUG_ID %])
+   {
+       reverse_desc.disabled = false;
+   }
+   else {
+       reverse_desc.disabled = true;
+       reverse_desc.value = '';
+   }
+}
+
+function onChangeVisibilityField() {
+    var vis_field = document.getElementById('visibility_field_id');
+    var vis_value = document.getElementById('visibility_values');
+
+    if (vis_field.value) {
+        var values = select_values[vis_field.value];
+        bz_populateSelectFromArray(vis_value, values);
+    }
+    else {
+        bz_clearOptions(vis_value);
+    }
+}

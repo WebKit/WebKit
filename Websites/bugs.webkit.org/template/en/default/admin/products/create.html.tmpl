@@ -25,14 +25,14 @@
 [% PROCESS global/header.html.tmpl
   title = title
   style_urls = ['skins/standard/admin.css']
+  javascript_urls = ['js/util.js']
 %]
 
 [% DEFAULT
-  product.votesperuser = "0",
-  product.maxvotesperbug  = "10000",
-  product.votestoconfirm = "0",
+  product.is_active = 1,
   version = "unspecified",
-  product.defaultmilestone = "---"
+  product.defaultmilestone = constants.DEFAULT_MILESTONE
+  product.allows_unconfirmed = 1
 %]
 
 <form method="post" action="editproducts.cgi">
@@ -48,13 +48,13 @@
     </tr>
     <tr>
       <th align="right">Create chart datasets for this product:</th>
-      <td><input type="checkbox" name="createseries" value="1"></td>
+      <td>
+        <input type="checkbox" name="createseries" value="1" checked="checked">
+      </td>
     </tr>
   </table>
 
-  <input type="submit" value="Add">
-  <input type="hidden" name="subcategory" value="-All-">
-  <input type="hidden" name="open_name"   value="All Open">
+  <input type="submit" id="add-product" value="Add">
   <input type="hidden" name="action" value="new">
   <input type="hidden" name="token" value="[% token FILTER html %]">
   <input type="hidden" name="classification"

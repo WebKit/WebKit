@@ -21,54 +21,48 @@
   #                 Marc Schumann <wurblzap@gmail.com>
   #%]
 
-<tr>
+<tr class="attachment_data">
   <th><label for="data">File</label>:</th>
   <td>
-    <em>Enter the path to the file on your computer.</em><br>
-    <input type="file" id="data" name="data" size="50"
-      [% IF Param("allow_attach_url") %]
-        onchange="DataFieldHandler()" 
-      [% END %]
-    >
+    <em>Enter the path to the file on your computer</em> (or
+    <a id="attachment_data_controller" href="javascript:TUI_toggle_class('attachment_text_field');
+                                             javascript:TUI_toggle_class('attachment_data')"
+    >paste text as attachment</a>).<br>
+    <input type="file" id="data" name="data" size="50" onchange="DataFieldHandler()">
   </td>
 </tr>
-[% IF Param("maxlocalattachment") %]
-<tr>
-  <th>BigFile:</th>
+<tr class="attachment_text_field">
+  <th><label for="attach_text">File</label>:</th>
   <td>
-    <input type="checkbox" id="bigfile"
-           name="bigfile" value="bigfile">
-    <label for="bigfile">
-      Big File - Stored locally and may be purged
-    </label>
+    <em>Paste the text to be added as an attachment</em> (or
+    <a id="attachment_text_field_controller" href="javascript:TUI_toggle_class('attachment_text_field');
+                                                   javascript:TUI_toggle_class('attachment_data')"
+    >attach a file</a>).<br>
+    <textarea id="attach_text" name="attach_text" cols="80" rows="15"
+              onkeyup="TextFieldHandler()" onblur="TextFieldHandler()"></textarea>
   </td>
 </tr>
-[% END %]
-[% IF Param("allow_attach_url") %]
 <tr>
-  <th><label for="attachurl">AttachURL</label>:</th>
-  <td>
-    <em>URL to be attached instead.</em><br>
-    <input type="text" id="attachurl" name="attachurl" size="60" 
-           maxlength="2000"
-           onkeyup="URLFieldHandler()" onblur="URLFieldHandler()">
-  </td>
-</tr>
-[% END %]
-<tr>
-  <th><label for="description">Description</label>:</th>
+  <th class="required"><label for="description">Description</label>:</th>
   <td>
     <em>Describe the attachment briefly.</em><br>
-    <input type="text" id="description" name="description" size="60" maxlength="200">
+    <input type="text" id="description" name="description" class="required"
+           size="60" maxlength="200">
   </td>
 </tr>
-<tr>
+<tr[% ' class="expert_fields"' UNLESS bug.id %]>
   <th>Content Type:</th>
   <td>
     <em>If the attachment is a patch, check the box below.</em><br>
     <input type="checkbox" id="ispatch" name="ispatch" value="1"
            onchange="setContentTypeDisabledState(this.form);">
     <label for="ispatch">patch</label><br><br>
+    [%# Reset this whenever the page loads so that the JS state is up to date %]
+    <script type="text/javascript">
+      YAHOO.util.Event.onDOMReady(function() {
+          bz_fireEvent(document.getElementById('ispatch'), 'change');
+      });
+    </script>
 
     <em>Otherwise, choose a method for determining the content type.</em><br>
     <input type="radio" id="autodetect"
@@ -79,7 +73,7 @@
       <label for="list">select from list</label>:
       <select name="contenttypeselection" id="contenttypeselection"
               onchange="this.form.contenttypemethod[1].checked = true;">
-        [% PROCESS "attachment/content-types.html.tmpl" %]
+        [% PROCESS content_types %]
       </select><br>
     <input type="radio" id="manual"
                  name="contenttypemethod" value="manual">
@@ -89,11 +83,27 @@
              onchange="if (this.value) this.form.contenttypemethod[2].checked = true;">
   </td>
 </tr>
-<tr>
+<tr[% ' class="expert_fields"' UNLESS bug.id %]>
   <td> </td>
   <td>
     [% IF flag_types && flag_types.size > 0 %]
-      [% PROCESS "flag/list.html.tmpl" bug_id=bugid attach_id=attachid %]<br>
+      [% PROCESS "flag/list.html.tmpl" %]<br>
     [% END %]
   </td>
 </tr>
+
+[% BLOCK content_types %]
+  [% mimetypes = [{type => "text/plain", desc => "plain text"},
+                  {type => "text/html",  desc => "HTML source"},
+                  {type => "application/xml", desc => "XML source"},
+                  {type => "image/gif",  desc => "GIF image"},
+                  {type => "image/jpeg", desc => "JPEG image"},
+                  {type => "image/png",  desc => "PNG image"},
+                  {type => "application/octet-stream", desc => "binary file"}]
+  %]
+  [% Hook.process("mimetypes", "attachment/createformcontents.html.tmpl") %]
+
+  [% FOREACH m = mimetypes %]
+    <option value="[% m.type FILTER html %]">[% m.desc FILTER html %] ([% m.type FILTER html %])</option>
+  [% END %]
+[% END %]

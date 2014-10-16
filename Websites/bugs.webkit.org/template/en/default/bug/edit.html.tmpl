@@ -40,7 +40,7 @@
        */
       [% IF user.settings.quote_replies.value != 'off' %]
         document.write('[<a href="#add_comment" onclick="replyToComment(' + 
-                       id + ',' + real_id + ');">reply<' + '/a>]');
+                       id + ',' + real_id + '); return false;">reply<' + '/a>]');
       [% END %]
   }
 
@@ -52,24 +52,15 @@
         /* pre id="comment_name_N" */
         var text_elem = document.getElementById('comment_text_'+id);
         var text = getText(text_elem);
-
-        /* make sure we split on all newlines -- IE or Moz use \r and \n
-         * respectively.
-         */
-        text = text.split(/\r|\n/);
-
-        for (var i=0; i < text.length; i++) {
-            replytext += "> " + text[i] + "\n"; 
-        }
-
-        replytext = prefix + replytext + "\n";
+        replytext = prefix + wrapReplyText(text);
       [% ELSIF user.settings.quote_replies.value == 'simple_reply' %]
         replytext = prefix;
       [% END %]
 
-    [% IF Param("insidergroup") && user.in_group(Param("insidergroup")) %]
+    [% IF user.is_insider %]
       if (document.getElementById('isprivate_' + real_id).checked) {
           document.getElementById('newcommentprivacy').checked = 'checked';
+          updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment'); 
       }
     [% END %]
 
@@ -107,7 +98,7 @@
       return text;
   }
 
-[% IF user.in_group(Param('timetrackinggroup')) %]
+[% IF user.is_timetracker %]
   var fRemainingTime = [% bug.remaining_time %]; // holds the original value
   function adjustRemainingTime() {
       // subtracts time spent from remaining time
@@ -128,26 +119,27 @@
 
 [% END %]
 
-  function updateCommentTagControl(checkbox, form) {
-      if (checkbox.checked) {
-          form.comment.className='bz_private';
-      } else {
-          form.comment.className='';
-      }
-  }
+  /* Index all classifications so we can keep track of the classification
+   * for the selected product, which could control field visibility.
+   */
+  var all_classifications = new Array([% bug.choices.product.size %]);
+  [%- FOREACH product = bug.choices.product %]
+      all_classifications['[% product.name FILTER js %]'] = '
+          [%- product.classification.name FILTER js %]';
+  [%- END %]
 
   //-->
   </script>
 
-<form name="changeform" method="post" action="process_bug.cgi">
+<form name="changeform" id="changeform" method="post" action="process_bug.cgi">
 
   <input type="hidden" name="delta_ts" value="[% bug.delta_ts %]">
-  <input type="hidden" name="longdesclength" value="[% bug.longdescs.size %]">
+  <input type="hidden" name="longdesclength" value="[% bug.comments.size %]">
   <input type="hidden" name="id" value="[% bug.bug_id %]">
   <input type="hidden" name="token" value="[% issue_hash_token([bug.id, bug.delta_ts]) FILTER html %]">
 
   [% PROCESS section_title %]
-  <table>
+  <table class="edit_form">
     <tr>
       [%# 1st Column %]
       <td id="bz_show_bug_column_1" class="bz_show_bug_column">     
@@ -189,7 +181,9 @@
          
          [% PROCESS section_cclist %]
          
-         [% PROCESS section_spacer %] 
+         [% PROCESS section_spacer %]
+
+         [% PROCESS section_see_also %] 
          
          [% PROCESS section_customfields %]
          
@@ -209,90 +203,43 @@
     </tr>
   </table>
 
-  
-  [% PROCESS section_restrict_visibility %]
-  [% IF user.in_group(Param('timetrackinggroup')) %]
-    <br>
-    [% PROCESS section_timetracking %]
-  [% END %]
-  
+  <table id="bz_big_form_parts" cellspacing="0" cellpadding="0"><tr>
+  <td>
+    [% IF user.is_timetracker %]
+      [% PROCESS section_timetracking %]
+    [% END %]
 
-[%# *** Attachments *** %]
+    [%# *** Attachments *** %]
 
-  [% PROCESS attachment/list.html.tmpl
-             attachments = bug.attachments
-             bugid       = bug.bug_id
-             num_attachment_flag_types = bug.num_attachment_flag_types
-             show_attachment_flags = bug.show_attachment_flags
-   %]
+    [% PROCESS attachment/list.html.tmpl
+               attachments = bug.attachments
+               bugid       = bug.bug_id
+               num_attachment_flag_types = bug.num_attachment_flag_types
+               show_attachment_flags = bug.show_attachment_flags
+    %]
 
+    [% IF user.settings.comment_box_position.value == 'before_comments' %]
+      [% PROCESS comment_box %]
+    [% END %]
+  </td>
+  <td>
+    [% PROCESS section_restrict_visibility %]
+  </td>
+  </tr></table>
 
-[%# *** Comments Groups *** %]
+  [%# *** Additional Comments *** %]
+  <div id="comments">
+    [% PROCESS bug/comments.html.tmpl
+      comments = bug.comments
+      mode = user.id ? "edit" : "show"
+    %]
+  </div>
 
-  <br>
-  <table cellpadding="1" cellspacing="1">
-    <tr>
-      <td id="comment_status_commit">
-        <!-- The table keeps the commit button aligned with the box. -->
-        <a name="add_comment"></a>
-        [% IF user.id %]
-        <table><tr><td>
-          <label for="comment" accesskey="c"><b>Additional <u>C</u>omments</b></label>:
-          [% IF Param("insidergroup") && user.in_group(Param("insidergroup")) %]
-            <input type="checkbox" name="commentprivacy" value="1"
-                   id="newcommentprivacy"
-                   onClick="updateCommentTagControl(this, form)">
-            <label for="newcommentprivacy">Private</label>
-          [% END %]
-          <br>
-          [% INCLUDE global/textarea.html.tmpl
-                     name      = 'comment'
-                     id        = 'comment'
-                     minrows   = 10
-                     maxrows   = 25
-                     cols      = constants.COMMENT_COLS
-          %]
-          <br>
-          <div id="knob-buttons">
-            <input type="submit" value="Commit" id="commit">
-            [% IF bug.user.canmove %]
-              <input type="submit" name="action" id="action" value="[% Param("move-button-text") %]">
-            [% END %]
-          </div>
-          <table class="status" cellspacing="0" cellpadding="0">
-            <tr>
-              <td class="field_label">
-                <b><a href="page.cgi?id=fields.html#status">Status</a></b>:
-              </td>
-              <td>
-                <a name="bug_status_bottom"></a>
-                [% PROCESS bug/knob.html.tmpl %]
-              </td>
-            </tr>
-          </table>
-        </td></tr></table>
-        [% ELSE %]
-          <fieldset>
-            <legend>Note</legend>
-            <p>
-              You need to
-              <a href="[% IF Param('ssl') != 'never' %][% Param('sslbase') %][% END %]show_bug.cgi?id=[% bug.bug_id %]&amp;GoAheadAndLogIn=1">log in</a>
-              before you can comment on or make changes to this [% terms.bug %].
-            </p>
-          </fieldset>
-        [% END %]
-        [%# *** Additional Comments *** %]
-        <hr>
-        <div id="comments">
-        [% PROCESS bug/comments.html.tmpl
-           comments = bug.longdescs
-           mode = user.id ? "edit" : "show"
-         %]
-        </div>
-        
-      </td>
-    </tr>
-  </table>
+  [% IF user.settings.comment_box_position.value == 'after_comments' %]
+    <hr>
+    [% PROCESS comment_box %]
+  [% END %]        
+
 </form>
 
 [%############################################################################%]
@@ -301,17 +248,17 @@
 
 [% BLOCK section_title %]
   [%# That's the main table, which contains all editable fields. %]
-  <div class="bz_alias_short_desc_container">
-    
+  <div class="bz_alias_short_desc_container edit_form">
+      [% PROCESS commit_button id="_top"%]
      <a href="show_bug.cgi?id=[% bug.bug_id %]">
-        <b>[% terms.Bug %]&nbsp;[% bug.bug_id FILTER html %]</b></a> - 
-     <span id="summary_alias_container" class="bz_default_hidden"> 
+        [%-# %]<b>[% terms.Bug %]&nbsp;[% bug.bug_id FILTER html %]</b>
+     [%-# %]</a> -<span id="summary_alias_container" class="bz_default_hidden"> 
       [% IF Param("usebugaliases") %]
         [% IF bug.alias != "" %]
           (<span id="alias_nonedit_display">[% bug.alias FILTER html %]</span>) 
         [% END %]
       [% END %]
-      <span id="short_desc_nonedit_display">[% bug.short_desc FILTER html %]</span>
+      <span id="short_desc_nonedit_display">[% bug.short_desc FILTER quoteUrls(bug) %]</span>
       [% IF bug.check_can_change_field('short_desc', 0, 1) || 
             bug.check_can_change_field('alias', 0, 1)  %]
         <small class="editme">(<a href="#" id="editme_action">edit</a>)</small>
@@ -373,23 +320,35 @@
     [%#  PRODUCT  #%]
     [%#############%]
     <tr>
-      <td class="field_label">
-        <label for="product" accesskey="p"><b><u>P</u>roduct</b></label>:
-      </td>
-      [% PROCESS select selname => "product" %]
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.product,
+            override_legal_values = bug.choices.product
+            desc_url = 'describecomponents.cgi', value = bug.product
+            editable = bug.check_can_change_field('product', 0, 1) %]
+    </tr>
+
+    [%# Classification is here so that it can be used in value controllers
+      # and visibility controllers. It comes after product because
+      # it uses some javascript that depends on the existence of the
+      # product field.
+      #%]
+    <tr class="bz_default_hidden">
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug field = bug_fields.classification
+            override_legal_values = bug.choices.classification
+            value = bug.classification
+            editable = bug.check_can_change_field('product', 0, 1) %]
     </tr>
     [%###############%]    
     [%#  Component  #%]
     [%###############%]
     <tr>
-      <td class="field_label">
-        <label for="component" accesskey="m">
-          <b><a href="describecomponents.cgi?product=[% bug.product FILTER url_quote %]">
-            Co<u>m</u>ponent</a>:
-          </b>
-        </label>
-      </td>
-      [% PROCESS select selname => "component" %]
+      [% INCLUDE bug/field.html.tmpl
+          bug = bug, field = bug_fields.component, value = bug.component
+          override_legal_values = bug.choices.component
+          desc_url = "describecomponents.cgi?product=$bug.product"
+          editable = bug.check_can_change_field('component', 0, 1)
+      %]
     </tr>
     <tr>
       <td class="field_label">
@@ -405,9 +364,15 @@
       <td class="field_label">
         <label for="rep_platform" accesskey="h"><b>Platform</b></label>:
       </td>
-      <td>
-       [% PROCESS select selname => "rep_platform" no_td=> 1 %]
-       [%+ PROCESS select selname => "op_sys" no_td=> 1 %]
+      <td class="field_value">
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.rep_platform,
+            no_tds = 1, value = bug.rep_platform
+            editable = bug.check_can_change_field('rep_platform', 0, 1) %]
+       [%+ INCLUDE bug/field.html.tmpl 
+            bug = bug, field = bug_fields.op_sys, 
+            no_tds = 1, value = bug.op_sys
+            editable = bug.check_can_change_field('op_sys', 0, 1) %]
        <script type="text/javascript">
          assignToDefaultOnChange(['product', 'component']);
        </script>
@@ -429,9 +394,9 @@
     </td>
     <td id="bz_field_status">
       <span id="static_bug_status">
-        [% get_status(bug.bug_status) FILTER html %]
+        [% display_value("bug_status", bug.bug_status) FILTER html %]
         [% IF bug.resolution %]
-          [%+ get_resolution(bug.resolution) FILTER html %]
+          [%+ display_value("resolution", bug.resolution) FILTER html %]
           [% IF bug.dup_id %]
             of [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]
           [% END %]
@@ -452,7 +417,7 @@
 [% BLOCK section_details2 %]
 
  [%###############################################################%]
- [%# Importance (priority, severity and votes) #%]
+ [%# Importance (priority and severity) #%]
  [%###############################################################%]
     <tr>
       <td class="field_label">
@@ -460,36 +425,24 @@
           <b><a href="page.cgi?id=fields.html#importance"><u>I</u>mportance</a></b></label>:
       </td>
       <td>
-        [% PROCESS select selname => "priority" no_td=>1 %] 
-        [% PROCESS select selname = "bug_severity" no_td=>1 %]
-        [% IF bug.use_votes %]
-          <span id="votes_container">
-          [% IF bug.votes %] 
-            with 
-            <a href="votes.cgi?action=show_bug&amp;bug_id=[% bug.bug_id %]">
-              [% bug.votes %] 
-              [% IF bug.votes == 1 %]
-                vote
-              [% ELSE %]
-                votes
-              [% END %]</a> 
-          [% END %]    
-          (<a href="votes.cgi?action=show_user&amp;bug_id=
-                  [% bug.bug_id %]#vote_[% bug.bug_id %]">vote</a>)
-          </span>  
-        [% END %]
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.priority,
+            no_tds = 1, value = bug.priority
+            editable = bug.check_can_change_field('priority', 0, 1) %]
+       [%+ INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.bug_severity,
+            no_tds = 1, value = bug.bug_severity
+            editable = bug.check_can_change_field('bug_severity', 0, 1) %]
+        [% Hook.process('after_importance', 'bug/edit.html.tmpl') %]
       </td>
     </tr>
 
     [% IF Param("usetargetmilestone") && bug.target_milestone %]
       <tr>
         <td class="field_label">
-          <label for="target_milestone"><b>
-            [% IF bug.milestoneurl %]
-              <a href="[% bug.milestoneurl FILTER html %]">
-            [% END %]
-            Target&nbsp;Milestone[% "</a>" IF bug.milestoneurl %]
-          [%%]</b></label>:
+          <label for="target_milestone">
+              <a href="page.cgi?id=fields.html#target_milestone">
+            Target&nbsp;Milestone</a></label>:
         </td>
         [% PROCESS select selname = "target_milestone" %]
       </tr>
@@ -511,8 +464,12 @@
         [% IF bug.check_can_change_field("assigned_to", 0, 1) %]
           <div id="bz_assignee_edit_container" class="bz_default_hidden">
             <span>
-              [% INCLUDE user_identity user=> bug.assigned_to %]
+              [% INCLUDE global/user.html.tmpl who = bug.assigned_to %]
               (<a href="#" id="bz_assignee_edit_action">edit</a>)
+              [% IF bug.assigned_to.id != user.id %]
+                (<a title="Reassign to yourself" 
+                    href="#" id="bz_assignee_take_action">take</a>)
+              [% END %]
             </span>
           </div>
           <div id="bz_assignee_input">
@@ -520,6 +477,7 @@
                  id => "assigned_to"
                  name => "assigned_to"
                  value => bug.assigned_to.login
+                 classes => ["bz_userfield"]
                  size => 30
             %]
             <br>
@@ -532,10 +490,16 @@
                              'bz_assignee_edit_action', 
                              'assigned_to', 
                              '[% bug.assigned_to.login FILTER js %]' );
+           hideEditableField('bz_assignee_edit_container',
+                             'bz_assignee_input',
+                             'bz_assignee_take_action',
+                             'assigned_to',
+                             '[% bug.assigned_to.login FILTER js %]',
+                             '[% user.login FILTER js %]' );
            initDefaultCheckbox('assignee');                  
           </script>
         [% ELSE %]
-          [% INCLUDE user_identity user => bug.assigned_to %]
+          [% INCLUDE global/user.html.tmpl who = bug.assigned_to %]
         [% END %]
       </td>
     </tr>
@@ -546,13 +510,12 @@
         <label for="qa_contact" accesskey="q"><b><u>Q</u>A Contact</b></label>:
       </td>
       <td>
-
         [% IF bug.check_can_change_field("qa_contact", 0, 1) %]
           [% IF bug.qa_contact != "" %]
            <div id="bz_qa_contact_edit_container" class="bz_default_hidden">
             <span>
               <span id="bz_qa_contact_edit_display">
-              [% INCLUDE user_identity user=> bug.qa_contact %]</span>
+              [% INCLUDE global/user.html.tmpl who = bug.qa_contact %]</span>
               (<a href="#" id="bz_qa_contact_edit_action">edit</a>)
             </span>
           </div>
@@ -563,6 +526,7 @@
                 name => "qa_contact"
                 value => bug.qa_contact.login
                 size => 30
+                classes => ["bz_userfield"]
                 emptyok => 1
             %]
             <br>
@@ -580,7 +544,7 @@
             initDefaultCheckbox('qa_contact');
           </script>
         [% ELSE %]
-          [% INCLUDE user_identity user => bug.qa_contact %]
+          [% INCLUDE global/user.html.tmpl who = bug.qa_contact %]
         [% END %]
       </td>
     </tr>
@@ -591,23 +555,16 @@
 [%# Block for URL Keyword and Whiteboard                                     #%]
 [%############################################################################%]
 [% BLOCK section_url_keyword_whiteboard %]
-[%# *** URL Whiteboard Keywords *** %]
   <tr>
-    <td class="field_label">
-      <label for="bug_file_loc" accesskey="u"><b>
-        [% IF bug.bug_file_loc 
-           AND NOT bug.bug_file_loc.match("^(javascript|data)") %]
-          <a href="[% bug.bug_file_loc FILTER html %]"><u>U</u>RL</a>
-        [% ELSE %]
-          <u>U</u>RL
-        [% END %]
-      [%%]</b></label>:
-    </td>
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = bug_fields.bug_file_loc
+      editable = 1
+      accesskey = "u"
+    %]
     <td>
       [% IF bug.check_can_change_field("bug_file_loc", 0, 1) %]
         <span id="bz_url_edit_container" class="bz_default_hidden"> 
-        [% IF bug.bug_file_loc 
-           AND NOT bug.bug_file_loc.match("^(javascript|data)") %]
+        [% IF is_safe_url(bug.bug_file_loc) %]
            <a href="[% bug.bug_file_loc FILTER html %]" target="_blank"
               title="[% bug.bug_file_loc FILTER html %]">
              [% bug.bug_file_loc FILTER truncate(40) FILTER html %]</a>
@@ -618,7 +575,8 @@
       [% END %]
       <span id="bz_url_input_area">
         [% url_output =  PROCESS input no_td=1 inputname => "bug_file_loc" size => "40" colspan => 2 %]
-        [% IF NOT bug.check_can_change_field("bug_file_loc", 0, 1)  %]
+        [% IF NOT bug.check_can_change_field("bug_file_loc", 0, 1)
+              AND is_safe_url(bug.bug_file_loc) %]
           <a href="[% bug.bug_file_loc FILTER html %]">[% url_output FILTER none %]</a>
         [% ELSE %]
           [% url_output FILTER none %]
@@ -651,8 +609,13 @@
         <label for="keywords" accesskey="k">
           <b><a href="describekeywords.cgi"><u>K</u>eywords</a></b></label>:
       </td>
-      [% PROCESS input inputname => "keywords" size => 40 colspan => 2
-                       value => bug.keywords.join(', ') %]
+      <td class="field_value" colspan="2">
+        [% INCLUDE bug/field.html.tmpl
+           bug = bug, field = bug_fields.keywords, value = bug.keywords
+           editable = bug.check_can_change_field("keywords", 0, 1),
+           no_tds = 1
+        %]
+      </td>
     </tr>
   [% END %]
 [% END %]
@@ -662,13 +625,13 @@
 [%############################################################################%]
 [% BLOCK section_dependson_blocks %]
   <tr>
-    [% PROCESS dependencies
-               dep = { title => "Depends&nbsp;on", fieldname => "dependson" } %]
+    [% INCLUDE dependencies 
+         field = bug_fields.dependson deps = bug.depends_on_obj %]
   </tr>
   
   <tr>
-    [% PROCESS dependencies accesskey = "b"
-               dep = { title => "<u>B</u>locks", fieldname => "blocked" } %]
+    [% INCLUDE dependencies 
+         field = bug_fields.blocked deps = bug.blocks_obj %]
   
   <tr>
     <th>&nbsp;</th>
@@ -691,103 +654,93 @@
 [% BLOCK section_restrict_visibility %]
   [% RETURN UNLESS bug.groups.size %]
 
-  [% inallgroups = 1 %]
-  [% inagroup = 0 %]
-  [% emitted_description = 0 %]
+  <div class="bz_group_visibility_section">
+    [% inallgroups = 1 %]
+    [% inagroup = 0 %]
+    [% emitted_description = 0 %]
 
-  [% FOREACH group = bug.groups %]
-    [% SET inallgroups = 0 IF NOT group.ingroup %]
-    [% SET inagroup = 1 IF group.ison %]
+    [% FOREACH group = bug.groups %]
+      [% SET inallgroups = 0 IF NOT group.ingroup %]
+      [% SET inagroup = 1 IF group.ison %]
 
-    [% NEXT IF group.mandatory %]
+      [% NEXT IF group.mandatory %]
 
-    [% IF NOT emitted_description %]
-      [% emitted_description = 1 %]
-      <table>
-        <tr>
-          <td class="field_label">
-            <label id="bz_restrict_group_visibility_label"><b>Restrict Group Visibility</b>:</label>
-          </td>
-          <td>
-            <div id="bz_restrict_group_visibility_help">
-              <b>Only users in all of the selected groups can view this [% terms.bug %]:</b>
-              <br>
-              <small>
-                (Unchecking all boxes makes this a more public [% terms.bug %].)
-              </small>
-            </div>
-    [% END %]
+      [% IF NOT emitted_description %]
+        [% emitted_description = 1 %]
+          <div id="bz_restrict_group_visibility_help">
+            <b>Only users in all of the selected groups can view this 
+              [%+ terms.bug %]:</b>
+             <p class="instructions">
+               Unchecking all boxes makes this a more public [% terms.bug %].
+             </p>
+          </div>
+      [% END %]
 
-    [% IF group.ingroup %]
-      <input type="hidden" name="defined_bit-[% group.bit %]" value="1">
-    [% END %]
-    <input type="checkbox" value="1" name="bit-[% group.bit %]" id="bit-[% group.bit %]"
-           [% ' checked="checked"' IF group.ison %]
-           [% ' disabled="disabled"' IF NOT group.ingroup %]>
-    <label for="bit-[% group.bit %]">[% group.description FILTER html_light %]</label>
-    <br>
-  [% END %]
+      [% IF group.ingroup %]
+        <input type="hidden" name="defined_groups" 
+               value="[% group.name FILTER html %]">
+      [% END %]
 
-  [% IF emitted_description %]
-    [% IF NOT inallgroups %]
-      <b>Only members of a group can change the visibility of [% terms.abug %] for that group.</b>
+      <input type="checkbox" value="[% group.name FILTER html %]"
+             name="groups" id="group_[% group.bit %]"
+             [% ' checked="checked"' IF group.ison %]
+             [% ' disabled="disabled"' IF NOT group.ingroup %]>
+      <label for="group_[% group.bit %]">
+      [%- group.description FILTER html_light %]</label>
       <br>
     [% END %]
-      </td>
-    </tr>
-    [% "</table>" IF NOT inagroup %]
-  [% END %]
 
-  [% IF inagroup %]
-    [% IF NOT emitted_description %]
-      [% emitted_description = 1 %]
-      <table>
+    [% IF emitted_description %]
+      [% IF NOT inallgroups %]
+        <p class="instructions">Only members of a group can change the 
+          visibility of [% terms.abug %] for that group.</p>
+      [% END %]
     [% END %]
-    <tr>
-      <td class="field_label">
-        <label id="bz_enable_role_visibility_label"><b>Enable Role Visibility</b>:</label>
-      </td>
-      <td>
-        <div id="bz_enable_role_visibility_help">
-          <b>Users in the roles selected below can always view this [% terms.bug %]:</b>
-          <br>
-          <small>
-            (The assignee
-            [% IF (Param('useqacontact')) %]
-               and QA contact
-            [% END %]
-            can always see [% terms.abug %], and this section does not take effect unless
-            the [% terms.bug %] is restricted to at least one group.)
-          </small>
+
+    [% IF inagroup %]
+      <div id="bz_enable_role_visibility_help">
+        <b>Users in the roles selected below can always view 
+          this [% terms.bug %]:</b>
+      </div>
+      <div id="bz_enable_role_visibility">
+        <div>
+          [% user_can_edit_accessible = 
+            bug.check_can_change_field("reporter_accessible", 0, 1) 
+          %]
+          [% IF user_can_edit_accessible %]
+            <input type="hidden" name="defined_reporter_accessible" value="1">
+          [% END %]
+          <input type="checkbox" value="1"
+                 name="reporter_accessible" id="reporter_accessible"
+                 [% " checked" IF bug.reporter_accessible %]
+                 [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
+          <label for="reporter_accessible">Reporter</label>
         </div>
         <div>
-          <div>
-            [% user_can_edit_accessible = bug.check_can_change_field("reporter_accessible", 0, 1) %]
-            [% IF user_can_edit_accessible %]
-              <input type="hidden" name="defined_reporter_accessible" value="1">
-            [% END %]
-            <input type="checkbox" value="1"
-                   name="reporter_accessible" id="reporter_accessible"
-                   [% " checked" IF bug.reporter_accessible %]
-                   [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
-            <label for="reporter_accessible">Reporter</label>
-          </div>
-          <div>
-            [% user_can_edit_accessible = bug.check_can_change_field("cclist_accessible", 0, 1) %]
-            [% IF user_can_edit_accessible %]
-              <input type="hidden" name="defined_cclist_accessible" value="1">
-            [% END %]
-            <input type="checkbox" value="1"
-                   name="cclist_accessible" id="cclist_accessible"
-                   [% " checked" IF bug.cclist_accessible %]
-                   [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
-            <label for="cclist_accessible">CC List</label>
-          </div>
+          [% user_can_edit_accessible = 
+            bug.check_can_change_field("cclist_accessible", 0, 1) 
+          %]
+          [% IF user_can_edit_accessible %]
+            <input type="hidden" name="defined_cclist_accessible" value="1">
+          [% END %]
+          <input type="checkbox" value="1"
+                 name="cclist_accessible" id="cclist_accessible"
+                 [% " checked" IF bug.cclist_accessible %]
+                 [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
+          <label for="cclist_accessible">CC List</label>
         </div>
-      </td>
-    </tr>
-  </table>
-  [% END %]
+        <p class="instructions">
+          The assignee
+          [% IF (Param('useqacontact')) %]
+             and QA contact
+          [% END %]
+          can always see [% terms.abug %], and this section does not
+          take effect unless the [% terms.bug %] is restricted to at
+          least one group.
+        </p>
+      </div>
+    [% END %]
+  </div> [%# bz_group_visibility_section %]
 [% END %]
 
 [%############################################################################%]
@@ -800,7 +753,7 @@
       <b>Reported</b>:
     </td>
     <td>
-     [% bug.creation_ts FILTER time %] by [% INCLUDE user_identity user => bug.reporter %]
+     [% bug.creation_ts FILTER time %] by [% INCLUDE global/user.html.tmpl who = bug.reporter %]
     </td>
   </tr>
   
@@ -820,11 +773,10 @@
 [%# Block for CC LIST                                                        #%]
 [%############################################################################%]
 [% BLOCK section_cclist %]
-  [% IF user.id %]
     <tr>
-        <td class="field_label">
-          <label for="newcc" accesskey="a"><b>CC List</b>:</label>
-        </td>
+      <td class="field_label">
+        <label for="newcc" accesskey="a"><b>CC List</b>:</label>
+      </td>
       <td>
         [% IF user.id %]
           [% IF NOT bug.cc || NOT bug.cc.contains(user.login) %]
@@ -853,46 +805,75 @@
             including you
           [% END %]
         [% END %]
-        <span id="cc_edit_area_showhide_container" class="bz_default_hidden">
-          (<a href="#" id="cc_edit_area_showhide">edit</a>)
-        </span>
-        <div id="cc_edit_area">
-          <div>
-            <div>
-              <label for="cc">
-                <b>Add</b>
-              </label>
-            </div>
-            [% INCLUDE global/userselect.html.tmpl
-                id => "newcc"
-                name => "newcc"
-                value => ""
-                size => 30
-                multiple => 5
-              %]
-          </div>
-        [% IF bug.cc %]
-          <select id="cc" name="cc" multiple="multiple" size="5">
-          [% FOREACH c = bug.cc %]
-            <option value="[% c FILTER html %]">[% c FILTER html %]</option>
-          [% END %]
-          </select>
-          [% IF user.id %]
-            <br>
-            <input type="checkbox" id="removecc" name="removecc">
-            [%%]<label for="removecc">Remove selected CCs</label>
-            <br>
-          [% END %]
+        [% IF user.id || bug.cc.size %]
+          <span id="cc_edit_area_showhide_container" class="bz_default_hidden">
+            (<a href="#" id="cc_edit_area_showhide">[% IF user.id %]edit[% ELSE %]show[% END %]</a>)
+          </span>
         [% END %]
+        <div id="cc_edit_area">
+          <br>
+          [% IF user.id %]
+            <div>
+              <div><label for="cc"><b>Add</b></label></div>
+              [% INCLUDE global/userselect.html.tmpl
+                  id => "newcc"
+                  name => "newcc"
+                  value => ""
+                  size => 30
+                  classes => ["bz_userfield"]
+                  multiple => 5
+                %]
+            </div>
+          [% END %]
+          [% IF bug.cc %]
+            <select id="cc" multiple="multiple" size="5"
+              [% IF bug.user.canedit %]name="cc"[% END %]>
+              [% FOREACH c = bug.cc %]
+                <option value="[% c FILTER email FILTER html %]">
+                  [% c FILTER email FILTER html %]</option>
+              [% END %]
+            </select>
+            [% IF user.id && !bug.user.canedit %]
+              <input type="hidden" name="cc" value="[% user.login FILTER email FILTER html %]">
+            [% END %]
+            [% IF user.id AND (bug.user.canedit OR bug.cc.contains(user.login)) %]
+              <br>
+              <input type="checkbox" id="removecc" name="removecc">
+              <label for="removecc">
+                [% IF bug.user.canedit %]
+                  Remove selected CCs
+                [% ELSE %]
+                  Remove me from the CC list
+                [% END %]
+              </label>
+              <br>
+            [% END %]
+          [% END %]
         </div>
-        <script type="text/javascript">
-          hideEditableField( 'cc_edit_area_showhide_container', 
-                             'cc_edit_area', 
-                             'cc_edit_area_showhide', 
-                             '', 
-                             '');  
-        </script>
+        [% IF user.id || bug.cc.size %]
+          <script type="text/javascript">
+            hideEditableField( 'cc_edit_area_showhide_container', 
+                               'cc_edit_area', 
+                               'cc_edit_area_showhide', 
+                               '', 
+                               '');  
+          </script>
+        [% END %]
       </td>
+    </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for See Also                                                       #%]
+[%############################################################################%]
+[% BLOCK section_see_also %]
+  [% IF Param('use_see_also') || bug.see_also.size %]
+    <tr>
+      [% INCLUDE bug/field.html.tmpl 
+           field    = bug_fields.see_also
+           value    = bug.see_also
+           editable = bug.check_can_change_field('see_also', 0, 1)
+      %]
     </tr>
   [% END %]
 [% END %]
@@ -912,30 +893,18 @@
   [% END %]
   [% IF show_bug_flags %]
     <tr>
-      <td class="field_label">
+      <td class="field_label flags_label">
         <label><b>Flags:</b></label>
       </td>
       <td></td>
     </tr>
     <tr>
       <td colspan="2">
-      [% IF user.id %]
         [% IF bug.flag_types.size > 0 %]
           [% PROCESS "flag/list.html.tmpl" flag_no_header = 1
                                            flag_types = bug.flag_types
                                            any_flags_requesteeble = bug.any_flags_requesteeble %]
         [% END %]
-      [% ELSE %]
-        [% FOREACH type = bug.flag_types %]
-          [% FOREACH flag = type.flags %]
-              [% flag.setter.nick FILTER html %]:
-              [%+ type.name FILTER html FILTER no_break %][% flag.status %]
-              [%+ IF flag.requestee %]
-                ([% flag.requestee.nick FILTER html %])
-              [% END %]<br>
-          [% END %]
-        [% END %]
-      [% END %]         
       </td>
     </tr>
   [% END %]
@@ -947,14 +916,19 @@
 
 [% BLOCK section_customfields %]
 [%# *** Custom Fields *** %]
-
   [% USE Bugzilla %]
   [% FOREACH field = Bugzilla.active_custom_fields %]
     <tr>
-      [% PROCESS bug/field.html.tmpl value=bug.${field.name}
+      [% PROCESS bug/field.html.tmpl value = bug.${field.name}
                                      editable = bug.check_can_change_field(field.name, 0, 1)
                                      value_span = 2 %]
     </tr>
+    [% IF extra_field_item %]
+      <tr>
+        <th class="field_label">[% extra_field_item.header FILTER none %]</th>
+        <td>[% extra_field_item.data FILTER none %]</td>
+      </tr>
+    [% END %]
   [% END %]
 [% END %]
 
@@ -977,36 +951,35 @@
 
 [% BLOCK dependencies %]
 
-  <th class="field_label">
-    <label for="[% dep.fieldname %]"[% " accesskey=\"$accesskey\"" IF accesskey %]>
-    [% dep.title %]</label>:
-  </th>
-  <td>    
-    <span id="[% dep.fieldname %]_input_area">
-      [% IF bug.check_can_change_field(dep.fieldname, 0, 1) %]
-        <input name="[% dep.fieldname %]" id="[% dep.fieldname %]"
-               value="[% bug.${dep.fieldname}.join(', ') %]">
+  [% INCLUDE "bug/field-label.html.tmpl" %]
+
+  <td>
+    <span id="[% field.name FILTER html %]_input_area">
+      [% IF bug.check_can_change_field(field.name, 0, 1) %]
+        <input name="[% field.name FILTER html %]" 
+               id="[% field.name FILTER html %]" class="text_input"
+               value="[% bug.${field.name}.join(', ') FILTER html %]">
       [% END %]
     </span>
     
-    [% FOREACH depbug = bug.${dep.fieldname} %]
-      [% depbug FILTER bug_link(depbug) FILTER none %][% " " %]
+    [% FOREACH dep_bug = deps %]
+      [% dep_bug.id FILTER bug_link(dep_bug, use_alias => 1)
+                    FILTER none %][% " " %]
     [% END %]
-    [% IF bug.check_can_change_field(dep.fieldname, 0, 1) %]
-      <span id="[% dep.fieldname %]_edit_container" class="edit_me bz_default_hidden" >
-        (<a href="#" id="[% dep.fieldname %]_edit_action">edit</a>)
+    [% IF bug.check_can_change_field(field.name, 0, 1) %]
+      <span id="[% field.name FILTER html %]_edit_container" 
+            class="edit_me bz_default_hidden">
+        (<a href="#" id="[% field.name FILTER html %]_edit_action">edit</a>)
       </span>
       <script type="text/javascript">
-        hideEditableField('[% dep.fieldname %]_edit_container', 
-                          '[% dep.fieldname %]_input_area', 
-                          '[% dep.fieldname %]_edit_action', 
-                          '[% dep.fieldname %]', 
-                          "[% bug.${dep.fieldname}.join(', ') %]");
+        hideEditableField('[% field.name FILTER js %]_edit_container', 
+                          '[% field.name FILTER js %]_input_area', 
+                          '[% field.name FILTER js %]_edit_action', 
+                          '[% field.name FILTER js %]', 
+                          '[% bug.${field.name}.join(', ') FILTER js %]');
       </script>
     [% END %]
   </td>
-  
-  [% accesskey = undef %]
   
 [% END %]
 
@@ -1070,9 +1043,9 @@
         [% PROCESS formattimeunit time_unit=bug.estimated_time - (bug.actual_time + bug.remaining_time) %]
       </td>
        <td>
-         <input name="deadline" id="deadline" value="[% bug.deadline %]"
-                size="10" maxlength="10"><br />
-         <small>(YYYY-MM-DD)</small>
+         [% INCLUDE bug/field.html.tmpl
+           field = bug_fields.deadline, value = bug.deadline, no_tds = 1
+           editable = bug.check_can_change_field('deadline', 0, 1) %]
       </td>        
     </tr>
     <tr>
@@ -1086,28 +1059,91 @@
 [% END %]
 
 [%############################################################################%]
+[%# Block for the Additional Comments box                                    #%]
+[%############################################################################%]
+
+[% BLOCK comment_box %]
+  <div id="add_comment" class="bz_section_additional_comments">
+    [% IF user.id %]
+      <label for="comment" accesskey="c"><b>Additional 
+        <u>C</u>omments</b></label>:
+
+      [% IF user.is_insider %]
+        <input type="checkbox" name="comment_is_private" value="1"
+               id="newcommentprivacy"
+               onClick="updateCommentTagControl(this, 'comment')">
+        <label for="newcommentprivacy">
+          Make comment private (visible only to members of the
+          <strong>[% Param('insidergroup') FILTER html %]</strong> group)
+        </label>
+      [% END %]
+
+      <!-- This table keeps the submit button aligned with the box. -->
+      <table><tr><td>
+        [% INCLUDE global/textarea.html.tmpl
+                   name      = 'comment'
+                   id        = 'comment'
+                   minrows   = 10
+                   maxrows   = 25
+                   cols      = constants.COMMENT_COLS
+        %]
+        [% Hook.process("after_comment_textarea", 'bug/edit.html.tmpl') %]
+        <br>
+        [% PROCESS commit_button id=""%]
+
+        <table id="bug_status_bottom"
+               class="status" cellspacing="0" cellpadding="0">
+          <tr>
+            <td class="field_label">
+              <b><a href="page.cgi?id=fields.html#status">Status</a></b>:
+            </td>
+            <td>
+              [% PROCESS bug/knob.html.tmpl %]
+            </td>
+          </tr>
+        </table>
+      </td></tr></table>
+
+    [%# For logged-out users %]
+    [% ELSE %]
+      <table>
+        <tr>
+          <td>
+            <fieldset>
+              <legend>Note</legend>
+              You need to
+              <a href="show_bug.cgi?id=
+                      [%- bug.bug_id %]&amp;GoAheadAndLogIn=1">log in</a>
+              before you can comment on or make changes to this [% terms.bug %].
+            </fieldset>
+          </td>
+        </tr> 
+      </table>
+    [% END %]
+  </div>
+[% END %]
+
+[%############################################################################%]
 [%# Block for SELECT fields                                                  #%]
 [%############################################################################%]
 
 [% BLOCK select %]
-  [% IF NOT no_td %]
   <td>
-  [% END %]
-    [% IF bug.check_can_change_field(selname, 0, 1) AND bug.choices.${selname}.size > 1 %]
+    [% IF bug.check_can_change_field(selname, 0, 1) 
+          AND bug.choices.${selname}.size > 1 %]
       <select id="[% selname %]" name="[% selname %]">
         [% FOREACH x = bug.choices.${selname} %]
-          <option value="[% x FILTER html %]"
-            [% " selected" IF x == bug.${selname} %]>[% x FILTER html %]
+          [% NEXT IF NOT x.is_active AND x.name != bug.${selname} %]
+          <option value="[% x.name FILTER html %]"
+            [% " selected" IF x.name == bug.${selname} %]>
+            [%- x.name FILTER html %]
           </option>
         [% END %]
       </select>
     [% ELSE %]
       [% bug.${selname} FILTER html %]
     [% END %]
-  [% IF NOT no_td %]
   </td>
-  [% END %]
-  [% no_td = 0 %]
 [% END %]
 
 [%############################################################################%]
@@ -1120,7 +1156,7 @@
   [% END %]
     [% val = value ? value : bug.$inputname %]
     [% IF bug.check_can_change_field(inputname, 0, 1) %]
-       <input id="[% inputname %]" name="[% inputname %]"
+       <input id="[% inputname %]" name="[% inputname %]" class="text_input"
               value="[% val FILTER html %]"[% " size=\"$size\"" IF size %]
               [% " maxlength=\"$maxlength\"" IF maxlength %]
               [% " spellcheck=\"$spellcheck\"" IF spellcheck %]>
@@ -1143,23 +1179,11 @@
   [% value = undef %]
   [% spellcheck = undef %]
 [% END %]
-
-[%############################################################################%]
-[%# Block for user identities. Wraps the information inside of an hCard.     #%]
-[%############################################################################%]
-
-[% BLOCK user_identity %]
-  <span class="vcard">
-    [% FILTER collapse %]
-      [% IF user.name %]
-        <a class="email" href="mailto:[% user.email FILTER html %]" 
-           title="[% user.email FILTER html %]"
-          ><span class="fn">[% user.name FILTER html %]</span
-        ></a>
-      [% ELSE %]
-        <a class="fn email" href="mailto:[% user.email FILTER html %]">
-          [% user.email FILTER html %]</a>
-      [% END %]
-    [% END %]</span>
+[% BLOCK commit_button %]
+  [% IF user.id %]
+    <div class="knob-buttons">
+      <input type="submit" value="Save Changes" 
+             id="commit[% id FILTER css_class_quote %]">
+    </div>
+  [% END %]
 [% END %]
-

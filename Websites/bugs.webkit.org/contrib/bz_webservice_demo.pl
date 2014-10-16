@@ -210,7 +210,7 @@ if ($fetch_extension_info) {
     _die_on_fault($soapresult);
     my $extensions = $soapresult->result()->{extensions};
     foreach my $extensionname (keys(%$extensions)) {
-        print "Extensionn '$extensionname' information\n";
+        print "Extension '$extensionname' information\n";
         my $extension = $extensions->{$extensionname};
         foreach my $data (keys(%$extension)) {
             print '  ' . $data . ' => ' . $extension->{$data} . "\n";
@@ -390,7 +390,7 @@ this:
         version     => "unspecified",
         description => "This is a description of the bug... hohoho",
         op_sys      => "All",
-        platform    => "All",	
+        platform    => "All",
         priority    => "P4",
         severity    => "normal"
     };

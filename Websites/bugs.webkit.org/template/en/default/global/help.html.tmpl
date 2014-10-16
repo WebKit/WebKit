@@ -23,8 +23,9 @@
 
 [% IF cgi.param("help") %]
   <script type="text/javascript"> <!--
-    [% FOREACH h = help_html %]
-      g_helpTexts["[% h.id FILTER js %]"] = "[%- h.html FILTER js -%]";
+    [% FOREACH help_name = help_html.keys %]
+      g_helpTexts["[% help_name FILTER js %]"] = 
+        "[%- help_html.$help_name FILTER js -%]";
     [% END %]
     // -->
   </script>

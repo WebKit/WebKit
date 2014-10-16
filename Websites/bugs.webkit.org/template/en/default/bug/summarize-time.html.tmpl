@@ -14,8 +14,6 @@
   #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
-[% USE date %]
-
 [% PROCESS "global/field-descs.none.tmpl" %]
 
 [% title = "Time Summary " %]
@@ -34,13 +32,15 @@
     header = header 
     style_urls = ["skins/standard/summarize-time.css"]
     doc_section = "timetracking.html"
+    yui = ['calendar']
+    javascript_urls = [ "js/util.js", "js/field.js" ]
     %]
 
 [% INCLUDE query_form %]
 
 [% IF do_report %]
 
-  [% global.grand_total = 0 %]
+  [% global.grand_total = 0 global.estimated = 0 global.remaining = 0 %]
 
   [% FOREACH workdata = part_list %]
     [%# parts contains date ranges (from, to). %]
@@ -59,6 +59,16 @@
     [% ELSE %]
       [% INCLUDE owner_report %]
     [% END %]
+  [% END %]
+
+  [% IF detailed %]
+    <h4 style="margin: 0">
+      Total of [% global.remaining FILTER format("%.2f") %]h remains from
+      original estimate of [% global.estimated FILTER format("%.2f") %]h
+      [% IF global.deadline %]
+        (deadline [% global.deadline FILTER html %])
+      [% END %]
+    </h4>
   [% END %]
 
   [% IF monthly %]
@@ -103,6 +113,7 @@
     [% col = 0 subtotal = 0%]
     [% FOREACH bugdata=ownerdata.nsort("bug_id") %]
         [% bug_id = bugdata.bug_id %]
+        [% INCLUDE calc_bug_total id=bug_id %]
         [% global.bug_count.$bug_id = 1 %]
         [% IF detailed %]
             [% INCLUDE bug_header cid=col id=bug_id bugdata=bugdata extra=1 %]
@@ -141,6 +152,7 @@
 
 [% BLOCK do_one_bug %]
     [% subtotal = 0.00 cid = 0 %]
+    [% INCLUDE calc_bug_total id=id %]
     [% global.bug_count.$id = 1 %]
     [% INCLUDE bug_header id=id %]
 
@@ -176,14 +188,47 @@
         <td width="80" valign="top">
           <b>[% "$terms.Bug $id" FILTER bug_link(id) FILTER none %]</b>
         </td>
-        <td width="100"><b>[% get_status(bugs.$id.bug_status) FILTER html %]</b></td>
+        <td width="100"><b>[% display_value("bug_status", bugs.$id.bug_status) FILTER html %]</b></td>
         <td colspan="2">[% bugs.$id.short_desc FILTER html %]</td>
         [% IF extra %]
           <td align="right" valign="top">[% bugdata.total_time FILTER html %]</td>
         [% END %]
     </tr>
+    [% IF detailed %]
+      <tr class="bug_header[% '2' IF cid % 2 %]">
+        <td>&nbsp;</td>
+        <td colspan="3">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="33%">
+                Estimated: [% bugs.$id.estimated_time FILTER format("%.2f") %]h
+              </td>
+              <td width="33%">
+                Remaining: [% bugs.$id.remaining_time FILTER format("%.2f") %]h
+              </td>
+              <td width="33%">
+                Deadline: [% bugs.$id.deadline || "<b>Not set</b>" %]
+              </td>
+            </tr>
+          </table>
+        </td>
+        [% IF extra %]
+          <td>&nbsp;</td>
+        [% END %]
+      </tr>
+   [% END %]
 [% END %]
 
+[% BLOCK calc_bug_total %]
+  [% IF !global.bug_count.$id %]
+    [% global.estimated = global.estimated + bugs.$id.estimated_time %]
+    [% global.remaining = global.remaining + bugs.$id.remaining_time %]
+    [% IF !global.deadline || bugs.$id.deadline &&
+          global.deadline.replace("-", "") < bugs.$id.deadline.replace("-", "") %]
+      [% SET global.deadline = bugs.$id.deadline %]
+    [% END %]
+  [% END %]
+[% END %]
 
 [% BLOCK inactive_report %]
     <h3>Inactive [% terms.bugs %]</h3>
@@ -238,11 +283,23 @@
              for="start_date">Period <u>s</u>tarting</label></b>: 
 </td><td colspan="3">
   <input type="text" id="start_date" name="start_date" size="11"
-  align="right" value="[% start_date FILTER html %]" maxlength="10">
+         align="right" value="[% start_date FILTER html %]" maxlength="10"
+         onchange="updateCalendarFromField(this)">
+  <button type="button" class="calendar_button"
+    id="button_calendar_start_date"
+    onclick="showCalendar('start_date')"><span>Calendar</span>
+  </button>
+  <div id="con_calendar_start_date"></div>
   &nbsp;
   <b>and <label accesskey="e" for="end_date"><u>e</u>nding</label></b>: 
   <input type="text" name="end_date" size="11" id="end_date"
-  align="right" value ="[% end_date FILTER html %]" maxlength="10">
+         align="right" value ="[% end_date FILTER html %]" maxlength="10"
+         onchange="updateCalendarFromField(this)">
+  <button type="button" class="calendar_button"
+    id="button_calendar_end_date"
+    onclick="showCalendar('end_date')"><span>Calendar</span>
+  </button>
+  <div id="con_calendar_end_date"></div>
 </td><td align="right">
   <input type="submit" id="summarize" value="Summarize">
 </td></tr>
@@ -286,7 +343,9 @@
 </form>
 <script type="text/javascript">
 <!--
-   document.forms['summary'].start_date.focus()
+  createCalendar('start_date');
+  createCalendar('end_date');
+  document.forms['summary'].start_date.focus();
 //--></script>
 <hr noshade size=1>
 [% END %]

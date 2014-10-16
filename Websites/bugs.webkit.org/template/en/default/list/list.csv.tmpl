@@ -17,16 +17,23 @@
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
   #                 Gervase Markham <gerv@gerv.net>
+  #                 miketosh
   #%]
 
 [% PROCESS "global/field-descs.none.tmpl" %]
-[% USE date %]
 
 [% colsepchar = user.settings.csv_colsepchar.value %]
 
-bug_id
-[% FOREACH column = displaycolumns %]
-  [% colsepchar %][% column FILTER csv %]
+[% IF human %]
+  [% field_descs.bug_id FILTER csv %]
+  [% FOREACH column = displaycolumns %]
+    [% colsepchar %][% field_descs.$column FILTER csv %]
+  [% END %]
+[% ELSE %]
+  bug_id
+  [% FOREACH column = displaycolumns %]
+    [% colsepchar %][% column FILTER csv %]
+  [% END %]
 [% END %]
 
 [% FOREACH bug = bugs %]
@@ -35,11 +42,11 @@ bug_id
       [% colsepchar %]
       [% IF column == "opendate" OR column == "changeddate" %]
         [% rawcolumn = column.replace("date", "time") %]
-        [% bug.$column = date.format(bug.$rawcolumn, "%Y-%m-%d %H:%M:%S") %]
+        [% bug.$column = bug.$rawcolumn FILTER time("%Y-%m-%d %H:%M:%S") %]
       [% ELSIF column == 'bug_status' %]
-        [% bug.$column = get_status(bug.$column) %]
+        [% bug.$column = display_value("bug_status", bug.$column) %]
       [% ELSIF column == 'resolution' %]
-        [%- bug.$column = get_resolution(bug.$column) %]
+        [%- bug.$column = display_value("resolution", bug.$column) %]
       [% END %]
       [% bug.$column FILTER csv %]
     [% END %]

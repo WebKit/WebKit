@@ -15,10 +15,8 @@
   #%]
 
 [%# INTERFACE:
-  #      removed_na: array of hashes; groups not applicable for the product.  
-  # added_mandatory: array of hashes; groups mandatory for the product.  
-  #  classification: Bugzilla::Classification object;  product classification.
-  #         product: Bugzilla::Product object; the product.
+  # product: Bugzilla::Product object; the product.
+  # changes: Hashref with changes made to the product group controls.
   #%]
 
 [% title = BLOCK %]
@@ -29,16 +27,16 @@
   title = title
 %]
 <p>
-[% IF removed_na.size > 0 %]
-  [% FOREACH g = removed_na %]
+[% IF changes._group_controls.now_na.size %]
+  [% FOREACH g = changes._group_controls.now_na %]
     Removing [% terms.bugs %] from group '[% g.name FILTER html %]' which
     no longer applies to this product<p>
     [% g.bug_count FILTER html %] [%+ terms.bugs %] removed<p>
   [% END %]
 [% END %]
 
-[% IF added_mandatory.size > 0 %]
-  [% FOREACH g = added_mandatory %]
+[% IF changes._group_controls.now_mandatory.size %]
+  [% FOREACH g = changes._group_controls.now_mandatory %]
     Adding [% terms.bugs %] to group '[% g.name FILTER html %]' which is 
     mandatory for this product<p>
     [% g.bug_count FILTER html %] [%+ terms.bugs %] added<p>

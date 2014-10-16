@@ -40,6 +40,8 @@
   [% PROCESS reports/series.html.tmpl 
      button_name = "Change Data Set" %]
   <input type="hidden" name="action" value="alter">
+  <input type="hidden" name="token"
+         value="[% issue_hash_token([default.id, default.name]) FILTER html %]">
   
   [% IF default.series_id %]
     <input type="hidden" name="series_id" value="[% default.series_id %]">
@@ -48,9 +50,9 @@
 
 <p>
   <b>Creator</b>: 
-  [% IF creator.email %]
-    <a href="mailto:[% creator.email FILTER html %]">
-    [% creator.email FILTER html %]</a>
+  [% IF default.creator %]
+    <a href="mailto:[% default.creator.email FILTER html %]">
+    [% default.creator.email FILTER html %]</a>
   [% ELSE %]
     (automatically created by [% terms.Bugzilla %])
   [% END %]
@@ -64,9 +66,9 @@ set.
   <a href="query.cgi?[% default.query FILTER html %]">View 
     series search parameters</a> |
   <a href="buglist.cgi?cmdtype=dorem&amp;namedcmd=
-    [% default.category FILTER url_quote %]-
-    [% default.subcategory FILTER url_quote %]-
-    [% default.name FILTER url_quote %]&amp;remaction=runseries&amp;series_id=
+    [% default.category FILTER uri %]-
+    [% default.subcategory FILTER uri %]-
+    [% default.name FILTER uri %]&amp;remaction=runseries&amp;series_id=
     [% default.series_id %]">Run series search</a>
 </p>
 

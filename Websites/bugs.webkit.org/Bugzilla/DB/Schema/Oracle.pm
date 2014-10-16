@@ -35,6 +35,7 @@ use Carp qw(confess);
 use Bugzilla::Util;
 
 use constant ADD_COLUMN => 'ADD';
+use constant MULTIPLE_FKS_IN_ALTER => 0;
 # Whether this is true or not, this is what it needs to be in order for
 # hash_identifier to maintain backwards compatibility with versions before
 # 3.2rc2.
@@ -136,37 +137,44 @@ sub get_drop_index_ddl {
 # - Delete CASCADE
 # - Delete SET NULL
 sub get_fk_ddl {
-    my ($self, $table, $column, $references) = @_;
-    return "" if !$references;
+    my $self = shift;
+    my $ddl = $self->SUPER::get_fk_ddl(@_);
 
-    my $update    = $references->{UPDATE} || 'CASCADE';
-    my $delete    = $references->{DELETE};
-    my $to_table  = $references->{TABLE}  || confess "No table in reference";
-    my $to_column = $references->{COLUMN} || confess "No column in reference";
-    my $fk_name   = $self->_get_fk_name($table, $column, $references);
+    # iThe Bugzilla Oracle driver implements UPDATE via a trigger.
+    $ddl =~ s/ON UPDATE \S+//i;
+    # RESTRICT is the default for DELETE on Oracle and may not be specified.
+    $ddl =~ s/ON DELETE RESTRICT//i;
 
-    my $fk_string = "\n     CONSTRAINT $fk_name FOREIGN KEY ($column)\n"
-                    . "     REFERENCES $to_table($to_column)\n";
-   
-    $fk_string    = $fk_string . "     ON DELETE $delete" if $delete; 
-    
-    if ( $update =~ /CASCADE/i ){
-        my $tr_str = "CREATE OR REPLACE TRIGGER ${fk_name}_UC"
-                     . " AFTER  UPDATE  ON ". $to_table
-                     . " REFERENCING "
-                     . " NEW AS NEW "
-                     . " OLD AS OLD "
-                     . " FOR EACH ROW "
-                     . " BEGIN "
-                     . "     UPDATE $table"
-                     . "        SET $column = :NEW.$to_column"
-                     . "      WHERE $column = :OLD.$to_column;"
-                     . " END ${fk_name}_UC;";
-        my $dbh = Bugzilla->dbh; 
-        $dbh->do($tr_str);      
+    return $ddl;
+}
+
+sub get_add_fks_sql {
+    my $self = shift;
+    my ($table, $column_fks) = @_;
+    my @sql = $self->SUPER::get_add_fks_sql(@_);
+
+    foreach my $column (keys %$column_fks) {
+        my $fk = $column_fks->{$column};
+        next if $fk->{UPDATE} && uc($fk->{UPDATE}) ne 'CASCADE';
+        my $fk_name   = $self->_get_fk_name($table, $column, $fk);
+        my $to_column = $fk->{COLUMN};
+        my $to_table  = $fk->{TABLE};
+
+        my $trigger = <<END;
+CREATE OR REPLACE TRIGGER ${fk_name}_UC
+          AFTER UPDATE OF $to_column ON $to_table
+              REFERENCING NEW AS NEW OLD AS OLD
+             FOR EACH ROW
+                    BEGIN
+                   UPDATE $table
+                      SET $column = :NEW.$to_column
+                    WHERE $column = :OLD.$to_column;
+                      END ${fk_name}_UC;
+END
+        push(@sql, $trigger);
     }
 
-    return $fk_string;
+    return @sql;
 }
 
 sub get_drop_fk_sql {
@@ -206,6 +214,10 @@ sub get_alter_column_ddl {
 
     my $default = $new_def->{DEFAULT};
     my $default_old = $old_def->{DEFAULT};
+
+    if (defined $default) {
+        $default = $specific->{$default} if exists $specific->{$default};
+    }
     # This first condition prevents "uninitialized value" errors.
     if (!defined $default && !defined $default_old) {
         # Do Nothing
@@ -219,7 +231,6 @@ sub get_alter_column_ddl {
     elsif ( (defined $default && !defined $default_old) || 
             ($default ne $default_old) ) 
     {
-        $default = $specific->{$default} if exists $specific->{$default};
         push(@statements, "ALTER TABLE $table MODIFY $column "
                          . " DEFAULT $default");
     }
@@ -228,7 +239,7 @@ sub get_alter_column_ddl {
     if (!$old_def->{NOTNULL} && $new_def->{NOTNULL}) {
         my $setdefault;
         # Handle any fields that were NULL before, if we have a default,
-        $setdefault = $new_def->{DEFAULT} if exists $new_def->{DEFAULT};
+        $setdefault = $default if defined $default;
         # But if we have a set_nulls_to, that overrides the DEFAULT 
         # (although nobody would usually specify both a default and 
         # a set_nulls_to.)
@@ -340,23 +351,63 @@ sub get_rename_column_ddl {
     my $def = $self->get_column_abstract($table, $old_name);
     if ($def->{TYPE} =~ /SERIAL/i) {
         # We have to rename the series also, and fix the default of the series.
-        push(@sql, "RENAME ${table}_${old_name}_SEQ TO 
-                      ${table}_${new_name}_seq");
-        my $serial_sql =
-                       "CREATE OR REPLACE TRIGGER ${table}_${new_name}_TR "
-                     . " BEFORE INSERT ON ${table} "
-                     . " FOR EACH ROW "
-                     . " BEGIN "
-                     . "   SELECT ${table}_${new_name}_SEQ.NEXTVAL "
-                     . "   INTO :NEW.${new_name} FROM DUAL; "
-                     . " END;";
-        push(@sql, $serial_sql);
+        my $old_seq = "${table}_${old_name}_SEQ";
+        my $new_seq = "${table}_${new_name}_SEQ";
+        push(@sql, "RENAME $old_seq TO $new_seq");
+        push(@sql, $self->_get_create_trigger_ddl($table, $new_name, $new_seq));
         push(@sql, "DROP TRIGGER ${table}_${old_name}_TR");
     }
     if ($def->{TYPE} =~ /varchar|text/i && $def->{NOTNULL} ) {
         push(@sql, _get_notnull_trigger_ddl($table,$new_name));
         push(@sql, "DROP TRIGGER ${table}_${old_name}");
     }
+    return @sql;
+}
+
+sub get_rename_table_sql {
+    my ($self, $old_name, $new_name) = @_;
+    if (lc($old_name) eq lc($new_name)) {
+        # if the only change is a case change, return an empty list.
+        return ();
+    }
+
+    my @sql = ("ALTER TABLE $old_name RENAME TO $new_name");
+    my @columns = $self->get_table_columns($old_name);
+    foreach my $column (@columns) {
+        my $def = $self->get_column_abstract($old_name, $column);
+        if ($def->{TYPE} =~ /SERIAL/i) {
+            # If there's a SERIAL column on this table, we also need
+            # to rename the sequence.
+            my $old_seq = "${old_name}_${column}_SEQ";
+            my $new_seq = "${new_name}_${column}_SEQ";
+            push(@sql, "RENAME $old_seq TO $new_seq");
+            push(@sql, $self->_get_create_trigger_ddl($new_name, $column, $new_seq));
+            push(@sql, "DROP TRIGGER ${old_name}_${column}_TR");
+        }
+        if ($def->{TYPE} =~ /varchar|text/i && $def->{NOTNULL}) {
+            push(@sql, _get_notnull_trigger_ddl($new_name, $column));
+            push(@sql, "DROP TRIGGER ${old_name}_${column}");
+        }
+    }
+
+    return @sql;
+}
+
+sub get_drop_table_ddl {
+    my ($self, $name) = @_;
+    my @sql;
+
+    my @columns = $self->get_table_columns($name);
+    foreach my $column (@columns) {
+        my $def = $self->get_column_abstract($name, $column);
+        if ($def->{TYPE} =~ /SERIAL/i) {
+            # If there's a SERIAL column on this table, we also need
+            # to remove the sequence.
+            push(@sql, "DROP SEQUENCE ${name}_${column}_SEQ");
+        }
+    }
+    push(@sql, "DROP TABLE $name CASCADE CONSTRAINTS PURGE");
+
     return @sql;
 }
 
@@ -387,17 +438,47 @@ sub _get_create_seq_ddl {
                    . " NOMAXVALUE "
                    . " NOCYCLE "
                    . " NOCACHE";
-     my $serial_sql = "CREATE OR REPLACE TRIGGER ${table}_${column}_TR "
-                    . " BEFORE INSERT ON ${table} "
-                    . " FOR EACH ROW "
-                    . " BEGIN "
-                    . "   SELECT ${seq_name}.NEXTVAL "
-                    . "   INTO :NEW.${column} FROM DUAL; "
-                    . " END;";
     push (@ddl, $seq_sql);
-    push (@ddl, $serial_sql);
+    push(@ddl, $self->_get_create_trigger_ddl($table, $column, $seq_name));
 
     return @ddl;
+}
+
+sub _get_create_trigger_ddl {
+    my ($self, $table, $column, $seq_name) = @_;
+    my $serial_sql = "CREATE OR REPLACE TRIGGER ${table}_${column}_TR "
+                   . " BEFORE INSERT ON $table "
+                   . " FOR EACH ROW "
+                   . " BEGIN "
+                   . "   SELECT ${seq_name}.NEXTVAL "
+                   . "   INTO :NEW.$column FROM DUAL; "
+                   . " END;";
+    return $serial_sql;
+}
+
+sub get_set_serial_sql { 
+    my ($self, $table, $column, $value) = @_; 
+    my @sql;
+    my $seq_name = "${table}_${column}_SEQ";
+    push(@sql, "DROP SEQUENCE ${seq_name}");
+    push(@sql, $self->_get_create_seq_ddl($table, $column, $value));       
+    return @sql;
+} 
+
+sub get_drop_column_ddl {
+    my $self = shift;
+    my ($table, $column) = @_;
+    my @sql;
+    push(@sql, $self->SUPER::get_drop_column_ddl(@_));
+    my $dbh=Bugzilla->dbh;
+    my $trigger_name = uc($table . "_" . $column);
+    my $exist_trigger = $dbh->selectcol_arrayref(
+        "SELECT OBJECT_NAME FROM USER_OBJECTS
+         WHERE OBJECT_NAME = ?", undef, $trigger_name);
+    if(@$exist_trigger) {
+        push(@sql, "DROP TRIGGER $trigger_name");
+    }
+    return @sql;
 }
 
 1;

@@ -271,8 +271,6 @@
         Perl module, which Bugzilla uses to send email, can be configured to
         use many different underlying implementations for actually sending the
         mail using the <option>mail_delivery_method</option> parameter.
-        Implementations other than <literal>sendmail</literal> require that the
-        <option>sendmailnow</option> param be set to <literal>on</literal>.
         </para>
       </glossdef>
     </glossentry>
@@ -281,7 +279,7 @@
       <glossterm>MySQL</glossterm>
 
       <glossdef>
-        <para>MySQL is currently the required
+        <para>MySQL is one of the supported
         <glossterm linkend="gloss-rdbms">RDBMS</glossterm> for Bugzilla. MySQL
         can be downloaded from <ulink url="http://www.mysql.com"/>. While you
         should familiarize yourself with all of the documentation, some high
@@ -306,8 +304,7 @@
           <varlistentry>
             <term><ulink url="http://www.mysql.com/doc/en/Privilege_system.html">Privilege System</ulink></term>
             <listitem>
-              <para>Much more detailed information about the suggestions in
-              <xref linkend="security-mysql"/>.
+              <para>Information about how to protect your MySQL server.
               </para>
             </listitem>
           </varlistentry>

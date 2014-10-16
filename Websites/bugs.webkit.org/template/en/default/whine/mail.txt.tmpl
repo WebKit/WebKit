@@ -31,10 +31,6 @@
 [% PROCESS global/variables.none.tmpl %]
 [% PROCESS 'global/field-descs.none.tmpl' %]
 
-[%# assignee_login_string is a literal string used for getting the 
-  # assignee's name out of the bug data %]
-[% SET assignee_login_string="map_assigned_to.login_name" %]
-
 [% body %]
 
 [% IF author.login == recipient.login %]
@@ -44,26 +40,29 @@
   This search was scheduled by [% author.login %].
 [% END %]
 
-
-[% FOREACH query=queries %]
+[% IF queries.size %]
+  [% FOREACH query=queries %]
 
 [%+ query.title +%]
 [%+ "-" FILTER repeat(query.title.length) %]
 
- [% FOREACH bug=query.bugs %]
+  [% FOREACH bug=query.bugs %]
   [% terms.Bug +%] [%+ bug.bug_id %]:
   [%+ urlbase %]show_bug.cgi?id=[% bug.bug_id +%]
-  Priority: [%+ bug.priority -%]
-  Severity: [%+ bug.bug_severity -%]
-  Platform: [%+ bug.rep_platform %]
-  Assignee: [%+ bug.$assignee_login_string %]
-    Status: [%+ get_status(bug.bug_status) %]
-            [%- IF bug.resolution -%] Resolution: [% get_resolution(bug.resolution) -%]
-                                [%- END %]
+  Priority: [%+ display_value("priority", bug.priority) -%]
+  Severity: [%+ display_value("bug_severity", bug.bug_severity) -%]
+  Platform: [%+ display_value("rep_platform", bug.rep_platform) %]
+  Assignee: [%+ bug.assigned_to %]
+    Status: [%+ display_value("bug_status", bug.bug_status) %]
+            [%- IF bug.resolution -%] Resolution: [% display_value("resolution", bug.resolution) -%]
+            [%- END %]
    Summary: [% bug.short_desc %]
 
- [% END %]
+   [% END %]
 
+  [% END %]
+[% ELSE %]
+
+  No [% terms.bugs %] were found that matched the search criteria.
 [% END %]
-
 

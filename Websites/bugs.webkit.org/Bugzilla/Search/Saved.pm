@@ -32,30 +32,89 @@ use Bugzilla::Search qw(IsValidQueryType);
 use Bugzilla::User;
 use Bugzilla::Util;
 
+use Scalar::Util qw(blessed);
+
 #############
 # Constants #
 #############
 
 use constant DB_TABLE => 'namedqueries';
+# Do not track buglists saved by users.
+use constant AUDIT_CREATES => 0;
+use constant AUDIT_UPDATES => 0;
+use constant AUDIT_REMOVES => 0;
 
 use constant DB_COLUMNS => qw(
     id
     userid
     name
     query
-    query_type
 );
-
-use constant REQUIRED_CREATE_FIELDS => qw(name query);
 
 use constant VALIDATORS => {
     name       => \&_check_name,
     query      => \&_check_query,
-    query_type => \&_check_query_type,
     link_in_footer => \&_check_link_in_footer,
 };
 
-use constant UPDATE_COLUMNS => qw(name query query_type);
+use constant UPDATE_COLUMNS => qw(name query);
+
+###############
+# Constructor #
+###############
+
+sub new {
+    my $class = shift;
+    my $param = shift;
+    my $dbh = Bugzilla->dbh;
+
+    my $user;
+    if (ref $param) {
+        $user = $param->{user} || Bugzilla->user;
+        my $name = $param->{name};
+        if (!defined $name) {
+            ThrowCodeError('bad_arg',
+                {argument => 'name',
+                 function => "${class}::new"});
+        }
+        my $condition = 'userid = ? AND name = ?';
+        my $user_id = blessed $user ? $user->id : $user;
+        detaint_natural($user_id)
+          || ThrowCodeError('param_must_be_numeric',
+                            {function => $class . '::_init', param => 'user'});
+        my @values = ($user_id, $name);
+        $param = { condition => $condition, values => \@values };
+    }
+
+    unshift @_, $param;
+    my $self = $class->SUPER::new(@_);
+    if ($self) {
+        $self->{user} = $user if blessed $user;
+
+        # Some DBs (read: Oracle) incorrectly mark the query string as UTF-8
+        # when it's coming out of the database, even though it has no UTF-8
+        # characters in it, which prevents Bugzilla::CGI from later reading
+        # it correctly.
+        utf8::downgrade($self->{query}) if utf8::is_utf8($self->{query});
+    }
+    return $self;
+}
+
+sub check {
+    my $class = shift;
+    my $search = $class->SUPER::check(@_);
+    my $user = Bugzilla->user;
+    return $search if $search->user->id == $user->id;
+
+    if (!$search->shared_with_group
+        or !$user->in_group($search->shared_with_group)) 
+    {
+        ThrowUserError('missing_query', { queryname => $search->name, 
+                                          sharer_id => $search->user->id });
+    }
+
+    return $search;
+}
 
 ##############
 # Validators #
@@ -84,12 +143,6 @@ sub _check_query {
     return $cgi->query_string;
 }
 
-sub _check_query_type {
-    my ($invocant, $type) = @_;
-    # Right now the only query type is LIST_OF_BUGS.
-    return $type ? LIST_OF_BUGS : QUERY_LIST;
-}
-
 #########################
 # Database Manipulation #
 #########################
@@ -115,6 +168,40 @@ sub create {
     $dbh->bz_commit_transaction();
 
     return $obj;
+}
+
+sub rename_field_value {
+    my ($class, $field, $old_value, $new_value) = @_;
+
+    my $old = url_quote($old_value);
+    my $new = url_quote($new_value);
+    my $old_sql = $old;
+    $old_sql =~ s/([_\%])/\\$1/g;
+
+    my $table = $class->DB_TABLE;
+    my $id_field = $class->ID_FIELD;
+
+    my $dbh = Bugzilla->dbh;
+    $dbh->bz_start_transaction();
+
+    my %queries = @{ $dbh->selectcol_arrayref(
+        "SELECT $id_field, query FROM $table WHERE query LIKE ?",
+        {Columns=>[1,2]}, "\%$old_sql\%") };
+    foreach my $id (keys %queries) {
+        my $query = $queries{$id};
+        $query =~ s/\b$field=\Q$old\E\b/$field=$new/gi;
+        # Fix boolean charts.
+        while ($query =~ /\bfield(\d+-\d+-\d+)=\Q$field\E\b/gi) {
+            my $chart_id = $1;
+            # Note that this won't handle lists or substrings inside of
+            # boolean charts. Users will have to fix those themselves.
+            $query =~ s/\bvalue\Q$chart_id\E=\Q$old\E\b/value$chart_id=$new/i;
+        }
+        $dbh->do("UPDATE $table SET query = ? WHERE $id_field = ?",
+                 undef, $query, $id);
+    }
+
+    $dbh->bz_commit_transaction();
 }
 
 sub preload {
@@ -210,8 +297,7 @@ sub shared_with_users {
 # Simple Accessors #
 ####################
 
-sub bug_ids_only { return ($_[0]->{'query_type'} == LIST_OF_BUGS) ? 1 : 0; }
-sub url          { return $_[0]->{'query'}; }
+sub url  { return $_[0]->{'query'}; }
 
 sub user {
     my ($self) = @_;
@@ -226,7 +312,6 @@ sub user {
 
 sub set_name       { $_[0]->set('name',       $_[1]); }
 sub set_url        { $_[0]->set('query',      $_[1]); }
-sub set_query_type { $_[0]->set('query_type', $_[1]); }
 
 1;
 
@@ -264,7 +349,8 @@ documented below.
 
 =item C<new>
 
-Does not accept a bare C<name> argument. Instead, accepts only an id.
+Takes either an id, or the named parameters C<user> and C<name>.
+C<user> can be either a L<Bugzilla::User> object or a numeric user id.
 
 See also: L<Bugzilla::Object/new>.
 
@@ -297,9 +383,9 @@ Whether or not this search should be displayed in the footer for the
 I<current user> (not the owner of the search, but the person actually
 using Bugzilla right now).
 
-=item C<bug_ids_only>
+=item C<type>
 
-True if the search contains only a list of Bug IDs.
+The numeric id of the type of search this is (from L<Bugzilla::Constants>).
 
 =item C<shared_with_group>
 

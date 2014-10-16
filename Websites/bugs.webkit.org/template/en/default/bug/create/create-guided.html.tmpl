@@ -34,6 +34,8 @@
    style = "#somebugs { width: 100%; height: 500px }"
  %]
 
+[% style = "" %]
+
 <p>
   <font color="red">
     This is a template used on mozilla.org.  This template, and the
@@ -67,8 +69,7 @@ function PutDescription() {
 }
 </script>
 
-<a name="step1"></a>
-<h3>Step 1 of 3 - has your [% terms.bug %] already been reported?</h3>
+<h3 id="step1">Step 1 of 3 - has your [% terms.bug %] already been reported?</h3>
 
 <p>
   <font color="red">Please don't skip this step - half of all 
@@ -83,7 +84,7 @@ function PutDescription() {
 [% ELSIF product.name == "Thunderbird" %]
   [% productstring = "product=Mozilla%20Application%20Suite&amp;product=Thunderbird" %]
 [% ELSE %]
-  [% productstring = BLOCK %]product=[% product.name FILTER url_quote %][% END %]
+  [% productstring = BLOCK %]product=[% product.name FILTER uri %][% END %]
 [% END %]
 
 <p>
@@ -136,8 +137,7 @@ function PutDescription() {
 </p>
 
 
-<a name="step2"></a>
-<h3>Step 2 of 3 - give information</h3>
+<h3 id="step2">Step 2 of 3 - give information</h3>
 
 <p>
   If you've tried a few searches and your [% terms.bug %] really isn't in 
@@ -207,7 +207,7 @@ function PutDescription() {
         To pick the right component, you could use the same one as
         similar [% terms.bugs %] you found in your search, or read the full list of
         <a target="_blank" href="describecomponents.cgi?product=
-            [% product.name FILTER url_quote %]">component
+            [% product.name FILTER uri %]">component
         descriptions</a> (opens in new window) if you need more help.
       </p>
     </td>
@@ -471,11 +471,12 @@ function PutDescription() {
       </p>
     </td>
   </tr>
+
+  [% Hook.process('form') %]
 </table>
 
 
-<a name="step3"></a>
-<h3>Step 3 of 3 - submit the [% terms.bug %] report</h3>
+<h3 id="step3">Step 3 of 3 - submit the [% terms.bug %] report</h3>
 
 <p>
   <input type="submit" id="report" value="    Submit [% terms.Bug %] Report    "

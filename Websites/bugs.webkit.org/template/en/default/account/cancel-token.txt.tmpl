@@ -37,7 +37,7 @@ to [% Param('maintainer') %] if you suspect foul play.
             Token: [% token %]
        Token Type: [% tokentype %]
              User: [% emailaddress %]
-       Issue Date: [% issuedate %]
+       Issue Date: [% issuedate FILTER time("%Y-%m-%d %H:%M:%S %Z", timezone) %]
        Event Data: [% eventdata %]
 Canceled Because: [% PROCESS cancelactionmessage %]
 

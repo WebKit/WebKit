@@ -25,8 +25,10 @@
 
 # This is a script suitable for running once a day from a cron job.  It 
 # looks at all the bugs, and sends whiny mail to anyone who has a bug 
-# assigned to them that has status NEW or REOPENED that has not been 
-# touched for more than the number of days specified in the whinedays param.
+# assigned to them that has status CONFIRMED, NEW, or REOPENED that has not
+# been touched for more than the number of days specified in the whinedays
+# param. (We have NEW and REOPENED in there to keep compatibility with old
+# Bugzillas.)
 
 use strict;
 use lib qw(. lib);
@@ -44,7 +46,7 @@ my $query = q{SELECT bug_id, short_desc, login_name
                 FROM bugs
           INNER JOIN profiles
                   ON userid = assigned_to
-               WHERE (bug_status = ? OR bug_status = ?)
+               WHERE bug_status IN (?,?,?)
                  AND disable_mail = 0
                  AND } . $dbh->sql_to_days('NOW()') . " - " .
                        $dbh->sql_to_days('delta_ts') . " > " .
@@ -54,7 +56,8 @@ my $query = q{SELECT bug_id, short_desc, login_name
 my %bugs;
 my %desc;
 
-my $slt_bugs = $dbh->selectall_arrayref($query, undef, 'NEW', 'REOPENED');
+my $slt_bugs = $dbh->selectall_arrayref($query, undef, 'CONFIRMED', 'NEW',
+                                                       'REOPENED');
 
 foreach my $bug (@$slt_bugs) {
     my ($id, $desc, $email) = @$bug;
@@ -85,11 +88,10 @@ foreach my $email (sort (keys %bugs)) {
     $vars->{'bugs'} = \@bugs;
 
     my $msg;
-    my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    my $template = Bugzilla->template_inner($user->setting('lang'));
     $template->process("email/whine.txt.tmpl", $vars, \$msg)
       or die($template->error());
 
-    Bugzilla->template_inner("");
     MessageToMTA($msg);
 
     print "$email      " . join(" ", @{$bugs{$email}}) . "\n";

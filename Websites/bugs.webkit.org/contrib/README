@@ -8,19 +8,13 @@ This file is encoded in UTF8 for purposes of contributor names.
 
 This directory includes:
 
-bugzilla_ldapsync.rb --  Script that can be run via Cron that queries an LDAP
-                         server for e-mail addresses to add Bugzilla users
-                         for. Will optionally disable Bugzilla users with
-                         no matching LDAP record. Contributed by Thomas
-                         Stromberg <thomas+bugzilla@stromberg.org>.
-
     bugzilla-submit/ --  A standalone bug submission program.
 
          bzdbcopy.pl --  A script to copy data from an installation running 
                          on one DB platform to an installation running on 
                          another DB platform.
 
-bz_webservice_demo.p --  An example script that demonstrates how to talk to
+bz_webservice_demo.pl --  An example script that demonstrates how to talk to
                          Bugzilla via XMLRPC.
 
              cmdline/ -- Various commands for querying your Bugzilla 
@@ -29,13 +23,6 @@ bz_webservice_demo.p --  An example script that demonstrates how to talk to
        cvs-update.pl --  Script to keep a record of all CVS updates made 
                          from a given directory. The log is useful when
                          changes need to be backed out.
-
-         gnatsparse/ --  A Python script used to import a GNATS database
-                         into Bugzilla.
-
-         gnats2bz.pl --  A Perl script to help import bugs from a GNATS 
-                         database into a Bugzilla database.  Contributed by
-                         Tom Schutter <tom@platte.com>.
 
             jb2bz.py --  Script to import bugs from JitterBug to Bugzilla.
 
@@ -68,6 +55,3 @@ sendunsentbugmail.pl --  Script to find bugs with un-sent mail and to
                          missing users to Bugzilla. Can disable/update 
                          non-existing/changed information. Contributed by
                          Andreas Höfler <andreas.hoefler@bearingpoint.com>.
-
-        yp_nomail.sh --  Script that can be run via Cron that regularly updates
-                         the nomail file for terminated employees. 

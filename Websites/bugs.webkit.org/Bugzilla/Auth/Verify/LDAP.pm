@@ -56,7 +56,7 @@ sub check_credentials {
     # just appending the Base DN to the uid isn't sufficient to get the
     # user's DN.  For servers which don't work this way, there will still
     # be no harm done.
-    $self->_bind_ldap_anonymously();
+    $self->_bind_ldap_for_search();
 
     # Now, we verify that the user exists, and get a LDAP Distinguished
     # Name for the user.
@@ -76,12 +76,35 @@ sub check_credentials {
     return { failure => AUTH_LOGINFAILED } if $pw_result->code;
 
     # And now we fill in the user's details.
-    my $detail_result = $self->ldap->search(_bz_search_params($username));
-    return { failure => AUTH_ERROR, error => "ldap_search_error",
-             details => {errstr => $detail_result->error, username => $username}
-    } if $detail_result->code;
 
-    my $user_entry = $detail_result->shift_entry;
+    # First try the search as the (already bound) user in question.
+    my $user_entry;
+    my $error_string;
+    my $detail_result = $self->ldap->search(_bz_search_params($username));
+    if ($detail_result->code) {
+        # Stash away the original error, just in case
+        $error_string = $detail_result->error;
+    } else {
+        $user_entry = $detail_result->shift_entry;
+    }
+
+    # If that failed (either because the search failed, or returned no
+    # results) then try re-binding as the initial search user, but only
+    # if the LDAPbinddn parameter is set.
+    if (!$user_entry && Bugzilla->params->{"LDAPbinddn"}) {
+        $self->_bind_ldap_for_search();
+
+        $detail_result = $self->ldap->search(_bz_search_params($username));
+        if (!$detail_result->code) {
+            $user_entry = $detail_result->shift_entry;
+        }
+    }
+
+    # If we *still* don't have anything in $user_entry then give up.
+    return { failure => AUTH_ERROR, error => "ldap_search_error",
+             details => {errstr => $error_string, username => $username}
+    } if !$user_entry;
+
 
     my $mail_attr = Bugzilla->params->{"LDAPmailattribute"};
     if ($mail_attr) {
@@ -128,7 +151,7 @@ sub _bz_search_params {
                       . Bugzilla->params->{"LDAPfilter"} . ')');
 }
 
-sub _bind_ldap_anonymously {
+sub _bind_ldap_for_search {
     my ($self) = @_;
     my $bind_result;
     if (Bugzilla->params->{"LDAPbinddn"}) {

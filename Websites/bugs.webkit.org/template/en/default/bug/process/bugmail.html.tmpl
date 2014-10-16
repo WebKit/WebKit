@@ -20,34 +20,21 @@
   #%]
 
 [%# INTERFACE:
-  # mailing_bugid: string. ID of the bug this mail is concerning.
-  # mailrecipients: hash. People involved in this change. Hash has up to five
-  #                elements:
-  #                changer: string. The login name of the user who made the
-  #                change.
-  #
-  #                For bug changes where people need to be notified:
-  #                 owner: string. The login name of the bug assignee.
-  #                 reporter: string. The login name of the bug reporter.
-  #                 qacontact: string. The login name of the bug's QA contact.
-  #                  Optional.
-  #                 cc: list of strings. The login names of those on the CC
-  #                  list.
+  # mailing_bugid: The bug ID that email is being sent for.
+  # sent_bugmail: The results of Bugzilla::BugMail::Send().
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% mail = SendBugMail(mailing_bugid, mailrecipients) %]
-
 <dl>
 [% PROCESS emails
    description = "Email sent to"
-   names = mail.sent
+   names = sent_bugmail.sent
 %]
 
 [% PROCESS emails
    description = "Excluding"
-   names = mail.excluded
+   names = sent_bugmail.excluded
 %]
 </dl>
 

@@ -19,41 +19,46 @@
   #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
-<script type="text/javascript">
-  <!--
-  function toggle_display(link) {
-    var table = document.getElementById("attachment_table");
-    var rows = table.getElementsByTagName("tr");
-    var originalHeight = table.offsetHeight; // Store current height for scrolling
+[% RETURN UNLESS attachments.size || Param("maxattachmentsize") || Param("maxlocalattachment") %]
 
-    var toggle;
-    if (link.innerHTML == "Show Obsolete") {
-      toggle = ""; // This should be 'table-row', but IE 6 doesn't understand it.
-      link.innerHTML = "Hide Obsolete";
-    }
-    else {
-      toggle = "none";
-      link.innerHTML = "Show Obsolete";
-    }
+<script type="text/javascript">
+<!--
+function toggle_display(link) {
+    var table = document.getElementById("attachment_table");
+    var view_all = document.getElementById("view_all");
+    var hide_obsolete_url_parameter = "&hide_obsolete=1";
+    // Store current height for scrolling later
+    var originalHeight = table.offsetHeight;
+    var rows = YAHOO.util.Dom.getElementsByClassName(
+        'bz_tr_obsolete', 'tr', table);
 
     for (var i = 0; i < rows.length; i++) {
-      if (rows[i].className.match('bz_tr_obsolete'))
-        rows[i].style.display = toggle;
+        bz_toggleClass(rows[i], 'bz_default_hidden');
+    }
+
+    if (YAHOO.util.Dom.hasClass(rows[0], 'bz_default_hidden')) {
+        link.innerHTML = "Show Obsolete";
+        view_all.href = view_all.href + hide_obsolete_url_parameter 
+    }
+    else {
+        link.innerHTML = "Hide Obsolete";
+        view_all.href = view_all.href.replace(hide_obsolete_url_parameter,"");
     }
 
     var newHeight = table.offsetHeight;
+    // This scrolling makes the window appear to not move at all.
     window.scrollBy(0, newHeight - originalHeight);
 
     return false;
-  }
-  //-->
+}
+//-->
 </script>
 
 <br>
 <table id="attachment_table" cellspacing="0" cellpadding="4">
-  <tr>
+  <tr id="a0">
     <th colspan="[% show_attachment_flags ? 3 : 2 %]" align="left">
-      <a name="a0" id="a0">Attachments</a>
+      Attachments
     </th>
   </tr>
 
@@ -66,11 +71,15 @@
       [% IF attachment.isobsolete %]
         [% obsolete_attachments = obsolete_attachments + 1 %]
       [% END %]
-      <tr class="[% "bz_private" IF attachment.isprivate %][%-%]
-                 [%+ "bz_tr_obsolete" IF attachment.isobsolete %]">
+      <tr id="a[% count %]" class="[% "bz_contenttype_" _ attachment.contenttype
+                     FILTER css_class_quote %]
+                 [% " bz_patch" IF attachment.ispatch %]
+                 [% " bz_private" IF attachment.isprivate %]
+                 [% " bz_tr_obsolete bz_default_hidden" 
+                     IF attachment.isobsolete %]">
         <td valign="top">
           [% IF attachment.datasize %]
-            <a name="a[% count %]" href="attachment.cgi?id=[% attachment.id %]"
+            <a href="attachment.cgi?id=[% attachment.id %]"
                title="View the content of the attachment">
           [% END %]
           <b>[% attachment.description FILTER html FILTER obsolete(attachment.isobsolete) %]</b>
@@ -81,8 +90,6 @@
               ([% attachment.datasize FILTER unitconvert %],
               [% IF attachment.ispatch %]
                 patch)
-              [% ELSIF attachment.isurl %]
-                url)
               [% ELSE %]
                 [%+ attachment.contenttype FILTER html %])
               [% END %]
@@ -95,10 +102,7 @@
                title="Go to the comment associated with the attachment">
               [%- attachment.attached FILTER time %]</a>,
 
-            <a href="mailto:[% attachment.attacher.email FILTER html %]"
-               title="Write an email to the creator of the attachment">
-              [% attachment.attacher.name || attachment.attacher.login FILTER html %]
-            </a>
+            [% INCLUDE global/user.html.tmpl who = attachment.attacher %]
           </span>
         </td>
 
@@ -108,10 +112,22 @@
               <i>no flags</i>
             [% ELSE %]
               [% FOREACH flag = attachment.flags %]
-                [% flag.setter.nick FILTER html %]:
+                [% IF user.id %]
+                  <span title="[% flag.setter.identity FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+                [% ELSIF flag.setter.name %]
+                  <span title="[% flag.setter.name FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+                [% ELSE %]
+                  [% flag.setter.nick FILTER html %]:
+                [% END %]
                 [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
                 [%+ IF flag.status == "?" && flag.requestee %]
-                  ([% flag.requestee.nick FILTER html %])
+                  [% IF user.id %]
+                    (<span title="[% flag.requestee.identity FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
+                  [% ELSIF flag.requestee.name %]
+                    (<span title="[% flag.requestee.name FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
+                  [% ELSE %]
+                    ([% flag.requestee.nick FILTER html %])
+                  [% END %]
                 [% END %]<br>
               [% END %]
             [% END %]
@@ -120,7 +136,7 @@
 
         <td valign="top">
           <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Details</a>
-          [% IF attachment.ispatch && patchviewerinstalled %]
+          [% IF attachment.ispatch && feature_enabled('patch_viewer') %]
             | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
           [% END %]
           [% Hook.process("action") %]
@@ -134,15 +150,20 @@
       [% IF attachments.size %]
         <span class="bz_attach_view_hide">
           [% IF obsolete_attachments %]
-            <a href="#a0" onClick="return toggle_display(this);">Hide Obsolete</a> ([% obsolete_attachments %])
+            <a href="#a0" onclick="return toggle_display(this);">Show
+              Obsolete</a> ([% obsolete_attachments %])
           [% END %]
           [% IF Param("allow_attachment_display") %]
-            <a href="attachment.cgi?bugid=[% bugid %]&amp;action=viewall">View All</a>
+            <a id="view_all" href="attachment.cgi?bugid=
+                  [%- bugid %]&amp;action=viewall
+                  [%- "&amp;hide_obsolete=1" IF obsolete_attachments %]">View All</a>
           [% END %]
         </span>
       [% END %]
-      <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Add an attachment</a>
-      (proposed patch, testcase, etc.)
+      [% IF Param("maxattachmentsize") || Param("maxlocalattachment") %]
+        <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Add an attachment</a>
+        (proposed patch, testcase, etc.)
+      [% END %]
     </td>
   </tr>
 </table>

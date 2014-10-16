@@ -11,6 +11,7 @@
   * The Original Code is the Bugzilla Bug Tracking System.
   *
   * Contributor(s): Vitaly Harisov <vitaly@rathedg.com>
+  *                 Guy Pyrzak <guy.pyrzak@gmail.com> 
   */
 
 /* index page (begin) */
@@ -18,51 +19,16 @@
     #page-index
     {
         padding: 0.2em 0.2em 0.15em 0.2em;
+        max-width: 1000px;
     }
 
-    #page-index ul, #page-index li,
-    #page-index p, #page-index form p
-    {
-        margin: 0;
-        padding: 0;
-    }
-
-    #page-index ul
-    {
-        padding-bottom: 1em;
-    }
-
-    #page-index li
-    {
-        list-style: none;
-    }
-
-    #page-index p
-    {
-        padding-bottom: 0.5em;
+    /* By default these contain nothing, but these CSS rules make things
+       easier on customizers. */
+    .intro, .outro {
+        text-align: center;
     }
 
     /* Hide from NN4 */
-    div#page-index .intro
-    {
-        width: 250px;
-        height: 200px;
-
-        margin-top: 2.3em;
-        margin-right: 2.3em;
-        float: right;
-        background: transparent no-repeat url(index/front.png);
-    }
-
-    #page-index #report
-    {
-        padding-bottom: 1em;
-    }
-
-    #page-index #sidebar
-    {
-        padding-top: 1em;
-    }
 
     #new_release
     {
@@ -81,5 +47,97 @@
     #welcome-admin a
     {
         font-weight: bold;
+    }
+
+    .bz_common_actions {
+        text-align: center;
+    }
+    .bz_common_actions ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .bz_common_actions ul li {
+        display: inline;
+        vertical-align: top;
+    }
+    .bz_common_actions ul li a {
+        display: inline-block;
+        height: 170px;
+        width: 145px;
+        margin: 0 2ex 2em 0;
+    }
+    .bz_common_actions ul li a span {
+        position: relative;
+        top: 90%;
+        font-weight: bold;
+    }
+    .bz_common_actions a,
+    .bz_common_actions a:visited,
+    .bz_common_actions a:hover {
+        text-decoration: none;
+    }
+    #enter_bug { background: url(index/file-a-bug.png)     no-repeat; }
+    #query     { background: url(index/search.png)  no-repeat; }
+    #account   { 
+      background: url(index/new-account.png) no-repeat; 
+      margin-right: 0;
+    }
+    
+    #quicksearchForm
+    {
+        clear: both;
+        text-align: center;
+        margin-bottom: 2em;
+    }
+    
+    #quicksearchForm #quicksearch_main
+    {
+        width: 27em;
+    }
+    
+    #quicksearchForm
+    {
+        margin: 0;
+        padding: 0;
+    }
+    
+    #page-index table{
+        border-collapse: collapse;
+        margin: auto;
+    }
+    
+    #welcome
+    {
+        font-size: x-large;
+        font-weight: bold;
+        text-align: center;
+        margin: 0 0 0.8em 0;
+        padding: 0;
+    }
+    
+    ul.additional_links 
+    {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    ul#quicksearch_links{
+        margin-bottom: 1em;
+    }
+    
+    ul.additional_links li
+    {
+        display: inline;
+    }
+    
+    ul.additional_links li.bz_default_hidden
+    {
+        display: none;
+    }
+    
+    input.quicksearch_help_text
+    {
+        color: #ccc;
     }
 /* index page (end) */

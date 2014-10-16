@@ -31,8 +31,9 @@ BEGIN { *esc = \&Pod::Simple::HTML::esc }
 # Note that if you leave out a category here, it will not be indexed
 # in the contents file, even though its HTML POD will still exist.
 use constant FILE_TRANSLATION => {
-    Files      => ['importxml', 'contrib', 'checksetup', 'email_in', 'install-module',
-                   'sanitycheck'],
+    Files      => ['importxml', 'contrib', 'checksetup', 'email_in', 
+                   'install-module', 'sanitycheck', 'jobqueue', 'migrate',
+                   'collectstats'],
     Modules    => ['bugzilla'],
     Extensions => ['extensions'],
 };
@@ -104,6 +105,16 @@ sub note_for_contents_file {
     $self->{bugzilla_desc}->{join('::', @$namelets)} = $description;
 
     return $retval;
+}
+
+# Exclude modules being in lib/.
+sub find_all_pods {
+    my($self, $dirs) = @_;
+    my $mod2path = $self->SUPER::find_all_pods($dirs);
+    foreach my $mod (keys %$mod2path) {
+        delete $mod2path->{$mod} if $mod =~ /^lib::/;
+    }
+    return $mod2path;
 }
 
 1;

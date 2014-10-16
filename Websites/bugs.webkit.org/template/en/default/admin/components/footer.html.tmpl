@@ -33,7 +33,7 @@ Edit
   component <a 
   title="Edit Component '[% comp.name FILTER html %]'"
   href="editcomponents.cgi?action=edit&amp;product=
-  [%- product.name FILTER url_quote %]&amp;component=[% comp.name FILTER url_quote %]">
+  [%- product.name FILTER uri %]&amp;component=[% comp.name FILTER uri %]">
    '[% comp.name FILTER html %]'</a> 
   or edit
 [% END %]
@@ -42,13 +42,13 @@ Edit
 other components of product <a 
   title="Choose a component from product '[% product.name FILTER html %]' to edit"
   href="editcomponents.cgi?product=
-  [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>, 
+  [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>, 
   or edit 
 [% END %]
 
 product <a 
   title="Edit Product '[% product.name FILTER html %]'"
   href="editproducts.cgi?action=edit&amp;product=
-  [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>.
+  [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
 
 </p>

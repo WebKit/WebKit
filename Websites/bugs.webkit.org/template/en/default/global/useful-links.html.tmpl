@@ -27,7 +27,6 @@
 
 <ul id="useful-links">
   <li id="links-actions">
-    <div class="label">Actions: </div>
       [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_bottom" %]
   </li>
 
@@ -38,12 +37,9 @@
   %]
     [% print_pipe = 0 %]
     <li id="links-saved">
-      <div class="label">
-        Saved Searches:
-      </div>
       <ul class="links">
         [% IF user.showmybugslink %]
-          [% filtered_username = user.login FILTER url_quote %]
+          [% filtered_username = user.login FILTER uri %]
           <li><a href="[% Param('mybugstemplate').replace('%userid%', filtered_username) %]">My [% terms.Bugs %]</a></li>
           [% print_pipe = 1 %]
         [% END %]
@@ -51,7 +47,7 @@
         [% FOREACH q = user.queries %]
           [% IF q.link_in_footer %]
             <li>[% '<span class="separator">| </span>' IF print_pipe %]
-            <a href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER url_quote %]">[% q.name FILTER html %]</a></li>
+            <a href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER uri %]">[% q.name FILTER html %]</a></li>
             [% print_pipe = 1 %]
           [% END %]
         [% END %]
@@ -65,8 +61,8 @@
           <li>
             [% '<span class="separator">| </span>' IF print_pipe %]
             <a href="buglist.cgi?cmdtype=dorem&amp;remaction=run&amp;namedcmd=
-                     [% q.name FILTER url_quote %]&amp;sharer_id=
-                     [% q.user.id FILTER url_quote %]"
+                     [% q.name FILTER uri %]&amp;sharer_id=
+                     [% q.user.id FILTER uri %]"
                class="shared"
                title="Shared by [% q.user.identity FILTER html %]"
                >[% q.name FILTER html FILTER no_break %]</a></li>

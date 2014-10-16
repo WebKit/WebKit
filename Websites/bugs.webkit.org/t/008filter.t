@@ -30,10 +30,11 @@
 # Sample exploit code: '>"><script>alert('Oh dear...')</script>
 
 use strict;
-use lib 't';
+use lib qw(. lib t);
 
 use vars qw(%safe);
 
+use Bugzilla::Constants;
 use Support::Templates;
 use File::Spec;
 use Test::More tests => $Support::Templates::num_actual_files;
@@ -45,7 +46,7 @@ my $topdir = cwd;
 $/ = undef;
 
 foreach my $path (@Support::Templates::include_paths) {
-    $path =~ s|\\|/|g if $^O eq 'MSWin32';  # convert \ to / in path if on windows
+    $path =~ s|\\|/|g if ON_WINDOWS;  # convert \ to / in path if on windows
     $path =~ m|template/([^/]+)/([^/]+)|;
     my $lang = $1;
     my $flavor = $2;
@@ -60,13 +61,9 @@ foreach my $path (@Support::Templates::include_paths) {
     chdir $path; # relative path
     
     # We load a %safe list of acceptable exceptions.
-    if (!-r "filterexceptions.pl") {
-        ok(0, "$path has templates but no filterexceptions.pl file. --ERROR");
-        next;
-    }
-    else {
+    if (-r "filterexceptions.pl") {
         do "filterexceptions.pl";
-        if ($^O eq 'MSWin32') {
+        if (ON_WINDOWS) {
           # filterexceptions.pl uses / separated paths, while 
           # find_actual_files returns \ separated ones on Windows.
           # Here, we convert the filter exception hash to use \.
@@ -85,17 +82,19 @@ foreach my $path (@Support::Templates::include_paths) {
     # us to flag which members were not found, and report that as a warning, 
     # thereby keeping the lists clean.
     foreach my $file (keys %safe) {
-        my $list = $safe{$file};
-        $safe{$file} = {};
-        foreach my $directive (@$list) {
-            $safe{$file}{$directive} = 0;    
+        if (ref $safe{$file} eq 'ARRAY') {
+            my $list = $safe{$file};
+            $safe{$file} = {};
+            foreach my $directive (@$list) {
+                $safe{$file}{$directive} = 0;    
+            }
         }
     }
 
     foreach my $file (@testitems) {
         # There are some files we don't check, because there is no need to
         # filter their contents due to their content-type.
-        if ($file =~ /\.(txt|png)\.tmpl$/) {
+        if ($file =~ /\.(pm|txt|png)\.tmpl$/) {
             ok(1, "($lang/$flavor) $file is filter-safe");
             next;
         }
@@ -109,7 +108,7 @@ foreach my $path (@Support::Templates::include_paths) {
 
         # /g means we execute this loop for every match
         # /s means we ignore linefeeds in the regexp matches
-        while ($slurp =~ /\[%(.*?)%\]/gs) {
+        while ($slurp =~ /\[%(?:-|\+|~|=)?(.*?)(?:-|\+|~|=)?%\]/gs) {
             my $directive = $1;
 
             my @lineno = ($` =~ m/\n/gs);
@@ -154,11 +153,11 @@ sub directive_ok {
     my ($file, $directive) = @_;
 
     # Comments
-    return 1 if $directive =~ /^[+-]?#/;        
+    return 1 if $directive =~ /^#/;        
 
-    # Remove any leading/trailing + or - and whitespace.
-    $directive =~ s/^[+-]?\s*//;
-    $directive =~ s/\s*[+-]?$//;
+    # Remove any leading/trailing whitespace.
+    $directive =~ s/^\s*//;
+    $directive =~ s/\s*$//;
 
     # Empty directives are ok; they are usually line break helpers
     return 1 if $directive eq '';
@@ -211,7 +210,7 @@ sub directive_ok {
     return 1 if $directive =~ /^(time2str|url)\(/;
 
     # Safe Template Toolkit virtual methods
-    return 1 if $directive =~ /\.(length$|size$|push\(|delete\()/;
+    return 1 if $directive =~ /\.(length$|size$|push\(|unshift\(|delete\()/;
 
     # Special Template Toolkit loop variable
     return 1 if $directive =~ /^loop\.(index|count)$/;
@@ -222,10 +221,10 @@ sub directive_ok {
     # Things which are already filtered
     # Note: If a single directive prints two things, and only one is 
     # filtered, we may not catch that case.
-    return 1 if $directive =~ /FILTER\ (html|csv|js|base64|url_quote|css_class_quote|
-                                        ics|quoteUrls|time|uri|xml|lower|html_light|
+    return 1 if $directive =~ /FILTER\ (html|csv|js|base64|css_class_quote|ics|
+                                        quoteUrls|time|uri|xml|lower|html_light|
                                         obsolete|inactive|closed|unitconvert|
-                                        txt|none)\b/x;
+                                        txt|html_linebreak|none)\b/x;
 
     return 0;
 }

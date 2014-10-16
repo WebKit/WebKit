@@ -40,8 +40,9 @@
 
 [% SET exclude_items = ['version', 'component', 'target_milestone'] %]
 [% IF verify_bug_groups %]
-  [% exclude_items.push('bit-\d+') %]
+  [% exclude_items.push('groups', 'defined_groups') %]
 [% END %]
+[% Hook.process('exclude') %]
 
 [% PROCESS "global/hidden-fields.html.tmpl"
      exclude = '^' _ exclude_items.join('|') _ '$' %]
@@ -110,6 +111,7 @@
                  size=10 %]
       </td>
     [% END %]
+    [% Hook.process('field') %]
   </tr>
 </table>
 
@@ -122,9 +124,9 @@
     [%+ terms.Bugs %] will no longer be restricted to these groups and may become
     public if no other group applies:<br>
     [% FOREACH group = old_groups %]
-      <input type="checkbox" id="bit-[% group.id FILTER html %]"
-             name="bit-[% group.id FILTER html %]" disabled="disabled" value="1">
-      <label for="bit-[% group.id FILTER html %]">
+      <input type="checkbox" id="group_[% group.id FILTER html %]"
+             name="groups" disabled="disabled" value="[% group.name FILTER html %]">
+      <label for="group_[% group.id FILTER html %]">
         [% group.name FILTER html %]: [% group.description FILTER html %]
       </label>
       <br>
@@ -152,16 +154,15 @@
     <p>These groups are optional. You can decide to restrict [% terms.bugs %] to
     one or more of the following groups:<br>
     [% FOREACH group = optional_groups %]
-      <input type="hidden" name="defined_bit-[% group.group.id FILTER html %]"
-             value="1">
-      <input type="checkbox" id="bit-[% group.group.id FILTER html %]"
-             name="bit-[% group.group.id FILTER html %]"
-             [%+ ((group.membercontrol == constants.CONTROLMAPDEFAULT && user.in_group(group.group.name))
+      <input type="hidden" name="defined_groups"
+             value="[% group.group.name FILTER html %]">
+      <input type="checkbox" id="group_[% group.group.id FILTER html %]"
+             name="groups"
+             [% ' checked="checked"' IF ((group.membercontrol == constants.CONTROLMAPDEFAULT && user.in_group(group.group.name))
                  || (group.othercontrol == constants.CONTROLMAPDEFAULT && !user.in_group(group.group.name))
-                 || cgi.param("bit-$group.group.id") == 1) ?
-                 'checked="checked"' : ''
-             %] value="1">
-      <label for="bit-[% group.group.id FILTER html %]">
+                 || cgi.param("groups").contains(group.group.name)) %]
+             value="[% group.group.name FILTER html %]">
+      <label for="group_[% group.group.id FILTER html %]">
         [% group.group.name FILTER html %]: [% group.group.description FILTER html %]
       </label>
       <br>
@@ -173,9 +174,10 @@
     <p>These groups are mandatory and [% terms.bugs %] will be automatically
     restricted to these groups:<br>
     [% FOREACH group = mandatory_groups %]
-      <input type="checkbox" id="bit-[% group.group.id FILTER html %]" checked="checked"
-             name="bit-[% group.group.id FILTER html %]" value="1" disabled="disabled">
-      <label for="bit-[% group.group.id FILTER html %]">
+      <input type="checkbox" id="group_[% group.group.id FILTER html %]"
+              checked="checked" disabled="disabled"
+             name="groups" value="[% group.group.name FILTER html %]">
+      <label for="group_[% group.group.id FILTER html %]">
         [% group.group.name FILTER html %]: [% group.group.description FILTER html %]
       </label>
       <br>

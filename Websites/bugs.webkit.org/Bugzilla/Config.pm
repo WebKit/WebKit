@@ -34,6 +34,8 @@ use strict;
 
 use base qw(Exporter);
 use Bugzilla::Constants;
+use Bugzilla::Hook;
+use Bugzilla::Install::Filesystem qw(fix_file_permissions);
 use Data::Dumper;
 use File::Temp;
 
@@ -46,22 +48,28 @@ use File::Temp;
   );
 Exporter::export_ok_tags('admin');
 
-use vars qw(@param_list);
-
 # INITIALISATION CODE
 # Perl throws a warning if we use bz_locations() directly after do.
 our %params;
 # Load in the param definitions
 sub _load_params {
     my $panels = param_panels();
+    my %hook_panels;
     foreach my $panel (keys %$panels) {
         my $module = $panels->{$panel};
         eval("require $module") || die $@;
-        my @new_param_list = "$module"->get_param_list();
-        foreach my $item (@new_param_list) {
+        my @new_param_list = $module->get_param_list();
+        $hook_panels{lc($panel)} = { params => \@new_param_list };
+    }
+    # This hook is also called in editparams.cgi. This call here is required
+    # to make SetParam work.
+    Bugzilla::Hook::process('config_modify_panels', 
+                            { panels => \%hook_panels });
+
+    foreach my $panel (keys %hook_panels) {
+        foreach my $item (@{$hook_panels{$panel}->{params}}) {
             $params{$item->{'name'}} = $item;
         }
-        push(@param_list, @new_param_list);
     }
 }
 # END INIT CODE
@@ -77,7 +85,8 @@ sub param_panels {
         $param_panels->{$module} = "Bugzilla::Config::$module" unless $module eq 'Common';
     }
     # Now check for any hooked params
-    Bugzilla::Hook::process('config', { config => $param_panels });
+    Bugzilla::Hook::process('config_add_panels', 
+                            { panel_modules => $param_panels });
     return $param_panels;
 }
 
@@ -107,33 +116,28 @@ sub update_params {
     my $answer = Bugzilla->installation_answers;
 
     my $param = read_param_file();
+    my %new_params;
 
     # If we didn't return any param values, then this is a new installation.
     my $new_install = !(keys %$param);
 
     # --- UPDATE OLD PARAMS ---
 
-    # Old Bugzilla versions stored the version number in the params file
-    # We don't want it, so get rid of it
-    delete $param->{'version'};
-
     # Change from usebrowserinfo to defaultplatform/defaultopsys combo
     if (exists $param->{'usebrowserinfo'}) {
         if (!$param->{'usebrowserinfo'}) {
             if (!exists $param->{'defaultplatform'}) {
-                $param->{'defaultplatform'} = 'Other';
+                $new_params{'defaultplatform'} = 'Other';
             }
             if (!exists $param->{'defaultopsys'}) {
-                $param->{'defaultopsys'} = 'Other';
+                $new_params{'defaultopsys'} = 'Other';
             }
         }
-        delete $param->{'usebrowserinfo'};
     }
 
     # Change from a boolean for quips to multi-state
     if (exists $param->{'usequip'} && !exists $param->{'enablequips'}) {
-        $param->{'enablequips'} = $param->{'usequip'} ? 'on' : 'off';
-        delete $param->{'usequip'};
+        $new_params{'enablequips'} = $param->{'usequip'} ? 'on' : 'off';
     }
 
     # Change from old product groups to controls for group_control_map
@@ -141,24 +145,19 @@ sub update_params {
     if (exists $param->{'usebuggroups'} && 
         !exists $param->{'makeproductgroups'}) 
     {
-        $param->{'makeproductgroups'} = $param->{'usebuggroups'};
-    }
-    if (exists $param->{'usebuggroupsentry'} 
-       && !exists $param->{'useentrygroupdefault'}) {
-        $param->{'useentrygroupdefault'} = $param->{'usebuggroupsentry'};
+        $new_params{'makeproductgroups'} = $param->{'usebuggroups'};
     }
 
     # Modularise auth code
     if (exists $param->{'useLDAP'} && !exists $param->{'loginmethod'}) {
-        $param->{'loginmethod'} = $param->{'useLDAP'} ? "LDAP" : "DB";
+        $new_params{'loginmethod'} = $param->{'useLDAP'} ? "LDAP" : "DB";
     }
 
     # set verify method to whatever loginmethod was
     if (exists $param->{'loginmethod'} 
         && !exists $param->{'user_verify_class'}) 
     {
-        $param->{'user_verify_class'} = $param->{'loginmethod'};
-        delete $param->{'loginmethod'};
+        $new_params{'user_verify_class'} = $param->{'loginmethod'};
     }
 
     # Remove quip-display control from parameters
@@ -171,8 +170,7 @@ sub update_params {
         ($param->{'enablequips'} eq 'approved') && do {$new_value = 'moderated';};
         ($param->{'enablequips'} eq 'frozen')   && do {$new_value = 'closed';};
         ($param->{'enablequips'} eq 'off')      && do {$new_value = 'closed';};
-        $param->{'quip_list_entry_control'} = $new_value;
-        delete $param->{'enablequips'};
+        $new_params{'quip_list_entry_control'} = $new_value;
     }
 
     # Old mail_delivery_method choices contained no uppercase characters
@@ -188,14 +186,34 @@ sub update_params {
         $param->{'mail_delivery_method'} = $translation{$method};
     }
 
+    # Convert the old "ssl" parameter to the new "ssl_redirect" parameter.
+    # Both "authenticated sessions" and "always" turn on "ssl_redirect"
+    # when upgrading.
+    if (exists $param->{'ssl'} and $param->{'ssl'} ne 'never') {
+        $new_params{'ssl_redirect'} = 1;
+    }
+
+    # "specific_search_allow_empty_words" has been renamed to "search_allow_no_criteria".
+    if (exists $param->{'specific_search_allow_empty_words'}) {
+        $new_params{'search_allow_no_criteria'} = $param->{'specific_search_allow_empty_words'};
+    }
+
     # --- DEFAULTS FOR NEW PARAMS ---
 
     _load_params unless %params;
-    foreach my $item (@param_list) {
-        my $name = $item->{'name'};
+    foreach my $name (keys %params) {
+        my $item = $params{$name};
         unless (exists $param->{$name}) {
             print "New parameter: $name\n" unless $new_install;
-            $param->{$name} = $answer->{$name} || $item->{'default'};
+            if (exists $new_params{$name}) {
+                $param->{$name} = $new_params{$name};
+            }
+            elsif (exists $answer->{$name}) {
+                $param->{$name} = $answer->{$name};
+            }
+            else {
+                $param->{$name} = $item->{'default'};
+            }
         }
     }
 
@@ -204,21 +222,23 @@ sub update_params {
     # --- REMOVE OLD PARAMS ---
 
     my %oldparams;
-    # Remove any old params, put them in old-params.txt
+    # Remove any old params
     foreach my $item (keys %$param) {
-        if (!grep($_ eq $item, map ($_->{'name'}, @param_list))) {
-            $oldparams{$item} = $param->{$item};
-            delete $param->{$item};
+        if (!exists $params{$item}) {
+            $oldparams{$item} = delete $param->{$item};
         }
     }
 
+    # Write any old parameters to old-params.txt
+    my $datadir = bz_locations()->{'datadir'};
+    my $old_param_file = "$datadir/old-params.txt";
     if (scalar(keys %oldparams)) {
-        my $op_file = new IO::File('old-params.txt', '>>', 0600)
-          || die "old-params.txt: $!";
+        my $op_file = new IO::File($old_param_file, '>>', 0600)
+          || die "Couldn't create $old_param_file: $!";
 
         print "The following parameters are no longer used in Bugzilla,",
               " and so have been\nmoved from your parameters file into",
-              " old-params.txt:\n";
+              " $old_param_file:\n";
 
         local $Data::Dumper::Terse  = 1;
         local $Data::Dumper::Indent = 0;
@@ -281,27 +301,11 @@ sub write_params {
     rename $tmpname, $param_file
       or die "Can't rename $tmpname to $param_file: $!";
 
-    ChmodDataFile($param_file, 0666);
+    fix_file_permissions($param_file);
 
     # And now we have to reset the params cache so that Bugzilla will re-read
     # them.
     delete Bugzilla->request_cache->{params};
-}
-
-# Some files in the data directory must be world readable if and only if
-# we don't have a webserver group. Call this function to do this.
-# This will become a private function once all the datafile handling stuff
-# moves into this package
-
-# This sub is not perldoc'd for that reason - noone should know about it
-sub ChmodDataFile {
-    my ($file, $mask) = @_;
-    my $perm = 0770;
-    if ((stat(bz_locations()->{'datadir'}))[2] & 0002) {
-        $perm = 0777;
-    }
-    $perm = $perm & $mask;
-    chmod $perm,$file;
 }
 
 sub read_param_file {

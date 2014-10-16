@@ -22,15 +22,26 @@ use fields qw(
     successful
 );
 
+use Bugzilla::Hook;
+
+use Hash::Util qw(lock_keys);
+use List::MoreUtils qw(any);
+
 sub new {
     my $class = shift;
     my $list = shift;
     my $self = $class->SUPER::new(@_);
+    my %methods = map { $_ => "Bugzilla/Auth/Verify/$_.pm" } split(',', $list);
+    lock_keys(%methods);
+    Bugzilla::Hook::process('auth_verify_methods', { modules => \%methods });
+
     $self->{_stack} = [];
     foreach my $verify_method (split(',', $list)) {
-        require "Bugzilla/Auth/Verify/${verify_method}.pm";
-        push(@{$self->{_stack}}, 
-             "Bugzilla::Auth::Verify::$verify_method"->new(@_));
+        my $module = $methods{$verify_method};
+        require $module;
+        $module =~ s|/|::|g;
+        $module =~ s/.pm$//;
+        push(@{$self->{_stack}}, $module->new(@_));
     }
     return $self;
 }
@@ -76,6 +87,11 @@ sub user_can_create_account {
         return 1 if $object->user_can_create_account;
     }
     return 0;
+}
+
+sub extern_id_used {
+    my ($self) = @_;
+    return any { $_->extern_id_used } @{ $self->{_stack} };
 }
 
 1;

@@ -39,6 +39,7 @@ use base qw(Exporter);
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
+use Bugzilla::Hook;
 use Bugzilla::Util;
 
 use Date::Format qw(time2str);
@@ -47,14 +48,17 @@ use Encode qw(encode);
 use Encode::MIME::Header;
 use Email::Address;
 use Email::MIME;
-# Loading this gives us encoding_set.
-use Email::MIME::Modifier;
 use Email::Send;
 
 sub MessageToMTA {
-    my ($msg) = (@_);
+    my ($msg, $send_now) = (@_);
     my $method = Bugzilla->params->{'mail_delivery_method'};
     return if $method eq 'None';
+
+    if (Bugzilla->params->{'use_mailer_queue'} and !$send_now) {
+        Bugzilla->job_queue->insert('send_mail', { msg => $msg });
+        return;
+    }
 
     my $email;
     if (ref $msg) {
@@ -71,6 +75,14 @@ sub MessageToMTA {
         $email = new Email::MIME($msg);
     }
 
+    # We add this header to uniquely identify all email that we
+    # send as coming from this Bugzilla installation.
+    #
+    # We don't use correct_urlbase, because we want this URL to
+    # *always* be the same for this Bugzilla, in every email,
+    # even if the admin changes the "ssl_redirect" parameter some day.
+    $email->header_set('X-Bugzilla-URL', Bugzilla->params->{'urlbase'});
+    
     # We add this header to mark the mail as "auto-generated" and
     # thus to hopefully avoid auto replies.
     $email->header_set('Auto-Submitted', 'auto-generated');
@@ -79,7 +91,11 @@ sub MessageToMTA {
         my ($part) = @_;
         return if $part->parts > 1; # Top-level
         my $content_type = $part->content_type || '';
-        if ($content_type !~ /;/) {
+        $content_type =~ /charset=['"](.+)['"]/;
+        # If no charset is defined or is the default us-ascii,
+        # then we encode the email to UTF-8 if Bugzilla has utf8 enabled.
+        # XXX - This is a hack to workaround bug 723944.
+        if (!$1 || $1 eq 'us-ascii') {
             my $body = $part->body;
             if (Bugzilla->params->{'utf8'}) {
                 $part->charset_set('UTF-8');
@@ -131,8 +147,6 @@ sub MessageToMTA {
                 push(@args, "-f$from_email") if $from_email;
             }
         }
-        push(@args, "-ODeliveryMode=deferred")
-            if !Bugzilla->params->{"sendmailnow"};
     }
     else {
         # Sendmail will automatically append our hostname to the From
@@ -145,7 +159,7 @@ sub MessageToMTA {
         
         # Sendmail adds a Date: header also, but others may not.
         if (!defined $email->header('Date')) {
-            $email->header_set('Date', time2str("%a, %e %b %Y %T %z", time()));
+            $email->header_set('Date', time2str("%a, %d %b %Y %T %z", time()));
         }
     }
 
@@ -156,6 +170,9 @@ sub MessageToMTA {
                     Hello => $hostname, 
                     Debug => Bugzilla->params->{'smtp_debug'};
     }
+
+    Bugzilla::Hook::process('mailer_before_send', 
+                            { email => $email, mailer_args => \@args });
 
     if ($method eq "Test") {
         my $filename = bz_locations()->{'datadir'} . '/mailer.testfile';
@@ -195,7 +212,9 @@ sub build_thread_marker {
         $threadingmarker = "Message-ID: <bug-$bug_id-$user_id$sitespec>";
     }
     else {
-        $threadingmarker = "In-Reply-To: <bug-$bug_id-$user_id$sitespec>" .
+        my $rand_bits = generate_random_password(10);
+        $threadingmarker = "Message-ID: <bug-$bug_id-$user_id-$rand_bits$sitespec>" .
+                           "\nIn-Reply-To: <bug-$bug_id-$user_id$sitespec>" .
                            "\nReferences: <bug-$bug_id-$user_id$sitespec>";
     }
 

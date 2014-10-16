@@ -73,13 +73,6 @@ foreach my $module (@$modules, @$opt_modules)
     print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
 }
 
-# CGI is a special case, because for Perl versions below 5.10, it has an
-# optional version *and* a required version.
-# We check @opt_modules first, then @modules, and pick the first we get.
-# We'll get the optional one then, if it is given, otherwise the required one.
-my ($cgi_opt) = grep($_->{module} eq 'CGI', @$opt_modules, @$modules);
-print ENTITIES '<!ENTITY min-mp-cgi-ver "' . $cgi_opt->{version} . '">' . "\n";
-
 print ENTITIES "\n <!-- Database Versions --> \n";
 
 my $db_modules = DB_MODULE;
@@ -211,12 +204,12 @@ foreach my $lang (@langs) {
     chdir 'html';
 
     MakeDocs('separate HTML', "jade -t sgml -i html -d $LDP_HOME/ldp.dsl\#html " .
-	 "$JADE_PUB/xml.dcl ../xml/Bugzilla-Guide.xml");
+         "$JADE_PUB/xml.dcl ../xml/Bugzilla-Guide.xml");
     MakeDocs('big HTML', "jade -V nochunks -t sgml -i html -d " .
          "$LDP_HOME/ldp.dsl\#html $JADE_PUB/xml.dcl " .
-	 "../xml/Bugzilla-Guide.xml > Bugzilla-Guide.html");
+         "../xml/Bugzilla-Guide.xml > Bugzilla-Guide.html");
     MakeDocs('big text', "lynx -dump -justify=off -nolist Bugzilla-Guide.html " .
-	 "> ../txt/Bugzilla-Guide.txt");
+         "> ../txt/Bugzilla-Guide.txt");
 
     if (! grep($_ eq "--with-pdf", @ARGV)) {
         next;

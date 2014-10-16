@@ -21,7 +21,6 @@
 [%# INTERFACE:
   # bug_id: integer. The number of the bug(s).
   # multiple_bugs: boolean. True if bug_id contains > 1 bug number.
-  # doall: boolean. True if we are displaying every bug in the database.
   # showsummary: boolean. True if we are showing bug summaries.
   # rankdir: string. "TB" if we are ranking top-to-bottom,
                      "LR" if left-to-right.
@@ -37,7 +36,7 @@
    header = title
  %]
 
-[% IF NOT multiple_bugs AND NOT doall %]
+[% IF NOT multiple_bugs %]
   [% filtered_desc = short_desc FILTER html %]
   [% title = "$title for $terms.bug $bug_id"
      header = "$header for $terms.bug <a href=\"show_bug.cgi?id=$bug_id\">$bug_id</a>"
@@ -82,8 +81,6 @@
             Restrict to [% terms.bugs %] having a direct relationship with entered [% terms.bugs %]</option>
           <option value="web" [% 'selected="selected"' IF display == "web" %]>
             Show all [% terms.bugs %] having any relationship with entered [% terms.bugs %]</option>
-          <option value="doall" [% 'selected="selected"' IF display == "doall" %]>
-            Show every [% terms.bug %] in the system with dependencies</option>
         </select>
       </td>
     </tr>

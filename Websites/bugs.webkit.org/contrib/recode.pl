@@ -24,10 +24,10 @@ use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Util qw(detect_encoding);
 
 use Digest::MD5 qw(md5_base64);
 use Encode qw(encode decode resolve_alias is_utf8);
-use Encode::Guess;
 use Getopt::Long;
 use Pod::Usage;
 
@@ -72,61 +72,6 @@ sub trunc {
     return $truncated;
 }
 
-sub do_guess {
-    my ($data) = @_;
-
-    my $encoding = detect($data);
-    $encoding = resolve_alias($encoding) if $encoding;
-
-    # Encode::Detect is bad at detecting certain charsets, but Encode::Guess
-    # is better at them. Here's the details:
-
-    # shiftjis, big5-eten, euc-kr, and euc-jp: (Encode::Detect
-    # tends to accidentally mis-detect UTF-8 strings as being
-    # these encodings.)
-    my @utf8_accidental = qw(shiftjis big5-eten euc-kr euc-jp);
-    if ($encoding && grep($_ eq $encoding, @utf8_accidental)) {
-        $encoding = undef;
-        my $decoder = guess_encoding($data, @utf8_accidental);
-        $encoding = $decoder->name if ref $decoder;
-    }
-
-    # Encode::Detect sometimes mis-detects various ISO encodings as iso-8859-8,
-    # but Encode::Guess can usually tell which one it is.
-    if ($encoding && $encoding eq 'iso-8859-8') {
-        my $decoded_as = guess_iso($data, 'iso-8859-8', 
-            # These are ordered this way because it gives the most 
-            # accurate results.
-            qw(iso-8859-7 iso-8859-2));
-        $encoding = $decoded_as if $decoded_as;
-    }
-
-    # Workaround for WebKit Bug 9630 which caused WebKit nightly builds
-    # to send non-breaking space characters (0xA0) when submitting
-    # textarea content to Bugzilla.
-    if (!$encoding) {
-        my $decoder = guess_encoding($data, qw(cp1252));
-        $encoding = $decoder->name if ref $decoder;
-    }
-
-    return $encoding;
-}
-
-# A helper for do_guess.
-sub guess_iso {
-    my ($data, $versus, @isos) = @_;
-
-    my $encoding;
-    foreach my $iso (@isos) {
-        my $decoder = guess_encoding($data, ($iso, $versus));
-        if (ref $decoder) {
-            $encoding = $decoder->name if ref $decoder;
-            last;
-        }
-    }
-    return $encoding;
-}
-
 sub is_valid_utf8 {
     my ($str) = @_;
     Encode::_utf8_on($str);
@@ -152,8 +97,6 @@ if (exists $switch{'charset'}) {
 }
 
 if ($switch{'guess'}) {
-    # Encode::Detect::Detector doesn't seem to return a true value.
-    # So we have to check if we can run detect.
     if (!eval { require Encode::Detect::Detector }) {
         my $root = ROOT_USER;
         print STDERR <<EOT;
@@ -165,8 +108,6 @@ Encode::Detect, run the following command:
 EOT
         exit;
     }
-
-    import Encode::Detect::Detector qw(detect);
 }
 
 my %overrides;
@@ -266,7 +207,7 @@ foreach my $table ($dbh->bz_table_list_real) {
 
                 my $encoding;
                 if ($switch{'guess'}) {
-                    $encoding = do_guess($data);
+                    $encoding = detect_encoding($data);
 
                     # We only show failures if they don't appear to be
                     # ASCII.

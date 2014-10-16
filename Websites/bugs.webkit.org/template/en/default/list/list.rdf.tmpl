@@ -27,6 +27,7 @@
 
 <bz:result rdf:about="[% urlbase FILTER xml %]buglist.cgi?[% urlquerypart FILTER html %]">
   <bz:installation rdf:resource="[% urlbase FILTER xml %]" />
+  <bz:query_timestamp>[% currenttime FILTER time('%Y-%m-%d %T %Z') FILTER html %]</bz:query_timestamp>
   <bz:bugs>
     <Seq>
     [% FOREACH bug = bugs %]
@@ -37,7 +38,7 @@
           <bz:id nc:parseType="Integer">[% bug.bug_id %]</bz:id>
         
         [% FOREACH column = displaycolumns %]
-          <bz:[% column %][% ' nc:parseType="Integer"' IF column == "votes" %]>[% bug.$column FILTER html %]</bz:[% column %]>
+          <bz:[% column %]>[% bug.$column FILTER html %]</bz:[% column %]>
         [% END %]
         
         </bz:bug>

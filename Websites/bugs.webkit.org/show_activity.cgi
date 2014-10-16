@@ -43,17 +43,21 @@ Bugzilla->login();
 
 # Make sure the bug ID is a positive integer representing an existing
 # bug that the user is authorized to access.
-my $bug_id = $cgi->param('id');
-ValidateBugID($bug_id);
+my $id = $cgi->param('id');
+my $bug = Bugzilla::Bug->check($id);
 
 ###############################################################################
 # End Data/Security Validation
 ###############################################################################
 
-($vars->{'operations'}, $vars->{'incomplete_data'}) = 
-    Bugzilla::Bug::GetBugActivity($bug_id);
+# Run queries against the shadow DB. In the worst case, new changes are not
+# visible immediately due to replication lag.
+Bugzilla->switch_to_shadow_db;
 
-$vars->{'bug'} = new Bugzilla::Bug($bug_id);
+($vars->{'operations'}, $vars->{'incomplete_data'}) = 
+    Bugzilla::Bug::GetBugActivity($bug->id);
+
+$vars->{'bug'} = $bug;
 
 print $cgi->header();
 

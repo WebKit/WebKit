@@ -125,7 +125,8 @@ sub new {
 ###############################
 
 sub add_setting {
-    my ($name, $values, $default_value, $subclass, $force_check) = @_;
+    my ($name, $values, $default_value, $subclass, $force_check,
+        $silently) = @_;
     my $dbh = Bugzilla->dbh;
 
     my $exists = _setting_exists($name);
@@ -146,7 +147,7 @@ sub add_setting {
                       undef, $name);
         }
     }
-    else {
+    elsif (!$silently) {
         print get_text('install_setting_new', { name => $name }) . "\n";
     }
     $dbh->do(q{INSERT INTO setting (name, default_value, is_enabled, subclass)

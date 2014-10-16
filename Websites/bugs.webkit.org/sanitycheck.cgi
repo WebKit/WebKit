@@ -31,9 +31,11 @@ use lib qw(. lib);
 use Bugzilla;
 use Bugzilla::Bug;
 use Bugzilla::Constants;
-use Bugzilla::Util;
 use Bugzilla::Error;
+use Bugzilla::Hook;
+use Bugzilla::Util;
 use Bugzilla::Status;
+use Bugzilla::Token;
 
 ###########################################################################
 # General subs
@@ -74,10 +76,19 @@ my $dbh = Bugzilla->dbh;
 # take the user prefs into account rather than querying the web browser.
 my $template;
 if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
-    $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    $template = Bugzilla->template_inner($user->setting('lang'));
 }
 else {
     $template = Bugzilla->template;
+
+    # Only check the token if we are running this script from the
+    # web browser and a parameter is passed to the script.
+    # XXX - Maybe these two parameters should be deleted once logged in?
+    $cgi->delete('GoAheadAndLogIn', 'Bugzilla_restrictlogin');
+    if (scalar($cgi->param())) {
+        my $token = $cgi->param('token');
+        check_hash_token($token, ['sanitycheck']);
+    }
 }
 my $vars = {};
 
@@ -87,7 +98,6 @@ print $cgi->header() unless Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
 # As this script can now alter the group_control_map table, we no longer
 # let users with editbugs privs run it anymore.
 $user->in_group("editcomponents")
-  || ($user->in_group('editkeywords') && $cgi->param('rebuildkeywordcache'))
   || ThrowUserError("auth_failure", {group  => "editcomponents",
                                      action => "run",
                                      object => "sanity_check"});
@@ -95,39 +105,6 @@ $user->in_group("editcomponents")
 unless (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
     $template->process('admin/sanitycheck/list.html.tmpl', $vars)
       || ThrowTemplateError($template->error());
-}
-
-###########################################################################
-# Users with 'editkeywords' privs only can only check keywords.
-###########################################################################
-unless ($user->in_group('editcomponents')) {
-    check_votes_or_keywords('keywords');
-    Status('checks_completed');
-
-    $template->process('global/footer.html.tmpl', $vars)
-        || ThrowTemplateError($template->error());
-    exit;
-}
-
-###########################################################################
-# Fix vote cache
-###########################################################################
-
-if ($cgi->param('rebuildvotecache')) {
-    Status('vote_cache_rebuild_start');
-    $dbh->bz_start_transaction();
-    $dbh->do(q{UPDATE bugs SET votes = 0});
-    my $sth_update = $dbh->prepare(q{UPDATE bugs 
-                                        SET votes = ? 
-                                      WHERE bug_id = ?});
-    my $sth = $dbh->prepare(q{SELECT bug_id, SUM(vote_count)
-                                FROM votes }. $dbh->sql_group_by('bug_id'));
-    $sth->execute();
-    while (my ($id, $v) = $sth->fetchrow_array) {
-        $sth_update->execute($v, $id);
-    }
-    $dbh->bz_commit_transaction();
-    Status('vote_cache_rebuild_end');
 }
 
 ###########################################################################
@@ -140,14 +117,10 @@ if ($cgi->param('createmissinggroupcontrolmapentries')) {
     my $na    = CONTROLMAPNA;
     my $shown = CONTROLMAPSHOWN;
     my $insertsth = $dbh->prepare(
-        qq{INSERT INTO group_control_map (
-                       group_id, product_id, entry,
-                       membercontrol, othercontrol, canedit
-                      )
-               VALUES (
-                       ?, ?, 0,
-                       $shown, $na, 0
-                      )});
+        qq{INSERT INTO group_control_map
+                       (group_id, product_id, membercontrol, othercontrol)
+                VALUES (?, ?, $shown, $na)});
+
     my $updatesth = $dbh->prepare(qq{UPDATE group_control_map
                                         SET membercontrol = $shown
                                       WHERE group_id   = ?
@@ -223,6 +196,22 @@ if ($cgi->param('repair_creation_date')) {
 }
 
 ###########################################################################
+# Fix everconfirmed
+###########################################################################
+
+if ($cgi->param('repair_everconfirmed')) {
+    Status('everconfirmed_start');
+
+    my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED'} BUG_STATE_OPEN;
+    my $confirmed_open_states = join(', ', map {$dbh->quote($_)} @confirmed_open_states);
+
+    $dbh->do("UPDATE bugs SET everconfirmed = 0 WHERE bug_status = 'UNCONFIRMED'");
+    $dbh->do("UPDATE bugs SET everconfirmed = 1 WHERE bug_status IN ($confirmed_open_states)");
+
+    Status('everconfirmed_end');
+}
+
+###########################################################################
 # Fix entries in Bugs full_text
 ###########################################################################
 
@@ -250,14 +239,14 @@ if ($cgi->param('rescanallBugMail')) {
     require Bugzilla::BugMail;
 
     Status('send_bugmail_start');
-    my $time = $dbh->sql_interval(30, 'MINUTE');
+    my $time = $dbh->sql_date_math('NOW()', '-', 30, 'MINUTE');
 
     my $list = $dbh->selectcol_arrayref(qq{
                                         SELECT bug_id
                                           FROM bugs 
                                          WHERE (lastdiffed IS NULL
                                                 OR lastdiffed < delta_ts)
-                                           AND delta_ts < now() - $time
+                                           AND delta_ts < $time
                                       ORDER BY bug_id});
 
     Status('send_bugmail_status', {bug_count => scalar(@$list)});
@@ -269,7 +258,7 @@ if ($cgi->param('rescanallBugMail')) {
     # and so choosing this user as being the last one having done a change
     # for the bug may be problematic. So the best we can do at this point
     # is to choose the currently logged in user for email notification.
-    $vars->{'changer'} = Bugzilla->user->login;
+    $vars->{'changer'} = Bugzilla->user;
 
     foreach my $bugid (@$list) {
         Bugzilla::BugMail::Send($bugid, $vars);
@@ -293,17 +282,12 @@ if ($cgi->param('remove_invalid_bug_references')) {
 
     $dbh->bz_start_transaction();
 
-    # Include custom multi-select fields to the list.
-    my @multi_selects = Bugzilla->get_fields({custom => 1, type => FIELD_TYPE_MULTI_SELECT});
-    my @addl_fields = map { 'bug_' . $_->name . '/' } @multi_selects;
-
     foreach my $pair ('attachments/', 'bug_group_map/', 'bugs_activity/',
                       'bugs_fulltext/', 'cc/',
                       'dependencies/blocked', 'dependencies/dependson',
                       'duplicates/dupe', 'duplicates/dupe_of',
-                      'flags/', 'keywords/', 'longdescs/', 'votes/',
-                      @addl_fields)
-    {
+                      'flags/', 'keywords/', 'longdescs/') {
+
         my ($table, $field) = split('/', $pair);
         $field ||= "bug_id";
 
@@ -376,6 +360,15 @@ if ($cgi->param('remove_old_whine_targets')) {
     Status('whines_obsolete_target_deletion_end');
 }
 
+###########################################################################
+# Repair hook
+###########################################################################
+
+Bugzilla::Hook::process('sanitycheck_repair', { status => \&Status });
+
+###########################################################################
+# Checks
+###########################################################################
 Status('checks_start');
 
 ###########################################################################
@@ -462,10 +455,6 @@ CrossCheck("flagtypes", "id",
            ["flagexclusions", "type_id"],
            ["flaginclusions", "type_id"]);
 
-# Include custom multi-select fields to the list.
-my @multi_selects = Bugzilla->get_fields({custom => 1, type => FIELD_TYPE_MULTI_SELECT});
-my @addl_fields = map { ['bug_' . $_->name, 'bug_id'] } @multi_selects;
-
 CrossCheck("bugs", "bug_id",
            ["bugs_activity", "bug_id"],
            ["bug_group_map", "bug_id"],
@@ -476,11 +465,9 @@ CrossCheck("bugs", "bug_id",
            ["dependencies", "blocked"],
            ["dependencies", "dependson"],
            ['flags', 'bug_id'],
-           ["votes", "bug_id"],
            ["keywords", "bug_id"],
            ["duplicates", "dupe_of", "dupe"],
-           ["duplicates", "dupe", "dupe_of"],
-           @addl_fields);
+           ["duplicates", "dupe", "dupe_of"]);
 
 CrossCheck("groups", "id",
            ["bug_group_map", "group_id"],
@@ -512,7 +499,6 @@ CrossCheck("profiles", "userid",
            ["bugs_activity", "who", "bug_id"],
            ["cc", "who", "bug_id"],
            ['quips', 'userid'],
-           ["votes", "who", "bug_id"],
            ["longdescs", "who", "bug_id"],
            ["logincookies", "userid"],
            ["namedqueries", "userid"],
@@ -669,75 +655,14 @@ while (my ($id, $email) = $sth->fetchrow_array) {
 }
 
 ###########################################################################
-# Perform vote/keyword cache checks
+# Perform keyword checks
 ###########################################################################
 
-check_votes_or_keywords();
-
-sub check_votes_or_keywords {
-    my $check = shift || 'all';
-
-    my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare(q{SELECT bug_id, votes, keywords
-                                FROM bugs
-                               WHERE votes != 0 OR keywords != ''});
-    $sth->execute;
-
-    my %votes;
-    my %keyword;
-
-    while (my ($id, $v, $k) = $sth->fetchrow_array) {
-        if ($v != 0) {
-            $votes{$id} = $v;
-        }
-        if ($k) {
-            $keyword{$id} = $k;
-        }
-    }
-
-    # If we only want to check keywords, skip checks about votes.
-    _check_votes(\%votes) unless ($check eq 'keywords');
-    # If we only want to check votes, skip checks about keywords.
-    _check_keywords(\%keyword) unless ($check eq 'votes');
-}
-
-sub _check_votes {
-    my $votes = shift;
-
-    Status('vote_count_start');
-    my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare(q{SELECT bug_id, SUM(vote_count)
-                                FROM votes }.
-                                $dbh->sql_group_by('bug_id'));
-    $sth->execute;
-
-    my $offer_votecache_rebuild = 0;
-
-    while (my ($id, $v) = $sth->fetchrow_array) {
-        if ($v <= 0) {
-            Status('vote_count_alert', {id => $id}, 'alert');
-        } else {
-            if (!defined $votes->{$id} || $votes->{$id} != $v) {
-                Status('vote_cache_alert', {id => $id}, 'alert');
-                $offer_votecache_rebuild = 1;
-            }
-            delete $votes->{$id};
-        }
-    }
-    foreach my $id (keys %$votes) {
-        Status('vote_cache_alert', {id => $id}, 'alert');
-        $offer_votecache_rebuild = 1;
-    }
-
-    Status('vote_cache_rebuild_fix') if $offer_votecache_rebuild;
-}
-
-sub _check_keywords {
-    my $keyword = shift;
-
-    Status('keyword_check_start');
+sub check_keywords {
     my $dbh = Bugzilla->dbh;
     my $cgi = Bugzilla->cgi;
+
+    Status('keyword_check_start');
 
     my %keywordids;
     my $keywords = $dbh->selectall_arrayref(q{SELECT id, name
@@ -769,79 +694,6 @@ sub _check_keywords {
         }
         $lastid = $id;
         $lastk = $k;
-    }
-
-    Status('keyword_cache_start');
-
-    if ($cgi->param('rebuildkeywordcache')) {
-        $dbh->bz_start_transaction();
-    }
-
-    my $query = q{SELECT keywords.bug_id, keyworddefs.name
-                    FROM keywords
-              INNER JOIN keyworddefs
-                      ON keyworddefs.id = keywords.keywordid
-              INNER JOIN bugs
-                      ON keywords.bug_id = bugs.bug_id
-                ORDER BY keywords.bug_id, keyworddefs.name};
-
-    $sth = $dbh->prepare($query);
-    $sth->execute;
-
-    my $lastb = 0;
-    my @list;
-    my %realk;
-    while (1) {
-        my ($b, $k) = $sth->fetchrow_array;
-        if (!defined $b || $b != $lastb) {
-            if (@list) {
-                $realk{$lastb} = join(', ', @list);
-            }
-            last unless $b;
-
-            $lastb = $b;
-            @list = ();
-        }
-        push(@list, $k);
-    }
-
-    my @badbugs = ();
-
-    foreach my $b (keys(%$keyword)) {
-        if (!exists $realk{$b} || $realk{$b} ne $keyword->{$b}) {
-            push(@badbugs, $b);
-        }
-    }
-    foreach my $b (keys(%realk)) {
-        if (!exists $keyword->{$b}) {
-            push(@badbugs, $b);
-        }
-    }
-    if (@badbugs) {
-        @badbugs = sort {$a <=> $b} @badbugs;
-
-        if ($cgi->param('rebuildkeywordcache')) {
-            my $sth_update = $dbh->prepare(q{UPDATE bugs
-                                                SET keywords = ?
-                                              WHERE bug_id = ?});
-
-            Status('keyword_cache_fixing');
-            foreach my $b (@badbugs) {
-                my $k = '';
-                if (exists($realk{$b})) {
-                    $k = $realk{$b};
-                }
-                $sth_update->execute($k, $b);
-            }
-            Status('keyword_cache_fixed');
-        } else {
-            Status('keyword_cache_alert', {badbugs => \@badbugs}, 'alert');
-            Status('keyword_cache_rebuild');
-        }
-    }
-
-    if ($cgi->param('rebuildkeywordcache')) {
-        $dbh->bz_commit_transaction();
     }
 }
 
@@ -953,19 +805,13 @@ BugCheck("bugs WHERE bug_status NOT IN ($open_states) AND resolution = ''",
 Status('bug_check_status_everconfirmed');
 
 BugCheck("bugs WHERE bug_status = 'UNCONFIRMED' AND everconfirmed = 1",
-         'bug_check_status_everconfirmed_error_text');
+         'bug_check_status_everconfirmed_error_text', 'repair_everconfirmed');
 
 my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED'} BUG_STATE_OPEN;
 my $confirmed_open_states = join(', ', map {$dbh->quote($_)} @confirmed_open_states);
 
 BugCheck("bugs WHERE bug_status IN ($confirmed_open_states) AND everconfirmed = 0",
-         'bug_check_status_everconfirmed_error_text2');
-
-Status('bug_check_votes_everconfirmed');
-
-BugCheck("bugs INNER JOIN products ON bugs.product_id = products.id " .
-         "WHERE everconfirmed = 0 AND votestoconfirm <= votes",
-         'bug_check_votes_everconfirmed_error_text');
+         'bug_check_status_everconfirmed_error_text2', 'repair_everconfirmed');
 
 ###########################################################################
 # Control Values
@@ -1021,12 +867,12 @@ BugCheck("bugs
 
 Status('unsent_bugmail_check');
 
-my $time = $dbh->sql_interval(30, 'MINUTE');
+my $time = $dbh->sql_date_math('NOW()', '-', 30, 'MINUTE');
 my $badbugs = $dbh->selectcol_arrayref(qq{
                     SELECT bug_id 
                       FROM bugs 
                      WHERE (lastdiffed IS NULL OR lastdiffed < delta_ts)
-                       AND delta_ts < now() - $time
+                       AND delta_ts < $time
                   ORDER BY bug_id});
 
 
@@ -1058,6 +904,12 @@ foreach my $target (['groups', 'id', MAILTO_GROUP],
     }
 }
 Status('whines_obsolete_target_fix') if $display_repair_whines_link;
+
+###########################################################################
+# Check hook
+###########################################################################
+
+Bugzilla::Hook::process('sanitycheck_check', { status => \&Status });
 
 ###########################################################################
 # End

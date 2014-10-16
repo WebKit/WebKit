@@ -27,18 +27,11 @@
   title = "Select Classification"
 %]
 
-[% edit_contentlink = BLOCK %]
-  editproducts.cgi?classification=%%name%%
-[% END %]
-[% add_contentlink = BLOCK %]
-  editproducts.cgi?action=add&amp;classification=%%name%%
-[% END %]
-
 [% columns = [
      { 
        name => "name"
        heading => "Edit products of..."
-       contentlink => edit_contentlink
+       contentlink => 'editproducts.cgi?classification=%%name%%'
      },
      { 
        name => "description"
@@ -57,9 +50,11 @@
   [% columns.push({
        heading => "Action..."
        content => "Add product"
-       contentlink => add_contentlink })
+       contentlink => 'editproducts.cgi?action=add&amp;classification=%%name%%' })
   %]
 [% END %]
+
+[% Hook.process('before_table') %]
 
 [% PROCESS admin/table.html.tmpl
      columns = columns

@@ -31,13 +31,9 @@
   #               below), keyed by reasonname (e.g. comments; again, see
   #               below). The value is a boolean - true if the user is
   #               receiving mail for that reason when in that role.
-  # Also references the 'supportwatchers' Param.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
-
-[% useqacontact = Param('useqacontact') %]
-[% usevotes = Param('usevotes') %]
 
 <p>
   If you don't like getting a notification for "trivial"
@@ -81,8 +77,8 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
       [% prefname = "email-$constants.REL_ANY-$constants.EVT_FLAG_REQUESTED" %]
       <input type="checkbox" name="[% prefname %]" id="[% prefname %]" 
         value="1"
-        [% " checked" IF 
-                  mail.${constants.REL_ANY}.${constants.EVT_FLAG_REQUESTED} %]>
+        [% " checked"
+           IF user.mail_settings.${constants.REL_ANY}.${constants.EVT_FLAG_REQUESTED} %]>
       <label for="[% prefname %]">Email me when someone asks me to set a flag</label>
       <br>
     </td>
@@ -93,8 +89,8 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
       [% prefname = "email-$constants.REL_ANY-$constants.EVT_REQUESTED_FLAG" %]
       <input type="checkbox" name="[% prefname %]" id="[% prefname %]" 
         value="1"
-        [% " checked" IF 
-                  mail.${constants.REL_ANY}.${constants.EVT_REQUESTED_FLAG} %]>
+        [% " checked"
+           IF user.mail_settings.${constants.REL_ANY}.${constants.EVT_REQUESTED_FLAG} %]>
       <label for="[% prefname %]">Email me when someone sets a flag I asked for</label>
       <br>
     </td>
@@ -119,6 +115,8 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
 [% events = [
     { id = constants.EVT_ADDED_REMOVED,
       description = "I'm added to or removed from this capacity" },
+    { id = constants.EVT_BUG_CREATED,
+      description = "A new $terms.bug is created" },
     { id = constants.EVT_OPENED_CLOSED,
       description = "The $terms.bug is resolved or reopened" },
     { id = constants.EVT_PROJ_MANAGEMENT,
@@ -149,21 +147,28 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
 [% relationships = [
     { id = constants.REL_ASSIGNEE,
       description = "Assignee" },
-    { id = constants.REL_QA,
-      description = "QA Contact" },
     { id = constants.REL_REPORTER,
       description = "Reporter" },
     { id = constants.REL_CC,
       description = "CCed" },
-    { id = constants.REL_VOTER,
-      description = "Voter" },
 ] %]
+
+[% IF Param('useqacontact') %]
+  [% relationships.push({ id = constants.REL_QA, 
+                          description = "QA Contact" }) %]
+[% END %]
+
+
+[%# This is up here so that the "relationships" hook can modify it. %]
+[% no_added_removed = [constants.REL_REPORTER] %]
+
+[% Hook.process('relationships') %]
+
+[% num_columns = relationships.size %]
 
 <table class="bz_emailprefs" border="1">
   <tr>
-    <td colspan="[% (useqacontact AND usevotes) ? '5' : 
-                     ((useqacontact OR usevotes) ? '4' : '3') %]" 
-        align="center" width="50%">
+    <td colspan="[% num_columns FILTER html %]" align="center" width="50%">
       <b>When my relationship to this [% terms.bug %] is:</b>
     </td>
     <td rowspan="2" width="40%">
@@ -173,8 +178,6 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
 
   <tr>
     [% FOREACH relationship = relationships %]
-      [% NEXT IF (relationship.id == constants.REL_QA AND NOT useqacontact) OR
-                 (relationship.id == constants.REL_VOTER AND NOT usevotes) %]
       <th align="center" width="9%">
         [% relationship.description FILTER html %]
       </th>
@@ -185,18 +188,16 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
     [% count = loop.count() %]
     <tr class="bz_row_[% count % 2 == 1 ? "odd" : "even" %]">
       [% FOREACH relationship = relationships %]
-      [% NEXT IF (relationship.id == constants.REL_QA AND NOT useqacontact) OR
-                 (relationship.id == constants.REL_VOTER AND NOT usevotes) %]
         <td align="center">
           <input type="checkbox" 
             name="email-[% relationship.id %]-[% event.id %]"
             value="1"
             [%# The combinations don't always make sense; disable a couple %]
             [% IF event.id == constants.EVT_ADDED_REMOVED AND 
-                 (relationship.id == constants.REL_REPORTER OR
-                  relationship.id == constants.REL_VOTER) %]
+                  no_added_removed.contains(relationship.id) 
+            %]
                disabled
-            [% ELSIF mail.${relationship.id}.${event.id} %]
+            [% ELSIF user.mail_settings.${relationship.id}.${event.id} %]
                checked
             [% END %]>
         </td>
@@ -208,8 +209,7 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
   [% END %]
   
   <tr>
-    <td colspan="[% (useqacontact AND usevotes) ? '5' : 
-                     ((useqacontact OR usevotes) ? '4' : '3') %]" 
+    <td colspan="[% num_columns FILTER html %]" 
         align="center" width="50%">
       &nbsp;
     </td>
@@ -222,13 +222,11 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
     [% count = loop.count() %]
     <tr class="bz_row_[% count % 2 == 1 ? "odd" : "even" %]">
       [% FOREACH relationship = relationships %]
-        [% NEXT IF (relationship.id == constants.REL_QA AND NOT useqacontact) OR
-                   (relationship.id == constants.REL_VOTER AND NOT usevotes) %]
         <td align="center">
           <input type="checkbox" 
             name="neg-email-[% relationship.id %]-[% event.id %]"
             value="1"
-            [% " checked" IF NOT mail.${relationship.id}.${event.id} %]>
+            [% " checked" IF NOT user.mail_settings.${relationship.id}.${event.id} %]>
         </td>
       [% END %]
       <td>
@@ -239,30 +237,6 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
   
 </table>
 
-[%# Add hidden form fields for fields not used %]
-[% FOREACH event = events %]  
-  [% FOREACH relationship = relationships %]
-    [% IF (relationship.id == constants.REL_QA AND NOT useqacontact) OR
-          (relationship.id == constants.REL_VOTER AND NOT usevotes) %]
-      <input type="hidden" 
-        name="email-[% relationship.id %]-[% event.id %]"
-        value="[% mail.${relationship.id}.${event.id} ? "1" : "0" %]">
-    [% END %]
-  [% END %]
-[% END %]
-
-[% FOREACH event = neg_events %]  
-  [% FOREACH relationship = relationships %]
-    [% IF (relationship.id == constants.REL_QA AND NOT useqacontact) OR
-          (relationship.id == constants.REL_VOTER AND NOT usevotes) %]
-      <input type="hidden" 
-        name="neg-email-[% relationship.id %]-[% event.id %]"
-        value="[% mail.${relationship.id}.${event.id} ? "0" : "1" %]">
-    [% END %]
-  [% END %]
-[% END %]
-
-[% IF Param('supportwatchers') %]
 <hr>
 <b>User Watching</b>
 
@@ -290,11 +264,17 @@ You are currently not watching any users.
 [% END %]
 </p>
 
-<p><a name="new_watched_by_you" id="new_watched_by_you">Add users to my watch list (comma separated list)</a>:
-  <input size="60" name="new_watchedusers" value="">
+<p id="new_watched_by_you">Add users to my watch list (comma separated list):
+  [% INCLUDE global/userselect.html.tmpl
+     id => "new_watchedusers"
+     name => "new_watchedusers"
+     value => ""
+     size => 60
+     multiple => 5
+  %]
 </p>            
 
-<p><a name="watching_you" id="watching_you">Users watching you</a>:<br>
+<p id="watching_you">Users watching you:<br>
   [% IF watchers.size %]
     [% FOREACH watcher = watchers %]
       [% watcher FILTER html %] <br>
@@ -303,8 +283,6 @@ You are currently not watching any users.
     <i>No one</i>
   [% END %]
 </p>
-
-[% END %]
 
 <hr>
 

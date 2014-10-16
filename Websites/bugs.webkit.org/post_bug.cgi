@@ -55,42 +55,20 @@ my $vars = {};
 ######################################################################
 
 # redirect to enter_bug if no field is passed.
-print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi') unless $cgi->param();
+unless ($cgi->param()) {
+    print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi');
+    exit;
+}
 
 # Detect if the user already used the same form to submit a bug
 my $token = trim($cgi->param('token'));
-if ($token) {
-    my ($creator_id, $date, $old_bug_id) = Bugzilla::Token::GetTokenData($token);
-    unless ($creator_id
-              && ($creator_id == $user->id)
-              && ($old_bug_id =~ "^createbug:"))
-    {
-        # The token is invalid.
-        ThrowUserError('token_does_not_exist');
-    }
-
-    $old_bug_id =~ s/^createbug://;
-
-    if ($old_bug_id && (!$cgi->param('ignore_token')
-                        || ($cgi->param('ignore_token') != $old_bug_id)))
-    {
-        $vars->{'bugid'} = $old_bug_id;
-        $vars->{'allow_override'} = defined $cgi->param('ignore_token') ? 0 : 1;
-
-        print $cgi->header();
-        $template->process("bug/create/confirm-create-dupe.html.tmpl", $vars)
-           || ThrowTemplateError($template->error());
-        exit;
-    }
-}    
+check_token_data($token, 'create_bug', 'index.cgi');
 
 # do a match on the fields if applicable
-
-&Bugzilla::User::match_field ($cgi, {
+Bugzilla::User::match_field ({
     'cc'            => { 'type' => 'multi'  },
     'assigned_to'   => { 'type' => 'single' },
     'qa_contact'    => { 'type' => 'single' },
-    '^requestee_type-(\d+)$' => { 'type' => 'multi' },
 });
 
 if (defined $cgi->param('maketemplate')) {
@@ -104,16 +82,6 @@ if (defined $cgi->param('maketemplate')) {
 }
 
 umask 0;
-
-# get current time
-my $timestamp = $dbh->selectrow_array(q{SELECT NOW()});
-
-# Group Validation
-my @selected_groups;
-foreach my $group (grep(/^bit-\d+$/, $cgi->param())) {
-    $group =~ /^bit-(\d+)$/;
-    push(@selected_groups, $1);
-}
 
 # The format of the initial comment can be structured by adding fields to the
 # enter_bug template and then referencing them in the comment template.
@@ -141,7 +109,7 @@ push(@bug_fields, qw(
 
     alias
     blocked
-    commentprivacy
+    comment_is_private
     bug_file_loc
     bug_severity
     bug_status
@@ -162,22 +130,30 @@ my %bug_params;
 foreach my $field (@bug_fields) {
     $bug_params{$field} = $cgi->param($field);
 }
-$bug_params{'creation_ts'} = $timestamp;
-$bug_params{'cc'}          = [$cgi->param('cc')];
-$bug_params{'groups'}      = \@selected_groups;
-$bug_params{'comment'}     = $comment;
+foreach my $field (qw(cc groups)) {
+    next if !$cgi->should_set($field);
+    $bug_params{$field} = [$cgi->param($field)];
+}
+$bug_params{'comment'} = $comment;
 
 my @multi_selects = grep {$_->type == FIELD_TYPE_MULTI_SELECT && $_->enter_bug}
                          Bugzilla->active_custom_fields;
 
 foreach my $field (@multi_selects) {
+    next if !$cgi->should_set($field->name);
     $bug_params{$field->name} = [$cgi->param($field->name)];
 }
 
 my $bug = Bugzilla::Bug->create(\%bug_params);
 
-# Get the bug ID back.
+# Get the bug ID back and delete the token used to create this bug.
 my $id = $bug->bug_id;
+delete_token($token);
+
+# We do this directly from the DB because $bug->creation_ts has the seconds
+# formatted out of it (which should be fixed some day).
+my $timestamp = $dbh->selectrow_array(
+    'SELECT creation_ts FROM bugs WHERE bug_id = ?', undef, $id);
 
 # Set Version cookie, but only if the user actually selected
 # a version on the page.
@@ -192,93 +168,78 @@ if (defined $cgi->param('version')) {
 # after the bug is filed.
 
 # Add an attachment if requested.
-if (defined($cgi->upload('data')) || $cgi->param('attachurl')) {
-    $cgi->param('isprivate', $cgi->param('commentprivacy'));
-    my $attachment = Bugzilla::Attachment->insert_attachment_for_bug(!THROW_ERROR,
-                                                  $bug, $user, $timestamp, $vars);
+if (defined($cgi->upload('data')) || $cgi->param('attach_text')) {
+    $cgi->param('isprivate', $cgi->param('comment_is_private'));
+
+    # Must be called before create() as it may alter $cgi->param('ispatch').
+    my $content_type = Bugzilla::Attachment::get_content_type();
+    my $attachment;
+
+    # If the attachment cannot be successfully added to the bug,
+    # we notify the user, but we don't interrupt the bug creation process.
+    my $error_mode_cache = Bugzilla->error_mode;
+    Bugzilla->error_mode(ERROR_MODE_DIE);
+    eval {
+        $attachment = Bugzilla::Attachment->create(
+            {bug           => $bug,
+             creation_ts   => $timestamp,
+             data          => scalar $cgi->param('attach_text') || $cgi->upload('data'),
+             description   => scalar $cgi->param('description'),
+             filename      => $cgi->param('attach_text') ? "file_$id.txt" : scalar $cgi->upload('data'),
+             ispatch       => scalar $cgi->param('ispatch'),
+             isprivate     => scalar $cgi->param('isprivate'),
+             mimetype      => $content_type,
+            });
+    };
+    Bugzilla->error_mode($error_mode_cache);
 
     if ($attachment) {
-        # Update the comment to include the new attachment ID.
-        # This string is hardcoded here because Template::quoteUrls()
-        # expects to find this exact string.
-        my $new_comment = "Created an attachment (id=" . $attachment->id . ")\n" .
-                          $attachment->description . "\n";
-        # We can use $bug->longdescs here because we are sure that the bug
-        # description is of type CMT_NORMAL. No need to include it if it's
-        # empty, though.
-        if ($bug->longdescs->[0]->{'body'} !~ /^\s+$/) {
-            $new_comment .= "\n" . $bug->longdescs->[0]->{'body'};
-        }
-        $bug->update_comment($bug->longdescs->[0]->{'id'}, $new_comment);
+        # Set attachment flags.
+        my ($flags, $new_flags) = Bugzilla::Flag->extract_flags_from_cgi(
+                                      $bug, $attachment, $vars, SKIP_REQUESTEE_ON_ERROR);
+        $attachment->set_flags($flags, $new_flags);
+        $attachment->update($timestamp);
+        my $comment = $bug->comments->[0];
+        $comment->set_all({ type => CMT_ATTACHMENT_CREATED, 
+                            extra_data => $attachment->id });
+        $comment->update();
     }
     else {
         $vars->{'message'} = 'attachment_creation_failed';
     }
-
-    # Determine if Patch Viewer is installed, for Diff link
-    eval {
-        require PatchReader;
-        $vars->{'patchviewerinstalled'} = 1;
-    };
 }
 
-# Add flags, if any. To avoid dying if something goes wrong
-# while processing flags, we will eval() flag validation.
-# This requires errors to die().
-# XXX: this can go away as soon as flag validation is able to
-#      fail without dying.
-my $error_mode_cache = Bugzilla->error_mode;
-Bugzilla->error_mode(ERROR_MODE_DIE);
-eval {
-    Bugzilla::Flag::validate($id, undef, SKIP_REQUESTEE_ON_ERROR);
-    Bugzilla::Flag->process($bug, undef, $timestamp, $vars);
-};
-Bugzilla->error_mode($error_mode_cache);
-if ($@) {
-    $vars->{'message'} = 'flag_creation_failed';
-    $vars->{'flag_creation_error'} = $@;
-}
-
-# Email everyone the details of the new bug 
-$vars->{'mailrecipients'} = {'changer' => $user->login};
+# Set bug flags.
+my ($flags, $new_flags) = Bugzilla::Flag->extract_flags_from_cgi($bug, undef, $vars,
+                                                             SKIP_REQUESTEE_ON_ERROR);
+$bug->set_flags($flags, $new_flags);
+$bug->update($timestamp);
 
 $vars->{'id'} = $id;
 $vars->{'bug'} = $bug;
 
-Bugzilla::Hook::process("post_bug-after_creation", { vars => $vars });
+Bugzilla::Hook::process('post_bug_after_creation', { vars => $vars });
 
 ThrowCodeError("bug_error", { bug => $bug }) if $bug->error;
 
-$vars->{'sentmail'} = [];
-
-push (@{$vars->{'sentmail'}}, { type => 'created',
-                                id => $id,
-                              });
-
-foreach my $i (@{$bug->dependson || []}, @{$bug->blocked || []}) {
-    push (@{$vars->{'sentmail'}}, { type => 'dep', id => $i, });
+my $recipients = { changer => $user };
+my $bug_sent = Bugzilla::BugMail::Send($id, $recipients);
+$bug_sent->{type} = 'created';
+$bug_sent->{id}   = $id;
+my @all_mail_results = ($bug_sent);
+foreach my $dep (@{$bug->dependson || []}, @{$bug->blocked || []}) {
+    my $dep_sent = Bugzilla::BugMail::Send($dep, $recipients);
+    $dep_sent->{type} = 'dep';
+    $dep_sent->{id}   = $dep;
+    push(@all_mail_results, $dep_sent);
 }
+$vars->{sentmail} = \@all_mail_results;
 
-my @bug_list;
-if ($cgi->cookie("BUGLIST")) {
-    @bug_list = split(/:/, $cgi->cookie("BUGLIST"));
-}
-$vars->{'bug_list'} = \@bug_list;
-$vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
-
-if ($token) {
-    trick_taint($token);
-    $dbh->do('UPDATE tokens SET eventdata = ? WHERE token = ?', undef, 
-             ("createbug:$id", $token));
-}
-
-if (Bugzilla->usage_mode == USAGE_MODE_EMAIL) {
-    Bugzilla::BugMail::Send($id, $vars->{'mailrecipients'});
-}
-else {
-    print $cgi->header();
-    $template->process("bug/create/created.html.tmpl", $vars)
-        || ThrowTemplateError($template->error());
-}
+$format = $template->get_format("bug/create/created",
+                                 scalar($cgi->param('created-format')),
+                                 "html");
+print $cgi->header();
+$template->process($format->{'template'}, $vars)
+    || ThrowTemplateError($template->error());
 
 1;

@@ -23,17 +23,42 @@
 [% USE Bugzilla %]
 [% cgi = Bugzilla.cgi %]
 
-[% PROCESS "global/js-products.html.tmpl" %]
-
 [% PROCESS global/header.html.tmpl
   title="Request Queue"
   style = "
     table.requests th { text-align: left; }
     table#filtering th { text-align: right; }
   "
-  onload="var f = document.forms[0]; selectProduct(f.product, f.component, null, null, 'Any');"
-  javascript_urls=["js/productform.js"]
+  onload="var f = document.request_form; selectProduct(f.product, f.component, null, null, 'Any');"
+  javascript_urls=["js/productform.js", "js/field.js"]
+  style_urls = ['skins/standard/buglist.css']
+  yui = ['autocomplete']
 %]
+
+<script type="text/javascript">
+  var useclassification = false; // No classification level in use
+  var first_load = true; // Is this the first time we load the page?
+  var last_sel = []; // Caches last selection
+  var cpts = new Array();
+  [% n = 1 %]
+  [% IF Param('useclassification') %]
+    [% FOREACH clas = user.get_selectable_classifications %]
+      [% FOREACH prod = user.get_selectable_products(clas.id) %]
+        [%+ PROCESS js_comp %]
+      [% END %]
+    [% END %]
+  [% ELSE %]
+    [% FOREACH prod = user.get_selectable_products %]
+      [%+ PROCESS js_comp %]
+    [% END %]
+  [% END %]
+</script>
+
+[% BLOCK js_comp %]
+  cpts['[% n %]'] = [
+    [%- FOREACH comp = prod.components %]'[% comp.name FILTER js %]'[% ", " UNLESS loop.last %] [%- END -%]];
+  [% n = n+1 %]
+[% END %]
 
 <p>
 When you are logged in, only requests made by you or addressed to you
@@ -42,22 +67,44 @@ When you are logged out, all pending requests that are not restricted
 to some group are shown by default.
 </p>
 
-<form action="request.cgi" method="get">
+<form id="request_form" name="request_form" action="request.cgi" method="get">
   <input type="hidden" name="action" value="queue">
 
   <table id="filtering">
     <tr>
       <th>Requester:</th>
-      <td><input type="text" name="requester" value="[% cgi.param('requester') FILTER html %]" size="20" 
-           title="Requester's email address"></td>
+      <td>
+        [% INCLUDE global/userselect.html.tmpl
+           id => "requester"
+           name => "requester"
+           value => cgi.param('requester')
+           size => 20
+           emptyok => 1
+           field_title => "Requester's email address"
+        %]
+      </td>
       <th>Product:</th>
       <td>
         <select name="product" onchange="selectProduct(this, this.form.component, null, null, 'Any');">
           <option value="">Any</option>
-          [% FOREACH prod = products %]
-            <option value="[% prod.name FILTER html %]"
-                    [% "selected" IF cgi.param('product') == prod.name %]>
-              [% prod.name FILTER html %]</option>
+          [% IF Param('useclassification') %]
+            [% FOREACH c = user.get_selectable_classifications %]
+              <optgroup label="[% c.name FILTER html %]">
+                [% FOREACH p = user.get_selectable_products(c.id) %]
+                  <option value="[% p.name FILTER html %]"
+                    [% " selected" IF cgi.param('product') == p.name %]>
+                    [% p.name FILTER html %]
+                  </option>
+                [% END %]
+              </optgroup>
+            [% END %]
+          [% ELSE %]
+            [% FOREACH p = user.get_selectable_products %]
+              <option value="[% p.name FILTER html %]"
+                [% " selected" IF cgi.param('product') == p.name %]>
+                [% p.name FILTER html %]
+              </option>
+            [% END %]
           [% END %]
         </select>
       </td>
@@ -83,8 +130,17 @@ to some group are shown by default.
     </tr>
     <tr>
       <th>Requestee:</th>
-      <td><input type="text" name="requestee" value="[% cgi.param('requestee') FILTER html %]" size="20" 
-           title="Requestee's email address or &quot;-&quot; (hyphen) for requests with no requestee"></td>
+      <td>
+        [% INCLUDE global/userselect.html.tmpl
+           id => "requestee"
+           name => "requestee"
+           value => cgi.param('requestee')
+           size => 20
+           emptyok => 1
+           hyphenok => 1
+           field_title => "Requestee's email address or \"-\" (hyphen) for requests with no requestee"
+        %]
+      </td>
       <th>Component:</th>
       <td>
         <select name="component">
@@ -136,28 +192,32 @@ to some group are shown by default.
   </p>
 [% ELSE %]
   [% FOREACH request = requests %]
-    [% IF loop.first %] [% PROCESS start_new_table %] [% END %]
-    [% IF request.$group_field != group_value %]
+    [% IF request.$group_field != group_value || loop.first %]
       [% group_value = request.$group_field %]
-      [% UNLESS loop.first %]
-        </table>
-        [% PROCESS start_new_table %]
-      [% END %]
+      [% PROCESS display_buglist UNLESS loop.first %]
+      [% PROCESS start_new_table %]
     [% END %]
+    [% buglist.${request.bug_id} = 1 %]
     <tr>
       [% FOREACH column = display_columns %]
         [% NEXT IF column == group_field || excluded_columns.contains(column) %]
-        <td>[% PROCESS "display_$column" %]</td>
+        <td>
+          [% PROCESS "display_$column" %]
+          [% Hook.process('after_column') %]
+        </td>
       [% END %]
     </tr>
   [% END %]
-  </table>
+  [% PROCESS display_buglist %]
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]
 
 [% BLOCK start_new_table %]
-  <h3>[% column_headers.$group_field %]: [% (request.$group_field || "None") FILTER html %]</h3>
+  [% buglist = {} %]
+
+  <h3>[% column_headers.$group_field %]: 
+    [%+ (request.$group_field || "None") FILTER email FILTER html %]</h3>
   <table class="requests" cellspacing="0" cellpadding="4" border="1">
     <tr>
       [% FOREACH column = display_columns %]
@@ -176,15 +236,16 @@ to some group are shown by default.
 [% END %]
 
 [% BLOCK display_bug %]
-  <a href="show_bug.cgi?id=[% request.bug_id %]">
+  <a href="show_bug.cgi?id=[% request.bug_id %]"
+     [%- ' class="bz_secure"' IF request.restricted %]>
     [% request.bug_id %]: [%+ request.bug_summary FILTER html %]</a>
 [% END %]
 
 [% BLOCK display_attachment %]
   [% IF request.attach_id %]
-[%# if WEBKIT_CHANGES %]
+[%# if WEBKIT_CHANGES #%]
     <a href="attachment.cgi?id=[% request.attach_id %]&amp;action=review">
-[%# endif // WEBKIT_CHANGES %]
+[%# endif // WEBKIT_CHANGES #%]
       [% request.attach_id %]: [%+ request.attach_summary FILTER html %]</a>
   [% ELSE %]
     N/A
@@ -192,14 +253,21 @@ to some group are shown by default.
 [% END %]
 
 [% BLOCK display_requestee %]
-  [% request.requestee FILTER html %]
+  [% request.requestee FILTER email FILTER html %]
 [% END %]
 
 [% BLOCK display_requester %]
-  [% request.requester FILTER html %]
+  [% request.requester FILTER email FILTER html %]
 [% END %]
 
 [% BLOCK display_created %]
   [% request.created FILTER time %]
 [% END %]
 
+[% BLOCK display_buglist %]
+  </table>
+  [% NEXT UNLESS buglist.keys.size %]
+  <a href="buglist.cgi?bug_id=
+           [%- buglist.keys.nsort.join(",") FILTER html %]">(view as
+  [%+ terms.bug %] list)</a>
+[% END %]

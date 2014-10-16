@@ -82,16 +82,16 @@ from '[% product.name FILTER html %]' product
 
 </tr>
 <tr>
-  <TD VALIGN="top">Closed for [% terms.bugs %]:</TD>
-  <TD VALIGN="top">[% IF product.disallow_new %]Yes[% ELSE %]No[% END %]</td>
+  <TD VALIGN="top">Open for [% terms.bugs %]:</TD>
+  <TD VALIGN="top">[% IF product.is_active && comp.isactive %]Yes[% ELSE %]No[% END %]</td>
 </tr>
 <tr>
   <td valign="top">[% terms.Bugs %]:</td>
   <td valign="top">
 [% IF comp.bug_count %]
   <a title="List of [% terms.bugs %] for component '[% comp.name FILTER html %]'"
-     href="buglist.cgi?component=[% comp.name FILTER url_quote %]&amp;product=
-          [%- product.name FILTER url_quote %]">[% comp.bug_count %]</a>
+     href="buglist.cgi?component=[% comp.name FILTER uri %]&amp;product=
+          [%- product.name FILTER uri %]">[% comp.bug_count %]</a>
 [% ELSE %]
   None
 [% END %]

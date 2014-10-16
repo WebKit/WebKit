@@ -1,0 +1,61 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Everything Solved, Inc.
+  # Portions created by the Initial Developer are Copyright (C) 2010 the
+  # Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s):
+  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# INTERFACE:
+  #   bug: a Bugzilla::Bug object
+  #   link_text: the text that we're highlighting.
+  #   use_alias: boolean; If true, we display the bug's alias as the link
+  #              text instead of link_text.
+  #   comment_num: If defined, make this a link to that comment on the bug.
+  #   full_url: boolean; If true, generate links that include the full
+  #             urlbase. (This is for emails, mostly.)
+  #%]
+
+[% IF !bug %]
+  &lt;missing&gt;
+  [% RETURN %]
+[% END %]
+
+[%# We use "FILTER none" here because link_title is filtered down below. %]
+[% link_title = BLOCK %]
+  [% display_value('bug_status', bug.bug_status) FILTER none %]
+  [%+ display_value('resolution', bug.resolution) FILTER none %]
+[% END %]
+
+[% IF user.can_see_bug(bug) %]
+  [% link_title = link_title _ ' - ' _ bug.short_desc %]
+
+  [% IF use_alias && bug.alias %]
+    [% link_text = bug.alias %]
+  [% END %]
+[% END %]
+
+[% SET anchor = '' %]
+[% IF comment_num.defined %]
+  [% anchor = "#c$comment_num" %]
+[% END %]
+
+<a class="bz_bug_link 
+          bz_status_[% bug.bug_status FILTER css_class_quote %] 
+          [% ' bz_closed' IF !bug.isopened %]"
+   title="[% link_title FILTER collapse FILTER html %]"
+   href="[% urlbase FILTER html IF full_url %]show_bug.cgi?id=
+         [%~ bug.id FILTER uri %][% anchor FILTER html %]">
+  [%~ link_text FILTER html %]</a>

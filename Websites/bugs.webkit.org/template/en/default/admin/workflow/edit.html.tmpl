@@ -35,8 +35,8 @@
 <p>
   This page allows you to define which status transitions are valid in your workflow.
   For compatibility with older versions of [% terms.Bugzilla %], reopening [% terms.abug %]
-  will only display either [% get_status("UNCONFIRMED") FILTER html %] or
-  [%+ get_status("REOPENED") FILTER html %] (if allowed by your workflow) but not
+  will only display either [% display_value("bug_status", "UNCONFIRMED") FILTER html %] or
+  [%+ display_value("bug_status", "REOPENED") FILTER html %] (if allowed by your workflow) but not
   both. The decision depends on whether the [% terms.bug %] has ever been confirmed or not.
   So it is a good idea to allow both transitions and let [% terms.Bugzilla %] select the
   correct one.
@@ -54,7 +54,7 @@
     <th>&nbsp;</th>
     [% FOREACH status = statuses %]
       <th class="col-header[% status.is_open ? " open-status" : " closed-status" %]">
-        [% status.name FILTER html %]
+        [% display_value("bug_status", status.name) FILTER html %]
       </th>
     [% END %]
   </tr>
@@ -64,7 +64,7 @@
   [% FOREACH status = p.merge(statuses) %]
     <tr class="highlight">
       <th align="right" class="[% status.is_open ? "open-status" : "closed-status" %]">
-        [% status.name FILTER html %]
+        [% display_value("bug_status", status.name) FILTER html %]
       </th>
 
       [% FOREACH new_status = statuses %]
@@ -89,7 +89,7 @@
 <p>
   When [% terms.abug %] is marked as a duplicate of another one or is moved
   to another installation, the [% terms.bug %] status is automatically set to
-  <b>[% Param("duplicate_or_move_bug_status") FILTER html %]</b>. All transitions to
+  <b>[% display_value("bug_status", Param("duplicate_or_move_bug_status")) FILTER html %]</b>. All transitions to
   this [% terms.bug %] status must then be valid (this is the reason why you cannot edit
   them above).<br>
   Note: you can change this setting by visiting the
@@ -100,7 +100,7 @@
 <p align="center">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="token" value="[% token FILTER html %]">
-  <input type="submit" value="Commit Changes"> -
+  <input type="submit" id="update_workflow" value="Commit Changes"> -
   <a href="editworkflow.cgi">Cancel Changes</a> -
   <a href="editworkflow.cgi?action=edit_comment">View Comments Required on Status Transitions</a>
 </p>

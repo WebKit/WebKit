@@ -48,15 +48,18 @@ use constant TARGET_DB_HOST => 'localhost';
 # MAIN SCRIPT
 #####################################################################
 
-Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
-
 print "Connecting to the '" . SOURCE_DB_NAME . "' source database on " 
       . SOURCE_DB_TYPE . "...\n";
-my $source_db = Bugzilla::DB::_connect(SOURCE_DB_TYPE, SOURCE_DB_HOST, 
-    SOURCE_DB_NAME, undef, undef, SOURCE_DB_USER, SOURCE_DB_PASSWORD);
+my $source_db = Bugzilla::DB::_connect({
+    db_driver => SOURCE_DB_TYPE, 
+    db_host   => SOURCE_DB_HOST, 
+    db_name   => SOURCE_DB_NAME, 
+    db_user   => SOURCE_DB_USER, 
+    db_pass   => SOURCE_DB_PASSWORD,
+});
 # Don't read entire tables into memory.
 if (SOURCE_DB_TYPE eq 'Mysql') {
-    $source_db->{'mysql_use_result'}=1;
+    $source_db->{'mysql_use_result'} = 1;
 
     # MySQL cannot have two queries running at the same time. Ensure the schema
     # is loaded from the database so bz_column_info will not execute a query
@@ -65,19 +68,22 @@ if (SOURCE_DB_TYPE eq 'Mysql') {
 
 print "Connecting to the '" . TARGET_DB_NAME . "' target database on "
       . TARGET_DB_TYPE . "...\n";
-my $target_db = Bugzilla::DB::_connect(TARGET_DB_TYPE, TARGET_DB_HOST, 
-    TARGET_DB_NAME, undef, undef, TARGET_DB_USER, TARGET_DB_PASSWORD);
+my $target_db = Bugzilla::DB::_connect({
+    db_driver => TARGET_DB_TYPE,
+    db_host   => TARGET_DB_HOST, 
+    db_name   => TARGET_DB_NAME, 
+    db_user   => TARGET_DB_USER,
+    db_pass   => TARGET_DB_PASSWORD,
+});
 my $ident_char = $target_db->get_info( 29 ); # SQL_IDENTIFIER_QUOTE_CHAR
 
 # We use the table list from the target DB, because if somebody
 # has customized their source DB, we still want the script to work,
 # and it may otherwise fail in that situation (that is, the tables
 # may not exist in the target DB).
-my @table_list = $target_db->bz_table_list_real();
-
-# We don't want to copy over the bz_schema table's contents.
-my $bz_schema_location = lsearch(\@table_list, 'bz_schema');
-splice(@table_list, $bz_schema_location, 1) if $bz_schema_location > 0;
+#
+# We don't want to copy over the bz_schema table's contents, though.
+my @table_list = grep { $_ ne 'bz_schema' } $target_db->bz_table_list_real();
 
 # Instead of figuring out some fancy algorithm to insert data in the right
 # order and not break FK integrity, we just drop them all.
@@ -195,8 +201,7 @@ foreach my $table (@table_list) {
                 # PostgreSQL doesn't like it when you insert values into
                 # a serial field; it doesn't increment the counter 
                 # automatically.
-                $target_db->do("SELECT pg_catalog.setval 
-                                ('${table}_${column}_seq', $max_val, false)");
+                $target_db->bz_set_next_serial_value($table, $column);
             }
             elsif ($target_db->isa('Bugzilla::DB::Oracle')) {
                 # Oracle increments the counter on every insert, and *always*

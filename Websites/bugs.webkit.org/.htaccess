@@ -1,10 +1,33 @@
-# don't allow people to retrieve non-cgi executable files or our private data
+# Don't allow people to retrieve non-cgi executable files or our private data
 <FilesMatch ^(.*\.pm|.*\.pl|.*localconfig.*)$>
   deny from all
 </FilesMatch>
 <FilesMatch ^(localconfig.js|localconfig.rdf)$>
   allow from all
 </FilesMatch>
+<IfModule mod_expires.c>
+<IfModule mod_headers.c>
+<IfModule mod_env.c>
+  <FilesMatch (\.js|\.css)$>
+    ExpiresActive On
+    # According to RFC 2616, "1 year in the future" means "never expire".
+    # We change the name of the file's URL whenever its modification date
+    # changes, so browsers can cache any individual JS or CSS URL forever.
+    # However, since all JS and CSS URLs involve a ? in them (for the changing
+    # name) we have to explicitly set an Expires header or browsers won't
+    # *ever* cache them.
+    ExpiresDefault "now plus 1 years"
+    Header append Cache-Control "public"
+  </FilesMatch>
+
+  # This lets Bugzilla know that we are properly sending Cache-Control
+  # and Expires headers for CSS and JS files.
+  SetEnv BZ_CACHE_CONTROL 1
+</IfModule>
+</IfModule>
+</IfModule>
 
 # Force all connections to HTTPS for 90 days at a time.
-Header set Strict-Transport-Security "max-age=7776000"
+<IfModule mod_headers.c>
+  Header set Strict-Transport-Security "max-age=7776000"
+</IfModule>

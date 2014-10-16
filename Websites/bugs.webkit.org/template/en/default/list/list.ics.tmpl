@@ -30,8 +30,9 @@ BEGIN:VTODO
 [%+ PROCESS ics_url base_url=urlbase bug_id=bug.bug_id +%]
 [%+ PROCESS ics_status bug_status = bug.bug_status +%]
 [%+ PROCESS ics_dtstamp +%]
+[%+ ics_priorities.${bug.priority} FILTER ics('PRIORITY') +%]
 [% IF bug.changeddate %]
-[%+ time2str("%Y%m%dT%H%M%SZ", bug.changedtime, "UTC") FILTER ics('LAST-MODIFIED') +%]
+[%+ bug.changedtime FILTER time("%Y%m%dT%H%M%SZ", "UTC") FILTER ics('LAST-MODIFIED') +%]
 [% END %]
 [% IF bug.percentage_complete %]
 [%+ bug.percentage_complete FILTER format('%d') FILTER ics('PERCENT-COMPLETE') +%]
@@ -57,19 +58,19 @@ END:VCALENDAR
 [% END %]
 
 [% BLOCK ics_uid %]
-  [% "${bug_id}@${base_url}" FILTER url_quote FILTER ics('UID') %]
+  [% "${bug_id}@${base_url}" FILTER uri FILTER ics('UID') %]
 [% END %]
 
 [% BLOCK ics_url %]
-  [% "${base_url}show_bug.cgi?id=${bug_id}" FILTER url_quote FILTER ics('URL;VALUE=URI') %]
+  [% "${base_url}show_bug.cgi?id=${bug_id}" FILTER uri FILTER ics('URL;VALUE=URI') %]
 [% END %]
 
 [% BLOCK ics_dtstart %]
-  [% time2str("%Y%m%dT%H%M%SZ", bug.opentime, "UTC") FILTER ics('DTSTART') %]
+  [% bug.opentime FILTER time("%Y%m%dT%H%M%SZ", "UTC") FILTER ics('DTSTART') %]
 [% END %]
 
 [% BLOCK ics_dtstamp %]
-  [% time2str("%Y%m%dT%H%M%SZ", currenttime, "UTC") FILTER ics('DTSTAMP') %]
+  [% currenttime FILTER time("%Y%m%dT%H%M%SZ", "UTC") FILTER ics('DTSTAMP') %]
 [% END %]
 
 [% BLOCK ics_status %]
@@ -81,7 +82,7 @@ END:VCALENDAR
     [% END %]
   [% END %]
   [% IF NOT status %]
-    [% IF bug_status == 'ASSIGNED' %]
+    [% IF bug_status == 'IN_PROGRESS' || bug_status == 'ASSIGNED' %]
       [% status = 'IN-PROGRESS' %]
     [% ELSE %]
       [% status = 'NEEDS-ACTION' %]

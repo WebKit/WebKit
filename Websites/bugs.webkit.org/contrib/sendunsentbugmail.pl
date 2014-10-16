@@ -35,7 +35,8 @@ my $list = $dbh->selectcol_arrayref(
         'SELECT bug_id FROM bugs 
           WHERE lastdiffed IS NULL
              OR lastdiffed < delta_ts 
-            AND delta_ts < NOW() - ' . $dbh->sql_interval(30, 'MINUTE') .
+            AND delta_ts < ' 
+                . $dbh->sql_date_math('NOW()', '-', 30, 'MINUTE') .
      ' ORDER BY bug_id');
 
 if (scalar(@$list) > 0) {

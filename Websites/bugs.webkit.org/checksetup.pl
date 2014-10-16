@@ -53,15 +53,19 @@ BEGIN { chdir dirname($0); }
 use lib qw(. lib);
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
-use Bugzilla::Install::Util qw(install_string get_version_and_os get_console_locale);
+use Bugzilla::Install::Util qw(install_string get_version_and_os 
+                               init_console success);
 
 ######################################################################
 # Live Code
 ######################################################################
 
+# Do not run checksetup.pl from the web browser.
+Bugzilla::Install::Util::no_checksetup_from_cgi() if $ENV{'SERVER_SOFTWARE'};
+
 # When we're running at the command line, we need to pick the right
 # language before ever displaying any string.
-$ENV{'HTTP_ACCEPT_LANGUAGE'} ||= get_console_locale();
+init_console();
 
 my %switch;
 GetOptions(\%switch, 'help|h|?', 'check-modules', 'no-templates|t',
@@ -95,10 +99,11 @@ exit if $switch{'check-modules'};
 # then instead of our nice normal checksetup message, the user would
 # get a cryptic perl error about the missing module.
 
-# We need $::ENV{'PATH'} to remain defined.
-my $env = $::ENV{'PATH'};
 require Bugzilla;
-$::ENV{'PATH'} = $env;
+require Bugzilla::User;
+
+require Bugzilla::Util;
+import Bugzilla::Util qw(get_text);
 
 require Bugzilla::Config;
 import Bugzilla::Config qw(:admin);
@@ -115,7 +120,6 @@ require Bugzilla::Template;
 require Bugzilla::Field;
 require Bugzilla::Install;
 
-Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 Bugzilla->installation_mode(INSTALLATION_MODE_NON_INTERACTIVE) if $answers_file;
 Bugzilla->installation_answers($answers_file);
 
@@ -193,12 +197,16 @@ Bugzilla::Field::populate_field_definitions();
 ###########################################################################
 
 Bugzilla::Install::DB::update_table_definitions(\%old_params);
+Bugzilla::Install::init_workflow();
 
 ###########################################################################
 # Bugzilla uses --GROUPS-- to assign various rights to its users.
 ###########################################################################
 
 Bugzilla::Install::update_system_groups();
+
+# "Log In" as the fake superuser who can do everything.
+Bugzilla->set_user(Bugzilla::User->super_user);
 
 ###########################################################################
 # Create --SETTINGS-- users can adjust
@@ -217,12 +225,12 @@ Bugzilla::Install::reset_password($switch{'reset-password'})
     if $switch{'reset-password'};
 
 ###########################################################################
-# Create default Product and Classification
+# Create default Product
 ###########################################################################
 
 Bugzilla::Install::create_default_product();
 
-Bugzilla::Hook::process('install-before_final_checks', {'silent' => $silent });
+Bugzilla::Hook::process('install_before_final_checks', { silent => $silent });
 
 ###########################################################################
 # Final checks
@@ -231,8 +239,11 @@ Bugzilla::Hook::process('install-before_final_checks', {'silent' => $silent });
 # Check if the default parameter for urlbase is still set, and if so, give
 # notification that they should go and visit editparams.cgi 
 if (Bugzilla->params->{'urlbase'} eq '') {
-    print "\n" . Bugzilla::Install::get_text('install_urlbase_default') . "\n"
+    print "\n" . get_text('install_urlbase_default') . "\n"
         unless $silent;
+}
+if (!$silent) {
+    success(get_text('install_success'));
 }
 
 __END__
@@ -406,6 +417,10 @@ from one version of Bugzilla to another.
 
 The code for this is in L<Bugzilla::Install::DB/update_table_definitions>.
 
+This includes creating the default Classification (using 
+L<Bugzilla::Install/create_default_classification>) and setting up all
+the foreign keys for all tables, using L<Bugzilla::DB/bz_setup_foreign_keys>.
+
 =item 14
 
 Creates the system groups--the ones like C<editbugs>, C<admin>, and so on.
@@ -426,7 +441,7 @@ the C<--make-admin> switch.
 
 =item 17
 
-Creates the default Classification, Product, and Component, using
+Creates the default Product and Component, using
 L<Bugzilla::Install/create_default_product>.
 
 =back

@@ -40,6 +40,7 @@ use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::Search;
 use Bugzilla::Search::Quicksearch;
+use Bugzilla::Search::Recent;
 use Bugzilla::Search::Saved;
 use Bugzilla::User;
 use Bugzilla::Bug;
@@ -60,12 +61,14 @@ my $buffer = $cgi->query_string();
 # We have to check the login here to get the correct footer if an error is
 # thrown and to prevent a logged out user to use QuickSearch if 'requirelogin'
 # is turned 'on'.
-Bugzilla->login();
+my $user = Bugzilla->login();
 
 if (length($buffer) == 0) {
     print $cgi->header(-refresh=> '10; URL=query.cgi');
     ThrowUserError("buglist_parameters_required");
 }
+
+$cgi->redirect_search_url();
 
 # Determine whether this is a quicksearch query.
 my $searchstring = $cgi->param('quicksearch');
@@ -79,7 +82,7 @@ if (defined($searchstring)) {
 # If configured to not allow empty words, reject empty searches from the
 # Find a Specific Bug search form, including words being a single or 
 # several consecutive whitespaces only.
-if (!Bugzilla->params->{'specific_search_allow_empty_words'}
+if (!Bugzilla->params->{'search_allow_no_criteria'}
     && defined($cgi->param('content')) && $cgi->param('content') =~ /^\s*$/)
 {
     ThrowUserError("buglist_parameters_required");
@@ -107,16 +110,6 @@ if (defined $cgi->param('format') && $cgi->param('format') eq "rdf"
 # Treat requests for ctype=rss as requests for ctype=atom
 if (defined $cgi->param('ctype') && $cgi->param('ctype') eq "rss") {
     $cgi->param('ctype', "atom");
-}
-
-# The js ctype presents a security risk; a malicious site could use it  
-# to gather information about secure bugs. So, we only allow public bugs to be
-# retrieved with this format.
-#
-# Note that if and when this call clears cookies or has other persistent 
-# effects, we'll need to do this another way instead.
-if ((defined $cgi->param('ctype')) && ($cgi->param('ctype') eq "js")) {
-    Bugzilla->logout_request();
 }
 
 # An agent is a program that automatically downloads and extracts data
@@ -154,35 +147,32 @@ my $serverpush =
                 || $cgi->param('serverpush');
 
 my $order = $cgi->param('order') || "";
-my $order_from_cookie = 0;  # True if $order set using the LASTORDER cookie
 
 # The params object to use for the actual query itself
 my $params;
 
 # If the user is retrieving the last bug list they looked at, hack the buffer
 # storing the query string so that it looks like a query retrieving those bugs.
-if (defined $cgi->param('regetlastlist')) {
-    $cgi->cookie('BUGLIST') || ThrowUserError("missing_cookie");
+if (my $last_list = $cgi->param('regetlastlist')) {
+    my $bug_ids;
 
-    $order = "reuse last sort" unless $order;
-    my $bug_id = $cgi->cookie('BUGLIST');
-    $bug_id =~ s/:/,/g;
+    # Logged-out users use the old cookie method for storing the last search.
+    if (!$user->id or $last_list eq 'cookie') {
+        $bug_ids = $cgi->cookie('BUGLIST') or ThrowUserError("missing_cookie");
+        $bug_ids =~ s/[:-]/,/g;
+        $order ||= "reuse last sort";
+    }
+    # But logged in users store the last X searches in the DB so they can
+    # have multiple bug lists available.
+    else {
+        my $last_search = Bugzilla::Search::Recent->check(
+            { id => $last_list });
+        $bug_ids = join(',', @{ $last_search->bug_list });
+        $order ||= $last_search->list_order;
+    }
     # set up the params for this new query
-    $params = new Bugzilla::CGI({
-                                 bug_id => $bug_id,
-                                 order => $order,
-                                });
-}
-
-if ($buffer =~ /&cmd-/) {
-    my $url = "query.cgi?$buffer#chart";
-    print $cgi->redirect(-location => $url);
-    # Generate and return the UI (HTML page) from the appropriate template.
-    $vars->{'message'} = "buglist_adding_field";
-    $vars->{'url'} = $url;
-    $template->process("global/message.html.tmpl", $vars)
-      || ThrowTemplateError($template->error());
-    exit;
+    $params = new Bugzilla::CGI({ bug_id => $bug_ids, order => $order });
+    $params->param('list_id', $last_list);
 }
 
 # Figure out whether or not the user is doing a fulltext search.  If not,
@@ -202,82 +192,35 @@ foreach my $chart (@charts) {
 # Utilities
 ################################################################################
 
-local our @weekday= qw( Sun Mon Tue Wed Thu Fri Sat );
 sub DiffDate {
     my ($datestr) = @_;
     my $date = str2time($datestr);
     my $age = time() - $date;
-    my ($s,$m,$h,$d,$mo,$y,$wd)= localtime $date;
+
     if( $age < 18*60*60 ) {
-        $date = sprintf "%02d:%02d:%02d", $h,$m,$s;
+        $date = format_time($datestr, '%H:%M:%S');
     } elsif( $age < 6*24*60*60 ) {
-        $date = sprintf "%s %02d:%02d", $weekday[$wd],$h,$m;
+        $date = format_time($datestr, '%a %H:%M');
     } else {
-        $date = sprintf "%04d-%02d-%02d", 1900+$y,$mo+1,$d;
+        $date = format_time($datestr, '%Y-%m-%d');
     }
     return $date;
 }
 
 sub LookupNamedQuery {
-    my ($name, $sharer_id, $query_type, $throw_error) = @_;
-    my $user = Bugzilla->login(LOGIN_REQUIRED);
-    my $dbh = Bugzilla->dbh;
-    my $owner_id;
-    $throw_error = 1 unless defined $throw_error;
+    my ($name, $sharer_id) = @_;
 
-    # $name and $sharer_id are safe -- we only use them below in SELECT
-    # placeholders and then in error messages (which are always HTML-filtered).
-    $name || ThrowUserError("query_name_missing");
-    trick_taint($name);
-    if ($sharer_id) {
-        $owner_id = $sharer_id;
-        detaint_natural($owner_id);
-        $owner_id || ThrowUserError('illegal_user_id', {'userid' => $sharer_id});
-    }
-    else {
-        $owner_id = $user->id;
-    }
+    Bugzilla->login(LOGIN_REQUIRED);
 
-    my @args = ($owner_id, $name);
-    my $extra = '';
-    # If $query_type is defined, then we restrict our search.
-    if (defined $query_type) {
-        $extra = ' AND query_type = ? ';
-        detaint_natural($query_type);
-        push(@args, $query_type);
-    }
-    my ($id, $result) = $dbh->selectrow_array("SELECT id, query
-                                                 FROM namedqueries
-                                                WHERE userid = ? AND name = ?
-                                                      $extra",
-                                               undef, @args);
+    my $query = Bugzilla::Search::Saved->check(
+        { user => $sharer_id, name => $name });
 
-    # Some DBs (read: Oracle) incorrectly mark this string as UTF-8
-    # even though it has no UTF-8 characters in it, which prevents
-    # Bugzilla::CGI from later reading it correctly.
-    utf8::downgrade($result) if utf8::is_utf8($result);
+    $query->url
+       || ThrowUserError("buglist_parameters_required");
 
-    if (!defined($result)) {
-        return 0 unless $throw_error;
-        ThrowUserError("missing_query", {'queryname' => $name,
-                                         'sharer_id' => $sharer_id});
-    }
-
-    if ($sharer_id) {
-        my $group = $dbh->selectrow_array('SELECT group_id
-                                             FROM namedquery_group_map
-                                            WHERE namedquery_id = ?',
-                                          undef, $id);
-        if (!grep {$_ == $group} values(%{$user->groups()})) {
-            ThrowUserError("missing_query", {'queryname' => $name,
-                                             'sharer_id' => $sharer_id});
-        }
-    }
-    
-    $result
-       || ThrowUserError("buglist_parameters_required", {'queryname' => $name});
-
-    return wantarray ? ($result, $id) : $result;
+    # Detaint $sharer_id.
+    $sharer_id = $query->user->id if $sharer_id;
+    return wantarray ? ($query->url, $query->id, $sharer_id) : $query->url;
 }
 
 # Inserts a Named Query (a "Saved Search") into the database, or
@@ -293,15 +236,13 @@ sub LookupNamedQuery {
 #         empty, or we will throw a UserError.
 # link_in_footer (optional) - 1 if the Named Query should be 
 # displayed in the user's footer, 0 otherwise.
-# query_type (optional) - 1 if the Named Query contains a list of
-# bug IDs only, 0 otherwise (default).
 #
 # All parameters are validated before passing them into the database.
 #
 # Returns: A boolean true value if the query existed in the database 
 # before, and we updated it. A boolean false value otherwise.
 sub InsertNamedQuery {
-    my ($query_name, $query, $link_in_footer, $query_type) = @_;
+    my ($query_name, $query, $link_in_footer) = @_;
     my $dbh = Bugzilla->dbh;
 
     $query_name = trim($query_name);
@@ -310,13 +251,11 @@ sub InsertNamedQuery {
     if ($query_obj) {
         $query_obj->set_name($query_name);
         $query_obj->set_url($query);
-        $query_obj->set_query_type($query_type);
         $query_obj->update();
     } else {
         Bugzilla::Search::Saved->create({
             name           => $query_name,
             query          => $query,
-            query_type     => $query_type,
             link_in_footer => $link_in_footer
         });
     }
@@ -398,14 +337,15 @@ sub _close_standby_message {
 # Command Execution
 ################################################################################
 
-$cgi->param('cmdtype', "") if !defined $cgi->param('cmdtype');
-$cgi->param('remaction', "") if !defined $cgi->param('remaction');
+my $cmdtype   = $cgi->param('cmdtype')   || '';
+my $remaction = $cgi->param('remaction') || '';
+my $sharer_id;
 
 # Backwards-compatibility - the old interface had cmdtype="runnamed" to run
 # a named command, and we can't break this because it's in bookmarks.
-if ($cgi->param('cmdtype') eq "runnamed") {  
-    $cgi->param('cmdtype', "dorem");
-    $cgi->param('remaction', "run");
+if ($cmdtype eq "runnamed") {  
+    $cmdtype = "dorem";
+    $remaction = "run";
 }
 
 # Now we're going to be running, so ensure that the params object is set up,
@@ -423,7 +363,7 @@ $params ||= new Bugzilla::CGI($cgi);
 my @time = localtime(time());
 my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];
 my $filename = "bugs-$date.$format->{extension}";
-if ($cgi->param('cmdtype') eq "dorem" && $cgi->param('remaction') =~ /^run/) {
+if ($cmdtype eq "dorem" && $remaction =~ /^run/) {
     $filename = $cgi->param('namedcmd') . "-$date.$format->{extension}";
     # Remove white-space from the filename so the user cannot tamper
     # with the HTTP headers.
@@ -433,11 +373,12 @@ $filename =~ s/\\/\\\\/g; # escape backslashes
 $filename =~ s/"/\\"/g; # escape quotes
 
 # Take appropriate action based on user's request.
-if ($cgi->param('cmdtype') eq "dorem") {  
-    if ($cgi->param('remaction') eq "run") {
+if ($cmdtype eq "dorem") {  
+    if ($remaction eq "run") {
         my $query_id;
-        ($buffer, $query_id) = LookupNamedQuery(scalar $cgi->param("namedcmd"),
-                                                scalar $cgi->param('sharer_id'));
+        ($buffer, $query_id, $sharer_id) =
+          LookupNamedQuery(scalar $cgi->param("namedcmd"),
+                           scalar $cgi->param('sharer_id'));
         # If this is the user's own query, remember information about it
         # so that it can be modified easily.
         $vars->{'searchname'} = $cgi->param('namedcmd');
@@ -450,15 +391,15 @@ if ($cgi->param('cmdtype') eq "dorem") {
         $order = $params->param('order') || $order;
 
     }
-    elsif ($cgi->param('remaction') eq "runseries") {
+    elsif ($remaction eq "runseries") {
         $buffer = LookupSeries(scalar $cgi->param("series_id"));
         $vars->{'searchname'} = $cgi->param('namedcmd');
         $vars->{'searchtype'} = "series";
         $params = new Bugzilla::CGI($buffer);
         $order = $params->param('order') || $order;
     }
-    elsif ($cgi->param('remaction') eq "forget") {
-        my $user = Bugzilla->login(LOGIN_REQUIRED);
+    elsif ($remaction eq "forget") {
+        $user = Bugzilla->login(LOGIN_REQUIRED);
         # Copy the name into a variable, so that we can trick_taint it for
         # the DB. We know it's safe, because we're using placeholders in 
         # the SQL, and the SQL is only a DELETE.
@@ -485,14 +426,10 @@ if ($cgi->param('cmdtype') eq "dorem") {
         }
 
         # If we are here, then we can safely remove the saved search
-        my ($query_id) = $dbh->selectrow_array('SELECT id FROM namedqueries
-                                                    WHERE userid = ?
-                                                      AND name   = ?',
-                                                  undef, ($user->id, $qname));
-        if (!$query_id) {
-            # The user has no query of this name. Play along.
-        }
-        else {
+        my $query_id;
+        ($buffer, $query_id) = LookupNamedQuery(scalar $cgi->param("namedcmd"),
+                                                $user->id);
+        if ($query_id) {
             # Make sure the user really wants to delete his saved search.
             my $token = $cgi->param('token');
             check_hash_token($token, [$query_id, $qname]);
@@ -515,103 +452,70 @@ if ($cgi->param('cmdtype') eq "dorem") {
         # Generate and return the UI (HTML page) from the appropriate template.
         $vars->{'message'} = "buglist_query_gone";
         $vars->{'namedcmd'} = $qname;
-        $vars->{'url'} = "query.cgi";
+        $vars->{'url'} = "buglist.cgi?newquery=" . url_quote($buffer) . "&cmdtype=doit&remtype=asnamed&newqueryname=" . url_quote($qname);
         $template->process("global/message.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
         exit;
     }
 }
-elsif (($cgi->param('cmdtype') eq "doit") && defined $cgi->param('remtype')) {
+elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
     if ($cgi->param('remtype') eq "asdefault") {
-        my $user = Bugzilla->login(LOGIN_REQUIRED);
+        $user = Bugzilla->login(LOGIN_REQUIRED);
         InsertNamedQuery(DEFAULT_QUERY_NAME, $buffer);
         $vars->{'message'} = "buglist_new_default_query";
     }
     elsif ($cgi->param('remtype') eq "asnamed") {
-        my $user = Bugzilla->login(LOGIN_REQUIRED);
+        $user = Bugzilla->login(LOGIN_REQUIRED);
         my $query_name = $cgi->param('newqueryname');
         my $new_query = $cgi->param('newquery');
-        my $query_type = QUERY_LIST;
-        # If list_of_bugs is true, we are adding/removing individual bugs
-        # to a saved search. We get the existing list of bug IDs (if any)
-        # and add/remove the passed ones.
+        my $token = $cgi->param('token');
+        check_hash_token($token, ['savedsearch']);
+        # If list_of_bugs is true, we are adding/removing tags to/from
+        # individual bugs.
         if ($cgi->param('list_of_bugs')) {
-            # We add or remove bugs based on the action choosen.
+            # We add/remove tags based on the action choosen.
             my $action = trim($cgi->param('action') || '');
             $action =~ /^(add|remove)$/
-              || ThrowCodeError('unknown_action', {'action' => $action});
+              || ThrowUserError('unknown_action', {action => $action});
 
-            # If we are removing bugs, then we must have an existing
-            # saved search selected.
-            if ($action eq 'remove') {
-                $query_name && ThrowUserError('no_bugs_to_remove');
-            }
+            my $method = "${action}_tag";
 
-            my %bug_ids;
-            my $is_new_name = 0;
-            if ($query_name) {
-                my ($query, $query_id) =
-                  LookupNamedQuery($query_name, undef, QUERY_LIST, !THROW_ERROR);
-                # Make sure this name is not already in use by a normal saved search.
-                if ($query) {
-                    ThrowUserError('query_name_exists', {name     => $query_name,
-                                                         query_id => $query_id});
-                }
-                $is_new_name = 1;
-            }
             # If no new tag name has been given, use the selected one.
-            $query_name ||= $cgi->param('oldqueryname');
+            $query_name ||= $cgi->param('oldqueryname')
+              or ThrowUserError('no_tag_to_edit', {action => $action});
 
-            # Don't throw an error if it's a new tag name: if the tag already
-            # exists, add/remove bugs to it, else create it. But if we are
-            # considering an existing tag, then it has to exist and we throw
-            # an error if it doesn't (hence the usage of !$is_new_name).
-            if (my $old_query = LookupNamedQuery($query_name, undef, LIST_OF_BUGS, !$is_new_name)) {
-                # We get the encoded query. We need to decode it.
-                my $old_cgi = new Bugzilla::CGI($old_query);
-                foreach my $bug_id (split /[\s,]+/, scalar $old_cgi->param('bug_id')) {
-                    $bug_ids{$bug_id} = 1 if detaint_natural($bug_id);
-                }
-            }
-
-            my $keep_bug = ($action eq 'add') ? 1 : 0;
-            my $changes = 0;
+            my @buglist;
+            # Validate all bug IDs before editing tags in any of them.
             foreach my $bug_id (split(/[\s,]+/, $cgi->param('bug_ids'))) {
                 next unless $bug_id;
-                ValidateBugID($bug_id);
-                $bug_ids{$bug_id} = $keep_bug;
-                $changes = 1;
+                push(@buglist, Bugzilla::Bug->check($bug_id));
             }
-            ThrowUserError('no_bug_ids',
-                           {'action' => $action,
-                            'tag' => $query_name})
-              unless $changes;
 
-            # Only keep bug IDs we want to add/keep. Disregard deleted ones.
-            my @bug_ids = grep { $bug_ids{$_} == 1 } keys %bug_ids;
-            # If the list is now empty, we could as well delete it completely.
-            ThrowUserError('no_bugs_in_list', {'tag' => $query_name})
-              unless scalar(@bug_ids);
+            foreach my $bug (@buglist) {
+                $bug->$method($query_name);
+            }
 
-            $new_query = "bug_id=" . join(',', sort {$a <=> $b} @bug_ids);
-            $query_type = LIST_OF_BUGS;
-        }
-        my $tofooter = 1;
-        my $existed_before = InsertNamedQuery($query_name, $new_query,
-                                              $tofooter, $query_type);
-        if ($existed_before) {
-            $vars->{'message'} = "buglist_updated_named_query";
+            $vars->{'message'} = 'tag_updated';
+            $vars->{'action'} = $action;
+            $vars->{'tag'} = $query_name;
+            $vars->{'buglist'} = [map { $_->id } @buglist];
         }
         else {
-            $vars->{'message'} = "buglist_new_named_query";
+            my $existed_before = InsertNamedQuery($query_name, $new_query, 1);
+            if ($existed_before) {
+                $vars->{'message'} = "buglist_updated_named_query";
+            }
+            else {
+                $vars->{'message'} = "buglist_new_named_query";
+            }
+
+            # Make sure to invalidate any cached query data, so that the footer is
+            # correctly displayed
+            $user->flush_queries_cache();
+
+            $vars->{'queryname'} = $query_name;
         }
 
-        # Make sure to invalidate any cached query data, so that the footer is
-        # correctly displayed
-        $user->flush_queries_cache();
-
-        $vars->{'queryname'} = $query_name;
-        
         print $cgi->header();
         $template->process("global/message.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
@@ -631,83 +535,7 @@ if (!$params->param('query_format')) {
 # Column Definition
 ################################################################################
 
-# Define the columns that can be selected in a query and/or displayed in a bug
-# list.  Column records include the following fields:
-#
-# 1. ID: a unique identifier by which the column is referred in code;
-#
-# 2. Name: The name of the column in the database (may also be an expression
-#          that returns the value of the column);
-#
-# 3. Title: The title of the column as displayed to users.
-# 
-# Note: There are a few hacks in the code that deviate from these definitions.
-#       In particular, when the list is sorted by the "votes" field the word 
-#       "DESC" is added to the end of the field to sort in descending order, 
-#       and the redundant short_desc column is removed when the client
-#       requests "all" columns.
-# Note: For column names using aliasing (SQL "<field> AS <alias>"), the column
-#       ID needs to be identical to the field ID for list ordering to work.
-
-local our $columns = {};
-sub DefineColumn {
-    my ($id, $name, $title) = @_;
-    $columns->{$id} = { 'name' => $name , 'title' => $title };
-}
-
-# Column:     ID                    Name                           Title
-DefineColumn("bug_id"            , "bugs.bug_id"                , "ID"               );
-DefineColumn("alias"             , "bugs.alias"                 , "Alias"            );
-DefineColumn("opendate"          , "bugs.creation_ts"           , "Opened"           );
-DefineColumn("changeddate"       , "bugs.delta_ts"              , "Changed"          );
-DefineColumn("bug_severity"      , "bugs.bug_severity"          , "Severity"         );
-DefineColumn("priority"          , "bugs.priority"              , "Priority"         );
-DefineColumn("rep_platform"      , "bugs.rep_platform"          , "Hardware"         );
-DefineColumn("assigned_to"       , "map_assigned_to.login_name" , "Assignee"         );
-DefineColumn("reporter"          , "map_reporter.login_name"    , "Reporter"         );
-DefineColumn("qa_contact"        , "map_qa_contact.login_name"  , "QA Contact"       );
-if ($format->{'extension'} eq 'html') {
-    DefineColumn("assigned_to_realname", "CASE WHEN map_assigned_to.realname = '' THEN map_assigned_to.login_name ELSE map_assigned_to.realname END AS assigned_to_realname", "Assignee"  );
-    DefineColumn("reporter_realname"   , "CASE WHEN map_reporter.realname    = '' THEN map_reporter.login_name    ELSE map_reporter.realname    END AS reporter_realname"   , "Reporter"  );
-    DefineColumn("qa_contact_realname" , "CASE WHEN map_qa_contact.realname  = '' THEN map_qa_contact.login_name  ELSE map_qa_contact.realname  END AS qa_contact_realname" , "QA Contact");
-} else {
-    DefineColumn("assigned_to_realname", "map_assigned_to.realname AS assigned_to_realname", "Assignee"  );
-    DefineColumn("reporter_realname"   , "map_reporter.realname AS reporter_realname"      , "Reporter"  );
-    DefineColumn("qa_contact_realname" , "map_qa_contact.realname AS qa_contact_realname"  , "QA Contact");
-}
-DefineColumn("bug_status"        , "bugs.bug_status"            , "Status"           );
-DefineColumn("resolution"        , "bugs.resolution"            , "Resolution"       );
-DefineColumn("short_short_desc"  , "bugs.short_desc"            , "Summary"          );
-DefineColumn("short_desc"        , "bugs.short_desc"            , "Summary"          );
-DefineColumn("status_whiteboard" , "bugs.status_whiteboard"     , "Whiteboard"       );
-DefineColumn("component"         , "map_components.name"        , "Component"        );
-DefineColumn("product"           , "map_products.name"          , "Product"          );
-DefineColumn("classification"    , "map_classifications.name"   , "Classification"   );
-DefineColumn("version"           , "bugs.version"               , "Version"          );
-DefineColumn("op_sys"            , "bugs.op_sys"                , "OS"               );
-DefineColumn("target_milestone"  , "bugs.target_milestone"      , "Target Milestone" );
-DefineColumn("votes"             , "bugs.votes"                 , "Votes"            );
-DefineColumn("keywords"          , "bugs.keywords"              , "Keywords"         );
-DefineColumn("estimated_time"    , "bugs.estimated_time"        , "Estimated Hours"  );
-DefineColumn("remaining_time"    , "bugs.remaining_time"        , "Remaining Hours"  );
-DefineColumn("actual_time"       , "(SUM(ldtime.work_time)*COUNT(DISTINCT ldtime.bug_when)/COUNT(bugs.bug_id)) AS actual_time", "Actual Hours");
-DefineColumn("percentage_complete",
-    "(CASE WHEN (SUM(ldtime.work_time)*COUNT(DISTINCT ldtime.bug_when)/COUNT(bugs.bug_id)) " .
-    "            + bugs.remaining_time = 0.0 " .
-    "THEN 0.0 " .
-    "ELSE 100*((SUM(ldtime.work_time)*COUNT(DISTINCT ldtime.bug_when)/COUNT(bugs.bug_id)) " .
-    "     /((SUM(ldtime.work_time)*COUNT(DISTINCT ldtime.bug_when)/COUNT(bugs.bug_id)) + bugs.remaining_time)) " .
-    "END) AS percentage_complete"                               , "% Complete"); 
-DefineColumn("relevance"         , "relevance"                  , "Relevance"        );
-DefineColumn("deadline"          , $dbh->sql_date_format('bugs.deadline', '%Y-%m-%d') . " AS deadline", "Deadline");
-
-foreach my $field (Bugzilla->active_custom_fields) {
-    # Multi-select fields are not (yet) supported in buglists.
-    next if $field->type == FIELD_TYPE_MULTI_SELECT;
-    DefineColumn($field->name, 'bugs.' . $field->name, $field->description);
-}
-
-Bugzilla::Hook::process("buglist-columns", {'columns' => $columns} );
+my $columns = Bugzilla::Search::COLUMNS;
 
 ################################################################################
 # Display Column Determination
@@ -754,21 +582,9 @@ else {
 # and are hard-coded into the display templates.
 @displaycolumns = grep($_ ne 'bug_id', @displaycolumns);
 
-# Add the votes column to the list of columns to be displayed
-# in the bug list if the user is searching for bugs with a certain
-# number of votes and the votes column is not already on the list.
-
-# Some versions of perl will taint 'votes' if this is done as a single
-# statement, because the votes param is tainted at this point
-my $votes = $params->param('votes');
-$votes ||= "";
-if (trim($votes) && !grep($_ eq 'votes', @displaycolumns)) {
-    push(@displaycolumns, 'votes');
-}
-
 # Remove the timetracking columns if they are not a part of the group
 # (happens if a user had access to time tracking and it was revoked/disabled)
-if (!Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})) {
+if (!Bugzilla->user->is_timetracker) {
    @displaycolumns = grep($_ ne 'estimated_time', @displaycolumns);
    @displaycolumns = grep($_ ne 'remaining_time', @displaycolumns);
    @displaycolumns = grep($_ ne 'actual_time', @displaycolumns);
@@ -792,27 +608,35 @@ if (grep('relevance', @displaycolumns) && !$fulltext) {
 # Severity, priority, resolution and status are required for buglist
 # CSS classes.
 my @selectcolumns = ("bug_id", "bug_severity", "priority", "bug_status",
-                     "resolution");
-
-# if using classification, we also need to look in product.classification_id
-if (Bugzilla->params->{"useclassification"}) {
-    push (@selectcolumns,"product");
-}
+                     "resolution", "product");
 
 # remaining and actual_time are required for percentage_complete calculation:
-if (lsearch(\@displaycolumns, "percentage_complete") >= 0) {
+if (grep { $_ eq "percentage_complete" } @displaycolumns) {
     push (@selectcolumns, "remaining_time");
     push (@selectcolumns, "actual_time");
 }
 
-# Display columns are selected because otherwise we could not display them.
-push (@selectcolumns, @displaycolumns);
+# Make sure that the login_name version of a field is always also
+# requested if the realname version is requested, so that we can
+# display the login name when the realname is empty.
+my @realname_fields = grep(/_realname$/, @displaycolumns);
+foreach my $item (@realname_fields) {
+    my $login_field = $item;
+    $login_field =~ s/_realname$//;
+    if (!grep($_ eq $login_field, @selectcolumns)) {
+        push(@selectcolumns, $login_field);
+    }
+}
 
-# If the user is editing multiple bugs, we also make sure to select the product
-# and status because the values of those fields determine what options the user
+# Display columns are selected because otherwise we could not display them.
+foreach my $col (@displaycolumns) {
+    push (@selectcolumns, $col) if !grep($_ eq $col, @selectcolumns);
+}
+
+# If the user is editing multiple bugs, we also make sure to select the 
+# status, because the values of that field determines what options the user
 # has for modifying the bugs.
 if ($dotweak) {
-    push(@selectcolumns, "product") if !grep($_ eq 'product', @selectcolumns);
     push(@selectcolumns, "bug_status") if !grep($_ eq 'bug_status', @selectcolumns);
 }
 
@@ -829,9 +653,11 @@ if ($format->{'extension'} eq 'atom') {
       'short_desc',
       'opendate',
       'changeddate',
+      'reporter',
       'reporter_realname',
       'priority',
       'bug_severity',
+      'assigned_to',
       'assigned_to_realname',
       'bug_status',
       'product',
@@ -844,17 +670,6 @@ if ($format->{'extension'} eq 'atom') {
         push(@selectcolumns, $required) if !grep($_ eq $required,@selectcolumns);
     }
 }
-
-################################################################################
-# Query Generation
-################################################################################
-
-# Convert the list of columns being selected into a list of column names.
-my @selectnames = map($columns->{$_}->{'name'}, @selectcolumns);
-
-# Remove columns with no names, such as percentage_complete
-#  (or a removed *_time column due to permissions)
-@selectnames = grep($_ ne '', @selectnames);
 
 ################################################################################
 # Sort Order Determination
@@ -871,59 +686,58 @@ if (!$order || $order =~ /^reuse/i) {
         # Cookies from early versions of Specific Search included this text,
         # which is now invalid.
         $order =~ s/ LIMIT 200//;
-        
-        $order_from_cookie = 1;
     }
     else {
         $order = '';  # Remove possible "reuse" identifier as unnecessary
     }
 }
 
-my $db_order = "";  # Modified version of $order for use with SQL query
 if ($order) {
     # Convert the value of the "order" form field into a list of columns
     # by which to sort the results.
     ORDER: for ($order) {
         /^Bug Number$/ && do {
-            $order = "bugs.bug_id";
+            $order = "bug_id";
             last ORDER;
         };
         /^Importance$/ && do {
-            $order = "bugs.priority, bugs.bug_severity";
+            $order = "priority,bug_severity";
             last ORDER;
         };
         /^Assignee$/ && do {
-            $order = "map_assigned_to.login_name, bugs.bug_status, bugs.priority, bugs.bug_id";
+            $order = "assigned_to,bug_status,priority,bug_id";
             last ORDER;
         };
         /^Last Changed$/ && do {
-            $order = "bugs.delta_ts, bugs.bug_status, bugs.priority, map_assigned_to.login_name, bugs.bug_id";
+            $order = "changeddate,bug_status,priority,assigned_to,bug_id";
             last ORDER;
         };
         do {
-            my @order;
-            my @columnnames = map($columns->{lc($_)}->{'name'}, keys(%$columns));
+            my (@order, @invalid_fragments);
+
             # A custom list of columns.  Make sure each column is valid.
             foreach my $fragment (split(/,/, $order)) {
                 $fragment = trim($fragment);
                 next unless $fragment;
-                # Accept an order fragment matching a column name, with
-                # asc|desc optionally following (to specify the direction)
-                if (grep($fragment =~ /^\Q$_\E(\s+(asc|desc))?$/, @columnnames, keys(%$columns))) {
-                    next if $fragment =~ /\brelevance\b/ && !$fulltext;
-                    push(@order, $fragment);
+                my ($column_name, $direction) = split_order_term($fragment);
+                $column_name = translate_old_column($column_name);
+
+                # Special handlings for certain columns
+                next if $column_name eq 'relevance' && !$fulltext;
+                                
+                if (exists $columns->{$column_name}) {
+                    $direction = " $direction" if $direction;
+                    push(@order, "$column_name$direction");
                 }
                 else {
-                    my $vars = { fragment => $fragment };
-                    if ($order_from_cookie) {
-                        $cgi->remove_cookie('LASTORDER');
-                        ThrowCodeError("invalid_column_name_cookie", $vars);
-                    }
-                    else {
-                        ThrowCodeError("invalid_column_name_form", $vars);
-                    }
+                    push(@invalid_fragments, $fragment);
                 }
             }
+            if (scalar @invalid_fragments) {
+                $vars->{'message'} = 'invalid_column_name';
+                $vars->{'invalid_fragments'} = \@invalid_fragments;
+            }
+
             $order = join(",", @order);
             # Now that we have checked that all columns in the order are valid,
             # detaint the order string.
@@ -934,73 +748,34 @@ if ($order) {
 
 if (!$order) {
     # DEFAULT
-    $order = "bugs.bug_status, bugs.priority, map_assigned_to.login_name, bugs.bug_id";
+    $order = "bug_status,priority,assigned_to,bug_id";
 }
 
-# Make sure ORDER BY columns are included in the field list.
-foreach my $fragment (split(/,/, $order)) {
-    $fragment = trim($fragment);
-    if (!grep($fragment =~ /^\Q$_\E(\s+(asc|desc))?$/, @selectnames)) {
-        # Add order columns to selectnames
-        # The fragment has already been validated
-        $fragment =~ s/\s+(asc|desc)$//;
+my @orderstrings = split(/,\s*/, $order);
 
-        # While newer fragments contain IDs for aliased columns, older
-        # LASTORDER cookies (or bookmarks) may contain full names.
-        # Convert them to an ID here.
-        if ($fragment =~ / AS (\w+)/) {
-            $fragment = $1;
-        }
-
-        $fragment =~ tr/a-zA-Z\.0-9\-_//cd;
-
-        # If the order fragment is an ID, we need its corresponding name
-        # to be in the field list.
-        if (exists($columns->{$fragment})) {
-            $fragment = $columns->{$fragment}->{'name'};
-        }
-
-        push @selectnames, $fragment;
-    }
+if ($fulltext and grep { /^relevance/ } @orderstrings) {
+    $vars->{'message'} = 'buglist_sorted_by_relevance'
 }
 
-$db_order = $order;  # Copy $order into $db_order for use with SQL query
-
-# If we are sorting by votes, sort in descending order if no explicit
-# sort order was given
-$db_order =~ s/bugs.votes\s*(,|$)/bugs.votes desc$1/i;
-                             
-# the 'actual_time' field is defined as an aggregate function, but 
-# for order we just need the column name 'actual_time'
-my $aggregate_search = quotemeta($columns->{'actual_time'}->{'name'});
-$db_order =~ s/$aggregate_search/actual_time/g;
-
-# the 'percentage_complete' field is defined as an aggregate too
-$aggregate_search = quotemeta($columns->{'percentage_complete'}->{'name'});
-$db_order =~ s/$aggregate_search/percentage_complete/g;
-
-# Now put $db_order into a format that Bugzilla::Search can use.
-# (We create $db_order as a string first because that's the way
-# we did it before Bugzilla::Search took an "order" argument.)
-my @orderstrings = split(/,\s*/, $db_order);
+# In the HTML interface, by default, we limit the returned results,
+# which speeds up quite a few searches where people are really only looking
+# for the top results.
+if ($format->{'extension'} eq 'html' && !defined $params->param('limit')) {
+    $params->param('limit', Bugzilla->params->{'default_search_limit'});
+    $vars->{'default_limited'} = 1;
+}
 
 # Generate the basic SQL query that will be used to generate the bug list.
-my $search = new Bugzilla::Search('fields' => \@selectnames, 
-                                  'params' => $params,
-                                  'order' => \@orderstrings);
-my $query = $search->getSQL();
+my $search = new Bugzilla::Search('fields' => \@selectcolumns, 
+                                  'params' => scalar $params->Vars,
+                                  'order'  => \@orderstrings,
+                                  'sharer' => $sharer_id);
+my $query = $search->sql;
+$vars->{'search_description'} = $search->search_description;
 
-if (defined $cgi->param('limit')) {
-    my $limit = $cgi->param('limit');
-    if (detaint_natural($limit)) {
-        $query .= " " . $dbh->sql_limit($limit);
-    }
-}
-elsif ($fulltext) {
-    $query .= " " . $dbh->sql_limit(FULLTEXT_BUGLIST_LIMIT);
-    $vars->{'message'} = 'buglist_sorted_by_relevance' if ($cgi->param('order') =~ /^relevance/);
-}
-
+# We don't want saved searches and other buglist things to save
+# our default limit.
+$params->delete('limit') if $vars->{'default_limited'};
 
 ################################################################################
 # Query Execution
@@ -1012,7 +787,13 @@ if ($cgi->param('debug')
 ) {
     $vars->{'debug'} = 1;
     $vars->{'query'} = $query;
-    $vars->{'debugdata'} = $search->getDebugData();
+    # Explains are limited to admins because you could use them to figure
+    # out how many hidden bugs are in a particular product (by doing
+    # searches and looking at the number of rows the explain says it's
+    # examining).
+    if (Bugzilla->user->in_group('admin')) {
+        $vars->{'query_explain'} = $dbh->bz_explain($query);
+    }
 }
 
 # Time to use server push to display an interim message to the user until
@@ -1058,6 +839,22 @@ $buglist_sth->execute();
 # Retrieve the query results one row at a time and write the data into a list
 # of Perl records.
 
+# If we're doing time tracking, then keep totals for all bugs.
+my $percentage_complete = grep($_ eq 'percentage_complete', @displaycolumns);
+my $estimated_time      = grep($_ eq 'estimated_time', @displaycolumns);
+my $remaining_time      = grep($_ eq 'remaining_time', @displaycolumns)
+                            || $percentage_complete;
+my $actual_time         = grep($_ eq 'actual_time', @displaycolumns)
+                            || $percentage_complete;
+
+my $time_info = { 'estimated_time' => 0,
+                  'remaining_time' => 0,
+                  'actual_time' => 0,
+                  'percentage_complete' => 0,
+                  'time_present' => ($estimated_time || $remaining_time ||
+                                     $actual_time || $percentage_complete),
+                };
+    
 my $bugowners = {};
 my $bugproducts = {};
 my $bugstatuses = {};
@@ -1080,16 +877,12 @@ while (my @row = $buglist_sth->fetchrow_array()) {
         $bug->{'changeddate'} =~ 
             s/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/$1-$2-$3 $4:$5:$6/;
 
-        # Put in the change date as a time, so that the template date plugin
-        # can format the date in any way needed by the template. ICS and Atom
-        # have specific, and different, date and time formatting.
-        $bug->{'changedtime'} = str2time($bug->{'changeddate'}, Bugzilla->params->{'timezone'});
-        $bug->{'changeddate'} = DiffDate($bug->{'changeddate'});        
+        $bug->{'changedtime'} = $bug->{'changeddate'}; # for iCalendar and Atom
+        $bug->{'changeddate'} = DiffDate($bug->{'changeddate'});
     }
 
     if ($bug->{'opendate'}) {
-        # Put in the open date as a time for the template date plugin.
-        $bug->{'opentime'} = str2time($bug->{'opendate'}, Bugzilla->params->{'timezone'});
+        $bug->{'opentime'} = $bug->{'opendate'}; # for iCalendar
         $bug->{'opendate'} = DiffDate($bug->{'opendate'});
     }
 
@@ -1105,6 +898,11 @@ while (my @row = $buglist_sth->fetchrow_array()) {
 
     # Add id to list for checking for bug privacy later
     push(@bugidlist, $bug->{'bug_id'});
+
+    # Compute time tracking info.
+    $time_info->{'estimated_time'} += $bug->{'estimated_time'} if ($estimated_time);
+    $time_info->{'remaining_time'} += $bug->{'remaining_time'} if ($remaining_time);
+    $time_info->{'actual_time'}    += $bug->{'actual_time'}    if ($actual_time);
 }
 
 # Check for bug privacy and set $bug->{'secure_mode'} to 'implied' or 'manual'
@@ -1137,6 +935,15 @@ if (@bugidlist) {
     }
 }
 
+# Compute percentage complete without rounding.
+my $sum = $time_info->{'actual_time'}+$time_info->{'remaining_time'};
+if ($sum > 0) {
+    $time_info->{'percentage_complete'} = 100*$time_info->{'actual_time'}/$sum;
+}
+else { # remaining_time <= 0 
+    $time_info->{'percentage_complete'} = 0
+}                             
+
 ################################################################################
 # Template Variable Definition
 ################################################################################
@@ -1152,16 +959,20 @@ $vars->{'displaycolumns'} = \@displaycolumns;
 $vars->{'openstates'} = [BUG_STATE_OPEN];
 $vars->{'closedstates'} = [map {$_->name} closed_bug_statuses()];
 
-# The list of query fields in URL query string format, used when creating
-# URLs to the same query results page with different parameters (such as
-# a different sort order or when taking some action on the set of query
-# results).  To get this string, we call the Bugzilla::CGI::canoncalise_query
-# function with a list of elements to be removed from the URL.
-$vars->{'urlquerypart'} = $params->canonicalise_query('order',
-                                                      'cmdtype',
-                                                      'query_based_on');
+# The iCal file needs priorities ordered from 1 to 9 (highest to lowest)
+# If there are more than 9 values, just make all the lower ones 9
+if ($format->{'extension'} eq 'ics') {
+    my $n = 1;
+    $vars->{'ics_priorities'} = {};
+    my $priorities = get_legal_field_values('priority');
+    foreach my $p (@$priorities) {
+        $vars->{'ics_priorities'}->{$p} = ($n > 9) ? 9 : $n++;
+    }
+}
+
 $vars->{'order'} = $order;
 $vars->{'caneditbugs'} = 1;
+$vars->{'time_info'} = $time_info;
 
 if (!Bugzilla->user->in_group('editbugs')) {
     foreach my $product (keys %$bugproducts) {
@@ -1186,7 +997,26 @@ if (scalar(@bugowners) > 1 && Bugzilla->user->in_group('editbugs')) {
 $vars->{'splitheader'} = $cgi->cookie('SPLITHEADER') ? 1 : 0;
 
 $vars->{'quip'} = GetQuip();
-$vars->{'currenttime'} = time();
+$vars->{'currenttime'} = localtime(time());
+
+# See if there's only one product in all the results (or only one product
+# that we searched for), which allows us to provide more helpful links.
+my @products = keys %$bugproducts;
+my $one_product;
+if (scalar(@products) == 1) {
+    $one_product = new Bugzilla::Product({ name => $products[0] });
+}
+# This is used in the "Zarroo Boogs" case.
+elsif (my @product_input = $cgi->param('product')) {
+    if (scalar(@product_input) == 1 and $product_input[0] ne '') {
+        $one_product = new Bugzilla::Product({ name => $cgi->param('product') });
+    }
+}
+# We only want the template to use it if the user can actually 
+# enter bugs against it.
+if ($one_product && Bugzilla->user->can_enter_product($one_product)) {
+    $vars->{'one_product'} = $one_product;
+}
 
 # The following variables are used when the user is making changes to multiple bugs.
 if ($dotweak && scalar @bugs) {
@@ -1197,7 +1027,6 @@ if ($dotweak && scalar @bugs) {
                                         object => 'multiple_bugs'});
     }
     $vars->{'dotweak'} = 1;
-    $vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
   
     # issue_session_token needs to write to the master DB.
     Bugzilla->switch_to_main_db();
@@ -1210,8 +1039,6 @@ if ($dotweak && scalar @bugs) {
     $vars->{'priorities'} = get_legal_field_values('priority');
     $vars->{'severities'} = get_legal_field_values('bug_severity');
     $vars->{'resolutions'} = get_legal_field_values('resolution');
-
-    $vars->{'unconfirmedstate'} = 'UNCONFIRMED';
 
     # Convert bug statuses to their ID.
     my @bug_statuses = map {$dbh->quote($_)} keys %$bugstatuses;
@@ -1242,19 +1069,19 @@ if ($dotweak && scalar @bugs) {
     $vars->{'new_bug_statuses'} = Bugzilla::Status->new_from_list($bug_status_ids);
 
     # The groups the user belongs to and which are editable for the given buglist.
-    my @products = keys %$bugproducts;
     $vars->{'groups'} = GetGroups(\@products);
 
     # If all bugs being changed are in the same product, the user can change
     # their version and component, so generate a list of products, a list of
     # versions for the product (if there is only one product on the list of
     # products), and a list of components for the product.
-    if (scalar(@products) == 1) {
-        my $product = new Bugzilla::Product({name => $products[0]});
-        $vars->{'versions'} = [map($_->name ,@{$product->versions})];
-        $vars->{'components'} = [map($_->name, @{$product->components})];
-        $vars->{'targetmilestones'} = [map($_->name, @{$product->milestones})]
-            if Bugzilla->params->{'usetargetmilestone'};
+    if ($one_product) {
+        $vars->{'versions'} = [map($_->name, grep($_->is_active, @{ $one_product->versions }))];
+        $vars->{'components'} = [map($_->name, grep($_->is_active, @{ $one_product->components }))];
+        if (Bugzilla->params->{'usetargetmilestone'}) {
+            $vars->{'targetmilestones'} = [map($_->name, grep($_->is_active,  
+                                               @{ $one_product->milestones }))];
+        }
     }
 }
 
@@ -1262,6 +1089,9 @@ if ($dotweak && scalar @bugs) {
 # the "Remember search as" field.
 $vars->{'defaultsavename'} = $cgi->param('query_based_on');
 
+# If we did a quick search then redisplay the previously entered search 
+# string in the text field.
+$vars->{'quicksearch'} = $searchstring;
 
 ################################################################################
 # HTTP Header Generation
@@ -1273,36 +1103,28 @@ my $contenttype;
 my $disposition = "inline";
 
 if ($format->{'extension'} eq "html" && !$agent) {
-    if ($order) {
-        $cgi->send_cookie(-name => 'LASTORDER',
-                          -value => $order,
-                          -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
-    }
-    my $bugids = join(":", @bugidlist);
-    # See also Bug 111999
-    if (length($bugids) == 0) {
-        $cgi->remove_cookie('BUGLIST');
-    }
-    elsif (length($bugids) < 4000) {
-        $cgi->send_cookie(-name => 'BUGLIST',
-                          -value => $bugids,
-                          -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
-    }
-    else {
-        $cgi->remove_cookie('BUGLIST');
-        $vars->{'toolong'} = 1;
-    }
-
+    my $list_id = $cgi->param('list_id') || $cgi->param('regetlastlist');
+    my $search = $user->save_last_search(
+        { bugs => \@bugidlist, order => $order, vars => $vars, list_id => $list_id });
+    $cgi->param('list_id', $search->id) if $search;
     $contenttype = "text/html";
 }
 else {
     $contenttype = $format->{'ctype'};
 }
 
+# Set 'urlquerypart' once the buglist ID is known.
+$vars->{'urlquerypart'} = $params->canonicalise_query('order', 'cmdtype',
+                                                      'query_based_on');
+
 if ($format->{'extension'} eq "csv") {
     # We set CSV files to be downloaded, as they are designed for importing
     # into other programs.
     $disposition = "attachment";
+
+    # If the user clicked the CSV link in the search results,
+    # They should get the Field Description, not the column name in the db
+    $vars->{'human'} = $cgi->param('human');
 }
 
 # Suggest a name for the bug list if the user wants to save it as a file.

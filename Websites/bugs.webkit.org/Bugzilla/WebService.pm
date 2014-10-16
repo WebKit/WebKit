@@ -15,126 +15,27 @@
 # Contributor(s): Marc Schumann <wurblzap@gmail.com>
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
+# This is the base class for $self in WebService method calls. For the 
+# actual RPC server, see Bugzilla::WebService::Server and its subclasses.
 package Bugzilla::WebService;
-
 use strict;
-use Bugzilla::WebService::Constants;
-use Bugzilla::Util;
-use Date::Parse;
+use Bugzilla::WebService::Server;
 
-sub fail_unimplemented {
-    my $this = shift;
-
-    die SOAP::Fault
-        ->faultcode(ERROR_UNIMPLEMENTED)
-        ->faultstring('Service Unimplemented');
-}
-
-sub datetime_format {
-    my ($self, $date_string) = @_;
-
-    my $time = str2time($date_string);
-    my ($sec, $min, $hour, $mday, $mon, $year) = localtime $time;
-    # This format string was stolen from SOAP::Utils->format_datetime,
-    # which doesn't work but which has almost the right format string.
-    my $iso_datetime = sprintf('%d%02d%02dT%02d:%02d:%02d',
-        $year + 1900, $mon + 1, $mday, $hour, $min, $sec);
-    return $iso_datetime;
-}
-
-sub handle_login {
-    my ($classes, $action, $uri, $method) = @_;
-
-    my $class = $classes->{$uri};
-    eval "require $class";
-
-    return if $class->login_exempt($method);
-    Bugzilla->login();
-
-    # Even though we check for the need to redirect in
-    # Bugzilla->login() we check here again since Bugzilla->login()
-    # does not know what the current XMLRPC method is. Therefore
-    # ssl_require_redirect in Bugzilla->login() will have returned 
-    # false if system was configured to redirect for authenticated 
-    # sessions and the user was not yet logged in.
-    # So here we pass in the method name to ssl_require_redirect so
-    # it can then check for the extra case where the method equals
-    # User.login, which we would then need to redirect if not
-    # over a secure connection. 
-    my $full_method = $uri . "." . $method;
-    Bugzilla->cgi->require_https(Bugzilla->params->{'sslbase'})
-        if ssl_require_redirect($full_method);
-
-    return;
-}
+# Used by the JSON-RPC server to convert incoming date fields apprpriately.
+use constant DATE_FIELDS => {};
+# Used by the JSON-RPC server to convert incoming base64 fields appropriately.
+use constant BASE64_FIELDS => {};
 
 # For some methods, we shouldn't call Bugzilla->login before we call them
 use constant LOGIN_EXEMPT => { };
 
+# Used to allow methods to be called in the JSON-RPC WebService via GET.
+# Methods that can modify data MUST not be listed here.
+use constant READ_ONLY => ();
+
 sub login_exempt {
     my ($class, $method) = @_;
-
     return $class->LOGIN_EXEMPT->{$method};
-}
-
-1;
-
-package Bugzilla::WebService::XMLRPC::Transport::HTTP::CGI;
-use strict;
-eval { require XMLRPC::Transport::HTTP; };
-our @ISA = qw(XMLRPC::Transport::HTTP::CGI);
-
-sub initialize {
-    my $self = shift;
-    my %retval = $self->SUPER::initialize(@_);
-    $retval{'serializer'} = Bugzilla::WebService::XMLRPC::Serializer->new;
-    return %retval;
-}
-
-sub make_response {
-    my $self = shift;
-
-    $self->SUPER::make_response(@_);
-
-    # XMLRPC::Transport::HTTP::CGI doesn't know about Bugzilla carrying around
-    # its cookies in Bugzilla::CGI, so we need to copy them over.
-    foreach (@{Bugzilla->cgi->{'Bugzilla_cookie_list'}}) {
-        $self->response->headers->push_header('Set-Cookie', $_);
-    }
-}
-
-1;
-
-# This package exists to fix a UTF-8 bug in SOAP::Lite.
-# See http://rt.cpan.org/Public/Bug/Display.html?id=32952.
-package Bugzilla::WebService::XMLRPC::Serializer;
-use strict;
-# We can't use "use base" because XMLRPC::Serializer doesn't return
-# a true value.
-eval { require XMLRPC::Lite; };
-our @ISA = qw(XMLRPC::Serializer);
-
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(@_);
-    # This fixes UTF-8.
-    $self->{'_typelookup'}->{'base64'} =
-        [10, sub { !utf8::is_utf8($_[0]) && $_[0] =~ /[^\x09\x0a\x0d\x20-\x7f]/},
-        'as_base64'];
-    # This makes arrays work right even though we're a subclass.
-    # (See http://rt.cpan.org//Ticket/Display.html?id=34514)
-    $self->{'_encodingStyle'} = '';
-    return $self;
-}
-
-sub as_string {
-    my $self = shift;
-    my ($value) = @_;
-    # Something weird happens with XML::Parser when we have upper-ASCII 
-    # characters encoded as UTF-8, and this fixes it.
-    utf8::encode($value) if utf8::is_utf8($value) 
-                            && $value =~ /^[\x00-\xff]+$/;
-    return $self->SUPER::as_string($value);
 }
 
 1;
@@ -150,86 +51,130 @@ Bugzilla::WebService - The Web Service interface to Bugzilla
 This is the standard API for external programs that want to interact
 with Bugzilla. It provides various methods in various modules.
 
-Currently the only method of accessing the API is via XML-RPC. The XML-RPC
-standard is described here: L<http://www.xmlrpc.com/spec>
-
-The endpoint for Bugzilla WebServices is the C<xmlrpc.cgi> script in
-your Bugzilla installation. For example, if your Bugzilla is at
-C<bugzilla.yourdomain.com>, then your XML-RPC client would access the
-API via: C<http://bugzilla.yourdomain.com/xmlrpc.cgi>
+You can interact with this API via
+L<XML-RPC|Bugzilla::WebService::Server::XMLRPC> or
+L<JSON-RPC|Bugzilla::WebService::Server::JSONRPC>.
 
 =head1 CALLING METHODS
 
-Methods are called in the normal XML-RPC fashion. Bugzilla does not currently
-implement any extensions to the standard method of XML-RPC method calling.
-
 Methods are grouped into "packages", like C<Bug> for 
 L<Bugzilla::WebService::Bug>. So, for example,
-L<Bugzilla::WebService::Bug/get>, is called as C<Bug.get> in XML-RPC.
+L<Bugzilla::WebService::Bug/get>, is called as C<Bug.get>.
 
 =head1 PARAMETERS
 
-In addition to the standard parameter types like C<int>, C<string>, etc.,
-XML-RPC has two data structures, a C<< <struct> >> and an C<< <array> >>.
+The Bugzilla API takes the following various types of parameters:
 
-=head2 Structs
+=over
 
-In Perl, we call a C<< <struct> >> a "hash" or a "hashref". You may see
-us refer to it that way in the API documentation.
+=item C<int>
 
-In example code, you will see the characters C<{> and C<}> used to represent
-the beginning and end of structs.
+Integer. May be null.
 
-For example, here's a struct in XML-RPC:
+=item C<double>
 
- <struct>
-   <member>
-     <name>fruit</name>
-     <value><string>oranges</string></value>
-   </member>
-   <member>
-     <name>vegetable</name>
-     <value><string>lettuce</string></value>
-   </member>
- </struct>
+A floating-point number. May be null.
 
-In our example code in these API docs, that would look like:
+=item C<string>
 
- { fruit => 'oranges', vegetable => 'lettuce' }
+A string. May be null.
 
-=head2 Arrays
+=item C<dateTime>
+
+A date/time. Represented differently in different interfaces to this API.
+May be null.
+
+=item C<boolean>
+
+True or false.
+
+=item C<base64>
+
+A base64-encoded string. This is the only way to transfer
+binary data via the WebService.
+
+=item C<array>
+
+An array. There may be mixed types in an array.
 
 In example code, you will see the characters C<[> and C<]> used to
 represent the beginning and end of arrays.
 
-For example, here's an array in XML-RPC:
-
- <array>
-   <data>
-     <value><i4>1</i4></value>
-     <value><i4>2</i4></value>
-     <value><i4>3</i4></value>
-   </data>
- </array>
-
-In our example code in these API docs, that would look like:
+In our example code in these API docs, an array that contains the numbers
+1, 2, and 3 would look like:
 
  [1, 2, 3]
 
+=item C<struct>
+
+A mapping of keys to values. Called a "hash", "dict", or "map" in some
+other programming languages. We sometimes call this a "hash" in the API
+documentation.
+
+The keys are strings, and the values can be any type.
+
+In example code, you will see the characters C<{> and C<}> used to represent
+the beginning and end of structs.
+
+For example, a struct with an "fruit" key whose value is "oranges",
+and a "vegetable" key whose value is "lettuce" would look like:
+
+ { fruit => 'oranges', vegetable => 'lettuce' }
+
+=back
+
 =head2 How Bugzilla WebService Methods Take Parameters
 
-B<All> Bugzilla WebServices functions take their parameters in
-a C<< <struct> >>. Another way of saying this would be: All functions
-take a single argument, a C<< <struct> >> that contains all parameters.
-The names of the parameters listed in the API docs for each function are
-the C<name> element for the struct C<member>s.
+B<All> Bugzilla WebService functions use I<named> parameters.
+The individual C<Bugzilla::WebService::Server> modules explain
+how this is implemented for those frontends.
 
 =head1 LOGGING IN
 
+There are various ways to log in:
+
+=over
+
+=item C<User.login>
+
 You can use L<Bugzilla::WebService::User/login> to log in as a Bugzilla 
 user. This issues standard HTTP cookies that you must then use in future
-calls, so your XML-RPC client must be capable of receiving and transmitting
+calls, so your client must be capable of receiving and transmitting
 cookies.
+
+=item C<Bugzilla_login> and C<Bugzilla_password>
+
+B<Added in Bugzilla 3.6>
+
+You can specify C<Bugzilla_login> and C<Bugzilla_password> as arguments
+to any WebService method, and you will be logged in as that user if your
+credentials are correct. Here are the arguments you can specify to any
+WebService method to perform a login:
+
+=over
+
+=item C<Bugzilla_login> (string) - A user's login name.
+
+=item C<Bugzilla_password> (string) - That user's password.
+
+=item C<Bugzilla_restrictlogin> (boolean) - Optional. If true,
+then your login will only be valid for your IP address.
+
+=item C<Bugzilla_rememberlogin> (boolean) - Optional. If true,
+then the cookie sent back to you with the method response will
+not expire.
+
+=back
+
+The C<Bugzilla_restrictlogin> and C<Bugzilla_rememberlogin> options
+are only used when you have also specified C<Bugzilla_login> and 
+C<Bugzilla_password>.
+
+Note that Bugzilla will return HTTP cookies along with the method
+response when you use these arguments (just like the C<User.login> method
+above).
+
+=back
 
 =head1 STABLE, EXPERIMENTAL, and UNSTABLE
 
@@ -251,18 +196,17 @@ Bugzilla versions.
 
 =head1 ERRORS
 
-If a particular webservice call fails, it will throw a standard XML-RPC
-error. There will be a numeric error code, and then the description
-field will contain descriptive text of the error. Each error that Bugzilla
-can throw has a specific code that will not change between versions of
-Bugzilla.
+If a particular webservice call fails, it will throw an error in the
+appropriate format for the frontend that you are using. For all frontends,
+there is at least a numeric error code and descriptive text for the error.
 
 The various errors that functions can throw are specified by the
 documentation of those functions.
 
-If your code needs to know what error Bugzilla threw, use the numeric
-code. Don't try to parse the description, because that may change
-from version to version of Bugzilla.
+Each error that Bugzilla can throw has a specific numeric code that will
+not change between versions of Bugzilla. If your code needs to know what
+error Bugzilla threw, use the numeric code. Don't try to parse the
+description, because that may change from version to version of Bugzilla.
 
 Note that if you display the error to the user in an HTML program, make
 sure that you properly escape the error, as it will not be HTML-escaped.
@@ -285,3 +229,93 @@ an error 302, there won't be an error -302.
 Sometimes a function will throw an error that doesn't have a specific
 error code. In this case, the code will be C<-32000> if it's a "fatal"
 error, and C<32000> if it's a "transient" error.
+
+=head1 COMMON PARAMETERS
+
+Many Webservice methods take similar arguments. Instead of re-writing
+the documentation for each method, we document the parameters here, once,
+and then refer back to this documentation from the individual methods
+where these parameters are used.
+
+=head2 Limiting What Fields Are Returned
+
+Many WebService methods return an array of structs with various
+fields in the structs. (For example, L<Bugzilla::WebService::Bug/get>
+returns a list of C<bugs> that have fields like C<id>, C<summary>, 
+C<creation_time>, etc.)
+
+These parameters allow you to limit what fields are present in
+the structs, to possibly improve performance or save some bandwidth.
+
+=over
+
+=item C<include_fields> 
+
+C<array> An array of strings, representing the (case-sensitive) names of
+fields in the return value. Only the fields specified in this hash will
+be returned, the rest will not be included.
+
+If you specify an empty array, then this function will return empty
+hashes.
+
+Invalid field names are ignored.
+
+Example:
+
+  User.get( ids => [1], include_fields => ['id', 'name'] )
+
+would return something like:
+
+  { users => [{ id => 1, name => 'user@domain.com' }] }
+
+=item C<exclude_fields>
+
+C<array> An array of strings, representing the (case-sensitive) names of
+fields in the return value. The fields specified will not be included in
+the returned hashes.
+
+If you specify all the fields, then this function will return empty
+hashes.
+
+Invalid field names are ignored.
+
+Specifying fields here overrides C<include_fields>, so if you specify a
+field in both, it will be excluded, not included.
+
+Example:
+
+  User.get( ids => [1], exclude_fields => ['name'] )
+
+would return something like:
+
+  { users => [{ id => 1, real_name => 'John Smith' }] }
+
+=back
+
+=head1 SEE ALSO
+
+=head2 Server Types
+
+=over
+
+=item L<Bugzilla::WebService::Server::XMLRPC>
+
+=item L<Bugzilla::WebService::Server::JSONRPC>
+
+=back
+
+=head2 WebService Methods
+
+=over
+
+=item L<Bugzilla::WebService::Bug>
+
+=item L<Bugzilla::WebService::Bugzilla>
+
+=item L<Bugzilla::WebService::Group>
+
+=item L<Bugzilla::WebService::Product>
+
+=item L<Bugzilla::WebService::User>
+
+=back

@@ -66,7 +66,7 @@
     [% terms.Bug %] 
     <a href="show_bug.cgi?id=[% bug.bug_id FILTER html %]">[% bug.bug_id FILTER html %]</a>
     [% IF Param("usebugaliases") AND bug.alias AND NOT bug.error %]
-      (<a href="show_bug.cgi?id=[% bug.alias FILTER url_quote %]">
+      (<a href="show_bug.cgi?id=[% bug.alias FILTER uri %]">
         [% bug.alias FILTER html %]</a>)
     [% END %]
   </h1>
@@ -129,8 +129,8 @@
     <tr>
       <th>[% field_descs.bug_status  FILTER html %]:</th>
       <td>
-        [% get_status(bug.bug_status) FILTER html %]
-        [%+ get_resolution(bug.resolution) FILTER html %]
+        [% display_value("bug_status", bug.bug_status) FILTER html %]
+        [%+ display_value("resolution", bug.resolution) FILTER html %]
       </td>
 
       [% PROCESS rightcell %]
@@ -139,7 +139,7 @@
     <tr>
       <th>[% field_descs.bug_severity FILTER html %]:</th>
       <td class="bz_[% bug.bug_severity FILTER css_class_quote -%]">
-        [% bug.bug_severity FILTER html %]
+        [% display_value("bug_severity", bug.bug_severity) FILTER html %]
       </td>
 
       [% PROCESS rightcell %]
@@ -163,11 +163,23 @@
       <tr>
         <th>[% field_descs.bug_file_loc FILTER html %]:</th>
         <td colspan="3">
-          [% IF bug.bug_file_loc.match("^(javascript|data)") %]
-            [% bug.bug_file_loc FILTER html %]
-          [% ELSE %]
+          [% IF is_safe_url(bug.bug_file_loc) %]
             <a href="[% bug.bug_file_loc FILTER html %]">
                      [% bug.bug_file_loc FILTER html %]</a>
+          [% ELSE %]
+            [% bug.bug_file_loc FILTER html %]
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+
+    [% IF bug.see_also.size %]
+      <tr>
+        <th>[% field_descs.see_also FILTER html %]:</th>
+        <td colspan="3">
+          [% FOREACH see_also = bug.see_also %]
+            <a href="[% see_also.name FILTER html %]">[% see_also.name FILTER html %]</a>
+            [% "<br>" IF not loop.last() %]
           [% END %]
         </td>
       </tr>
@@ -186,6 +198,13 @@
         [% PROCESS bug/field.html.tmpl value=bug.${field.name} editable=0 %]
         [%# Even-numbered fields get a closing <tr> %]
         [% '</tr>' IF !(field_counter % 2) %]
+        [% IF extra_field_item %]
+          [% field_counter = field_counter + 1 %]
+          [% '<tr>' IF field_counter % 2 %]
+          <th>[% extra_field_item.header FILTER none %]</th>
+          <td>[% extra_field_item.data FILTER none %]</td>
+          [% '</tr>' IF !(field_counter % 2) %]
+        [% END %]
     [% END %]
     [%# And we have to finish the row if we ended on an odd number. %]
     [% '<th></th><td></td></tr>' IF field_counter % 2 %]
@@ -195,7 +214,7 @@
       [% PROCESS dependencies name = "blocked"  %]
     [% END %]
 
-    [% IF user.in_group(Param("timetrackinggroup")) %]
+    [% IF user.is_timetracker %]
       <tr>
         <th>Time tracking:</th>
         <td colspan="3">
@@ -289,7 +308,7 @@
   <br>
 
   [% PROCESS bug/comments.html.tmpl
-     comments = bug.longdescs %]
+     comments = bug.comments %]
 
 [% END %]
 
@@ -301,7 +320,7 @@
 [% BLOCK row %]
   <tr>
     <th>[% field_descs.${cell} FILTER html %]:</th>
-    <td[% " colspan=3" IF fullrow %]>[% bug.${cell} FILTER html %]</td>
+    <td[% " colspan=3" IF fullrow %]>[% display_value(cell, bug.${cell}) FILTER html %]</td>
     [% PROCESS rightcell IF !fullrow %]
   </tr>
   [% fullrow = 0 %]
@@ -336,12 +355,12 @@
       <th class="rightcell">[% field_descs.cc FILTER html %]:</th>
       <td>
         [% FOREACH c = bug.cc %]
-          [% c FILTER html %][% ", " IF not loop.last() %]
+          [% c FILTER email FILTER html %][% ", " IF not loop.last() %]
         [% END %]
     [% ELSIF name == "reporter" || name == "assigned_to" 
              || name == "qa_contact" %]
       <th class="rightcell">[% field_descs.${name} FILTER html %]:</th>
-      <td>[% bug.${name}.identity FILTER html %]</td>
+      <td>[% bug.${name}.identity FILTER email FILTER html %]</td>
     [% ELSIF name == "flags" %]
         <th class="rightcell">Flags:</th>
         <td>
@@ -357,7 +376,7 @@
         </td>
     [% ELSIF name != "" %]
       <th class="rightcell">[% field_descs.${name} FILTER html %]:</th>
-      <td>[% bug.${name} FILTER html %]</td>
+      <td>[% display_value(name, bug.${name}) FILTER html %]</td>
     [% ELSE %]
       <td>&nbsp;</td>
       <td>&nbsp;</td>

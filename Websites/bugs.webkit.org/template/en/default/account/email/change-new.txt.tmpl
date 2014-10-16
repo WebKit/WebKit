@@ -20,7 +20,6 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% expiration_ts = token_ts + (max_token_age * 86400) %]
 From: [% Param('mailfrom') %]
 To: [% emailaddress %]
 Subject: [% terms.Bugzilla %] Change Email Address Request
@@ -31,12 +30,12 @@ for the account [% oldemailaddress %] to your address.
 
 To confirm the change, visit the following link:
 
-[%+ urlbase %]token.cgi?t=[% token FILTER url_quote %]&a=cfmem
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=cfmem
 
 If you are not the person who made this request, or you wish to cancel
 this request, visit the following link:
 
-[%+ urlbase %]token.cgi?t=[% token FILTER url_quote %]&a=cxlem
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=cxlem
 
-If you do nothing, the request will lapse after [%+ max_token_age %] days
-(on [%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]).
+If you do nothing, the request will lapse after [% constants.MAX_TOKEN_AGE %] days
+(on [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]).

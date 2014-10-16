@@ -1,0 +1,53 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Everything Solved, Inc.
+  # Portions created by the Initial Developer are Copyright (C) 2010 the
+  # Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s):
+  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# INTERFACE:
+  #   field: a Bugzilla::Field object
+  #   desc_url: An alternate link to help for the field.
+  #   hidden: True if the field label should start hidden.
+  #   rowspan: a "rowspan" value for the label's <th>.
+  #   tag_name: the tag to use to surround the label
+  #   accesskey: access key for the label
+  #%]
+
+[% DEFAULT tag_name = "th" %]
+<[% tag_name FILTER html %] class="field_label [% ' bz_hidden_field' IF hidden %]
+           [%- ' required' IF field.is_mandatory && NOT bug.id %]"
+    id="field_label_[% field.name FILTER html %]"
+    [% IF rowspan %] rowspan="[% rowspan FILTER html %]"[% END %]>
+
+  [% IF editable %]
+    <label for="[% field.name FILTER html %]"[% IF accesskey %] accesskey="[% accesskey FILTER html %]"[% END %]>
+  [% END %]
+
+  <a 
+    [% IF help_html.${field.name}.defined %]
+      title="[% help_html.${field.name} FILTER txt FILTER collapse FILTER html %]"
+      class="field_help_link"
+    [% END %]
+    [% IF desc_url %]
+      href="[% desc_url FILTER html %]"
+    [% ELSE %]
+      href="page.cgi?id=fields.html#[% field.name FILTER uri %]"
+    [% END %]
+  >[%- field_descs.${field.name} FILTER html %]:</a>
+
+  [% '</label>' IF editable %]
+</[% tag_name FILTER html %]>

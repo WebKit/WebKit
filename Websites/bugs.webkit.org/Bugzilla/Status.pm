@@ -22,43 +22,115 @@ use strict;
 
 package Bugzilla::Status;
 
-use base qw(Bugzilla::Object Exporter);
-@Bugzilla::Status::EXPORT = qw(BUG_STATE_OPEN is_open_state closed_bug_statuses);
+use Bugzilla::Error;
+# This subclasses Bugzilla::Field::Choice instead of implementing 
+# ChoiceInterface, because a bug status literally is a special type
+# of Field::Choice, not just an object that happens to have the same
+# methods.
+use base qw(Bugzilla::Field::Choice Exporter);
+@Bugzilla::Status::EXPORT = qw(
+    BUG_STATE_OPEN
+    SPECIAL_STATUS_WORKFLOW_ACTIONS
+
+    is_open_state 
+    closed_bug_statuses
+);
 
 ################################
 #####   Initialization     #####
 ################################
 
-use constant DB_TABLE => 'bug_status';
-
-use constant DB_COLUMNS => qw(
-    id
-    value
-    sortkey
-    isactive
-    is_open
+use constant SPECIAL_STATUS_WORKFLOW_ACTIONS => qw(
+    none
+    duplicate
+    change_resolution
+    clearresolution
 );
 
-use constant NAME_FIELD => 'value';
-use constant LIST_ORDER => 'sortkey, value';
+use constant DB_TABLE => 'bug_status';
+
+# This has all the standard Bugzilla::Field::Choice columns plus "is_open"
+sub DB_COLUMNS {
+    return ($_[0]->SUPER::DB_COLUMNS, 'is_open');
+}
+
+sub VALIDATORS {
+    my $invocant = shift;
+    my $validators = $invocant->SUPER::VALIDATORS;
+    $validators->{is_open} = \&Bugzilla::Object::check_boolean;
+    $validators->{value} = \&_check_value;
+    return $validators;
+}
+
+#########################
+# Database Manipulation #
+#########################
+
+sub create {
+    my $class = shift;
+    my $self = $class->SUPER::create(@_);
+    delete Bugzilla->request_cache->{status_bug_state_open};
+    add_missing_bug_status_transitions();
+    return $self;
+}
+
+sub remove_from_db {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    my $id = $self->id;
+    $dbh->bz_start_transaction();
+    $self->SUPER::remove_from_db();
+    $dbh->do('DELETE FROM status_workflow
+               WHERE old_status = ? OR new_status = ?',
+              undef, $id, $id);
+    $dbh->bz_commit_transaction();
+    delete Bugzilla->request_cache->{status_bug_state_open};
+}
 
 ###############################
 #####     Accessors        ####
 ###############################
 
-sub name      { return $_[0]->{'value'};    }
-sub sortkey   { return $_[0]->{'sortkey'};  }
 sub is_active { return $_[0]->{'isactive'}; }
 sub is_open   { return $_[0]->{'is_open'};  }
+
+sub is_static {
+    my $self = shift;
+    if ($self->name eq 'UNCONFIRMED'
+        || $self->name eq Bugzilla->params->{'duplicate_or_move_bug_status'}) 
+    {
+        return 1;
+    }
+    return 0;
+}
+
+##############
+# Validators #
+##############
+
+sub _check_value {
+    my $invocant = shift;
+    my $value = $invocant->SUPER::_check_value(@_);
+
+    if (grep { lc($value) eq lc($_) } SPECIAL_STATUS_WORKFLOW_ACTIONS) {
+        ThrowUserError('fieldvalue_reserved_word',
+                       { field => $invocant->field, value => $value });
+    }
+    return $value;
+}
+
 
 ###############################
 #####       Methods        ####
 ###############################
 
 sub BUG_STATE_OPEN {
-    # XXX - We should cache this list.
     my $dbh = Bugzilla->dbh;
-    return @{$dbh->selectcol_arrayref('SELECT value FROM bug_status WHERE is_open = 1')};
+    my $cache = Bugzilla->request_cache;
+    $cache->{status_bug_state_open} ||=
+        $dbh->selectcol_arrayref('SELECT value FROM bug_status 
+                                   WHERE is_open = 1');
+    return @{ $cache->{status_bug_state_open} };
 }
 
 # Tells you whether or not the argument is a valid "open" state.
@@ -105,28 +177,6 @@ sub can_change_to {
     }
 
     return $self->{'can_change_to'};
-}
-
-sub can_change_from {
-    my $self = shift;
-    my $dbh = Bugzilla->dbh;
-
-    if (!defined $self->{'can_change_from'}) {
-        my $old_status_ids = $dbh->selectcol_arrayref('SELECT old_status
-                                                         FROM status_workflow
-                                                   INNER JOIN bug_status
-                                                           ON id = old_status
-                                                        WHERE isactive = 1
-                                                          AND new_status = ?
-                                                          AND old_status IS NOT NULL',
-                                                        undef, $self->id);
-
-        # Allow the bug status to remain unchanged.
-        push(@$old_status_ids, $self->id);
-        $self->{'can_change_from'} = Bugzilla::Status->new_from_list($old_status_ids);
-    }
-
-    return $self->{'can_change_from'};
 }
 
 sub comment_required_on_change_from {
@@ -191,7 +241,7 @@ Bugzilla::Status - Bug status class.
 
     use Bugzilla::Status;
 
-    my $bug_status = new Bugzilla::Status({name => 'ASSIGNED'});
+    my $bug_status = new Bugzilla::Status({ name => 'IN_PROGRESS' });
     my $bug_status = new Bugzilla::Status(4);
 
     my @closed_bug_statuses = closed_bug_statuses();
@@ -226,17 +276,6 @@ below.
               given the current bug status. If this method is called as a
               class method, then it returns all bug statuses available on
               bug creation.
-
- Params:      none.
-
- Returns:     A list of Bugzilla::Status objects.
-
-=item C<can_change_from>
-
- Description: Returns the list of active statuses a bug can be changed from
-              given the new bug status. If the bug status is available on
-              bug creation, this method doesn't return this information.
-              You have to call C<can_change_to> instead.
 
  Params:      none.
 

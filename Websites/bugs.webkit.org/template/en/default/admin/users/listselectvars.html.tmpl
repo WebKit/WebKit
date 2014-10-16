@@ -20,8 +20,8 @@
 
 [% BLOCK listselectionurlparams %]
   [% FOREACH field = listselectionvalues.keys %]&amp;
-    [% field FILTER url_quote %]=
-    [% listselectionvalues.$field FILTER url_quote %]
+    [% field FILTER uri %]=
+    [% listselectionvalues.$field FILTER uri %]
   [% END %]
 [% END %]
 

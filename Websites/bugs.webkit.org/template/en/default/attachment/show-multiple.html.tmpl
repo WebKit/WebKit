@@ -21,7 +21,7 @@
 [% PROCESS global/variables.none.tmpl %]
 [% filtered_summary = bugsummary FILTER html %]
 [% header = BLOCK %]View All Attachments for
-  [%+ "$terms.Bug $bug.bug_id" FILTER bug_link(bug.bug_id) FILTER none %][% END %]
+  [%+ "$terms.Bug $bug.id" FILTER bug_link(bug) FILTER none %][% END %]
 
 [% title = BLOCK %]
   View All Attachments for [% terms.Bug %] [%+ bug.bug_id FILTER html %]
@@ -31,8 +31,14 @@
   title = title
   header = header
   subheader = filtered_summary
+  style_urls = ['skins/standard/attachment.css']
 %]
-
+[% IF hide_obsolete %]
+  <div id="hidden_obsolete_message">
+    Obsolete attachments are hidden. To view all attachments (including obsolete) 
+    <a href="attachment.cgi?bugid=[% bug.id FILTER html %]&amp;action=viewall">click here</a>.
+  </div>
+[% END %]
 <br>
 
 [% FOREACH a = attachments %]
@@ -82,10 +88,22 @@
   </table>
 
   [% IF a.is_viewable %]
-    <iframe src="attachment.cgi?id=[% a.id %]" width="75%" height="350">
-      <b>You cannot view the attachment on this page because your browser does not support IFRAMEs.
-      <a href="attachment.cgi?id=[% a.id %]">View the attachment on a separate page</a>.</b>
-    </iframe>
+    [% IF a.contenttype == "text/html" %]
+      [%# For security reasons (clickjacking, embedded scripts), we never
+        # render HTML pages from here. The source code is displayed instead. %]
+      [% INCLUDE global/textarea.html.tmpl
+         minrows = 10
+         cols    = 80
+         defaultcontent = a.data
+         readonly = 'readonly'
+         classes = 'viewall_frame'
+      %]
+    [% ELSE %]
+      <iframe src="attachment.cgi?id=[% a.id %]" class="viewall_frame">
+        <b>You cannot view the attachment on this page because your browser does not support IFRAMEs.
+        <a href="attachment.cgi?id=[% a.id %]">View the attachment on a separate page</a>.</b>
+      </iframe>
+    [% END %]
   [% ELSE %]
     <p><b>
       Attachment cannot be viewed because its MIME type is not text/*, image/*, or application/vnd.mozilla.*.

@@ -48,7 +48,6 @@ var series = {
 [% END %] 
 };
 
-[%# Should attempt to preserve selection across invocations @@@ %]
 [%# This function takes necessary action on selection of a category %]
 function catSelected() {
   var cat = document.chartform.category.value;
@@ -67,7 +66,8 @@ function catSelected() {
   [% IF newtext %]
     subcatwidget.options[i] = new Option("[% newtext FILTER js %]", "");
   [% END %]  
-  
+
+  subcatwidget.disabled = false;
   subcatwidget.options[0].selected = true;
   
   if (document.chartform.action[1]) {
@@ -100,11 +100,13 @@ function checkNewState() {
   <td align="left">
     <select name="[% sel.name %]" id="[% sel.name %]"
             size="[% sel.size %]" style="width: 15em"
+            [%+ 'multiple="multiple"' IF sel.multiple %]
             [%+ "disabled=\"disabled\"" UNLESS ${sel.name}.keys.size || newtext %]
             [%+ "onchange=\"$sel.onchange\"" IF sel.onchange %]>
       [% FOREACH x = ${sel.name}.keys.sort %]
-        <option value="[% x FILTER html %]"
-          [% " selected" IF default.${sel.name} == x %]>
+        [% value = sel.value_in_hash ? ${sel.name}.$x : x %]
+        <option value="[% value FILTER html %]"
+          [% " selected" IF default.${sel.name} == value %]>
           [% x FILTER html %]</option>
       [% END %]
       [% IF newtext %]

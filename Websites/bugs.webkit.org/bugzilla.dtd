@@ -1,13 +1,19 @@
 <!ELEMENT bugzilla (bug+)>
 <!ATTLIST bugzilla
-	version CDATA #REQUIRED
-	urlbase CDATA #REQUIRED
-	maintainer CDATA #REQUIRED
-	exporter CDATA #IMPLIED
+          version CDATA #REQUIRED
+          urlbase CDATA #REQUIRED
+          maintainer CDATA #REQUIRED
+          exporter CDATA #IMPLIED
 >
-<!ELEMENT bug (bug_id, (alias?, creation_ts, short_desc, delta_ts, reporter_accessible, cclist_accessible, classification_id, classification, product, component, version, rep_platform, op_sys, bug_status, resolution?, dup_id?, bug_file_loc?, status_whiteboard?, keywords*, priority, bug_severity, target_milestone?, dependson*, blocked*, votes?, everconfirmed, reporter, assigned_to, qa_contact?, cc*, (estimated_time, remaining_time, actual_time, deadline)?, group*, flag*, long_desc*, attachment*)?)>
+<!ELEMENT bug (bug_id, (alias?, creation_ts, short_desc, delta_ts, reporter_accessible, 
+    cclist_accessible, classification_id, classification, product, component, 
+    version, rep_platform, op_sys, bug_status, resolution?, dup_id?, see_also*, 
+    bug_file_loc?, status_whiteboard?, keywords*, priority, bug_severity, 
+    target_milestone?, dependson*, blocked*, everconfirmed, reporter, assigned_to, 
+    cc*, (estimated_time, remaining_time, actual_time, deadline?)?, qa_contact?, 
+    votes?, token?, group*, flag*, long_desc*, attachment*)?)>
 <!ATTLIST bug
-	error (NotFound | NotPermitted | InvalidBugId) #IMPLIED
+          error (NotFound | NotPermitted | InvalidBugId) #IMPLIED
 >
 <!ELEMENT bug_id (#PCDATA)>
 <!ELEMENT alias (#PCDATA)>
@@ -23,13 +29,22 @@
 <!ELEMENT version (#PCDATA)>
 <!ELEMENT rep_platform (#PCDATA)>
 <!ELEMENT assigned_to (#PCDATA)>
+<!ATTLIST assigned_to 
+          name CDATA #REQUIRED
+>
 <!ELEMENT delta_ts (#PCDATA)>
 <!ELEMENT component (#PCDATA)>
 <!ELEMENT reporter (#PCDATA)>
+<!ATTLIST reporter
+          name CDATA #REQUIRED
+>
 <!ELEMENT target_milestone (#PCDATA)>
 <!ELEMENT bug_severity (#PCDATA)>
 <!ELEMENT creation_ts (#PCDATA)>
 <!ELEMENT qa_contact (#PCDATA)>
+<!ATTLIST qa_contact
+          name CDATA #REQUIRED
+>
 <!ELEMENT status_whiteboard (#PCDATA)>
 <!ELEMENT op_sys (#PCDATA)>
 <!ELEMENT resolution (#PCDATA)>
@@ -39,29 +54,38 @@
 <!ELEMENT keywords (#PCDATA)>
 <!ELEMENT dependson (#PCDATA)>
 <!ELEMENT blocked (#PCDATA)>
-<!ELEMENT votes (#PCDATA)>
 <!ELEMENT everconfirmed (#PCDATA)>
 <!ELEMENT cc (#PCDATA)>
+<!ELEMENT see_also (#PCDATA)>
+<!ELEMENT votes (#PCDATA)>
+<!ELEMENT token (#PCDATA)>
 <!ELEMENT group (#PCDATA)>
+<!ATTLIST group
+          id CDATA #REQUIRED
+>
 <!ELEMENT estimated_time (#PCDATA)>
 <!ELEMENT remaining_time (#PCDATA)>
 <!ELEMENT actual_time (#PCDATA)>
 <!ELEMENT deadline (#PCDATA)>
-<!ELEMENT long_desc (who, bug_when, work_time?, thetext)>
+<!ELEMENT long_desc (commentid, attachid?, who, bug_when, work_time?, thetext)>
 <!ATTLIST long_desc
-          encoding (base64) #IMPLIED
-          isprivate (0|1) #IMPLIED
- >
+          isprivate (0|1) #REQUIRED
+>
+<!ELEMENT commentid (#PCDATA)>
 <!ELEMENT who (#PCDATA)>
+<!ATTLIST who
+          name CDATA #REQUIRED
+>
 <!ELEMENT bug_when (#PCDATA)>
 <!ELEMENT work_time (#PCDATA)>
 <!ELEMENT thetext (#PCDATA)>
-<!ELEMENT attachment (attachid, date, desc, filename?, type?, size?, data?, flag*)>
+<!ELEMENT attachment (attachid, date, delta_ts, desc, filename, type, size, attacher, token?, data?, flag*)>
 <!ATTLIST attachment
-          isobsolete (0|1) #IMPLIED
-          ispatch (0|1) #IMPLIED
-          isprivate (0|1) #IMPLIED
+          isobsolete (0|1) #REQUIRED
+          ispatch (0|1) #REQUIRED
+          isprivate (0|1) #REQUIRED
 >
+<!ELEMENT attacher (#PCDATA)>
 <!ELEMENT attachid (#PCDATA)>
 <!ELEMENT date (#PCDATA)>
 <!ELEMENT desc (#PCDATA)>
@@ -75,7 +99,9 @@
 <!ELEMENT flag EMPTY>
 <!ATTLIST flag
           name CDATA #REQUIRED
+          id CDATA #REQUIRED
+          type_id CDATA #REQUIRED 
           status CDATA #REQUIRED
-          setter CDATA #IMPLIED
+          setter CDATA #REQUIRED
           requestee CDATA #IMPLIED
 >

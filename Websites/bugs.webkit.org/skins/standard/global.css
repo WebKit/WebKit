@@ -20,6 +20,7 @@
   *                 Vitaly Harisov <vitaly@rathedg.com>
   *                 Svetlana Harisova <light@rathedg.com>
   *                 Marc Schumann <wurblzap@gmail.com>
+  *                 Pascal Held <paheld@gmail.com>
   */
 
 /* global (begin) */
@@ -41,22 +42,34 @@
 /* header (begin) */
     #header {
         margin-bottom: 1em;
-        padding-bottom: 2px;
     }
 
-    #header form {
-        font-size: 85%;
+    #header form, #header form input,
+    #footer form, #footer form input
+    {
+        font-size: 95%;
         display: inline;
     }
 
     #header .links {
-        font-size: 85%;
-        border-left: 1px solid silver;
-        border-right: 1px solid silver;
-        border-bottom: 1px solid silver;
+        border-left: 1px solid #747E93;
+        border-right: 1px solid #747E93;
+        border-bottom: 1px solid #747E93;
         -moz-border-radius-bottomleft: 5px;
         -moz-border-radius-bottomright: 5px;
         padding: 0.5em;
+    }
+
+    #lang_links_container {
+        float: right;
+    }
+    #lang_links_container .links {
+        border: none;
+        padding: .5em;
+    }
+
+    .lang_current {
+        font-weight: bold;
     }
 
     #message {
@@ -64,6 +77,19 @@
         margin: 0.3em 0em;
         padding: 0.3em;
         color: green;
+    }
+
+    form.mini_login input.bz_login  {
+        width: 10em;
+    }
+    form.mini_login input.bz_password {
+        width: 6em;
+    }
+    form.mini_login input.bz_remember {
+        margin: 0;
+    }
+    .bz_mini_login_help {
+        color: #777;
     }
 
 /* header (end)   */
@@ -116,46 +142,40 @@
 
 /* titles (end) */
 
-/* footer (begin) */
+/* footer (begin)
+ * See also the "header" section for styles that apply
+ * to both the header and footer. 
+ */
     #footer {
         clear: both;
-        margin-top: 5px;
+        margin-top: 1em;
         width: 100%;
         background: #edf2f2;
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
     }
 
-    #footer form {
-        display: inline;
-    }
-
-    #footer .btn,
-    #footer .txt {
-        font-size: 80%;
-    }
-
     #footer #useful-links {
-        display: table;
         padding-left: 1ex;
         padding-right: 1ex;
     }
 
-    #footer #links-actions,
-    #footer #links-saved,
-    #footer #links-special {
-        display: table-row;
+    #footer ul {
         list-style-type: none;
+    }
+    #links-saved ul {
+        display: inline;
+    }
+    #links-saved th {
+        vertical-align: top;
     }
 
     #footer .label {
-        display: table-cell;
         white-space: nowrap;
         vertical-align: top;
     }
 
     #footer .links {
-        display: table-cell;
         vertical-align: top;
     }
 /* footer (end) */
@@ -193,26 +213,35 @@
 /* tabs (end) */
 
 /* generic (begin) */
-    :link {
+    a {
         color: #039;
     }
 
-    :visited {
+    a:visited {
         color: #636;
     }
 
-    :link:hover, :visited:hover {
+    a:hover {
         color: #333;
     }
 
-    :link:active, :link:active {
+    a:active {
         color: #000;
     }
 
     .clickable_area {
         cursor: pointer;
     }
+
+    textarea {
+        font-family: monospace;
+    }
 /* generic (end) */
+
+/* Links that control whether or not something is visible. */
+a.controller {
+    font-size: 115%;
+}
 
 div#docslinks {
     float: right;
@@ -223,6 +252,18 @@ div#docslinks {
 
 #docslinks h2 {
     margin: 0;
+}
+
+/**************************/
+/* Bug links and statuses */
+/**************************/
+
+.bz_bug_link {
+    /* Catch-all if you want common styles for all bug links */
+}
+
+.bz_bug_link .bz_status_UNCONFIRMED {
+    font-style: italic;
 }
 
 .bz_obsolete {
@@ -243,39 +284,82 @@ div#docslinks {
     color: #a0a0a0;
 }
 
+/************/
+/* Comments */
+/************/
+
+.bz_comment_table td {
+    vertical-align: top;
+}
+
 .bz_comment {
     margin-bottom: 2em;
 }
 
-/* The rules for these classes make international text wrap correctly,
-   even for languages like Japanese that have no spaces. */
-.bz_comment_text, .uneditable_textarea {
+/* tbody.file pre is for the Diff view of attachments. */
+.bz_comment_text, .uneditable_textarea, tbody.file pre {
      font-family: monospace;
-    /* Note that these must all be on separate lines or they stop
-       working in Konqueror. */
-     white-space: pre-wrap;      /* CSS 3 & 2.1 */
-     white-space: -moz-pre-wrap; /* Gecko */
-     white-space: -pre-wrap;     /* Opera 4-6 */
-     white-space: -o-pre-wrap;   /* Opera 7 */
+     white-space: pre-wrap;
 }
 
 .bz_comment_text {
      width: 50em;
 }
 
-.bz_first_comment {
+.bz_comment_user, .bz_comment_time, .bz_comment_number, 
+.bz_private_checkbox, .bz_comment_actions
+{
+    margin: 0 .5em;
+}
+
+.bz_comment_actions, .bz_comment_number, .bz_private_checkbox {
+    float: right;
+}
+
+.bz_collapse_expand_comments {
+    padding: 0;
+    margin: 0 0 0 1em;
+    list-style-type: none;
+}
+.bz_collapse_expand_comments li {
+    margin-bottom: .5em;
+}
+.bz_collapse_comment {
+    text-decoration: none;
+}
+
+.bz_private_checkbox input { 
+    margin: 0;
+    vertical-align: middle;
 }
 
 .bz_comment_head, .bz_first_comment_head {
+    padding-top: .1em;
+    padding-bottom: .1em;
+    padding-left: .5em;
     background-color: #e0e0e0;
 }
+
+.bz_comment_user_images img {
+    vertical-align: bottom;
+}
+
 .bz_comment_hilite pre {
     background-color: lightgreen;
     margin: 0;
     padding: 1em 0;
 }
 
-span.quote {
+/** End Comments **/
+
+.bz_default_hidden, .bz_tui_hidden, .bz_hidden_field, .bz_hidden_option {
+    /* We have !important because we want elements with these classes to always
+     * be hidden, even if there is some CSS that overrides it (we use these
+     * classes inside JavaScript to hide things). */
+    display: none !important;
+}
+
+.bz_comment_text span.quote {
     color: #65379c;
     /* Make quoted text not wrap. */
     white-space: pre;
@@ -291,8 +375,16 @@ table#flags td {
     min-width: 3em;
 }
 
+input.requestee {
+    width: 15em;
+}
+
 #error_msg {
     font-size: x-large;
+}
+
+.warning {
+  color: red;
 }
 
 .throw_error {
@@ -304,7 +396,7 @@ table#flags td {
 }
 
 dt {
-    font-weight: bolder;
+    font-weight: bold;
 }
 body > dl > dt {
     border-top: dotted gray thin;
@@ -317,10 +409,15 @@ dl dl > dt {
     white-space: normal !important;
 }
 
+/* Arrow buttons are buttons with only &uarr;, &darr;, &larr; or &rarr; on
+ * them. We want these to look a little less spidery. */
+.arrow_button {
+    font-size: 150%;
+}
+
 /* Style of the attachment table and time tracking table */
 #attachment_table {
     border-collapse: collapse;
-    width: 40em;
     border: 1px solid #333333;
 }
 
@@ -346,28 +443,6 @@ dl dl > dt {
     padding-left: 1em;
 }
 
-table.attachment_info th {
-    text-align: right;
-    vertical-align: top;
-}
-
-table.attachment_info td {
-    text-align: left;
-    vertical-align: top;
-}
-
-/* Text displayed when the attachment is not viewable by the web browser */
-#noview {
-    text-align: left;
-    vertical-align: middle;
-}
-
-/* For bug fields */
-.uneditable_textarea {
-    width: 30em;
-    font-size: medium;
-}
-
 div.user_match {
     margin-bottom: 1em;
 }
@@ -390,19 +465,50 @@ div.user_match {
         display: none;
     }
 
+    div.bz_query_buttons {
+        display: none;
+    }
+
     body {
         background-image: none;
         background-color: #fff;
     }
 }
 
+/**************/
+/* Bug Fields */
+/**************/
+
 .field_label {
     text-align: right;
     vertical-align: top;
     font-weight: bold;
 }
+.field_help_link {
+    cursor: help;
+}
 .field_value, form#Create th, form#Create td {
     vertical-align: top;
+}
+.field_value .text_input {
+  width: 100%;
+  min-width: 25em;
+}
+
+.uneditable_textarea {
+    width: 30em;
+    font-size: medium;
+}
+
+th.required:before {
+    content: "* ";
+}
+th.required:before, span.required_star {
+    color: red;
+}
+input.required, select.required, span.required_explanation {
+    background-color: #fff7cd;
+    color: #000;
 }
 
 .calendar_button {
@@ -420,15 +526,43 @@ div.user_match {
     border: 1px solid #404D6C;
 }
 
-form#Create th {
-    text-align: right;
+.bug_urls {
+    margin: 0 0 1em 0;
+    padding: 0;
+    list-style-type: none;
 }
 
-form#Create .comment {
-    vertical-align: top;
+/* custom styles for inline instances of autocomplete input fields */
+.yui-skin-sam .yui-ac-input { position:static !important; 
+                              vertical-align:middle !important; }
+.yui-skin-sam .yui-ac-container { left:0px !important; }
+.yui-skin-sam .yui-ac { display: inline-block; }
+#bugzilla-body .yui-ac-content {
+    max-height: 19em;
     overflow: auto;
-    color: green;
-    margin: 0 0.5em;
-    padding: 0.3em;
-    height: 8ex;
+    overflow-x: hidden;
+}
+
+#keyword_container {
+    padding-top: .2em;
+}
+
+
+#keyword_container .yui-ac-content {
+    margin-left: -1px;
+}
+
+/*******************/
+/* Form Validation */
+/*******************/
+
+.validation_error_text {
+    font-size: 120%;
+    color: #B70000;
+    font-weight: bold;
+}
+
+.validation_error_field, input.validation_error_field {
+    border: 2px solid #B70000;
+    background-color: #FFEBEB;
 }

@@ -26,16 +26,26 @@ use fields qw(
     _stack
     successful
 );
+use Hash::Util qw(lock_keys);
+use Bugzilla::Hook;
+use Bugzilla::Constants;
+use List::MoreUtils qw(any);
 
 sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);
     my $list = shift;
+    my %methods = map { $_ => "Bugzilla/Auth/Login/$_.pm" } split(',', $list);
+    lock_keys(%methods);
+    Bugzilla::Hook::process('auth_login_methods', { modules => \%methods });
+
     $self->{_stack} = [];
     foreach my $login_method (split(',', $list)) {
-        require "Bugzilla/Auth/Login/${login_method}.pm";
-        push(@{$self->{_stack}}, 
-             "Bugzilla::Auth::Login::$login_method"->new(@_));
+        my $module = $methods{$login_method};
+        require $module;
+        $module =~ s|/|::|g;
+        $module =~ s/.pm$//;
+        push(@{$self->{_stack}}, $module->new(@_));
     }
     return $self;
 }
@@ -44,10 +54,20 @@ sub get_login_info {
     my $self = shift;
     my $result;
     foreach my $object (@{$self->{_stack}}) {
+        # See Bugzilla::WebService::Server::JSONRPC for where and why
+        # auth_no_automatic_login is used.
+        if (Bugzilla->request_cache->{auth_no_automatic_login}) {
+            next if $object->is_automatic;
+        }
         $result = $object->get_login_info(@_);
         $self->{successful} = $object;
-        last if !$result->{failure};
-        # So that if none of them succeed, it's undef.
+        
+        # We only carry on down the stack if this method denied all knowledge.
+        last unless ($result->{failure}
+                    && ($result->{failure} eq AUTH_NODATA 
+                       || $result->{failure} eq AUTH_NO_SUCH_USER));
+        
+        # If none of the methods succeed, it's undef.
         $self->{successful} = undef;
     }
     return $result;
@@ -82,6 +102,11 @@ sub user_can_create_account {
         return 1 if $object->user_can_create_account;
     }
     return 0;
+}
+
+sub extern_id_used {
+    my ($self) = @_;
+    return any { $_->extern_id_used } @{ $self->{_stack} };
 }
 
 1;

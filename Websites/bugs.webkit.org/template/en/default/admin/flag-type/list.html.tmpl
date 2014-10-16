@@ -16,6 +16,7 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
@@ -30,7 +31,7 @@
     .inactive { color: #787878; }
     .multiplicable { display: block; }
   "
-  onload="var f = document.forms[0]; selectProduct(f.product, f.component, null, null, '__All__');"
+  onload="var f = document.flagtype_form; selectProduct(f.product, f.component, null, null, '__All__');"
   javascript_urls=["js/productform.js"]
   doc_section = "flags-overview.html#flag-types"
 %]
@@ -55,7 +56,7 @@
   which are available to at least one component of the product are shown.
 </p>
 
-<form action="editflagtypes.cgi" method="get">
+<form id="flagtype_form" name="flagtype_form" action="editflagtypes.cgi" method="get">
   <table>
     <tr>
       <th><label for="product">Product:</label></th>
@@ -79,6 +80,11 @@
                     [% comp FILTER html %]</option>
           [% END %]
         </select>
+      </td>
+      <td>
+        <input type="checkbox" id="show_flag_counts" name="show_flag_counts" value="1"
+               [%+ 'checked="checked"' IF show_flag_counts %]>
+        <label for="show_flag_counts">Show flag counts</label>
       </td>
       <td><input type="submit" id="submit" value="Filter"></td>
     </tr>
@@ -114,6 +120,11 @@
       <th>Properties</th>
       <th>Grant group</th>
       <th>Request group</th>
+      [% IF show_flag_counts %]
+        <th>Flags</th>
+        [%# Note to translators: translate the strings in quotes only. %]
+        [% state_desc = {granted = 'granted' denied = 'denied' pending = 'pending'} %]
+      [% END %]
       <th>Actions</th>
     </tr>
 
@@ -136,6 +147,21 @@
         </td>
         <td>[% IF type.grant_group %][% type.grant_group.name FILTER html %][% END %]</td>
         <td>[% IF type.request_group %][% type.request_group.name FILTER html %][% END %]</td>
+        [% IF show_flag_counts %]
+          <td>
+            [% FOREACH state = ['granted', 'pending', 'denied'] %]
+              [% bug_list = bug_lists.${type.id}.$state || [] %]
+              [% IF bug_list.size %]
+                <a href="buglist.cgi?bug_id=[% bug_list.unique.nsort.join(",") FILTER html %]">
+                  [% bug_list.size FILTER html %] [%+ state_desc.$state FILTER html %]
+                </a>
+                <br>
+              [% ELSE %]
+                0 [% state_desc.$state FILTER html %]<br>
+              [% END %]
+            [% END %]
+          </td>
+        [% END %]
         <td>
           <a href="editflagtypes.cgi?action=copy&amp;id=[% type.id %]">Copy</a>
           | <a href="editflagtypes.cgi?action=confirmdelete&amp;id=[% type.id %]">Delete</a>

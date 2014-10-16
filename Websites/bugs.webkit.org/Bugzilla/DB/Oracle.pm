@@ -35,16 +35,16 @@ For interface details see L<Bugzilla::DB> and L<DBI>.
 =cut
 
 package Bugzilla::DB::Oracle;
-
 use strict;
+use base qw(Bugzilla::DB);
 
 use DBD::Oracle;
 use DBD::Oracle qw(:ora_types);
+use List::Util qw(max);
+
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-# This module extends the DB interface via inheritance
-use base qw(Bugzilla::DB);
 
 #####################################################################
 # Constants
@@ -52,10 +52,14 @@ use base qw(Bugzilla::DB);
 use constant EMPTY_STRING  => '__BZ_EMPTY_STR__';
 use constant ISOLATION_LEVEL => 'READ COMMITTED';
 use constant BLOB_TYPE => { ora_type => ORA_BLOB };
-use constant GROUPBY_REGEXP => '((CASE\s+WHEN.+END)|(TO_CHAR\(.+\))|(\(SCORE.+\))|(\(MATCH.+\))|(\w+(\.\w+)?))(\s+AS\s+)?(.*)?$';
+# The max size allowed for LOB fields, in kilobytes.
+use constant MIN_LONG_READ_LEN => 32 * 1024;
+use constant FULLTEXT_OR => ' OR ';
 
 sub new {
-    my ($class, $user, $pass, $host, $dbname, $port) = @_;
+    my ($class, $params) = @_;
+    my ($user, $pass, $host, $dbname, $port) = 
+        @$params{qw(db_user db_pass db_host db_name db_port)};
 
     # You can never connect to Oracle without a DB name,
     # and there is no default DB.
@@ -65,13 +69,16 @@ sub new {
     $ENV{'NLS_LANG'} = '.AL32UTF8' if Bugzilla->params->{'utf8'};
 
     # construct the DSN from the parameters we got
-    my $dsn = "DBI:Oracle:host=$host;sid=$dbname";
+    my $dsn = "dbi:Oracle:host=$host;sid=$dbname";
     $dsn .= ";port=$port" if $port;
     my $attrs = { FetchHashKeyName => 'NAME_lc',  
-                  LongReadLen => ( Bugzilla->params->{'maxattachmentsize'}
-                                     || 1000 ) * 1024, 
+                  LongReadLen => max(Bugzilla->params->{'maxattachmentsize'},
+                                     MIN_LONG_READ_LEN) * 1024,
                 };
-    my $self = $class->db_new($dsn, $user, $pass, $attrs);
+    my $self = $class->db_new({ dsn => $dsn, user => $user, 
+                                pass => $pass, attrs => $attrs });
+    # Needed by TheSchwartz
+    $self->{private_bz_dsn} = $dsn;
 
     bless ($self, $class);
 
@@ -95,14 +102,45 @@ sub bz_last_key {
     return $last_insert_id;
 }
 
+sub bz_check_regexp {
+    my ($self, $pattern) = @_;
+
+    eval { $self->do("SELECT 1 FROM DUAL WHERE "
+          . $self->sql_regexp($self->quote("a"), $pattern, 1)) };
+
+    $@ && ThrowUserError('illegal_regexp',
+        { value => $pattern, dberror => $self->errstr });
+}
+
+sub bz_explain { 
+     my ($self, $sql) = @_; 
+     my $sth = $self->prepare("EXPLAIN PLAN FOR $sql"); 
+     $sth->execute();
+     my $explain = $self->selectcol_arrayref(
+         "SELECT PLAN_TABLE_OUTPUT FROM TABLE(DBMS_XPLAN.DISPLAY)");
+     return join("\n", @$explain); 
+} 
+
+sub sql_group_concat {
+    my ($self, $text, $separator) = @_;
+    $separator = $self->quote(', ') if !defined $separator;
+    return "group_concat(T_CLOB_DELIM($text, $separator))";
+}
+
 sub sql_regexp {
-    my ($self, $expr, $pattern) = @_;
+    my ($self, $expr, $pattern, $nocheck, $real_pattern) = @_;
+    $real_pattern ||= $pattern;
+
+    $self->bz_check_regexp($real_pattern) if !$nocheck;
 
     return "REGEXP_LIKE($expr, $pattern)";
 }
 
 sub sql_not_regexp {
-    my ($self, $expr, $pattern) = @_;
+    my ($self, $expr, $pattern, $nocheck, $real_pattern) = @_;
+    $real_pattern ||= $pattern;
+
+    $self->bz_check_regexp($real_pattern) if !$nocheck;
 
     return "NOT REGEXP_LIKE($expr, $pattern)" 
 }
@@ -136,7 +174,7 @@ sub sql_fulltext_search {
     my ($self, $column, $text, $label) = @_;
     $text = $self->quote($text);
     trick_taint($text);
-    return "CONTAINS($column,$text,$label)", "SCORE($label)";
+    return "CONTAINS($column,$text,$label) > 0", "SCORE($label)";
 }
 
 sub sql_date_format {
@@ -156,13 +194,15 @@ sub sql_date_format {
     return "TO_CHAR($date, " . $self->quote($format) . ")";
 }
 
-sub sql_interval {
-    my ($self, $interval, $units) = @_;
+sub sql_date_math {
+    my ($self, $date, $operator, $interval, $units) = @_;
+    my $time_sql;
     if ($units =~ /YEAR|MONTH/i) {
-        return "NUMTOYMINTERVAL($interval,'$units')";
+        $time_sql = "NUMTOYMINTERVAL($interval,'$units')";
     } else{
-        return "NUMTODSINTERVAL($interval,'$units')";
+        $time_sql = "NUMTODSINTERVAL($interval,'$units')";
     }
+   return "$date $operator $time_sql";
 }
 
 sub sql_position {
@@ -185,6 +225,15 @@ sub sql_in {
     return "( " . join(" OR ", @in_str) . " )";
 }
 
+sub _bz_add_field_table {
+    my ($self, $name, $schema_ref, $type) = @_;
+    $self->SUPER::_bz_add_field_table($name, $schema_ref);
+    if (defined($type) && $type == FIELD_TYPE_MULTI_SELECT) {
+        my $uk_name = "UK_" . $self->_bz_schema->_hash_identifier($name . '_value');
+        $self->do("ALTER TABLE $name ADD CONSTRAINT $uk_name UNIQUE(value)");
+    }
+}
+
 sub bz_drop_table {
      my ($self, $name) = @_;
      my $table_exists = $self->bz_table_info($name);
@@ -197,7 +246,7 @@ sub bz_drop_table {
 # Dropping all FKs for a specified table. 
 sub _bz_drop_fks {
     my ($self, $table) = @_;
-    my @columns = $self->_bz_real_schema->get_table_columns($table);
+    my @columns = $self->bz_table_columns($table);
     foreach my $column (@columns) {
         $self->bz_drop_fk($table, $column);
     }
@@ -229,6 +278,10 @@ sub _fix_hashref {
 
 sub adjust_statement {
     my ($sql) = @_;
+    
+    if ($sql =~ /^CREATE OR REPLACE.*/i){
+        return $sql;
+    } 
 
     # We can't just assume any occurrence of "''" in $sql is an empty
     # string, since "''" can occur inside a string literal as a way of
@@ -295,6 +348,10 @@ sub adjust_statement {
         
         # Oracle need no 'AS'
         $nonstring =~ s/\bAS\b//ig;
+        
+        # Take the first 4000 chars for comparison  
+        $nonstring =~ s/\(\s*(longdescs_\d+\.thetext|attachdata_\d+\.thedata)/
+                      \(DBMS_LOB.SUBSTR\($1, 4000, 1\)/ig;
 
         # Look for a LIMIT clause
         ($limit) = ($nonstring =~ m(/\* LIMIT (\d*) \*/)o);
@@ -319,20 +376,17 @@ sub adjust_statement {
         if ($new_sql !~ /\bWHERE\b/) {
             $new_sql = $new_sql." WHERE 1=1";
         }
-         my ($before_where, $after_where) = split /\bWHERE\b/i,$new_sql;
-         if (defined($offset)) {
-             if ($new_sql =~ /(.*\s+)FROM(\s+.*)/i) { 
-                 my ($before_from,$after_from) = ($1,$2);
-                 $before_where = "$before_from FROM ($before_from,"
-                             . " ROW_NUMBER() OVER (ORDER BY 1) R "
-                             . " FROM $after_from ) "; 
-                 $after_where = " R BETWEEN $offset+1 AND $limit+$offset";
-             }
-         } else {
-                 $after_where = " rownum <=$limit AND ".$after_where;
-         }
-
-         $new_sql = $before_where." WHERE ".$after_where;
+        my ($before_where, $after_where) = split(/\bWHERE\b/i, $new_sql, 2);
+        if (defined($offset)) {
+            my ($before_from, $after_from) = split(/\bFROM\b/i, $new_sql, 2);
+            $before_where = "$before_from FROM ($before_from,"
+                          . " ROW_NUMBER() OVER (ORDER BY 1) R "
+                          . " FROM $after_from ) "; 
+            $after_where = " R BETWEEN $offset+1 AND $limit+$offset";
+        } else {
+            $after_where = " rownum <=$limit AND ".$after_where;
+        }
+        $new_sql = $before_where." WHERE ".$after_where;
     }
     return $new_sql;
 }
@@ -487,6 +541,88 @@ sub bz_setup_database {
               . " RETURN DATE IS BEGIN RETURN SYSDATE; END;");
     $self->do("CREATE OR REPLACE FUNCTION CHAR_LENGTH(COLUMN_NAME VARCHAR2)" 
               . " RETURN NUMBER IS BEGIN RETURN LENGTH(COLUMN_NAME); END;");
+    
+    # Create types for group_concat
+    my $t_clob_delim = $self->selectcol_arrayref("
+        SELECT TYPE_NAME FROM USER_TYPES WHERE TYPE_NAME=?",
+        undef, 'T_CLOB_DELIM'); 
+
+    if ( !@$t_clob_delim ) {
+        $self->do("CREATE OR REPLACE TYPE T_CLOB_DELIM AS OBJECT "
+              . "( p_CONTENT CLOB, p_DELIMITER VARCHAR2(256));");
+    }
+
+    $self->do("CREATE OR REPLACE TYPE T_GROUP_CONCAT AS OBJECT 
+               (  CLOB_CONTENT CLOB,
+                  DELIMITER    VARCHAR2(256),
+                  STATIC FUNCTION ODCIAGGREGATEINITIALIZE(
+                      SCTX IN OUT NOCOPY T_GROUP_CONCAT)
+                  RETURN NUMBER,
+                  MEMBER FUNCTION ODCIAGGREGATEITERATE(
+                      SELF IN OUT NOCOPY T_GROUP_CONCAT,
+                      VALUE IN T_CLOB_DELIM) 
+                  RETURN NUMBER,
+                  MEMBER FUNCTION ODCIAGGREGATETERMINATE(
+                      SELF IN T_GROUP_CONCAT,
+                      RETURNVALUE OUT NOCOPY CLOB,
+                      FLAGS       IN NUMBER)
+                  RETURN NUMBER,
+                  MEMBER FUNCTION ODCIAGGREGATEMERGE(
+                      SELF IN OUT NOCOPY T_GROUP_CONCAT,
+                      CTX2 IN T_GROUP_CONCAT) 
+                  RETURN NUMBER);");
+
+    $self->do("CREATE OR REPLACE TYPE BODY T_GROUP_CONCAT IS
+                  STATIC FUNCTION ODCIAGGREGATEINITIALIZE(
+                  SCTX IN OUT NOCOPY T_GROUP_CONCAT)
+                  RETURN NUMBER IS
+                  BEGIN
+                      SCTX := T_GROUP_CONCAT(EMPTY_CLOB(), NULL);
+                      DBMS_LOB.CREATETEMPORARY(SCTX.CLOB_CONTENT, TRUE);
+                      RETURN ODCICONST.SUCCESS;
+                  END;
+                  MEMBER FUNCTION ODCIAGGREGATEITERATE(
+                      SELF IN OUT NOCOPY T_GROUP_CONCAT,
+                      VALUE IN T_CLOB_DELIM) 
+                  RETURN NUMBER IS
+                  BEGIN
+                      SELF.DELIMITER := VALUE.P_DELIMITER;
+                      DBMS_LOB.WRITEAPPEND(SELF.CLOB_CONTENT, 
+                                           LENGTH(SELF.DELIMITER),
+                                           SELF.DELIMITER);
+                      DBMS_LOB.APPEND(SELF.CLOB_CONTENT, VALUE.P_CONTENT);
+  
+                      RETURN ODCICONST.SUCCESS;
+                  END;
+                  MEMBER FUNCTION ODCIAGGREGATETERMINATE(
+                      SELF IN T_GROUP_CONCAT,
+                      RETURNVALUE OUT NOCOPY CLOB,
+                      FLAGS IN NUMBER) 
+                  RETURN NUMBER IS
+                  BEGIN
+                      RETURNVALUE := RTRIM(LTRIM(SELF.CLOB_CONTENT, 
+                                     SELF.DELIMITER), 
+                                     SELF.DELIMITER);
+                      RETURN ODCICONST.SUCCESS;
+                  END;
+                  MEMBER FUNCTION ODCIAGGREGATEMERGE(
+                      SELF IN OUT NOCOPY T_GROUP_CONCAT,
+                      CTX2 IN T_GROUP_CONCAT) 
+                  RETURN NUMBER IS
+                  BEGIN
+                      DBMS_LOB.WRITEAPPEND(SELF.CLOB_CONTENT, 
+                                           LENGTH(SELF.DELIMITER), 
+                                           SELF.DELIMITER);
+                      DBMS_LOB.APPEND(SELF.CLOB_CONTENT, CTX2.CLOB_CONTENT);
+                      RETURN ODCICONST.SUCCESS;
+                  END;
+               END;");
+
+    # Create user-defined aggregate function group_concat
+    $self->do("CREATE OR REPLACE FUNCTION GROUP_CONCAT(P_INPUT T_CLOB_DELIM) 
+               RETURN CLOB 
+               DETERMINISTIC PARALLEL_ENABLE AGGREGATE USING T_GROUP_CONCAT;");
+
     # Create a WORLD_LEXER named BZ_LEX for multilingual fulltext search
     my $lexer = $self->selectcol_arrayref(
        "SELECT pre_name FROM CTXSYS.CTX_PREFERENCES WHERE pre_name = ? AND
@@ -512,6 +648,10 @@ sub bz_setup_database {
                 my $fk_name = $self->_bz_schema->_get_fk_name($table,
                                                               $column,
                                                               $references);
+                # bz_rename_table didn't rename the trigger correctly.
+                if ($table eq 'bug_tag' && $to_table eq 'tags') {
+                    $to_table = 'tag';
+                }
                 if ( $update =~ /CASCADE/i ){
                      my $trigger_name = uc($fk_name . "_UC");
                      my $exist_trigger = $self->selectcol_arrayref(
@@ -522,7 +662,7 @@ sub bz_setup_database {
                     }
   
                      my $tr_str = "CREATE OR REPLACE TRIGGER $trigger_name"
-                         . " AFTER  UPDATE  ON ". $to_table
+                         . " AFTER UPDATE OF $to_column ON $to_table "
                          . " REFERENCING "
                          . " NEW AS NEW "
                          . " OLD AS OLD "
@@ -538,6 +678,14 @@ sub bz_setup_database {
      }
    }
 
+   # Drop the trigger which causes bug 541553
+   my $trigger_name = "PRODUCTS_MILESTONEURL";
+   my $exist_trigger = $self->selectcol_arrayref(
+       "SELECT OBJECT_NAME FROM USER_OBJECTS
+        WHERE OBJECT_NAME = ?", undef, $trigger_name);
+   if(@$exist_trigger) {
+       $self->do("DROP TRIGGER $trigger_name");
+   }
 }
 
 package Bugzilla::DB::Oracle::st;

@@ -1,0 +1,63 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
+  #                 Bradley Baetz <bbaetz@student.usyd.edu.au>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# This template should be called with PROCESS before processing
+  # "global/header.html.tmpl" in any template that is going to load the
+  # bug form. It expects only a "bug" object, and can even manage to get
+  # along without that. Some of these variables are just defaults that will
+  # be overridden by the calling templates.
+  #%]
+
+[% filtered_desc = bug.short_desc FILTER html %]
+[% subheader = filtered_desc %]
+[% filtered_timestamp = bug.delta_ts FILTER time %]
+[% title = "$terms.Bug $bug.bug_id &ndash; $filtered_desc" %]
+[% header = "$terms.Bug&nbsp;$bug.bug_id" %]
+[% header_addl_info = "Last modified: $filtered_timestamp" %]
+[% yui = ['autocomplete', 'calendar'] %]
+[% javascript_urls = [ "js/util.js", "js/field.js" ] %]
+[% IF bug.defined %]
+  [% unfiltered_title = "$terms.Bug $bug.bug_id – $bug.short_desc" %]
+  [% javascript =  BLOCK %]
+    if( !document.location.href.match(/show_bug\.cgi/) && history && history.replaceState ) {
+      history.replaceState( null, 
+                         "[% unfiltered_title FILTER js %]",  
+                         "show_bug.cgi?id=[% bug.bug_id FILTER js %]" );
+      document.title = "[% unfiltered_title FILTER js %]";
+    }
+    [% javascript FILTER none %]
+  [% END %]
+[% END %]
+[% style_urls = [ "skins/standard/show_bug.css" ] %]
+[% doc_section = "bug_page.html" %]
+[% bodyclasses = ['bz_bug',
+                  "bz_status_$bug.bug_status",
+                  "bz_product_$bug.product",
+                  "bz_component_$bug.component",
+                  "bz_bug_$bug.bug_id",
+                  ] %]
+[% FOREACH group = bug.groups_in %]
+  [% bodyclasses.push("bz_group_$group.name") %]
+[% END %]
+
+[% Hook.process('end') %]

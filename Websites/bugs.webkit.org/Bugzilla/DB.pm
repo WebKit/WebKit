@@ -37,7 +37,7 @@ use base qw(DBI::db);
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
-use Bugzilla::Install::Util qw(vers_cmp);
+use Bugzilla::Install::Util qw(vers_cmp install_string);
 use Bugzilla::Install::Localconfig;
 use Bugzilla::Util;
 use Bugzilla::Error;
@@ -52,7 +52,6 @@ use Storable qw(dclone);
 
 use constant BLOB_TYPE => DBI::SQL_BLOB;
 use constant ISOLATION_LEVEL => 'REPEATABLE READ';
-use constant GROUPBY_REGEXP => '(?:.*\s+AS\s+)?(\w+(\.\w+)?)(?:\s+(ASC|DESC))?$';
 
 # Set default values for what used to be the enum types.  These values
 # are no longer stored in localconfig.  If we are upgrading from a
@@ -66,14 +65,50 @@ use constant GROUPBY_REGEXP => '(?:.*\s+AS\s+)?(\w+(\.\w+)?)(?:\s+(ASC|DESC))?$'
 use constant ENUM_DEFAULTS => {
     bug_severity  => ['blocker', 'critical', 'major', 'normal',
                       'minor', 'trivial', 'enhancement'],
-    priority     => ["P1","P2","P3","P4","P5"],
+    priority     => ["Highest", "High", "Normal", "Low", "Lowest", "---"],
     op_sys       => ["All","Windows","Mac OS","Linux","Other"],
     rep_platform => ["All","PC","Macintosh","Other"],
-    bug_status   => ["UNCONFIRMED","NEW","ASSIGNED","REOPENED","RESOLVED",
-                     "VERIFIED","CLOSED"],
-    resolution   => ["","FIXED","INVALID","WONTFIX", "DUPLICATE","WORKSFORME",
-                     "MOVED"],
+    bug_status   => ["UNCONFIRMED","CONFIRMED","IN_PROGRESS","RESOLVED",
+                     "VERIFIED"],
+    resolution   => ["","FIXED","INVALID","WONTFIX", "DUPLICATE","WORKSFORME"],
 };
+
+# The character that means "OR" in a boolean fulltext search. If empty,
+# the database doesn't support OR searches in fulltext searches.
+# Used by Bugzilla::Bug::possible_duplicates.
+use constant FULLTEXT_OR => '';
+
+# These are used in regular expressions to mean "the start or end of a word".
+#
+# We don't use [[:<:]] and [[:>:]], even though they mean
+# "start and end of a word" and are supported by both MySQL and PostgreSQL,
+# because they don't work if your search starts or ends with a non-alphanumeric
+# character, and there's a fair chance somebody will want to use the "word"
+# search to search flags for something like "review+".
+#
+# We do use [:almum:] because it is supported by at least MySQL and
+# PostgreSQL, and hopefully will get us as much Unicode support as possible,
+# depending on how well the regexp engines of the various databases support
+# Unicode.
+use constant WORD_START => '(^|[^[:alnum:]])';
+use constant WORD_END   => '($|[^[:alnum:]])';
+
+# On most databases, in order to drop an index, you have to first drop
+# the foreign keys that use that index. However, on some databases,
+# dropping the FK immediately before dropping the index causes problems
+# and doesn't need to be done anyway, so those DBs set this to 0.
+use constant INDEX_DROPS_REQUIRE_FK_DROPS => 1;
+
+#####################################################################
+# Overridden Superclass Methods 
+#####################################################################
+
+sub quote {
+    my $self = shift;
+    my $retval = $self->SUPER::quote(@_);
+    trick_taint($retval) if defined $retval;
+    return $retval;
+}
 
 #####################################################################
 # Connection Methods
@@ -84,22 +119,27 @@ sub connect_shadow {
     die "Tried to connect to non-existent shadowdb" 
         unless $params->{'shadowdb'};
 
-    my $lc = Bugzilla->localconfig;
+    # Instead of just passing in a new hashref, we locally modify the
+    # values of "localconfig", because some drivers access it while
+    # connecting.
+    my %connect_params = %{ Bugzilla->localconfig };
+    $connect_params{db_host} = $params->{'shadowdbhost'};
+    $connect_params{db_name} = $params->{'shadowdb'};
+    $connect_params{db_port} = $params->{'shadowdbport'};
+    $connect_params{db_sock} = $params->{'shadowdbsock'};
 
-    return _connect($lc->{db_driver}, $params->{"shadowdbhost"},
-                    $params->{'shadowdb'}, $params->{"shadowdbport"},
-                    $params->{"shadowdbsock"}, $lc->{db_user}, $lc->{db_pass});
+    return _connect(\%connect_params);
 }
 
 sub connect_main {
     my $lc = Bugzilla->localconfig;
-    return _connect($lc->{db_driver}, $lc->{db_host}, $lc->{db_name}, $lc->{db_port},
-                    $lc->{db_sock}, $lc->{db_user}, $lc->{db_pass});
+    return _connect(Bugzilla->localconfig); 
 }
 
 sub _connect {
-    my ($driver, $host, $dbname, $port, $sock, $user, $pass) = @_;
+    my ($params) = @_;
 
+    my $driver = $params->{db_driver};
     my $pkg_module = DB_MODULE->{lc($driver)}->{db};
 
     # do the actual import
@@ -108,7 +148,7 @@ sub _connect {
                 . " localconfig: " . $@);
 
     # instantiate the correct DB specific module
-    my $dbh = $pkg_module->new($user, $pass, $host, $dbname, $port, $sock);
+    my $dbh = $pkg_module->new($params);
 
     return $dbh;
 }
@@ -128,36 +168,16 @@ sub bz_check_requirements {
 
     my $lc = Bugzilla->localconfig;
     my $db = DB_MODULE->{lc($lc->{db_driver})};
+
     # Only certain values are allowed for $db_driver.
     if (!defined $db) {
         die "$lc->{db_driver} is not a valid choice for \$db_driver in"
             . bz_locations()->{'localconfig'};
     }
 
-    die("It is not safe to run Bugzilla inside the 'mysql' database.\n"
-        . "Please pick a different value for \$db_name in localconfig.")
-        if $lc->{db_name} eq 'mysql';
-
     # Check the existence and version of the DBD that we need.
-    my $dbd        = $db->{dbd};
-    my $sql_server = $db->{name};
-    my $sql_want   = $db->{db_version};
-    unless (have_vers($dbd, $output)) {
-        my $command = install_command($dbd);
-        my $root    = ROOT_USER;
-        my $dbd_mod = $dbd->{module};
-        my $dbd_ver = $dbd->{version};
-        my $version = $dbd_ver ? " $dbd_ver or higher" : '';
-        print <<EOT;
-
-For $sql_server, Bugzilla requires that perl's $dbd_mod $dbd_ver or later be
-installed. To install this module, run the following command (as $root):
-
-    $command
-
-EOT
-        exit;
-    }
+    my $dbd = $db->{dbd};
+    _bz_check_dbd($db, $output);
 
     # We don't try to connect to the actual database if $db_check is
     # disabled.
@@ -168,28 +188,62 @@ EOT
 
     # And now check the version of the database server itself.
     my $dbh = _get_no_db_connection();
+    $dbh->bz_check_server_version($db, $output);
 
-    printf("Checking for %15s %-9s ", $sql_server, "(v$sql_want)")
-        if $output;
-    my $sql_vers = $dbh->bz_server_version;
-    $dbh->disconnect;
+    print "\n" if $output;
+}
+
+sub _bz_check_dbd {
+    my ($db, $output) = @_;
+
+    my $dbd = $db->{dbd};
+    unless (have_vers($dbd, $output)) {
+        my $sql_server = $db->{name};
+        my $command = install_command($dbd);
+        my $root    = ROOT_USER;
+        my $dbd_mod = $dbd->{module};
+        my $dbd_ver = $dbd->{version};
+        die <<EOT;
+
+For $sql_server, Bugzilla requires that perl's $dbd_mod $dbd_ver or later be
+installed. To install this module, run the following command (as $root):
+
+    $command
+
+EOT
+    }
+}
+
+sub bz_check_server_version {
+    my ($self, $db, $output) = @_;
+
+    my $sql_vers = $self->bz_server_version;
+    $self->disconnect;
+
+    my $sql_want = $db->{db_version};
+    my $version_ok = vers_cmp($sql_vers, $sql_want) > -1 ? 1 : 0;
+
+    my $sql_server = $db->{name};
+    if ($output) {
+        Bugzilla::Install::Requirements::_checking_for({
+            package => $sql_server, wanted => $sql_want,
+            found   => $sql_vers, ok => $version_ok });
+    }
 
     # Check what version of the database server is installed and let
     # the user know if the version is too old to be used with Bugzilla.
-    if ( vers_cmp($sql_vers,$sql_want) > -1 ) {
-        print "ok: found v$sql_vers\n" if $output;
-    } else {
-        print <<EOT;
+    if (!$version_ok) {
+        die <<EOT;
 
 Your $sql_server v$sql_vers is too old. Bugzilla requires version
 $sql_want or later of $sql_server. Please download and install a
 newer version.
 
 EOT
-        exit;
     }
 
-    print "\n" if $output;
+    # This is used by subclasses.
+    return $sql_vers;
 }
 
 # Note that this function requires that localconfig exist and
@@ -197,7 +251,7 @@ EOT
 sub bz_create_database {
     my $dbh;
     # See if we can connect to the actual Bugzilla database.
-    my $conn_success = eval { $dbh = connect_main(); };
+    my $conn_success = eval { $dbh = connect_main() };
     my $db_name = Bugzilla->localconfig->{db_name};
 
     if (!$conn_success) {
@@ -214,10 +268,9 @@ sub bz_create_database {
         if (!$success) {
             my $error = $dbh->errstr || $@;
             chomp($error);
-            print STDERR  "The '$db_name' database could not be created.",
-                          " The error returned was:\n\n    $error\n\n",
-                          _bz_connect_error_reasons();
-            exit;
+            die "The '$db_name' database could not be created.",
+                " The error returned was:\n\n    $error\n\n",
+                _bz_connect_error_reasons();
         }
     }
 
@@ -228,19 +281,19 @@ sub bz_create_database {
 sub _get_no_db_connection {
     my ($sql_server) = @_;
     my $dbh;
-    my $lc = Bugzilla->localconfig;
+    my %connect_params = %{ Bugzilla->localconfig };
+    $connect_params{db_name} = '';
     my $conn_success = eval {
-        $dbh = _connect($lc->{db_driver}, $lc->{db_host}, '', $lc->{db_port},
-                        $lc->{db_sock}, $lc->{db_user}, $lc->{db_pass});
+        $dbh = _connect(\%connect_params);
     };
     if (!$conn_success) {
-        my $sql_server = DB_MODULE->{lc($lc->{db_driver})}->{name};
+        my $driver = $connect_params{db_driver};
+        my $sql_server = DB_MODULE->{lc($driver)}->{name};
         # Can't use $dbh->errstr because $dbh is undef.
         my $error = $DBI::errstr || $@;
         chomp($error);
-        print STDERR "There was an error connecting to $sql_server:\n\n",
-                     "    $error\n\n", _bz_connect_error_reasons();
-        exit;
+        die "There was an error connecting to $sql_server:\n\n",
+            "    $error\n\n", _bz_connect_error_reasons(), "\n";
     }
     return $dbh;    
 }
@@ -272,9 +325,9 @@ EOT
 }
 
 # List of abstract methods we are checking the derived class implements
-our @_abstract_methods = qw(REQUIRED_VERSION PROGRAM_NAME DBD_VERSION
-                            new sql_regexp sql_not_regexp sql_limit sql_to_days
-                            sql_date_format sql_interval);
+our @_abstract_methods = qw(new sql_regexp sql_not_regexp sql_limit sql_to_days
+                            sql_date_format sql_date_math bz_explain
+                            sql_group_concat);
 
 # This overridden import method will check implementation of inherited classes
 # for missing implementation of abstract methods
@@ -287,7 +340,7 @@ sub import {
         # make sure all abstract methods are implemented
         foreach my $meth (@_abstract_methods) {
             $pkg->can($meth)
-                or croak("Class $pkg does not define method $meth");
+                or die("Class $pkg does not define method $meth");
         }
     }
 
@@ -342,6 +395,15 @@ sub sql_string_concat {
     return '(' . join(' || ', @params) . ')';
 }
 
+sub sql_string_until {
+    my ($self, $string, $substring) = @_;
+
+    my $position = $self->sql_position($substring, $string);
+    return "CASE WHEN $position != 0"
+             . " THEN SUBSTR($string, 1, $position - 1)"
+             . " ELSE $string END";
+}
+
 sub sql_in {
     my ($self, $column_name, $in_list_ref) = @_;
     return " $column_name IN (" . join(',', @$in_list_ref) . ") ";
@@ -357,21 +419,34 @@ sub sql_fulltext_search {
     # make the string lowercase to do case insensitive search
     my $lower_text = lc($text);
 
-    # split the text we search for into separate words
-    my @words = split(/\s+/, $lower_text);
+    # split the text we're searching for into separate words. As a hack
+    # to allow quicksearch to work, if the field starts and ends with
+    # a double-quote, then we don't split it into words. We can't use
+    # Text::ParseWords here because it gets very confused by unbalanced
+    # quotes, which breaks searches like "don't try this" (because of the
+    # unbalanced single-quote in "don't").
+    my @words;
+    if ($lower_text =~ /^"/ and $lower_text =~ /"$/) {
+        $lower_text =~ s/^"//;
+        $lower_text =~ s/"$//;
+        @words = ($lower_text);
+    }
+    else {
+        @words = split(/\s+/, $lower_text);
+    }
 
     # surround the words with wildcards and SQL quotes so we can use them
     # in LIKE search clauses
-    @words = map($self->quote("%$_%"), @words);
+    @words = map($self->quote("\%$_\%"), @words);
 
     # untaint words, since they are safe to use now that we've quoted them
-    map(trick_taint($_), @words);
+    trick_taint($_) foreach @words;
 
     # turn the words into a set of LIKE search clauses
     @words = map("LOWER($column) LIKE $_", @words);
 
     # search for occurrences of all specified words in the column
-    return "CASE WHEN (" . join(" AND ", @words) . ") THEN 1 ELSE 0 END";
+    return join (" AND ", @words), "CASE WHEN (" . join(" AND ", @words) . ") THEN 1 ELSE 0 END";
 }
 
 #####################################################################
@@ -391,6 +466,15 @@ sub bz_last_key {
                                  $table, $column);
 }
 
+sub bz_check_regexp {
+    my ($self, $pattern) = @_;
+
+    eval { $self->do("SELECT " . $self->sql_regexp($self->quote("a"), $pattern, 1)) };
+
+    $@ && ThrowUserError('illegal_regexp', 
+        { value => $pattern, dberror => $self->errstr }); 
+}
+
 #####################################################################
 # Database Setup
 #####################################################################
@@ -401,11 +485,18 @@ sub bz_setup_database {
     # If we haven't ever stored a serialized schema,
     # set up the bz_schema table and store it.
     $self->_bz_init_schema_storage();
-    
+   
+    # We don't use bz_table_list here, because that uses _bz_real_schema.
+    # We actually want the table list from the ABSTRACT_SCHEMA in
+    # Bugzilla::DB::Schema.
     my @desired_tables = $self->_bz_schema->get_table_list();
+    my $bugs_exists = $self->bz_table_info('bugs');
+    if (!$bugs_exists) {
+        print install_string('db_table_setup'), "\n";
+    }
 
     foreach my $table_name (@desired_tables) {
-        $self->bz_add_table($table_name);
+        $self->bz_add_table($table_name, { silently => !$bugs_exists });
     }
 }
 
@@ -415,28 +506,59 @@ sub bz_enum_initial_values {
 }
 
 sub bz_populate_enum_tables {
-    my ($self) = @_;
+    my ($self) = @_; 
+
+    my $any_severities = $self->selectrow_array(
+        'SELECT 1 FROM bug_severity ' . $self->sql_limit(1));
+    print install_string('db_enum_setup'), "\n  " if !$any_severities;
 
     my $enum_values = $self->bz_enum_initial_values();
     while (my ($table, $values) = each %$enum_values) {
         $self->_bz_populate_enum_table($table, $values);
     }
+
+    print "\n" if !$any_severities;
 }
 
 sub bz_setup_foreign_keys {
     my ($self) = @_;
 
-    # We use _bz_schema because bz_add_table has removed all REFERENCES
-    # items from _bz_real_schema.
-    my @tables = $self->_bz_schema->get_table_list();
+    # profiles_activity was the first table to get foreign keys,
+    # so if it doesn't have them, then we're setting up FKs
+    # for the first time, and should be quieter about it.
+    my $activity_fk = $self->bz_fk_info('profiles_activity', 'userid');
+    my $any_fks = $activity_fk && $activity_fk->{created};
+    if (!$any_fks) {
+        print get_text('install_fk_setup'), "\n";
+    }
+
+    my @tables = $self->bz_table_list();
     foreach my $table (@tables) {
-        my @columns = $self->_bz_schema->get_table_columns($table);
+        my @columns = $self->bz_table_columns($table);
+        my %add_fks;
         foreach my $column (@columns) {
-            my $def = $self->_bz_schema->get_column_abstract($table, $column);
-            if ($def->{REFERENCES}) {
-                $self->bz_add_fk($table, $column, $def->{REFERENCES});
+            # First we check for any FKs that have created => 0,
+            # in the _bz_real_schema. This also picks up FKs with
+            # created => 1, but bz_add_fks will ignore those.
+            my $fk = $self->bz_fk_info($table, $column);
+            # Then we check the abstract schema to see if there
+            # should be an FK on this column, but one wasn't set in the
+            # _bz_real_schema for some reason. We do this to handle
+            # various problems caused by upgrading from versions
+            # prior to 4.2, and also to handle problems caused
+            # by enabling an extension pre-4.2, disabling it for
+            # the 4.2 upgrade, and then re-enabling it later.
+            unless ($fk && $fk->{created}) {
+                my $standard_def = 
+                    $self->_bz_schema->get_column_abstract($table, $column);
+                if (exists $standard_def->{REFERENCES}) {
+                    $fk = dclone($standard_def->{REFERENCES});
+                }
             }
+
+            $add_fks{$column} = $fk if $fk;
         }
+        $self->bz_add_fks($table, \%add_fks, { silently => !$any_fks });
     }
 }
 
@@ -444,9 +566,9 @@ sub bz_setup_foreign_keys {
 sub bz_drop_foreign_keys {
     my ($self) = @_;
 
-    my @tables = $self->_bz_real_schema->get_table_list();
+    my @tables = $self->bz_table_list();
     foreach my $table (@tables) {
-        my @columns = $self->_bz_real_schema->get_table_columns($table);
+        my @columns = $self->bz_table_columns($table);
         foreach my $column (@columns) {
             $self->bz_drop_fk($table, $column);
         }
@@ -483,6 +605,20 @@ sub bz_add_column {
         foreach my $sql (@statements) {
             $self->do($sql);
         }
+
+        # To make things easier for callers, if they don't specify
+        # a REFERENCES item, we pull it from the _bz_schema if the
+        # column exists there and has a REFERENCES item.
+        # bz_setup_foreign_keys will then add this FK at the end of
+        # Install::DB.
+        my $col_abstract = 
+            $self->_bz_schema->get_column_abstract($table, $name);
+        if (exists $col_abstract->{REFERENCES}) {
+            my $new_fk = dclone($col_abstract->{REFERENCES});
+            $new_fk->{created} = 0;
+            $new_def->{REFERENCES} = $new_fk;
+        }
+        
         $self->_bz_real_schema->set_column($table, $name, $new_def);
         $self->_bz_store_real_schema;
     }
@@ -490,20 +626,40 @@ sub bz_add_column {
 
 sub bz_add_fk {
     my ($self, $table, $column, $def) = @_;
+    $self->bz_add_fks($table, { $column => $def });
+}
 
-    my $col_def = $self->bz_column_info($table, $column);
-    if (!$col_def->{REFERENCES}) {
-        $self->_check_references($table, $column, $def->{TABLE},
-                                 $def->{COLUMN});
-        print get_text('install_fk_add',
-                       { table => $table, column => $column, fk => $def }) 
-            . "\n" if Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
-        my @sql = $self->_bz_real_schema->get_add_fk_sql($table, $column, $def);
-        $self->do($_) foreach @sql;
-        $col_def->{REFERENCES} = $def;
-        $self->_bz_real_schema->set_column($table, $column, $col_def);
-        $self->_bz_store_real_schema;
+sub bz_add_fks {
+    my ($self, $table, $column_fks, $options) = @_;
+
+    my %add_these;
+    foreach my $column (keys %$column_fks) {
+        my $current_fk = $self->bz_fk_info($table, $column);
+        next if ($current_fk and $current_fk->{created});
+        my $new_fk = $column_fks->{$column};
+        $self->_check_references($table, $column, $new_fk);
+        $add_these{$column} = $new_fk;
+        if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE 
+            and !$options->{silently}) 
+        {
+            print get_text('install_fk_add',
+                           { table => $table, column => $column, 
+                             fk    => $new_fk }), "\n";
+        }
     }
+
+    return if !scalar(keys %add_these);
+
+    my @sql = $self->_bz_real_schema->get_add_fks_sql($table, \%add_these);
+    $self->do($_) foreach @sql;
+
+    foreach my $column (keys %add_these) {
+        my $fk_def = $add_these{$column};
+        $fk_def->{created} = 1;
+        $self->_bz_real_schema->set_fk($table, $column, $fk_def);
+    }
+
+    $self->_bz_store_real_schema();
 }
 
 sub bz_alter_column {
@@ -523,6 +679,11 @@ sub bz_alter_column {
                 "SELECT 1 FROM $table WHERE $name IS NULL");
             ThrowCodeError('column_not_null_no_default_alter', 
                            { name => "$table.$name" }) if ($any_nulls);
+        }
+        # Preserve foreign key definitions in the Schema object when altering
+        # types.
+        if (my $fk = $self->bz_fk_info($table, $name)) {
+            $new_def->{REFERENCES} = $fk;
         }
         $self->bz_alter_column_raw($table, $name, $new_def, $current_def,
                                    $set_nulls_to);
@@ -568,6 +729,15 @@ sub bz_alter_column_raw {
     $self->do($_) foreach (@statements);
 }
 
+sub bz_alter_fk {
+    my ($self, $table, $column, $fk_def) = @_;
+    my $current_fk = $self->bz_fk_info($table, $column);
+    ThrowCodeError('column_alter_nonexistent_fk',
+                   { table => $table, column => $column }) if !$current_fk;
+    $self->bz_drop_fk($table, $column);
+    $self->bz_add_fk($table, $column, $fk_def);
+}
+
 sub bz_add_index {
     my ($self, $table, $name, $definition) = @_;
 
@@ -605,12 +775,12 @@ sub bz_add_index_raw {
 }
 
 sub bz_add_table {
-    my ($self, $name) = @_;
+    my ($self, $name, $options) = @_;
 
     my $table_exists = $self->bz_table_info($name);
 
     if (!$table_exists) {
-        $self->_bz_add_table_raw($name);
+        $self->_bz_add_table_raw($name, $options);
         my $table_def = dclone($self->_bz_schema->get_table_abstract($name));
 
         my %fields = @{$table_def->{FIELDS}};
@@ -619,8 +789,11 @@ sub bz_add_table {
             # initial table creation, because column names have changed
             # over history and it's impossible to keep track of that info
             # in ABSTRACT_SCHEMA.
-            delete $fields{$col}->{REFERENCES};
+            next unless exists $fields{$col}->{REFERENCES};
+            $fields{$col}->{REFERENCES}->{created} =
+                $self->_bz_real_schema->FK_ON_CREATE;
         }
+        
         $self->_bz_real_schema->add_table($name, $table_def);
         $self->_bz_store_real_schema;
     }
@@ -641,9 +814,13 @@ sub bz_add_table {
 # Returns:     nothing
 #
 sub _bz_add_table_raw {
-    my ($self, $name) = @_;
+    my ($self, $name, $options) = @_;
     my @statements = $self->_bz_schema->get_table_ddl($name);
-    print "Adding new table $name ...\n" unless i_am_cgi();
+    if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE
+        and !$options->{silently})
+    {
+        print install_string('db_table_new', { table => $name }), "\n";
+    }
     $self->do($_) foreach (@statements);
 }
 
@@ -672,12 +849,18 @@ sub bz_add_field_tables {
     my ($self, $field) = @_;
     
     $self->_bz_add_field_table($field->name,
-                                $self->_bz_schema->FIELD_TABLE_SCHEMA);
-    if ( $field->type == FIELD_TYPE_MULTI_SELECT ) {
-        $self->_bz_add_field_table('bug_' . $field->name,
-                $self->_bz_schema->MULTI_SELECT_VALUE_TABLE);
-    }
+                               $self->_bz_schema->FIELD_TABLE_SCHEMA, $field->type);
+    if ($field->type == FIELD_TYPE_MULTI_SELECT) {
+        my $ms_table = "bug_" . $field->name;
+        $self->_bz_add_field_table($ms_table,
+            $self->_bz_schema->MULTI_SELECT_VALUE_TABLE);
 
+        $self->bz_add_fks($ms_table, 
+            { bug_id => {TABLE => 'bugs', COLUMN => 'bug_id',
+                         DELETE => 'CASCADE'},
+
+              value  => {TABLE  => $field->name, COLUMN => 'value'} });
+    }
 }
 
 sub bz_drop_field_tables {
@@ -713,19 +896,58 @@ sub bz_drop_column {
 sub bz_drop_fk {
     my ($self, $table, $column) = @_;
 
-    my $col_def = $self->bz_column_info($table, $column);
-    if ($col_def && exists $col_def->{REFERENCES}) {
-        my $def = $col_def->{REFERENCES};
+    my $fk_def = $self->bz_fk_info($table, $column);
+    if ($fk_def and $fk_def->{created}) {
         print get_text('install_fk_drop',
-                       { table => $table, column => $column, fk => $def })
+                       { table => $table, column => $column, fk => $fk_def })
             . "\n" if Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
-        my @sql = $self->_bz_real_schema->get_drop_fk_sql($table,$column,$def);
-        $self->do($_) foreach @sql;
-        delete $col_def->{REFERENCES};
-        $self->_bz_real_schema->set_column($table, $column, $col_def);
+        my @statements = 
+            $self->_bz_real_schema->get_drop_fk_sql($table, $column, $fk_def);
+        foreach my $sql (@statements) {
+            # Because this is a deletion, we don't want to die hard if
+            # we fail because of some local customization. If something
+            # is already gone, that's fine with us!
+            eval { $self->do($sql); } or warn "Failed SQL: [$sql] Error: $@";
+        }
+        # Under normal circumstances, we don't permanently drop the fk--
+        # we want checksetup to re-create it again later. The only
+        # time that FKs get permanently dropped is if the column gets
+        # dropped.
+        $fk_def->{created} = 0;
+        $self->_bz_real_schema->set_fk($table, $column, $fk_def);
         $self->_bz_store_real_schema;
     }
 
+}
+
+sub bz_get_related_fks {
+    my ($self, $table, $column) = @_;
+    my @tables = $self->_bz_real_schema->get_table_list();
+    my @related;
+    foreach my $check_table (@tables) {
+        my @columns = $self->bz_table_columns($check_table);
+        foreach my $check_column (@columns) {
+            my $fk = $self->bz_fk_info($check_table, $check_column);
+            if ($fk 
+                and (($fk->{TABLE} eq $table and $fk->{COLUMN} eq $column)
+                     or ($check_column eq $column and $check_table eq $table)))
+            {
+                push(@related, [$check_table, $check_column, $fk]);
+            }
+        } # foreach $column
+    } # foreach $table
+
+    return \@related;
+}
+
+sub bz_drop_related_fks {
+    my $self = shift;
+    my $related = $self->bz_get_related_fks(@_);
+    foreach my $item (@$related) {
+        my ($table, $column) = @$item;
+        $self->bz_drop_fk($table, $column);
+    }
+    return $related;
 }
 
 sub bz_drop_index {
@@ -734,6 +956,12 @@ sub bz_drop_index {
     my $index_exists = $self->bz_index_info($table, $name);
 
     if ($index_exists) {
+        if ($self->INDEX_DROPS_REQUIRE_FK_DROPS) {
+            # We cannot delete an index used by a FK.
+            foreach my $column (@{$index_exists->{FIELDS}}) {
+                $self->bz_drop_related_fks($table, $column);
+            }
+        }
         $self->bz_drop_index_raw($table, $name);
         $self->_bz_real_schema->delete_index($table, $name);
         $self->_bz_store_real_schema;        
@@ -789,6 +1017,14 @@ sub bz_drop_table {
     }
 }
 
+sub bz_fk_info {
+    my ($self, $table, $column) = @_;
+    my $col_info = $self->bz_column_info($table, $column);
+    return undef if !$col_info;
+    my $fk = $col_info->{REFERENCES};
+    return $fk;
+}
+
 sub bz_rename_column {
     my ($self, $table, $old_name, $new_name) = @_;
 
@@ -822,6 +1058,18 @@ sub bz_rename_table {
     my $new = $self->bz_table_info($new_name);
     ThrowCodeError('db_rename_conflict', { old => $old_name,
                                            new => $new_name }) if $new;
+
+    # FKs will all have the wrong names unless we drop and then let them
+    # be re-created later. Under normal circumstances, checksetup.pl will
+    # automatically re-create these dropped FKs at the end of its DB upgrade
+    # run, so we don't need to re-create them in this method.
+    my @columns = $self->bz_table_columns($old_name);
+    foreach my $column (@columns) {
+        # these just return silently if there's no FK to drop
+        $self->bz_drop_fk($old_name, $column);
+        $self->bz_drop_related_fks($old_name, $column);
+    }
+
     my @sql = $self->_bz_real_schema->get_rename_table_sql($old_name, $new_name);
     print get_text('install_table_rename', 
                    { old => $old_name, new => $new_name }) . "\n"
@@ -829,6 +1077,16 @@ sub bz_rename_table {
     $self->do($_) foreach @sql;
     $self->_bz_real_schema->rename_table($old_name, $new_name);
     $self->_bz_store_real_schema;
+}
+
+sub bz_set_next_serial_value {
+    my ($self, $table, $column, $value) = @_;
+    if (!$value) {
+        $value = $self->selectrow_array("SELECT MAX($column) FROM $table") || 0;
+        $value++;
+    }
+    my @sql = $self->_bz_real_schema->get_set_serial_sql($table, $column, $value);
+    $self->do($_) foreach @sql;
 }
 
 #####################################################################
@@ -899,6 +1157,11 @@ sub bz_table_indexes {
     return \%return_indexes;
 }
 
+sub bz_table_list {
+    my ($self) = @_;
+    return $self->_bz_real_schema->get_table_list();
+}
+
 #####################################################################
 # Protected "Real Database" Schema Information Methods
 #####################################################################
@@ -953,7 +1216,10 @@ sub bz_start_transaction {
         # what we need in Bugzilla to be safe, for what we do.
         # Different DBs have different defaults for their isolation
         # level, so we just set it here manually.
-        $self->do('SET TRANSACTION ISOLATION LEVEL ' . $self->ISOLATION_LEVEL);
+        if ($self->ISOLATION_LEVEL) {
+            $self->do('SET TRANSACTION ISOLATION LEVEL ' 
+                      . $self->ISOLATION_LEVEL);
+        }
         $self->{private_bz_transaction_count} = 1;
     }
 }
@@ -989,7 +1255,9 @@ sub bz_rollback_transaction {
 #####################################################################
 
 sub db_new {
-    my ($class, $dsn, $user, $pass, $override_attrs) = @_;
+    my ($class, $params) = @_;
+    my ($dsn, $user, $pass, $override_attrs) = 
+        @$params{qw(dsn user pass attrs)};
 
     # set up default attributes used to connect to the database
     # (may be overridden by DB driver implementations)
@@ -1072,7 +1340,7 @@ sub _bz_init_schema_storage {
             $self->_bz_add_table_raw('bz_schema');
         }
 
-        print "Initializing the new Schema storage...\n";
+        print install_string('db_schema_init'), "\n";
         my $sth = $self->prepare("INSERT INTO bz_schema "
                                  ." (schema_data, version) VALUES (?,?)");
         $sth->bind_param(1, $store_me, $self->BLOB_TYPE);
@@ -1175,14 +1443,13 @@ sub _bz_populate_enum_table {
 
     # If the table is empty...
     if (!$table_size) {
+        print " $table";
         my $insert = $self->prepare(
             "INSERT INTO $sql_table (value,sortkey) VALUES (?,?)");
-        print "Inserting values into the '$table' table:\n";
         my $sortorder = 0;
         my $maxlen    = max(map(length($_), @$valuelist)) + 2;
         foreach my $value (@$valuelist) {
             $sortorder += 100;
-            printf "%-${maxlen}s sortkey: $sortorder\n", "'$value'";
             $insert->execute($value, $sortorder);
         }
     }
@@ -1191,33 +1458,55 @@ sub _bz_populate_enum_table {
 # This is used before adding a foreign key to a column, to make sure
 # that the database won't fail adding the key.
 sub _check_references {
-    my ($self, $table, $column, $foreign_table, $foreign_column) = @_;
+    my ($self, $table, $column, $fk) = @_;
+    my $foreign_table = $fk->{TABLE};
+    my $foreign_column = $fk->{COLUMN};
 
+    # We use table aliases because sometimes we join a table to itself,
+    # and we can't use the same table name on both sides of the join.
+    # We also can't use the words "table" or "foreign" because those are
+    # reserved words.
     my $bad_values = $self->selectcol_arrayref(
-        "SELECT DISTINCT $table.$column 
-           FROM $table LEFT JOIN $foreign_table
-                ON $table.$column = $foreign_table.$foreign_column
-          WHERE $foreign_table.$foreign_column IS NULL
-                AND $table.$column IS NOT NULL");
+        "SELECT DISTINCT tabl.$column 
+           FROM $table AS tabl LEFT JOIN $foreign_table AS forn
+                ON tabl.$column = forn.$foreign_column
+          WHERE forn.$foreign_column IS NULL
+                AND tabl.$column IS NOT NULL");
 
     if (@$bad_values) {
-        my $values = join(', ', @$bad_values);
-        print <<EOT;
-
-ERROR: There are invalid values for the $column column in the $table 
-table. (These values do not exist in the $foreign_table table, in the 
-$foreign_column column.)
-
-Before continuing with checksetup, you will need to fix these values,
-either by deleting these rows from the database, or changing the values
-of $column in $table to point to valid values in $foreign_table.$foreign_column.
-
-The bad values from the $table.$column column are:
-$values
-
-EOT
-        # I just picked a number above 2, to be considered "abnormal exit."
-        exit 3;
+        my $delete_action = $fk->{DELETE} || '';
+        if ($delete_action eq 'CASCADE') {
+            $self->do("DELETE FROM $table WHERE $column IN (" 
+                      . join(',', ('?') x @$bad_values)  . ")",
+                      undef, @$bad_values);
+            if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+                print "\n", get_text('install_fk_invalid_fixed',
+                    { table => $table, column => $column,
+                      foreign_table => $foreign_table,
+                      foreign_column => $foreign_column,
+                      'values' => $bad_values, action => 'delete' }), "\n";
+            }
+        }
+        elsif ($delete_action eq 'SET NULL') {
+            $self->do("UPDATE $table SET $column = NULL
+                        WHERE $column IN ("
+                      . join(',', ('?') x @$bad_values)  . ")",
+                      undef, @$bad_values);
+            if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+                print "\n", get_text('install_fk_invalid_fixed',
+                    { table => $table, column => $column,
+                      foreign_table => $foreign_table, 
+                      foreign_column => $foreign_column,
+                      'values' => $bad_values, action => 'null' }), "\n";
+            }
+        }
+        else {
+            die "\n", get_text('install_fk_invalid',
+                { table => $table, column => $column,
+                  foreign_table => $foreign_table,
+                  foreign_column => $foreign_column,
+                 'values' => $bad_values }), "\n";
+        }
     }
 }
 
@@ -1518,6 +1807,11 @@ Abstract method, should be overridden by database specific code.
 
 =item C<$pattern> - the regular expression to search for (scalar)
 
+=item C<$nocheck> - true if the pattern should not be tested; false otherwise (boolean)
+
+=item C<$real_pattern> - the real regular expression to search for.
+This argument is used when C<$pattern> is a placeholder ('?').
+
 =back
 
 =item B<Returns>
@@ -1540,13 +1834,7 @@ Abstract method, should be overridden by database specific code.
 
 =item B<Params>
 
-=over
-
-=item C<$expr> - SQL expression for the text to be searched (scalar)
-
-=item C<$pattern> - the regular expression to search for (scalar)
-
-=back
+Same as L</sql_regexp>.
 
 =item B<Returns>
 
@@ -1660,13 +1948,13 @@ Formatted SQL for date formatting (scalar)
 
 =back
 
-=item C<sql_interval>
+=item C<sql_date_math>
 
 =over
 
 =item B<Description>
 
-Outputs proper SQL syntax for a time interval function.
+Outputs proper SQL syntax for adding some amount of time to a date.
 
 Abstract method, should be overridden by database specific code.
 
@@ -1674,15 +1962,28 @@ Abstract method, should be overridden by database specific code.
 
 =over
 
-=item C<$interval> - the time interval requested (e.g. '30') (integer)
+=item C<$date>
 
-=item C<$units> - the units the interval is in (e.g. 'MINUTE') (string)
+C<string> The date being added to or subtracted from.
+
+=item C<$operator>
+
+C<string> Either C<-> or C<+>, depending on whether you're subtracting
+or adding.
+
+=item C<$interval>
+
+C<integer> The time interval you're adding or subtracting (e.g. C<30>)
+
+=item C<$units> 
+
+C<string> the units the interval is in (e.g. 'MINUTE')
 
 =back
 
 =item B<Returns>
 
-Formatted SQL for interval function (scalar)
+Formatted SQL for adding or subtracting a date and some amount of time (scalar)
 
 =back
 
@@ -1774,14 +2075,41 @@ Formatted SQL for concatenating specified strings
 
 =back
 
+=item C<sql_string_until>
+
+=over
+
+=item B<Description>
+
+Returns SQL for truncating a string at the first occurrence of a certain
+substring.
+
+=item B<Params>
+
+Note that both parameters need to be sql-quoted.
+
+=item C<$string> The string we're truncating
+
+=item C<$substring> The substring we're truncating at.
+
+=back
+
 =item C<sql_fulltext_search>
 
 =over
 
 =item B<Description>
 
-Returns SQL syntax for performing a full text search for specified text 
-on a given column.
+Returns one or two SQL expressions for performing a full text search for
+specified text on a given column.
+
+If one value is returned, it is a numeric expression that indicates
+a match with a positive value and a non-match with zero. In this case,
+the DB must support casting numeric expresions to booleans.
+
+If two values are returned, then the first value is a boolean expression
+that indicates the presence of a match, and the second value is a numeric
+expression that can be used for ranking.
 
 There is a ANSI SQL version of this method implemented using LIKE operator,
 but it's not a real full text search. DB specific modules should override 

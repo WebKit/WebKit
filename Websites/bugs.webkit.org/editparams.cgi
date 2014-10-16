@@ -67,22 +67,28 @@ foreach my $panel (keys %$param_panels) {
                  param_list => \@module_param_list,
                  sortkey => eval "\$${module}::sortkey;"
                };
+    defined($item->{'sortkey'}) || ($item->{'sortkey'} = 100000);
     push(@panels, $item);
     $current_module = $panel if ($current_panel eq lc($panel));
 }
+
+my %hook_panels = map { $_->{name} => { params => $_->{param_list} } }
+                      @panels;
+# Note that this hook is also called in Bugzilla::Config.
+Bugzilla::Hook::process('config_modify_panels', { panels => \%hook_panels });
 
 $vars->{panels} = \@panels;
 
 if ($action eq 'save' && $current_module) {
     check_token_data($token, 'edit_parameters');
     my @changes = ();
-    my @module_param_list = "$param_panels->{$current_module}"->get_param_list();
+    my @module_param_list = @{ $hook_panels{lc($current_module)}->{params} };
 
     foreach my $i (@module_param_list) {
         my $name = $i->{'name'};
         my $value = $cgi->param($name);
 
-        if (defined $cgi->param("reset-$name")) {
+        if (defined $cgi->param("reset-$name") && !$i->{'no_reset'}) {
             $value = $i->{'default'};
         } else {
             if ($i->{'type'} eq 'm') {
@@ -93,6 +99,11 @@ if ($action eq 'save' && $current_module) {
                 $value =~ s/\r\n?/\n/g;
                 # assume single linefeed is an empty string
                 $value =~ s/^\n$//;
+            }
+            # Stop complaining if the URL has no trailing slash.
+            # XXX - This hack can go away once bug 303662 is implemented.
+            if ($name =~ /(?<!webdot)base$/) {
+                $value = "$value/" if ($value && $value !~ m#/$#);
             }
         }
 

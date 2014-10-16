@@ -36,7 +36,7 @@ use strict;
 use Bugzilla::Config::Common;
 use Email::Send;
 
-$Bugzilla::Config::MTA::sortkey = "10";
+our $sortkey = 1200;
 
 sub get_param_list {
   my $class = shift;
@@ -58,9 +58,10 @@ sub get_param_list {
   },
 
   {
-   name => 'sendmailnow',
+   name => 'use_mailer_queue',
    type => 'b',
-   default => 1
+   default => 0,
+   checker => \&check_theschwartz_available,
   },
 
   {
@@ -90,7 +91,6 @@ sub get_param_list {
    default => 7,
    checker => \&check_numeric
   },
-  
   {
    name => 'globalwatchers',
    type => 't',

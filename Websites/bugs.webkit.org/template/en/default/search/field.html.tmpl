@@ -1,0 +1,142 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Guy Pyrzak
+  # Portions created by the Initial Developer are Copyright (C) 2010 the
+  # Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s): Guy Pyrzak <guy.pyrzak@gmail.com>
+  #                 Reed Loden <reed@reedloden.com>
+  #
+  #%]
+[%# INTERFACE:
+  #   field: a Bugzilla::Field object
+  #   value: the value or values that should be used to prepopulate the field
+  #   accesskey: the access key used to access the field more quickly
+  #   onchange: js to run when the change event fires on the field
+  #   type_selected: used by the free text to indicate which type of text
+  #                  search was selected for a particular field
+  #%]
+  
+[% SWITCH field.type %]
+  [% CASE [ constants.FIELD_TYPE_FREETEXT,
+            constants.FIELD_TYPE_TEXTAREA, 
+            constants.FIELD_TYPE_UNKNOWN ] %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    [% INCLUDE "search/type-select.html.tmpl"
+       name = field.name _ "_type",
+       types = types, 
+       selected = type_selected
+    %]    
+    <input name="[% field.name FILTER html %]" 
+           id="[% field.name FILTER html %]" size="40"
+           [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+           value="[% value FILTER html %]">              
+  [% CASE constants.FIELD_TYPE_KEYWORDS %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    [% INCLUDE "search/type-select.html.tmpl"
+       name = field.name _ "_type",
+       types = types, 
+       selected = type_selected
+    %]
+    <div id="keyword_container">
+       <input name="[% field.name FILTER html %]" 
+              id="[% field.name FILTER html %]" size="40"
+              [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+              value="[% value FILTER html %]">
+       <div id="keyword_autocomplete"></div>
+    </div>
+    <script type="text/javascript" defer="defer">
+      YAHOO.bugzilla.keyword_array = [
+        [%- FOREACH keyword = all_keywords %]
+          [%-# %]"[% keyword.name FILTER js %]"
+          [%- "," IF NOT loop.last %][% END %]];
+      YAHOO.bugzilla.keywordAutocomplete.init('[% field.name FILTER js %]',
+                                              'keyword_autocomplete');
+    </script>
+  [% CASE constants.FIELD_TYPE_DATETIME %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    from <input name="[% field.name FILTER html %]from" 
+                id="[% field.name FILTER html %]" 
+                size="10" maxlength="10"
+                value="[% value.0 FILTER html %]" 
+                onchange="updateCalendarFromField(this);[% onchange FILTER html %]">
+         <button type="button" class="calendar_button"
+                        id="button_calendar_[% field.name FILTER html %]"
+                        onclick="showCalendar('[% field.name FILTER js %]')">
+           <span>Calendar</span>
+         </button>
+         <span id="con_calendar_[% field.name FILTER html %]"></span>               
+    to <input name="[% field.name FILTER html %]to" 
+              id="[% field.name FILTER html %]to" size="10" maxlength="10"
+              value="[% value.1 FILTER html %]" 
+              onchange="updateCalendarFromField(this);[% onchange FILTER html %]">
+       <button type="button" class="calendar_button"
+                      id="button_calendar_[% field.name FILTER html %]to"
+                      onclick="showCalendar('[% field.name FILTER js %]to')">
+         <span>Calendar</span>
+       </button>
+    <small>(YYYY-MM-DD or relative dates)</small>
+    
+    <span id="con_calendar_[% field.name FILTER html %]to"></span>
+    <script type="text/javascript">
+      createCalendar('[% field.name FILTER js %]');
+      createCalendar('[% field.name FILTER js %]to');
+    </script>
+  [% CASE [ constants.FIELD_TYPE_SINGLE_SELECT, 
+            constants.FIELD_TYPE_MULTI_SELECT ] %]
+    <div id="container_[% field.name FILTER html %]" class="search_field_grid">      
+      [% INCLUDE "bug/field-label.html.tmpl"
+        field = field
+        editable = 1
+        tag_name = "span"
+      %]
+      <select name="[% field.name FILTER html%]" 
+              id="[% field.name FILTER html %]" 
+        [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+        multiple="multiple" size="7">
+        [% legal_values = ${field.name} %]
+        [% IF field.name == "component" %]
+          [% legal_values = ${"component_"} %]
+        [% END %]
+        [% FOREACH current_value = legal_values %]
+          [% IF current_value.id %]
+            [%# current_value is a hash instead of a value which 
+                only applies for Resolution really, everywhere else current_value
+                is just the value %]
+            [% v = current_value.name OR '---' -%]
+            <option value="[% v FILTER html %]"
+              [% ' selected="selected"' IF value.contains( v ) %]>
+              [% display_value(field.name, current_value.name) FILTER html %]
+            </option>
+          [% ELSE %]
+            <option value="[% current_value OR '---' FILTER html %]"
+              [% ' selected="selected"' IF value.contains( current_value ) %]>
+              [% display_value(field.name, current_value) FILTER html %]
+            </option>
+          [% END %]
+        [% END %]
+      </select>
+    </div>
+  [% END %]

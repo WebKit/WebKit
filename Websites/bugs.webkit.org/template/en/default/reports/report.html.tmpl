@@ -66,15 +66,18 @@
   [% col_field_disp FILTER html %]
 [% END %]
 
+[% time = time FILTER time('%Y-%m-%d %H:%M:%S') FILTER html %]
+
 [% PROCESS global/header.html.tmpl 
   style = "
     .t1     { background-color: #ffffff } /* white       */
     .t2     { background-color: #dfefff } /* light blue  */
     .t3     { background-color: #dddddd } /* grey        */
     .t4     { background-color: #c3d3ed } /* darker blue */
-    .ttotal { background-color: #cfffdf } /* light green */
+    .ttotal, .ttotal td { background-color: #cfffdf } /* light green */
   "
-  header_addl_info = time2str("%Y-%m-%d %H:%M:%S", time)
+  header_addl_info = time
+  yui = ['datatable']
 %]
 
 [% IF debug %]
@@ -94,18 +97,18 @@
       [% PROCESS "reports/report-table.html.tmpl" %]
     [% ELSE %]
       [% IF tbl %]
-        <h2>[% tbl_disp FILTER html %]</h2>
+        <h2>[% tbl_disp FILTER email FILTER html %]</h2>
       [% END %]
       
       [% imageurl = BLOCK %]report.cgi?[% imagebase FILTER html %]&amp;format=
-        [% format FILTER url_quote %]&amp;ctype=png&amp;action=plot&amp;
+        [% format FILTER uri %]&amp;ctype=png&amp;action=plot&amp;
         [% IF tbl_field %]
           [% IF tbl != "-total-" %]
-            [% tbl_field FILTER url_quote %]=[% tbl FILTER url_quote %]&amp;
+            [% tbl_field FILTER uri %]=[% tbl FILTER uri %]&amp;
           [% ELSE %]
             [% FOREACH tblname = tbl_names %]
               [% IF tblname != "-total-" %]
-                [% tbl_field FILTER url_quote %]=[% tblname FILTER url_quote %]&amp;
+                [% tbl_field FILTER uri %]=[% tblname FILTER uri %]&amp;
               [% END %]
             [% END %]
           [% END %]

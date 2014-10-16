@@ -1,0 +1,40 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Dave Miller <justdave@bugzilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
+  #%]
+[%
+   title = "$terms.Bug Moving"
+   desc = "Set up parameters to move $terms.bugs to/from another installation"
+%]
+
+[% param_descs = {
+
+  "move-to-url" => 
+    "The URL of the database we allow some of our $terms.bugs to"
+    _ " be moved to.",
+
+  "move-to-address" => 
+    "To move ${terms.bugs}, an email is sent to the target database."
+    _ " This is the email address that that database uses to listen"
+    _ " for incoming ${terms.bugs}.",
+
+  movers => 
+    "A list of people with permission to move $terms.bugs ",
+
+} %]

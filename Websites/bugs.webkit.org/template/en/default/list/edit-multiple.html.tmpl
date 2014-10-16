@@ -19,6 +19,7 @@
   #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #                 Frédéric Buclin <LpSolit@gmail.com>
   #                 Guy Pyrzak <guy.pyrzak@gmail.com>
+  #                 Reed Loden <reed@reedloden.com>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
@@ -28,12 +29,15 @@
 <input type="hidden" name="token" value="[% token FILTER html %]">
 
 <script type="text/javascript">
-  var numelements = document.forms.changeform.elements.length;
   function SetCheckboxes(value) {
-      var item;
-      for (var i=0 ; i<numelements ; i++) {
-          item = document.forms.changeform.elements[i];
-          item.checked = value;
+      var elements = document.forms.changeform.getElementsByTagName('input'),
+          numelements = elements.length,
+          item, i;
+      for (i = 0; i < numelements; i++) {
+          item = elements[i];
+          if (item.type === 'checkbox' && item.name.match(/^id_/)) {
+            item.checked = value;
+          }
       }
   }
   document.write(' <input type="button" name="uncheck_all" value="Uncheck All" onclick="SetCheckboxes(false);">');
@@ -137,7 +141,7 @@
     <th><label for="bug_status">Status:</label></th>
     <td colspan="3">[% PROCESS status_section %]</td>
   </tr>
-  [% IF user.in_group(Param("timetrackinggroup")) %]
+  [% IF user.is_timetracker %]
     <tr>
       <th><label for="estimated_time">Estimated Hours:</label></th>
       <td>
@@ -146,13 +150,9 @@
                value="[% dontchange FILTER html %]"
                size="6">
       </td>
-      <th><label for="deadline">Deadline (YYYY-MM-DD):</label></th>
-      <td>
-        <input id="deadline"
-               name="deadline"
-               value="[% dontchange FILTER html %]"
-               size="10">
-      </td>
+      [% PROCESS bug/field.html.tmpl 
+          field = bug_fields.deadline, value = dontchange
+          editable = 1, allow_dont_change = 1 %]
     </tr>
     <tr>
       <th><label for="remaining_time">Remaining Hours:</label></th>
@@ -174,7 +174,7 @@
            id => "assigned_to"
            name => "assigned_to"
            value => dontchange
-           size => 32
+           size => 40
       %]
       <input type="checkbox" id="set_default_assignee" name="set_default_assignee" value="1">
       <label for="set_default_assignee">Reset Assignee to default</label>
@@ -189,7 +189,7 @@
              id => "qa_contact"
              name => "qa_contact"
              value => dontchange
-             size => 32
+             size => 40
         %]
         <input type="checkbox" id="set_default_qa_contact" name="set_default_qa_contact" value="1">
         <label for="set_default_qa_contact">Reset QA Contact to default</label>
@@ -201,7 +201,13 @@
 
     <th><label for="masscc">CC List:</label></th>
     <td colspan="3">
-      <input id="masscc" name="masscc" size="32">
+      [% INCLUDE global/userselect.html.tmpl
+           id => "masscc"
+           name => "masscc"
+           value => ""
+           size => 40
+           multiple => 5
+      %]
       <select name="ccaction">
         <option value="add">Add these to the CC List</option>
         <option value="remove">Remove these from the CC List</option>
@@ -213,22 +219,54 @@
   [% IF use_keywords %]
     <tr>
 
-      <th>
-        <label for="keywords">
-          <a href="describekeywords.cgi">Keywords</a>:
-        </label>
-      </th>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.keywords, editable = 1
+         desc_url = "describekeywords.cgi"
+      %]
       <td colspan="3">
-        <input id="keywords" name="keywords" size="32">
+        [% INCLUDE bug/field.html.tmpl
+           field = bug_fields.keywords, editable = 1, value = keywords
+           no_tds = 1
+        %]
         <select name="keywordaction">
           <option value="add">Add these keywords</option>
-          <option value="delete">Delete these keywords</option>
-          <option value="makeexact">Make the keywords be exactly this list</option>
+          <option value="remove">Delete these keywords</option>
+          <option value="set">Make the keywords be exactly this list</option>
         </select>
       </td>
 
     </tr>
   [% END %]
+
+  <tr>
+    <th>
+      <label for="dependson">
+          Depends On:
+      </label>
+    </th>
+    <td colspan="3">
+      <input id="dependson" name="dependson" size="40">
+      <select name="dependson_action">
+          <option value="add">Add these IDs</option>
+          <option value="remove">Delete these IDs</option>
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <th>
+      <label for="blocked">
+          Blocks:
+      </label>
+    </th>
+    <td colspan="3">
+      <input id="blocked" name="blocked" size="40">
+      <select name="blocked_action">
+          <option value="add">Add these IDs</option>
+          <option value="remove">Delete these IDs</option>
+      </select>
+    </td>
+  </tr>
 
   [% IF Param('usestatuswhiteboard') %]
     <tr>
@@ -243,6 +281,8 @@
   [% END %]
 
   [% USE Bugzilla %]
+  [%# Show all legal values and all fields, ignoring visibility controls. %]
+  [% bug = 0 %]
   [% FOREACH field = Bugzilla.active_custom_fields %]
     <tr>
       [% PROCESS bug/field.html.tmpl value = dontchange
@@ -255,7 +295,17 @@
 
 </table>
 
-<b><label for="comment">Additional Comments:</label></b><br>
+<b><label for="comment">Additional Comments:</label></b>
+[% IF user.is_insider %]
+  <input type="checkbox" name="comment_is_private" value="1"
+         id="newcommentprivacy"
+         onClick="updateCommentTagControl(this, form)"/>
+   <label for="newcommentprivacy">
+     Make comment private (visible only to members of the
+     <strong>[% Param('insidergroup') FILTER html %]</strong> group)
+   </label>
+[% END %]
+<br>
 [% INCLUDE global/textarea.html.tmpl
   name    = 'comment'
   id      = 'comment'
@@ -264,12 +314,22 @@
   cols    = constants.COMMENT_COLS
 %]<br>
 
+[% Hook.process('before_groups') %]
+
 [% IF groups.size > 0 %]
+
+  <script type="text/javascript">
+    function turn_off(myself, id) {
+        var other_checkbox = document.getElementById(id);
+        if (myself.checked && other_checkbox) {
+            other_checkbox.checked = false;
+        }
+    }
+  </script>
 
   <b>Groups:</b><br>
   <table border="1">
     <tr>
-      <th>Don't<br>change<br>this group<br>restriction</th>
       <th>Remove<br>[% terms.bugs %]<br>from this<br>group</th>
       <th>Add<br>[% terms.bugs %]<br>to this<br>group</th>
       <th>Group Name:</th>
@@ -278,14 +338,17 @@
     [% FOREACH group = groups %]
     <tr>
       <td align="center">
-        <input type="radio" name="bit-[% group.id %]" value="-1" checked="checked">
-      </td>
-      <td align="center">
-        <input type="radio" name="bit-[% group.id %]" value="0">
+        <input type="checkbox" name="defined_groups" 
+               id="defined_group_[% group.id %]"
+               value="[% group.name FILTER html %]"
+               onchange="turn_off(this, 'group_[% group.id %]')">
       </td>
       [% IF group.is_active %]
         <td align="center">
-          <input type="radio" name="bit-[% group.id %]" value="1">
+          <input type="checkbox" name="groups" 
+                 id="group_[% group.id FILTER html %]"
+                 value="[% group.name FILTER html %]"
+                 onchange="turn_off(this, 'defined_group_[% group.id %]')">
         </td>
       [% ELSE %]
         <td>&nbsp;</td>
@@ -308,11 +371,10 @@
   [% END %]
 
 [% END %]
-<input type="submit" id="commit" value="Commit">
 
-[% IF Param('move-enabled') && user.is_mover %]
-  <input type="submit" name="action" id="action" value="[% Param('move-button-text') %]">
-[% END %]
+[%+ Hook.process('after_groups') %]
+
+<input type="submit" id="commit" value="Commit">
 
 [%############################################################################%]
 [%# Select Menu Block                                                        #%]
@@ -325,7 +387,7 @@
     </option>
     [% FOREACH menuitem = menuitems %]
       [% IF property %][% menuitem = menuitem.$property %][% END %]
-      <option value="[% menuitem FILTER html %]">[% menuitem FILTER html %]</option>
+      <option value="[% menuitem FILTER html %]">[% display_value(menuname, menuitem) FILTER html %]</option>
     [% END %]
   </select>
 [% END %]
@@ -344,7 +406,7 @@
   
     [% FOREACH bug_status = new_bug_statuses %]
       <option value="[% bug_status.name FILTER html %]">
-        [% get_status(bug_status.name) FILTER html %]
+        [% display_value("bug_status", bug_status.name) FILTER html %]
       </option>
       [% IF !bug_status.is_open %]
         [% filtered_status =  bug_status.name FILTER js %]
@@ -365,7 +427,7 @@
     [% FOREACH r = resolutions %]
       [% NEXT IF !r %]
       [% NEXT IF r == "DUPLICATE" || r == "MOVED" %]
-      <option value="[% r FILTER html %]">[% get_resolution(r) FILTER html %]</option>
+      <option value="[% r FILTER html %]">[% display_value("resolution", r) FILTER html %]</option>
     [% END %]
   </select>
   </span>

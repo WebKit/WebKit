@@ -33,7 +33,6 @@
   # namedquery_group_map:     number of named queries the user has shared
   # profiles_activity:        number of changes made to other users' profiles
   # series:                   number of series the viewed user has created
-  # votes:                    number of bugs the viewed user has voted on
   # watch.watched:            number of users the viewed user is being watched
   #                           by
   # watch.watcher:            number of users the viewed user is watching
@@ -69,8 +68,8 @@
     <td>
       [% IF otheruser.groups.size %]
         <ul>
-          [% FOREACH group = otheruser.groups.keys %]
-            <li>[% group FILTER html %]</li>
+          [% FOREACH group = otheruser.groups %]
+            <li>[% group.name FILTER html %]</li>
           [% END %]
         </ul>
       [% ELSE %]
@@ -113,7 +112,7 @@
           <li>
             [% otheruser.login FILTER html %]
             <a href="buglist.cgi?field0-0-0=attachments.submitter&type0-0-0=equals&value0-0-0=
-               [%- otheruser.login FILTER url_quote %]">has submitted
+               [%- otheruser.login FILTER uri %]">has submitted
             [% IF attachments == 1 %]
               one attachment
             [% ELSE %]
@@ -133,7 +132,7 @@
           <li>
             [% otheruser.login FILTER html %]
             <a href="buglist.cgi?emailreporter1=1&amp;emailtype1=exact&amp;email1=
-               [%- otheruser.login FILTER url_quote %]">has reported
+               [%- otheruser.login FILTER uri %]">has reported
             [% IF reporter == 1 %]
               one [% terms.bug %]
             [% ELSE %]
@@ -171,7 +170,7 @@
           <li>
             [% otheruser.login FILTER html %] has
             <a href="buglist.cgi?field0-0-0=setters.login_name&amp;type0-0-0=equals&amp;value0-0-0=
-               [%- otheruser.login FILTER url_quote %]">set
+               [%- otheruser.login FILTER uri %]">set
             or requested
             [% IF flags.setter == 1 %]
               a flag
@@ -192,7 +191,7 @@
           <li>
             [% otheruser.login FILTER html %] has
             <a href="buglist.cgi?emaillongdesc1=1&amp;emailtype1=exact&amp;email1=
-               [%- otheruser.login FILTER url_quote %]">commented
+               [%- otheruser.login FILTER uri %]">commented
             [% IF longdescs == 1 %]
               once on [% terms.abug %]
             [% ELSE %]
@@ -226,8 +225,9 @@
   [% END %]
 
   [% IF assignee_or_qa || cc || component_cc || email_setting || flags.requestee ||
-        namedqueries || profile_setting || quips || series || votes || watch.watched ||
-        watch.watcher || whine_events || whine_schedules %]
+        namedqueries || profile_setting || quips || series || watch.watched ||
+        watch.watcher || whine_events || whine_schedules || otheruser.has_audit_entries ||
+        other_safe %]
     <div class="warningmessages">
       <p>The following deletions are <b>safe</b> and will not generate
       referential integrity inconsistencies.</p>
@@ -237,7 +237,7 @@
           <li>
             [% otheruser.login FILTER html %]
             <a href="buglist.cgi?emailassigned_to1=1&amp;emailqa_contact1=1&amp;emailtype1=exact&amp;email1=
-               [%- otheruser.login FILTER url_quote %]">is
+               [%- otheruser.login FILTER uri %]">is
             the assignee or the QA contact of
             [% IF assignee_or_qa == 1 %]
               one [% terms.bug %]
@@ -252,7 +252,7 @@
           <li>
             [% otheruser.login FILTER html %]
             <a href="buglist.cgi?emailcc1=1&amp;emailtype1=exact&amp;email1=
-               [%- otheruser.login FILTER url_quote %]">is
+               [%- otheruser.login FILTER uri %]">is
             on the CC list of
             [% IF cc == 1 %]
               [%+ terms.abug %]
@@ -283,7 +283,7 @@
           <li>
             [% otheruser.login FILTER html %] has been
             <a href="buglist.cgi?field0-0-0=requestees.login_name&amp;type0-0-0=equals&amp;value0-0-0=
-               [%- otheruser.login FILTER url_quote %]">asked
+               [%- otheruser.login FILTER uri %]">asked
             to set
             [% IF flags.requestee == 1 %]
               a flag
@@ -372,23 +372,6 @@
             will have no author anymore, but will remain available.
           </li>
         [% END %]
-        [% IF votes %]
-          <li>
-            [% otheruser.login FILTER html %] has voted on
-            [% IF votes == 1 %]
-              [%+ terms.abug %]
-            [% ELSE %]
-              [%+ votes %] [%+ terms.bugs %]
-            [% END %].
-            If you delete the user account,
-            [% IF votes == 1 %]
-              this vote
-            [% ELSE %]
-              these votes
-            [% END %]
-            will be deleted along with the user account.
-          </li>
-        [% END %]
         [% IF watch.watched || watch.watcher %]
           <li>
             [% otheruser.login FILTER html %]
@@ -445,6 +428,15 @@
             but the whines themselves will be left unaltered.
           </li>
         [% END %]
+        [% IF otheruser.has_audit_entries %]
+          <li>
+            The user has performed audited administrative tasks
+            that are logged in the database.
+            If you delete this user account, the audit log entries
+            will no longer be indentifiable.
+          </li>
+        [% END %]
+        [% Hook.process('warn_safe') %]
       </ul>
     </div>
 

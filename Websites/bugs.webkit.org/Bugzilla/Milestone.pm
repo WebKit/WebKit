@@ -26,6 +26,8 @@ use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 
+use Scalar::Util qw(blessed);
+
 ################################
 #####    Initialization    #####
 ################################
@@ -41,25 +43,28 @@ use constant DB_COLUMNS => qw(
     value
     product_id
     sortkey
+    isactive
 );
 
-use constant REQUIRED_CREATE_FIELDS => qw(
-    name
-    product
-);
+use constant REQUIRED_FIELD_MAP => {
+    product_id => 'product',
+};
 
 use constant UPDATE_COLUMNS => qw(
     value
     sortkey
+    isactive
 );
 
 use constant VALIDATORS => {
-    product => \&_check_product,
-    sortkey => \&_check_sortkey,
+    product  => \&_check_product,
+    sortkey  => \&_check_sortkey,
+    value    => \&_check_value,
+    isactive => \&Bugzilla::Object::check_boolean,
 };
 
-use constant UPDATE_VALIDATORS => {
-    value => \&_check_value,
+use constant VALIDATOR_DEPENDENCIES => {
+    value => ['product'],
 };
 
 ################################
@@ -94,14 +99,10 @@ sub new {
 }
 
 sub run_create_validators {
-    my $class  = shift;
+    my $class = shift;
     my $params = $class->SUPER::run_create_validators(@_);
-
     my $product = delete $params->{product};
     $params->{product_id} = $product->id;
-    $params->{value} = $class->_check_value($params->{name}, $product);
-    delete $params->{name};
-
     return $params;
 }
 
@@ -165,7 +166,8 @@ sub remove_from_db {
 ################################
 
 sub _check_value {
-    my ($invocant, $name, $product) = @_;
+    my ($invocant, $name, undef, $params) = @_;
+    my $product = blessed($invocant) ? $invocant->product : $params->{product};
 
     $name = trim($name);
     $name || ThrowUserError('milestone_blank_name');
@@ -173,7 +175,6 @@ sub _check_value {
         ThrowUserError('milestone_name_too_long', {name => $name});
     }
 
-    $product = $invocant->product if (ref $invocant);
     my $milestone = new Bugzilla::Milestone({product => $product, name => $name});
     if ($milestone && (!ref $invocant || $milestone->id != $invocant->id)) {
         ThrowUserError('milestone_already_exists', { name    => $milestone->name,
@@ -196,6 +197,8 @@ sub _check_sortkey {
 
 sub _check_product {
     my ($invocant, $product) = @_;
+    $product || ThrowCodeError('param_required',
+                    { function => "$invocant->create", param => "product" });
     return Bugzilla->user->check_can_admin_product($product->name);
 }
 
@@ -203,8 +206,9 @@ sub _check_product {
 # Methods
 ################################
 
-sub set_name { $_[0]->set('value', $_[1]); }
-sub set_sortkey { $_[0]->set('sortkey', $_[1]); }
+sub set_name      { $_[0]->set('value', $_[1]);    }
+sub set_sortkey   { $_[0]->set('sortkey', $_[1]);  }
+sub set_is_active { $_[0]->set('isactive', $_[1]); }
 
 sub bug_count {
     my $self = shift;
@@ -226,6 +230,7 @@ sub bug_count {
 sub name       { return $_[0]->{'value'};      }
 sub product_id { return $_[0]->{'product_id'}; }
 sub sortkey    { return $_[0]->{'sortkey'};    }
+sub is_active  { return $_[0]->{'isactive'};   }
 
 sub product {
     my $self = shift;
@@ -255,7 +260,7 @@ Bugzilla::Milestone - Bugzilla product milestone class.
     my $sortkey    = $milestone->sortkey;
 
     my $milestone = Bugzilla::Milestone->create(
-        { name => $name, product => $product, sortkey => $sortkey });
+        { value => $name, product => $product, sortkey => $sortkey });
 
     $milestone->set_name($new_name);
     $milestone->set_sortkey($new_sortkey);
@@ -361,11 +366,11 @@ Milestone.pm represents a Product Milestone object.
 
 =over
 
-=item C<create({name => $name, product => $product, sortkey => $sortkey})>
+=item C<create({value => $value, product => $product, sortkey => $sortkey})>
 
  Description: Create a new milestone for the given product.
 
- Params:      $name    - name of the new milestone (string). This name
+ Params:      $value   - name of the new milestone (string). This name
                          must be unique within the product.
               $product - a Bugzilla::Product object.
               $sortkey - the sortkey of the new milestone (signed integer)

@@ -121,21 +121,13 @@ if ($old_id == $new_id) {
 #     where fooN is the column to update, and barN1, barN2, ... are
 #     the columns to take into account to avoid duplicated entries.
 #     Note that the barNM columns are optional.
-my $changes = {
-    # Tables affecting bugs.
-    bugs            => ['assigned_to', 'reporter', 'qa_contact'],
-    bugs_activity   => ['who'],
-    attachments     => ['submitter_id'],
-    flags           => ['setter_id', 'requestee_id'],
+#
+# We set the tables that require custom stuff (multiple columns to check)
+# here, but the simple stuff is all handled below by bz_get_related_fks.
+my %changes = (
     cc              => ['who bug_id'],
-    longdescs       => ['who'],
-    votes           => ['who'],
     # Tables affecting global behavior / other users.
-    components      => ['initialowner', 'initialqacontact'],
     component_cc    => ['user_id component_id'],
-    quips           => ['userid'],
-    series          => ['creator'],
-    whine_events    => ['owner_userid'],
     watch           => ['watcher watched', 'watched watcher'],
     # Tables affecting the user directly.
     namedqueries    => ['userid name'],
@@ -143,17 +135,23 @@ my $changes = {
     user_group_map  => ['user_id group_id isbless grant_type'],
     email_setting   => ['user_id relationship event'],
     profile_setting => ['user_id setting_name'],
-    profiles_activity => ['userid', 'who'], # Should activity be migrated?
 
     # Only do it if mailto_type = 0, i.e is pointing to a user account!
     # This requires to be done separately due to this condition.
     whine_schedules => [], # ['mailto'],
+);
 
-    # Delete all old records for these tables; no migration.
-    logincookies    => [], # ['userid'],
-    tokens          => [], # ['userid'],
-    profiles        => [], # ['userid'],
-};
+my $userid_fks = $dbh->bz_get_related_fks('profiles', 'userid');
+foreach my $item (@$userid_fks) {
+    my ($table, $column) = @$item;
+    $changes{$table} ||= [];
+    push(@{ $changes{$table} }, $column);
+}
+
+# Delete all old records for these tables; no migration.
+foreach my $table (qw(logincookies tokens profiles)) {
+    $changes{$table} = [];
+}
 
 # Start the transaction
 $dbh->bz_start_transaction();
@@ -163,8 +161,8 @@ $dbh->do('DELETE FROM logincookies WHERE userid = ?', undef, $old_id);
 $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $old_id);
 
 # Migrate records from old user to new user.
-foreach my $table (keys(%$changes)) {
-    foreach my $column_list (@{$changes->{$table}}) {
+foreach my $table (keys %changes) {
+    foreach my $column_list (@{ $changes{$table} }) {
         # Get all columns to consider. There is always at least
         # one column given: the one to update.
         my @columns = split(/[\s]+/, $column_list);

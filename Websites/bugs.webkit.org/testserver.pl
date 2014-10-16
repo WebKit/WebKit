@@ -21,13 +21,7 @@
 use strict;
 use lib qw(. lib);
 
-BEGIN {
-    my $envpath = $ENV{'PATH'};
-    require Bugzilla;
-    # $ENV{'PATH'} is required by the 'ps' command to run correctly.
-    $ENV{'PATH'} = $envpath;
-}
-
+use Bugzilla;
 use Bugzilla::Constants;
 
 use Socket;
@@ -48,7 +42,7 @@ if ((@ARGV != 1) || ($ARGV[0] !~ /^https?:/))
 # Try to determine the GID used by the web server.
 my @pscmds = ('ps -eo comm,gid', 'ps -acxo command,gid', 'ps -acxo command,rgid');
 my $sgid = 0;
-if ($^O !~ /MSWin32/i) {
+if (!ON_WINDOWS) {
     foreach my $pscmd (@pscmds) {
         open PH, "$pscmd 2>/dev/null |";
         while (my $line = <PH>) {
@@ -65,7 +59,8 @@ my $webgroupnum = 0;
 my $webservergroup = Bugzilla->localconfig->{webservergroup};
 if ($webservergroup =~ /^(\d+)$/) {
     $webgroupnum = $1;
-} else {
+}
+else {
     eval { $webgroupnum = (getgrnam $webservergroup) || 0; };
 }
 
@@ -76,30 +71,33 @@ if ($sgid > 0) {
 "WARNING \$webservergroup is set to an empty string.
 That is a very insecure practice. Please refer to the
 Bugzilla documentation.\n";
-    } elsif ($webgroupnum == $sgid) {
+    }
+    elsif ($webgroupnum == $sgid || Bugzilla->localconfig->{use_suexec}) {
         print "TEST-OK Webserver is running under group id in \$webservergroup.\n";
-    } else {
+    }
+    else {
         print 
 "TEST-WARNING Webserver is running under group id not matching \$webservergroup.
 This if the tests below fail, this is probably the problem.
 Please refer to the web server configuration section of the Bugzilla guide. 
 If you are using virtual hosts or suexec, this warning may not apply.\n";
     }
-} elsif ($^O !~ /MSWin32/i) {
+}
+elsif (!ON_WINDOWS) {
    print
 "TEST-WARNING Failed to find the GID for the 'httpd' process, unable
 to validate webservergroup.\n";
 }
 
 
-# Try to fetch a static file (front.png)
+# Try to fetch a static file (padlock.png)
 $ARGV[0] =~ s/\/$//;
-my $url = $ARGV[0] . "/skins/standard/index/front.png";
+my $url = $ARGV[0] . "/images/padlock.png";
 if (fetch($url)) {
-    print "TEST-OK Got front picture.\n";
+    print "TEST-OK Got padlock picture.\n";
 } else {
     print 
-"TEST-FAILED Fetch of skins/standard/index/front.png failed
+"TEST-FAILED Fetch of images/padlock.png failed
 Your web server could not fetch $url.
 Check your web server configuration and try again.\n";
     exit(1);
@@ -140,7 +138,7 @@ if ($@ eq '') {
 
     # Ensure major versions of GD and libgd match
     # Windows's GD module include libgd.dll, guaranteed to match
-    if ($^O !~ /MSWin32/i) {
+    if (!ON_WINDOWS) {
         my $gdlib = `gdlib-config --version 2>&1` || "";
         $gdlib =~ s/\n$//;
         if (!$gdlib) {

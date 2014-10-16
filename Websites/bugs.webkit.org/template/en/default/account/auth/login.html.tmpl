@@ -69,17 +69,15 @@
       </tr>
     [% END %]
 
-    [% IF Param('loginnetmask') < 32 %]
-      <tr>
-        <th>&nbsp;</th>
-        <td>
-          <input type="checkbox" id="Bugzilla_restrictlogin" name="Bugzilla_restrictlogin"
-                 checked="checked">
-          <label for="Bugzilla_restrictlogin">Restrict this session to this IP address
-          (using this option improves security)</label>
-        </td>
-      </tr>
-    [% END %]
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="checkbox" id="Bugzilla_restrictlogin" name="Bugzilla_restrictlogin"
+               checked="checked">
+        <label for="Bugzilla_restrictlogin">Restrict this session to this IP address
+        (using this option improves security)</label>
+      </td>
+    </tr>
   </table>
 
   [% PROCESS "global/hidden-fields.html.tmpl"
@@ -92,6 +90,8 @@
     Otherwise, you will be required to log in frequently.)
   </p>
 </form>
+
+[% Hook.process('additional_methods') %]
 
 [%# Allow the user to create a new account, or request a token to change
   # their password, assuming that our auth method allows that.
@@ -109,14 +109,13 @@
   [% IF user.authorizer.can_change_password %]
     <hr>
 
-    <a name="forgot"></a>
-    <form method="get" action="token.cgi">
+    <form id="forgot" method="get" action="token.cgi">
       <input type="hidden" name="a" value="reqpw">
       If you have an account, but have forgotten your password,
       enter your login name below and submit a request
       to change your password.<br>
       <input size="35" name="loginname">
-      <input type="submit" id="request" value="Submit Request">
+      <input type="submit" id="request" value="Reset Password">
     </form>
   [% END %]
 

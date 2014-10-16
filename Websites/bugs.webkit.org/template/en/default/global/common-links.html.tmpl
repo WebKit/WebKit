@@ -20,10 +20,12 @@
   #%]
 
 [% DEFAULT qs_suffix = "" %]
+[% USE Bugzilla %]
 
 <ul class="links">
   <li><a href="./">Home</a></li>
   <li><span class="separator">| </span><a href="enter_bug.cgi">New</a></li>
+  <li><span class="separator">| </span><a href="describecomponents.cgi">Browse</a></li>
   <li><span class="separator">| </span><a href="query.cgi">Search</a></li>
 
   <li class="form">
@@ -32,9 +34,12 @@
         onsubmit="if (this.quicksearch.value == '')
                   { alert('Please enter one or more search terms first.');
                     return false; } return true;">
-    <input class="txt" type="text" id="quicksearch[% qs_suffix FILTER html %]" name="quicksearch">
-    <input class="btn" type="submit" value="Find" id="find[% qs_suffix FILTER html %]">
-    [%-# Work around FF bug: keep this on one line %]</form></li>
+    <input class="txt" type="text" id="quicksearch[% qs_suffix FILTER html %]" name="quicksearch" 
+           title="Quick Search" value="[% quicksearch FILTER html %]">
+    <input class="btn" type="submit" value="Search" 
+           id="find[% qs_suffix FILTER html %]">
+    [%-# Work around FF bug: keep this on one line %]</form>
+  <a href="page.cgi?id=quicksearch.html" title="Quicksearch Help">[?]</a></li>
 
   <li><span class="separator">| </span><a href="report.cgi">Reports</a></li>
 
@@ -42,24 +47,20 @@
     [% IF Param('shutdownhtml') || Bugzilla.has_flags %]
       <span class="separator">| </span>
       [% IF user.id %]
-        <a href="request.cgi?requester=[% user.login FILTER url_quote %]&amp;requestee=
-                 [% user.login FILTER url_quote %]&amp;do_union=1&amp;group=type&amp;action=queue">My Requests</a>
+        <a href="request.cgi?requester=[% user.login FILTER uri %]&amp;requestee=
+                 [% user.login FILTER uri %]&amp;do_union=1&amp;group=type&amp;action=queue">My Requests</a>
       [% ELSE %]
         <a href="request.cgi">Requests</a>
       [% END %]
     [% END %]
   [%-# Work around FF bug: keep this on one line %]</li>
 
-  [% IF user.id && Param('usevotes') %]
-    <li><span class="separator">| </span><a href="votes.cgi?action=show_user">My&nbsp;Votes</a></li>
-  [% END %]
-
   [% IF user.login %]
     <li><span class="separator">| </span><a href="userprefs.cgi">Preferences</a></li>
-    [% IF user.groups.tweakparams || user.groups.editusers || user.can_bless
-          || (Param('useclassification') && user.groups.editclassifications)
-          || user.groups.editcomponents || user.groups.admin || user.groups.creategroups
-          || user.groups.editkeywords || user.groups.bz_canusewhines
+    [% IF user.in_group('tweakparams') || user.in_group('editusers') || user.can_bless
+          || (Param('useclassification') && user.in_group('editclassifications'))
+          || user.in_group('editcomponents') || user.in_group('admin') || user.in_group('creategroups')
+          || user.in_group('editkeywords') || user.in_group('bz_canusewhines')
           || user.get_products_by_permission("editcomponents").size %]
       <li><span class="separator">| </span><a href="admin.cgi">Administration</a></li>
     [% END %]
@@ -69,7 +70,7 @@
     <li>
       <span class="separator">| </span>
       [% IF user.authorizer.can_logout %]
-        <a href="relogin.cgi">Log&nbsp;out</a>
+        <a href="index.cgi?logout=1">Log&nbsp;out</a>
       [% ELSE %]
         Logged&nbsp;in&nbsp;as
       [% END %]
@@ -82,41 +83,29 @@
       [% END %]
     [%-# Work around FF bug: keep this on one line %]</li>
   [% ELSE %]
+  
+    [% PROCESS link_to_documentation %]
+    
     [% IF Param('createemailregexp')
           && user.authorizer.user_can_create_account %]
-      <li><span class="separator">| </span><a href="createaccount.cgi">New&nbsp;Account</a></li>
+      <li id="new_account_container[% qs_suffix FILTER html %]">
+        <span class="separator">| </span>
+        <a href="createaccount.cgi">New&nbsp;Account</a>
+      </li>
     [% END %]
 
-    [% PROCESS link_to_documentation %]
-
-    [% IF user.authorizer.can_login %]
-      [%# Use the current script name. If an empty name is returned,
-        # then we are accessing the home page. %]
-
-      [% script_name = cgi.url(Relative => 1) %]
-
-      [% IF cgi.request_method == "POST" OR script_name.match("relogin") %]
-        [% script_name = "" %]
-      [% END %]
-
-      [%# If SSL is in use, use 'sslbase', else use 'urlbase'. %]
-      [% IF Param("sslbase") != "" && Param("ssl") != "never" %]
-        [% script_name = Param("sslbase") _ script_name %]
-      [% ELSE %]
-        [% script_name = Param("urlbase") _ script_name %]
-      [% END %]
-
-      [% IF cgi.request_method == "GET" AND cgi.query_string %]
-        [% script_name = script_name _ "?" _ cgi.query_string %]
-        [% script_name = script_name _ "&GoAheadAndLogIn=1" IF !cgi.query_string.match("GoAheadAndLogIn") %]
-      [% ELSE %]
-        [% script_name = script_name _ "?GoAheadAndLogIn=1" %]
-      [% END %]
-        
-      <li><span class="separator">| </span><a href="[% script_name FILTER html %]">Log&nbsp;In</a></li>
+    [%# Only display one login form when we're on a LOGIN_REQUIRED page. That
+      # way, we're guaranteed that the user will use the form that has 
+      # hidden_fields in it (the center form) instead of this one. Also, it's
+      # less confusing to have one form (as opposed to  three) when you're 
+      # required to log in.
+      #%]
+    [% IF user.authorizer.can_login && !Bugzilla.page_requires_login %]
+      [% PROCESS "account/auth/login-small.html.tmpl" %]
     [% END %]
   [% END %]
 </ul>
+
 [% Hook.process("link-row") %]
 [% BLOCK link_to_documentation %]
     [% IF doc_section && Param('docs_urlbase') %]

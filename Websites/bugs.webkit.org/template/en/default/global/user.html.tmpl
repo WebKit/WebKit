@@ -1,0 +1,39 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Daniel Brooks.
+  # Portions created by the Initial Developer are Copyright (C) 2007
+  # the Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s): 
+  #   Daniel Brooks <db48x@db48x.net>
+  #   Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# INTERFACE:
+  # who: A Bugzilla::User object that we are going to represent.
+  #%]
+
+<span class="vcard">
+  [% FILTER collapse %]
+    [% IF user.id %]
+      <a class="email" href="mailto:[% who.email FILTER html %]"
+         title="[% who.identity FILTER html %]">
+    [%- END -%]
+    [% IF who.name %]
+       <span class="fn">[% who.name FILTER html %]</span>
+    [% ELSE %]
+      [% who.login FILTER email FILTER html %]
+    [% END %]
+    [% '</a>' IF user.id %]
+  [% END %]
+</span>

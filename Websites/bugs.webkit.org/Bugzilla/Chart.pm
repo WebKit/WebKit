@@ -67,7 +67,7 @@ sub init {
     #
     # The URL encoding is:
     # line0=67&line0=73&line1=81&line2=67...
-    # &label0=B+/+R+/+NEW&label1=...
+    # &label0=B+/+R+/+CONFIRMED&label1=...
     # &select0=1&select3=1...    
     # &cumulate=1&datefrom=2002-02-03&dateto=2002-04-04&ctype=html...
     # &gt=1&labelgt=Grand+Total    
@@ -382,8 +382,7 @@ sub getSeriesIDs {
 sub getVisibleSeries {
     my %cats;
 
-    # List of groups the user is in; use -1 to make sure it's not empty.
-    my $grouplist = join(", ", (-1, values(%{Bugzilla->user->groups})));
+    my $grouplist = Bugzilla->user->groups_as_string;
     
     # Get all visible series
     my $dbh = Bugzilla->dbh;
@@ -397,10 +396,10 @@ sub getVisibleSeries {
                         "LEFT JOIN category_group_map AS cgm " .
                         "    ON series.category = cgm.category_id " .
                         "    AND cgm.group_id NOT IN($grouplist) " .
-                        "WHERE creator = " . Bugzilla->user->id . " OR " .
-                        "      cgm.category_id IS NULL " . 
+                        "WHERE creator = ? OR (is_public = 1 AND cgm.category_id IS NULL) " .
                    $dbh->sql_group_by('series.series_id', 'cc1.name, cc2.name, ' .
-                                      'series.name'));
+                                      'series.name'),
+                        undef, Bugzilla->user->id);
     foreach my $series (@$serieses) {
         my ($cat, $subcat, $name, $series_id) = @$series;
         $cats{$cat}{$subcat}{$name} = $series_id;
@@ -439,7 +438,7 @@ sub dump {
     
     require Data::Dumper;
     print "<pre>Bugzilla::Chart object:\n";
-    print Data::Dumper::Dumper($self);
+    print html_quote(Data::Dumper::Dumper($self));
     print "</pre>";
 }
 

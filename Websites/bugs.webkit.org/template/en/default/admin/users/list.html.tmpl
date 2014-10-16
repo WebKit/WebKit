@@ -63,36 +63,33 @@
 [% END %]
 
 [%# Disabled users are crossed out. Missing realnames are noticed in red. %]
-[% overrides.login_name = [] %]
-[% overrides.realname = [] %]
+[% overrides.login_name = {} %]
+[% overrides.realname = {} %]
 
 [% FOREACH thisuser = users %]
   [% IF !thisuser.realname %]
     [%# We cannot pass one class now and one class later. %]
-    [% SET classes = (thisuser.disabledtext ? "bz_inactive missing" : "missing") %]
-    [% overrides.realname.push({
-        match_value      => "$thisuser.login_name"
-        match_field      => 'login_name'
-        content          => "missing"
-        override_content => 1
-        class            => "$classes"
-        override_class   => 1 })
+    [% SET classes = (thisuser.is_enabled ? "missing" : "bz_inactive missing") %]
+    [% overrides.realname.login_name.${thisuser.login_name} = {
+           content          => "missing"
+           override_content => 1
+           class            => "$classes"
+           override_class   => 1
+       }
+    %]
+  [% ELSIF !thisuser.is_enabled %]
+    [% overrides.realname.login_name.${thisuser.login_name} = {
+           class          => "bz_inactive"
+           override_class => 1
+       }
     %]
   [% END %]
 
-  [% IF thisuser.disabledtext %]
-    [% overrides.login_name.push({
-        match_value    => "$thisuser.login_name"
-        match_field    => 'login_name'
-        class          => "bz_inactive"
-        override_class => 1 })
-    %]
-
-    [% overrides.realname.push({
-        match_value    => "$thisuser.login_name"
-        match_field    => 'login_name'
-        class          => "bz_inactive"
-        override_class => 1 })
+  [% IF !thisuser.is_enabled %]
+    [% overrides.login_name.login_name.${thisuser.login_name} = {
+           class          => "bz_inactive"
+           override_class => 1
+       }
     %]
   [% END %]
 [% END %]

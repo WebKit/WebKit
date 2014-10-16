@@ -29,6 +29,7 @@
 [% PROCESS global/header.html.tmpl
   title = title
   style_urls = ['skins/standard/admin.css']
+  javascript_urls = ['js/util.js']
 %]
 
 [% group_control = {${constants.CONTROLMAPNA}        => 'NA',
@@ -44,7 +45,7 @@
 
     <tr>
       <th align="right" valign="top">
-        <a href="editcomponents.cgi?product=[% product.name FILTER url_quote %]">
+        <a href="editcomponents.cgi?product=[% product.name FILTER uri %]">
         Edit components:
         </a>
       </th>
@@ -66,7 +67,7 @@
     </tr>
     <tr>
       <th align="right" valign="top">
-        <a href="editversions.cgi?product=[% product.name FILTER url_quote %]">Edit
+        <a href="editversions.cgi?product=[% product.name FILTER uri %]">Edit
 versions:</a>
       </th>
       <td>
@@ -83,7 +84,7 @@ versions:</a>
     [% IF Param('usetargetmilestone') %]
       <tr>
         <th align="right" valign="top">
-          <a href="editmilestones.cgi?product=[% product.name FILTER url_quote %]">
+          <a href="editmilestones.cgi?product=[% product.name FILTER uri %]">
           Edit milestones:</a>
         </th>
         <td>
@@ -101,14 +102,13 @@ versions:</a>
     <tr>
       <th align="right" valign="top">
         <a href="editproducts.cgi?action=editgroupcontrols&product=
-          [%- product.name FILTER url_quote %]&classification=
-          [%- classification.name FILTER url_quote %]">
+          [%- product.name FILTER uri %]">
           Edit Group Access Controls:
         </a>
       </th>
       <td>
         [% IF product.group_controls.size %]
-          [% FOREACH g = product.group_controls.values %]
+          [% FOREACH g = product.group_controls.values.sort("name") %]
             <b>[% g.group.name FILTER html %]:</b>&nbsp;
             [% IF g.group.isactive %]
               [% group_control.${g.membercontrol} FILTER html %]/
@@ -130,7 +130,7 @@ versions:</a>
     </tr>
     <tr>
       <th align="right">[% terms.Bugs %]:</th>
-      <td><a href="buglist.cgi?product=[% product.name FILTER url_quote %]">
+      <td><a href="buglist.cgi?product=[% product.name FILTER uri %]">
             [% product.bug_count FILTER html %]</a></td>
     </tr>
   </table>
@@ -139,9 +139,7 @@ versions:</a>
         value="[% product.name FILTER html %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="token" value="[% token FILTER html %]">
-  <input type="hidden" name="classification"
-         value="[% classification.name FILTER html %]">
-  <input type="submit" name="submit" value="Save Changes">
+  <input type="submit" id="update-product" value="Save Changes">
 </form>
   
 [% PROCESS "admin/products/footer.html.tmpl"

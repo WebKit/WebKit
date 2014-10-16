@@ -25,7 +25,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::RADIUS::sortkey = "09";
+our $sortkey = 1100;
 
 sub get_param_list {
   my $class = shift;

@@ -51,7 +51,7 @@
               [%# We cannot use translated statuses and resolutions from field-descs.none.html
                 # because old charts do not distinguish statuses from resolutions. %]
               [% FOREACH dataset = datasets %]
-                <option value="[% dataset.value FILTER html %]:"
+                <option value="[% dataset.value FILTER html %]"
                   [% " selected=\"selected\"" IF dataset.selected %]>
                   [% dataset.value FILTER html %]</option>
               [% END %]

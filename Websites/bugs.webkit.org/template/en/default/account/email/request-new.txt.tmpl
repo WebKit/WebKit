@@ -15,13 +15,12 @@
 
 [%# INTERFACE:
   # token: random string used to authenticate the transaction.
-  # token_ts: creation date of the token.
+  # expiration_ts: expiration date of the token.
   # email: email address of the new account.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% expiration_ts = token_ts + (constants.MAX_TOKEN_AGE * 86400) %]
 From: [% Param('mailfrom') %]
 To: [% email %]
 Subject: [% terms.Bugzilla %]: confirm account creation
@@ -31,11 +30,11 @@ X-Bugzilla-Type: admin
 using your email address ([% email %]).
 
 To continue creating an account using this email address, visit the 
-following link by [%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]:
+following link by [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]:
 
-[%+ urlbase %]token.cgi?t=[% token FILTER url_quote %]&a=request_new_account
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=request_new_account
 
-If you did not receive this email before [%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %] or
+If you did not receive this email before [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %] or
 you wish to create an account using a different email address you can begin
 again by going to:
 
@@ -51,7 +50,7 @@ Hotmail, or similar) to avoid receiving spam at your primary email address.
 If you do not wish to create an account, or if this request was made in
 error you can do nothing or visit the following link:
 
-[%+ urlbase %]token.cgi?t=[% token FILTER url_quote %]&a=cancel_new_account
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=cancel_new_account
 
 If the above links do not work, or you have any other issues regarding
 your account, please contact administration at [% Param('maintainer') %].

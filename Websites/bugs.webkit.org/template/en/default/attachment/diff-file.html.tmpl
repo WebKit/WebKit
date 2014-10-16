@@ -16,6 +16,7 @@
   # Rights Reserved.
   #
   # Contributor(s): John Keiser <jkeiser@netscape.com>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# This line is really long for a reason: to get rid of any possible textnodes
@@ -52,7 +53,7 @@ incremental_restore()
 [% FOREACH section = sections %]
   [% section_num = section_num + 1 %]
   <tr><th colspan="4" class="section_head">
-    <table cellpadding="0" cellspacing="0">
+    <table id="[% file.filename FILTER html %]_sec[% section_num %]" cellpadding="0" cellspacing="0">
     <tr><th width="95%" align="left">
   [% IF file.is_add %]
     Added
@@ -78,7 +79,7 @@ incremental_restore()
     &nbsp;&nbsp;[% section.func_info FILTER html IF section.func_info %]
   [% END %] 
     </th><th>
-  <a name="[% file.filename FILTER html %]_sec[% section_num %]" href="#[% file.filename FILTER html %]_sec[% section_num %]">Link&nbsp;Here</a>&nbsp;
+  <a href="#[% file.filename FILTER html %]_sec[% section_num %]">Link&nbsp;Here</a>&nbsp;
     </th></tr></table>
   </th></tr>
   [% current_line_old = section.old_start %]
@@ -99,30 +100,31 @@ incremental_restore()
     [% IF group.plus.size %]
       [% IF group.minus.size %]
         [% i = 0 %]
-        [%# We need to store them in external variables. %]
-        [% curr_new = current_line_new %]
-        [% curr_old = current_line_old %]
         [% WHILE (i < group.plus.size || i < group.minus.size) %]
+          [%# WHILE cannot loop more than 1000 times by default, so we break it every 500 times. %]
           [% currentloop = 0 %]
           [% WHILE currentloop < 500 && (i < group.plus.size || i < group.minus.size) %]
             <tr>
-              <td class="num">[% curr_old %]</td>
+            [% IF i < group.minus.size %]
+              <td class="num">[% current_line_old + i %]</td>
               <td class="changed"><pre>[% group.minus.$i FILTER html %]</pre></td>
-              <td class="num">[% curr_new %]</td>
+            [% ELSIF i == group.minus.size %]
+              [% rowspan = group.plus.size - group.minus.size %]
+              <td class="num"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+              <td class="changed"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+            [% END %]
+
+            [% IF i < group.plus.size %]
+              <td class="num">[% current_line_new + i %]</td>
               <td class="changed"><pre>[% group.plus.$i FILTER html %]</pre></td>
+            [% ELSIF i == group.plus.size %]
+              [% rowspan = group.minus.size - group.plus.size %]
+              <td class="num"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+              <td class="changed"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+            [% END %]
             </tr>
             [% currentloop = currentloop + 1 %]
             [% i = i + 1 %]
-            [% IF i < group.minus.size %]
-              [% curr_old = curr_old + 1 %]
-            [% ELSE %]
-              [% curr_old = "" %]
-            [% END %]
-            [% IF i < group.plus.size %]
-              [% curr_new = curr_new + 1 %]
-            [% ELSE %]
-              [% curr_new = "" %]
-            [% END %]
           [% END %]
         [% END %]
         [% current_line_old = current_line_old + group.minus.size %]
@@ -136,7 +138,10 @@ incremental_restore()
             </tr>
           [% ELSE %]
             <tr>
-              <td class="num"></td><td></td>
+            [% IF loop.first %]
+              <td class="num"[% IF group.plus.size > 1 %] rowspan="[% group.plus.size %]"[% END %]></td>
+              <td[% IF group.plus.size > 1 %] rowspan="[% group.plus.size %]"[% END %]></td>
+            [% END %]
               <td class="num">[% current_line_new %]</td>
               <td class="added"><pre>[% line FILTER html %]</pre></td>
             </tr>
@@ -156,7 +161,10 @@ incremental_restore()
             <tr>
               <td class="num">[% current_line_old %]</td>
               <td class="removed"><pre>[% line FILTER html %]</pre></td>
-              <td class="num"></td><td></td>
+            [% IF loop.first %]
+              <td class="num"[% IF group.minus.size > 1 %] rowspan="[% group.minus.size %]"[% END %]></td>
+              <td[% IF group.minus.size > 1 %] rowspan="[% group.minus.size %]"[% END %]></td>
+            [% END %]
             </tr>
           [% END %]
           [% current_line_old = current_line_old + 1 %]

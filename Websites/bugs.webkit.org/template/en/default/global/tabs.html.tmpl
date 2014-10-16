@@ -35,9 +35,13 @@
 
       [% FOREACH tab = tabs %]
         [% IF tab.name == current_tab_name %]
-          <td class="selected">[% tab.label FILTER html %]</td>
+          <td id="tab_[% tab.name FILTER html %]" class="selected">
+            [% tab.label FILTER html %]</td>
         [% ELSE %]
-          <td class="clickable_area" onClick="document.location='[% tab.link FILTER html %]'"><a href="[% tab.link FILTER html %]">[% tab.label FILTER html %]</a></td>
+          <td id="tab_[% tab.name FILTER html %]" class="clickable_area"
+              onClick="document.location='[% tab.link FILTER html %]'">
+            <a href="[% tab.link FILTER html %]">[% tab.label FILTER html %]</a>
+          </td>
         [% END %]
       [% END %]
 

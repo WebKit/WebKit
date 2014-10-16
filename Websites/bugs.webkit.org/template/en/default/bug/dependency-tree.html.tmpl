@@ -64,14 +64,14 @@
         [% IF ids.size %]
             depends on 
         [% ELSE %]
-            does not depend on any [% terms.bugs %].
+            does not depend on any [% 'open ' IF hide_resolved %][% terms.bugs %].
         [% END %]
     [% ELSIF type == 2 %]
         [% tree_name = "blocked_tree" %]
         [% IF ids.size %] 
             blocks 
         [% ELSE %]
-            does not block any [% terms.bugs %].
+            does not block any [% 'open ' IF hide_resolved %][% terms.bugs %].
         [% END %]
     [% END %]
     [% IF ids.size %]
@@ -83,7 +83,7 @@
   [% IF ids.size %]
     ([% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END -%]
     <a href="buglist.cgi?bug_id=[% ids.join(",") %]">view as [% terms.bug %] list</a>
-    [% IF user.groups.editbugs && ids.size > 1 %]
+    [% IF user.in_group('editbugs') && ids.size > 1 %]
       | <a href="buglist.cgi?bug_id=[% ids.join(",") %]&amp;tweak=1">change several</a>
     [% END %])
     <ul class="tree">
@@ -129,7 +129,7 @@
     [% extra_class = " b_open" %]
     [% extra_args = 'onclick="return doToggle(this, event)"' %] 
   [% END %]
-  <a name="b[% bugid %]" 
+  <a id="b[% bugid %]" 
      class="b [%+ extra_class FILTER none %]"
      title="Click to expand or contract this portion of the tree. Hold down the Ctrl key while clicking to expand or contract all subtrees."
      [% extra_args FILTER none %]>&nbsp;&nbsp;</a>
@@ -144,7 +144,7 @@
       <span class="summ_text">[%+ bug.short_desc FILTER html %]</span>
       <span class="summ_info">[[% INCLUDE buginfo %]]</span>
     </a>
-    <a href="showdependencytree.cgi?id=[% bugid FILTER url_quote %]"
+    <a href="showdependencytree.cgi?id=[% bugid FILTER uri %]"
        class="tree_link">
       <img src="skins/standard/dependency-tree/tree.png"
            title="See dependency tree for [% terms.bug %] [%+ bugid FILTER html %]">
@@ -153,8 +153,8 @@
 [% END %]
 
 [% BLOCK buginfo %]
-  [% get_status(bug.bug_status) FILTER html -%] [%+ get_resolution(bug.resolution) FILTER html %];
-  [%-%] assigned to [% bug.assigned_to.login FILTER html %]
+  [% display_value("bug_status", bug.bug_status) FILTER html -%] [%+ display_value("resolution", bug.resolution) FILTER html %];
+  [%-%] assigned to [% bug.assigned_to.login FILTER email FILTER html %]
   [%-%][% "; Target: " _ bug.target_milestone IF bug.target_milestone %]
 [% END %]
 

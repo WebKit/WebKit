@@ -38,10 +38,26 @@
 [%# use the global field descs %]
 [% PROCESS "global/field-descs.none.tmpl" %]
 
+[%# This lists fields which use the user auto-completion feature and which
+  # are not listed in field_descs. %]
+[% field_labels = { # Used by editcomponents.cgi
+                    "initialcc"               => "Default CC List",
+                    "initialowner"            => "Default Assignee",
+                    "initialqacontact"        => "Default QA Contact",
+                    # Used by process_bug.cgi
+                    "masscc"                  => "CC List",
+                    # Used by request.cgi
+                    "requester"               => "Requester",
+                    "requestee"               => "Requestee",
+                    # Used by userprefs.cgi
+                    "new_watchedusers"        => "Watch List",
+
+   }
+%]
 [% IF matchsuccess == 1 %]
   [% PROCESS global/header.html.tmpl title="Confirm Match" %]
 
-[% USE Bugzilla %]
+  [% USE Bugzilla %]
 
   <form method="post" 
   [% IF script -%]
@@ -70,9 +86,13 @@
   [% PROCESS global/header.html.tmpl title="Match Failed" %]
   <p>
     [% terms.Bugzilla %] was unable to make any match at all for one or more of
-    the names and/or email addresses you entered on the previous page.<br>
-    Please go back and try other names or email addresses.
+    the names and/or email addresses you entered on the previous page.
+    [% IF !user.id %]
+      <b>Note: You are currently logged out. Only exact matches against e-mail
+      addresses will be performed.</b>
+    [% END %]
   </p>
+  <p>Please go back and try other names or email addresses.</p>
 [% END %]
 
   <table border="0">
@@ -130,10 +150,11 @@
                 [% ELSE %]
                   matched
                   <b>[% query.value.users.0.identity FILTER html %]</b>
+                  <input type="hidden" name="[% field.key FILTER html %]"
+                         value="[% query.value.users.0.login FILTER html %]">
                 [% END %]
             [% ELSE %]
-                [% IF (query.key.length < 3) && !(Param('emailsuffix'))
-                    && (Param('usermatchmode') == 'search') %]
+                [% IF (query.key.length < 3) && !Param('emailsuffix') %]
                   <font color="#FF0000">was too short for substring match
                   (minimum 3 characters)</font>
                 [% ELSE %]
@@ -155,7 +176,10 @@
 
 [% IF matchsuccess == 1 %]
 
-  [% PROCESS "global/hidden-fields.html.tmpl" exclude="^Bugzilla_(login|password)$" %]
+  [% SET exclude_these = 
+           matches.keys.merge(['Bugzilla_login', 'Bugzilla_password']) %]
+  [% SET exclude = '^' _ exclude_these.join('|') _ '$' %]
+  [% PROCESS "global/hidden-fields.html.tmpl" exclude = exclude %]
 
   <p>
     <input type="submit" id="continue" value="Continue">
@@ -170,14 +194,12 @@
 
 [% BLOCK field_names %]
 
-  [% IF field_descs.${field_name} %]
-    [%  field_descs.${field_name} FILTER html -%]
-
-  [%-# ELSIF for things that don't belong in the field_descs hash here -%]
-
+  [% IF field_descs.$field_name %]
+    [% field_descs.$field_name FILTER html %]
+  [% ELSIF field_labels.$field_name %]
+    [% field_labels.$field_name FILTER html %]
   [% ELSIF field_name.match("^requestee") %]
     [% fields.${field_name}.flag_type.name %] requestee
-
   [% ELSE %]
     [% field_name FILTER html %]
   [% END %]

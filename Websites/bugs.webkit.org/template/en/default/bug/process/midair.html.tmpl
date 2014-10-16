@@ -45,7 +45,7 @@
 
 <p>
   Someone else has made changes to
-  [%+ "$terms.bug $bug.id" FILTER bug_link(bug.id) FILTER none %]
+  [%+ "$terms.bug $bug.id" FILTER bug_link(bug) FILTER none %]
   at the same time you were trying to.
   The changes made were:
 </p>
@@ -67,7 +67,7 @@
 <p>
   Your comment was:<br>
   <blockquote><pre class="bz_comment_text">
-    [% cgi.param("comment") FILTER wrap_comment FILTER html %]
+    [% cgi.param("comment") FILTER html %]
   </pre></blockquote>
 </p>
 [% END %]
@@ -88,9 +88,23 @@ You have the following choices:
         [% ", except for the added comment(s)" IF comments.size > start_at %].
     </form>
   </li>
+  [% IF cgi.param("comment") %]
+    <li>
+      <form method="post" action="process_bug.cgi">
+        <input type="hidden" name="id" value="[% cgi.param("id") FILTER html %]">
+        <input type="hidden" name="delta_ts" value="[% bug.delta_ts FILTER html %]">
+        <input type="hidden" name="comment" value="[% cgi.param("comment") FILTER html %]">
+        <input type="hidden" name="comment_is_private"
+               value="[% cgi.param("comment_is_private") FILTER html %]">
+        <input type="hidden" name="longdesclength" value="[% bug.comments.size %]">
+        <input type="hidden" name="token" value="[% cgi.param("token") FILTER html %]">
+        <input type="submit" id="process_comment" value="Submit only my new comment">
+      </form>
+    </li>
+  [% END %]
   <li>
     Throw away my changes, and
-    [%+ "revisit $terms.bug $bug.id" FILTER bug_link(bug.id) FILTER none %]
+    [%+ "revisit $terms.bug $bug.id" FILTER bug_link(bug) FILTER none %]
   </li>
 </ul>
 

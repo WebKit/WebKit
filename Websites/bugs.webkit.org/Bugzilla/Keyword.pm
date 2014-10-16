@@ -35,8 +35,6 @@ use constant DB_COLUMNS => qw(
 
 use constant DB_TABLE => 'keyworddefs';
 
-use constant REQUIRED_CREATE_FIELDS => qw(name description);
-
 use constant VALIDATORS => {
     name        => \&_check_name,
     description => \&_check_description,
@@ -74,17 +72,12 @@ sub set_description { $_[0]->set('description', $_[1]); }
 ####      Subroutines    ######
 ###############################
 
-sub keyword_count {
-    my ($count) = 
-        Bugzilla->dbh->selectrow_array('SELECT COUNT(*) FROM keyworddefs');
-    return $count;
-}
-
 sub get_all_with_bug_count {
     my $class = shift;
     my $dbh = Bugzilla->dbh;
     my $keywords =
-      $dbh->selectall_arrayref('SELECT ' . join(', ', DB_COLUMNS) . ',
+      $dbh->selectall_arrayref('SELECT ' 
+                                      . join(', ', $class->_get_db_columns) . ',
                                        COUNT(keywords.bug_id) AS bug_count
                                   FROM keyworddefs
                              LEFT JOIN keywords
@@ -111,7 +104,9 @@ sub _check_name {
     my ($self, $name) = @_;
 
     $name = trim($name);
-    $name eq "" && ThrowUserError("keyword_blank_name");
+    if (!defined $name or $name eq "") {
+        ThrowUserError("keyword_blank_name");
+    }
     if ($name =~ /[\s,]/) {
         ThrowUserError("keyword_invalid_name");
     }
@@ -129,7 +124,9 @@ sub _check_name {
 sub _check_description {
     my ($self, $desc) = @_;
     $desc = trim($desc);
-    $desc eq '' && ThrowUserError("keyword_blank_description");
+    if (!defined $desc or $desc eq '') {
+        ThrowUserError("keyword_blank_description");
+    }
     return $desc;
 }
 
@@ -144,8 +141,6 @@ Bugzilla::Keyword - A Keyword that can be added to a bug.
 =head1 SYNOPSIS
 
  use Bugzilla::Keyword;
-
- my $count = Bugzilla::Keyword::keyword_count;
 
  my $description = $keyword->description;
 
@@ -165,14 +160,6 @@ See L<Bugzilla::Object> for more subroutines that this object
 implements.
 
 =over
-
-=item C<keyword_count()> 
-
- Description: A utility function to get the total number
-              of keywords defined. Mostly used to see
-              if there are any keywords defined at all.
- Params:      none
- Returns:     An integer, the count of keywords.
 
 =item C<get_all_with_bug_count()> 
 

@@ -20,45 +20,33 @@ use strict;
 
 use Bugzilla::Constants;
 
-use constant REMOTE_FILE   => 'http://updates.bugzilla.org/bugzilla-update.xml';
-use constant LOCAL_FILE    => "/bugzilla-update.xml"; # Relative to datadir.
 use constant TIME_INTERVAL => 86400; # Default is one day, in seconds.
 use constant TIMEOUT       => 5; # Number of seconds before timeout.
 
 # Look for new releases and notify logged in administrators about them.
 sub get_notifications {
+    return if !Bugzilla->feature('updates');
     return if (Bugzilla->params->{'upgrade_notification'} eq 'disabled');
 
-    # If the XML::Twig module is missing, we won't be able to parse
-    # the XML file. So there is no need to go further.
-    eval("require XML::Twig");
-    return if $@;
-
-    my $local_file = bz_locations()->{'datadir'} . LOCAL_FILE;
+    my $local_file = bz_locations()->{'datadir'} . '/' . LOCAL_FILE;
     # Update the local XML file if this one doesn't exist or if
     # the last modification time (stat[9]) is older than TIME_INTERVAL.
     if (!-e $local_file || (time() - (stat($local_file))[9] > TIME_INTERVAL)) {
-        # Are we sure we didn't try to refresh this file already
-        # but we failed because we cannot modify its timestamp?
-        my $can_alter = (-e $local_file) ? utime(undef, undef, $local_file) : 1;
-        if ($can_alter) {
-            unlink $local_file; # Make sure the old copy is away.
-            my $error = _synchronize_data();
-            # If an error is returned, leave now.
-            return $error if $error;
-        }
-        else {
-            return {'error' => 'no_update', 'xml_file' => $local_file};
-        }
+        unlink $local_file; # Make sure the old copy is away.
+        return { 'error' => 'no_update' } if (-e $local_file);
+
+        my $error = _synchronize_data();
+        # If an error is returned, leave now.
+        return $error if $error;
     }
 
     # If we cannot access the local XML file, ignore it.
-    return {'error' => 'no_access', 'xml_file' => $local_file} unless (-r $local_file);
+    return { 'error' => 'no_access' } unless (-r $local_file);
 
     my $twig = XML::Twig->new();
     $twig->safe_parsefile($local_file);
     # If the XML file is invalid, return.
-    return {'error' => 'corrupted', 'xml_file' => $local_file} if $@;
+    return { 'error' => 'corrupted' } if $@;
     my $root = $twig->root;
 
     my @releases;
@@ -128,10 +116,7 @@ sub get_notifications {
 }
 
 sub _synchronize_data {
-    eval("require LWP::UserAgent");
-    return {'error' => 'missing_package', 'package' => 'LWP::UserAgent'} if $@;
-
-    my $local_file = bz_locations()->{'datadir'} . LOCAL_FILE;
+    my $local_file = bz_locations()->{'datadir'} . '/' . LOCAL_FILE;
 
     my $ua = LWP::UserAgent->new();
     $ua->timeout(TIMEOUT);
@@ -145,7 +130,7 @@ sub _synchronize_data {
     else {
         $ua->env_proxy;
     }
-    $ua->mirror(REMOTE_FILE, $local_file);
+    my $response = eval { $ua->mirror(REMOTE_FILE, $local_file) };
 
     # $ua->mirror() forces the modification time of the local XML file
     # to match the modification time of the remote one.
@@ -156,11 +141,14 @@ sub _synchronize_data {
         # Try to alter its last modification time.
         my $can_alter = utime(undef, undef, $local_file);
         # This error should never happen.
-        $can_alter || return {'error' => 'no_update', 'xml_file' => $local_file};
+        $can_alter || return { 'error' => 'no_update' };
+    }
+    elsif ($response && $response->is_error) {
+        # We have been unable to download the file.
+        return { 'error' => 'cannot_download', 'reason' => $response->status_line };
     }
     else {
-        # We have been unable to download the file.
-        return {'error' => 'cannot_download', 'xml_file' => $local_file};
+        return { 'error' => 'no_write', 'reason' => $@ };
     }
 
     # Everything went well.

@@ -35,7 +35,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::Query::sortkey = "12";
+our $sortkey = 1400;
 
 sub get_param_list {
   my $class = shift;
@@ -58,28 +58,34 @@ sub get_param_list {
   {
    name => 'mybugstemplate',
    type => 't',
-   default => 'buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;emailassigned_to1=1&amp;emailreporter1=1&amp;emailtype1=exact&amp;email1=%userid%&amp;field0-0-0=bug_status&amp;type0-0-0=notequals&amp;value0-0-0=UNCONFIRMED&amp;field0-0-1=reporter&amp;type0-0-1=equals&amp;value0-0-1=%userid%'
+   default => 'buglist.cgi?resolution=---&amp;emailassigned_to1=1&amp;emailreporter1=1&amp;emailtype1=exact&amp;email1=%userid%'
   },
 
   {
    name => 'defaultquery',
    type => 't',
-   default => 'bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&order=Importance&long_desc_type=substring'
+   default => 'resolution=---&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&emaillongdesc3=1&order=Importance&long_desc_type=substring'
   },
 
   {
-   name    => 'quicksearch_comment_cutoff',
-   type    => 't',
-   default => '4',
-   checker => \&check_numeric
-  },
-  
-  {
-   name => 'specific_search_allow_empty_words',
+   name => 'search_allow_no_criteria',
    type => 'b',
-   default => 0
-  }
-  
+   default => 1
+  },
+
+  {
+    name => 'default_search_limit',
+    type => 't',
+    default => '500',
+    checker => \&check_numeric
+  },
+
+  {
+    name => 'max_search_results',
+    type => 't',
+    default => '10000',
+    checker => \&check_numeric
+  },
   );
   return @param_list;
 }

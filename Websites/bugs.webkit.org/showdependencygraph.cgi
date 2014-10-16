@@ -29,6 +29,7 @@ use File::Temp;
 
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Install::Filesystem;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Bug;
@@ -58,7 +59,7 @@ local our (%seen, %edgesdone, %bugtitles);
 sub CreateImagemap {
     my $mapfilename = shift;
     my $map = "<map name=\"imagemap\">\n";
-    my $default;
+    my $default = "";
 
     open MAP, "<$mapfilename";
     while(my $line = <MAP>) {
@@ -89,11 +90,13 @@ sub AddLink {
     my $key = "$blocked,$dependson";
     if (!exists $edgesdone{$key}) {
         $edgesdone{$key} = 1;
-        print $fh "$blocked -> $dependson\n";
+        print $fh "$dependson -> $blocked\n";
         $seen{$blocked} = 1;
         $seen{$dependson} = 1;
     }
 }
+
+ThrowCodeError("missing_bug_id") if !defined $cgi->param('id');
 
 # The list of valid directions. Some are not proposed in the dropdrown
 # menu despite the fact that they are valid.
@@ -101,20 +104,22 @@ my @valid_rankdirs = ('LR', 'RL', 'TB', 'BT');
 
 my $rankdir = $cgi->param('rankdir') || 'TB';
 # Make sure the submitted 'rankdir' value is valid.
-if (lsearch(\@valid_rankdirs, $rankdir) < 0) {
+if (!grep { $_ eq $rankdir } @valid_rankdirs) {
     $rankdir = 'TB';
 }
 
 my $display = $cgi->param('display') || 'tree';
 my $webdotdir = bz_locations()->{'webdotdir'};
 
-if (!defined $cgi->param('id') && $display ne 'doall') {
-    ThrowCodeError("missing_bug_id");
-}
-
 my ($fh, $filename) = File::Temp::tempfile("XXXXXXXXXX",
                                            SUFFIX => '.dot',
-                                           DIR => $webdotdir);
+                                           DIR => $webdotdir,
+                                           UNLINK => 1);
+
+chmod Bugzilla::Install::Filesystem::CGI_WRITE, $filename
+    or warn install_string('chmod_failed', { path => $filename,
+                                             error => $! });
+
 my $urlbase = Bugzilla->params->{'urlbase'};
 
 print $fh "digraph G {";
@@ -125,64 +130,54 @@ node [URL="${urlbase}show_bug.cgi?id=\\N", style=filled, color=lightgrey]
 
 my %baselist;
 
-if ($display eq 'doall') {
-    my $dependencies = $dbh->selectall_arrayref(
-                           "SELECT blocked, dependson FROM dependencies");
+foreach my $i (split('[\s,]+', $cgi->param('id'))) {
+    my $bug = Bugzilla::Bug->check($i);
+    $baselist{$bug->id} = 1;
+}
 
-    foreach my $dependency (@$dependencies) {
-        my ($blocked, $dependson) = @$dependency;
-        AddLink($blocked, $dependson, $fh);
-    }
-} else {
-    foreach my $i (split('[\s,]+', $cgi->param('id'))) {
-        ValidateBugID($i);
-        $baselist{$i} = 1;
-    }
+my @stack = keys(%baselist);
 
-    my @stack = keys(%baselist);
+if ($display eq 'web') {
+    my $sth = $dbh->prepare(q{SELECT blocked, dependson
+                                FROM dependencies
+                               WHERE blocked = ? OR dependson = ?});
 
-    if ($display eq 'web') {
-        my $sth = $dbh->prepare(q{SELECT blocked, dependson
-                                    FROM dependencies
-                                   WHERE blocked = ? OR dependson = ?});
-
-        foreach my $id (@stack) {
-            my $dependencies = $dbh->selectall_arrayref($sth, undef, ($id, $id));
-            foreach my $dependency (@$dependencies) {
-                my ($blocked, $dependson) = @$dependency;
-                if ($blocked != $id && !exists $seen{$blocked}) {
-                    push @stack, $blocked;
-                }
-                if ($dependson != $id && !exists $seen{$dependson}) {
-                    push @stack, $dependson;
-                }
-                AddLink($blocked, $dependson, $fh);
+    foreach my $id (@stack) {
+        my $dependencies = $dbh->selectall_arrayref($sth, undef, ($id, $id));
+        foreach my $dependency (@$dependencies) {
+            my ($blocked, $dependson) = @$dependency;
+            if ($blocked != $id && !exists $seen{$blocked}) {
+                push @stack, $blocked;
             }
+            if ($dependson != $id && !exists $seen{$dependson}) {
+                push @stack, $dependson;
+            }
+            AddLink($blocked, $dependson, $fh);
         }
     }
-    # This is the default: a tree instead of a spider web.
-    else {
-        my @blocker_stack = @stack;
-        foreach my $id (@blocker_stack) {
-            my $blocker_ids = Bugzilla::Bug::EmitDependList('blocked', 'dependson', $id);
-            foreach my $blocker_id (@$blocker_ids) {
-                push(@blocker_stack, $blocker_id) unless $seen{$blocker_id};
-                AddLink($id, $blocker_id, $fh);
-            }
-        }
-        my @dependent_stack = @stack;
-        foreach my $id (@dependent_stack) {
-            my $dep_bug_ids = Bugzilla::Bug::EmitDependList('dependson', 'blocked', $id);
-            foreach my $dep_bug_id (@$dep_bug_ids) {
-                push(@dependent_stack, $dep_bug_id) unless $seen{$dep_bug_id};
-                AddLink($dep_bug_id, $id, $fh);
-            }
+}
+# This is the default: a tree instead of a spider web.
+else {
+    my @blocker_stack = @stack;
+    foreach my $id (@blocker_stack) {
+        my $blocker_ids = Bugzilla::Bug::EmitDependList('blocked', 'dependson', $id);
+        foreach my $blocker_id (@$blocker_ids) {
+            push(@blocker_stack, $blocker_id) unless $seen{$blocker_id};
+            AddLink($id, $blocker_id, $fh);
         }
     }
+    my @dependent_stack = @stack;
+    foreach my $id (@dependent_stack) {
+        my $dep_bug_ids = Bugzilla::Bug::EmitDependList('dependson', 'blocked', $id);
+        foreach my $dep_bug_id (@$dep_bug_ids) {
+            push(@dependent_stack, $dep_bug_id) unless $seen{$dep_bug_id};
+            AddLink($dep_bug_id, $id, $fh);
+        }
+    }
+}
 
-    foreach my $k (keys(%baselist)) {
-        $seen{$k} = 1;
-    }
+foreach my $k (keys(%baselist)) {
+    $seen{$k} = 1;
 }
 
 my $sth = $dbh->prepare(
@@ -192,9 +187,6 @@ my $sth = $dbh->prepare(
 foreach my $k (keys(%seen)) {
     # Retrieve bug information from the database
     my ($stat, $resolution, $summary) = $dbh->selectrow_array($sth, undef, $k);
-    $stat ||= 'NEW';
-    $resolution ||= '';
-    $summary ||= '';
 
     # Resolution and summary are shown only if user can see the bug
     if (!Bugzilla->user->can_see_bug($k)) {
@@ -206,6 +198,10 @@ foreach my $k (keys(%seen)) {
     my @params;
 
     if ($summary ne "" && $cgi->param('showsummary')) {
+        # Wide characters cause GraphViz to die.
+        if (Bugzilla->params->{'utf8'}) {
+            utf8::encode($summary) if utf8::is_utf8($summary);
+        }
         $summary =~ s/([\\\"])/\\$1/g;
         push(@params, qq{label="$k\\n$summary"});
     }
@@ -240,8 +236,6 @@ foreach my $k (keys(%seen)) {
 print $fh "}\n";
 close $fh;
 
-chmod 0777, $filename;
-
 my $webdotbase = Bugzilla->params->{'webdotbase'};
 
 if ($webdotbase =~ /^https?:/) {
@@ -259,15 +253,20 @@ if ($webdotbase =~ /^https?:/) {
     my ($pngfh, $pngfilename) = File::Temp::tempfile("XXXXXXXXXX",
                                                      SUFFIX => '.png',
                                                      DIR => $webdotdir);
+
+    chmod Bugzilla::Install::Filesystem::WS_SERVE, $pngfilename
+        or warn install_string('chmod_failed', { path => $pngfilename,
+                                                 error => $! });
+
     binmode $pngfh;
     open(DOT, "\"$webdotbase\" -Tpng $filename|");
     binmode DOT;
     print $pngfh $_ while <DOT>;
     close DOT;
     close $pngfh;
-    
+
     # On Windows $pngfilename will contain \ instead of /
-    $pngfilename =~ s|\\|/|g if $^O eq 'MSWin32';
+    $pngfilename =~ s|\\|/|g if ON_WINDOWS;
 
     # Under mod_perl, pngfilename will have an absolute path, and we
     # need to make that into a relative path.
@@ -283,12 +282,18 @@ if ($webdotbase =~ /^https?:/) {
     my ($mapfh, $mapfilename) = File::Temp::tempfile("XXXXXXXXXX",
                                                      SUFFIX => '.map',
                                                      DIR => $webdotdir);
+
+    chmod Bugzilla::Install::Filesystem::WS_SERVE, $mapfilename
+        or warn install_string('chmod_failed', { path => $mapfilename,
+                                                 error => $! });
+
     binmode $mapfh;
     open(DOT, "\"$webdotbase\" -Tismap $filename|");
     binmode DOT;
     print $mapfh $_ while <DOT>;
     close DOT;
     close $mapfh;
+
     $vars->{'image_map'} = CreateImagemap($mapfilename);
 }
 

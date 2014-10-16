@@ -23,6 +23,7 @@
 #                 Lance Larsh <lance.larsh@oracle.com>
 #                 Dennis Melentyev <dennis.melentyev@infopulse.com.ua>
 #                 Akamai Technologies <bugzilla-dev@akamai.com>
+#                 Elliotte Martin <emartin@everythingsolved.com>
 
 package Bugzilla::DB::Schema;
 
@@ -43,12 +44,19 @@ use Bugzilla::Constants;
 use Carp qw(confess);
 use Digest::MD5 qw(md5_hex);
 use Hash::Util qw(lock_value unlock_hash lock_keys unlock_keys);
+use List::MoreUtils qw(firstidx natatime);
 use Safe;
 # Historical, needed for SCHEMA_VERSION = '1.00'
 use Storable qw(dclone freeze thaw);
 
-# New SCHEMA_VERSION (2.00) use this
+# New SCHEMA_VERSIONs (2+) use this
 use Data::Dumper;
+
+# Whether or not this database can safely create FKs when doing a
+# CREATE TABLE statement. This is false for most DBs, because they
+# prevent you from creating FKs on tables and columns that don't
+# yet exist. (However, in SQLite it's 1 because SQLite allows that.)
+use constant FK_ON_CREATE => 0;
 
 =head1 NAME
 
@@ -206,10 +214,33 @@ update this column in this table."
 
 =cut
 
-use constant SCHEMA_VERSION  => '2.00';
+use constant SCHEMA_VERSION  => 3;
 use constant ADD_COLUMN      => 'ADD COLUMN';
+# Multiple FKs can be added using ALTER TABLE ADD CONSTRAINT in one
+# SQL statement. This isn't true for all databases.
+use constant MULTIPLE_FKS_IN_ALTER => 1;
 # This is a reasonable default that's true for both PostgreSQL and MySQL.
 use constant MAX_IDENTIFIER_LEN => 63;
+
+use constant FIELD_TABLE_SCHEMA => {
+    FIELDS => [
+        id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+                     PRIMARYKEY => 1},
+        value    => {TYPE => 'varchar(64)', NOTNULL => 1},
+        sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
+        isactive => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                     DEFAULT => 'TRUE'},
+        visibility_value_id => {TYPE => 'INT2'},
+    ],
+    # Note that bz_add_field_table should prepend the table name
+    # to these index names.
+    INDEXES => [
+        value_idx   => {FIELDS => ['value'], TYPE => 'UNIQUE'},
+        sortkey_idx => ['sortkey', 'value'],
+        visibility_value_id_idx => ['visibility_value_id'],
+    ],
+};
+
 use constant ABSTRACT_SCHEMA => {
 
     # BUG-RELATED TABLES
@@ -221,8 +252,11 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             bug_id              => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                                     PRIMARYKEY => 1},
-            assigned_to         => {TYPE => 'INT3', NOTNULL => 1},
-            bug_file_loc        => {TYPE => 'MEDIUMTEXT'},
+            assigned_to         => {TYPE => 'INT3', NOTNULL => 1,
+                                    REFERENCES => {TABLE  => 'profiles',
+                                                   COLUMN => 'userid'}},
+            bug_file_loc        => {TYPE => 'MEDIUMTEXT', 
+                                    NOTNULL => 1, DEFAULT => "''"},
             bug_severity        => {TYPE => 'varchar(64)', NOTNULL => 1},
             bug_status          => {TYPE => 'varchar(64)', NOTNULL => 1},
             creation_ts         => {TYPE => 'DATETIME'},
@@ -230,23 +264,25 @@ use constant ABSTRACT_SCHEMA => {
             short_desc          => {TYPE => 'varchar(255)', NOTNULL => 1},
             op_sys              => {TYPE => 'varchar(64)', NOTNULL => 1},
             priority            => {TYPE => 'varchar(64)', NOTNULL => 1},
-            product_id          => {TYPE => 'INT2', NOTNULL => 1},
+            product_id          => {TYPE => 'INT2', NOTNULL => 1,
+                                    REFERENCES => {TABLE  => 'products',
+                                                   COLUMN => 'id'}},
             rep_platform        => {TYPE => 'varchar(64)', NOTNULL => 1},
-            reporter            => {TYPE => 'INT3', NOTNULL => 1},
+            reporter            => {TYPE => 'INT3', NOTNULL => 1,
+                                    REFERENCES => {TABLE  => 'profiles',
+                                                   COLUMN => 'userid'}},
             version             => {TYPE => 'varchar(64)', NOTNULL => 1},
-            component_id        => {TYPE => 'INT2', NOTNULL => 1},
+            component_id        => {TYPE => 'INT2', NOTNULL => 1,
+                                    REFERENCES => {TABLE  => 'components',
+                                                   COLUMN => 'id'}},
             resolution          => {TYPE => 'varchar(64)',
                                     NOTNULL => 1, DEFAULT => "''"},
             target_milestone    => {TYPE => 'varchar(20)',
                                     NOTNULL => 1, DEFAULT => "'---'"},
-            qa_contact          => {TYPE => 'INT3'},
+            qa_contact          => {TYPE => 'INT3',
+                                    REFERENCES => {TABLE  => 'profiles',
+                                                   COLUMN => 'userid'}},
             status_whiteboard   => {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
-                                    DEFAULT => "''"},
-            votes               => {TYPE => 'INT3', NOTNULL => 1,
-                                    DEFAULT => '0'},
-            # Note: keywords field is only a cache; the real data
-            # comes from the keywords table
-            keywords            => {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
                                     DEFAULT => "''"},
             lastdiffed          => {TYPE => 'DATETIME'},
             everconfirmed       => {TYPE => 'BOOLEAN', NOTNULL => 1},
@@ -254,9 +290,9 @@ use constant ABSTRACT_SCHEMA => {
                                     NOTNULL => 1, DEFAULT => 'TRUE'},
             cclist_accessible   => {TYPE => 'BOOLEAN',
                                     NOTNULL => 1, DEFAULT => 'TRUE'},
-            estimated_time      => {TYPE => 'decimal(5,2)',
+            estimated_time      => {TYPE => 'decimal(7,2)',
                                     NOTNULL => 1, DEFAULT => '0'},
-            remaining_time      => {TYPE => 'decimal(5,2)',
+            remaining_time      => {TYPE => 'decimal(7,2)',
                                     NOTNULL => 1, DEFAULT => '0'},
             deadline            => {TYPE => 'DATETIME'},
             alias               => {TYPE => 'varchar(20)'},
@@ -278,7 +314,6 @@ use constant ABSTRACT_SCHEMA => {
             bugs_resolution_idx       => ['resolution'],
             bugs_target_milestone_idx => ['target_milestone'],
             bugs_qa_contact_idx       => ['qa_contact'],
-            bugs_votes_idx            => ['votes'],
         ],
     },
 
@@ -307,27 +342,43 @@ use constant ABSTRACT_SCHEMA => {
 
     bugs_activity => {
         FIELDS => [
-            bug_id    => {TYPE => 'INT3', NOTNULL => 1},
-            attach_id => {TYPE => 'INT3'},
+            bug_id    => {TYPE => 'INT3', NOTNULL => 1,
+                          REFERENCES    =>  {TABLE  =>  'bugs',
+                                             COLUMN =>  'bug_id',
+                                             DELETE => 'CASCADE'}},
+            attach_id => {TYPE => 'INT3',
+                          REFERENCES    =>  {TABLE  =>  'attachments',
+                                            COLUMN  =>  'attach_id',
+                                            DELETE => 'CASCADE'}},
             who       => {TYPE => 'INT3', NOTNULL => 1,
                           REFERENCES => {TABLE  => 'profiles',
                                          COLUMN => 'userid'}},
             bug_when  => {TYPE => 'DATETIME', NOTNULL => 1},
-            fieldid   => {TYPE => 'INT3', NOTNULL => 1},
-            added     => {TYPE => 'TINYTEXT'},
+            fieldid   => {TYPE => 'INT3', NOTNULL => 1,
+                          REFERENCES    =>  {TABLE  =>  'fielddefs',
+                                             COLUMN =>  'id'}},
+            added     => {TYPE => 'varchar(255)'},
             removed   => {TYPE => 'TINYTEXT'},
+            comment_id => {TYPE => 'INT3', 
+                           REFERENCES => { TABLE  => 'longdescs',
+                                           COLUMN => 'comment_id',
+                                           DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             bugs_activity_bug_id_idx  => ['bug_id'],
             bugs_activity_who_idx     => ['who'],
             bugs_activity_bug_when_idx => ['bug_when'],
             bugs_activity_fieldid_idx => ['fieldid'],
+            bugs_activity_added_idx   => ['added'],
         ],
     },
 
     cc => {
         FIELDS => [
-            bug_id => {TYPE => 'INT3', NOTNULL => 1},
+            bug_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'bugs',
+                                      COLUMN => 'bug_id',
+                                      DELETE => 'CASCADE'}},
             who    => {TYPE => 'INT3', NOTNULL => 1,
                        REFERENCES => {TABLE  => 'profiles',
                                       COLUMN => 'userid',
@@ -344,10 +395,15 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             comment_id      => {TYPE => 'MEDIUMSERIAL',  NOTNULL => 1,
                                 PRIMARYKEY => 1},
-            bug_id          => {TYPE => 'INT3',  NOTNULL => 1},
-            who             => {TYPE => 'INT3', NOTNULL => 1},
+            bug_id          => {TYPE => 'INT3',  NOTNULL => 1,
+                                REFERENCES => {TABLE => 'bugs',
+                                               COLUMN => 'bug_id',
+                                               DELETE => 'CASCADE'}},
+            who             => {TYPE => 'INT3', NOTNULL => 1,
+                                REFERENCES => {TABLE => 'profiles',
+                                               COLUMN => 'userid'}},
             bug_when        => {TYPE => 'DATETIME', NOTNULL => 1},
-            work_time       => {TYPE => 'decimal(5,2)', NOTNULL => 1,
+            work_time       => {TYPE => 'decimal(7,2)', NOTNULL => 1,
                                 DEFAULT => '0'},
             thetext         => {TYPE => 'LONGTEXT', NOTNULL => 1},
             isprivate       => {TYPE => 'BOOLEAN', NOTNULL => 1,
@@ -367,8 +423,14 @@ use constant ABSTRACT_SCHEMA => {
 
     dependencies => {
         FIELDS => [
-            blocked   => {TYPE => 'INT3', NOTNULL => 1},
-            dependson => {TYPE => 'INT3', NOTNULL => 1},
+            blocked   => {TYPE => 'INT3', NOTNULL => 1,
+                          REFERENCES    =>  {TABLE  =>   'bugs',
+                                            COLUMN  =>  'bug_id',
+                                            DELETE => 'CASCADE'}},
+            dependson => {TYPE => 'INT3', NOTNULL => 1,
+                          REFERENCES    =>  {TABLE  =>   'bugs',
+                                            COLUMN  =>  'bug_id',
+                                            DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             dependencies_blocked_idx   => ['blocked'],
@@ -376,31 +438,20 @@ use constant ABSTRACT_SCHEMA => {
         ],
     },
 
-    votes => {
-        FIELDS => [
-            who        => {TYPE => 'INT3', NOTNULL => 1,
-                           REFERENCES => {TABLE  => 'profiles',
-                                          COLUMN => 'userid',
-                                          DELETE => 'CASCADE'}},
-            bug_id     => {TYPE => 'INT3', NOTNULL => 1},
-            vote_count => {TYPE => 'INT2', NOTNULL => 1},
-        ],
-        INDEXES => [
-            votes_who_idx    => ['who'],
-            votes_bug_id_idx => ['bug_id'],
-        ],
-    },
-
     attachments => {
         FIELDS => [
             attach_id    => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                              PRIMARYKEY => 1},
-            bug_id       => {TYPE => 'INT3', NOTNULL => 1},
+            bug_id       => {TYPE => 'INT3', NOTNULL => 1,
+                             REFERENCES    =>  {TABLE  => 'bugs',
+                                                COLUMN => 'bug_id',
+                                                DELETE => 'CASCADE'}},
             creation_ts  => {TYPE => 'DATETIME', NOTNULL => 1},
             modification_time => {TYPE => 'DATETIME', NOTNULL => 1},
             description  => {TYPE => 'TINYTEXT', NOTNULL => 1},
             mimetype     => {TYPE => 'TINYTEXT', NOTNULL => 1},
-            ispatch      => {TYPE => 'BOOLEAN'},
+            ispatch      => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                             DEFAULT => 'FALSE'},
             filename     => {TYPE => 'varchar(100)', NOTNULL => 1},
             submitter_id => {TYPE => 'INT3', NOTNULL => 1,
                              REFERENCES => {TABLE => 'profiles',
@@ -408,8 +459,6 @@ use constant ABSTRACT_SCHEMA => {
             isobsolete   => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
             isprivate    => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                             DEFAULT => 'FALSE'},
-            isurl        => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
         ],
         INDEXES => [
@@ -422,16 +471,60 @@ use constant ABSTRACT_SCHEMA => {
     attach_data => {
         FIELDS => [
             id      => {TYPE => 'INT3', NOTNULL => 1,
-                        PRIMARYKEY => 1},
+                        PRIMARYKEY => 1,
+                        REFERENCES  =>  {TABLE  => 'attachments',
+                                         COLUMN => 'attach_id',
+                                         DELETE => 'CASCADE'}},
             thedata => {TYPE => 'LONGBLOB', NOTNULL => 1},
         ],
     },
 
     duplicates => {
         FIELDS => [
-            dupe_of => {TYPE => 'INT3', NOTNULL => 1},
+            dupe_of => {TYPE => 'INT3', NOTNULL => 1,
+                        REFERENCES => {TABLE  =>  'bugs',
+                                       COLUMN =>  'bug_id',
+                                       DELETE =>  'CASCADE'}},
             dupe    => {TYPE => 'INT3', NOTNULL => 1,
+                        PRIMARYKEY => 1,
+                        REFERENCES => {TABLE  =>  'bugs',
+                                       COLUMN =>  'bug_id',
+                                       DELETE =>  'CASCADE'}},
+        ],
+    },
+
+    bug_see_also => {
+        FIELDS => [
+            id     => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                        PRIMARYKEY => 1},
+            bug_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'bugs',
+                                      COLUMN => 'bug_id',
+                                      DELETE => 'CASCADE'}},
+            value  => {TYPE => 'varchar(255)', NOTNULL => 1},
+            class  => {TYPE => 'varchar(255)', NOTNULL => 1, DEFAULT => "''"},
+        ],
+        INDEXES => [
+            bug_see_also_bug_id_idx => {FIELDS => [qw(bug_id value)], 
+                                        TYPE   => 'UNIQUE'},
+        ],
+    },
+
+    # Auditing
+    # --------
+
+    audit_log => {
+        FIELDS => [
+            user_id   => {TYPE => 'INT3',
+                          REFERENCES => {TABLE  => 'profiles',
+                                         COLUMN => 'userid',
+                                         DELETE => 'SET NULL'}},
+            class     => {TYPE => 'varchar(255)', NOTNULL => 1},
+            object_id => {TYPE => 'INT4', NOTNULL => 1},
+            field     => {TYPE => 'varchar(64)', NOTNULL => 1},
+            removed   => {TYPE => 'MEDIUMTEXT'},
+            added     => {TYPE => 'MEDIUMTEXT'},
+            at_time   => {TYPE => 'DATETIME', NOTNULL => 1},
         ],
     },
 
@@ -443,7 +536,7 @@ use constant ABSTRACT_SCHEMA => {
             id          => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
                             PRIMARYKEY => 1},
             name        => {TYPE => 'varchar(64)', NOTNULL => 1},
-            description => {TYPE => 'MEDIUMTEXT'},
+            description => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
         ],
         INDEXES => [
             keyworddefs_name_idx   => {FIELDS => ['name'],
@@ -453,8 +546,15 @@ use constant ABSTRACT_SCHEMA => {
 
     keywords => {
         FIELDS => [
-            bug_id    => {TYPE => 'INT3', NOTNULL => 1},
-            keywordid => {TYPE => 'INT2', NOTNULL => 1},
+            bug_id    => {TYPE => 'INT3', NOTNULL => 1,
+                          REFERENCES => {TABLE  => 'bugs',
+                                         COLUMN => 'bug_id',
+                                         DELETE => 'CASCADE'}},
+            keywordid => {TYPE => 'INT2', NOTNULL => 1,
+                          REFERENCES => {TABLE  => 'keyworddefs',
+                                         COLUMN => 'id',
+                                         DELETE => 'CASCADE'}},
+
         ],
         INDEXES => [
             keywords_bug_id_idx    => {FIELDS => [qw(bug_id keywordid)],
@@ -471,14 +571,27 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             id                => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                                   PRIMARYKEY => 1},
-            type_id           => {TYPE => 'INT2', NOTNULL => 1},
+            type_id           => {TYPE => 'INT2', NOTNULL => 1,
+                                  REFERENCES => {TABLE  => 'flagtypes',
+                                                 COLUMN => 'id',
+                                                 DELETE => 'CASCADE'}},
             status            => {TYPE => 'char(1)', NOTNULL => 1},
-            bug_id            => {TYPE => 'INT3', NOTNULL => 1},
-            attach_id         => {TYPE => 'INT3'},
+            bug_id            => {TYPE => 'INT3', NOTNULL => 1,
+                                  REFERENCES => {TABLE  => 'bugs',
+                                                 COLUMN => 'bug_id',
+                                                 DELETE => 'CASCADE'}},
+            attach_id         => {TYPE => 'INT3',
+                                  REFERENCES => {TABLE  => 'attachments',
+                                                 COLUMN => 'attach_id',
+                                                 DELETE => 'CASCADE'}},
             creation_date     => {TYPE => 'DATETIME', NOTNULL => 1},
             modification_date => {TYPE => 'DATETIME'},
-            setter_id         => {TYPE => 'INT3'},
-            requestee_id      => {TYPE => 'INT3'},
+            setter_id         => {TYPE => 'INT3', NOTNULL => 1,
+                                  REFERENCES => {TABLE  => 'profiles',
+                                                 COLUMN => 'userid'}},
+            requestee_id      => {TYPE => 'INT3',
+                                  REFERENCES => {TABLE  => 'profiles',
+                                                 COLUMN => 'userid'}},
         ],
         INDEXES => [
             flags_bug_id_idx       => [qw(bug_id attach_id)],
@@ -508,8 +621,14 @@ use constant ABSTRACT_SCHEMA => {
                                  DEFAULT => 'FALSE'},
             sortkey          => {TYPE => 'INT2', NOTNULL => 1,
                                  DEFAULT => '0'},
-            grant_group_id   => {TYPE => 'INT3'},
-            request_group_id => {TYPE => 'INT3'},
+            grant_group_id   => {TYPE => 'INT3',
+                                 REFERENCES => {TABLE  => 'groups',
+                                                COLUMN => 'id',
+                                                DELETE => 'SET NULL'}},
+            request_group_id => {TYPE => 'INT3',
+                                 REFERENCES => {TABLE  => 'groups',
+                                                COLUMN => 'id',
+                                                DELETE => 'SET NULL'}},
         ],
     },
 
@@ -518,9 +637,18 @@ use constant ABSTRACT_SCHEMA => {
     #     to be set for them.
     flaginclusions => {
         FIELDS => [
-            type_id      => {TYPE => 'INT2', NOTNULL => 1},
-            product_id   => {TYPE => 'INT2'},
-            component_id => {TYPE => 'INT2'},
+            type_id      => {TYPE => 'INT2', NOTNULL => 1,
+                             REFERENCES => {TABLE  => 'flagtypes',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
+            product_id   => {TYPE => 'INT2',
+                             REFERENCES => {TABLE  => 'products',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
+            component_id => {TYPE => 'INT2',
+                             REFERENCES => {TABLE  => 'components',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             flaginclusions_type_id_idx =>
@@ -530,9 +658,18 @@ use constant ABSTRACT_SCHEMA => {
 
     flagexclusions => {
         FIELDS => [
-            type_id      => {TYPE => 'INT2', NOTNULL => 1},
-            product_id   => {TYPE => 'INT2'},
-            component_id => {TYPE => 'INT2'},
+            type_id      => {TYPE => 'INT2', NOTNULL => 1,
+                             REFERENCES => {TABLE  => 'flagtypes',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
+            product_id   => {TYPE => 'INT2',
+                             REFERENCES => {TABLE  => 'products',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
+            component_id => {TYPE => 'INT2',
+                             REFERENCES => {TABLE  => 'components',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             flagexclusions_type_id_idx =>
@@ -560,11 +697,45 @@ use constant ABSTRACT_SCHEMA => {
                             DEFAULT => 'FALSE'},
             enter_bug   => {TYPE => 'BOOLEAN', NOTNULL => 1,
                             DEFAULT => 'FALSE'},
+            buglist     => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                            DEFAULT => 'FALSE'},
+            visibility_field_id => {TYPE => 'INT3', 
+                                    REFERENCES => {TABLE  => 'fielddefs',
+                                                   COLUMN => 'id'}},
+            value_field_id => {TYPE => 'INT3',
+                               REFERENCES => {TABLE  => 'fielddefs',
+                                              COLUMN => 'id'}},
+            reverse_desc => {TYPE => 'TINYTEXT'},
+            is_mandatory => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                             DEFAULT => 'FALSE'},
+            is_numeric    => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                             DEFAULT => 'FALSE'},
         ],
         INDEXES => [
             fielddefs_name_idx    => {FIELDS => ['name'],
                                       TYPE => 'UNIQUE'},
             fielddefs_sortkey_idx => ['sortkey'],
+            fielddefs_value_field_id_idx => ['value_field_id'],
+            fielddefs_is_mandatory_idx => ['is_mandatory'],
+        ],
+    },
+
+    # Field Visibility Information
+    # -------------------------
+
+    field_visibility => {
+        FIELDS => [
+            field_id => {TYPE => 'INT3', 
+                         REFERENCES => {TABLE  => 'fielddefs',
+                                        COLUMN => 'id',
+                                        DELETE => 'CASCADE'}},
+            value_id => {TYPE => 'INT2', NOTNULL => 1}
+        ],
+        INDEXES => [
+            field_visibility_field_id_idx => {
+                FIELDS => [qw(field_id value_id)],
+                TYPE   => 'UNIQUE'
+            },
         ],
     },
 
@@ -576,7 +747,12 @@ use constant ABSTRACT_SCHEMA => {
             id         =>  {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                             PRIMARYKEY => 1},
             value      =>  {TYPE => 'varchar(64)', NOTNULL => 1},
-            product_id =>  {TYPE => 'INT2', NOTNULL => 1},
+            product_id =>  {TYPE => 'INT2', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'products',
+                                           COLUMN => 'id',
+                                           DELETE => 'CASCADE'}},
+            isactive   =>  {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                            DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             versions_product_id_idx => {FIELDS => [qw(product_id value)],
@@ -588,10 +764,15 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             id         => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, 
                            PRIMARYKEY => 1},
-            product_id => {TYPE => 'INT2', NOTNULL => 1},
+            product_id => {TYPE => 'INT2', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'products',
+                                          COLUMN => 'id',
+                                          DELETE => 'CASCADE'}},
             value      => {TYPE => 'varchar(20)', NOTNULL => 1},
             sortkey    => {TYPE => 'INT2', NOTNULL => 1,
                            DEFAULT => 0},
+            isactive   => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                           DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             milestones_product_id_idx => {FIELDS => [qw(product_id value)],
@@ -604,106 +785,79 @@ use constant ABSTRACT_SCHEMA => {
 
     bug_status => {
         FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
+            @{ dclone(FIELD_TABLE_SCHEMA->{FIELDS}) },
             is_open  => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'},
+
         ],
         INDEXES => [
             bug_status_value_idx  => {FIELDS => ['value'],
                                        TYPE => 'UNIQUE'},
             bug_status_sortkey_idx => ['sortkey', 'value'],
+            bug_status_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     resolution => {
-        FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
-        ],
+        FIELDS => dclone(FIELD_TABLE_SCHEMA->{FIELDS}),
         INDEXES => [
             resolution_value_idx   => {FIELDS => ['value'],
                                        TYPE => 'UNIQUE'},
             resolution_sortkey_idx => ['sortkey', 'value'],
+            resolution_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     bug_severity => {
-        FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1, 
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
-        ],
+        FIELDS => dclone(FIELD_TABLE_SCHEMA->{FIELDS}),
         INDEXES => [
             bug_severity_value_idx   => {FIELDS => ['value'],
                                          TYPE => 'UNIQUE'},
             bug_severity_sortkey_idx => ['sortkey', 'value'],
+            bug_severity_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     priority => {
-        FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
-        ],
+        FIELDS => dclone(FIELD_TABLE_SCHEMA->{FIELDS}),
         INDEXES => [
             priority_value_idx   => {FIELDS => ['value'],
                                      TYPE => 'UNIQUE'},
             priority_sortkey_idx => ['sortkey', 'value'],
+            priority_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     rep_platform => {
-        FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
-        ],
+        FIELDS => dclone(FIELD_TABLE_SCHEMA->{FIELDS}),
         INDEXES => [
             rep_platform_value_idx   => {FIELDS => ['value'],
                                          TYPE => 'UNIQUE'},
             rep_platform_sortkey_idx => ['sortkey', 'value'],
+            rep_platform_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     op_sys => {
-        FIELDS => [
-            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                         PRIMARYKEY => 1},
-            value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive => {TYPE => 'BOOLEAN', NOTNULL => 1, 
-                         DEFAULT => 'TRUE'},
-        ],
+        FIELDS => dclone(FIELD_TABLE_SCHEMA->{FIELDS}),
         INDEXES => [
             op_sys_value_idx   => {FIELDS => ['value'],
                                    TYPE => 'UNIQUE'},
             op_sys_sortkey_idx => ['sortkey', 'value'],
+            op_sys_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 
     status_workflow => {
         FIELDS => [
             # On bug creation, there is no old value.
-            old_status      => {TYPE => 'INT2'},
-            new_status      => {TYPE => 'INT2', NOTNULL => 1},
+            old_status      => {TYPE => 'INT2',
+                                REFERENCES => {TABLE  => 'bug_status', 
+                                               COLUMN => 'id',
+                                               DELETE => 'CASCADE'}},
+            new_status      => {TYPE => 'INT2', NOTNULL => 1,
+                                REFERENCES => {TABLE  => 'bug_status', 
+                                               COLUMN => 'id',
+                                               DELETE => 'CASCADE'}},
             require_comment => {TYPE => 'INT1', NOTNULL => 1, DEFAULT => 0},
         ],
         INDEXES => [
@@ -733,10 +887,29 @@ use constant ABSTRACT_SCHEMA => {
             mybugslink     => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                DEFAULT => 'TRUE'},
             extern_id      => {TYPE => 'varchar(64)'},
+            is_enabled     => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                               DEFAULT => 'TRUE'}, 
         ],
         INDEXES => [
             profiles_login_name_idx => {FIELDS => ['login_name'],
                                         TYPE => 'UNIQUE'},
+            profiles_extern_id_idx => {FIELDS => ['extern_id'],
+                                       TYPE   => 'UNIQUE'}
+        ],
+    },
+
+    profile_search => {
+        FIELDS => [
+            id         => {TYPE => 'INTSERIAL', NOTNULL => 1, PRIMARYKEY => 1},
+            user_id    => {TYPE => 'INT3', NOTNULL => 1, 
+                           REFERENCES => {TABLE  => 'profiles', 
+                                          COLUMN => 'userid', 
+                                          DELETE => 'CASCADE'}},
+            bug_list   => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+            list_order => {TYPE => 'MEDIUMTEXT'},
+        ],
+        INDEXES => [
+            profile_search_user_id_idx => [qw(user_id)],
         ],
     },
 
@@ -807,7 +980,6 @@ use constant ABSTRACT_SCHEMA => {
                                             DELETE => 'CASCADE'}},
             name         => {TYPE => 'varchar(64)', NOTNULL => 1},
             query        => {TYPE => 'LONGTEXT', NOTNULL => 1},
-            query_type   => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0},
         ],
         INDEXES => [
             namedqueries_userid_idx => {FIELDS => [qw(userid name)],
@@ -833,6 +1005,36 @@ use constant ABSTRACT_SCHEMA => {
         ],
     },
 
+    tag => {
+        FIELDS => [
+            id   => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1},
+            name => {TYPE => 'varchar(64)', NOTNULL => 1},
+            user_id  => {TYPE => 'INT3', NOTNULL => 1,
+                         REFERENCES => {TABLE  => 'profiles',
+                                        COLUMN => 'userid',
+                                        DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            tag_user_id_idx => {FIELDS => [qw(user_id name)], TYPE => 'UNIQUE'},
+        ],
+    },
+
+    bug_tag => {
+        FIELDS => [
+            bug_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'bugs',
+                                      COLUMN => 'bug_id',
+                                      DELETE => 'CASCADE'}},
+            tag_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'tag',
+                                      COLUMN => 'id',
+                                      DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            bug_tag_bug_id_idx => {FIELDS => [qw(bug_id tag_id)], TYPE => 'UNIQUE'},
+        ],
+    },
+
     component_cc => {
 
         FIELDS => [
@@ -840,7 +1042,10 @@ use constant ABSTRACT_SCHEMA => {
                              REFERENCES => {TABLE  => 'profiles',
                                             COLUMN => 'userid',
                                             DELETE => 'CASCADE'}},
-            component_id => {TYPE => 'INT2', NOTNULL => 1},
+            component_id => {TYPE => 'INT2', NOTNULL => 1,
+                             REFERENCES => {TABLE  => 'components',
+                                            COLUMN => 'id',
+                                            DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             component_cc_user_id_idx => {FIELDS => [qw(component_id user_id)],
@@ -859,13 +1064,32 @@ use constant ABSTRACT_SCHEMA => {
                          REFERENCES => {TABLE  => 'profiles',
                                         COLUMN => 'userid',
                                         DELETE => 'CASCADE'}},
-            ipaddr   => {TYPE => 'varchar(40)', NOTNULL => 1},
+            ipaddr   => {TYPE => 'varchar(40)'},
             lastused => {TYPE => 'DATETIME', NOTNULL => 1},
         ],
         INDEXES => [
             logincookies_lastused_idx => ['lastused'],
         ],
     },
+
+    login_failure => {
+        FIELDS => [
+            user_id    => {TYPE => 'INT3', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'profiles',
+                                          COLUMN => 'userid',
+                                          DELETE => 'CASCADE'}},
+            login_time => {TYPE => 'DATETIME', NOTNULL => 1},
+            ip_addr    => {TYPE => 'varchar(40)', NOTNULL => 1},
+        ],
+        INDEXES => [
+            # We do lookups by every item in the table simultaneously, but 
+            # having an index with all three items would be the same size as
+            # the table. So instead we have an index on just the smallest item, 
+            # to speed lookups.
+            login_failure_user_id_idx => ['user_id'],
+        ],
+    },
+
 
     # "tokens" stores the tokens users receive when a password or email
     #     change is requested.  Tokens provide an extra measure of security
@@ -909,12 +1133,22 @@ use constant ABSTRACT_SCHEMA => {
 
     group_control_map => {
         FIELDS => [
-            group_id      => {TYPE => 'INT3', NOTNULL => 1},
-            product_id    => {TYPE => 'INT3', NOTNULL => 1},
-            entry         => {TYPE => 'BOOLEAN', NOTNULL => 1},
-            membercontrol => {TYPE => 'BOOLEAN', NOTNULL => 1},
-            othercontrol  => {TYPE => 'BOOLEAN', NOTNULL => 1},
-            canedit       => {TYPE => 'BOOLEAN', NOTNULL => 1},
+            group_id      => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'groups',
+                                             COLUMN => 'id',
+                                             DELETE => 'CASCADE'}},
+            product_id    => {TYPE => 'INT2', NOTNULL => 1,
+                              REFERENCES => {TABLE  =>  'products',
+                                             COLUMN =>  'id',
+                                             DELETE =>  'CASCADE'}},
+            entry         => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                              DEFAULT => 'FALSE'},
+            membercontrol => {TYPE => 'INT1', NOTNULL => 1,
+                              DEFAULT => CONTROLMAPNA},
+            othercontrol  => {TYPE => 'INT1', NOTNULL => 1,
+                              DEFAULT => CONTROLMAPNA},
+            canedit       => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                              DEFAULT => 'FALSE'},
             editcomponents => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                DEFAULT => 'FALSE'},
             editbugs      => {TYPE => 'BOOLEAN', NOTNULL => 1,
@@ -938,8 +1172,14 @@ use constant ABSTRACT_SCHEMA => {
     # if GRANT_REGEXP - record was created by evaluating a regexp
     user_group_map => {
         FIELDS => [
-            user_id    => {TYPE => 'INT3', NOTNULL => 1},
-            group_id   => {TYPE => 'INT3', NOTNULL => 1},
+            user_id    => {TYPE => 'INT3', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'profiles',
+                                          COLUMN => 'userid',
+                                          DELETE => 'CASCADE'}},
+            group_id   => {TYPE => 'INT3', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'groups',
+                                          COLUMN => 'id',
+                                          DELETE => 'CASCADE'}},
             isbless    => {TYPE => 'BOOLEAN', NOTNULL => 1,
                            DEFAULT => 'FALSE'},
             grant_type => {TYPE => 'INT1', NOTNULL => 1,
@@ -961,8 +1201,14 @@ use constant ABSTRACT_SCHEMA => {
     # if GROUP_VISIBLE - member groups may see grantor group
     group_group_map => {
         FIELDS => [
-            member_id  => {TYPE => 'INT3', NOTNULL => 1},
-            grantor_id => {TYPE => 'INT3', NOTNULL => 1},
+            member_id  => {TYPE => 'INT3', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'groups',
+                                          COLUMN => 'id',
+                                          DELETE => 'CASCADE'}},
+            grantor_id => {TYPE => 'INT3', NOTNULL => 1,
+                           REFERENCES => {TABLE  => 'groups',
+                                          COLUMN => 'id',
+                                          DELETE => 'CASCADE'}},
             grant_type => {TYPE => 'INT1', NOTNULL => 1,
                            DEFAULT => GROUP_MEMBERSHIP},
         ],
@@ -977,8 +1223,14 @@ use constant ABSTRACT_SCHEMA => {
     # in order to see a bug.
     bug_group_map => {
         FIELDS => [
-            bug_id   => {TYPE => 'INT3', NOTNULL => 1},
-            group_id => {TYPE => 'INT3', NOTNULL => 1},
+            bug_id   => {TYPE => 'INT3', NOTNULL => 1,
+                         REFERENCES => {TABLE  => 'bugs',
+                                        COLUMN => 'bug_id',
+                                        DELETE => 'CASCADE'}},
+            group_id => {TYPE => 'INT3', NOTNULL => 1,
+                         REFERENCES => {TABLE  => 'groups',
+                                        COLUMN => 'id',
+                                        DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             bug_group_map_bug_id_idx   =>
@@ -991,8 +1243,14 @@ use constant ABSTRACT_SCHEMA => {
     # in order to see a named query somebody else shares.
     namedquery_group_map => {
         FIELDS => [
-            namedquery_id => {TYPE => 'INT3', NOTNULL => 1},
-            group_id      => {TYPE => 'INT3', NOTNULL => 1},
+            namedquery_id => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'namedqueries',
+                                             COLUMN => 'id',
+                                             DELETE => 'CASCADE'}},
+            group_id      => {TYPE => 'INT3', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'groups',
+                                             COLUMN => 'id',
+                                             DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             namedquery_group_map_namedquery_id_idx   =>
@@ -1003,8 +1261,14 @@ use constant ABSTRACT_SCHEMA => {
 
     category_group_map => {
         FIELDS => [
-            category_id => {TYPE => 'INT2', NOTNULL => 1},
-            group_id    => {TYPE => 'INT3', NOTNULL => 1},
+            category_id => {TYPE => 'INT2', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'series_categories',
+                                           COLUMN =>  'id',
+                                           DELETE => 'CASCADE'}},
+            group_id    => {TYPE => 'INT3', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'groups',
+                                           COLUMN => 'id',
+                                           DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             category_group_map_category_id_idx =>
@@ -1036,20 +1300,17 @@ use constant ABSTRACT_SCHEMA => {
                                   PRIMARYKEY => 1},
             name              => {TYPE => 'varchar(64)', NOTNULL => 1},
             classification_id => {TYPE => 'INT2', NOTNULL => 1,
-                                  DEFAULT => '1'},
-            description       => {TYPE => 'MEDIUMTEXT'},
-            milestoneurl      => {TYPE => 'TINYTEXT', NOTNULL => 1,
-                                  DEFAULT => "''"},
-            disallownew       => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                                  DEFAULT => 0},
-            votesperuser      => {TYPE => 'INT2', NOTNULL => 1,
-                                  DEFAULT => 0},
-            maxvotesperbug    => {TYPE => 'INT2', NOTNULL => 1,
-                                  DEFAULT => '10000'},
-            votestoconfirm    => {TYPE => 'INT2', NOTNULL => 1,
-                                  DEFAULT => 0},
+                                  DEFAULT => '1',
+                                  REFERENCES => {TABLE  => 'classifications',
+                                                 COLUMN => 'id',
+                                                 DELETE => 'CASCADE'}},
+            description       => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+            isactive          => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                                  DEFAULT => 1},
             defaultmilestone  => {TYPE => 'varchar(20)',
                                   NOTNULL => 1, DEFAULT => "'---'"},
+            allows_unconfirmed => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                                   DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             products_name_idx   => {FIELDS => ['name'],
@@ -1062,7 +1323,10 @@ use constant ABSTRACT_SCHEMA => {
             id               => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
                                  PRIMARYKEY => 1},
             name             => {TYPE => 'varchar(64)', NOTNULL => 1},
-            product_id       => {TYPE => 'INT2', NOTNULL => 1},
+            product_id       => {TYPE => 'INT2', NOTNULL => 1,
+                                 REFERENCES => {TABLE  => 'products',
+                                                COLUMN => 'id',
+                                                DELETE => 'CASCADE'}},
             initialowner     => {TYPE => 'INT3', NOTNULL => 1,
                                  REFERENCES => {TABLE  => 'profiles',
                                                 COLUMN => 'userid'}},
@@ -1071,6 +1335,8 @@ use constant ABSTRACT_SCHEMA => {
                                                 COLUMN => 'userid',
                                                 DELETE => 'SET NULL'}},
             description      => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+            isactive         => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                                 DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             components_product_id_idx => {FIELDS => [qw(product_id name)],
@@ -1086,26 +1352,37 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             series_id   => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                             PRIMARYKEY => 1},
-            creator     => {TYPE => 'INT3'},
-            category    => {TYPE => 'INT2', NOTNULL => 1},
-            subcategory => {TYPE => 'INT2', NOTNULL => 1},
+            creator     => {TYPE => 'INT3',
+                            REFERENCES => {TABLE  => 'profiles',
+                                           COLUMN => 'userid',
+                                           DELETE => 'CASCADE'}},
+            category    => {TYPE => 'INT2', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'series_categories',
+                                           COLUMN => 'id',
+                                           DELETE => 'CASCADE'}},
+            subcategory => {TYPE => 'INT2', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'series_categories',
+                                           COLUMN => 'id',
+                                           DELETE => 'CASCADE'}},
             name        => {TYPE => 'varchar(64)', NOTNULL => 1},
             frequency   => {TYPE => 'INT2', NOTNULL => 1},
-            last_viewed => {TYPE => 'DATETIME'},
             query       => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
             is_public   => {TYPE => 'BOOLEAN', NOTNULL => 1,
                             DEFAULT => 'FALSE'},
         ],
         INDEXES => [
-            series_creator_idx  =>
-                {FIELDS => [qw(creator category subcategory name)],
-                 TYPE => 'UNIQUE'},
+            series_creator_idx  => ['creator'],
+            series_category_idx => {FIELDS => [qw(category subcategory name)],
+                                    TYPE => 'UNIQUE'},
         ],
     },
 
     series_data => {
         FIELDS => [
-            series_id    => {TYPE => 'INT3', NOTNULL => 1},
+            series_id    => {TYPE => 'INT3', NOTNULL => 1,
+                             REFERENCES => {TABLE  => 'series',
+                                            COLUMN => 'series_id',
+                                            DELETE => 'CASCADE'}},
             series_date  => {TYPE => 'DATETIME', NOTNULL => 1},
             series_value => {TYPE => 'INT3', NOTNULL => 1},
         ],
@@ -1183,6 +1460,8 @@ use constant ABSTRACT_SCHEMA => {
                                             DELETE => 'CASCADE'}},
             subject      => {TYPE => 'varchar(128)'},
             body         => {TYPE => 'MEDIUMTEXT'},
+            mailifnobugs => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                             DEFAULT => 'FALSE'},
         ],
     },
 
@@ -1193,7 +1472,10 @@ use constant ABSTRACT_SCHEMA => {
         FIELDS => [
             quipid   => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
                          PRIMARYKEY => 1},
-            userid   => {TYPE => 'INT3'},
+            userid   => {TYPE => 'INT3',
+                         REFERENCES => {TABLE  => 'profiles', 
+                                        COLUMN => 'userid',
+                                        DELETE => 'SET NULL'}},
             quip     => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
             approved => {TYPE => 'BOOLEAN', NOTNULL => 1,
                          DEFAULT => 'TRUE'},
@@ -1226,7 +1508,10 @@ use constant ABSTRACT_SCHEMA => {
 
     setting_value => {
         FIELDS => [
-            name        => {TYPE => 'varchar(32)', NOTNULL => 1},
+            name        => {TYPE => 'varchar(32)', NOTNULL => 1,
+                            REFERENCES => {TABLE  => 'setting', 
+                                           COLUMN => 'name',
+                                           DELETE => 'CASCADE'}},
             value       => {TYPE => 'varchar(32)', NOTNULL => 1},
             sortindex   => {TYPE => 'INT2', NOTNULL => 1},
         ],
@@ -1244,7 +1529,10 @@ use constant ABSTRACT_SCHEMA => {
                               REFERENCES => {TABLE  => 'profiles',
                                              COLUMN => 'userid',
                                              DELETE => 'CASCADE'}},
-            setting_name  => {TYPE => 'varchar(32)', NOTNULL => 1},
+            setting_name  => {TYPE => 'varchar(32)', NOTNULL => 1,
+                              REFERENCES => {TABLE  => 'setting',
+                                             COLUMN => 'name',
+                                             DELETE => 'CASCADE'}},
             setting_value => {TYPE => 'varchar(32)', NOTNULL => 1},
         ],
         INDEXES => [
@@ -1252,6 +1540,93 @@ use constant ABSTRACT_SCHEMA => {
                                                   TYPE => 'UNIQUE'},
         ],
      },
+
+    # THESCHWARTZ TABLES
+    # ------------------
+    # Note: In the standard TheSchwartz schema, most integers are unsigned,
+    # but we didn't implement unsigned ints for Bugzilla schemas, so we
+    # just create signed ints, which should be fine.
+
+    ts_funcmap => {
+        FIELDS => [
+            funcid   => {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1},
+            funcname => {TYPE => 'varchar(255)', NOTNULL => 1},
+        ],
+        INDEXES => [
+            ts_funcmap_funcname_idx => {FIELDS => ['funcname'], 
+                                          TYPE => 'UNIQUE'},
+        ],
+    },
+
+    ts_job => {
+        FIELDS => [
+            # In a standard TheSchwartz schema, this is a BIGINT, but we
+            # don't have those and I didn't want to add them just for this.
+            jobid         => {TYPE => 'INTSERIAL', PRIMARYKEY => 1, 
+                              NOTNULL => 1},
+            funcid        => {TYPE => 'INT4', NOTNULL => 1},
+            # In standard TheSchwartz, this is a MEDIUMBLOB.
+            arg           => {TYPE => 'LONGBLOB'},
+            uniqkey       => {TYPE => 'varchar(255)'},
+            insert_time   => {TYPE => 'INT4'},
+            run_after     => {TYPE => 'INT4', NOTNULL => 1},
+            grabbed_until => {TYPE => 'INT4', NOTNULL => 1},
+            priority      => {TYPE => 'INT2'},
+            coalesce      => {TYPE => 'varchar(255)'},
+        ],
+        INDEXES => [
+            ts_job_funcid_idx => {FIELDS => [qw(funcid uniqkey)],
+                                  TYPE   => 'UNIQUE'},
+            # In a standard TheSchewartz schema, these both go in the other
+            # direction, but there's no reason to have three indexes that
+            # all start with the same column, and our naming scheme doesn't
+            # allow it anyhow.
+            ts_job_run_after_idx => [qw(run_after funcid)],
+            ts_job_coalesce_idx  => [qw(coalesce funcid)],
+        ],
+    },
+
+    ts_note => {
+        FIELDS => [
+            # This is a BIGINT in standard TheSchwartz schemas.
+            jobid   => {TYPE => 'INT4', NOTNULL => 1},
+            notekey => {TYPE => 'varchar(255)'},
+            value   => {TYPE => 'LONGBLOB'},
+        ],
+        INDEXES => [
+            ts_note_jobid_idx => {FIELDS => [qw(jobid notekey)], 
+                                    TYPE => 'UNIQUE'},
+        ],
+    },
+
+    ts_error => {
+        FIELDS => [
+            error_time => {TYPE => 'INT4', NOTNULL => 1},
+            jobid      => {TYPE => 'INT4', NOTNULL => 1},
+            message    => {TYPE => 'varchar(255)', NOTNULL => 1},
+            funcid     => {TYPE => 'INT4', NOTNULL => 1, DEFAULT => 0},
+        ],
+        INDEXES => [
+            ts_error_funcid_idx     => [qw(funcid error_time)],
+            ts_error_error_time_idx => ['error_time'],
+            ts_error_jobid_idx      => ['jobid'],
+        ],
+    },
+
+    ts_exitstatus => {
+        FIELDS => [
+            jobid           => {TYPE => 'INTSERIAL', PRIMARYKEY => 1,
+                                NOTNULL => 1},
+            funcid          => {TYPE => 'INT4', NOTNULL => 1, DEFAULT => 0},
+            status          => {TYPE => 'INT2'},
+            completion_time => {TYPE => 'INT4'},
+            delete_after    => {TYPE => 'INT4'},
+        ],
+        INDEXES => [
+            ts_exitstatus_funcid_idx       => ['funcid'],
+            ts_exitstatus_delete_after_idx => ['delete_after'],
+        ],
+    },
 
     # SCHEMA STORAGE
     # --------------
@@ -1265,23 +1640,7 @@ use constant ABSTRACT_SCHEMA => {
 
 };
 
-use constant FIELD_TABLE_SCHEMA => {
-    FIELDS => [
-        id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                     PRIMARYKEY => 1},
-        value    => {TYPE => 'varchar(64)', NOTNULL => 1},
-        sortkey  => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-        isactive => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                     DEFAULT => 'TRUE'},
-    ],
-    # Note that bz_add_field_table should prepend the table name
-    # to these index names.
-    INDEXES => [
-        value_idx   => {FIELDS => ['value'], TYPE => 'UNIQUE'},
-        sortkey_idx => ['sortkey', 'value'],
-    ],
-};
-
+# Foreign Keys are added in Bugzilla::DB::bz_add_field_tables
 use constant MULTI_SELECT_VALUE_TABLE => {
     FIELDS => [
         bug_id => {TYPE => 'INT3', NOTNULL => 1},
@@ -1291,7 +1650,6 @@ use constant MULTI_SELECT_VALUE_TABLE => {
         bug_id_idx => {FIELDS => [qw( bug_id value)], TYPE => 'UNIQUE'},
     ],
 };
-
 
 #--------------------------------------------------------------------------
 
@@ -1384,7 +1742,7 @@ sub _initialize {
                 if exists $abstract_schema->{$table};
         }
         unlock_keys(%$abstract_schema);
-        Bugzilla::Hook::process('db_schema-abstract_schema', 
+        Bugzilla::Hook::process('db_schema_abstract_schema', 
                                 { schema => $abstract_schema });
         unlock_hash(%$abstract_schema);
     }
@@ -1490,8 +1848,9 @@ C<ALTER TABLE> SQL statement
     # DEFAULT attribute must appear before any column constraints
     # (e.g., NOT NULL), for Oracle
     $type_ddl .= " DEFAULT $default" if (defined($default));
-    $type_ddl .= " NOT NULL" if ($finfo->{NOTNULL});
+    # PRIMARY KEY must appear before NOT NULL for SQLite.
     $type_ddl .= " PRIMARY KEY" if ($finfo->{PRIMARYKEY});
+    $type_ddl .= " NOT NULL" if ($finfo->{NOTNULL});
 
     return($type_ddl);
 
@@ -1564,11 +1923,33 @@ sub _hash_identifier {
 }
 
 
-sub get_add_fk_sql {
-    my ($self, $table, $column, $def) = @_;
+sub get_add_fks_sql {
+    my ($self, $table, $column_fks) = @_;
 
-    my $fk_string = $self->get_fk_ddl($table, $column, $def);
-    return ("ALTER TABLE $table ADD $fk_string");
+    my @add = $self->_column_fks_to_ddl($table, $column_fks);
+
+    my @sql;
+    if ($self->MULTIPLE_FKS_IN_ALTER) {
+        my $alter = "ALTER TABLE $table ADD " . join(', ADD ', @add);
+        push(@sql, $alter);
+    }
+    else {
+        foreach my $fk_string (@add) {
+            push(@sql, "ALTER TABLE $table ADD $fk_string");
+        }
+    }
+    return @sql;
+}
+
+sub _column_fks_to_ddl {
+    my ($self, $table, $column_fks) = @_;
+    my @ddl;
+    foreach my $column (keys %$column_fks) {
+        my $def = $column_fks->{$column};
+        my $fk_string = $self->get_fk_ddl($table, $column, $def);
+        push(@ddl, $fk_string);
+    }
+    return @ddl;
 }
 
 sub get_drop_fk_sql { 
@@ -1710,7 +2091,7 @@ sub get_table_ddl {
     return @ddl;
 
 } #eosub--get_table_ddl
-#--------------------------------------------------------------------------
+
 sub _get_create_table_ddl {
 
 =item C<_get_create_table_ddl>
@@ -1726,25 +2107,27 @@ sub _get_create_table_ddl {
 
     my $thash = $self->{schema}{$table};
     die "Table $table does not exist in the database schema."
-        unless (ref($thash));
+        unless ref $thash;
 
-    my $create_table = "CREATE TABLE $table \(\n";
-
+    my (@col_lines, @fk_lines);
     my @fields = @{ $thash->{FIELDS} };
     while (@fields) {
         my $field = shift(@fields);
         my $finfo = shift(@fields);
-        $create_table .= "\t$field\t" . $self->get_type_ddl($finfo);
-        $create_table .= "," if (@fields);
-        $create_table .= "\n";
+        push(@col_lines, "\t$field\t" . $self->get_type_ddl($finfo));
+        if ($self->FK_ON_CREATE and $finfo->{REFERENCES}) {
+            my $fk = $finfo->{REFERENCES};
+            my $fk_ddl = $self->get_fk_ddl($table, $field, $fk);
+            push(@fk_lines, $fk_ddl);
+        }
     }
+    
+    my $sql = "CREATE TABLE $table (\n" . join(",\n", @col_lines, @fk_lines)
+              . "\n)";
+    return $sql
 
-    $create_table .= "\)";
+} 
 
-    return($create_table)
-
-} #eosub--_get_create_table_ddl
-#--------------------------------------------------------------------------
 sub _get_create_index_ddl {
 
 =item C<_get_create_index_ddl>
@@ -1798,8 +2181,8 @@ sub get_add_column_ddl {
         if defined $init_value;
 
     if (defined $definition->{REFERENCES}) {
-        push(@statements, $self->get_add_fk_sql($table, $column,
-                                                $definition->{REFERENCES}));
+        push(@statements, $self->get_add_fks_sql($table, { $column =>
+                                                           $definition->{REFERENCES} }));
     }
 
     return (@statements);
@@ -1859,7 +2242,8 @@ sub get_alter_column_ddl {
 
 =cut
 
-    my ($self, $table, $column, $new_def, $set_nulls_to) = @_;
+    my $self = shift;
+    my ($table, $column, $new_def, $set_nulls_to) = @_;
 
     my @statements;
     my $old_def = $self->get_column_abstract($table, $column);
@@ -1873,6 +2257,10 @@ sub get_alter_column_ddl {
 
     my $default = $new_def->{DEFAULT};
     my $default_old = $old_def->{DEFAULT};
+
+    if (defined $default) {
+        $default = $specific->{$default} if exists $specific->{$default};
+    }
     # This first condition prevents "uninitialized value" errors.
     if (!defined $default && !defined $default_old) {
         # Do Nothing
@@ -1886,24 +2274,13 @@ sub get_alter_column_ddl {
     elsif ( (defined $default && !defined $default_old) || 
             ($default ne $default_old) ) 
     {
-        $default = $specific->{$default} if exists $specific->{$default};
         push(@statements, "ALTER TABLE $table ALTER COLUMN $column "
                          . " SET DEFAULT $default");
     }
 
     # If we went from NULL to NOT NULL.
     if (!$old_def->{NOTNULL} && $new_def->{NOTNULL}) {
-        my $setdefault;
-        # Handle any fields that were NULL before, if we have a default,
-        $setdefault = $new_def->{DEFAULT} if exists $new_def->{DEFAULT};
-        # But if we have a set_nulls_to, that overrides the DEFAULT 
-        # (although nobody would usually specify both a default and 
-        # a set_nulls_to.)
-        $setdefault = $set_nulls_to if defined $set_nulls_to;
-        if (defined $setdefault) {
-            push(@statements, "UPDATE $table SET $column = $setdefault"
-                            . "  WHERE $column IS NULL");
-        }
+        push(@statements, $self->_set_nulls_sql(@_));
         push(@statements, "ALTER TABLE $table ALTER COLUMN $column"
                         . " SET NOT NULL");
     }
@@ -1923,6 +2300,27 @@ sub get_alter_column_ddl {
     }
 
     return @statements;
+}
+
+# Helps handle any fields that were NULL before, if we have a default,
+# when doing an ALTER COLUMN.
+sub _set_nulls_sql {
+    my ($self, $table, $column, $new_def, $set_nulls_to) = @_;
+    my $default = $new_def->{DEFAULT};
+    # If we have a set_nulls_to, that overrides the DEFAULT 
+    # (although nobody would usually specify both a default and 
+    # a set_nulls_to.)
+    $default = $set_nulls_to if defined $set_nulls_to;
+    if (defined $default) {
+         my $specific = $self->{db_specific};
+         $default = $specific->{$default} if exists $specific->{$default};
+    }
+    my @sql;
+    if (defined $default) {
+        push(@sql, "UPDATE $table SET $column = $default"
+                . "  WHERE $column IS NULL");
+    }
+    return @sql;
 }
 
 sub get_drop_index_ddl {
@@ -2204,7 +2602,7 @@ sub delete_column {
     my ($self, $table, $column) = @_;
 
     my $abstract_fields = $self->{abstract_schema}{$table}{FIELDS};
-    my $name_position = lsearch($abstract_fields, $column);
+    my $name_position = firstidx { $_ eq $column } @$abstract_fields;
     die "Attempted to delete nonexistent column ${table}.${column}" 
         if $name_position == -1;
     # Delete the key/value pair from the array.
@@ -2258,6 +2656,28 @@ sub set_column {
     $self->_set_object($table, $column, $new_def, $fields);
 }
 
+=item C<set_fk($table, $column \%fk_def)>
+
+Sets the C<REFERENCES> item on the specified column.
+
+=cut
+
+sub set_fk {
+    my ($self, $table, $column, $fk_def) = @_;
+    # Don't want to modify the source def before we explicitly set it below.
+    # This is just us being extra-cautious.
+    my $column_def = dclone($self->get_column_abstract($table, $column));
+    die "Tried to set an fk on $table.$column, but that column doesn't exist"
+        if !$column_def;
+    if ($fk_def) {
+        $column_def->{REFERENCES} = $fk_def;
+    }
+    else {
+        delete $column_def->{REFERENCES};
+    }
+    $self->set_column($table, $column, $column_def);
+}
+
 sub set_index {
 
 =item C<set_index($table, $name, $definition)>
@@ -2293,7 +2713,7 @@ sub set_index {
 sub _set_object {
     my ($self, $table, $name, $definition, $array_to_change) = @_;
 
-    my $obj_position = lsearch($array_to_change, $name) + 1;
+    my $obj_position = (firstidx { $_ eq $name } @$array_to_change) + 1;
     # If the object doesn't exist, then add it.
     if (!$obj_position) {
         push(@$array_to_change, $name);
@@ -2326,7 +2746,7 @@ sub delete_index {
     my ($self, $table, $name) = @_;
 
     my $indexes = $self->{abstract_schema}{$table}{INDEXES};
-    my $name_position = lsearch($indexes, $name);
+    my $name_position = firstidx { $_ eq $name } @$indexes;
     die "Attempted to delete nonexistent index $name on the $table table" 
         if $name_position == -1;
     # Delete the key/value pair from the array.
@@ -2410,7 +2830,7 @@ sub serialize_abstract {
  Description: Used for when you've read a serialized Schema off the disk,
               and you want a Schema object that represents that data.
  Params:      $serialized - scalar. The serialized data.
-              $version - A number in the format X.YZ. The "version"
+              $version - A number. The "version"
                   of the Schema that did the serialization.
                   See the docs for C<SCHEMA_VERSION> for more details.
  Returns:     A Schema object. It will have the methods of (and work 
@@ -2423,7 +2843,7 @@ sub deserialize_abstract {
     my ($class, $serialized, $version) = @_;
 
     my $thawed_hash;
-    if (int($version) < 2) {
+    if ($version < 2) {
         $thawed_hash = thaw($serialized);
     }
     else {
@@ -2431,6 +2851,22 @@ sub deserialize_abstract {
         $cpt->reval($serialized) ||
             die "Unable to restore cached schema: " . $@;
         $thawed_hash = ${$cpt->varglob('VAR1')};
+    }
+
+    # Version 2 didn't have the "created" key for REFERENCES items.
+    if ($version < 3) {
+        my $standard = $class->new()->{abstract_schema};
+        foreach my $table_name (keys %$thawed_hash) {
+            my %standard_fields = 
+                @{ $standard->{$table_name}->{FIELDS} || [] };
+            my $table = $thawed_hash->{$table_name};
+            my %fields = @{ $table->{FIELDS} || [] };
+            while (my ($field, $def) = each %fields) {
+                if (exists $def->{REFERENCES}) {
+                    $def->{REFERENCES}->{created} = 1;
+                }
+            }
+        }
     }
 
     return $class->new(undef, $thawed_hash);
@@ -2502,7 +2938,7 @@ unsigned)
 
 =item C<SMALLSERIAL>
 
-An auto-increment L</INT1>
+An auto-increment L</INT2>
 
 =item C<MEDIUMSERIAL>
 

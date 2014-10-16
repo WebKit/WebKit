@@ -57,6 +57,10 @@
        heading => "Is Obsolete"
      },
      {
+       name => "is_mandatory"
+       heading => "Is Mandatory"
+     },
+     {
        name => "action"
        heading => "Action"
        content => ""
@@ -65,30 +69,28 @@
 %]
 
 [% USE Bugzilla %]
-[% custom_fields = Bugzilla.get_fields({ custom => 1 }) %]
+[% custom_fields = Bugzilla.fields({ custom => 1 }) %]
 
 [%# We want to display the type name of fields, not their type ID. %]
-[% overrides.type = [] %]
+[% overrides.type = {} %]
 
 [% FOREACH field_type = field_types.keys %]
-  [% overrides.type.push({
-       match_value => field_type
-       match_field => 'type'
+  [% overrides.type.type.$field_type = {
        override_content => 1
-       content => field_types.${field_type}
-    })
+       content => field_types.$field_type
+    }
   %]
 [% END %]
 
 
-[% overrides.action = [ {
-     match_value => 1
-     match_field => 'obsolete'
-     override_content => 1
-     content => "Delete"
-     override_contentlink => 1
-     contentlink => delete_contentlink
-   } ]
+[% overrides.action.obsolete = {
+     "1" => {
+       override_content => 1
+       content => "Delete"
+       override_contentlink => 1
+       contentlink => delete_contentlink
+     }
+   }
 %] 
 
 [% PROCESS admin/table.html.tmpl

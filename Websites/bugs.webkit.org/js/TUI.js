@@ -16,153 +16,94 @@
  * Rights Reserved.
  * 
  * Contributor(s): Dennis Melentyev <dennis.melentyev@infopulse.com.ua>
+ *                 Max Kanat-Alexander <mkanat@bugzilla.org>
  */
 
- /* This file provides JavaScript functions to be included once one wish
-  * to add a hide/reveal/collapse per-class functionality
-  *
-  * 
-  * This file contains hide/reveal API for customizable page views
-  * TUI stands for Tweak UI.
-  *
-  * See bug 262592 for usage examples.
-  * 
-  * Note: this interface is experimental and under development.
-  * We may and probably will make breaking changes to it in the future.
-  */
+/* This file provides JavaScript functions to be included when one wishes
+ * to show/hide certain UI elements, and have the state of them being
+ * shown/hidden stored in a cookie.
+ * 
+ * TUI stands for Tweak UI.
+ *
+ * Requires js/util.js and the YUI Dom and Cookie libraries.
+ *
+ * See template/en/default/bug/create/create.html.tmpl for a usage example.
+ */
 
-  var TUIClasses = new Array;
-  var TUICookiesEnabled = -1;
+var TUI_HIDDEN_CLASS = 'bz_tui_hidden';
+var TUI_COOKIE_NAME  = 'TUI';
 
-  // Internal function to demangle cookies
-  function TUI_demangle(value) {
-    var pair;
-    var pairs = value.split(",");
-    for (i = 0; i < pairs.length; i++) {
-      pair = pairs[i].split(":");
-      if (pair[0] != null && pair[1] != null)
-        TUIClasses[pair[0]] = pair[1];
+var TUI_alternates = new Array();
+
+/** 
+ * Hides a particular class of elements if they are shown, 
+ * or shows them if they are hidden. Then it stores whether that
+ * class is now hidden or shown.
+ *
+ * @param className   The name of the CSS class to hide.
+ */
+function TUI_toggle_class(className) {
+    var elements = YAHOO.util.Dom.getElementsByClassName(className);
+    for (var i = 0; i < elements.length; i++) {
+        bz_toggleClass(elements[i], TUI_HIDDEN_CLASS);
     }
-  }
+    _TUI_save_class_state(elements, className);
+    _TUI_toggle_control_link(className);
+}
 
- /*  TUI_tweak: Function to redraw whole document. 
-  *  Also, initialize TUIClasses array with defaults, then override it 
-  *  with values from cookie
-  */
 
-  function TUI_tweak( cookiesuffix, classes  ) {
-    var dc = document.cookie;
-    var begin = -1;
-    var end = 0;
-
-    // Register classes and their defaults
-    TUI_demangle(classes);
-
-    if (TUICookiesEnabled > 0) {
-      // If cookies enabled, process them
-      TUI_demangle(TUI_getCookie(cookiesuffix));
-    }
-    else if (TUICookiesEnabled == -1) {
-      // If cookies availability not checked yet since browser does 
-      // not has navigator.cookieEnabled property, let's check it manualy
-      var cookie = TUI_getCookie(cookiesuffix);
-      if (cookie.length == 0)
-      {
-        TUI_setCookie(cookiesuffix);
-	// Cookies are definitely disabled for JS.
-        if (TUI_getCookie(cookiesuffix).length == 0)
-          TUICookiesEnabled = 0;
-        else
-          TUICookiesEnabled = 1;
-      }
-      else {
-        // Have cookie set, pretend to be able to reset them later on
-        TUI_demangle(cookie);
-        TUICookiesEnabled = 1;
-      }
-    }
-      
-    if (TUICookiesEnabled > 0) {
-      var els = document.getElementsByTagName('*');
-      for (i = 0; i < els.length; i++) {
-        if (null != TUIClasses[els[i].className]) {
-          TUI_apply(els[i], TUIClasses[els[i].className]);
+/**
+ * Specifies that a certain class of items should be hidden by default,
+ * if the user doesn't have a TUI cookie.
+ * 
+ * @param className   The class to hide by default.
+ */
+function TUI_hide_default(className) {
+    YAHOO.util.Event.onDOMReady(function () {
+        if (!YAHOO.util.Cookie.getSub('TUI', className)) {
+            TUI_toggle_class(className);
         }
-      }
+    });
+}
+
+function _TUI_toggle_control_link(className) {
+    var link = document.getElementById(className + "_controller");
+    if (!link) return;
+    var original_text = link.innerHTML;
+    link.innerHTML = TUI_alternates[className];
+    TUI_alternates[className] = original_text;
+}
+
+function _TUI_save_class_state(elements, aClass) {
+    // We just check the first element to see if it's hidden or not, and
+    // consider that all elements are the same.
+    if (YAHOO.util.Dom.hasClass(elements[0], TUI_HIDDEN_CLASS)) {
+        _TUI_store(aClass, 0);
     }
-    return;
-  }
-
-  // TUI_apply: Function to draw certain element. 
-  // Receives element itself and style value: hide, reveal or collapse
-
-  function TUI_apply(element, value) {
-    if (TUICookiesEnabled > 0 && element != null) {
-      switch (value)
-      {
-        case 'hide':
-          element.style.visibility="hidden";
-          break;
-        case 'collapse':
-          element.style.visibility="hidden";
-          element.style.display="none";
-          break;
-        case 'reveal': // Shown item must expand
-        default:     // The default is to show & expand
-          element.style.visibility="visible";
-          element.style.display="";
-          break;
-      }
+    else {
+        _TUI_store(aClass, 1);
     }
-  }
+}
 
-  // TUI_change: Function to process class. 
-  // Usualy called from onclick event of button
+function _TUI_store(aClass, state) {
+    YAHOO.util.Cookie.setSub(TUI_COOKIE_NAME, aClass, state,
+    {
+        expires: new Date('January 1, 2038'),
+        path: BUGZILLA.param.cookie_path
+    });
+}
 
-  function TUI_change(cookiesuffix, clsname, action) {
-    if (TUICookiesEnabled > 0) {
-      var els, i;
-      els = document.getElementsByTagName('*');
-      for (i=0; i<els.length; i++) {
-        if (els[i].className.match(clsname)) {
-          TUI_apply(els[i], action);
+function _TUI_restore() {
+    var yui_classes = YAHOO.util.Cookie.getSubs(TUI_COOKIE_NAME);
+    for (yui_item in yui_classes) {
+        if (yui_classes[yui_item] == 0) {
+            var elements = YAHOO.util.Dom.getElementsByClassName(yui_item);
+            for (var i = 0; i < elements.length; i++) {
+                YAHOO.util.Dom.addClass(elements[i], 'bz_tui_hidden');
+            }
+            _TUI_toggle_control_link(yui_item);
         }
-      }
-      TUIClasses[clsname]=action;
-      TUI_setCookie(cookiesuffix);
     }
-  }
-  
-  // TUI_setCookie: Function to set TUI cookie. 
-  // Used internally
+}
 
-  function TUI_setCookie(cookiesuffix) {
-    var cookieval = "";
-    var expireOn = new Date();
-    expireOn.setYear(expireOn.getFullYear() + 25); 
-    for (clsname in TUIClasses) {
-      if (cookieval.length > 0)
-        cookieval += ",";
-      cookieval += clsname+":"+TUIClasses[clsname];
-    }
-    document.cookie="Bugzilla_TUI_"+cookiesuffix+"="+cookieval+"; expires="+expireOn.toString();
-  }
-
-  // TUI_getCookie: Function to get TUI cookie. 
-  // Used internally
-
-  function TUI_getCookie(cookiesuffix) {
-    var dc = document.cookie;
-    var begin, end;
-    var cookiePrefix = "Bugzilla_TUI_"+cookiesuffix+"="; 
-    begin = dc.indexOf(cookiePrefix, end);
-    if (begin != -1) {
-      begin += cookiePrefix.length;
-      end = dc.indexOf(";", begin);
-      if (end == -1) {
-        end = dc.length;
-      }
-      return unescape(dc.substring(begin, end));
-    }
-    return "";
-  }
+YAHOO.util.Event.onDOMReady(_TUI_restore);

@@ -38,22 +38,23 @@ use Bugzilla::Update;
 
 # Check whether or not the user is logged in
 my $user = Bugzilla->login(LOGIN_OPTIONAL);
+my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
+
+# And log out the user if requested. We do this first so that nothing
+# else accidentally relies on the current login.
+if ($cgi->param('logout')) {
+    Bugzilla->logout();
+    $user = Bugzilla->user;
+    $vars->{'message'} = "logged_out";
+    # Make sure that templates or other code doesn't get confused about this.
+    $cgi->delete('logout');
+}
 
 ###############################################################################
 # Main Body Execution
 ###############################################################################
-
-my $cgi = Bugzilla->cgi;
-# Force to use HTTPS unless Bugzilla->params->{'ssl'} equals 'never'.
-# This is required because the user may want to log in from here.
-if ($cgi->protocol ne 'https' && Bugzilla->params->{'sslbase'} ne ''
-    && Bugzilla->params->{'ssl'} ne 'never')
-{
-    $cgi->require_https(Bugzilla->params->{'sslbase'});
-}
-
-my $template = Bugzilla->template;
-my $vars = {};
 
 # Return the appropriate HTTP response headers.
 print $cgi->header();

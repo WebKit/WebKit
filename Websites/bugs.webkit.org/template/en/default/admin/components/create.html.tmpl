@@ -26,70 +26,16 @@
   
 [% title = BLOCK %]Add component to the [% product.name FILTER html %] product[% END %]
 [% PROCESS global/header.html.tmpl
+  yui = [ 'autocomplete' ]
+  javascript_urls = [ "js/field.js" ]
   title = title
 %]
 
 <form method="post" action="editcomponents.cgi">
   <table border="0" cellpadding="4" cellspacing="0">
-    <tr>
-      <th align="right">Component:</th>
-      <td><input size="64" maxlength="64" name="component" value=""></td>
-    </tr>
-    <tr>
-      <th align="right">Description:</th>
-      <td>
-        [% INCLUDE global/textarea.html.tmpl
-          name    = 'description'
-          minrows = 4
-          cols    = 64
-          wrap    = 'virtual'
-        %]
-      </td>
-    </tr>
-    <tr>
-      <th align="right"><label for="initialowner">Default Assignee:</label></th>
-      <td>
-        [% INCLUDE global/userselect.html.tmpl
-           name => "initialowner"
-           id => "initialowner"
-           value => ""
-           size => 64
-         %]
-      </td>
-    </tr>
-[% IF Param('useqacontact') %]
-    <tr>
-      <th align="right">
-        <label for="initialqacontact">Default QA Contact:</label></th>
-      <td>
-        [% INCLUDE global/userselect.html.tmpl
-           name => "initialqacontact"
-           id => "initialqacontact"
-           value => ""
-           size => 64
-           emptyok => 1
-         %]
-      </td>
-    </tr>
-[% END %]
-    <tr>
-      <th align="right">
-        <label for="initialcc">Default CC List:</label>
-      </th>
-      <td>
-        [% INCLUDE global/userselect.html.tmpl
-           name => "initialcc"
-           id => "initialcc"
-           value => ""
-           size => 64
-           multiple => 5
-        %]
-        <br>
-        [% IF !Param("usemenuforusers") %]
-          <em>Enter user names for the CC list as a comma-separated list.</em>
-        [% END %]
-      </td>
-    </tr>
+
+    [% PROCESS "admin/components/edit-common.html.tmpl" %]
+    
   </table>
   <hr>
   <input type="submit" id="create" value="Add">

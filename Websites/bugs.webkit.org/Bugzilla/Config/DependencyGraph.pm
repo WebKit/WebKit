@@ -35,7 +35,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::DependencyGraph::sortkey = "06";
+our $sortkey = 800;
 
 sub get_param_list {
   my $class = shift;

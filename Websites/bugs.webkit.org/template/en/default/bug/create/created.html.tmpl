@@ -24,23 +24,16 @@
   #     type: string; type of change for this bug, either 'created' if this bug
   #         was created or 'dep' if it was added as a dependent/blocker
   #     id: integer; the ID of the bug
-  # mailrecipients: hash; contains the BugMail recipients, for details on
-  #     this contents, see template bug/process/bugmail.html.tmpl
   # bug: object; Bugzilla::Bug object of the bug that was created (used in
   #     template bug/edit.html.tmpl
-  # bug_list: array of integers; sorted bug list (used in template
-  #     bug/navigate.html.tmpl)
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
+[% PROCESS "bug/show-header.html.tmpl" %]
 [% PROCESS global/header.html.tmpl
-  title = "$terms.Bug $id Submitted"
-  javascript_urls = [ "js/util.js", "js/field.js",
-                        "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
-  style_urls = [ "skins/standard/yui/calendar.css", "skins/standard/show_bug.css" ]
-  
-  
+  title = "$terms.Bug $id Submitted &ndash; $filtered_desc"
+  header = "$terms.Bug&nbsp;$id Submitted"
 %]
 
 [% header_done = 1 %]
@@ -49,8 +42,7 @@
   [% PROCESS bug/process/results.html.tmpl
      type = item.type
      id = item.id
-     mail = item.mail
-     mailrecipients = mailrecipients
+     sent_bugmail = item
    %]
 [% END %]
 

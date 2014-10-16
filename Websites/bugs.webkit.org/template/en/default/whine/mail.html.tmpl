@@ -31,10 +31,6 @@
 [% PROCESS global/variables.none.tmpl %]
 [% PROCESS 'global/field-descs.none.tmpl' %]
 
-[%# assignee_login_string is a literal string used for getting the 
-  # assignee's name out of the bug data %]
-[% SET assignee_login_string="map_assigned_to.login_name" %]
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
@@ -44,9 +40,9 @@
   </head>
   <body bgcolor="#FFFFFF">
 
-    <p align="left">
+    <pre>
       [% body FILTER html %]
-    </p>
+    </pre>
 
     <p align="left">
       [% IF author.login == recipient.login %]
@@ -57,39 +53,42 @@
       [% END %]
     </p>
 
+[% IF queries.size %]
+  [% FOREACH query=queries %]
 
-[% FOREACH query=queries %]
+    <h2>[%+ query.title FILTER html %]</h2>
 
-  <h2>[%+ query.title FILTER html %]</h2>
-
-  <table width="100%">
-    <tr>
-      <th align="left">ID</th>
-      <th align="left">Sev</th>
-      <th align="left">Pri</th>
-      <th align="left">Plt</th>
-      <th align="left">Assignee</th>
-      <th align="left">Status</th>
-      <th align="left">Resolution</th>
-      <th align="left">Summary</th>
-    </tr>
-
-    [% FOREACH bug=query.bugs %]
+    <table width="100%">
       <tr>
-        <td align="left"><a href="[%+ urlbase FILTER html %]show_bug.cgi?id=
-            [%- bug.bug_id %]">[% bug.bug_id %]</a></td>
-        <td align="left">[% bug.bug_severity FILTER html %]</td>
-        <td align="left">[% bug.priority FILTER html %]</td>
-        <td align="left">[% bug.rep_platform FILTER html %]</td>
-        <td align="left">[% bug.$assignee_login_string FILTER html %]</td>
-        <td align="left">[% get_status(bug.bug_status) FILTER html %]</td>
-        <td align="left">[% get_resolution(bug.resolution) FILTER html %]</td>
-        <td align="left">[% bug.short_desc FILTER html %]</td>
+        <th align="left">ID</th>
+        <th align="left">Sev</th>
+        <th align="left">Pri</th> 
+        <th align="left">Plt</th>
+        <th align="left">Assignee</th>
+        <th align="left">Status</th>
+        <th align="left">Resolution</th>
+        <th align="left">Summary</th>
       </tr>
-    [% END %]
-  </table>
-[% END %]
 
+      [% FOREACH bug=query.bugs %]
+        <tr>
+          <td align="left"><a href="[%+ urlbase FILTER html %]show_bug.cgi?id=
+              [%- bug.bug_id %]">[% bug.bug_id %]</a></td>
+          <td align="left">[% display_value("bug_severity", bug.bug_severity) FILTER html %]</td>
+          <td align="left">[% display_value("priority", bug.priority) FILTER html %]</td>
+          <td align="left">[% display_value("rep_platform", bug.rep_platform) FILTER html %]</td>
+          <td align="left">[% bug.assigned_to FILTER html %]</td>
+          <td align="left">[% display_value("bug_status", bug.bug_status) FILTER html %]</td>
+          <td align="left">[% display_value("resolution", bug.resolution) FILTER html %]</td>
+          <td align="left">[% bug.short_desc FILTER html %]</td>
+        </tr>
+      [% END %]
+    </table>
+  [% END %]
+[% ELSE %]
+
+  <h3>No [% terms.bugs %] were found that matched the search criteria.</h3>
+[% END %]
   </body>
 </html>
 

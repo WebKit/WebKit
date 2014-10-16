@@ -26,23 +26,9 @@
 
 [% PROCESS global/variables.none.tmpl %]
 [% bug = bugs.0 %]
-[% bodyclasses = ['bz_bug',
-                 "bz_status_$bug.bug_status",
-                 "bz_component_$bug.component",
-                 "bz_bug_$bug.bug_id"
-                 ]
-%]
-[% FOREACH group = bug.groups_in %]
-  [% bodyclasses.push("bz_group_$group.name") %]
-[% END %]
-
+[% PROCESS "bug/show-header.html.tmpl" %]
 [% PROCESS global/header.html.tmpl
   title = "Attachment $attachment.id added to $terms.Bug $attachment.bug_id"
-  bodyclasses = bodyclasses
-  javascript_urls = [ "js/util.js", "js/field.js",
-                      "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
-  style_urls = [ "skins/standard/yui/calendar.css", "skins/standard/show_bug.css" ]
-  doc_section = "bug_page.html"
 %]
 
 <dl>

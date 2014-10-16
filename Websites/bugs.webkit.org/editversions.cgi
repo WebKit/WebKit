@@ -63,6 +63,7 @@ my $version_name = trim($cgi->param('version') || '');
 my $action       = trim($cgi->param('action')  || '');
 my $showbugcounts = (defined $cgi->param('showbugcounts'));
 my $token        = $cgi->param('token');
+my $isactive     = $cgi->param('isactive');
 
 #
 # product = '' -> Show nice list of products
@@ -119,7 +120,8 @@ if ($action eq 'add') {
 
 if ($action eq 'new') {
     check_token_data($token, 'add_version');
-    my $version = Bugzilla::Version::create($version_name, $product);
+    my $version = Bugzilla::Version->create(
+        { value => $version_name, product => $product });
     delete_token($token);
 
     $vars->{'message'} = 'version_created';
@@ -202,7 +204,9 @@ if ($action eq 'update') {
 
     $dbh->bz_start_transaction();
 
-    $vars->{'updated'} = $version->update($version_name, $product);
+    $version->set_name($version_name);
+    $version->set_is_active($isactive);
+    my $changes = $version->update();
 
     $dbh->bz_commit_transaction();
     delete_token($token);
@@ -210,13 +214,12 @@ if ($action eq 'update') {
     $vars->{'message'} = 'version_updated';
     $vars->{'version'} = $version;
     $vars->{'product'} = $product;
+    $vars->{'changes'} = $changes;
     $template->process("admin/versions/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
 }
 
-#
 # No valid action found
-#
-ThrowUserError('no_valid_action', {'field' => "version"});
+ThrowUserError('unknown_action', {action => $action});

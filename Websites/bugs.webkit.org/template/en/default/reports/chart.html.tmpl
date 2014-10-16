@@ -25,9 +25,11 @@
            height = 350 
 %]
 
+[% time = time FILTER time('%Y-%m-%d %H:%M:%S') FILTER html %]
+
 [% PROCESS global/header.html.tmpl 
   title = "Chart"
-  header_addl_info = time2str("%Y-%m-%d %H:%M:%S", time)
+  header_addl_info = time
 %]
 
 <div align="center">

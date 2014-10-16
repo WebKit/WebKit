@@ -46,7 +46,40 @@
   header_addl_info = ""
   onload = ""
   style_urls = []
+  yui = []
 %]
+
+[% SET yui_css = {
+  autocomplete => 1,
+  calendar     => 1,
+  datatable    => 1,
+  button       => 1,
+} %]
+
+[%# Note: This is simple dependency resolution--you can't have dependencies
+  # that depend on each other. You have to specify all of a module's deps,
+  # if that module is going to be specified in "yui".
+  #%]
+[% SET yui_deps = {
+  autocomplete => ['json', 'connection', 'datasource'],
+  datatable    => ['json', 'connection', 'datasource', 'element'],
+} %]
+
+[%# When using certain YUI modules, we need to process certain
+  # extra JS templates.
+  #%]
+[% SET yui_templates = {
+  datatable => ['global/value-descs.js.tmpl'],
+} %]
+
+[%# These are JS URLs that are *always* on the page and come before
+  # every other JS URL.
+  #%]
+[% SET starting_js_urls = [
+    "js/yui/yahoo-dom-event/yahoo-dom-event.js",
+    "js/yui/cookie/cookie-min.js",
+] %]
+
 
 [%# We should be able to set the default value of the header variable
   # to the value of the title variable using the DEFAULT directive,
@@ -59,9 +92,14 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
                       "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html lang="en">
   <head>
+    [% Hook.process("start") %]
     <title>[% title %]</title>
+
+    [% IF Param('utf8') %]
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    [% END %]
 
 [%# Migration note: contents of the old Param 'headerhtml' would go here %]
 
@@ -69,95 +107,33 @@
 
     [% PROCESS 'global/setting-descs.none.tmpl' %]
 
-    [%# Set up the skin CSS cascade:
-      #  1. Standard Bugzilla stylesheet set (persistent)
-      #  2. Standard Bugzilla stylesheet set (selectable)
-      #  3. All third-party "skin" stylesheet sets (selectable)
-      #  4. Page-specific styles
-      #  5. Custom Bugzilla stylesheet set (persistent)
-      # "Selectable" skin file sets may be either preferred or alternate.
-      # Exactly one is preferred, determined by the "skin" user preference.
-      #%]
-    [% IF user.settings.skin.value != 'standard' %]
-      [% user_skin = user.settings.skin.value %]
-    [% END %]
-    [% style_urls.unshift('skins/standard/global.css') %]
+    [% SET yui = yui_resolve_deps(yui, yui_deps) %]
+    [% SET css_sets = css_files(style_urls, yui, yui_css) %]
 
     [%# CSS cascade, part 1: Standard Bugzilla stylesheet set (persistent).
       # Always present.
       #%]
-    [% FOREACH style_url = style_urls %]
-      <link href="[% style_url FILTER html %]"
-            rel="stylesheet"
-            type="text/css">
-    [% END %]
-    <!--[if IE]>
-      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
-        # Use it to import CSS fixes so that Bugzilla looks decent on IE, too.
-        #%]
-      <link href="skins/standard/IE-fixes.css"
-            rel="stylesheet"
-            type="text/css">
-    <![endif]-->
-
-    [%# CSS cascade, part 2: Standard Bugzilla stylesheet set (selectable)
-      # Present if skin selection is enabled.
+    [%# This allows people to switch back to the "Classic" skin if they
+      # are in another skin. 
       #%]
-    [% IF user.settings.skin.is_enabled %]
-      [% FOREACH style_url = style_urls %]
-        <link href="[% style_url FILTER html %]"
-              rel="[% 'alternate ' IF user_skin %]stylesheet"
-              title="[% setting_descs.standard FILTER html %]"
-              type="text/css">
-      [% END %]
-      <!--[if IE]>
-        [%# Internet Explorer treats [if IE] HTML comments as uncommented.
-          # Use it to import CSS fixes so that Bugzilla looks decent on IE,
-          # too.
-          #%]
-        <link href="skins/standard/IE-fixes.css"
-              rel="[% 'alternate ' IF user_skin %]stylesheet"
-              title="[% setting_descs.standard FILTER html %]"
-              type="text/css">
-      <![endif]-->
+    <link href="[% 'skins/standard/global.css' FILTER mtime FILTER html %]"
+          rel="alternate stylesheet" 
+          title="[% setting_descs.standard FILTER html %]">
+    [% FOREACH style_url = css_sets.standard %]
+      [% PROCESS format_css_link css_set_name = 'standard' %]
     [% END %]
 
-    [%# CSS cascade, part 3: Third-party stylesheet set (selectable).
-      # All third-party skins are present if skin selection is enabled.
-      # The admin-selected skin is always present.
+    [%# CSS cascade, part 2 & 3: Third-party stylesheet set (selected and
+      # selectable). All third-party skins are present as alternate
+      # stylesheets, even if they are not currently in use.
       #%]
-    [% FOREACH contrib_skin = user.settings.skin.legal_values %]
-      [% NEXT IF contrib_skin == 'standard' %]
-      [% NEXT UNLESS contrib_skin == user_skin
-                  OR user.settings.skin.is_enabled %]
-      [% contrib_skin = contrib_skin FILTER url_quote %]
-      [% IF contrib_skin.match('\.css$') %]
-        [%# 1st skin variant: single-file stylesheet %]
-        <link href="[% "skins/contrib/$contrib_skin" %]"
-              rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
-              title="[% contrib_skin FILTER html %]"
-              type="text/css">
-      [% ELSE %]
-        [%# 2nd skin variant: stylesheet set %]
-        [% FOREACH style_url = style_urls %]
-          [% IF style_url.match('^skins/standard/') %]
-            <link href="[% style_url.replace('^skins/standard/',
-                                             "skins/contrib/$contrib_skin/") %]"
-                  rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
-                  title="[% contrib_skin FILTER html %]"
-                  type="text/css">
-          [% END %]
-        [% END %]
-        <!--[if IE]>
-          [%# Internet Explorer treats [if IE] HTML comments as uncommented.
-            # Use it to import CSS fixes so that Bugzilla looks decent on IE,
-            # too.
-            #%]
-          <link href="skins/contrib/[% contrib_skin FILTER html %]/IE-fixes.css"
-                rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
-                title="[% contrib_skin FILTER html %]"
-                type="text/css">
-        <![endif]-->
+    [% FOREACH style_url = css_sets.skin %]
+      [% PROCESS format_css_link css_set_name = user.settings.skin.value %]
+    [% END %]
+
+    [% FOREACH alternate_skin = css_sets.alternate.keys %]
+      [% FOREACH style_url = css_sets.alternate.$alternate_skin %]
+        [% PROCESS format_css_link css_set_name = alternate_skin %]
       [% END %]
     [% END %]
 
@@ -173,49 +149,95 @@
       # Always present. Site administrators may override all other style
       # definitions, including skins, using custom stylesheets.
       #%]
-    [% FOREACH style_url = style_urls %]
-      [% IF style_url.match('^skins/standard/') %]
-        <link href="[% style_url.replace('^skins/standard/', "skins/custom/")
-                       FILTER html %]" rel="stylesheet" type="text/css">
-      [% END %]
-    [% END %]
-    <!--[if IE]>
-      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
-        # Use it to import CSS fixes so that Bugzilla looks decent on IE, too.
-        #%]
-      <link href="skins/custom/IE-fixes.css"
-            rel="stylesheet"
-            type="text/css">
-    <![endif]-->
-
-
-    [% IF javascript %]
-      <script type="text/javascript">
-        [% javascript %]
-      </script>
+    [% FOREACH style_url = css_sets.custom %]
+      [% PROCESS format_css_link css_set_name = 'standard' %]
     [% END %]
 
-    [% IF javascript_urls %]
-      [% FOREACH javascript_url = javascript_urls %]
-        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
-      [% END %]
-      [% IF javascript_urls.grep('yui/').size %]
-        <script type="text/javascript">
-          YAHOO.namespace('bugzilla');
-          if( YAHOO.env.ua.gecko )
-            YAHOO.util.Event._simpleRemove(window, "unload", YAHOO.util.Event._unload);
-        </script>
-      [% END %]
+    [%# YUI Scripts %]
+    [% FOREACH yui_name = yui %]
+      [% starting_js_urls.push("js/yui/$yui_name/${yui_name}-min.js") %]
+    [% END %]
+    [% starting_js_urls.push('js/global.js') %]
+
+    [% FOREACH javascript_url = starting_js_urls %]
+      [% PROCESS format_js_link %]
     [% END %]
 
-[%# if WEBKIT_CHANGES %]
+    <script type="text/javascript">
+    <!--
+        YAHOO.namespace('bugzilla');
+        YAHOO.util.Event.addListener = function (el, sType, fn, obj, overrideContext) {
+               if ( ("onpagehide" in window || YAHOO.env.ua.gecko) && sType === "unload") { sType = "pagehide"; };
+               var capture = ((sType == "focusin" || sType == "focusout") && !YAHOO.env.ua.ie) ? true : false;
+               return this._addListener(el, this._getType(sType), fn, obj, overrideContext, capture);
+         };
+        if ( "onpagehide" in window || YAHOO.env.ua.gecko) {
+            YAHOO.util.Event._simpleRemove(window, "unload", 
+                                           YAHOO.util.Event._unload);
+        }
+        [%# The language selector needs javascript to set its cookie,
+          # so it is hidden in HTML/CSS by the "bz_default_hidden" class.
+          # If the browser can run javascript, it will then "unhide"
+          # the language selector using the following code.
+          #%]
+        function unhide_language_selector() { 
+            YAHOO.util.Dom.removeClass(
+                'lang_links_container', 'bz_default_hidden'
+            ); 
+        } 
+        YAHOO.util.Event.onDOMReady(unhide_language_selector);
+
+        [%# Make some Bugzilla information available to all scripts. 
+          # We don't import every parameter and constant because we
+          # don't want to add a lot of uncached JS to every page. 
+          #%]
+        var BUGZILLA = {
+            param: {
+                cookiepath: '[% Param('cookiepath') FILTER js %]',
+                maxusermatches: [% Param('maxusermatches') FILTER js %]
+            },
+            constant: {
+                COMMENT_COLS: [% constants.COMMENT_COLS FILTER js %]
+            },
+            string: {
+                [%# Please keep these in alphabetical order. %]
+
+                attach_desc_required:
+                    'You must enter a Description for this attachment.',
+                component_required:
+                    'You must select a Component for this [% terms.bug %].',
+                description_required:
+                    'You must enter a Description for this [% terms.bug %].',
+                short_desc_required:
+                    'You must enter a Summary for this [% terms.bug %].',
+                version_required:
+                    'You must select a Version for this [% terms.bug %].'
+            }
+        };
+
+        [% FOREACH yui_name = yui %]
+          [% FOREACH yui_template = yui_templates.$yui_name %]
+            [% INCLUDE $yui_template %]
+          [% END %]
+        [% END %]
+        [% IF javascript %]
+          [% javascript %]
+        [% END %]
+    // -->
+    </script>
+
+    [% FOREACH javascript_url = javascript_urls %]
+      [% PROCESS format_js_link %]
+    [% END %]
+
+[%# if WEBKIT_CHANGES #%]
     [%# this puts the live bookmark up on firefox for the RSS feed %]
     [% IF rsslink %]
        <link rel="alternate" 
              type="application/rss+xml" title="RSS 1.0" 
              href="[% rsslink FILTER html %]">
     [% END %]
-[%# endif // WEBKIT_CHANGES %]
+[%# endif // WEBKIT_CHANGES #%]
 
     [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
     <link rel="search" type="application/opensearchdescription+xml"
@@ -232,39 +254,56 @@
         class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
                [% FOREACH class = bodyclasses %]
                  [% ' ' %][% class FILTER css_class_quote %]
-               [% END %]">
+               [% END %] yui-skin-sam">
 
 [%# Migration note: the following file corresponds to the old Param
   # 'bannerhtml'
   #%]
 
-
 <div id="header">
 
+[%# if WEBKIT_CHANGES #%]
 [%# INCLUDE global/banner.html.tmpl #%]
+[%# endif // WEBKIT_CHANGES #%]
 
 <table border="0" cellspacing="0" cellpadding="0" id="titles">
 <tr>
     <td id="title">
-      <p>WebKit [% terms.Bugzilla %]
-[%# if WEBKIT_CHANGES %]
-      [%# " &ndash; $header" IF header %]</p>
-[%# endif // WEBKIT_CHANGES %]
+[%# if WEBKIT_CHANGES #%]
+      [%# " &ndash; $header" IF header #%]</p>
+[%# endif // WEBKIT_CHANGES #%]
     </td>
 
-[%# WEBKIT_CHANGES: Removed subheader and header_addl_info output %]
+[%# WEBKIT_CHANGES: Removed subheader and header_addl_info output #%]
 </tr>
 </table>
 
-[%# if WEBKIT_CHANGES %]
+<table id="lang_links_container" cellpadding="0" cellspacing="0"
+       class="bz_default_hidden"><tr><td>
+[% IF Bugzilla.languages.size > 1 %]
+  <ul class="links">
+  [% FOREACH lang = Bugzilla.languages.sort %]
+    <li>[% IF NOT loop.first %]<span class="separator"> | </span>[% END %]
+    [% IF lang == current_language %]
+      <span class="lang_current">[% lang FILTER html FILTER upper %]</span>
+    [% ELSE %]
+      <a href="#" onclick="set_language('[% lang FILTER none %]');">
+       [%- lang FILTER html FILTER upper %]</a>
+    [% END %]
+    </li>
+  [% END %]
+  </ul>
+[% END %]
+</td></tr></table>
+
+[%# if WEBKIT_CHANGES #%]
   [% IF header || subheader %]
     <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
   [% END %]
-[%# endif // WEBKIT_CHANGES %]
+[%# endif // WEBKIT_CHANGES #%]
 
 [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
-
-</div>
+</div> [%# header %]
 
 <div id="bugzilla-body">
 
@@ -274,4 +313,42 @@
 
 [% IF message %]
 <div id="message">[% message %]</div>
+[% END %]
+
+[% BLOCK format_css_link %]
+  [% IF style_url.match('/IE-fixes\.css') %]
+    <!--[if lte IE 7]>
+      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
+        # We use it to import CSS fixes so that Bugzilla looks decent on IE 7
+        # and below.
+        #%]
+  [% END %]
+
+  [% IF css_set_name == 'standard'
+       OR css_set_name == user.settings.skin.value
+  %]
+    [% SET css_rel = 'stylesheet' %]
+    [% SET css_set_display_name = setting_descs.${user.settings.skin.value}
+                                  || user.settings.skin.value %]
+  [% ELSE %]
+    [% SET css_rel = 'alternate stylesheet' %]
+    [% SET css_set_display_name = setting_descs.$css_set_name || css_set_name %]
+  [% END %]
+
+  [% IF css_set_name == 'standard' %]
+    [% SET css_title_link = '' %]
+  [% ELSE %]
+    [% css_title_link = BLOCK ~%]
+      title="[% css_set_display_name FILTER html %]"
+    [% END %]
+  [% END %]
+
+  <link href="[% style_url FILTER html %]" rel="[% css_rel FILTER none %]"
+        type="text/css" [% css_title_link FILTER none %]>
+
+  [% '<![endif]-->' IF style_url.match('/IE-fixes\.css') %]
+[% END %]
+
+[% BLOCK format_js_link %]
+  <script type="text/javascript" src="[% javascript_url FILTER mtime FILTER html %]"></script>
 [% END %]

@@ -40,37 +40,45 @@ use Bugzilla::Constants;
 use Bugzilla::Auth;
 use Bugzilla::Auth::Persist::Cookie;
 use Bugzilla::CGI;
+use Bugzilla::Extension;
 use Bugzilla::DB;
 use Bugzilla::Install::Localconfig qw(read_localconfig);
+use Bugzilla::Install::Requirements qw(OPTIONAL_MODULES);
+use Bugzilla::Install::Util qw(init_console);
 use Bugzilla::Template;
 use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::Field;
 use Bugzilla::Flag;
+use Bugzilla::Token;
 
 use File::Basename;
 use File::Spec::Functions;
+use DateTime::TimeZone;
+use Date::Parse;
 use Safe;
-
-# This creates the request cache for non-mod_perl installations.
-our $_request_cache = {};
 
 #####################################################################
 # Constants
 #####################################################################
 
 # Scripts that are not stopped by shutdownhtml being in effect.
-use constant SHUTDOWNHTML_EXEMPT => [
-    'editparams.cgi',
-    'checksetup.pl',
-    'recode.pl',
-];
+use constant SHUTDOWNHTML_EXEMPT => qw(
+    editparams.cgi
+    checksetup.pl
+    migrate.pl
+    recode.pl
+);
 
 # Non-cgi scripts that should silently exit.
-use constant SHUTDOWNHTML_EXIT_SILENTLY => [
-    'whine.pl'
-];
+use constant SHUTDOWNHTML_EXIT_SILENTLY => qw(
+    whine.pl
+);
+
+# shutdownhtml pages are sent as an HTTP 503. After how many seconds
+# should search engines attempt to index the page again?
+use constant SHUTDOWNHTML_RETRY_AFTER => 3600;
 
 #####################################################################
 # Global Code
@@ -80,13 +88,26 @@ use constant SHUTDOWNHTML_EXIT_SILENTLY => [
 
 # Note that this is a raw subroutine, not a method, so $class isn't available.
 sub init_page {
-    (binmode STDOUT, ':utf8') if Bugzilla->params->{'utf8'};
+    if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+        init_console();
+    }
+    elsif (Bugzilla->params->{'utf8'}) {
+        binmode STDOUT, ':utf8';
+    }
 
-    # Some environment variables are not taint safe
-    delete @::ENV{'PATH', 'IFS', 'CDPATH', 'ENV', 'BASH_ENV'};
-    # Some modules throw undefined errors (notably File::Spec::Win32) if
-    # PATH is undefined.
-    $ENV{'PATH'} = '';
+    if (${^TAINT}) {
+        # Some environment variables are not taint safe
+        delete @::ENV{'PATH', 'IFS', 'CDPATH', 'ENV', 'BASH_ENV'};
+        # Some modules throw undefined errors (notably File::Spec::Win32) if
+        # PATH is undefined.
+        $ENV{'PATH'} = '';
+    }
+
+    # Because this function is run live from perl "use" commands of
+    # other scripts, we're skipping the rest of this function if we get here
+    # during a perl syntax check (perl -c, like we do during the
+    # 001compile.t test).
+    return if $^C;
 
     # IIS prints out warnings to the webpage, so ignore them, or log them
     # to a file if the file exists.
@@ -102,25 +123,27 @@ sub init_page {
         };
     }
 
+    my $script = basename($0);
+
+    # Because of attachment_base, attachment.cgi handles this itself.
+    if ($script ne 'attachment.cgi') {
+        do_ssl_redirect_if_required();
+    }
+
     # If Bugzilla is shut down, do not allow anything to run, just display a
     # message to the user about the downtime and log out.  Scripts listed in 
     # SHUTDOWNHTML_EXEMPT are exempt from this message.
     #
-    # Because this is code which is run live from perl "use" commands of other
-    # scripts, we're skipping this part if we get here during a perl syntax 
-    # check -- runtests.pl compiles scripts without running them, so we 
-    # need to make sure that this check doesn't apply to 'perl -c' calls.
-    #
     # This code must go here. It cannot go anywhere in Bugzilla::CGI, because
     # it uses Template, and that causes various dependency loops.
-    if (!$^C && Bugzilla->params->{"shutdownhtml"} 
-        && lsearch(SHUTDOWNHTML_EXEMPT, basename($0)) == -1)
+    if (Bugzilla->params->{"shutdownhtml"}
+        && !grep { $_ eq $script } SHUTDOWNHTML_EXEMPT)
     {
         # Allow non-cgi scripts to exit silently (without displaying any
         # message), if desired. At this point, no DBI call has been made
         # yet, and no error will be returned if the DB is inaccessible.
-        if (lsearch(SHUTDOWNHTML_EXIT_SILENTLY, basename($0)) > -1
-            && !i_am_cgi())
+        if (!i_am_cgi()
+            && grep { $_ eq $script } SHUTDOWNHTML_EXIT_SILENTLY)
         {
             exit;
         }
@@ -151,7 +174,12 @@ sub init_page {
         else {
             $extension = 'txt';
         }
-        print Bugzilla->cgi->header() if i_am_cgi();
+        if (i_am_cgi()) {
+            # Set the HTTP status to 503 when Bugzilla is down to avoid pages
+            # being indexed by search engines.
+            print Bugzilla->cgi->header(-status => 503, 
+                -retry_after => SHUTDOWNHTML_RETRY_AFTER);
+        }
         my $t_output;
         $template->process("global/message.$extension.tmpl", $vars, \$t_output)
             || ThrowTemplateError($template->error);
@@ -160,32 +188,101 @@ sub init_page {
     }
 }
 
-init_page() if !$ENV{MOD_PERL};
-
 #####################################################################
 # Subroutines and Methods
 #####################################################################
 
 sub template {
     my $class = shift;
-    $class->request_cache->{language} = "";
     $class->request_cache->{template} ||= Bugzilla::Template->create();
     return $class->request_cache->{template};
 }
 
 sub template_inner {
     my ($class, $lang) = @_;
-    $lang = defined($lang) ? $lang : ($class->request_cache->{language} || "");
-    $class->request_cache->{language} = $lang;
+    my $cache = $class->request_cache;
+    my $current_lang = $cache->{template_current_lang}->[0];
+    $lang ||= $current_lang || '';
     $class->request_cache->{"template_inner_$lang"}
-        ||= Bugzilla::Template->create();
+        ||= Bugzilla::Template->create(language => $lang);
     return $class->request_cache->{"template_inner_$lang"};
+}
+
+our $extension_packages;
+sub extensions {
+    my ($class) = @_;
+    my $cache = $class->request_cache;
+    if (!$cache->{extensions}) {
+        # Under mod_perl, mod_perl.pl populates $extension_packages for us.
+        if (!$extension_packages) {
+            $extension_packages = Bugzilla::Extension->load_all();
+        }
+        my @extensions;
+        foreach my $package (@$extension_packages) {
+            my $extension = $package->new();
+            if ($extension->enabled) {
+                push(@extensions, $extension);
+            }        
+        }
+        $cache->{extensions} = \@extensions;
+    }
+    return $cache->{extensions};
+}
+
+sub feature {
+    my ($class, $feature) = @_;
+    my $cache = $class->request_cache;
+    return $cache->{feature}->{$feature}
+        if exists $cache->{feature}->{$feature};
+
+    my $feature_map = $cache->{feature_map};
+    if (!$feature_map) {
+        foreach my $package (@{ OPTIONAL_MODULES() }) {
+            foreach my $f (@{ $package->{feature} }) {
+                $feature_map->{$f} ||= [];
+                push(@{ $feature_map->{$f} }, $package->{module});
+            }
+        }
+        $cache->{feature_map} = $feature_map;
+    }
+
+    if (!$feature_map->{$feature}) {
+        ThrowCodeError('invalid_feature', { feature => $feature });
+    }
+
+    my $success = 1;
+    foreach my $module (@{ $feature_map->{$feature} }) {
+        # We can't use a string eval and "use" here (it kills Template-Toolkit,
+        # see https://rt.cpan.org/Public/Bug/Display.html?id=47929), so we have
+        # to do a block eval.
+        $module =~ s{::}{/}g;
+        $module .= ".pm";
+        eval { require $module; 1; } or $success = 0;
+    }
+    $cache->{feature}->{$feature} = $success;
+    return $success;
 }
 
 sub cgi {
     my $class = shift;
     $class->request_cache->{cgi} ||= new Bugzilla::CGI();
     return $class->request_cache->{cgi};
+}
+
+sub input_params {
+    my ($class, $params) = @_;
+    my $cache = $class->request_cache;
+    # This is how the WebService and other places set input_params.
+    if (defined $params) {
+        $cache->{input_params} = $params;
+    }
+    return $cache->{input_params} if defined $cache->{input_params};
+
+    # Making this scalar makes it a tied hash to the internals of $cgi,
+    # so if a variable is changed, then it actually changes the $cgi object
+    # as well.
+    $cache->{input_params} = $class->cgi->Vars;
+    return $cache->{input_params};
 }
 
 sub localconfig {
@@ -223,6 +320,10 @@ sub sudo_request {
     # NOTE: If you want to log the start of an sudo session, do it here.
 }
 
+sub page_requires_login {
+    return $_[0]->request_cache->{page_requires_login};
+}
+
 sub login {
     my ($class, $type) = @_;
 
@@ -230,9 +331,17 @@ sub login {
 
     my $authorizer = new Bugzilla::Auth();
     $type = LOGIN_REQUIRED if $class->cgi->param('GoAheadAndLogIn');
+
     if (!defined $type || $type == LOGIN_NORMAL) {
         $type = $class->params->{'requirelogin'} ? LOGIN_REQUIRED : LOGIN_NORMAL;
     }
+
+    # Allow templates to know that we're in a page that always requires
+    # login.
+    if ($type == LOGIN_REQUIRED) {
+        $class->request_cache->{page_requires_login} = 1;
+    }
+
     my $authenticated_user = $authorizer->login($type);
     
     # At this point, we now know if a real person is logged in.
@@ -243,37 +352,42 @@ sub login {
     # 3: There must be a valid value in the 'sudo' cookie
     # 4: A Bugzilla::User object must exist for the given cookie value
     # 5: That user must NOT be in the 'bz_sudo_protect' group
-    my $sudo_cookie = $class->cgi->cookie('sudo');
-    detaint_natural($sudo_cookie) if defined($sudo_cookie);
-    my $sudo_target;
-    $sudo_target = new Bugzilla::User($sudo_cookie) if defined($sudo_cookie);
-    if (defined($authenticated_user)                 &&
-        $authenticated_user->in_group('bz_sudoers')  &&
-        defined($sudo_cookie)                        &&
-        defined($sudo_target)                        &&
-        !($sudo_target->in_group('bz_sudo_protect'))
-       )
-    {
-        $class->set_user($sudo_target);
-        $class->request_cache->{sudoer} = $authenticated_user;
-        # And make sure that both users have the same Auth object,
-        # since we never call Auth::login for the sudo target.
-        $sudo_target->set_authorizer($authenticated_user->authorizer);
+    my $token = $class->cgi->cookie('sudo');
+    if (defined $authenticated_user && $token) {
+        my ($user_id, $date, $sudo_target_id) = Bugzilla::Token::GetTokenData($token);
+        if (!$user_id
+            || $user_id != $authenticated_user->id
+            || !detaint_natural($sudo_target_id)
+            || (time() - str2time($date) > MAX_SUDO_TOKEN_AGE))
+        {
+            $class->cgi->remove_cookie('sudo');
+            ThrowUserError('sudo_invalid_cookie');
+        }
 
-        # NOTE: If you want to do any special logging, do it here.
+        my $sudo_target = new Bugzilla::User($sudo_target_id);
+        if ($authenticated_user->in_group('bz_sudoers')
+            && defined $sudo_target
+            && !$sudo_target->in_group('bz_sudo_protect'))
+        {
+            $class->set_user($sudo_target);
+            $class->request_cache->{sudoer} = $authenticated_user;
+            # And make sure that both users have the same Auth object,
+            # since we never call Auth::login for the sudo target.
+            $sudo_target->set_authorizer($authenticated_user->authorizer);
+
+            # NOTE: If you want to do any special logging, do it here.
+        }
+        else {
+            delete_token($token);
+            $class->cgi->remove_cookie('sudo');
+            ThrowUserError('sudo_illegal_action', { sudoer => $authenticated_user,
+                                                    target_user => $sudo_target });
+        }
     }
     else {
         $class->set_user($authenticated_user);
     }
 
-    # We run after the login has completed since
-    # some of the checks in ssl_require_redirect
-    # look for Bugzilla->user->id to determine 
-    # if redirection is required.
-    if (i_am_cgi() && ssl_require_redirect()) {
-        $class->cgi->require_https($class->params->{'sslbase'});
-    }
-    
     return $class->user;
 }
 
@@ -311,33 +425,30 @@ sub logout_request {
     # there. Don't rely on it: use Bugzilla->user->login instead!
 }
 
+sub job_queue {
+    my $class = shift;
+    require Bugzilla::JobQueue;
+    $class->request_cache->{job_queue} ||= Bugzilla::JobQueue->new();
+    return $class->request_cache->{job_queue};
+}
+
 sub dbh {
     my $class = shift;
     # If we're not connected, then we must want the main db
-    $class->request_cache->{dbh} ||= $class->request_cache->{dbh_main} 
-        = Bugzilla::DB::connect_main();
+    $class->request_cache->{dbh} ||= $class->dbh_main;
 
     return $class->request_cache->{dbh};
 }
 
+sub dbh_main {
+    my $class = shift;
+    $class->request_cache->{dbh_main} ||= Bugzilla::DB::connect_main();
+    return $class->request_cache->{dbh_main};
+}
+
 sub languages {
     my $class = shift;
-    return $class->request_cache->{languages}
-        if $class->request_cache->{languages};
-
-    my @files = glob(catdir(bz_locations->{'templatedir'}, '*'));
-    my @languages;
-    foreach my $dir_entry (@files) {
-        # It's a language directory only if it contains "default" or
-        # "custom". This auto-excludes CVS directories as well.
-        next unless (-d catdir($dir_entry, 'default')
-                  || -d catdir($dir_entry, 'custom'));
-        $dir_entry = basename($dir_entry);
-        # Check for language tag format conforming to RFC 1766.
-        next unless $dir_entry =~ /^[a-zA-Z]{1,8}(-[a-zA-Z]{1,8})?$/;
-        push(@languages, $dir_entry);
-    }
-    return $class->request_cache->{languages} = \@languages;
+    return Bugzilla::Install::Util::supported_languages();
 }
 
 sub error_mode {
@@ -346,7 +457,16 @@ sub error_mode {
         $class->request_cache->{error_mode} = $newval;
     }
     return $class->request_cache->{error_mode}
-        || Bugzilla::Constants::ERROR_MODE_WEBPAGE;
+        || (i_am_cgi() ? ERROR_MODE_WEBPAGE : ERROR_MODE_DIE);
+}
+
+# This is used only by Bugzilla::Error to throw errors.
+sub _json_server {
+    my ($class, $newval) = @_;
+    if (defined $newval) {
+        $class->request_cache->{_json_server} = $newval;
+    }
+    return $class->request_cache->{_json_server};
 }
 
 sub usage_mode {
@@ -358,11 +478,17 @@ sub usage_mode {
         elsif ($newval == USAGE_MODE_CMDLINE) {
             $class->error_mode(ERROR_MODE_DIE);
         }
-        elsif ($newval == USAGE_MODE_WEBSERVICE) {
+        elsif ($newval == USAGE_MODE_XMLRPC) {
             $class->error_mode(ERROR_MODE_DIE_SOAP_FAULT);
+        }
+        elsif ($newval == USAGE_MODE_JSON) {
+            $class->error_mode(ERROR_MODE_JSON_RPC);
         }
         elsif ($newval == USAGE_MODE_EMAIL) {
             $class->error_mode(ERROR_MODE_DIE);
+        }
+        elsif ($newval == USAGE_MODE_TEST) {
+            $class->error_mode(ERROR_MODE_TEST);
         }
         else {
             ThrowCodeError('usage_mode_invalid',
@@ -371,7 +497,7 @@ sub usage_mode {
         $class->request_cache->{usage_mode} = $newval;
     }
     return $class->request_cache->{usage_mode}
-        || Bugzilla::Constants::USAGE_MODE_BROWSER;
+        || (i_am_cgi()? USAGE_MODE_BROWSER : USAGE_MODE_CMDLINE);
 }
 
 sub installation_mode {
@@ -403,7 +529,7 @@ sub switch_to_shadow_db {
         if ($class->params->{'shadowdb'}) {
             $class->request_cache->{dbh_shadow} = Bugzilla::DB::connect_shadow();
         } else {
-            $class->request_cache->{dbh_shadow} = request_cache()->{dbh_main};
+            $class->request_cache->{dbh_shadow} = $class->dbh_main;
         }
     }
 
@@ -417,21 +543,56 @@ sub switch_to_shadow_db {
 sub switch_to_main_db {
     my $class = shift;
 
-    $class->request_cache->{dbh} = $class->request_cache->{dbh_main};
-    # We have to return $class->dbh instead of {dbh} as
-    # {dbh_main} may be undefined if no connection to the main DB
-    # has been established yet.
-    return $class->dbh;
+    $class->request_cache->{dbh} = $class->dbh_main;
+    return $class->dbh_main;
 }
 
-sub get_fields {
-    my $class = shift;
-    my $criteria = shift;
-    # This function may be called during installation, and Field::match
-    # may fail at that time. so we want to return an empty list in that
-    # case.
-    my $fields = eval { Bugzilla::Field->match($criteria) } || [];
-    return @$fields;
+sub fields {
+    my ($class, $criteria) = @_;
+    $criteria ||= {};
+    my $cache = $class->request_cache;
+
+    # We create an advanced cache for fields by type, so that we
+    # can avoid going back to the database for every fields() call.
+    # (And most of our fields() calls are for getting fields by type.)
+    #
+    # We also cache fields by name, because calling $field->name a few
+    # million times can be slow in calling code, but if we just do it
+    # once here, that makes things a lot faster for callers.
+    if (!defined $cache->{fields}) {
+        my @all_fields = Bugzilla::Field->get_all;
+        my (%by_name, %by_type);
+        foreach my $field (@all_fields) {
+            my $name = $field->name;
+            $by_type{$field->type}->{$name} = $field;
+            $by_name{$name} = $field;
+        }
+        $cache->{fields} = { by_type => \%by_type, by_name => \%by_name };
+    }
+
+    my $fields = $cache->{fields};
+    my %requested;
+    if (my $types = delete $criteria->{type}) {
+        $types = ref($types) ? $types : [$types];
+        %requested = map { %{ $fields->{by_type}->{$_} || {} } } @$types;
+    }
+    else {
+        %requested = %{ $fields->{by_name} };
+    }
+
+    my $do_by_name = delete $criteria->{by_name};
+
+    # Filtering before returning the fields based on
+    # the criterias.
+    foreach my $filter (keys %$criteria) {
+        foreach my $field (keys %requested) {
+            if ($requested{$field}->$filter != $criteria->{$filter}) {
+                delete $requested{$field};
+            }
+        }
+    }
+
+    return $do_by_name ? \%requested : [values %requested];
 }
 
 sub active_custom_fields {
@@ -447,21 +608,35 @@ sub has_flags {
     my $class = shift;
 
     if (!defined $class->request_cache->{has_flags}) {
-        $class->request_cache->{has_flags} = Bugzilla::Flag::has_flags();
+        $class->request_cache->{has_flags} = Bugzilla::Flag->any_exist;
     }
     return $class->request_cache->{has_flags};
 }
 
-sub hook_args {
-    my ($class, $args) = @_;
-    $class->request_cache->{hook_args} = $args if $args;
-    return $class->request_cache->{hook_args};
+sub local_timezone {
+    my $class = shift;
+
+    if (!defined $class->request_cache->{local_timezone}) {
+        $class->request_cache->{local_timezone} =
+          DateTime::TimeZone->new(name => 'local');
+    }
+    return $class->request_cache->{local_timezone};
 }
+
+# This creates the request cache for non-mod_perl installations.
+# This is identical to Install::Util::_cache so that things loaded
+# into Install::Util::_cache during installation can be read out
+# of request_cache later in installation.
+our $_request_cache = $Bugzilla::Install::Util::_cache;
 
 sub request_cache {
     if ($ENV{MOD_PERL}) {
         require Apache2::RequestUtil;
-        return Apache2::RequestUtil->request->pnotes();
+        # Sometimes (for example, during mod_perl.pl), the request
+        # object isn't available, and we should use $_request_cache instead.
+        my $request = eval { Apache2::RequestUtil->request };
+        return $_request_cache if !$request;
+        return $request->pnotes();
     }
     return $_request_cache;
 }
@@ -479,12 +654,20 @@ sub _cleanup {
         $dbh->disconnect;
     }
     undef $_request_cache;
+
+    # These are both set by CGI.pm but need to be undone so that
+    # Apache can actually shut down its children if it needs to.
+    foreach my $signal (qw(TERM PIPE)) {
+        $SIG{$signal} = 'DEFAULT' if $SIG{$signal} && $SIG{$signal} eq 'IGNORE';
+    }
 }
 
 sub END {
     # Bugzilla.pm cannot compile in mod_perl.pl if this runs.
     _cleanup() unless $ENV{MOD_PERL};
 }
+
+init_page() if !$ENV{MOD_PERL};
 
 1;
 
@@ -569,6 +752,26 @@ The current C<cgi> object. Note that modules should B<not> be using this in
 general. Not all Bugzilla actions are cgi requests. Its useful as a convenience
 method for those scripts/templates which are only use via CGI, though.
 
+=item C<input_params>
+
+When running under the WebService, this is a hashref containing the arguments
+passed to the WebService method that was called. When running in a normal
+script, this is a hashref containing the contents of the CGI parameters.
+
+Modifying this hashref will modify the CGI parameters or the WebService
+arguments (depending on what C<input_params> currently represents).
+
+This should be used instead of L</cgi> in situations where your code
+could be being called by either a normal CGI script or a WebService method,
+such as during a code hook.
+
+B<Note:> When C<input_params> represents the CGI parameters, any
+parameter specified more than once (like C<foo=bar&foo=baz>) will appear
+as an arrayref in the hash, but any value specified only once will appear
+as a scalar. This means that even if a value I<can> appear multiple times,
+if it only I<does> appear once, then it will be a scalar in C<input_params>,
+not an arrayref.
+
 =item C<user>
 
 C<undef> if there is no currently logged in user or if the login code has not
@@ -602,6 +805,13 @@ Logs in a user, returning a C<Bugzilla::User> object, or C<undef> if there is
 no logged in user. See L<Bugzilla::Auth|Bugzilla::Auth>, and
 L<Bugzilla::User|Bugzilla::User>.
 
+=item C<page_requires_login>
+
+If the current page always requires the user to log in (for example,
+C<enter_bug.cgi> or any page called with C<?GoAheadAndLogIn=1>) then
+this will return something true. Otherwise it will return false. (This is
+set when you call L</login>.)
+
 =item C<logout($option)>
 
 Logs out the current user, which involves invalidating user sessions and
@@ -626,6 +836,30 @@ Essentially, causes calls to C<Bugzilla-E<gt>user> to return C<undef>. This has 
 effect of logging out a user for the current request only; cookies and
 database sessions are left intact.
 
+=item C<fields>
+
+This is the standard way to get arrays or hashes of L<Bugzilla::Field>
+objects when you need them. It takes the following named arguments
+in a hashref:
+
+=over
+
+=item C<by_name>
+
+If false (or not specified), this method will return an arrayref of
+the requested fields. The order of the returned fields is random.
+
+If true, this method will return a hashref of fields, where the keys
+are field names and the valules are L<Bugzilla::Field> objects.
+
+=item C<type>
+
+Either a single C<FIELD_TYPE_*> constant or an arrayref of them. If specified,
+the returned fields will be limited to the types in the list. If you don't
+specify this argument, all fields will be returned.
+
+=back
+
 =item C<error_mode>
 
 Call either C<Bugzilla->error_mode(Bugzilla::Constants::ERROR_MODE_DIE)>
@@ -646,10 +880,11 @@ usage mode changes.
 =item C<usage_mode>
 
 Call either C<Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_CMDLINE)>
-or C<Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_WEBSERVICE)> near the
+or C<Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_XMLRPC)> near the
 beginning of your script to change this flag's default of
 C<Bugzilla::Constants::USAGE_MODE_BROWSER> and to indicate that Bugzilla is
 being called in a non-interactive manner.
+
 This influences error handling because on usage mode changes, C<usage_mode>
 calls C<Bugzilla->error_mode> to set an error mode which makes sense for the
 usage mode.
@@ -670,6 +905,10 @@ used to automatically answer or skip prompts.
 
 The current database handle. See L<DBI>.
 
+=item C<dbh_main>
+
+The main database handle. See L<DBI>.
+
 =item C<languages>
 
 Currently installed languages.
@@ -689,9 +928,21 @@ The current Parameters of Bugzilla, as a hashref. If C<data/params>
 does not exist, then we return an empty hashref. If C<data/params>
 is unreadable or is not valid perl, we C<die>.
 
-=item C<hook_args>
+=item C<local_timezone>
 
-If you are running inside a code hook (see L<Bugzilla::Hook>) this
-is how you get the arguments passed to the hook.
+Returns the local timezone of the Bugzilla installation,
+as a DateTime::TimeZone object. This detection is very time
+consuming, so we cache this information for future references.
+
+=item C<job_queue>
+
+Returns a L<Bugzilla::JobQueue> that you can use for queueing jobs.
+Will throw an error if job queueing is not correctly configured on
+this Bugzilla installation.
+
+=item C<feature>
+
+Tells you whether or not a specific feature is enabled. For names
+of features, see C<OPTIONAL_MODULES> in C<Bugzilla::Install::Requirements>.
 
 =back

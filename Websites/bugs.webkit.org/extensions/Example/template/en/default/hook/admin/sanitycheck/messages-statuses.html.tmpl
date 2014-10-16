@@ -1,0 +1,36 @@
+[%# -*- Mode: perl; indent-tabs-mode: nil -*-
+  #
+  # The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Example Plugin.
+  #
+  # The Initial Developer of the Original Code is ITA Software
+  # Portions created by the Initial Developer are Copyright (C) 2009
+  # the Initial Developer. All Rights Reserved.
+  #
+  # Contributor(s): Bradley Baetz <bbaetz@everythingsolved.com>
+  #%]
+
+[% IF    san_tag == "example_check_au_user" %]
+  <em>EXAMPLE PLUGIN</em> - Checking for non-Australian users.
+[% ELSIF san_tag == "example_check_au_user_alert" %]
+  User &lt;[% login FILTER html %]&gt; isn't Australian.
+  [% IF user.in_group('editusers') %]
+    <a href="editusers.cgi?id=[% userid FILTER none %]">Edit this user</a>.
+  [% END %]
+[% ELSIF san_tag == "example_check_au_user_prompt" %]
+  <a href="sanitycheck.cgi?example_repair_au_user=1&amp;token=
+     [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Fix these users</a>.
+[% ELSIF san_tag == "example_repair_au_user_start" %]
+  <em>EXAMPLE PLUGIN</em> - OK, would now make users Australian.
+[% ELSIF san_tag == "example_repair_au_user_end" %]
+  <em>EXAMPLE PLUGIN</em> - Users would now be Australian.
+[% END %]

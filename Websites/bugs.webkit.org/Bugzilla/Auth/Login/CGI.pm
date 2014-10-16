@@ -40,12 +40,10 @@ use Bugzilla::Error;
 
 sub get_login_info {
     my ($self) = @_;
-    my $cgi = Bugzilla->cgi;
+    my $params = Bugzilla->input_params;
 
-    my $username = trim($cgi->param("Bugzilla_login"));
-    my $password = $cgi->param("Bugzilla_password");
-
-    $cgi->delete('Bugzilla_login', 'Bugzilla_password');
+    my $username = trim(delete $params->{"Bugzilla_login"});
+    my $password = delete $params->{"Bugzilla_password"};
 
     if (!defined $username || !defined $password) {
         return { failure => AUTH_NODATA };
@@ -59,21 +57,8 @@ sub fail_nodata {
     my $cgi = Bugzilla->cgi;
     my $template = Bugzilla->template;
 
-    if (Bugzilla->error_mode == Bugzilla::Constants::ERROR_MODE_DIE_SOAP_FAULT) {
-        die SOAP::Fault
-            ->faultcode(ERROR_AUTH_NODATA)
-            ->faultstring('Login Required');
-    }
-
-    # If system is not configured to never require SSL connections
-    # we want to always redirect to SSL since passing usernames and
-    # passwords over an unprotected connection is a bad idea. If we 
-    # get here then a login form will be provided to the user so we
-    # want this to be protected if possible.
-    if ($cgi->protocol ne 'https' && Bugzilla->params->{'sslbase'} ne ''
-        && Bugzilla->params->{'ssl'} ne 'never')
-    {
-        $cgi->require_https(Bugzilla->params->{'sslbase'});
+    if (Bugzilla->usage_mode != USAGE_MODE_BROWSER) {
+        ThrowUserError('login_required');
     }
 
     print $cgi->header();

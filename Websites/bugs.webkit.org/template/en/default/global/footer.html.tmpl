@@ -33,7 +33,7 @@
   #%]
 
 <div id="footer">
-  <div class="intro"></div>
+  <div class="intro">[% Hook.process('intro') %]</div>
 
 [%# Migration note: the old param 'blurbhtml' goes here %]
 
@@ -41,9 +41,11 @@
 
            [% PROCESS "global/useful-links.html.tmpl" %]
 
-  <div class="outro"></div>
+  <div class="outro">[% Hook.process('outro') %]</div>
 </div>
-<script defer src="/committers-autocomplete.js"></script>
+
+[% Hook.process("end") %]
+
 </body>
 </html>
 

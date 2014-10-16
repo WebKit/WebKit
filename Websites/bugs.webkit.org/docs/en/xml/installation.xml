@@ -1,5 +1,4 @@
 <!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> -->
-<!-- $Id$ -->
 <chapter id="installing-bugzilla">
   <title>Installing Bugzilla</title>
 
@@ -84,7 +83,7 @@
       
       <para>Any machine that doesn't have Perl on it is a sad machine indeed.
       If you don't have it and your OS doesn't provide official packages, 
-      visit <ulink url="http://www.perl.com"/>.
+      visit <ulink url="http://www.perl.org"/>.
       Although Bugzilla runs with Perl &min-perl-ver;,
       it's a good idea to be using the latest stable version.
       </para>
@@ -119,8 +118,8 @@
           </note> 
            
           <para>If you install from something other than a packaging/installation
-          system, such as .rpm (Redhat Package), .deb (Debian Package), .exe
-          (Windows Executable), or .msi (Microsoft Installer), make sure the MySQL
+          system, such as .rpm (RPM Package Manager), .deb (Debian Package), .exe
+          (Windows Executable), or .msi (Windows Installer), make sure the MySQL
           server is started when the machine boots.
           </para>
       </section>
@@ -136,8 +135,8 @@
           </para>
            
           <para>If you install from something other than a packaging/installation
-          system, such as .rpm (Redhat Package), .deb (Debian Package), .exe
-          (Windows Executable), or .msi (Microsoft Installer), make sure the
+          system, such as .rpm (RPM Package Manager), .deb (Debian Package), .exe
+          (Windows Executable), or .msi (Windows Installer), make sure the
           PostgreSQL server is started when the machine boots.
           </para>
       </section>
@@ -157,8 +156,8 @@
 
         <para>
           If you install from something other than a packaging/installation
-          system, such as .rpm (Redhat Package), .deb (Debian Package), .exe
-          (Windows Executable), or .msi (Microsoft Installer), make sure the
+          system, such as .rpm (RPM Package Manager), .deb (Debian Package), .exe
+          (Windows Executable), or .msi (Windows Installer), make sure the
           Oracle server is started when the machine boots.
         </para>
       </section>
@@ -243,29 +242,20 @@
       </para>
       
       <para>
-        There is a meta-module called Bundle::Bugzilla, 
-        which installs all the other 
-        modules with a single command. You should use this if you are running
-        Perl 5.6.1 or above.
-      </para>
-      
-      <para>
-        The preferred way of installing Perl modules is via CPAN on Unix, 
-        or PPM on Windows (see <xref linkend="win32-perl-modules"/>). These
-        instructions assume you are using CPAN; if for some reason you need 
-        to install the Perl modules manually, see 
-        <xref linkend="install-perlmodules-manual"/>.
+        The preferred way to install missing Perl modules is to use the package
+        manager provided by your operating system (e.g <quote>rpm</quote> or
+        <quote>yum</quote> on Linux distros, or <quote>ppm</quote> on Windows
+        if using ActivePerl, see <xref linkend="win32-perl-modules"/>).
+        If some Perl modules are still missing or are too old, then we recommend
+        using the <filename>install-module.pl</filename> script (doesn't work
+        with ActivePerl on Windows). If for some reason you really need to
+        install the Perl modules manually, see
+        <xref linkend="install-perlmodules-manual"/>. For instance, on Unix,
+        you invoke <filename>install-module.pl</filename> as follows:
       </para>  
         
-      <screen><prompt>bash#</prompt> perl -MCPAN -e 'install "&lt;modulename&gt;"'</screen>
+      <screen><prompt>bash#</prompt> perl install-module.pl &lt;modulename&gt;</screen>
 
-      <para>
-        If you using Bundle::Bugzilla, invoke the magic CPAN command on it.
-        Otherwise, you need to work down the 
-        list of modules that <filename>checksetup.pl</filename> says are
-        required, in the order given, invoking the command on each.
-      </para>
-      
       <tip>
         <para>Many people complain that Perl modules will not install for
         them. Most times, the error messages complain that they are missing a
@@ -299,7 +289,7 @@
 
         <listitem>
           <para>
-            CGI &min-cgi-ver;
+            CGI (&min-cgi-ver;)
           </para>
         </listitem>
 
@@ -311,14 +301,25 @@
     
         <listitem>
           <para>
+            DateTime (&min-datetime-ver;)
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            DateTime::TimeZone (&min-datetime-timezone-ver;)
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
             DBI (&min-dbi-ver;)
           </para>
         </listitem>
 
         <listitem>
           <para>
-            <link linkend="install-modules-dbd-mysql">DBD::mysql</link>
-            (&min-dbd-mysql-ver;) if using MySQL
+            DBD::mysql (&min-dbd-mysql-ver;) if using MySQL
           </para>
         </listitem>
         
@@ -336,14 +337,7 @@
 
         <listitem>
           <para>
-            File::Spec (&min-file-spec-ver;)
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-            <link linkend="install-modules-template">Template</link>
-            (&min-template-ver;)
+            Digest::SHA (&min-digest-sha-ver;)
           </para>
         </listitem>
 
@@ -355,7 +349,19 @@
 
         <listitem>
           <para>
-            Email::MIME::Modifier (&min-email-mime-modifier-ver;)
+            Email::MIME (&min-email-mime-ver;)
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Template (&min-template-ver;)
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            URI (&min-uri-ver;)
           </para>
         </listitem>
       </orderedlist>
@@ -364,43 +370,38 @@
       <orderedlist>
         <listitem>
           <para>
-            <link linkend="install-modules-gd">GD</link>
-            (&min-gd-ver;) for bug charting
+            GD (&min-gd-ver;) for bug charting
           </para>
         </listitem>
 
         <listitem>
           <para>
             Template::Plugin::GD::Image
-            (&min-gd-ver;) for Graphical Reports
+            (&min-template-plugin-gd-image-ver;) for Graphical Reports
           </para>
         </listitem>
 
         <listitem>
           <para>
-            <link linkend="install-modules-chart-base">Chart::Base</link>
-            (&min-chart-base-ver;) for bug charting
+            Chart::Lines (&min-chart-lines-ver;) for bug charting
           </para>
         </listitem>
 
         <listitem>
           <para>
-            <link linkend="install-modules-gd-graph">GD::Graph</link>
-            (&min-gd-graph-ver;) for bug charting
+            GD::Graph (&min-gd-graph-ver;) for bug charting
           </para>
         </listitem>
 
         <listitem>
           <para>
-            <link linkend="install-modules-gd-text">GD::Text</link>
-            (&min-gd-text-ver;) for bug charting
+            GD::Text (&min-gd-text-ver;) for bug charting
           </para>
         </listitem>
 
         <listitem>
           <para>
-            <link linkend="install-modules-xml-twig">XML::Twig</link>
-            (&min-xml-twig-ver;) for bug import/export
+            XML::Twig (&min-xml-twig-ver;) for bug import/export
           </para>
         </listitem>
 
@@ -419,14 +420,7 @@
 
         <listitem>
           <para>
-            <link linkend="install-modules-patchreader">PatchReader</link>
-            (&min-patchreader-ver;) for pretty HTML view of patches
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-            Image::Magick (&min-image-magick-ver;) for converting BMP image attachments to PNG
+            PatchReader (&min-patchreader-ver;) for pretty HTML view of patches
           </para>
         </listitem>
 
@@ -439,6 +433,13 @@
 
         <listitem>
           <para>
+            Authen::SASL
+            (&min-authen-sasl-ver;) for SASL Authentication
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
             Authen::Radius
             (&min-authen-radius-ver;) for RADIUS Authentication
           </para>
@@ -446,8 +447,21 @@
 
         <listitem>
           <para>
-            <link linkend="install-modules-soap-lite">SOAP::Lite</link>
-            (&min-soap-lite-ver;) for the web service interface
+            SOAP::Lite (&min-soap-lite-ver;) for the web service interface
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            JSON::RPC
+            (&min-json-rpc-ver;) for the JSON-RPC interface
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Test::Taint
+            (&min-test-taint-ver;) for the web service interface
           </para>
         </listitem>
 
@@ -481,127 +495,28 @@
 
         <listitem>
           <para>
-            mod_perl2
-            (&min-mod_perl2-ver;) for mod_perl
+            TheSchwartz
+            (&min-theschwartz-ver;) for Mail Queueing
           </para>
         </listitem>
 
         <listitem>
           <para>
-            CGI
-            (&min-mp-cgi-ver;) for mod_perl
+            Daemon::Generic
+            (&min-daemon-generic-ver;) for Mail Queueing
           </para>
         </listitem>
 
+        <listitem>
+          <para>
+            mod_perl2
+            (&min-mod_perl2-ver;) for mod_perl
+          </para>
+        </listitem>
       </orderedlist>
       </para>
-
-      <section id="install-modules-dbd-mysql">
-        <title>DBD::mysql</title>
-
-        <para>The installation process will ask you a few questions about the
-        desired compilation target and your MySQL installation. For most of the
-        questions the provided default will be adequate, but when asked if your
-        desired target is the MySQL or mSQL packages, you should
-        select the MySQL-related ones. Later you will be asked if you wish to
-        provide backwards compatibility with the older MySQL packages; you
-        should answer YES to this question. The default is NO.</para>
-
-        <para>A host of 'localhost' should be fine. A testing user of 'test',
-        with a null password, should have sufficient access to run
-        tests on the 'test' database which MySQL creates upon installation.
-        </para>
-      </section>
-
-      <section id="install-modules-template">
-        <title>Template Toolkit (&min-template-ver;)</title>
-
-        <para>When you install Template Toolkit, you'll get asked various
-        questions about features to enable. The defaults are fine, except
-        that it is recommended you use the high speed XS Stash of the Template
-        Toolkit, in order to achieve best performance.
-        </para>
-      </section> 
-
-      <section id="install-modules-gd">
-        <title>GD (&min-gd-ver;)</title>
-
-        <para>The GD module is only required if you want graphical reports.
-        </para>
-
-        <note>
-          <para>The Perl GD module requires some other libraries that may or
-          may not be installed on your system, including 
-          <classname>libpng</classname>
-          and 
-          <classname>libgd</classname>. 
-          The full requirements are listed in the Perl GD module README.
-          If compiling GD fails, it's probably because you're
-          missing a required library.</para>
-        </note>
-
-        <tip>
-          <para>The version of the GD module you need is very closely tied
-          to the <classname>libgd</classname> version installed on your system.
-          If you have a version 1.x of <classname>libgd</classname> the 2.x
-          versions of the GD module won't work for you.
-         </para>
-       </tip>
-      </section>
-
-      <section id="install-modules-chart-base">
-        <title>Chart::Base (&min-chart-base-ver;)</title>
-
-        <para>The Chart::Base module is only required if you want graphical 
-        reports. 
-        Note that earlier versions that 0.99c used GIFs, which are no longer
-        supported by the latest versions of GD.</para>
-      </section>
-
-      <section id="install-modules-gd-graph">
-        <title>GD::Graph (&min-gd-graph-ver;)</title>
-
-        <para>The GD::Graph module is only required if you want graphical 
-        reports.
-        </para>
-      </section>
-
-      <section id="install-modules-gd-text">
-        <title>GD::Text (&min-gd-text-ver;)</title>
-
-        <para>The GD::Text module is only required if you want graphical 
-        reports.
-        </para>
-      </section>
-
-      <section id="install-modules-xml-twig">
-        <title>XML::Twig (&min-xml-twig-ver;)</title>
-
-        <para>The XML::Twig module is only required if you want to import
-        XML bugs using the <filename>importxml.pl</filename>
-        script. This is required to use Bugzilla's "move bugs" feature;
-        you may also want to use it for migrating from another bug database.
-        </para>
-      </section>
-
-      <section id="install-modules-soap-lite">
-        <title>SOAP::Lite (&min-soap-lite-ver;)</title>
-        <para>Installing SOAP::Lite enables your Bugzilla installation to be
-        accessible at a standardized Web Service interface (SOAP/XML-RPC)
-        by third-party applications via HTTP(S).
-        </para>
-      </section>
-
-      <section id="install-modules-patchreader">
-        <title>PatchReader (&min-patchreader-ver;)</title>
-
-        <para>The PatchReader module is only required if you want to use
-        Patch Viewer, a
-        Bugzilla feature to show code patches in your web browser in a more
-        readable form.
-        </para>
-      </section>
     </section>
+
     <section id="install-MTA">
       <title>Mail Transfer Agent (MTA)</title>
     
@@ -665,10 +580,6 @@
       <para>Bugzilla requires <literal>mod_perl</literal> to be installed, which can be
       obtained from <ulink url="http://perl.apache.org"/> - Bugzilla requires
       version &min-mod_perl2-ver; (AKA 2.0.0-RC5) to be installed.</para>
-      
-      <para>Bugzilla also requires a more up-to-date version of the CGI
-      perl module to be installed, version &min-mp-cgi-ver; as opposed to &min-cgi-ver;
-      </para>
     </section>
   </section>
   
@@ -707,7 +618,7 @@
         the user you will create for your database. Pick a strong
         password (for simplicity, it should not contain single quote
         characters) and put it here. $db_driver can be either 'mysql',
-        'Pg' or 'oracle'.
+        'Pg', 'Oracle' or 'Sqlite'.
       </para>
 
       <note>
@@ -751,8 +662,8 @@
       <para>
         This section deals with configuring your database server for use
         with Bugzilla. Currently, MySQL (<xref linkend="mysql"/>),
-        PostgreSQL (<xref linkend="postgresql"/>) and Oracle (<xref linkend="oracle"/>)
-        are available.
+        PostgreSQL (<xref linkend="postgresql"/>), Oracle (<xref linkend="oracle"/>)
+        and SQLite (<xref linkend="sqlite"/>) are available.
       </para>
 
       <section id="database-schema">
@@ -773,9 +684,23 @@
 
         <caution>
           <para>
-            MySQL's default configuration is very insecure.
-            <xref linkend="security-mysql"/> has some good information for
-            improving your installation's security.
+            MySQL's default configuration is insecure.
+            We highly recommend to run <filename>mysql_secure_installation</filename>
+            on Linux or the MySQL installer on Windows, and follow the instructions.
+            Important points to note are:
+            <orderedlist>
+              <listitem>
+                <para>Be sure that the root account has a secure password set.</para>
+              </listitem>
+              <listitem>
+                <para>Do not create an anonymous account, and if it exists, say "yes"
+                to remove it.</para>
+              </listitem>
+              <listitem>
+                <para>If your web server and MySQL server are on the same machine,
+                you should disable the network access.</para>
+              </listitem>
+            </orderedlist>
           </para>
         </caution>
  
@@ -783,11 +708,11 @@
           <title>Allow large attachments and many comments</title>
           
           <para>By default, MySQL will only allow you to insert things
-          into the database that are smaller than 64KB. Attachments
+          into the database that are smaller than 1MB. Attachments
           may be larger than this. Also, Bugzilla combines all comments
           on a single bug into one field for full-text searching, and the
-          combination of all comments on a single bug are very likely to
-          be larger than 64KB.</para>
+          combination of all comments on a single bug could in some cases
+          be larger than 1MB.</para>
           
           <para>To change MySQL's default, you need to edit your MySQL
           configuration file, which is usually <filename>/etc/my.cnf</filename>
@@ -918,12 +843,12 @@ max_allowed_packet=4M
 
           <para>As the postgres user, you then need to create a new user: </para>
             
-          <screen> <prompt>bash$</prompt> createuser -U postgres -dAP bugs</screen>
+          <screen> <prompt>bash$</prompt> createuser -U postgres -dRSP bugs</screen>
  
           <para>When asked for a password, provide the password which will be set as
           <replaceable>$db_pass</replaceable> in <filename>localconfig</filename>.
-          The created user will have the ability to create databases and will not be
-          able to create new users.</para>
+          The created user will not be a superuser (-S) and will not be able to create
+          new users (-R). He will only have the ability to create databases (-d).</para>
         </section>
         
         <section>
@@ -1021,7 +946,26 @@ max_allowed_packet=4M
           </para>
         </section>
       </section>
-    </section>  
+
+      <section id="sqlite">
+        <title>SQLite</title>
+
+        <caution>
+          <para>
+            Due to SQLite's <ulink url="http://sqlite.org/faq.html#q5">concurrency
+            limitations</ulink> we recommend SQLite only for small and development
+            Bugzilla installations.
+          </para>
+        </caution>
+
+        <para>
+          No special configuration is required to run Bugzilla on SQLite.
+          The database will be stored in <filename>data/db/$db_name</filename>,
+          where <literal>$db_name</literal> is the database name defined
+          in <filename>localconfig</filename>.
+        </para>
+      </section>
+    </section>
 
     <section>
       <title>checksetup.pl</title>
@@ -1107,7 +1051,7 @@ max_allowed_packet=4M
     AddHandler cgi-script .cgi
     Options +Indexes +ExecCGI
     DirectoryIndex index.cgi
-    AllowOverride Limit
+    AllowOverride Limit FileInfo Indexes
     &lt;/Directory&gt;
                 </programlisting>
     
@@ -1130,6 +1074,14 @@ max_allowed_packet=4M
                     may or may not be appropriate. In most cases, including
                     this one, it is better to be as restrictive as possible
                     when granting extra access.
+                </para>
+                </note>
+
+                <note>
+                <para>
+                    On Windows, you may have to also add the
+                    <computeroutput>ScriptInterpreterSource Registry-Strict</computeroutput>
+                    line, see <link linkend="win32-http">Windows specific notes</link>.
                 </para>
                 </note>
             </step>                    
@@ -1199,7 +1151,7 @@ max_allowed_packet=4M
                 </warning> 
                 
                 <programlisting>
-    PerlSwitches -I/var/www/html/bugzilla -I/var/www/html/bugzilla/lib -w -T
+    PerlSwitches -w -T
     PerlConfigRequire /var/www/html/bugzilla/mod_perl.pl
                 </programlisting>
             </step>
@@ -1377,22 +1329,12 @@ c:\perl\bin\perl.exe -xc:\bugzilla -wT "%s" %s
       <para>
         Log in with the administrator account you defined in the last 
         <filename>checksetup.pl</filename> run. You should go through 
-        the parameters on the Edit Parameters page
-        (see link in the footer) and see if there are any you wish to
-        change. 
+        the Parameters page and see if there are any you wish to change.
         They key parameters are documented in <xref linkend="parameters"/>;
         you should certainly alter 
         <command>maintainer</command> and <command>urlbase</command>; 
         you may also want to alter 
         <command>cookiepath</command> or <command>requirelogin</command>.
-      </para>
-
-      <para>
-        This would also be a good time to revisit the
-        <filename>localconfig</filename> file and make sure that the 
-        names of the priorities, severities, platforms and operating systems
-        are those you wish to use when you start creating bugs. Remember
-        to rerun <filename>checksetup.pl</filename> if you change it.
       </para>
 
       <para>
@@ -1427,7 +1369,7 @@ c:\perl\bin\perl.exe -xc:\bugzilla -wT "%s" %s
         daily at 5 after midnight:
       </para>
       
-      <programlisting>5 0 * * * cd &lt;your-bugzilla-directory&gt; ; ./collectstats.pl</programlisting>
+      <programlisting>5 0 * * * cd &lt;your-bugzilla-directory&gt; &amp;&amp; ./collectstats.pl</programlisting>
 
       <para>
         After two days have passed you'll be able to view bug graphs from
@@ -1450,7 +1392,7 @@ c:\perl\bin\perl.exe -xc:\bugzilla -wT "%s" %s
       <para>What good are
       bugs if they're not annoying? To help make them more so you
       can set up Bugzilla's automatic whining system to complain at engineers
-      which leave their bugs in the NEW or REOPENED state without triaging them.
+      which leave their bugs in the CONFIRMED state without triaging them.
       </para>
       <para>
         This can be done by adding the following command as a daily
@@ -1458,7 +1400,7 @@ c:\perl\bin\perl.exe -xc:\bugzilla -wT "%s" %s
         graphs. This example runs it at 12.55am. 
       </para>
 
-      <programlisting>55 0 * * * cd &lt;your-bugzilla-directory&gt; ; ./whineatnews.pl</programlisting>
+      <programlisting>55 0 * * * cd &lt;your-bugzilla-directory&gt; &amp;&amp; ./whineatnews.pl</programlisting>
 
       <note>
         <para>
@@ -1488,7 +1430,7 @@ c:\perl\bin\perl.exe -xc:\bugzilla -wT "%s" %s
         graphs. This example runs it every 15 minutes. 
       </para>
 
-      <programlisting>*/15 * * * * cd &lt;your-bugzilla-directory&gt; ; ./whine.pl</programlisting>
+      <programlisting>*/15 * * * * cd &lt;your-bugzilla-directory&gt; &amp;&amp; ./whine.pl</programlisting>
 
       <note>
         <para>
@@ -1688,16 +1630,6 @@ C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
         </tip>
       </section>
   
-      <section id="win32-code-changes">
-        <title>Code changes required to run on Win32</title>
-
-        <para>
-          Bugzilla on Win32 is supported out of the box from version 2.20; this
-          means that no code changes are required to get Bugzilla running.
-        </para>
-        
-      </section>
-
       <section id="win32-http">
         <title>Serving the web pages</title>
 
@@ -1713,14 +1645,16 @@ C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
 
         <note>
           <para>
-            If using Apache on windows, you can set the <ulink
-            url="http://httpd.apache.org/docs-2.0/mod/core.html#scriptinterpretersource">ScriptInterpreterSource</ulink>
-            directive in your Apache config to avoid having to modify
-            the first line of every script to contain your path to Perl
-            instead of <filename>/usr/bin/perl</filename>. When setting
-            <filename>ScriptInterpreterSource</filename>, do not forget
-            to specify the <command>-T</command> flag to enable the taint
-            mode. For example: <command>C:\Perl\bin\perl.exe -T</command>.
+            The web server looks at <filename>/usr/bin/perl</filename> to
+            call Perl. If you are using Apache on windows, you can set the
+            <ulink url="http://httpd.apache.org/docs-2.0/mod/core.html#scriptinterpretersource">ScriptInterpreterSource</ulink>
+            directive in your Apache config file to make it look at the
+            right place: insert the line
+            <programlisting>ScriptInterpreterSource Registry-Strict</programlisting>
+            into your <filename>httpd.conf</filename> file, and create the key
+            <programlisting>HKEY_CLASSES_ROOT\.cgi\Shell\ExecCGI\Command</programlisting>
+            with <option>C:\Perl\bin\perl.exe -T</option> as value (adapt to your
+            path if needed) in the registry. When this is done, restart Apache.
           </para>
         </note>
 
@@ -1750,13 +1684,8 @@ C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
         <ulink url="http://www.postfix.org/">Postfix</ulink> 
         is used as the built-in email server.  Postfix provides an executable
         that mimics sendmail enough to fool Bugzilla, as long as Bugzilla can 
-        find it.</para>
-
-        <para>As of version 2.20, Bugzilla will be able to find the fake 
-        sendmail executable without any assistance.  However, you will have 
-        to turn on the sendmailnow parameter before you do anything that would 
-        result in email being sent.  For more information, see the description 
-        of the sendmailnow parameter in <xref linkend="parameters"/>.</para>
+        find it. Bugzilla is able to find the fake sendmail executable without
+        any assistance.</para>
 
       </section>
 
@@ -1766,12 +1695,12 @@ C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
         <para>Apple does not include the GD library with Mac OS X. Bugzilla
         needs this for bug graphs.</para>
 
-        <para>You can use DarwinPorts (<ulink url="http://darwinports.com/"/>)
+        <para>You can use MacPorts (<ulink url="http://www.macports.org/"/>)
         or Fink (<ulink url="http://sourceforge.net/projects/fink/"/>), both
         of which are similar in nature to the CPAN installer, but install
         common unix programs.</para>
 
-        <para>Follow the instructions for setting up DarwinPorts or Fink.
+        <para>Follow the instructions for setting up MacPorts or Fink.
         Once you have one installed, you'll want to use it to install the
         <filename>gd2</filename> package.
         </para>
@@ -1797,7 +1726,7 @@ C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
           </para>
         </note>
 
-        <para>Also available via DarwinPorts and Fink is
+        <para>Also available via MacPorts and Fink is
         <filename>expat</filename>. After installing the expat package, you
         will be able to install XML::Parser using CPAN. If you use fink, there
         is one caveat. Unlike recent versions of
@@ -1976,7 +1905,7 @@ pid-file=/home/foo/mymysql/the.pid
 
       <screen>
         <prompt>bash$</prompt>
-        <command>wget http://perl.com/CPAN/src/stable.tar.gz</command>
+        <command>wget http://perl.org/CPAN/src/stable.tar.gz</command>
         <prompt>bash$</prompt>
         <command>tar zvxf stable.tar.gz</command>
         <prompt>bash$</prompt>
@@ -2092,21 +2021,22 @@ pid-file=/home/foo/mymysql/the.pid
 
   <section id="upgrade">
     <title>Upgrading to New Releases</title>
-    
+
     <para>Upgrading to new Bugzilla releases is very simple. There is
-      a script included with Bugzilla that will automatically
-      do all of the database migration for you.</para>
-    
+      a script named <filename>checksetup.pl</filename> included with
+      Bugzilla that will automatically do all of the database migration
+      for you.</para>
+
     <para>The following sections explain how to upgrade from one
       version of Bugzilla to another. Whether you are upgrading
-      from one bug-fix version to another (such as 3.0.1 to 3.0.2)
-      or from one major version to another (such as from 3.0 to 3.2),
+      from one bug-fix version to another (such as 4.2 to 4.2.1)
+      or from one major version to another (such as from 4.0 to 4.2),
       the instructions are always the same.</para>
 
     <note>
       <para>
         Any examples in the following sections are written as though the
-        user were updating to version 2.22.1, but the procedures are the
+        user were updating to version 4.2.1, but the procedures are the
         same no matter what version you're updating to. Also, in the
         examples, the user's Bugzilla installation is found at
         <filename>/var/www/html/bugzilla</filename>. If that is not the
@@ -2202,10 +2132,10 @@ pid-file=/home/foo/mymysql/the.pid
       
       <variablelist>
         <varlistentry>
-          <term>CVS (<xref linkend="upgrade-cvs"/>)</term>
+          <term>Bzr (<xref linkend="upgrade-bzr"/>)</term>
           <listitem>
             <para>
-              If have <command>cvs</command> installed on your machine
+              If you have <command>bzr</command> installed on your machine
               and you have Internet access, this is the easiest way to
               upgrade, particularly if you have made modifications
               to the code or templates of Bugzilla.
@@ -2230,12 +2160,12 @@ pid-file=/home/foo/mymysql/the.pid
             <para>
               If you have made modifications to your Bugzilla, and
               you don't have Internet access or you don't want to use
-              cvs, then this is the best way to upgrade.
+              bzr, then this is the best way to upgrade.
             </para>
-            
+
             <para>
-              You can only do minor upgrades (such as 3.0 to 3.0.1 or
-              3.0.1 to 3.0.2) with patches.
+              You can only do minor upgrades (such as 4.2 to 4.2.1 or
+              4.2.1 to 4.2.2) with patches.
             </para>
           </listitem>
         </varlistentry>
@@ -2255,8 +2185,8 @@ pid-file=/home/foo/mymysql/the.pid
         <para>
           The larger the jump you are trying to make, the more difficult it
           is going to be to upgrade if you have made local customizations.
-          Upgrading from 3.0 to 3.0.1 should be fairly painless even if
-          you are heavily customized, but going from 2.18 to 3.0 is going
+          Upgrading from 4.2 to 4.2.1 should be fairly painless even if
+          you are heavily customized, but going from 2.18 to 4.2 is going
           to mean a fair bit of work re-writing your local changes to use
           the new files, logic, templates, etc. If you have done no local
           changes at all, however, then upgrading should be approximately
@@ -2265,41 +2195,53 @@ pid-file=/home/foo/mymysql/the.pid
         </para>
       </section>
 
-      <section id="upgrade-cvs">
-        <title>Upgrading using CVS</title>
+      <section id="upgrade-bzr">
+        <title>Upgrading using Bzr</title>
 
         <para>
-          This requires that you have cvs installed (most Unix machines do),
-          and requires that you are able to access cvs-mirror.mozilla.org
-          on port 2401, which may not be an option if you are behind a
-          highly restrictive firewall or don't have Internet access.
+          This requires that you have bzr installed (most Unix machines do),
+          and requires that you are able to access
+          <ulink url="http://bzr.mozilla.org/bugzilla/">bzr.mozilla.org</ulink>,
+          which may not be an option if you don't have Internet access.
         </para>
 
         <para>
           The following shows the sequence of commands needed to update a
-          Bugzilla installation via CVS, and a typical series of results.
+          Bugzilla installation via Bzr, and a typical series of results.
+          These commands assume that you already have Bugzilla installed
+          using Bzr.
         </para>
+
+        <warning>
+          <para>
+            If your installation is still using CVS, you must first convert
+            it to Bzr. A very detailed step by step documentation can be
+            found on <ulink url="https://wiki.mozilla.org/Bugzilla:Moving_From_CVS_To_Bazaar">wiki.mozilla.org</ulink>.
+          </para>
+        </warning>
 
         <programlisting>
 bash$ <command>cd /var/www/html/bugzilla</command>
-bash$ <command>cvs login</command>
-Logging in to :pserver:anonymous@cvs-mirror.mozilla.org:2401/cvsroot
-CVS password: <emphasis>('anonymous', or just leave it blank)</emphasis>
-bash$ <command>cvs -q update -r BUGZILLA-2_22_1 -dP</command>
-P checksetup.pl
-P collectstats.pl
-P docs/rel_notes.txt
-P template/en/default/list/quips.html.tmpl
-<emphasis>(etc.)</emphasis>
+bash$ <command>bzr switch 4.2</command> (only run this command when not yet running 4.2)
+bash$ <command>bzr up -r tag:bugzilla-4.2.1</command>
++N  extensions/MoreBugUrl/
++N  extensions/MoreBugUrl/Config.pm
++N  extensions/MoreBugUrl/Extension.pm
+...
+ M  Bugzilla/Attachment.pm
+ M  Bugzilla/Attachment/PatchReader.pm
+ M  Bugzilla/Bug.pm
+...
+All changes applied successfully.
         </programlisting>
 
         <caution>
           <para>
-            If a line in the output from <command>cvs update</command> begins
-            with a <computeroutput>C</computeroutput>, then that represents a
-            file with local changes that CVS was unable to properly merge. You
-            need to resolve these conflicts manually before Bugzilla (or at
-            least the portion using that file) will be usable.
+            If a line in the output from <command>bzr up</command> mentions
+            a conflict, then that represents a file with local changes that
+            Bzr was unable to properly merge. You need to resolve these
+            conflicts manually before Bugzilla (or at least the portion using
+            that file) will be usable.
           </para>
         </caution>
       </section>
@@ -2308,7 +2250,7 @@ P template/en/default/list/quips.html.tmpl
         <title>Upgrading using the tarball</title>
 
         <para>
-          If you are unable (or unwilling) to use CVS, another option that's
+          If you are unable (or unwilling) to use Bzr, another option that's
           always available is to obtain the latest tarball from the <ulink
           url="http://www.bugzilla.org/download/">Download Page</ulink> and 
           create a new Bugzilla installation from that.
@@ -2325,18 +2267,18 @@ P template/en/default/list/quips.html.tmpl
 
         <programlisting>
 bash$ <command>cd /var/www/html</command>
-bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.22.1.tar.gz</command>
+bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.2.1.tar.gz</command>
 <emphasis>(Output omitted)</emphasis>
-bash$ <command>tar xzvf bugzilla-2.22.1.tar.gz</command>
-bugzilla-2.22.1/
-bugzilla-2.22.1/.cvsignore
+bash$ <command>tar xzvf bugzilla-4.2.1.tar.gz</command>
+bugzilla-4.2.1/
+bugzilla-4.2.1/colchange.cgi
 <emphasis>(Output truncated)</emphasis>
-bash$ <command>cd bugzilla-2.22.1</command>
+bash$ <command>cd bugzilla-4.2.1</command>
 bash$ <command>cp ../bugzilla/localconfig* .</command>
 bash$ <command>cp -r ../bugzilla/data .</command>
 bash$ <command>cd ..</command>
 bash$ <command>mv bugzilla bugzilla.old</command>
-bash$ <command>mv bugzilla-2.22.1 bugzilla</command>
+bash$ <command>mv bugzilla-4.2.1 bugzilla</command>
         </programlisting>
 
         <warning>
@@ -2346,6 +2288,15 @@ bash$ <command>mv bugzilla-2.22.1 bugzilla</command>
             directory is the current working directory.
           </para>
         </warning>
+
+        <caution>
+          <para>
+            If you have some extensions installed, you will have to copy them
+            to the new bugzilla directory too. Extensions are located in
+            <filename>bugzilla/extensions/</filename>. Only copy those you
+            installed, not those managed by the Bugzilla team.
+          </para>
+        </caution>
 
         <para>
           This upgrade method will give you a clean install of Bugzilla.
@@ -2362,15 +2313,15 @@ bash$ <command>mv bugzilla-2.22.1 bugzilla</command>
           A patch is a collection of all the bug fixes that have been made
           since the last bug-fix release.
         </para>
-        
+
         <para>
           If you are doing a bug-fix upgrade&mdash;that is, one where only the 
-          last number of the revision changes, such as from 2.22 to
-          2.22.1&mdash;then you have the option of obtaining and applying a
+          last number of the revision changes, such as from 4.2 to
+          4.2.1&mdash;then you have the option of obtaining and applying a
           patch file from the <ulink
           url="http://www.bugzilla.org/download/">Download Page</ulink>.
         </para>
-        
+
         <para>
           As above, this example starts with obtaining the file via the 
           command line. If you have already downloaded it, you can omit the
@@ -2379,21 +2330,21 @@ bash$ <command>mv bugzilla-2.22.1 bugzilla</command>
 
         <programlisting>
 bash$ <command>cd /var/www/html/bugzilla</command>
-bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.22-to-2.22.1.diff.gz</command>
+bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.2-to-4.2.1.diff.gz</command>
 <emphasis>(Output omitted)</emphasis>
-bash$ <command>gunzip bugzilla-2.22-to-2.22.1.diff.gz</command>
-bash$ <command>patch -p1 &lt; bugzilla-2.22-to-2.22.1.diff</command>
-patching file checksetup.pl
-patching file collectstats.pl
+bash$ <command>gunzip bugzilla-4.2-to-4.2.1.diff.gz</command>
+bash$ <command>patch -p1 &lt; bugzilla-4.2-to-4.2.1.diff</command>
+patching file Bugzilla/Constants.pm
+patching file enter_bug.cgi
 <emphasis>(etc.)</emphasis>
         </programlisting>
 
         <warning>
           <para>
             Be aware that upgrading from a patch file does not change the
-            entries in your <filename class="directory">CVS</filename> directory.
-            This could make it more difficult to upgrade using CVS
-            (<xref linkend="upgrade-cvs"/>) in the future.
+            entries in your <filename class="directory">.bzr</filename> directory.
+            This could make it more difficult to upgrade using Bzr
+            (<xref linkend="upgrade-bzr"/>) in the future.
           </para>
         </warning>
 
@@ -2453,7 +2404,7 @@ bash$ <command>./checksetup.pl</command>
           
           <caution>
             <para>
-              If this is a major upgrade (say, 2.22 to 3.0 or similar),
+              If this is a major upgrade (say, 3.6 to 4.2 or similar),
               running <command>checksetup.pl</command> on a large
               installation (75,000 or more bugs) can take a long time,
               possibly several hours.

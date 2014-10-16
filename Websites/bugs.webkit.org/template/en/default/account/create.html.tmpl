@@ -40,7 +40,7 @@
 [% IF Param('emailsuffix') == '' %]
   a legitimate email address.
 [% ELSE %]
-  an accountname which when combined with [% Param('emailsuffix') %]
+  an account name which when combined with [% Param('emailsuffix') %]
   corresponds to an address where you receive email.
 [% END %]
   You will receive an email at this address to confirm the creation of your
@@ -73,6 +73,7 @@
     </tr>
   </table>
   <br>
+  <input type="hidden" id="token" name="token" value="[% issue_hash_token(['create_account']) FILTER html %]">
   <input type="submit" id="send" value="Send">
 </form>
 

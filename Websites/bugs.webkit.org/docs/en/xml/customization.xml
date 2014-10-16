@@ -2,6 +2,23 @@
 <chapter id="customization">
   <title>Customizing Bugzilla</title>
 
+  <section id="extensions">
+    <title>Bugzilla Extensions</title>
+
+    <para>
+      One of the best ways to customize Bugzilla is by writing a Bugzilla
+      Extension. Bugzilla Extensions let you modify both the code and
+      UI of Bugzilla in a way that can be distributed to other Bugzilla
+      users and ported forward to future versions of Bugzilla with minimal
+      effort.
+    </para>
+
+    <para>
+      See the <ulink url="api/Bugzilla/Extension.html">Bugzilla Extension
+      documentation</ulink> for information on how to write an Extension.
+    </para>
+  </section>
+
   <section id="cust-skins">
     <title>Custom Skins</title>
     
@@ -146,9 +163,9 @@
       <note>
         <para>
           Regardless of which method you choose, it is recommended that
-          you run <command>./checksetup.pl</command> after creating or
+          you run <command>./checksetup.pl</command> after 
           editing any templates in the <filename>template/en/default</filename>
-          directory, and after editing any templates in the 
+          directory, and after creating or editing any templates in the 
           <filename>custom</filename> directory.
         </para>
       </note>
@@ -190,20 +207,11 @@
         This means that if the data can possibly contain special HTML characters
         such as &lt;, and the data was not intended to be HTML, they need to be
         converted to entity form, i.e. &amp;lt;.  You use the 'html' filter in the
-        Template Toolkit to do this.  If you forget, you may open up
-        your installation to cross-site scripting attacks.
+        Template Toolkit to do this (or the 'uri' filter to encode special
+        characters in URLs).  If you forget, you may open up your installation
+        to cross-site scripting attacks.
       </para>
 
-      <para>
-        Also note that Bugzilla adds a few filters of its own, that are not
-        in standard Template Toolkit.  In particular, the 'url_quote' filter
-        can convert characters that are illegal or have special meaning in URLs,
-        such as &amp;, to the encoded form, i.e. %26.  This actually encodes most
-        characters (but not the common ones such as letters and numbers and so
-        on), including the HTML-special characters, so there's never a need to
-        HTML filter afterwards.
-      </para>
- 
       <para>
         Editing templates is a good way of doing a <quote>poor man's custom
         fields</quote>.
@@ -438,241 +446,6 @@
       
   </section>
 
-  <section id="cust-hooks">
-    <title>The Bugzilla Extension Mechanism</title>
-    
-    <warning>
-      <para>
-        Note that the below paths are inconsistent and confusing. They will
-        likely be changed in Bugzilla 4.0.
-      </para>
-    </warning>
-       
-    <para>
-      Extensions are a way for extensions to Bugzilla to insert code
-      into the standard Bugzilla templates and source files
-      without modifying these files themselves.  The extension mechanism 
-      defines a consistent API for extending the standard templates and source files 
-      in a way that cleanly separates standard code from extension code.  
-      Hooks reduce merge conflicts and make it easier to write extensions that work 
-      across multiple versions of Bugzilla, making upgrading a Bugzilla installation 
-      with installed extensions easier. Furthermore, they make it easy to install 
-      and remove extensions as each extension is nothing more than a 
-      simple directory structure. 
-    </para>
-    
-    <para>
-      There are two main types of hooks: code hooks and template hooks. Code 
-      hooks allow extensions to invoke code at specific points in various 
-      source files, while template hooks allow extensions to add elements to 
-      the Bugzilla user interface. 
-    </para>
-
-    <para>
-      A hook is just a named place in a standard source or template file
-      where extension source code or template files for that hook get processed. 
-      Each extension has a corresponding directory in the Bugzilla directory 
-      tree (<filename>BUGZILLA_ROOT/extensions/extension_name</filename>).  Hooking 
-      an extension source file or template to a hook is as simple as putting 
-      the extension file into extension's template or code directory. 
-      When Bugzilla processes the source file or template and reaches the hook, 
-      it will process all extension files in the hook's directory. 
-      The hooks themselves can be added into any source file or standard template 
-      upon request by extension authors.
-    </para>
-    
-    <para>
-      To use hooks to extend Bugzilla, first make sure there is
-      a hook at the appropriate place within the source file or template you 
-      want to extend. The exact appearance of a hook depends on if the hook 
-      is a code hook or a template hook. 
-    </para>
-    
-    <para>
-      Code hooks appear in Bugzilla source files as a single method call 
-      in the format <literal role="code">Bugzilla::Hook->process("<varname>name</varname>");</literal>.
-      For instance, <filename>enter_bug.cgi</filename> may invoke the hook 
-      "<varname>enter_bug-entrydefaultvars</varname>". Thus, a source file at 
-      <filename>BUGZILLA_ROOT/extensions/EXTENSION_NAME/code/enter_bug-entrydefaultvars.pl</filename>
-      will be automatically invoked when the code hook is reached. 
-    </para>
-   
-    <para>  
-      Template hooks appear in the standard Bugzilla templates as a 
-      single directive in the format
-      <literal role="code">[% Hook.process("<varname>name</varname>") %]</literal>,
-      where <varname>name</varname> is the unique name of the hook.
-    </para>
-
-    <para>
-      If you aren't sure what you want to extend or just want to browse the 
-      available hooks, either use your favorite multi-file search
-      tool (e.g. <command>grep</command>) to search the standard templates
-      for occurrences of <methodname>Hook.process</methodname> or the source 
-      files for occurrences of <methodname>Bugzilla::Hook::process</methodname>.
-    </para>
-
-    <para>
-      If there is no hook at the appropriate place within the Bugzilla 
-      source file or template you want to extend,
-      <ulink url="http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=User%20Interface">file
-      a bug requesting one</ulink>, specifying:
-    </para>
-
-    <simplelist>
-      <member>the source or template file for which you are 
-          requesting a hook;</member>
-      <member>
-        where in the file you would like the hook to be placed
-        (line number/position for latest version of the file in CVS
-        or description of location);
-      </member>
-      <member>the purpose of the hook;</member>
-      <member>a link to information about your extension, if any.</member>
-    </simplelist>
-
-    <para>
-      The Bugzilla reviewers will promptly review each hook request,
-      name the hook, add it to the template or source file, and check 
-      the new version of the template into CVS.
-    </para>
-
-    <para>
-      You may optionally attach a patch to the bug which implements the hook
-      and check it in yourself after receiving approval from a Bugzilla
-      reviewer.  The developers may suggest changes to the location of the
-      hook based on their analysis of your needs or so the hook can satisfy
-      the needs of multiple extensions, but the process of getting hooks
-      approved and checked in is not as stringent as the process for general
-      changes to Bugzilla, and any extension, whether released or still in
-      development, can have hooks added to meet their needs.
-    </para>
-
-    <para>
-      After making sure the hook you need exists (or getting it added if not),
-      add your extension to the directory within the Bugzilla
-      extensions tree corresponding to the hook. 
-    </para>
-    
-    <para>
-      That's it!  Now, when the source file or template containing the hook
-      is processed, your extension file will be processed at the point 
-      where the hook appears.
-    </para>
-
-    <para>
-      For example, let's say you have an extension named Projman that adds
-      project management capabilities to Bugzilla.  Projman has an
-      administration interface <filename>edit-projects.cgi</filename>, 
-      and you want to add a link to it into the navigation bar at the bottom
-      of every Bugzilla page for those users who are authorized
-      to administer projects.
-    </para>
-
-    <para>
-      The navigation bar is generated by the template file
-      <filename>useful-links.html.tmpl</filename>, which is located in
-      the <filename>global/</filename> subdirectory on the standard Bugzilla 
-      template path
-      <filename>BUGZILLA_ROOT/template/en/default/</filename>.
-      Looking in <filename>useful-links.html.tmpl</filename>, you find
-      the following hook at the end of the list of standard Bugzilla
-      administration links:
-    </para>
-
-    <programlisting><![CDATA[...
-    [% ', <a href="editkeywords.cgi">keywords</a>' 
-                                              IF user.groups.editkeywords %]
-    [% Hook.process("edit") %]
-...]]></programlisting>
-
-    <para>
-      The corresponding extension file for this hook is
-      <filename>BUGZILLA_ROOT/extensions/projman/template/en/global/useful-links-edit.html.tmpl</filename>.
-      You then create that template file and add the following constant:
-    </para>
-
-    <programlisting><![CDATA[...[% ', <a href="edit-projects.cgi">projects</a>' IF user.groups.projman_admins %]]]></programlisting>
-
-    <para>
-      Voila!  The link now appears after the other administration links in the
-      navigation bar for users in the <literal>projman_admins</literal> group.
-    </para>
-    
-    <para>
-      Now, let us say your extension adds a custom "project_manager" field 
-      to enter_bug.cgi. You want to modify the CGI script to set the default 
-      project manager to be productname@company.com. Looking at 
-      <filename>enter_bug.cgi</filename>, you see the enter_bug-entrydefaultvars 
-      hook near the bottom of the file before the default form values are set. 
-      The corresponding extension source file for this hook is located at 
-      <filename>BUGZILLA_ROOT/extensions/projman/code/enter_bug-entrydefaultvars.pl</filename>.
-      You then create that file and add the following:
-    </para>
-    
-    <programlisting>$default{'project_manager'} = $product.'@company.com';</programlisting>
-    
-    <para>
-      This code will be invoked whenever enter_bug.cgi is executed. 
-      Assuming that the rest of the customization was completed (e.g. the 
-      custom field was added to the enter_bug template and the required hooks 
-      were used in process_bug.cgi), the new field will now have this 
-      default value. 
-    </para>
-      
-    <para>
-      Notes:
-    </para>
-
-    <itemizedlist>
-      <listitem>
-        <para>
-          If your extension includes entirely new templates in addition to
-          extensions of standard templates, it should store those new
-          templates in its
-          <filename>BUGZILLA_ROOT/extensions/template/en/</filename> 
-          directory. Extension template directories, like the 
-          <filename>default/</filename> and <filename>custom/</filename>
-          directories, are part of the template search path, so putting templates
-          there enables them to be found by the template processor.
-        </para>
-
-        <para>
-          The template processor looks for templates first in the
-          <filename>custom/</filename> directory (i.e. templates added by the 
-          specific installation), then in the <filename>extensions/</filename>
-          directory (i.e. templates added by extensions), and finally in the 
-          <filename>default/</filename> directory (i.e. the standard Bugzilla 
-          templates). Thus, installation-specific templates override both 
-          default and extension templates.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          If you are looking to customize Bugzilla, you can also take advantage 
-          of template hooks. To do so, create a directory in
-          <filename>BUGZILLA_ROOT/template/en/custom/hook/</filename>
-          that corresponds to the hook you wish to use, then place your 
-          customization templates into those directories. For example, 
-          if you wanted to use the hook "end" in 
-          <filename>global/useful-links.html.tmpl</filename>, you would 
-          create the directory <filename>BUGZILLA_ROOT/template/en/custom/hook/
-          global/useful-links.html.tmpl/end/</filename> and add your customization 
-          template to this directory. 
-        </para>
-
-        <para>
-          Obviously this method of customizing Bugzilla only lets you add code
-          to the standard source files and templates; you cannot change the 
-          existing code. Nevertheless, for those customizations that only add 
-          code, this method can reduce conflicts when merging changes, 
-          making upgrading your customized Bugzilla installation easier.
-        </para>
-      </listitem>
-    </itemizedlist>    
-  </section>
-
   <section id="cust-change-permissions">
     <title>Customizing Who Can Change What</title>
     
@@ -746,7 +519,7 @@
       positive check, which returns 1 (allow) if certain conditions are true,
       or a negative check, which returns 0 (deny.) E.g.:
       <programlisting>    if ($field eq "qacontact") {
-        if (Bugzilla->user->groups("quality_assurance")) {
+        if (Bugzilla->user->in_group("quality_assurance")) {
             return 1;
         } 
         else {
@@ -790,8 +563,17 @@
     </para>    
   </section>   
 
-  <!-- Integrating Bugzilla with Third-Party Tools -->
-  &integration;
+  <section id="integration">
+    <title>Integrating Bugzilla with Third-Party Tools</title>
+
+    <para>
+      Many utilities and applications can integrate with Bugzilla,
+      either on the client- or server-side. None of them are maintained
+      by the Bugzilla community, nor are they tested during our
+      QA tests, so use them at your own risk. They are listed at
+      <ulink url="https://wiki.mozilla.org/Bugzilla:Addons" />.
+    </para>
+  </section>
 
 </chapter>
 

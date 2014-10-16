@@ -56,6 +56,7 @@
    }
    {name               => 'what'
     heading            => 'What'
+    content_use_field  => 1
    }
    {name               => 'removed'
     heading            => 'Removed'
@@ -72,9 +73,9 @@
 %]
 
 <p><a href="editusers.cgi?action=edit&amp;userid=
-  [%- otheruser.id FILTER url_quote %]"
+  [%- otheruser.id FILTER uri %]"
   title="Edit user '[% otheruser.login FILTER html %]'">Edit this user</a> or
-  <a title="Search For Users" href="editusers.cgi">find other accounts</a>
+  <a title="Search For Users" href="editusers.cgi">search for other accounts</a>
   [% IF listselectionvalues.matchtype != 'exact' %]
     or go <a title="Return to the user list"
        href="editusers.cgi?action=list[% INCLUDE listselectionurlparams %]">back

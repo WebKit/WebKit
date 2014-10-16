@@ -1,5 +1,4 @@
 <!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> -->
-<!-- $Id$ -->
 
 <chapter id="security">
 <title>Bugzilla Security</title>
@@ -80,96 +79,7 @@
     </section>
   
   </section>
-  
-  
-  
-  <section id="security-mysql">
-  <title>MySQL</title>
-  
-    <section id="security-mysql-account">
-    <title>The MySQL System Account</title>
-    
-      <para>As mentioned in <xref linkend="security-os-accounts"/>, the MySQL
-      daemon should run as a non-privileged, unique user. Be sure to consult
-      the MySQL documentation or the documentation that came with your system
-      for instructions.
-      </para>
-    </section>
-    
-    <section id="security-mysql-root">
-    <title>The MySQL <quote>root</quote> and <quote>anonymous</quote> Users</title>
-    
-      <para>By default, MySQL comes with a <quote>root</quote> user with a
-      blank password and an <quote>anonymous</quote> user, also with a blank
-      password. In order to protect your data, the <quote>root</quote> user
-      should be given a password and the anonymous user should be disabled.
-      </para>
-      
-      <example id="security-mysql-account-root">
-      <title>Assigning the MySQL <quote>root</quote> User a Password</title>
-      
-        <screen>
-<prompt>bash$</prompt> mysql mysql
-<prompt>mysql&gt;</prompt> UPDATE user SET password = password('<replaceable>new_password</replaceable>') WHERE user = 'root';
-<prompt>mysql&gt;</prompt> FLUSH PRIVILEGES;
-        </screen>
-      </example>
-      
-      <example id="security-mysql-account-anonymous">
-      <title>Disabling the MySQL <quote>anonymous</quote> User</title>
-        <screen>
-<prompt>bash$</prompt> mysql -u root -p mysql           <co id="security-mysql-account-anonymous-mysql"/>
-<prompt>Enter Password:</prompt> <replaceable>new_password</replaceable>
-<prompt>mysql&gt;</prompt> DELETE FROM user WHERE user = '';
-<prompt>mysql&gt;</prompt> FLUSH PRIVILEGES;
-        </screen>
-        <calloutlist>
-          <callout arearefs="security-mysql-account-anonymous-mysql">
-            <para>This command assumes that you have already completed
-            <xref linkend="security-mysql-account-root"/>.
-            </para>
-          </callout>
-        </calloutlist>
-      </example>
-          
-    </section>
-    
-    <section id="security-mysql-network">
-    <title>Network Access</title>
-    
-      <para>If MySQL and your web server both run on the same machine and you
-      have no other reason to access MySQL remotely, then you should disable
-      the network access. This, along with the suggestion in
-      <xref linkend="security-os-ports"/>, will help protect your system from
-      any remote vulnerabilities in MySQL.
-      </para>
-      
-      <example id="security-mysql-network-ex">
-      <title>Disabling Networking in MySQL</title>
-      
-        <para>Simply enter the following in <filename>/etc/my.cnf</filename>:
-        <screen>
-[mysqld]
-# Prevent network access to MySQL.
-skip-networking
-        </screen>
-        </para>
-      </example>
-      
-    </section>
 
-
-<!-- For possible addition in the future: How to better control the bugs user
-    <section id="security-mysql-bugs">
-    <title>The bugs User</title>
-    
-    </section>
--->
-  
-  </section>
-  
-  
-  
   <section id="security-webserver">
   <title>Web server</title>
 

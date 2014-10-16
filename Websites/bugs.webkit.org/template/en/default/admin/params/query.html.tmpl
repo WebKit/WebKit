@@ -32,7 +32,7 @@
                                 </li>
                                 <li>
                                   moderated - quips can be entered, but need to be approved
-                                  by an admin before they will be shown.
+                                  by a moderator before they will be shown.
                                 </li>
                                 <li>
                                   closed - no new additions to the quips list are allowed.
@@ -51,10 +51,27 @@
                   "access the advanced query page. It's in URL parameter " _
                   "format, which makes it hard to read. Sorry!",
 
-  quicksearch_comment_cutoff => "The maximum number of search terms for a QuickSearch " _
-                                "to search comments. If the QuickSearch query contains " _
-                                "more terms than this value, QuickSearch will not search comments.",
+  search_allow_no_criteria =>
+    "Unless the code explicitly allows all $terms.bugs to be returned, this " _
+    "parameter permits to block the execution of queries with no criteria. " _
+    "When turned off, a query must have some criteria specified to limit " _
+    "the number of $terms.bugs returned to the user. When turned on, a user " _
+    "is allowed to run a query with no criteria and get all $terms.bugs he can " _
+    "see in his list. Turning this parameter on is not recommended on large " _
+    "installations.",
 
-  specific_search_allow_empty_words => "Whether to allow a search on the 'Find a Specific " _
-                                       "Bug' page with an empty 'Words' field." }
-%]
+  default_search_limit =>
+    "By default, $terms.Bugzilla limits searches done in the web"
+    _ " interface to returning only this many results, for performance"
+    _ " reasons. (This only affects the HTML format of search results--CSV,"
+    _ " XML, and other formats are exempted.) Users can click a link on the"
+    _ " search result page to see all the results."
+    _ "<p>Usually you should not have to change this--the default value"
+    _ " should be acceptable for almost most installations.</p>",
+
+  max_search_results =>
+    "The maximum number of $terms.bugs that a search can"
+    _ " <strong>ever</strong> return. Tabular and graphical reports"
+    _ " are exempted from this limit, however.",
+
+} %]

@@ -28,7 +28,7 @@ if not mimetypes.types_map.has_key('.doc'):
 if not mimetypes.encodings_map.has_key('.bz2'):
     mimetypes.encodings_map['.bz2'] = "bzip2"
 
-bug_status='NEW'
+bug_status='CONFIRMED'
 component="default"
 version=""
 product="" # this is required, the rest of these are defaulted as above
@@ -265,8 +265,8 @@ def usage():
 Where OPTIONS are one or more of the following:
 
   -h                This help information.
-  -s STATUS         One of UNCONFIRMED, NEW, ASSIGNED, REOPENED, RESOLVED, VERIFIED, CLOSED
-                    (default is NEW)
+  -s STATUS         One of UNCONFIRMED, CONFIRMED, IN_PROGRESS, RESOLVED, VERIFIED
+                    (default is CONFIRMED)
   -c COMPONENT      The component to attach to each bug as it is important. This should be
                     valid component for the Product.
   -v VERSION        Version to assign to these defects.
@@ -285,7 +285,7 @@ def main():
 
     for o,a in opts:
         if o == "-s":
-            if a in ('UNCONFIRMED','NEW','ASSIGNED','REOPENED','RESOLVED','VERIFIED','CLOSED'):
+            if a in ('UNCONFIRMED','CONFIRMED','IN_PROGRESS','RESOLVED','VERIFIED'):
                 bug_status = a
         elif o == '-c':
             component = a

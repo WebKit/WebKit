@@ -35,7 +35,7 @@ use strict;
 
 use Bugzilla::Config::Common;
 
-$Bugzilla::Config::Admin::sortkey = "01";
+our $sortkey = 200;
 
 sub get_param_list {
   my $class = shift;
@@ -49,20 +49,14 @@ sub get_param_list {
   {
    name => 'allowemailchange',
    type => 'b',
-   default => 0
+   default => 1
   },
 
   {
    name => 'allowuserdeletion',
    type => 'b',
    default => 0
-  },
-
-  {
-   name => 'supportwatchers',
-   type => 'b',
-   default => 0
-  } );
+  });
   return @param_list;
 }
 

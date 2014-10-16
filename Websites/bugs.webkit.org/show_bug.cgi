@@ -51,15 +51,20 @@ if (!$cgi->param('id') && $single) {
     exit;
 }
 
-my @bugs = ();
+my $format = $template->get_format("bug/show", scalar $cgi->param('format'), 
+                                   scalar $cgi->param('ctype'));
+
+my @bugs;
 my %marks;
+
+# If the user isn't logged in, we use data from the shadow DB. If he plans
+# to edit the bug(s), he will have to log in first, meaning that the data
+# will be reloaded anyway, from the main DB.
+Bugzilla->switch_to_shadow_db unless $user->id;
 
 if ($single) {
     my $id = $cgi->param('id');
-    # Its a bit silly to do the validation twice - that functionality should
-    # probably move into Bug.pm at some point
-    ValidateBugID($id);
-    push @bugs, new Bugzilla::Bug($id);
+    push @bugs, Bugzilla::Bug->check($id);
     if (defined $cgi->param('mark')) {
         foreach my $range (split ',', $cgi->param('mark')) {
             if ($range =~ /^(\d+)-(\d+)$/) {
@@ -88,32 +93,19 @@ if ($single) {
     }
 }
 
-# Determine if Patch Viewer is installed, for Diff link
-eval {
-  require PatchReader;
-  $vars->{'patchviewerinstalled'} = 1;
-};
+Bugzilla::Bug->preload(\@bugs);
 
 $vars->{'bugs'} = \@bugs;
 $vars->{'marks'} = \%marks;
-$vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
 
 my @bugids = map {$_->bug_id} grep {!$_->error} @bugs;
 $vars->{'bugids'} = join(", ", @bugids);
-
-# Next bug in list (if there is one)
-my @bug_list;
-if ($cgi->cookie("BUGLIST")) {
-    @bug_list = split(/:/, $cgi->cookie("BUGLIST"));
-}
-
-$vars->{'bug_list'} = \@bug_list;
 
 # Work out which fields we are displaying (currently XML only.)
 # If no explicit list is defined, we show all fields. We then exclude any
 # on the exclusion list. This is so you can say e.g. "Everything except 
 # attachments" without listing almost all the fields.
-my @fieldlist = (Bugzilla::Bug->fields, 'group', 'long_desc', 
+my @fieldlist = (Bugzilla::Bug->fields, 'flag', 'group', 'long_desc',
                  'attachment', 'attachmentdata', 'token');
 my %displayfields;
 
@@ -121,7 +113,7 @@ if ($cgi->param("field")) {
     @fieldlist = $cgi->param("field");
 }
 
-unless (Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})) {
+unless (Bugzilla->user->is_timetracker) {
     @fieldlist = grep($_ !~ /(^deadline|_time)$/, @fieldlist);
 }
 

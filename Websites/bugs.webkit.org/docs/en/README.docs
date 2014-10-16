@@ -42,7 +42,7 @@ HOW TO SET UP YOUR OWN XML EDITING ENVIRONMENT:
 
 Trying to set up an XML Docbook editing environment the 
 first time can be a daunting task.
-I use Linux-Mandrake, in part, because it has a fully-functional
+I use Mandriva Linux, in part, because it has a fully-functional
 XML Docbook editing environment included as part of the
 distribution CD's.  If you have easier instructions for how to
 do this for a particular Linux distribution or platform, please
@@ -70,9 +70,9 @@ sgml-tools
 sgml-common
 
 
-If you're getting these from RedHat, make sure you get the ones in the
+If you're getting these from Red Hat, make sure you get the ones in the
 rawhide area.  The ones in the 7.2 distribution are too old and don't
-include the XML stuff.  The packages distrubuted with RedHat 8.0 and 9
+include the XML stuff.  The packages distrubuted with Red Hat Linux 8.0 and 9
 and known to work.
 
 Download "ldp.dsl" from the Resources page on tldp.org.  This is the 
@@ -91,7 +91,7 @@ dsssl>
 Note the difference is the top one points to the HTML docbook stylesheet, 
 and the next one points to the PRINT docbook stylesheet.
 
-Also note that modifying ldp.dsl doesn't seem to be needed on RedHat 9.
+Also note that modifying ldp.dsl doesn't seem to be needed on Red Hat Linux 9.
 
   You know, this sure looks awful involved.  Anyway, once you have this in
 place, add to your .bashrc:

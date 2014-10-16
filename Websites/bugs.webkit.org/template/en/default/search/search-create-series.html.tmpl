@@ -33,8 +33,10 @@
 [% PROCESS global/header.html.tmpl 
   title = "Create New Data Set"
   onload = "doOnSelectProduct(0);"
+  yui = [ 'autocomplete', 'calendar' ]
   javascript = js_data 
-  javascript_urls = [ "js/productform.js" ]
+  javascript_urls = [ "js/util.js", "js/productform.js", "js/TUI.js", "js/field.js" ]
+  style_urls = [ "skins/standard/search_form.css" ]
   doc_section = "reporting.html#charts-new-series"
 %]
 
@@ -43,7 +45,7 @@
 [% PROCESS search/form.html.tmpl %]
 
 <p>
-  <input type="submit" name="action-search" value="Run Search">
+  <input type="submit" id="action-search" name="action-search" value="Run Search">
   to see which [% terms.bugs %] would be included in this data set.
 </p>
     
@@ -52,6 +54,7 @@
 [% PROCESS reports/series.html.tmpl 
    button_name = "Create Data Set" %]
   <input type="hidden" name="action" value="create">
+  <input type="hidden" name="token" value="[% issue_hash_token(['create-series']) FILTER html %]">
 
 <script type="text/javascript">
   document.chartform.category[0].selected = true;

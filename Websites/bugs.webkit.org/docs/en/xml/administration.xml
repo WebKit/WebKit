@@ -100,13 +100,13 @@
 
           <varlistentry>
             <term>
-              ssl
+              ssl_redirect
             </term>
             <listitem>
               <para>
-                Determines when Bugzilla will force HTTPS (SSL) connections, using
-                the URL defined in <command>sslbase</command>. 
-                Options include "always", "never", and "authenticated sessions". 
+                If enabled, Bugzilla will force HTTPS (SSL) connections, by
+                automatically redirecting any users who try to use a non-SSL
+                connection.
               </para>
             </listitem>
           </varlistentry>
@@ -141,18 +141,6 @@
                 <command>cookiepath</command> should be set to 
                 <filename>/bugzilla/</filename>. Setting it to "/" will allow all sites 
                 served by this web server or virtual host to read Bugzilla cookies.
-              </para>
-            </listitem>
-          </varlistentry>
-
-          <varlistentry>
-            <term>
-              timezone
-            </term>
-            <listitem>
-              <para>
-                Timezone of server. The timezone is displayed with timestamps. If 
-                this parameter is left blank, the timezone is not displayed.
               </para>
             </listitem>
           </varlistentry>
@@ -262,34 +250,11 @@
 
         <section id="param-admin-policies">
           <title>Administrative Policies</title>
-        <para>
-        This page contains parameters for basic administrative functions.
-        Options include whether to allow the deletion of bugs and users, whether
-        to allow users to change their email address, and whether to allow
-        user watching (one user receiving all notifications of a selected
-        other user). 
-        </para>
-
-        <variablelist>
-
-          <varlistentry>
-            <term>
-              supportwatchers
-            </term>
-            <listitem>
-              <para>
-                Turning on this option allows users to ask to receive copies 
-                of bug mail sent to another user.  Watching a user with
-                different group permissions is not a way to 'get around' the
-                system; copied emails are still subject to the normal groupset
-                permissions of a bug, and <quote>watchers</quote> will only be 
-                copied on emails from bugs they would normally be allowed to view. 
-              </para> 
-            </listitem>
-          </varlistentry>
-
-        </variablelist>
-
+          <para>
+            This page contains parameters for basic administrative functions.
+            Options include whether to allow the deletion of bugs and users,
+            and whether to allow users to change their email address.
+          </para>
         </section>
 
         <section id="param-user-authentication">
@@ -510,25 +475,6 @@
                 Determines whether or not to automatically create groups
                 when new products are created. If this is on, the groups will be
                 used for querying bugs.
-              </para>
-            </listitem>
-          </varlistentry>
-
-          <varlistentry>
-            <term>
-              useentrygroupdefault
-            </term>
-            <listitem>
-              <para>
-                Bugzilla products can have a group associated with them, so that
-                certain users can only see bugs in certain products. When this 
-                parameter is set to <quote>on</quote>, this 
-                causes the initial group controls on newly created products 
-                to place all newly-created bugs in the group 
-                having the same name as the product immediately.
-                After a product is initially created, the group controls
-                can be further adjusted without interference by 
-                this mechanism.
               </para>
             </listitem>
           </varlistentry>
@@ -820,16 +766,62 @@
 
           <varlistentry>
             <term>
-              sendmailnow
+              smtpserver
             </term>
             <listitem>
               <para>
-                When Bugzilla is using Sendmail older than 8.12, turning this option
-                off will improve performance by not waiting for Sendmail to actually
-                send mail.  If Sendmail 8.12 or later is being used, there is 
-                nothing to gain by turning this off.  If another MTA is being used, 
-                such as Postfix, then this option *must* be turned on (even if you 
-                are using the fake sendmail executable that Postfix provides).
+                This is the SMTP server address, if the <quote>mail_delivery_method</quote>
+                parameter is set to SMTP.  Use "localhost" if you have a local MTA
+                running, otherwise use a remote SMTP server.  Append ":" and the port
+                number, if a non-default port is needed.
+              </para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>
+              smtp_username
+            </term>
+            <listitem>
+              <para>
+                Username to use for SASL authentication to the SMTP server.  Leave
+                this parameter empty if your server does not require authentication.
+              </para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>
+              smtp_password
+            </term>
+            <listitem>
+              <para>
+                Password to use for SASL authentication to the SMTP server. This
+                parameter will be ignored if the <quote>smtp_username</quote>
+                parameter is left empty.
+              </para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>
+              smtp_ssl
+            </term>
+            <listitem>
+              <para>
+                Enable SSL support for connection to the SMTP server.
+              </para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>
+              smtp_debug
+            </term>
+            <listitem>
+              <para>
+                This parameter allows you to enable detailed debugging output.
+                Log messages are printed the web server's error log.
               </para>
             </listitem>
           </varlistentry>
@@ -841,7 +833,7 @@
             <listitem>
               <para>
                 Set this to the number of days you want to let bugs go
-                in the NEW or REOPENED state before notifying people they have
+                in the CONFIRMED state before notifying people they have
                 untouched new bugs. If you do not plan to use this feature, simply 
                 do not set up the whining cron job described in the installation
                 instructions, or set this value to "0" (never whine).
@@ -932,7 +924,12 @@
             contains parameters for how user names can be queried and matched
             when entered.
           </para>
-
+          <para>
+            Another setting called 'ajax_user_autocompletion' enables certain
+            user fields to display a list of matched user names as a drop down after typing 
+            a few characters. Note that it is recommended to use mod_perl when
+            enabling 'ajax_user_autocompletion'.
+          </para>
         </section>
 
   </section>
@@ -1127,7 +1124,10 @@
             <emphasis>&lt;groupname&gt;</emphasis>: 
             If you have created some groups, e.g. "securitysensitive", then
             checkboxes will appear here to allow you to add users to, or
-            remove them from, these groups.
+            remove them from, these groups. The first checkbox gives the
+            user the ability to add and remove other users as members of
+            this group. The second checkbox adds the user himself as a member
+            of the group.
             </para>
           </listitem>
 
@@ -1309,7 +1309,7 @@
     basis. The number of <quote>votes</quote> available to 
     users is set per-product, as is the number of votes
     required to move a bug automatically from the UNCONFIRMED 
-    status to the NEW status.
+    status to the CONFIRMED status.
     </para>
 
     <para>
@@ -1337,17 +1337,6 @@
         <listitem>
           <para> 
             A brief description of the product
-          </para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term>
-          URL describing milestones for this product
-        </term>
-        <listitem>
-          <para> 
-            If there is reference URL, provide it here
           </para>
         </listitem>
       </varlistentry>
@@ -1882,12 +1871,12 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
 
     <note>
       <para>Milestone options will only appear for a Product if you turned
-      on the "usetargetmilestone" Param in the "Edit Parameters" screen.
+      on the "usetargetmilestone" parameter in the "Bug Fields" tab of the
+      "Parameters" page.
       </para>
     </note>
 
-    <para>To create new Milestones, set Default Milestones, and set
-    Milestone URL:</para>
+    <para>To create new Milestones, and set Default Milestones:</para>
 
     <orderedlist>
       <listitem>
@@ -1895,8 +1884,7 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
       </listitem>
 
       <listitem>
-        <para>Select "Add" in the bottom right corner.
-        text</para>
+        <para>Select "Add" in the bottom right corner.</para>
       </listitem>
 
       <listitem>
@@ -1906,12 +1894,6 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
         milestone appears. This is because milestones often do not 
         occur in alphanumeric order For example, "Future" might be
         after "Release 1.2". Select "Add".</para>
-      </listitem>
-
-      <listitem>
-        <para>From the Edit product screen, you can enter the URL of a 
-        page which gives information about your milestones and what
-        they mean. </para>
       </listitem>
     </orderedlist>
   </section>
@@ -2136,8 +2118,8 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
      <section id="flags-edit">
        <title>Editing a Flag</title>
        <para>
-         To edit a flag's properties, just click on the <quote>Edit</quote>
-         link next to the flag's description. That will take you to the same
+         To edit a flag's properties, just click the flag's name.
+         That will take you to the same
          form as described below (<xref linkend="flags-create"/>).
        </para>
      </section>
@@ -2445,6 +2427,11 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
               several types available:
                <simplelist>
                  <member>
+                   Bug ID: A field where you can enter the ID of another bug from
+                   the same Bugzilla installation. To point to a bug in a remote
+                   installation, use the See Also field instead.
+                 </member>
+                 <member>
                    Large Text Box: A multiple line box for entering free text.
                  </member>
                  <member>
@@ -2483,6 +2470,16 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
 
           <listitem>
             <para>
+              <emphasis>Reverse Relationship Description:</emphasis>
+              When the custom field is of type <quote>Bug ID</quote>, you can
+              enter text here which will be used as label in the referenced
+              bug to list bugs which point to it. This gives you the ability
+              to have a mutual relationship between two bugs.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
               <emphasis>Can be set on bug creation:</emphasis>
               Boolean that determines whether this field can be set on
               bug creation. If not selected, then a bug must be created 
@@ -2507,6 +2504,45 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
               be displayed at all. Obsolete Custom Fields are hidden.
             </para>
           </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Is mandatory:</emphasis>
+              Boolean that determines whether this field must be set.
+              For single and multi-select fields, this means that a (non-default)
+              value must be selected, and for text and date fields, some text
+              must be entered.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Field only appears when:</emphasis>
+              A custom field can be made visible when some criteria is met.
+              For instance, when the bug belongs to one or more products,
+              or when the bug is of some given severity. If left empty, then
+              the custom field will always be visible, in all bugs.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Field that controls the values that appear in this field:</emphasis>
+              When the custom field is of type <quote>Drop Down</quote> or
+              <quote>Multiple-Selection Box</quote>, you can restrict the
+              availability of the values of the custom field based on the
+              value of another field. This criteria is independent of the
+              criteria used in the <quote>Field only appears when</quote>
+              setting. For instance, you may decide that some given value
+              <quote>valueY</quote> is only available when the bug status
+              is RESOLVED while the value <quote>valueX</quote> should
+              always be listed.
+              Once you have selected the field which should control the
+              availability of the values of this custom field, you can
+              edit values of this custom field to set the criteria, see
+              <xref linkend="edit-values-list" />.
+            </para>
+          </listitem>
         </itemizedlist>
       </para>
     </section>
@@ -2526,10 +2562,13 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
       <title>Deleting Custom Fields</title>
 
       <para>
-        It is only possible to delete obsolete Custom Fields 
-        if the field has never been used in the database.
-        To remove a field which already has content,
-        mark it as obsolete.
+        Only custom fields which are marked as obsolete, and which never
+        have been used, can be deleted completely (else the integrity
+        of the bug history would be compromised). For custom fields marked
+        as obsolete, a "Delete" link will appear in the <quote>Action</quote>
+        column. If the custom field has been used in the past, the deletion
+        will be rejected. But marking the field as obsolete is sufficient
+        to hide it from the user interface entirely.
       </para>
     </section>
   </section>
@@ -2538,20 +2577,19 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
     <title>Legal Values</title>
 
     <para>
-      Since Bugzilla 2.20 RC1, legal values for Operating Systems, platforms,
-      bug priorities and severities can be edited from the User Interface
-      directly. This means that it is no longer required to manually edit
-      <filename>localconfig</filename>. Starting with Bugzilla 2.23.3, 
-      the list of valid resolutions can be customized from the same interface.
-      Since Bugzilla 3.1.1 the list of valid bug statuses can be customized
-      as well.
+      Legal values for the operating system, platform, bug priority and
+      severity, custom fields of type <quote>Drop Down</quote> and
+      <quote>Multiple-Selection Box</quote> (see <xref linkend="custom-fields" />),
+      as well as the list of valid bug statuses and resolutions can be
+      customized from the same interface. You can add, edit, disable and
+      remove values which can be used with these fields.
     </para>
 
     <section id="edit-values-list">
       <title>Viewing/Editing legal values</title>
       <para>
         Editing legal values requires <quote>admin</quote> privileges.
-        Select "Legal Values" from the Administration page. A list of all
+        Select "Field Values" from the Administration page. A list of all
         fields, both system fields and Custom Fields, for which legal values
         can be edited appears. Click a field name to edit its legal values.
       </para>
@@ -2559,6 +2597,11 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
         There is no limit to how many values a field can have, but each value 
         must be unique to that field. The sortkey is important to display these
         values in the desired order.
+      </para>
+      <para>
+        When the availability of the values of a custom field is controlled
+        by another field, you can select from here which value of the other field
+        must be set for the value of the custom field to appear.
       </para>
     </section>
 
@@ -2611,12 +2654,17 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
   <section id="voting">
     <title>Voting</title>
 
+    <para>All of the code for voting in Bugzilla has been moved into an
+    extension, called "Voting", in the <filename>extensions/Voting/</filename>
+    directory. To enable it, you must remove the <filename>disabled</filename>
+    file from that directory, and run <filename>checksetup.pl</filename>.</para>
+
     <para>Voting allows users to be given a pot of votes which they can allocate
     to bugs, to indicate that they'd like them fixed. 
     This allows developers to gauge
     user need for a particular enhancement or bugfix. By allowing bugs with
     a certain number of votes to automatically move from "UNCONFIRMED" to
-    "NEW", users of the bug system can help high-priority bugs garner
+    "CONFIRMED", users of the bug system can help high-priority bugs garner
     attention so they don't sit for a long time awaiting triage.</para>
 
     <para>To modify Voting settings:</para>
@@ -2645,7 +2693,7 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
         <para><emphasis>Number of votes a bug in this product needs to
         automatically get out of the UNCONFIRMED state</emphasis>: 
         Setting this field to "0" disables the automatic move of
-        bugs from UNCONFIRMED to NEW. 
+        bugs from UNCONFIRMED to CONFIRMED. 
         </para>
       </listitem>
 
@@ -2667,12 +2715,12 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
     </para>
   
     <para>
-      Quips are controlled by the <emphasis>enablequips</emphasis> parameter.
-      It has several possible values: on, approved, frozen or off.
-      In order to enable quips approval you need to set this parameter
-      to "approved". In this way, users are free to submit quips for
-      addition but an administrator must explicitly approve them before
-      they are actually used.
+      Quip submission is controlled by the <emphasis>quip_list_entry_control</emphasis>
+      parameter.  It has several possible values: open, moderated, or closed.
+      In order to enable quips approval you need to set this parameter to
+      "moderated". In this way, users are free to submit quips for addition
+      but an administrator must explicitly approve them before they are
+      actually used.
     </para>
 
     <para>
@@ -2687,7 +2735,7 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
     </para>
 
     <para>
-      Next to each tip there is a checkbox, under the
+      Next to each quip there is a checkbox, under the
       "Approved" column. Quips who have this checkbox checked are
       already approved and will appear next to the search results.
       The ones that have it unchecked are still preserved in the
@@ -2699,6 +2747,11 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
       Also, there is a delete link next to each quip,
       which can be used in order to permanently delete a quip.
     </para>
+
+    <para>
+      Display of quips is controlled by the <emphasis>display_quips</emphasis>
+      user preference.  Possible values are "on" and "off".
+    </para>
   </section>
 
   <section id="groups">
@@ -2706,7 +2759,7 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
 
     <para>
     Groups allow for separating bugs into logical divisions.
-    Groups are typically used to
+    Groups are typically used
     to isolate bugs that should only be seen by certain people. For
     example, a company might create a different group for each one of its customers
     or partners. Group permissions could be set so that each partner or customer would

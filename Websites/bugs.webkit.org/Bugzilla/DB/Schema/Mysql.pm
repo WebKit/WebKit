@@ -43,6 +43,9 @@ use base qw(Bugzilla::DB::Schema);
 # that should be interpreted as a BOOLEAN instead of as an INT1 when
 # reading in the Schema from the disk. The values are discarded; I just
 # used "1" for simplicity.
+# 
+# THIS CONSTANT IS ONLY USED FOR UPGRADES FROM 2.18 OR EARLIER. DON'T
+# UPDATE IT TO MODERN COLUMN NAMES OR DEFINITIONS.
 use constant BOOLEAN_MAP => {
     bugs           => {everconfirmed => 1, reporter_accessible => 1,
                        cclist_accessible => 1, qacontact_accessible => 1,
@@ -178,13 +181,35 @@ sub get_alter_column_ddl {
         delete $new_def_copy{PRIMARYKEY};
     }
 
-    my $new_ddl = $self->get_type_ddl(\%new_def_copy);
     my @statements;
 
     push(@statements, "UPDATE $table SET $column = $set_nulls_to
                         WHERE $column IS NULL") if defined $set_nulls_to;
-    push(@statements, "ALTER TABLE $table CHANGE COLUMN 
+
+    # Calling SET DEFAULT or DROP DEFAULT is *way* faster than calling
+    # CHANGE COLUMN, so just do that if we're just changing the default.
+    my %old_defaultless = %$old_def;
+    my %new_defaultless = %$new_def;
+    delete $old_defaultless{DEFAULT};
+    delete $new_defaultless{DEFAULT};
+    if (!$self->columns_equal($old_def, $new_def)
+        && $self->columns_equal(\%new_defaultless, \%old_defaultless)) 
+    {
+        if (!defined $new_def->{DEFAULT}) {
+            push(@statements,
+                 "ALTER TABLE $table ALTER COLUMN $column DROP DEFAULT");
+        }
+        else {
+            push(@statements, "ALTER TABLE $table ALTER COLUMN $column
+                               SET DEFAULT " . $new_def->{DEFAULT});
+        }
+    }
+    else {
+        my $new_ddl = $self->get_type_ddl(\%new_def_copy);
+        push(@statements, "ALTER TABLE $table CHANGE COLUMN 
                        $column $column $new_ddl");
+    }
+
     if ($old_def->{PRIMARYKEY} && !$new_def->{PRIMARYKEY}) {
         # Dropping a PRIMARY KEY needs an explicit DROP PRIMARY KEY
         push(@statements, "ALTER TABLE $table DROP PRIMARY KEY");
@@ -239,6 +264,11 @@ sub get_rename_indexes_ddl {
     # Remove the last comma.
     chop($sql);
     return ($sql);
+}
+
+sub get_set_serial_sql {
+    my ($self, $table, $column, $value) = @_;
+    return ("ALTER TABLE $table AUTO_INCREMENT = $value");
 }
 
 # Converts a DBI column_info output to an abstract column definition.

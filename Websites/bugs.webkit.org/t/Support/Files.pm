@@ -25,43 +25,15 @@ package Support::Files;
 
 use File::Find;
 
-# exclude_deps is a hash of arrays listing the files to be excluded
-# if a module is not available
-#
 @additional_files = ();
-%exclude_deps = (
-    'XML::Twig' => ['importxml.pl'],
-    'Net::LDAP' => ['Bugzilla/Auth/Verify/LDAP.pm'],
-    'Authen::Radius' => ['Bugzilla/Auth/Verify/RADIUS.pm'],
-    'Email::Reply' => ['email_in.pl'],
-    'Email::MIME::Attachment::Stripper' => ['email_in.pl']
-);
-
 
 @files = glob('*');
 find(sub { push(@files, $File::Find::name) if $_ =~ /\.pm$/;}, 'Bugzilla');
-
-sub have_pkg {
-    my ($pkg) = @_;
-    my ($msg, $vnum, $vstr);
-    no strict 'refs';
-    eval { my $p; ($p = $pkg . ".pm") =~ s!::!/!g; require $p; };
-    return !($@);
-}
-
-@exclude_files    = ();
-foreach $dep (keys(%exclude_deps)) {
-    if (!have_pkg($dep)) {
-        push @exclude_files, @{$exclude_deps{$dep}};
-    }
-}
+push(@files, 'extensions/create.pl');
 
 sub isTestingFile {
     my ($file) = @_;
     my $exclude;
-    foreach $exclude (@exclude_files) {
-        if ($file eq $exclude) { return undef; } # get rid of excluded files.
-    }
 
     if ($file =~ /\.cgi$|\.pl$|\.pm$/) {
         return 1;

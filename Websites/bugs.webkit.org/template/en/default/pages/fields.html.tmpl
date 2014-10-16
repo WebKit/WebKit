@@ -19,300 +19,220 @@
   #                 Gervase Markham <gerv@gerv.net>
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
 [% PROCESS "global/field-descs.none.tmpl" %]
-[% INCLUDE global/header.html.tmpl title = "A $terms.Bug's Life Cycle" %]
+[% PROCESS global/header.html.tmpl 
+  title = "$terms.Bug Fields" 
+  style_urls = ['skins/standard/page.css']
+%]
 
-<p>
-The <b>status</b> and <b>resolution</b> fields define and track the life
-cycle of [% terms.abug %].  
-</p>
+<p>This page describes the various fields that you see 
+  on [% terms.abug %].</p>
 
-<a name="status"></a>
-<a name="resolution"></a>
-
-<table border="1" cellpadding="4">
-  <tr align="center" valign="top">
-    <td width="50%">
-      <h1>STATUS</h1>
+<table class="field_value_explanation">
+  <thead>
+  <tr>
+    <td id="bug_status">
+      <h2>[% field_descs.bug_status FILTER upper FILTER html %]</h2>
     </td>
 
-    <td>
-      <h1>RESOLUTION</h1>
+    <td id="resolution">
+      <h2>[% field_descs.resolution FILTER upper FILTER html %]</h2>
     </td>
   </tr>
 
-  <tr valign="top">
-    <td>The <b>status</b> field indicates the general health of a 
-    [% terms.bug %]. Only certain status transitions are allowed.</td>
+  <tr>
+    <td>The [% field_descs.bug_status FILTER html %] field indicates the 
+      current state of a [% terms.bug %]. Only certain status transitions
+      are allowed.</td>
 
-    <td>The <b>resolution</b> field indicates what happened to this
-    [%+ terms.bug %].</td>
+    <td>The [% field_descs.resolution FILTER html %] field indicates what
+      happened to this [%+ terms.bug %].</td>
   </tr>
+  </thead>
 
-  <tr valign="top">
+  <tbody>
+  <tr class="header_row">
+    <td colspan="2">Open [% terms.Bugs %]</td>
+  </tr>
+  <tr>
     <td>
       <dl>
-        <dt>
-          <b>[% get_status("UNCONFIRMED") FILTER html %]</b>
+        <dt class="unconfirmed">
+          [% display_value("bug_status", "UNCONFIRMED") FILTER html %]
         </dt>
-        <dd>
+        <dd class="unconfirmed">
           This [% terms.bug %] has recently been added to the database. 
-          Nobody has validated that this [% terms.bug %] is true. Users
+          Nobody has confirmed that this [% terms.bug %] is valid. Users
           who have the "canconfirm" permission set may confirm
-          this [% terms.bug %], changing its state to [% get_status("NEW") FILTER html %]. Or, it may be
-          directly resolved and marked [% get_status("RESOLVED") FILTER html %].
+          this [% terms.bug %], changing its state to 
+          <b>[% display_value("bug_status", "CONFIRMED") FILTER html %]</b>. 
+          Or, it may be directly resolved and marked
+          <b>[% display_value("bug_status", "RESOLVED") FILTER html %]</b>.
         </dd>
 
-        <dt>
-          <b>[% get_status("NEW") FILTER html %]</b>
+        <dt class="confirmed">
+          [% display_value("bug_status", "CONFIRMED") FILTER html %]
         </dt>
-        <dd>
-          This [% terms.bug %] has recently been added to the assignee's
-          list of [% terms.bugs %] and must be processed. [% terms.Bugs %] in
-          this state may be accepted, and become <b>[% get_status("ASSIGNED") FILTER html %]</b>, passed
-          on to someone else, and remain <b>[% get_status("NEW") FILTER html %]</b>, or resolved and marked
-          <b>[% get_status("RESOLVED") FILTER html %]</b>.
+        <dd class="confirmed">
+          This [% terms.bug %] is valid and has recently been filed.
+          [%+ terms.Bugs %] in this state become 
+          <b>[% display_value("bug_status", "IN_PROGRESS") FILTER html %]</b>
+          when somebody is working on them, or become resolved and marked
+          <b>[% display_value("bug_status", "RESOLVED") FILTER html %]</b>.
         </dd>
 
-        <dt>
-          <b>[% get_status("ASSIGNED") FILTER html %]</b>
+        <dt class="in_progress">
+          [% display_value("bug_status", "IN_PROGRESS") FILTER html %]
         </dt>
-        <dd>
-          This [% terms.bug %] is not yet resolved, but is assigned to the 
-          proper person. From here [% terms.bugs %] can be given to another 
-          person and become <b>[% get_status("NEW") FILTER html %]</b>, or
-          resolved and become <b>[% get_status("RESOLVED") FILTER html %]</b>.
+        <dd class="in_progress">
+          This [% terms.bug %] is not yet resolved, but is assigned to the
+          proper person who is working on the [% terms.bug %]. From here,
+          [%+ terms.bugs %] can be given to another person and become
+          <b>[% display_value("bug_status", "CONFIRMED") FILTER html %]</b>, or
+          resolved and become 
+          <b>[% display_value("bug_status", "RESOLVED") FILTER html %]</b>.
         </dd>
-
-        <dt>
-          <b>[% get_status("REOPENED") FILTER html %]</b>
-        </dt>
-        <dd>
-          This [% terms.bug %] was once resolved, but the resolution was 
-          deemed incorrect. For example, a <b>[% get_resolution("WORKSFORME") FILTER html %]</b> [% terms.bug %] is
-          <b>[% get_status("REOPENED") FILTER html %]</b> when more information shows up and
-          the [% terms.bug %] is now reproducible. From here [% terms.bugs %] are
-          either marked <b>[% get_status("ASSIGNED") FILTER html %]</b> or
-          <b>[% get_status("RESOLVED") FILTER html %]</b>.
-        </dd>
+        
+        [% Hook.process('open-status') %]
       </dl>
     </td>
 
     <td>
-      <dl>
-        <dd>
-          No resolution yet. All [% terms.bugs %] which are in one of 
-          these "open" states have the resolution set to blank. All 
-          other [% terms.bugs %] will be marked with one of the following 
-          resolutions.
-        </dd>
-      </dl>
+      No resolution yet. All [% terms.bugs %] which are in one of
+      these "open" states have no resolution set.
     </td>
   </tr>
 
-  <tr valign="top">
+  <tr class="header_row">
+    <td colspan="2">Closed [% terms.Bugs %]</td>
+  </tr>
+
+  <tr>
     <td>
       <dl>
-        <dt>
-          <b>[% get_status("RESOLVED") FILTER html %]</b>
+        <dt class="resolved">
+          [% display_value("bug_status", "RESOLVED") FILTER html %]
         </dt>
-        <dd>
-          A resolution has been taken, and it is awaiting verification by
-          QA. From here [% terms.bugs %] are either re-opened and become 
-          <b>[% get_status("REOPENED") FILTER html %]</b>, are marked
-          <b>[% get_status("VERIFIED") FILTER html %]</b>, or are closed for
-          good and marked <b>[% get_status("CLOSED") FILTER html %]</b>.
+        <dd class="resolved">
+          A resolution has been performed, and it is awaiting verification by
+          QA. From here [% terms.bugs %] are either reopened and given some
+          open status, or are verified by QA and marked
+          <b>[% display_value("bug_status", "VERIFIED") FILTER html %]</b>.
         </dd>
 
-        <dt>
-          <b>[% get_status("VERIFIED") FILTER html %]</b>
+        <dt class="verified">
+          [% display_value("bug_status", "VERIFIED") FILTER html %]
         </dt>
-        <dd>
-          QA has looked at the [% terms.bug %] and the resolution and 
-          agrees that the appropriate resolution has been taken. [% terms.Bugs %] remain
-          in this state until the product they were reported
-          against actually ships, at which point they become
-          <b>[% get_status("CLOSED") FILTER html %]</b>.
+        <dd class="verified">
+          QA has looked at the [% terms.bug %] and the resolution and
+          agrees that the appropriate resolution has been taken. This is
+          the final status for [% terms.bugs %].
         </dd>
-
-        <dt>
-          <b>[% get_status("CLOSED") FILTER html %]</b>
-        </dt>
-        <dd>
-          The [% terms.bug %] is considered dead, the resolution is correct. 
-          Any zombie [% terms.bugs %] who choose to walk the earth again must 
-          do so by becoming <b>[% get_status("REOPENED") FILTER html %]</b>.
-        </dd>
+        
+        [% Hook.process('closed-status') %]
       </dl>
     </td>
 
     <td>
       <dl>
-        <dt>
-          <b>[% get_resolution("FIXED") FILTER html %]</b>
+        <dt class="fixed">
+          [% display_value("resolution", "FIXED") FILTER html %]
         </dt>
-        <dd>
+        <dd class="fixed">
           A fix for this [% terms.bug %] is checked into the tree and 
           tested.
         </dd>
 
-        <dt>
-          <b>[% get_resolution("INVALID") FILTER html %]</b>
+        <dt class="invalid">
+          [% display_value("resolution", "INVALID") FILTER html %]
         </dt>
-        <dd>
+        <dd class="invalid">
           The problem described is not [% terms.abug %].
         </dd>
 
-        <dt>
-          <b>[% get_resolution("WONTFIX") FILTER html %]</b>
+        <dt class="wontfix">
+          [% display_value("resolution", "WONTFIX") FILTER html %]
         </dt>
-        <dd>
+        <dd class="wontfix">
           The problem described is [% terms.abug %] which will never be 
           fixed.
         </dd>
 
-        <dt>
-         <b>[% get_resolution("DUPLICATE") FILTER html %]</b>
+        <dt class="duplicate">
+         [% display_value("resolution", "DUPLICATE") FILTER html %]
         </dt>
-        <dd>
+        <dd class="duplicate">
           The problem is a duplicate of an existing [% terms.bug %].
-          Marking [% terms.abug %] duplicate requires the [% terms.bug %]#
-          of the duplicating [% terms.bug %] and will at least put
-          that [% terms.bug %] number in the description field.
+          When [% terms.abug %] is marked as a
+          <b>[% display_value("resolution", "DUPLICATE") FILTER html %]</b>,
+          you will see which [% terms.bug %] it is a duplicate of,
+          next to the resolution.
         </dd>
 
-        <dt>
-          <b>[% get_resolution("WORKSFORME") FILTER html %]</b>
+        <dt class="worksforme">
+          [% display_value("resolution", "WORKSFORME") FILTER html %]
         </dt>
-        <dd>
+        <dd class="worksforme">
           All attempts at reproducing this [% terms.bug %] were futile, 
           and reading the code produces no clues as to why the described
           behavior would occur. If more information appears later,
           the [% terms.bug %] can be reopened.
         </dd>
-
-        <dt>
-          <b>[% get_resolution("MOVED") FILTER html %]</b>
-        </dt>
-        <dd>
-          The problem was specific to a related product 
-          whose [% terms.bugs %] are tracked in
-          another [% terms.bug %] database.
-          The [% terms.bug %] has been moved to that database.
-        </dd>
+        
+        [% Hook.process('resolution') %]
       </dl>
     </td>
   </tr>
+  </tbody>
 </table>
 
-<h2><a name="importance">Importance</h2>
-The importance of [% terms.abug %] is described as the combination of
-its <a href="#priority">priority</a> and <a href="#bug_severity">severity</a>,
-as described below.
+<h2>Other Fields</h2>
 
-<h2><a name="priority">Priority</a></h2>
-This field describes the importance and order in which [% terms.abug %]
-should be fixed. This field is utilized by the
-programmers/engineers to prioritize their work to be done. The
-available priorities range from <b>P1</b> (most important) to
-<b>P5</b> (least important).
+[% SET field_help_map = {} %]
+[% FOREACH field = bug_fields.keys %]
+  [% SET field_desc = field_descs.$field %]
+  [% field_help_map.$field_desc = { help  => help_html.$field, 
+                                    field => field } %]
+[% END %]
 
-<h2><a name="bug_severity">Severity</a></h2>
-This field describes the impact of [% terms.abug %]. 
+[%# These are fields that don't need to be documented, either because
+  # they have docs somewhere else in the UI, or they don't show up on bugs. 
+  # %]
+[% SET skip_fields = [ 
+  'days_elapsed', 
+  'everconfirmed',
+  'reporter_accessible',
+  'cclist_accessible',
+  'bug_group',
+  'commenter',
+  'owner_idle_time',
+  'bug_status',
+  'resolution',
+] %]
 
-<table>
-  <tr>
-    <th>Blocker</th>
+<dl class="field_descriptions">
+[% FOREACH field_desc = field_help_map.keys.sort %]
+  [% SET field = field_help_map.${field_desc}.field %]
+  [% SET field_object = bug_fields.$field %]
 
-    <td>Blocks development and/or testing work</td>
-  </tr>
+  [% NEXT IF field_object.obsolete %]
+  [% NEXT IF !user.is_timetracker AND field_object.is_timetracking %]
 
-  <tr>
-    <th>Critical</th>
+  [% NEXT IF field == 'status_whiteboard' AND !Param('usestatuswhiteboard') %]
+  [% NEXT IF field == 'target_milestone' AND !Param('usetargetmilestone') %]
+  [% NEXT IF field == 'alias' AND !Param('usebugaliases') %]
 
-    <td>crashes, loss of data, severe memory leak</td>
-  </tr>
+  [%# For now we don't have help for attachment fields and so on. %]
+  [% NEXT IF field.match('\.') %]
 
-  <tr>
-    <th>Major</th>
+  [% NEXT IF skip_fields.contains(field) %]
 
-    <td>major loss of function</td>
-  </tr>
+  <dt id="[% field FILTER html %]">[% field_desc FILTER html %]</dt>
+    <dd>
+      [% SET help_text = field_help_map.${field_desc}.help %]
+      [% help_text FILTER none %]
+    </dd>
+[% END %]
+</dl>
 
-  <tr>
-    <th>Normal</th>
-
-    <td>regular issue, some loss of functionality under specific circumstances</td>
-  </tr>
-
-
-  <tr>
-    <th>Minor</th>
-
-    <td>minor loss of function, or other problem where easy
-    workaround is present</td>
-  </tr>
-
-  <tr>
-    <th>Trivial</th>
-
-    <td>cosmetic problem like misspelled words or misaligned
-    text</td>
-  </tr>
-
-  <tr>
-    <th>Enhancement</th>
-
-    <td>Request for enhancement</td>
-</table>
-
-<h2><a name="rep_platform">Platform</a></h2>
-This is the hardware platform against which the [% terms.bug %] was
-reported. Legal platforms include: 
-
-<ul>
-  <li>All (happens on all platforms; cross-platform [% terms.bug %])</li>
-
-  <li>Macintosh</li>
-
-  <li>PC</li>
-</ul>
-<b>Note:</b> When searching, selecting the option "All" does not 
-select [% terms.bugs %]
-assigned against any platform. It merely selects [% terms.bugs %] that are
-marked as occurring on all platforms, i.e. are designated "All". 
-
-<h2><a name="op_sys">Operating System</a></h2>
-This is the operating system against which the [% terms.bug %] was
-reported. Legal operating systems include: 
-
-<ul>
-  <li>All (happens on all operating systems; cross-platform
-  [% terms.bug %])</li>
-
-  <li>Windows</li>
-
-  <li>Mac OS</li>
-
-  <li>Linux</li>
-</ul>
-Sometimes the operating system implies the platform, but not
-always. For example, Linux can run on PC and Macintosh and
-others. 
-
-<h2><a name="assigned_to">Assigned To</a></h2>
-
-<p>
-This is the person in charge of resolving the [% terms.bug %]. Every time
-this field changes, the status changes to <b>[% get_status("NEW") FILTER html %]</b> to make it
-easy to see which new [% terms.bugs %] have appeared on a person's list.</p>
-
-<p>
-The default status for queries is set to [% get_status("NEW") FILTER html %],
-[%+ get_status("ASSIGNED") FILTER html %] and [% get_status("REOPENED") FILTER html %].
-When searching for [% terms.bugs %] that have been resolved or
-verified, remember to set the status field appropriately. 
-</p>
-
-[% INCLUDE global/footer.html.tmpl %]
+[% PROCESS global/footer.html.tmpl %]

@@ -154,3 +154,121 @@ function bz_isValueInArray(aArray, aValue)
 
   return false;
 }
+
+/**
+ * Create wanted options in a select form control.
+ *
+ * @param  aSelect        Select form control to manipulate.
+ * @param  aValue         Value attribute of the new option element.
+ * @param  aTextValue     Value of a text node appended to the new option
+ *                        element.
+ * @return                Created option element.
+ */
+function bz_createOptionInSelect(aSelect, aTextValue, aValue) {
+  var myOption = new Option(aTextValue, aValue);
+  aSelect.options[aSelect.length] = myOption;
+  return myOption;
+}
+
+/**
+ * Clears all options from a select form control.
+ *
+ * @param  aSelect    Select form control of which options to clear.
+ */
+function bz_clearOptions(aSelect) {
+
+  var length = aSelect.options.length;
+
+  for (var i = 0; i < length; i++) {
+    aSelect.removeChild(aSelect.options[0]);
+  }
+}
+
+/**
+ * Takes an array and moves all the values to an select.
+ *
+ * @param aSelect         Select form control to populate. Will be cleared
+ *                        before array values are created in it.
+ * @param aArray          Array with values to populate select with.
+ */
+function bz_populateSelectFromArray(aSelect, aArray) {
+  // Clear the field
+  bz_clearOptions(aSelect);
+
+  for (var i = 0; i < aArray.length; i++) {
+    var item = aArray[i];
+    bz_createOptionInSelect(aSelect, item[1], item[0]);
+  }
+}
+
+/**
+ * Tells you whether or not a particular value is selected in a select,
+ * whether it's a multi-select or a single-select. The check is 
+ * case-sensitive.
+ *
+ * @param aSelect        The select you're checking.
+ * @param aValue         The value that you want to know about.
+ */
+function bz_valueSelected(aSelect, aValue) {
+    var options = aSelect.options;
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].selected && options[i].value == aValue) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Tells you where (what index) in a <select> a particular option is.
+ * Returns -1 if the value is not in the <select>
+ *
+ * @param aSelect       The select you're checking.
+ * @param aValue        The value you want to know the index of.
+ */
+function bz_optionIndex(aSelect, aValue) {
+    for (var i = 0; i < aSelect.options.length; i++) {
+        if (aSelect.options[i].value == aValue) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
+ * Used to fire an event programmatically.
+ * 
+ * @param anElement      The element you want to fire the event of.
+ * @param anEvent        The name of the event you want to fire, 
+ *                       without the word "on" in front of it.
+ */
+function bz_fireEvent(anElement, anEvent) {
+    if (document.createEvent) {
+        // DOM-compliant browser
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent(anEvent, true, true);
+        return !anElement.dispatchEvent(evt);
+    } else {
+        // IE
+        var evt = document.createEventObject();
+        return anElement.fireEvent('on' + anEvent, evt);
+    }
+}
+
+/**
+ * Adds a CSS class to an element if it doesn't have it. Removes the
+ * CSS class from the element if the element does have the class.
+ *
+ * Requires YUI's Dom library.
+ *
+ * @param anElement  The element to toggle the class on
+ * @param aClass     The name of the CSS class to toggle.
+ */
+function bz_toggleClass(anElement, aClass) {
+    if (YAHOO.util.Dom.hasClass(anElement, aClass)) {
+        YAHOO.util.Dom.removeClass(anElement, aClass);
+    }
+    else {
+        YAHOO.util.Dom.addClass(anElement, aClass);
+    }
+}

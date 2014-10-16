@@ -23,6 +23,10 @@
    desc = "Set up $terms.bug change policies"
 %]
 
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[% accept_status = display_value('bug_status', 'IN_PROGRESS') FILTER html %]
+
 [% param_descs = {
   duplicate_or_move_bug_status => "When $terms.abug is marked as a duplicate of another one " _
                                   "or is moved to another installation, use this $terms.bug status."
@@ -37,17 +41,13 @@
                                  "If off, then all $terms.bugs initially have the default " _
                                  "milestone for the product being filed in.",
 
-  musthavemilestoneonaccept => "If you are using Target Milestone, do you want to require that " _
-                               "the milestone be set in order for a user to ACCEPT a ${terms.bug}?",
-
-  commentonclearresolution => "If this option is on, the user needs to enter a short comment if " _
-                              "the ${terms.bug}'s resolution is cleared.",
+  musthavemilestoneonaccept => 
+    "If you are using ${field_descs.target_milestone}, do you want to require"
+    _ " that the milestone be set in order for a user to set"
+    _ "  ${terms.abug}'s status to ${accept_status}?",
 
   commentonchange_resolution => "If this option is on, the user needs to enter a short " _
                                 "comment if the resolution of the $terms.bug changes.",
-
-  commentonreassignbycomponent => "If this option is on, the user needs to enter a short comment if " _
-                                  "the $terms.bug is reassigned by component.",
 
   commentonduplicate => "If this option is on, the user needs to enter a short comment " _
                         "if the $terms.bug is marked as duplicate.",

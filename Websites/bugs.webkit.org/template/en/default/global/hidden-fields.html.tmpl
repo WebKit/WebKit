@@ -52,7 +52,7 @@
   [% ELSE %]
     [% FOREACH mvalue = cgi.param(field).slice(0) %]
       <input type="hidden" name="[% field FILTER html %]"
-             value="[% mvalue FILTER html FILTER html_linebreak %]">
+             value="[% mvalue FILTER html_linebreak %]">
     [% END %]
   [% END %]
 [% END %]

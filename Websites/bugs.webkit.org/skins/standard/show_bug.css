@@ -7,12 +7,26 @@
     font-weight: bold;
 }
 
-.bz_column_spacer {
-    width: 2em;
+.bz_bug .edit_form {
+  width: 100%;
+}
+.bz_bug .edit_form table {
+  width: 100%;
+}
+.bz_bug #alias {
+    min-width: 0;
+    width: 10em;
 }
 
-.bz_default_hidden {
-    display: none;
+.flags_label {
+    text-align: left;
+}
+table#flags {
+    width: auto;
+}
+
+.bz_column_spacer {
+    width: 0.5em;
 }
 
 .related_actions {
@@ -36,9 +50,28 @@
     height: 1em;
 }
 
-#duplicate_settings, #votes_container {
+#duplicate_settings {
     white-space: nowrap;
-    
+}
+
+#bz_big_form_parts td {
+    vertical-align: top;
+}
+
+.bz_group_visibility_section {
+    margin-left: 1em;
+}
+
+.bz_group_visibility_section .instructions {
+    font-style: italic;
+}
+
+#bz_restrict_group_visibility_help .instructions {
+    margin-top: 0;
+}
+
+#bz_enable_role_visibility_help {
+    margin-top: 1em;
 }
 
 .bz_time_tracking_table {
@@ -61,6 +94,9 @@
 .bz_time_tracking_table .bz_summarize_time {
     text-align: right;
 }
+.bz_time_tracking_table #deadline {
+    width: 7em;
+}
 
 #summary tr td { 
     vertical-align:top;
@@ -70,6 +106,13 @@
     margin-bottom: 3ex;
 }
 
-#knob-buttons {
+.knob-buttons {
     float: right;
+}
+
+.text_input, .bz_userfield, #keyword_container {
+    width: 100%;
+}
+.bz_bug .bz_alias_short_desc_container {
+    width: inherit;
 }

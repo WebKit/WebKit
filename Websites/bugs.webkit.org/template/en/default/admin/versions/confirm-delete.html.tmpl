@@ -52,8 +52,8 @@
 [% IF version.bug_count %]
   <a title="List of [% terms.bugs %] targetted at version '
            [%- version.name FILTER html %]'"
-     href="buglist.cgi?version=[% version.name FILTER url_quote %]&amp;product=
-          [%- product.name FILTER url_quote %]">
+     href="buglist.cgi?version=[% version.name FILTER uri %]&amp;product=
+          [%- product.name FILTER uri %]">
           [%- version.bug_count FILTER none %]</a>
 [% ELSE %]
   None

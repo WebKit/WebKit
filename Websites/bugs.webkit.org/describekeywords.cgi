@@ -35,6 +35,9 @@ my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
 my $vars = {};
 
+# Run queries against the shadow DB.
+Bugzilla->switch_to_shadow_db;
+
 $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 $vars->{'caneditkeywords'} = Bugzilla->user->in_group("editkeywords");
 
