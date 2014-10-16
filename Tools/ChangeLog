@@ -1,3 +1,17 @@
+2014-10-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174754.
+        https://bugs.webkit.org/show_bug.cgi?id=137789
+
+        Speculative fix for Windows test was ineffective. (Requested
+        by rfong on #webkit).
+
+        Reverted changeset:
+
+        "[Windows] Add some more logging to debug Windows test
+        issues."
+        http://trac.webkit.org/changeset/174754
+
 2014-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, add myself to CoordinatedGraphics watchers.
