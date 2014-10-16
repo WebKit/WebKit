@@ -1,3 +1,15 @@
+2014-10-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r174753.
+        https://bugs.webkit.org/show_bug.cgi?id=137761
+
+        caused layout tests to fail. (Requested by zalan on #webkit).
+
+        Reverted changeset:
+
+        "[Mac] Unreviewed gardening."
+        http://trac.webkit.org/changeset/174753
+
 2014-10-15  Zalan Bujtas  <zalan@apple.com>
 
         [Mac] Unreviewed gardening.
