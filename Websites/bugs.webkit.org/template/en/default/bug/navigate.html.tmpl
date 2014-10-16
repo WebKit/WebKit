@@ -49,37 +49,51 @@
 
   <a href="show_bug.cgi?id=
            [%- last_bug_list.first FILTER uri %]&amp;list_id=
-           [%- my_search.id FILTER uri %]">First</a>
+[%# if WEBKIT_CHANGES %]
+           [%- my_search.id FILTER uri %]">|&laquo;&nbsp;First</a>
+[%# endif // WEBKIT_CHANGES %]
   <a href="show_bug.cgi?id=
            [%- last_bug_list.last FILTER uri %]&amp;list_id=
-           [%- my_search.id FILTER uri %]">Last</a>
+[%# if WEBKIT_CHANGES %]
+           [%- my_search.id FILTER uri %]">Last&nbsp;&raquo;|</a>
+[%# endif // WEBKIT_CHANGES %]
 
   [% IF this_bug_idx > 0 %]
     [% prev_bug = this_bug_idx - 1 %]
     <a href="show_bug.cgi?id=
              [%- last_bug_list.$prev_bug FILTER uri %]&amp;list_id=
-             [%- my_search.id FILTER uri %]">Prev</a>
+[%# if WEBKIT_CHANGES %]
+             [%- my_search.id FILTER uri %]">&laquo;&nbsp;Prev</a>
+[%# endif // WEBKIT_CHANGES %]
   [% ELSE %]
-    <i><font color="#777777">Prev</font></i>
+[%# if WEBKIT_CHANGES %]
+    <i><font color="#777777">&laquo;&nbsp;Prev</font></i>
+[%# endif // WEBKIT_CHANGES %]
   [% END %]
 
   [% IF this_bug_idx + 1 < last_bug_list.size %]
     [% next_bug = this_bug_idx + 1 %]
     <a href="show_bug.cgi?id=
              [%- last_bug_list.$next_bug FILTER uri %]&amp;list_id=
-             [%- my_search.id FILTER uri %]">Next</a>
+[%# if WEBKIT_CHANGES %]
+             [%- my_search.id FILTER uri %]">Next&nbsp;&raquo;</a>
+[%# endif // WEBKIT_CHANGES %]
   [% ELSE %]
-    <i><font color="#777777">Next</font></i>
+[%# if WEBKIT_CHANGES %]
+    <i><font color="#777777">Next&nbsp;&raquo;</font></i>
+[%# endif // WEBKIT_CHANGES %]
   [% END %]
 
   &nbsp;&nbsp;<a href="buglist.cgi?regetlastlist=
               [%- my_search.id FILTER uri %]">Show last search results</a>
 [% ELSE %]
   [%# With no list, don't show link to search results %]
-  <i><font color="#777777">First</font></i>
-  <i><font color="#777777">Last</font></i>
-  <i><font color="#777777">Prev</font></i>
-  <i><font color="#777777">Next</font></i>
+[%# if WEBKIT_CHANGES %]
+  <i><font color="#777777">|&laquo;&nbsp;First</font></i>
+  <i><font color="#777777">Last&nbsp;&raquo;|</font></i>
+  <i><font color="#777777">&laquo;&nbsp;Prev</font></i>
+  <i><font color="#777777">Next&nbsp;&raquo;</font></i>
+[%# endif // WEBKIT_CHANGES %]
   &nbsp;&nbsp;
   <i><font color="#777777">This [% terms.bug %] is not in your last
     search results.</font></i>

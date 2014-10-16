@@ -33,8 +33,10 @@
 
 <dl>
   <dt>
+[%# if WEBKIT_CHANGES %]
     <a title="[% attachment.description FILTER html %]"
-       href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Attachment #[% attachment.id %]</a>
+       href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Attachment #[% attachment.id %]</a>
+[%# endif // WEBKIT_CHANGES %]
     to [% "$terms.bug $attachment.bug_id" FILTER bug_link(attachment.bug_id) FILTER none %] created
   </dt>
   <dd>
@@ -50,7 +52,9 @@
         <b>Note:</b> [% terms.Bugzilla %] automatically detected the content type
         <em>[% attachment.contenttype FILTER html %]</em> for this attachment.  If this is
         incorrect, correct the value by editing the attachment's
-        <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">details</a>.
+[%# if WEBKIT_CHANGES %]
+        <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">details</a>.
+[%# endif // WEBKIT_CHANGES %]
       </p>
     [% END %]
 

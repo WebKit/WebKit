@@ -91,10 +91,18 @@
     [% END %]
   </td>
 </tr>
+[%# if WEBKIT_CHANGES %]
+[% USE CGI %]
+[% cgi_product = CGI.param('product') %]
+[% PROCESS attachment/patchlegalese.html.tmpl product = cgi_product %]
+[%# endif // WEBKIT_CHANGES %]
 
 [% BLOCK content_types %]
+[%# WEBKIT_CHANGES: Added XHTML source and SVG image. %]
   [% mimetypes = [{type => "text/plain", desc => "plain text"},
                   {type => "text/html",  desc => "HTML source"},
+                  {type => "application/xhtml+xml", desc => "XHTML source"},
+                  {type => "image/svg+xml", desc => "SVG image"},
                   {type => "application/xml", desc => "XML source"},
                   {type => "image/gif",  desc => "GIF image"},
                   {type => "image/jpeg", desc => "JPEG image"},

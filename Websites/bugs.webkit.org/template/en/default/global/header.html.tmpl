@@ -34,7 +34,7 @@
   # style: string. CSS style.
   # style_urls: list. List of URLs to CSS style sheets.
   # message: string. A message to display to the user. May contain HTML.
-  # atomlink: Atom link URL, May contain HTML
+  # rsslink: RSS link URL, May contain HTML (WEBKIT_CHANGES)
   #%]
 
 [% IF message %]
@@ -230,12 +230,14 @@
       [% PROCESS format_js_link %]
     [% END %]
 
-    [%# this puts the live bookmark up on firefox for the Atom feed %]
-    [% IF atomlink %]
+[%# if WEBKIT_CHANGES #%]
+    [%# this puts the live bookmark up on firefox for the RSS feed %]
+    [% IF rsslink %]
        <link rel="alternate" 
-             type="application/atom+xml" title="Atom feed" 
-             href="[% atomlink FILTER html %]">
+             type="application/rss+xml" title="RSS 1.0" 
+             href="[% rsslink FILTER html %]">
     [% END %]
+[%# endif // WEBKIT_CHANGES #%]
 
     [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
     <link rel="search" type="application/opensearchdescription+xml"
@@ -249,7 +251,7 @@
   #%]
 
   <body onload="[% onload %]"
-        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') FILTER css_class_quote %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
                [% FOREACH class = bodyclasses %]
                  [% ' ' %][% class FILTER css_class_quote %]
                [% END %] yui-skin-sam">
@@ -260,26 +262,20 @@
 
 <div id="header">
 
-[% INCLUDE global/banner.html.tmpl %]
+[%# if WEBKIT_CHANGES #%]
+[%# INCLUDE global/banner.html.tmpl #%]
+[%# endif // WEBKIT_CHANGES #%]
 
 <table border="0" cellspacing="0" cellpadding="0" id="titles">
 <tr>
     <td id="title">
-      <p>[% terms.Bugzilla %]
-      [% " &ndash; $header" IF header %]</p>
+[%# if WEBKIT_CHANGES #%]
+      <p>WebKit [% terms.Bugzilla %]
+      [%# " &ndash; $header" IF header #%]</p>
+[%# endif // WEBKIT_CHANGES #%]
     </td>
 
-  [% IF subheader %]
-    <td id="subtitle">
-      <p class="subheader">[% subheader %]</p>
-    </td>
-  [% END %]
-
-  [% IF header_addl_info %]
-    <td id="information">
-      <p class="header_addl_info">[% header_addl_info %]</p>
-    </td>
-  [% END %]
+[%# WEBKIT_CHANGES: Removed subheader and header_addl_info output #%]
 </tr>
 </table>
 
@@ -300,6 +296,12 @@
   </ul>
 [% END %]
 </td></tr></table>
+
+[%# if WEBKIT_CHANGES #%]
+  [% IF header || subheader %]
+    <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
+  [% END %]
+[%# endif // WEBKIT_CHANGES #%]
 
 [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
 </div> [%# header %]

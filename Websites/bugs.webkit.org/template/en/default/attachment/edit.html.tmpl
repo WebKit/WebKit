@@ -223,6 +223,11 @@
                   document.write('<iframe id="viewDiffFrame" class="bz_default_hidden"><\/iframe>');
                 [% END %]
                 [% IF user.id %]
+[%# if WEBKIT_CHANGES %]
+                  [% IF attachment.ispatch %]
+                  document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch(attachment_id);">View Formatted Diff<\/button>');
+                  [% END %]
+[%# endif // WEBKIT_CHANGES %]
                   document.write('<button type="button" id="editButton" onclick="editAsComment(patchviewerinstalled);">Edit Attachment As Comment<\/button>');
                   document.write('<button type="button" id="undoEditButton" onclick="undoEditAsComment(patchviewerinstalled);" class="bz_default_hidden">Undo Edit As Comment<\/button>');
                   document.write('<button type="button" id="redoEditButton" onclick="redoEditAsComment(patchviewerinstalled);" class="bz_default_hidden">Redo Edit As Comment<\/button>');
@@ -254,6 +259,18 @@
       </div>
       <div id="attachment_comments_and_flags">
         [% IF user.id %]
+[%# if WEBKIT_CHANGES %]
+            [% IF attachment.ispatch %]
+        Bot Status:
+
+        <div class="statusBubble">
+          <iframe src="https://webkit-queues.appspot.com/status-bubble/[% attachment.id %]"
+                  style="width: 400px; height: 40px; border: none;" scrolling="no">
+          </iframe>
+        </div>
+        <br>
+            [% END %]
+[%# endif // WEBKIT_CHANGES %]
           <div id="smallCommentFrame" >
             <label for="comment">Comment (on the [% terms.bug %]):</label>
             [% classNames = 'block' %]
@@ -292,6 +309,11 @@
 <div id="attachment_actions">
   <span class="label">Actions:</span>
   <a href="attachment.cgi?id=[% attachment.id %]">View</a>
+[%# if WEBKIT_CHANGES %]
+  [% IF attachment.ispatch %]
+    | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=prettypatch">Formatted Diff</a>
+  [% END %]
+[%# endif // WEBKIT_CHANGES %]
   [% IF use_patchviewer %]
     | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
   [% END %]
@@ -318,7 +340,7 @@
   <script type="text/javascript">
     <!--
       YAHOO.util.Dom.removeClass( document.body, "no_javascript" );
-      toggle_attachment_details_visibility( );
+      // toggle_attachment_details_visibility( ); // WEBKIT_CHANGES
     -->
   </script>
 [% END %]

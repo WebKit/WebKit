@@ -131,6 +131,9 @@ TUI_hide_default('attachment_text_field');
     [% END %]
 
     [% Hook.process('form_before_submit') %]
+[%# if WEBKIT_CHANGES %]
+[% PROCESS attachment/patchlegalese.html.tmpl product = bug.product %]
+[%# endif // WEBKIT_CHANGES %]
 
     <tr>
       <th>&nbsp;</th>

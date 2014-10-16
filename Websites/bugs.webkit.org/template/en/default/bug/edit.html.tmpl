@@ -30,8 +30,9 @@
 
 [% PROCESS bug/time.html.tmpl %]
 
-<script type="text/javascript">
-<!--
+  <script type="text/javascript">
+  <!--
+  
   /* Outputs a link to call replyToComment(); used to reduce HTML output */
   function addReplyLink(id, real_id) {
       /* XXX this should really be updated to use the DOM Core's
@@ -118,7 +119,6 @@
 
 [% END %]
 
-[% IF user.id %]
   /* Index all classifications so we can keep track of the classification
    * for the selected product, which could control field visibility.
    */
@@ -127,9 +127,9 @@
       all_classifications['[% product.name FILTER js %]'] = '
           [%- product.classification.name FILTER js %]';
   [%- END %]
-[% END %]
-//-->
-</script>
+
+  //-->
+  </script>
 
 <form name="changeform" id="changeform" method="post" action="process_bug.cgi">
 
@@ -139,7 +139,9 @@
   <input type="hidden" name="token" value="[% issue_hash_token([bug.id, bug.delta_ts]) FILTER html %]">
 
   [% PROCESS section_title %]
-  <table class="edit_form">
+[%# if WEBKIT_CHANGES %]
+  <table id="bug_details" class="edit_form">
+[%# endif // WEBKIT_CHANGES %]
     <tr>
       [%# 1st Column %]
       <td id="bz_show_bug_column_1" class="bz_show_bug_column">     
@@ -352,10 +354,14 @@
     </tr>
     <tr>
       <td class="field_label">
-        <label for="version"><b>Version</b></label>:
+[%# if WEBKIT_CHANGES %]
+        <label for="version"><b><u>V</u>ersion</b></label>:
+[%# endif // WEBKIT_CHANGES %]
       </td>
 
-      [% PROCESS select selname => "version" %]
+[%# if WEBKIT_CHANGES %]
+      [% PROCESS select selname => "version" accesskey => "v" %]
+[%# endif // WEBKIT_CHANGES %]
     </tr>
     [%############%]    
     [%# PLATFORM #%]
@@ -374,7 +380,9 @@
             no_tds = 1, value = bug.op_sys
             editable = bug.check_can_change_field('op_sys', 0, 1) %]
        <script type="text/javascript">
-         assignToDefaultOnChange(['product', 'component']);
+[%# if WEBKIT_CHANGES %]
+         assignToDefaultOnChange(['product']);
+[%# endif // WEBKIT_CHANGES %]
        </script>
       </td>
     </tr>
@@ -422,17 +430,22 @@
     <tr>
       <td class="field_label">
         <label for="priority" accesskey="i">
-          <b><a href="page.cgi?id=fields.html#importance"><u>I</u>mportance</a></b></label>:
+[%# if WEBKIT_CHANGES %]
+          <b><a href="page.cgi?id=fields.html#importance"><u>I</u>mportanc<u>e</u></a></b></label>:
+[%# endif // WEBKIT_CHANGES %]
       </td>
       <td>
        [% INCLUDE bug/field.html.tmpl
             bug = bug, field = bug_fields.priority,
             no_tds = 1, value = bug.priority
             editable = bug.check_can_change_field('priority', 0, 1) %]
+[%# if WEBKIT_CHANGES %]
        [%+ INCLUDE bug/field.html.tmpl
             bug = bug, field = bug_fields.bug_severity,
             no_tds = 1, value = bug.bug_severity
+            accesskey = 'e'
             editable = bug.check_can_change_field('bug_severity', 0, 1) %]
+[%# endif // WEBKIT_CHANGES %]
         [% Hook.process('after_importance', 'bug/edit.html.tmpl') %]
       </td>
     </tr>
@@ -442,9 +455,13 @@
         <td class="field_label">
           <label for="target_milestone">
               <a href="page.cgi?id=fields.html#target_milestone">
-            Target&nbsp;Milestone</a></label>:
+[%# if WEBKIT_CHANGES %]
+            <u>T</u>arget&nbsp;Milestone</a></label>:
+[%# endif // WEBKIT_CHANGES %]
         </td>
-        [% PROCESS select selname = "target_milestone" %]
+[%# if WEBKIT_CHANGES %]
+        [% PROCESS select selname => "target_milestone" accesskey => "t" %]
+[%# endif // WEBKIT_CHANGES %]
       </tr>
     [% END %]
   

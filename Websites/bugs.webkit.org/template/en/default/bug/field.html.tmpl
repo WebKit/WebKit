@@ -35,6 +35,7 @@
   #           wrapping <td> for the field.
   #   bug (optional): The current Bugzilla::Bug being displayed, or a hash 
   #                   with default field values being displayed on a page.
+  #   accesskey: set an accesskey attribute for this string
   #%]
 
 [% SET hidden = 0 %]
@@ -55,6 +56,9 @@
         <input id="[% field.name FILTER html %]" class="text_input"
                name="[% field.name FILTER html %]"
                value="[% value FILTER html %]" size="40"
+[% IF accesskey %]
+               accesskey="[% accesskey FILTER html %]"
+[% END %]
                maxlength="[% constants.MAX_FREETEXT_LENGTH FILTER none %]"
                [% ' aria-required="true"' IF field.is_mandatory %]>
     [% CASE constants.FIELD_TYPE_DATETIME %]

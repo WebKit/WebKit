@@ -76,7 +76,11 @@ function toggle_display(link) {
                  [% " bz_patch" IF attachment.ispatch %]
                  [% " bz_private" IF attachment.isprivate %]
                  [% " bz_tr_obsolete bz_default_hidden" 
-                     IF attachment.isobsolete %]">
+                     IF attachment.isobsolete %]"
+[%# if WEBKIT_CHANGES %]
+                 [% IF attachment.ispatch && !attachment.isobsolete %] style="background-color: rgb(255,255,200);" [% END %]
+[%# endif // WEBKIT_CHANGES %]
+      >
         <td valign="top">
           [% IF attachment.datasize %]
             <a href="attachment.cgi?id=[% attachment.id %]"
@@ -135,11 +139,30 @@ function toggle_display(link) {
         [% END %]
 
         <td valign="top">
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch && user.id %]
+          <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Review Patch</a> |
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
           <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Details</a>
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch %]
+            | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=prettypatch">Formatted Diff</a>
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
           [% IF attachment.ispatch && feature_enabled('patch_viewer') %]
             | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
           [% END %]
           [% Hook.process("action") %]
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch %]
+          <div class="statusBubble">
+            <iframe src="https://webkit-queues.appspot.com/status-bubble/[% attachment.id %]"
+                    style="width: 600px; height: 20px; border: none;" scrolling="no">
+            </iframe>
+          </div>
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
         </td>
       </tr>
     [% END %]

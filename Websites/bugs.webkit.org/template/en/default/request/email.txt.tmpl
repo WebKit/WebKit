@@ -73,7 +73,9 @@ X-Bugzilla-Type: request
 [% FILTER bullet = wrap(80) %]
 Attachment [% attidsummary %]
 [%- END %]
-[%+ urlbase %]attachment.cgi?id=[% attachment.id %]&action=edit
+[%# if WEBKIT_CHANGES #%]
+[%+ urlbase %]attachment.cgi?id=[% attachment.id %]&action=review
+[%# endif // WEBKIT_CHANGES #%]
 [%- END %]
 
 [%- Hook.process('after_summary') -%]

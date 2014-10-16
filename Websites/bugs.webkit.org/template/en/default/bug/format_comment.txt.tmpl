@@ -42,7 +42,7 @@ X[% comment_body %]
 [% ELSIF comment.type == constants.CMT_ATTACHMENT_CREATED %]
 Created attachment [% comment.extra_data %]
 [% IF is_bugmail %]
-  --> [% urlbase _ "attachment.cgi?id=" _ comment.extra_data _ "&action=edit" %]
+  --> [% urlbase _ "attachment.cgi?id=" _ comment.extra_data _ "&action=review" %]
 [% END %]
 [%+ comment.attachment.description %]
 
