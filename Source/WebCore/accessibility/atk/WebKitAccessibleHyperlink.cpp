@@ -231,10 +231,10 @@ static gint getRangeLengthForObject(AccessibilityObject* obj, Range* range)
         return baseLength;
 
     RenderObject* renderer = markerObj->renderer();
-    if (!renderer || !renderer->isListMarker())
+    if (!is<RenderListMarker>(renderer))
         return baseLength;
 
-    RenderListMarker& marker = toRenderListMarker(*renderer);
+    auto& marker = downcast<RenderListMarker>(*renderer);
     return baseLength + marker.text().length() + marker.suffix().length();
 }
 

@@ -118,10 +118,10 @@ static Element* enclosingList(const RenderListItem* listItem)
 }
 
 // Returns the next list item with respect to the DOM order.
-static RenderListItem* nextListItem(const Element* listNode, const RenderListItem* item = 0)
+static RenderListItem* nextListItem(const Element* listNode, const RenderListItem* item = nullptr)
 {
     if (!listNode)
-        return 0;
+        return nullptr;
 
     const Element* current = item ? &item->element() : listNode;
     current = ElementTraversal::nextIncludingPseudo(current, listNode);
@@ -133,15 +133,15 @@ static RenderListItem* nextListItem(const Element* listNode, const RenderListIte
             continue;
         }
 
-        RenderObject* renderer = current->renderer();
-        if (renderer && renderer->isListItem())
-            return toRenderListItem(renderer);
+        RenderElement* renderer = current->renderer();
+        if (is<RenderListItem>(renderer))
+            return downcast<RenderListItem>(renderer);
 
         // FIXME: Can this be optimized to skip the children of the elements without a renderer?
         current = ElementTraversal::nextIncludingPseudo(current, listNode);
     }
 
-    return 0;
+    return nullptr;
 }
 
 // Returns the previous list item with respect to the DOM order.
@@ -149,13 +149,13 @@ static RenderListItem* previousListItem(const Element* listNode, const RenderLis
 {
     Element* current = &item->element();
     for (current = ElementTraversal::previousIncludingPseudo(current, listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
-        RenderObject* renderer = current->renderer();
-        if (!renderer || (renderer && !renderer->isListItem()))
+        RenderElement* renderer = current->renderer();
+        if (!is<RenderListItem>(renderer))
             continue;
-        Node* otherList = enclosingList(toRenderListItem(renderer));
+        Element* otherList = enclosingList(downcast<RenderListItem>(renderer));
         // This item is part of our current list, so it's what we're looking for.
         if (listNode == otherList)
-            return toRenderListItem(renderer);
+            return downcast<RenderListItem>(renderer);
         // We found ourself inside another list; lets skip the rest of it.
         // Use nextIncludingPseudo() here because the other list itself may actually
         // be a list item itself. We need to examine it, so we do this to counteract
@@ -163,7 +163,7 @@ static RenderListItem* previousListItem(const Element* listNode, const RenderLis
         if (otherList)
             current = ElementTraversal::nextIncludingPseudo(otherList);
     }
-    return 0;
+    return nullptr;
 }
 
 void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement* listNode)

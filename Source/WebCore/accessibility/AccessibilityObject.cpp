@@ -1160,8 +1160,8 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
 {
     for (; node; node = node->parentNode()) {
         RenderBoxModelObject* renderer = node->renderBoxModelObject();
-        if (renderer && renderer->isListItem())
-            return toRenderListItem(renderer);
+        if (is<RenderListItem>(renderer))
+            return downcast<RenderListItem>(renderer);
     }
     return nullptr;
 }

@@ -430,7 +430,7 @@ inline void BreakingContext::handleReplaced()
     // Optimize for a common case. If we can't find whitespace after the list
     // item, then this is all moot.
     LayoutUnit replacedLogicalWidth = m_block.logicalWidthForChild(replacedBox) + m_block.marginStartForChild(replacedBox) + m_block.marginEndForChild(replacedBox) + inlineLogicalWidth(m_current.renderer());
-    if (m_current.renderer()->isListMarker()) {
+    if (is<RenderListMarker>(*m_current.renderer())) {
         if (m_blockStyle.collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineMidpointState)) {
             // Like with inline flows, we start ignoring spaces to make sure that any
             // additional spaces we see will be discarded.
@@ -438,12 +438,12 @@ inline void BreakingContext::handleReplaced()
             m_currentCharacterIsWS = false;
             m_ignoringSpaces = true;
         }
-        if (toRenderListMarker(*m_current.renderer()).isInside())
+        if (downcast<RenderListMarker>(*m_current.renderer()).isInside())
             m_width.addUncommittedWidth(replacedLogicalWidth);
     } else
         m_width.addUncommittedWidth(replacedLogicalWidth);
-    if (m_current.renderer()->isRubyRun())
-        m_width.applyOverhang(toRenderRubyRun(m_current.renderer()), m_lastObject, m_nextObject);
+    if (is<RenderRubyRun>(*m_current.renderer()))
+        m_width.applyOverhang(downcast<RenderRubyRun>(m_current.renderer()), m_lastObject, m_nextObject);
     // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
     m_renderTextInfo.m_lineBreakIterator.updatePriorContext(replacementCharacter);
 }
@@ -995,7 +995,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
 
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
-        if (m_lastObject->isReplaced() && m_autoWrap && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!m_lastObject->isListMarker() || toRenderListMarker(*m_lastObject).isInside())) {
+        if (m_lastObject->isReplaced() && m_autoWrap && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
             m_width.commit();
             m_lineBreak.moveToStartOf(m_nextObject);
         }

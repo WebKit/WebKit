@@ -177,7 +177,7 @@ bool TextAutoSizingValue::adjustNodeSizes()
                 RefPtr<RenderStyle> style = cloneRenderStyleWithState(listMarkerRenderer->style());
                 style->setFontDescription(fontDescription);
                 style->font().update(autoSizingNode->document().ensureStyleResolver().fontSelector());
-                toRenderListMarker(*listMarkerRenderer).setStyle(style.releaseNonNull());
+                downcast<RenderListMarker>(*listMarkerRenderer).setStyle(style.releaseNonNull());
             }
             
             // Resize the line height of the parent.

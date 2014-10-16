@@ -93,8 +93,6 @@ private:
     bool m_notInList : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderListItem, isListItem())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListItem, isListItem())

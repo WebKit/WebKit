@@ -127,7 +127,7 @@ void AccessibilityListBox::visibleChildren(AccessibilityChildrenVector& result)
     
     unsigned length = m_children.size();
     for (unsigned i = 0; i < length; i++) {
-        if (toRenderListBox(m_renderer)->listIndexIsVisible(i))
+        if (downcast<RenderListBox>(*m_renderer).listIndexIsVisible(i))
             result.append(m_children[i]);
     }
 }
@@ -159,8 +159,8 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
     
     AccessibilityObject* listBoxOption = nullptr;
     unsigned length = m_children.size();
-    for (unsigned i = 0; i < length; i++) {
-        LayoutRect rect = toRenderListBox(m_renderer)->itemBoundingBoxRect(parentRect.location(), i);
+    for (unsigned i = 0; i < length; ++i) {
+        LayoutRect rect = downcast<RenderListBox>(*m_renderer).itemBoundingBoxRect(parentRect.location(), i);
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         if (rect.contains(point)) {

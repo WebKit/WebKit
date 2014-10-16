@@ -45,7 +45,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
     // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
     // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
     saveLastSelection();
-    if (RenderMenuList* menuList = toRenderMenuList(renderer()))
+    if (auto* menuList = downcast<RenderMenuList>(renderer()))
         menuList->showPopup();
 
     int index = selectedIndex();

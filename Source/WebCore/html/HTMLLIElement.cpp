@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ElementAncestorIterator.h"
 #include "HTMLNames.h"
 #include "RenderListItem.h"
 
@@ -87,39 +88,37 @@ void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomicString
 
 void HTMLLIElement::didAttachRenderers()
 {
-    if (!renderer() || !renderer()->isListItem())
+    if (!is<RenderListItem>(renderer()))
         return;
-    RenderListItem* listItemRenderer = toRenderListItem(renderer());
+    auto& listItemRenderer = downcast<RenderListItem>(*renderer());
 
-    // Find the enclosing list node.
-    Element* listNode = 0;
-    Element* current = this;
-    while (!listNode) {
-        current = current->parentElement();
-        if (!current)
+    // Check if there is an enclosing list.
+    bool isInList = false;
+    for (auto& ancestor : ancestorsOfType<HTMLElement>(*this)) {
+        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor)) {
+            isInList = true;
             break;
-        if (current->hasTagName(ulTag) || current->hasTagName(olTag))
-            listNode = current;
+        }
     }
 
     // If we are not in a list, tell the renderer so it can position us inside.
     // We don't want to change our style to say "inside" since that would affect nested nodes.
-    if (!listNode)
-        listItemRenderer->setNotInList(true);
+    if (!isInList)
+        listItemRenderer.setNotInList(true);
 
     parseValue(fastGetAttribute(valueAttr));
 }
 
 inline void HTMLLIElement::parseValue(const AtomicString& value)
 {
-    ASSERT(renderer() && renderer()->isListItem());
+    ASSERT(renderer());
 
     bool valueOK;
     int requestedValue = value.toInt(&valueOK);
     if (valueOK)
-        toRenderListItem(renderer())->setExplicitValue(requestedValue);
+        downcast<RenderListItem>(*renderer()).setExplicitValue(requestedValue);
     else
-        toRenderListItem(renderer())->clearExplicitValue();
+        downcast<RenderListItem>(*renderer()).clearExplicitValue();
 }
 
 }

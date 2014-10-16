@@ -2092,13 +2092,13 @@ bool Internals::isSelectPopupVisible(Node* node)
 
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*node);
 
-    auto renderer = select.renderer();
-    if (!renderer->isMenuList())
+    auto* renderer = select.renderer();
+    ASSERT(renderer);
+    if (!is<RenderMenuList>(*renderer))
         return false;
 
 #if !PLATFORM(IOS)
-    RenderMenuList* menuList = toRenderMenuList(renderer);
-    return menuList->popupIsVisible();
+    return downcast<RenderMenuList>(*renderer).popupIsVisible();
 #else
     return false;
 #endif // !PLATFORM(IOS)

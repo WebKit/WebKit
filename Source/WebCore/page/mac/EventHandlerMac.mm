@@ -842,8 +842,8 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
             if (scrollableContainer) {
                 if (RenderBox* box = scrollableContainer->renderBox()) {
-                    if (box->isListBox())
-                        scrollableArea = toRenderListBox(box);
+                    if (is<RenderListBox>(*box))
+                        scrollableArea = downcast<RenderListBox>(box);
                     else
                         scrollableArea = box->layer();
                 }

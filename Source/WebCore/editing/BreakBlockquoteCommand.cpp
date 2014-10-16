@@ -148,8 +148,8 @@ void BreakBlockquoteCommand::doApply()
             // find the first one so that we know where to start numbering.
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
-            if (listChildNode && listChildNode->renderer() && listChildNode->renderer()->isListItem())
-                setNodeAttribute(clonedChild, startAttr, AtomicString::number(toRenderListItem(listChildNode->renderer())->value()));
+            if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
+                setNodeAttribute(clonedChild, startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
         }
             
         appendNode(clonedChild.get(), clonedAncestor.get());

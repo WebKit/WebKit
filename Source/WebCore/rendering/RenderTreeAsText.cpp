@@ -934,11 +934,11 @@ String markerTextForListItem(Element* element)
     RefPtr<Element> elementRef(element);
     element->document().updateLayout();
 
-    RenderObject* renderer = element->renderer();
-    if (!renderer || !renderer->isListItem())
+    RenderElement* renderer = element->renderer();
+    if (!is<RenderListItem>(renderer))
         return String();
 
-    return toRenderListItem(renderer)->markerText();
+    return downcast<RenderListItem>(*renderer).markerText();
 }
 
 } // namespace WebCore

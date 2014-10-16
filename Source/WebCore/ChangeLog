@@ -1,3 +1,67 @@
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for list-related render objects
+        https://bugs.webkit.org/show_bug.cgi?id=137764
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() for list-related render objects and clean up
+        the surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::visibleChildren):
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::renderListItemContainerForNode):
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (getRangeLengthForObject):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (accessibilityObjectLength):
+        (offsetAdjustmentForListItem):
+        (webkitAccessibleTextGetText):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::didAttachRenderers):
+        (WebCore::HTMLLIElement::parseValue):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::nextSelectableListIndexPageAway):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer):
+        (WebCore::HTMLSelectElement::selectOption):
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/HTMLSelectElementWin.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformPrepareForWheelEvents):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::nextListItem):
+        (WebCore::previousListItem):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::markerTextForListItem):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustNodeSizes):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isSelectPopupVisible):
+
 2014-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr for CachedResource

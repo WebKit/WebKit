@@ -270,8 +270,8 @@ static guint accessibilityObjectLength(const AccessibilityObject* object)
     // for those cases when it's needed to take it into account
     // separately (as in getAccessibilityObjectForOffset)
     RenderObject* renderer = object->renderer();
-    if (renderer && renderer->isListMarker()) {
-        RenderListMarker& marker = toRenderListMarker(*renderer);
+    if (is<RenderListMarker>(renderer)) {
+        auto& marker = downcast<RenderListMarker>(*renderer);
         return marker.text().length() + marker.suffix().length();
     }
 
@@ -363,8 +363,8 @@ static int offsetAdjustmentForListItem(const AccessibilityObject* object)
     // We need to adjust the offsets for the list item marker in
     // Left-To-Right text, since we expose it together with the text.
     RenderObject* renderer = object->renderer();
-    if (renderer && renderer->isListItem() && renderer->style().direction() == LTR)
-        return toRenderListItem(renderer)->markerTextWithSuffix().length();
+    if (is<RenderListItem>(renderer) && renderer->style().direction() == LTR)
+        return downcast<RenderListItem>(*renderer).markerTextWithSuffix().length();
 
     return 0;
 }
@@ -495,8 +495,8 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
     int actualEndOffset = endOffset == -1 ? ret.length() : endOffset;
     if (coreObject->roleValue() == ListItemRole) {
         RenderObject* objRenderer = coreObject->renderer();
-        if (objRenderer && objRenderer->isListItem()) {
-            String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
+        if (is<RenderListItem>(objRenderer)) {
+            String markerText = downcast<RenderListItem>(*objRenderer).markerTextWithSuffix();
             ret = objRenderer->style().direction() == LTR ? markerText + ret : ret + markerText;
             if (endOffset == -1)
                 actualEndOffset = ret.length() + markerText.length();

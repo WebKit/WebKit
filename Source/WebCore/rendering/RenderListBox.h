@@ -161,8 +161,6 @@ private:
     RefPtr<Scrollbar> m_vBar;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderListBox, isListBox())
-
 } // namepace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListBox, isListBox())

@@ -562,14 +562,14 @@ int HTMLSelectElement::nextSelectableListIndexPageAway(int startIndex, SkipDirec
     const Vector<HTMLElement*>& items = listItems();
     // Can't use m_size because renderer forces a minimum size.
     int pageSize = 0;
-    if (renderer()->isListBox())
-        pageSize = toRenderListBox(renderer())->size() - 1; // -1 so we still show context.
+    if (is<RenderListBox>(*renderer()))
+        pageSize = downcast<RenderListBox>(*renderer()).size() - 1; // -1 so we still show context.
 
     // One page away, but not outside valid bounds.
     // If there is a valid option item one page away, the index is chosen.
     // If there is no exact one page away valid option, returns startIndex or the most far index.
-    int edgeIndex = (direction == SkipForwards) ? 0 : (items.size() - 1);
-    int skipAmount = pageSize + ((direction == SkipForwards) ? startIndex : (edgeIndex - startIndex));
+    int edgeIndex = direction == SkipForwards ? 0 : items.size() - 1;
+    int skipAmount = pageSize + (direction == SkipForwards ? startIndex : edgeIndex - startIndex);
     return nextValidIndex(edgeIndex, direction, skipAmount);
 }
 
@@ -707,26 +707,26 @@ void HTMLSelectElement::scrollToSelection()
     if (usesMenuList())
         return;
 
-    auto renderer = this->renderer();
-    if (!renderer || !renderer->isListBox())
+    auto* renderer = this->renderer();
+    if (!is<RenderListBox>(renderer))
         return;
-    toRenderListBox(renderer)->selectionChanged();
+    downcast<RenderListBox>(*renderer).selectionChanged();
 #else
-    if (auto renderer = this->renderer())
+    if (auto* renderer = this->renderer())
         renderer->repaint();
 #endif
 }
 
 void HTMLSelectElement::setOptionsChangedOnRenderer()
 {
-    if (auto renderer = this->renderer()) {
+    if (auto* renderer = this->renderer()) {
 #if !PLATFORM(IOS)
-        if (renderer->isMenuList())
-            toRenderMenuList(renderer)->setOptionsChanged(true);
+        if (is<RenderMenuList>(*renderer))
+            downcast<RenderMenuList>(*renderer).setOptionsChanged(true);
         else
-            toRenderListBox(renderer)->setOptionsChanged(true);
+            downcast<RenderListBox>(*renderer).setOptionsChanged(true);
 #else
-        toRenderMenuList(renderer)->setOptionsChanged(true);
+        downcast<RenderMenuList>(*renderer).setOptionsChanged(true);
 #endif
     }
 }
@@ -889,7 +889,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         deselectItemsWithoutValidation(element);
 
     // For the menu list case, this is what makes the selected element appear.
-    if (auto renderer = this->renderer())
+    if (auto* renderer = this->renderer())
         renderer->updateFromElement();
 
     scrollToSelection();
@@ -898,11 +898,11 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         m_isProcessingUserDrivenChange = flags & UserDriven;
         if (flags & DispatchChangeEvent)
             dispatchChangeEventForMenuList();
-        if (auto renderer = this->renderer()) {
-            if (renderer->isMenuList())
-                toRenderMenuList(renderer)->didSetSelectedIndex(listIndex);
+        if (auto* renderer = this->renderer()) {
+            if (is<RenderMenuList>(*renderer))
+                downcast<RenderMenuList>(*renderer).didSetSelectedIndex(listIndex);
             else
-                toRenderListBox(renderer)->selectionChanged();
+                downcast<RenderListBox>(*renderer).selectionChanged();
         }
     }
 
@@ -1120,7 +1120,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            if (!renderer() || !renderer()->isMenuList())
+            if (!is<RenderMenuList>(renderer()))
                 return true;
 
             // Save the selection so it can be compared to the new selection
@@ -1128,7 +1128,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
-            toRenderMenuList(renderer())->showPopup();
+            downcast<RenderMenuList>(*renderer()).showPopup();
             event->setDefaultHandled();
         }
         return true;
@@ -1219,7 +1219,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
                 // Calling focus() may remove the renderer or change the
                 // renderer type.
-                if (!renderer() || !renderer()->isMenuList())
+                if (!is<RenderMenuList>(renderer()))
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1227,7 +1227,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                toRenderMenuList(renderer())->showPopup();
+                downcast<RenderMenuList>(*renderer()).showPopup();
                 handled = true;
             }
         } else if (renderTheme->popsMenuByArrowKeys()) {
@@ -1236,7 +1236,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
                 // Calling focus() may remove the renderer or change the
                 // renderer type.
-                if (!renderer() || !renderer()->isMenuList())
+                if (!is<RenderMenuList>(renderer()))
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1244,7 +1244,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                toRenderMenuList(renderer())->showPopup();
+                downcast<RenderMenuList>(*renderer()).showPopup();
                 handled = true;
             } else if (keyCode == '\r') {
                 if (form())
@@ -1261,8 +1261,8 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
     if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         focus();
 #if !PLATFORM(IOS)
-        if (renderer() && renderer()->isMenuList()) {
-            auto& menuList = toRenderMenuList(*renderer());
+        if (is<RenderMenuList>(renderer())) {
+            auto& menuList = downcast<RenderMenuList>(*renderer());
             ASSERT(!menuList.popupIsVisible());
             // Save the selection so it can be compared to the new
             // selection when we call onChange during selectOption,
@@ -1278,7 +1278,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
 #if !PLATFORM(IOS)
     if (event->type() == eventNames().blurEvent && !focused()) {
-        auto& menuList = toRenderMenuList(*renderer());
+        auto& menuList = downcast<RenderMenuList>(*renderer());
         if (menuList.popupIsVisible())
             menuList.hidePopup();
     }
@@ -1341,13 +1341,13 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
     if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
         focus();
         // Calling focus() may remove or change our renderer, in which case we don't want to handle the event further.
-        if (!renderer() || !renderer()->isListBox())
+        if (!is<RenderListBox>(renderer()))
             return;
 
         // Convert to coords relative to the list box if needed.
         MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
         IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent.absoluteLocation(), UseTransforms));
-        int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
+        int listIndex = downcast<RenderListBox>(*renderer()).listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
 #if PLATFORM(COCOA)
@@ -1367,7 +1367,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             return;
 
         IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent.absoluteLocation(), UseTransforms));
-        int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
+        int listIndex = downcast<RenderListBox>(*renderer()).listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
                 if (m_multiple) {
@@ -1475,7 +1475,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
                 setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
             }
 
-            toRenderListBox(renderer())->scrollToRevealElementAtListIndex(endIndex);
+            downcast<RenderListBox>(*renderer()).scrollToRevealElementAtListIndex(endIndex);
             if (selectNewItem) {
                 updateListBoxSelection(deselectOthers);
                 listBoxOnChange();

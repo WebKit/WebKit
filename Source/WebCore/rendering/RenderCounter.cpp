@@ -131,9 +131,9 @@ static bool planCounter(RenderElement& renderer, const AtomicString& identifier,
     }
 
     if (identifier == "list-item") {
-        if (renderer.isListItem()) {
-            if (toRenderListItem(renderer).hasExplicitValue()) {
-                value = toRenderListItem(renderer).explicitValue();
+        if (is<RenderListItem>(renderer)) {
+            if (downcast<RenderListItem>(renderer).hasExplicitValue()) {
+                value = downcast<RenderListItem>(renderer).explicitValue();
                 isReset = true;
                 return true;
             }

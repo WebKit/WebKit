@@ -161,7 +161,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
         } else if (!child->renderer().isLineBreak() && (childStyle.boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
-            || (child->renderer().isListMarker() && !toRenderListMarker(child->renderer()).isInside())
+            || (is<RenderListMarker>(child->renderer()) && !downcast<RenderListMarker>(child->renderer()).isInside())
             || childStyle.hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
         
@@ -408,7 +408,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
                 if (knownToHaveNoOverflow())
                     maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
                 logicalLeft += flow.marginLogicalRight();
-            } else if (!child->renderer().isListMarker() || toRenderListMarker(child->renderer()).isInside()) {
+            } else if (!is<RenderListMarker>(child->renderer()) || downcast<RenderListMarker>(child->renderer()).isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
                 LayoutUnit logicalLeftMargin = isHorizontal() ? child->boxModelObject()->marginLeft() : child->boxModelObject()->marginTop();
