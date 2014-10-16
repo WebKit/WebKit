@@ -1,3 +1,15 @@
+2014-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        commit-queue: fails to close bugs after successfully landing patches
+        <http://webkit.org/b/137794>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.clear_attachment_flags): Change 'nr=0' to 'nr=1' to
+        tell Mechanize to use the second <textarea> on the page with
+        name="comment".
+
 2014-10-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update DRT to match Mac Logic

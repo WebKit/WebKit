@@ -754,7 +754,7 @@ class Bugzilla(object):
 
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
-        self.browser.set_value(comment_text, name='comment', nr=0)
+        self.browser.set_value(comment_text, name='comment', nr=1)
         self._find_select_element_for_flag('review').value = ("X",)
         self._find_select_element_for_flag('commit-queue').value = ("X",)
         self.browser.submit()
