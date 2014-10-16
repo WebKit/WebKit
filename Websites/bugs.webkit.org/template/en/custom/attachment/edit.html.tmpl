@@ -225,7 +225,7 @@
                 [% IF user.id %]
 [%# if WEBKIT_CHANGES %]
                   [% IF attachment.ispatch %]
-                  document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch();">View Formatt
+                  document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch(attachment_id);">View Formatted Diff<\/button>');
                   [% END %]
 [%# endif // WEBKIT_CHANGES %]
                   document.write('<button type="button" id="editButton" onclick="editAsComment(patchviewerinstalled);">Edit Attachment As Comment<\/button>');

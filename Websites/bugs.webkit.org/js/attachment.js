@@ -265,7 +265,7 @@ function redoEditAsComment(patchviewerinstalled)
 function viewPrettyPatch(attachment_id)
 {
     viewing_formatted_diff = !viewing_formatted_diff;
-    var src = "attachment.cgi?id=" . $attachment_id;
+    var src = "attachment.cgi?id=" + attachment_id;
     var buttonText = "View Formatted Diff";
     if (viewing_formatted_diff) {
       src += "&action=prettypatch"
