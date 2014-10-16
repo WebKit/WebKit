@@ -100,11 +100,9 @@ my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLO
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
 my $codeMirrorPath = File::Spec->catdir($uiRoot, 'External', 'CodeMirror');
 my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
-my $eslintPath = File::Spec->catdir($uiRoot, 'External', 'ESLint');
 
 my $codeMirrorLicense = readLicenseFile(File::Spec->catfile($codeMirrorPath, 'LICENSE'));
-my $esprimaLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
-my $eslintLicense = readLicenseFile(File::Spec->catfile($eslintPath, 'LICENSE'));
+my $esprimaMirrorLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
 
 make_path($protocolDir, $targetResourcePath);
 
@@ -157,11 +155,7 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
 
     # Export the license into Esprima.js.
     my $targetEsprimaJS = File::Spec->catfile($targetResourcePath, 'Esprima.js');
-    seedFile($targetEsprimaJS, $esprimaLicense);
-
-    # Export the license into ESLint.js.
-    my $targetESLintJS = File::Spec->catfile($targetResourcePath, 'ESLint.js');
-    seedFile($targetESLintJS, $eslintLicense);
+    seedFile($targetEsprimaJS, $esprimaMirrorLicense);
 
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
     my $jsMinScript = File::Spec->catfile($scriptsRoot, 'jsmin.py');
@@ -178,10 +172,6 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
     # Minify the Esprima.js file, appending to the license that was exported above.
     my $derivedSouressEsprimaJS = File::Spec->catfile($derivedSourcesDir, 'Esprima.js');
     system(qq("$python" "$jsMinScript" < "$derivedSouressEsprimaJS" >> "$targetEsprimaJS")) and die "Failed to minify $derivedSouressEsprimaJS: $!";
-
-    # Minify the ESLint.js file, appending to the license that was exported above.
-    my $derivedSouressESLintJS = File::Spec->catfile($derivedSourcesDir, 'ESLint.js');
-    system(qq("$python" "$jsMinScript" < "$derivedSouressESLintJS" >> "$targetESLintJS")) and die "Failed to minify $derivedSouressESLintJS: $!";
 
     # Copy over Main.html and the Images directory.
     copy($derivedSourcesMainHTML, File::Spec->catfile($targetResourcePath, 'Main.html'));
