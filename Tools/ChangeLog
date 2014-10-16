@@ -1,5 +1,18 @@
 2014-10-16  David Kilzer  <ddkilzer@apple.com>
 
+        commit-queue: fails to replace OO-PS! with reviewer name
+        <http://webkit.org/b/137795>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.fetch_bug_dictionary): Bugzilla 4.2.x never gives out
+        email addresses to unauthenticated page loads, so we must always
+        authenticate before getting bug data so we get full email
+        addresses.
+
+2014-10-16  David Kilzer  <ddkilzer@apple.com>
+
         commit-queue: fails to close bugs after successfully landing patches
         <http://webkit.org/b/137794>
 

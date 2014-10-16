@@ -468,12 +468,10 @@ class Bugzilla(object):
 
     def fetch_bug_dictionary(self, bug_id):
         try:
+            self.authenticate()
             return self._parse_bug_dictionary_from_xml(self._fetch_bug_page(bug_id))
         except KeyboardInterrupt:
             raise
-        except:
-            self.authenticate()
-            return self._parse_bug_dictionary_from_xml(self._fetch_bug_page(bug_id))
 
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
 
