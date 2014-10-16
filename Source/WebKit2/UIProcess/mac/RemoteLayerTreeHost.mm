@@ -54,6 +54,9 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawin
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
+    for (auto& delegate : m_animationDelegates.values())
+        [delegate.get() invalidate];
+
     clearLayers();
 }
 
@@ -168,7 +171,6 @@ void RemoteLayerTreeHost::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerI
 
     if (!animationKey.isEmpty())
         m_drawingArea.acceleratedAnimationDidEnd(layerID, animationKey);
-
 }
 
 void RemoteLayerTreeHost::clearLayers()

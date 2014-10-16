@@ -1,3 +1,24 @@
+2014-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under RemoteLayerTreeHost::getLayer() when closing a tab
+        https://bugs.webkit.org/show_bug.cgi?id=137796
+        rdar://problem/18547565
+
+        Reviewed by Tim Horton.
+        
+        CA can call our animation delegate after the RemoteLayerTreeHost has been
+        destroyed. CAAnimation retains its delegate, so it's safe for us to null out
+        the WKAnimationDelegate's pointer to the RemoteLayerTreeHost when tearing down
+        the RemoteLayerTreeHost.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::~RemoteLayerTreeHost):
+        (WebKit::RemoteLayerTreeHost::animationDidEnd):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (-[WKAnimationDelegate invalidate]):
+        (-[WKAnimationDelegate animationDidStart:]):
+        (-[WKAnimationDelegate animationDidStop:finished:]):
+
 2014-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Implement selection services menu for Legacy WebKit

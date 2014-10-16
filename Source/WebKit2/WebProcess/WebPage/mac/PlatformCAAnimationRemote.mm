@@ -54,6 +54,7 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 }
 
 - (instancetype)initWithLayerID:(GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;
+- (void)invalidate;
 @end
 
 @implementation WKAnimationDelegate
@@ -67,8 +68,16 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
     return self;
 }
 
+- (void)invalidate
+{
+    _layerTreeHost = nullptr;
+}
+
 - (void)animationDidStart:(CAAnimation *)animation
 {
+    if (!_layerTreeHost)
+        return;
+
     bool hasExplicitBeginTime = [[animation valueForKey:WKExplicitBeginTimeFlag] boolValue];
     CFTimeInterval startTime;
 
@@ -84,6 +93,9 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
+    if (!_layerTreeHost)
+        return;
+
     _layerTreeHost->animationDidEnd(_layerID, animation);
 }
 
