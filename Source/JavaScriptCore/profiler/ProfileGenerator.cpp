@@ -117,12 +117,12 @@ void ProfileGenerator::beginCallEntry(ProfileNode* node, double startTime)
 {
     ASSERT_ARG(node, node);
 
-    if (isnan(startTime))
+    if (std::isnan(startTime))
         startTime = currentTime();
 
     // If the debugger is paused when beginning, then don't set the start time. It
     // will be fixed up when the debugger unpauses or the call entry ends.
-    if (!isnan(m_debuggerPausedTimestamp))
+    if (!std::isnan(m_debuggerPausedTimestamp))
         startTime = NAN;
 
     node->appendCall(ProfileNode::Call(startTime));
@@ -135,19 +135,19 @@ void ProfileGenerator::endCallEntry(ProfileNode* node)
     ProfileNode::Call& last = node->lastCall();
 
     // If the debugger is paused, ignore the interval that ends now.
-    if (!isnan(m_debuggerPausedTimestamp) && !isnan(last.elapsedTime()))
+    if (!std::isnan(m_debuggerPausedTimestamp) && !std::isnan(last.elapsedTime()))
         return;
 
     // If paused and no time was accrued then the debugger was never unpaused. The call will
     // have no time accrued and appear to have started when the debugger was paused.
-    if (!isnan(m_debuggerPausedTimestamp)) {
+    if (!std::isnan(m_debuggerPausedTimestamp)) {
         last.setStartTime(m_debuggerPausedTimestamp);
         last.setElapsedTime(0.0);
         return;
     }
 
     // Otherwise, add the interval ending now to elapsed time.
-    double previousElapsedTime = isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
+    double previousElapsedTime = std::isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
     double newlyElapsedTime = currentTime() - last.startTime();
     last.setElapsedTime(previousElapsedTime + newlyElapsedTime);
 }
@@ -225,15 +225,15 @@ void ProfileGenerator::exceptionUnwind(ExecState* handlerCallFrame, const CallId
 
 void ProfileGenerator::didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&)
 {
-    ASSERT(isnan(m_debuggerPausedTimestamp));
+    ASSERT(std::isnan(m_debuggerPausedTimestamp));
 
     m_debuggerPausedTimestamp = currentTime();
 
     for (ProfileNode* node = m_currentNode.get(); node != m_profile->rootNode(); node = node->parent()) {
         ProfileNode::Call& last = node->lastCall();
-        ASSERT(!isnan(last.startTime()));
+        ASSERT(!std::isnan(last.startTime()));
 
-        double previousElapsedTime = isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
+        double previousElapsedTime = std::isnan(last.elapsedTime()) ? 0.0 : last.elapsedTime();
         double additionalElapsedTime = m_debuggerPausedTimestamp - last.startTime();
         last.setStartTime(NAN);
         last.setElapsedTime(previousElapsedTime + additionalElapsedTime);
@@ -242,7 +242,7 @@ void ProfileGenerator::didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentif
 
 void ProfileGenerator::didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&)
 {
-    ASSERT(!isnan(m_debuggerPausedTimestamp));
+    ASSERT(!std::isnan(m_debuggerPausedTimestamp));
 
     for (ProfileNode* node = m_currentNode.get(); node != m_profile->rootNode(); node = node->parent())
         node->lastCall().setStartTime(m_debuggerPausedTimestamp);
