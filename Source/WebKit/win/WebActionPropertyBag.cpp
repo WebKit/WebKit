@@ -111,11 +111,12 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
     if (!pszPropName)
         return E_POINTER;
 
-    WTFLogAlways("pVar Pointer Value: %p", pVar);
     VariantClear(pVar);
 
     if (isEqual(pszPropName, WebActionNavigationTypeKey)) {
+        WTFLogAlways("WebActionNavigationKey 1");
         V_VT(pVar) = VT_I4;
+        WTFLogAlways("WebActionNavigationKey 2");
         V_I4(pVar) = m_action.type();
         return S_OK;
     }
@@ -135,6 +136,7 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
     }
     if (isEqual(pszPropName, WebActionOriginalURLKey)) {
         V_VT(pVar) = VT_BSTR;
+        WTFLogAlways("WebActionOriginalURLKey");
         V_BSTR(pVar) = BString(m_action.url().string()).release();
         return S_OK;
     }

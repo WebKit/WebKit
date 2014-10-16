@@ -112,6 +112,21 @@ RefPtr<TestRunner> gTestRunner;
 
 UINT_PTR waitToDumpWatchdog = 0;
 
+
+typedef int(*SETOANOCACHE)(void);
+
+void DisableBSTRCache()
+{
+    HINSTANCE hLib = LoadLibrary(L"OLEAUT32.DLL");
+    if (hLib != NULL)
+    {
+        SETOANOCACHE SetOaNoCache = (SETOANOCACHE)GetProcAddress(hLib, "SetOaNoCache");
+        if (SetOaNoCache != NULL)
+            SetOaNoCache();
+        FreeLibrary(hLib);
+    }
+}
+
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {
     persistentUserStyleSheetLocation = url;
@@ -1247,6 +1262,7 @@ int main(int argc, const char* argv[])
     ::SetErrorMode(0);
 
     ::SetUnhandledExceptionFilter(exceptionFilter);
+    DisableBSTRCache();
 
     leakChecking = false;
 
