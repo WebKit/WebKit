@@ -1,3 +1,15 @@
+2014-10-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r174025): remote inspector crashes frequently when executing inspector frontend's JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=137758
+
+        Rubber stamped by Filip Pizlo.
+
+        Reverted r174025 for just PutByOffset Nodes.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2014-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up unnecessary PassOwnPtr.h inclusion

@@ -943,7 +943,7 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
+            insertStoreBarrier(m_indexInBlock, node->child2());
             break;
         }
             
