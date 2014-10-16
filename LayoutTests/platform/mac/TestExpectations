@@ -382,9 +382,6 @@ webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 webkit.org/b/82982 fast/dom/jsDevicePixelRatio.html [ Pass Failure ]
 
-# Failing subpixel reference tests
-webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
-
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 http/tests/security/video-cross-origin-accessfailure.html
@@ -970,34 +967,29 @@ webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-sci
 
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 
-# Subpixel failures
+# Subpixel failures START
+# Inline text positioning
+webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
 
-# Subpixel: -webkit-flex off-by-one px
+# -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
-# debug assert on empty drawRect
-webkit.org/b/128283 [ Debug ] transitions/shorthand-border-transitions.html [ Skip ]
-
-# Non-uniform scaling context.
-webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
-
-# repaintRectsAsText reports different repaintrects on ML
+# repaintRectsAsText reports different repaintrects.
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
 # Some CSS region expected tests do not properly match CSS region's behavior.
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 
-webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
-
 # These tests require fractional text widths. Ahem can't provide it -> using LucidaGrandeUI -> fails on ML due to different font size.  
 [ MountainLion ] fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Pass ImageOnlyFailure ]
 [ MountainLion ] fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ Pass ImageOnlyFailure ]
-# clipping filter effects when region is present. 
+
+# Clipping filter effects when region is present.
 webkit.org/b/133523 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 
 webkit.org/b/136419 fast/sub-pixel/block-with-margin-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/137729 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
-# End of subpixel failures.
+# Subpixel failures END
 
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
 

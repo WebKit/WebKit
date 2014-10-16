@@ -2,6 +2,14 @@
 
         [Mac] Unreviewed gardening.
 
+        Unskip more subpixel related tests.
+
+        * platform/mac/TestExpectations:
+
+2014-10-16  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
         Unskip subpixel border tests.
 
         * platform/mac/TestExpectations:
