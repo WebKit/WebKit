@@ -413,13 +413,15 @@ private:
             variable = node->variableAccessData();
             variable->mergeIsCaptured(isCaptured);
             
-            switch (node->op()) {
-            case GetLocal:
-                return node;
-            case SetLocal:
-                return node->child1().node();
-            default:
-                break;
+            if (!isCaptured) {
+                switch (node->op()) {
+                case GetLocal:
+                    return node;
+                case SetLocal:
+                    return node->child1().node();
+                default:
+                    break;
+                }
             }
         } else
             variable = newVariableAccessData(operand, isCaptured);
