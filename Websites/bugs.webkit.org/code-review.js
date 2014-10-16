@@ -555,10 +555,10 @@ var CODE_REVIEW_UNITTEST;
       $.get('show_bug.cgi?id=' + bug_id, function(data) {
         var comments = [];
         $(data).find('.bz_comment').each(function() {
-          var author = $(this).find('.email').text();
+          var author = $(this).find('.email').text().trim();
           var text = $(this).find('.bz_comment_text').text();
 
-          var comment_marker = '(From update of attachment ' + attachment_id + ' .details.)';
+          var comment_marker = 'Comment on attachment ' + attachment_id + ' .details.';
           if (text.match(comment_marker))
             $.merge(comments, scanForComments(author, text));
 
