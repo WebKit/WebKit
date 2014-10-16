@@ -1,5 +1,11 @@
 2014-10-15  Zalan Bujtas  <zalan@apple.com>
 
+        [Mac] Unreviewed gardening(mountain-lion).
+
+        * platform/mac-mountainlion/fast/text/international/hindi-spacing-expected.txt: Added.
+
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
         [Mac] Unreviewed gardening.
 
         Rebaselining.
