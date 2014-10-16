@@ -205,6 +205,11 @@ public:
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) override;
+    virtual bool hasRelevantSelectionServices(bool isTextOnly) const override;
+#endif
+
 #if PLATFORM(IOS)
     WebView* webView() const { return m_webView; }
 #else
@@ -212,6 +217,5 @@ public:
 #endif
 
 private:
-
     WebView *m_webView;
 };

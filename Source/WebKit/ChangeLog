@@ -1,3 +1,13 @@
+2014-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Implement selection services menu for Legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=137582
+        <rdar://problem/18604241>
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening. Ignore Visual Studio *.sdf files.

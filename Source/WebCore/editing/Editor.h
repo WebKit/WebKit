@@ -432,7 +432,7 @@ public:
     WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
     WEBCORE_EXPORT const SimpleFontData* fontForSelection(bool&) const;
-    WEBCORE_EXPORT NSDictionary* fontAttributesForSelectionStart() const;
+    WEBCORE_EXPORT NSDictionary *fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
 #if !PLATFORM(IOS)
@@ -442,6 +442,7 @@ public:
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
     WEBCORE_EXPORT PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif // !PLATFORM(IOS)
+    WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
