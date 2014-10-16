@@ -1,3 +1,45 @@
+2014-10-15  Oliver Hunt  <oliver@apple.com>
+
+        Use a single allocation for the Arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=137751
+
+        Reviewed by Filip Pizlo.
+
+        This patch removes the secondary allocation for parameters in the Arguments
+        object.  This is faily simple, but we needed to make it possible for the JIT
+        to allocate a variable GC object.  To do this i've added a new 
+        emitAllocateVariableSizedJSObject function to the JIT that does the work to
+        find the correct heap for a variable sized allocation and then bump that
+        allocator.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateVariableSizedJSObject):
+        * heap/CopyToken.h:
+        * heap/Heap.h:
+        (JSC::Heap::subspaceForObjectWithoutDestructor):
+        (JSC::Heap::subspaceForObjectNormalDestructor):
+        (JSC::Heap::subspaceForObjectsWithImmortalStructure):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::subspaceForObjectsWithNormalDestructor):
+        (JSC::MarkedSpace::subspaceForObjectsWithImmortalStructure):
+        (JSC::MarkedSpace::subspaceForObjectsWithoutDestructor):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        (JSC::Arguments::copyBackingStore):
+        (JSC::Arguments::tearOff):
+        (JSC::Arguments::allocateRegisterArray): Deleted.
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::isTornOff):
+        (JSC::Arguments::offsetOfRegisterArray):
+        (JSC::Arguments::registerArraySizeInBytes):
+        (JSC::Arguments::registerArray):
+        (JSC::Arguments::allocationSize): Deleted.
+
 2014-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         Apparently we've had a hole in arguments capture all along

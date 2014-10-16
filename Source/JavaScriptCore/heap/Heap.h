@@ -135,7 +135,9 @@ public:
     HeapOperation operationInProgress() { return m_operationInProgress; }
     // true if an allocation or collection is in progress
     bool isBusy();
-    
+    MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
+    MarkedSpace::Subspace& subspaceForObjectNormalDestructor() { return m_objectSpace.subspaceForObjectsWithNormalDestructor(); }
+    MarkedSpace::Subspace& subspaceForObjectsWithImmortalStructure() { return m_objectSpace.subspaceForObjectsWithImmortalStructure(); }
     MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
     MarkedAllocator& allocatorForObjectWithNormalDestructor(size_t bytes) { return m_objectSpace.normalDestructorAllocatorFor(bytes); }
     MarkedAllocator& allocatorForObjectWithImmortalStructureDestructor(size_t bytes) { return m_objectSpace.immortalStructureDestructorAllocatorFor(bytes); }

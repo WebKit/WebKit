@@ -82,6 +82,22 @@ struct Size : MarkedBlock::CountFunctor {
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
+    // [ 32... 128 ]
+    static const size_t preciseStep = MarkedBlock::atomSize;
+    static const size_t preciseCutoff = 128;
+    static const size_t preciseCount = preciseCutoff / preciseStep;
+
+    // [ 1024... blockSize ]
+    static const size_t impreciseStep = 2 * preciseCutoff;
+    static const size_t impreciseCutoff = MarkedBlock::blockSize / 2;
+    static const size_t impreciseCount = impreciseCutoff / impreciseStep;
+
+    struct Subspace {
+        std::array<MarkedAllocator, preciseCount> preciseAllocators;
+        std::array<MarkedAllocator, impreciseCount> impreciseAllocators;
+        MarkedAllocator largeAllocator;
+    };
+
     MarkedSpace(Heap*);
     ~MarkedSpace();
     void lastChanceToFinalize();
@@ -93,7 +109,11 @@ public:
     void* allocateWithNormalDestructor(size_t);
     void* allocateWithImmortalStructureDestructor(size_t);
     void* allocateWithoutDestructor(size_t);
- 
+
+    Subspace& subspaceForObjectsWithNormalDestructor() { return m_normalDestructorSpace; }
+    Subspace& subspaceForObjectsWithImmortalStructure() { return m_immortalStructureDestructorSpace; }
+    Subspace& subspaceForObjectsWithoutDestructor() { return m_normalSpace; }
+
     void resetAllocators();
 
     void visitWeakSets(HeapRootVisitor&);
@@ -143,25 +163,10 @@ public:
 private:
     friend class DelayedReleaseScope;
     friend class LLIntOffsetsExtractor;
+    friend class JIT;
 
     template<typename Functor> void forEachAllocator(Functor&);
     template<typename Functor> void forEachAllocator();
-
-    // [ 32... 128 ]
-    static const size_t preciseStep = MarkedBlock::atomSize;
-    static const size_t preciseCutoff = 128;
-    static const size_t preciseCount = preciseCutoff / preciseStep;
-
-    // [ 1024... blockSize ]
-    static const size_t impreciseStep = 2 * preciseCutoff;
-    static const size_t impreciseCutoff = MarkedBlock::blockSize / 2;
-    static const size_t impreciseCount = impreciseCutoff / impreciseStep;
-
-    struct Subspace {
-        std::array<MarkedAllocator, preciseCount> preciseAllocators;
-        std::array<MarkedAllocator, impreciseCount> impreciseAllocators;
-        MarkedAllocator largeAllocator;
-    };
 
     Subspace m_normalDestructorSpace;
     Subspace m_immortalStructureDestructorSpace;

@@ -271,6 +271,7 @@ Arguments* StackVisitor::Frame::createArguments()
         ASSERT(m_inlineCallFrame);
         arguments = Arguments::create(vm, physicalFrame, m_inlineCallFrame, mode);
         arguments->tearOff(physicalFrame, m_inlineCallFrame);
+        jsCast<Arguments*>((JSCell*)arguments);
     } else 
 #endif
     {

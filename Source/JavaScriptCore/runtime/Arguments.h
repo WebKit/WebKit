@@ -48,14 +48,14 @@ public:
 
     static Arguments* create(VM& vm, CallFrame* callFrame, ArgumentsMode mode = NormalArgumentsCreationMode)
     {
-        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
+        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap, offsetOfInlineRegisterArray() + registerArraySizeInBytes(callFrame))) Arguments(callFrame);
         arguments->finishCreation(callFrame, mode);
         return arguments;
     }
         
     static Arguments* create(VM& vm, CallFrame* callFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode = NormalArgumentsCreationMode)
     {
-        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap)) Arguments(callFrame);
+        Arguments* arguments = new (NotNull, allocateCell<Arguments>(vm.heap, offsetOfInlineRegisterArray() + registerArraySizeInBytes(inlineCallFrame))) Arguments(callFrame);
         arguments->finishCreation(callFrame, inlineCallFrame, mode);
         return arguments;
     }
@@ -86,7 +86,7 @@ public:
     void copyToArguments(ExecState*, CallFrame*, uint32_t copyLength, int32_t firstArgumentOffset);
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
-    bool isTornOff() const { return m_registerArray.get(); }
+    bool isTornOff() const { return m_registers == (&registerArray() - CallFrame::offsetFor(1) - 1); }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
@@ -98,15 +98,9 @@ public:
     static ptrdiff_t offsetOfOverrodeLength() { return OBJECT_OFFSETOF(Arguments, m_overrodeLength); }
     static ptrdiff_t offsetOfIsStrictMode() { return OBJECT_OFFSETOF(Arguments, m_isStrictMode); }
     static ptrdiff_t offsetOfRegisters() { return OBJECT_OFFSETOF(Arguments, m_registers); }
-    static ptrdiff_t offsetOfRegisterArray() { return OBJECT_OFFSETOF(Arguments, m_registerArray); }
+    static ptrdiff_t offsetOfInlineRegisterArray() { return WTF::roundUpToMultipleOf<8>(sizeof(Arguments)); }
     static ptrdiff_t offsetOfSlowArgumentData() { return OBJECT_OFFSETOF(Arguments, m_slowArgumentData); }
     static ptrdiff_t offsetOfCallee() { return OBJECT_OFFSETOF(Arguments, m_callee); }
-
-    static size_t allocationSize(size_t inlineCapacity)
-    {
-        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
-        return sizeof(Arguments);
-    }
     
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
@@ -126,8 +120,8 @@ private:
     void createStrictModeCallerIfNecessary(ExecState*);
     void createStrictModeCalleeIfNecessary(ExecState*);
 
-    size_t registerArraySizeInBytes() const { return sizeof(WriteBarrier<Unknown>) * m_numArguments; }
-    void allocateRegisterArray(VM&);
+    static size_t registerArraySizeInBytes(CallFrame* callFrame) { return sizeof(WriteBarrier<Unknown>) * callFrame->argumentCount(); }
+    static size_t registerArraySizeInBytes(InlineCallFrame* inlineCallFrame) { return sizeof(WriteBarrier<Unknown>) * (inlineCallFrame->arguments.size() - 1); }
     bool isArgument(size_t);
     bool trySetArgument(VM&, size_t argument, JSValue);
     JSValue tryGetArgument(size_t argument);
@@ -151,7 +145,8 @@ private:
     bool m_isStrictMode;
 
     WriteBarrierBase<Unknown>* m_registers;
-    CopyWriteBarrier<WriteBarrier<Unknown>> m_registerArray;
+    WriteBarrier<Unknown>& registerArray() { return *reinterpret_cast<WriteBarrier<Unknown>*>(reinterpret_cast<char*>(this) + offsetOfInlineRegisterArray()); }
+    const WriteBarrier<Unknown>& registerArray() const { return *reinterpret_cast<const WriteBarrier<Unknown>*>(reinterpret_cast<const char*>(this) + offsetOfInlineRegisterArray()); }
 
 public:
     struct SlowArgumentData {

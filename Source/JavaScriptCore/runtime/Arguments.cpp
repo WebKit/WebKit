@@ -43,14 +43,13 @@ const ClassInfo Arguments::s_info = { "Arguments", &Base::s_info, 0, CREATE_METH
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
+
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     JSObject::visitChildren(thisObject, visitor);
 
-    if (thisObject->m_registerArray) {
-        visitor.copyLater(thisObject, ArgumentsRegisterArrayCopyToken, 
-            thisObject->m_registerArray.get(), thisObject->registerArraySizeInBytes());
-        visitor.appendValues(thisObject->m_registerArray.get(), thisObject->m_numArguments);
-    }
+    if (thisObject->isTornOff())
+        visitor.appendValues(&thisObject->registerArray(), thisObject->m_numArguments);
+
     if (thisObject->m_slowArgumentData) {
         visitor.copyLater(thisObject, ArgumentsSlowArgumentDataCopyToken,
             thisObject->m_slowArgumentData.get(), SlowArgumentData::sizeForNumArguments(thisObject->m_numArguments));
@@ -66,22 +65,6 @@ void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken t
     
 
     switch (token) {
-    case ArgumentsRegisterArrayCopyToken: {
-        WriteBarrier<Unknown>* registerArray = thisObject->m_registerArray.get();
-        if (!registerArray)
-            return;
-
-        if (visitor.checkIfShouldCopy(registerArray)) {
-            size_t bytes = thisObject->registerArraySizeInBytes();
-            WriteBarrier<Unknown>* newRegisterArray = static_cast<WriteBarrier<Unknown>*>(visitor.allocateNewSpace(bytes));
-            memcpy(newRegisterArray, registerArray, bytes);
-            thisObject->m_registerArray.setWithoutWriteBarrier(newRegisterArray);
-            thisObject->m_registers = newRegisterArray - CallFrame::offsetFor(1) - 1;
-            visitor.didCopy(registerArray, bytes);
-        }
-        return;
-    }
-
     case ArgumentsSlowArgumentDataCopyToken: {
         SlowArgumentData* slowArgumentData = thisObject->m_slowArgumentData.get();
         if (!slowArgumentData)
@@ -361,15 +344,6 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
-void Arguments::allocateRegisterArray(VM& vm)
-{
-    ASSERT(!m_registerArray);
-    void* backingStore;
-    if (!vm.heap.tryAllocateStorage(this, registerArraySizeInBytes(), &backingStore))
-        RELEASE_ASSERT_NOT_REACHED();
-    m_registerArray.set(vm, this, static_cast<WriteBarrier<Unknown>*>(backingStore));
-}
-
 void Arguments::tearOff(CallFrame* callFrame)
 {
     if (isTornOff())
@@ -380,13 +354,14 @@ void Arguments::tearOff(CallFrame* callFrame)
 
     // Must be called for the same call frame from which it was created.
     ASSERT(bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers);
-    
-    allocateRegisterArray(callFrame->vm());
-    m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
+
+    m_registers = &registerArray() - CallFrame::offsetFor(1) - 1;
 
     for (size_t i = 0; i < m_numArguments; ++i) {
-        if (m_slowArgumentData && m_slowArgumentData->slowArguments()[i].status == SlowArgument::Captured)
+        if (m_slowArgumentData && m_slowArgumentData->slowArguments()[i].status == SlowArgument::Captured) {
+            m_registers[CallFrame::argumentOffset(i)].setUndefined();
             continue;
+        }
         trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
     }
 }
@@ -399,9 +374,8 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     
     if (!m_numArguments)
         return;
-    
-    allocateRegisterArray(callFrame->vm());
-    m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
+
+    m_registers = &registerArray() - CallFrame::offsetFor(1) - 1;
 
     for (size_t i = 0; i < m_numArguments; ++i) {
         ValueRecovery& recovery = inlineCallFrame->arguments[i + 1];

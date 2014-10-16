@@ -32,7 +32,6 @@ enum CopyToken {
     ButterflyCopyToken,
     TypedArrayVectorCopyToken,
     MapBackingStoreCopyToken,
-    ArgumentsRegisterArrayCopyToken,
     ArgumentsSlowArgumentDataCopyToken
 };
 
