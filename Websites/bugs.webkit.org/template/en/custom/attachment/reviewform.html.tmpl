@@ -20,12 +20,6 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% USE CGI %]
-[%  
-    # We use a query string rietveldreview=true to indicate when in rietveld mode. 
-    rietveldReview = CGI.param('rietveldreview')
-%]
-
 <style>
 * { font-size: small; }
 #comment { width: 100%; height: 100%; font-family: monospace; }
@@ -51,26 +45,12 @@
     }
     function onSubmitComments()
     {
-[% IF rietveldReview %]
-         var submitBtn = document.getElementById('submitBtn');
-         submitBtn.innerHTML = 'Fetching comments from Rietveld...';
-         submitBtn.disabled = true; // Disable since this is asynch.
-         top.getComments();
-         // Handle the error case of Rietveld not responding by giving
-         // the user another chance.
-         setTimeout(function() {
-             submitBtn.innerHTML = 'Fetching comments timed out ... retry?';
-             submitBtn.disabled = false;
-         }, 30000);
-         return false;
-[% ELSE %]
          // If someone just left the entire comment alone, then upload the form
          // with no comment at all.
          var textarea = document.getElementById("comment");
          if (textarea.defaultValue === textarea.value)
              textarea.value = "";
          return true;
-[% END %]
     }
 [% END %]
 
@@ -138,15 +118,9 @@
 </tr>
 <tr>
 <td colspan="4">
-[% IF rietveldReview %]
-Enter high-level comments below.  Make detailed comments above.  Submit will submit both.<br>
-[% ELSE %]
 Enter comments below:<br>
-[% END %]
 <textarea id=comment name="comment" wrap="soft">
-[% IF !rietveldReview %]
 [% quotedpatch FILTER html %]
-[% END %]
 </textarea><br>
 
 </tr>

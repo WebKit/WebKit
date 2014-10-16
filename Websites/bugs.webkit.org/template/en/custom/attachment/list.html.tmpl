@@ -112,16 +112,10 @@ function toggle_display(link) {
 
         [% IF show_attachment_flags %]
           <td class="bz_attach_flags" valign="top">
-[%# if WEBKIT_CHANGES %]
-            [% IF attachment.flags.size == 0  || 
-               (attachment.flags.size == 1 && attachment.flags.0.type.name == 'in-rietveld') %]
-[%# endif // WEBKIT_CHANGES %]
+            [% IF attachment.flags.size == 0 %]
               <i>no flags</i>
             [% ELSE %]
               [% FOREACH flag = attachment.flags %]
-[%# if WEBKIT_CHANGES %]
-                [% IF flag.type.name != 'in-rietveld' %]
-[%# endif // WEBKIT_CHANGES %]
                 [% IF user.id %]
                   <span title="[% flag.setter.identity FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
                 [% ELSIF flag.setter.name %]
@@ -139,9 +133,6 @@ function toggle_display(link) {
                     ([% flag.requestee.nick FILTER html %])
                   [% END %]
                 [% END %]<br>
-[%# if WEBKIT_CHANGES %]
-                [% END %]
-[%# endif // WEBKIT_CHANGES %]
               [% END %]
             [% END %]
           </td>
@@ -165,11 +156,6 @@ function toggle_display(link) {
           [% Hook.process("action") %]
 [%# if WEBKIT_CHANGES %]
           [% IF attachment.ispatch %]
-            [% FOREACH flag = attachment.flags %]
-              [% IF flag.type.name == 'in-rietveld' && flag.status == "+"  %]
-                | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=rietveldreview&amp;GoAheadAndLogIn=1">Rietve
-              [% END %]
-            [% END %]
           <div class="statusBubble">
             <iframe src="https://webkit-queues.appspot.com/status-bubble/[% attachment.id %]"
                     style="width: 600px; height: 20px; border: none;" scrolling="no">
