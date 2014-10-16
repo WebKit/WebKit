@@ -53,6 +53,56 @@
 
 <h2 id="v42_point">Updates in this 4.2.x Release</h2>
 
+<h3>4.2.11</h3>
+
+<p>This release fixes several security issues. See the
+  <a href="http://www.bugzilla.org/security/4.0.14/">Security Advisory</a>
+    for details.</p>
+
+<h3>4.2.10</h3>
+
+<p>This release fixes one security issue. See the
+  <a href="http://www.bugzilla.org/security/4.0.13/">Security Advisory</a>
+    for details.</p>
+
+<h3>4.2.9</h3>
+
+<p>This release fixes one regression introduced in [% terms.Bugzilla %] 4.2.8 by
+  <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=968576">security [% terms.bug %] 968576</a>:
+  URLs in [% terms.bug %] comments are displayed correctly again.
+  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=998323">[% terms.Bug %] 998323</a>)</p>
+
+<h3>4.2.8</h3>
+
+<p>This release fixes one minor security issue. See the
+  <a href="http://www.bugzilla.org/security/4.0.11/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following [% terms.bugs %] have been fixed in this release:</p>
+
+<ul>
+  <li><kbd>checksetup.pl</kbd> was incorrectly reporting DBI 1.630 (1.63) as
+    being older than 1.614, preventing the upgrade to complete.
+    If you still use Perl 5.10.0 or older, make sure you have the
+    <a href="http://search.cpan.org/~jpeacock/version/lib/version.pod">version</a>
+    module installed before running <kbd>checksetup.pl</kbd>.
+    If you use Perl 5.10.1 or newer, this module is already available and
+    no special action is required.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=938300">[% terms.Bug %] 938300</a>)</li>
+  <li><kbd>checksetup.pl</kbd> no longer fails with "Invalid version format (non-numeric data)"
+    when a Perl module contains an invalid version number.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=781672">[% terms.Bug %] 781672</a>)</li>
+  <li>The PROJECT environment variable is now correctly taken into account
+    when mod_perl is enabled (this variable allows several installations to
+    share the same codebase).
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=843457">[% terms.Bug %] 843457</a>)</li>
+  <li>[% terms.Bugzilla %] no longer crashes when the <kbd>shutdownhtml</kbd>
+    parameter is set and using a non-cookie based authentication method.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=748095">[% terms.Bug %] 748095</a>)</li>
+  <li>The default date and time format used for SQLite has been fixed.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=938161">[% terms.Bug %] 938161</a>)</li>
+</ul>
+
 <h3>4.2.7</h3>
 
 <p>This release fixes several security issues. See the

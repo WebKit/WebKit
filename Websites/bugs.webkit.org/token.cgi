@@ -382,7 +382,7 @@ sub confirm_create_account {
 
     my $otheruser = Bugzilla::User->create({
         login_name => $login_name, 
-        realname   => $cgi->param('realname'), 
+        realname   => scalar $cgi->param('realname'),
         cryptpassword => $password});
 
     # Now delete this token.

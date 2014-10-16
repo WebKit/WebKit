@@ -32,7 +32,7 @@
 [%- IF comment.count %]
 --- Comment #[% comment.count %] from [% comment.author.identity %] ---
 [% END %]
-[%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) %]
+[%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) FILTER strip_control_chars %]
 [% END %]
 
 -- [%# Protect the trailing space of the signature marker %]

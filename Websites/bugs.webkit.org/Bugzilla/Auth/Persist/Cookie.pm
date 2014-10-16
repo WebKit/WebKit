@@ -127,7 +127,7 @@ sub logout {
         $login_cookie = $cookie->value;
     }
     else {
-        $login_cookie = $cgi->cookie("Bugzilla_logincookie");
+        $login_cookie = $cgi->cookie("Bugzilla_logincookie") || '';
     }
     trick_taint($login_cookie);
 

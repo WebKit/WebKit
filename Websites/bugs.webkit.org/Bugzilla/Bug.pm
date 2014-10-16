@@ -908,12 +908,6 @@ sub update {
                                    join(', ', @added_names)];
     }
 
-    # Flags
-    my ($removed, $added) = Bugzilla::Flag->update_flags($self, $old_bug, $delta_ts);
-    if ($removed || $added) {
-        $changes->{'flagtypes.name'} = [$removed, $added];
-    }
-
     # Comments
     foreach my $comment (@{$self->{added_comments} || []}) {
         # Override the Comment's timestamp to be identical to the update
@@ -935,6 +929,9 @@ sub update {
         LogActivityEntry($self->id, "longdescs.isprivate", $from, $to, 
                          Bugzilla->user->id, $delta_ts, $comment->id);
     }
+
+    # Clear the cache of comments
+    delete $self->{comments};
 
     # Insert the values into the multiselect value tables
     my @multi_selects = grep {$_->type == FIELD_TYPE_MULTI_SELECT}
@@ -970,6 +967,12 @@ sub update {
 
     $_->update foreach @{ $self->{_update_ref_bugs} || [] };
     delete $self->{_update_ref_bugs};
+
+    # Flags
+    my ($removed, $added) = Bugzilla::Flag->update_flags($self, $old_bug, $delta_ts);
+    if ($removed || $added) {
+        $changes->{'flagtypes.name'} = [$removed, $added];
+    }
 
     # Log bugs_activity items
     # XXX Eventually, when bugs_activity is able to track the dupe_id,

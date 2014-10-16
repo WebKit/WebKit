@@ -59,23 +59,24 @@ my @products = @{$vars->{products}};
 
 my $action = $cgi->param('action') || 'list';
 my $token  = $cgi->param('token');
-my $product = $cgi->param('product');
-my $component = $cgi->param('component');
+my $prod_name = $cgi->param('product');
+my $comp_name = $cgi->param('component');
 my $flag_id = $cgi->param('id');
 
-if ($product) {
+my ($product, $component);
+
+if ($prod_name) {
     # Make sure the user is allowed to view this product name.
     # Users with global editcomponents privs can see all product names.
-    ($product) = grep { lc($_->name) eq lc($product) } @products;
-    $product || ThrowUserError('product_access_denied', { name => $cgi->param('product') });
+    ($product) = grep { lc($_->name) eq lc($prod_name) } @products;
+    $product || ThrowUserError('product_access_denied', { name => $prod_name });
 }
 
-if ($component) {
-    ($product && $product->id)
-      || ThrowUserError('flag_type_component_without_product');
-    ($component) = grep { lc($_->name) eq lc($component) } @{$product->components};
+if ($comp_name) {
+    $product || ThrowUserError('flag_type_component_without_product');
+    ($component) = grep { lc($_->name) eq lc($comp_name) } @{$product->components};
     $component || ThrowUserError('product_unknown_component', { product => $product->name,
-                                                                comp => $cgi->param('component') });
+                                                                comp => $comp_name });
 }
 
 # If 'categoryAction' is set, it has priority over 'action'.

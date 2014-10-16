@@ -1,0 +1,53 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
+
+#!start included /usr/share/perl5/ExtUtils/MANIFEST.SKIP
+# Avoid version control files.
+\B\.git\b
+\B\.bzr\b
+\B\.bzrignore\b
+\B\.gitignore\b
+\B\.gitrev\b
+\B\.patch\b
+
+# Avoid Makemaker generated and utility files.
+\bMANIFEST\.bak
+\bMakefile$
+\bblib/
+\bMakeMaker-\d
+\bpm_to_blib\.ts$
+\bpm_to_blib$
+\bblibdirs\.ts$         # 6.18 through 6.25 generated this
+
+# Avoid Module::Build generated and utility files.
+\bBuild$
+\b_build/
+
+# Avoid temp and backup files.
+~$
+\.old$
+\#$
+\b\.#
+\.bak$
+\.swp$
+
+#!end included /usr/share/perl5/ExtUtils/MANIFEST.SKIP
+
+# Avoid Module::Build generated and utility files.
+\bBuild$
+\bBuild.bat$
+\b_build
+\bBuild.COM$
+\bBUILD.COM$
+\bbuild.com$
+
+# Avoid archives of this distribution
+\bBugzilla-[\d\.\_]+
+
+# Bugzilla specific avoids
+\bdata\/\b
+\blocalconfig$

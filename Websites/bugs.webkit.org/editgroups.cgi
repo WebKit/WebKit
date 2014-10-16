@@ -242,7 +242,7 @@ if ($action eq 'new') {
 
 if ($action eq 'del') {
     # Check that an existing group ID is given
-    my $group = Bugzilla::Group->check({ id => $cgi->param('group') });
+    my $group = Bugzilla::Group->check({ id => scalar $cgi->param('group') });
     $group->check_remove({ test_only => 1 });
     $vars->{'shared_queries'} =
         $dbh->selectrow_array('SELECT COUNT(*)
@@ -266,7 +266,7 @@ if ($action eq 'del') {
 if ($action eq 'delete') {
     check_token_data($token, 'delete_group');
     # Check that an existing group ID is given
-    my $group = Bugzilla::Group->check({ id => $cgi->param('group') });
+    my $group = Bugzilla::Group->check({ id => scalar $cgi->param('group') });
     $vars->{'name'} = $group->name;
     $group->remove_from_db({
         remove_from_users => scalar $cgi->param('removeusers'),

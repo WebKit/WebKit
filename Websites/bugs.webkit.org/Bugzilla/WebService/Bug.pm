@@ -2037,7 +2037,7 @@ narrowed down to specific products.
 =item C<summary> (string) B<Required> - A string of keywords defining
 the type of bug you are trying to report.
 
-=item C<products> (array) - One or more product names to narrow the
+=item C<product> (array) - One or more product names to narrow the
 duplicate search to. If omitted, all bugs are searched.
 
 =back

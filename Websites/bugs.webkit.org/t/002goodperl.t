@@ -32,7 +32,7 @@ use lib 't';
 
 use Support::Files;
 
-use Test::More tests => (scalar(@Support::Files::testitems) * 3);
+use Test::More tests => (scalar(@Support::Files::testitems) * 4);
 
 my @testitems = @Support::Files::testitems; # get the files to test.
 
@@ -126,4 +126,35 @@ foreach my $file (@testitems) {
     
     close(FILE);
 }
+
+# Forbird the { foo => $cgi->param() } syntax, for security reasons.
+foreach my $file (@testitems) {
+    $file =~ s/\s.*$//; # nuke everything after the first space (#comment)
+    next unless $file; # skip null entries
+    if (!open(FILE, $file)) {
+        ok(0, "could not open $file --WARNING");
+        next;
+    }
+    my $lineno = 0;
+    my @unsafe_args;
+
+    while (my $file_line = <FILE>) {
+        $lineno++;
+        $file_line =~ s/^\s*(.+)\s*$/$1/; # Remove leading and trailing whitespaces.
+        if ($file_line =~ /^[^#]+=> \$cgi\->param/) {
+            push(@unsafe_args, "$file_line on line $lineno");
+        }
+    }
+
+    if (@unsafe_args) {
+        ok(0, "$file incorrectly passes a CGI argument to a hash --ERROR\n" .
+              join("\n", @unsafe_args));
+    }
+    else {
+        ok(1, "$file has no vulnerable hash syntax");
+    }
+
+    close(FILE);
+}
+
 exit 0;

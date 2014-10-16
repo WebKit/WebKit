@@ -1014,7 +1014,7 @@ if (scalar(@products) == 1) {
 # This is used in the "Zarroo Boogs" case.
 elsif (my @product_input = $cgi->param('product')) {
     if (scalar(@product_input) == 1 and $product_input[0] ne '') {
-        $one_product = new Bugzilla::Product({ name => $cgi->param('product') });
+        $one_product = new Bugzilla::Product({ name => $product_input[0] });
     }
 }
 # We only want the template to use it if the user can actually 

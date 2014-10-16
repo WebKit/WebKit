@@ -24,6 +24,7 @@ package Bugzilla::Install::Requirements;
 # MUST NOT "use."
 
 use strict;
+use version;
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Util qw(vers_cmp install_string bin_loc 
@@ -206,7 +207,9 @@ sub OPTIONAL_MODULES {
         package => 'Chart',
         module  => 'Chart::Lines',
         # Versions below 2.1 cannot be detected accurately.
-        version => '2.1',
+        # There is no 2.1.0 release (it was 2.1), but .0 is required to fix
+        # https://rt.cpan.org/Public/Bug/Display.html?id=28218.
+        version => '2.1.0',
         feature => [qw(new_charts old_charts)],
     },
     {
@@ -640,8 +643,8 @@ sub check_graphviz {
     return $return;
 }
 
-# This was originally clipped from the libnet Makefile.PL, adapted here to
-# use the below vers_cmp routine for accurate version checking.
+# This was originally clipped from the libnet Makefile.PL, adapted here for
+# accurate version checking.
 sub have_vers {
     my ($params, $output) = @_;
     my $module  = $params->{module};
@@ -659,21 +662,24 @@ sub have_vers {
     Bugzilla::Install::Util::set_output_encoding();
 
     # VERSION is provided by UNIVERSAL::, and can be called even if
-    # the module isn't loaded.
-    my $vnum = $module->VERSION || -1;
+    # the module isn't loaded. We eval'uate ->VERSION because it can die
+    # when the version is not valid (yes, this happens from time to time).
+    # In that case, we use an uglier method to get the version.
+    my $vnum = eval { $module->VERSION };
+    if ($@) {
+        no strict 'refs';
+        $vnum = ${"${module}::VERSION"};
 
-    # CGI's versioning scheme went 2.75, 2.751, 2.752, 2.753, 2.76
-    # That breaks the standard version tests, so we need to manually correct
-    # the version
-    if ($module eq 'CGI' && $vnum =~ /(2\.7\d)(\d+)/) {
-        $vnum = $1 . "." . $2;
+        # If we come here, then the version is not a valid one.
+        # We try to sanitize it.
+        if ($vnum =~ /^((\d+)(\.\d+)*)/) {
+            $vnum = $1;
+        }
     }
-    # CPAN did a similar thing, where it has versions like 1.9304.
-    if ($module eq 'CPAN' and $vnum =~ /^(\d\.\d{2})\d{2}$/) {
-        $vnum = $1;
-    }
+    $vnum ||= -1;
 
-    my $vok = (vers_cmp($vnum,$wanted) > -1);
+    # Must do a string comparison as $vnum may be of the form 5.10.1.
+    my $vok = ($vnum ne '-1' && version->new($vnum) >= version->new($wanted)) ? 1 : 0;
     my $blacklisted;
     if ($vok && $params->{blacklist}) {
         $blacklisted = grep($vnum =~ /$_/, @{$params->{blacklist}});

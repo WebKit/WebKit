@@ -911,10 +911,12 @@ sub get_content_type {
     return 'text/plain' if ($cgi->param('ispatch') || $cgi->param('attach_text'));
 
     my $content_type;
-    if (!defined $cgi->param('contenttypemethod')) {
+    my $method = $cgi->param('contenttypemethod');
+
+    if (!defined $method) {
         ThrowUserError("missing_content_type_method");
     }
-    elsif ($cgi->param('contenttypemethod') eq 'autodetect') {
+    elsif ($method eq 'autodetect') {
         defined $cgi->upload('data') || ThrowUserError('file_not_specified');
         # The user asked us to auto-detect the content type, so use the type
         # specified in the HTTP request headers.
@@ -935,18 +937,17 @@ sub get_content_type {
             $content_type = 'image/png';
         }
     }
-    elsif ($cgi->param('contenttypemethod') eq 'list') {
+    elsif ($method eq 'list') {
         # The user selected a content type from the list, so use their
         # selection.
         $content_type = $cgi->param('contenttypeselection');
     }
-    elsif ($cgi->param('contenttypemethod') eq 'manual') {
+    elsif ($method eq 'manual') {
         # The user entered a content type manually, so use their entry.
         $content_type = $cgi->param('contenttypeentry');
     }
     else {
-        ThrowCodeError("illegal_content_type_method",
-                       { contenttypemethod => $cgi->param('contenttypemethod') });
+        ThrowCodeError("illegal_content_type_method", { contenttypemethod => $method });
     }
     return $content_type;
 }

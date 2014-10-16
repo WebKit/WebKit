@@ -941,7 +941,7 @@
 [% IF !message %]
   [% message = BLOCK %]
     You are using [% terms.Bugzilla %]'s messaging functions incorrectly. You
-    passed in the string '[% message_tag %]'. The correct use is to pass
+    passed in the string '[% message_tag FILTER html %]'. The correct use is to pass
     in a tag, and define that tag in the file messages.html.tmpl.<br>
     <br>
     If you are a [% terms.Bugzilla %] end-user seeing this message, please
