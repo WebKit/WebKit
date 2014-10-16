@@ -344,8 +344,6 @@ private:
 #endif
 };
 
-INLINE_BOX_OBJECT_TYPE_CASTS(InlineFlowBox, isInlineFlowBox())
-
 #ifdef NDEBUG
 
 inline void InlineFlowBox::checkConsistency() const
@@ -363,6 +361,8 @@ inline void InlineFlowBox::setHasBadChildList()
 #endif
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineFlowBox, isInlineFlowBox())
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.

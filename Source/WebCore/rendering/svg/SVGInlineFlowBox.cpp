@@ -38,10 +38,10 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     PaintInfo childPaintInfo(paintInfo);
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-        if (child->isSVGInlineTextBox())
-            toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
-        else if (child->isSVGInlineFlowBox())
-            toSVGInlineFlowBox(child)->paintSelectionBackground(childPaintInfo);
+        if (is<SVGInlineTextBox>(*child))
+            downcast<SVGInlineTextBox>(*child).paintSelectionBackground(childPaintInfo);
+        else if (is<SVGInlineFlowBox>(*child))
+            downcast<SVGInlineFlowBox>(*child).paintSelectionBackground(childPaintInfo);
     }
 }
 
@@ -53,8 +53,8 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-            if (child->isSVGInlineTextBox())
-                computeTextMatchMarkerRectForRenderer(&(toSVGInlineTextBox(child)->renderer()));
+            if (is<SVGInlineTextBox>(*child))
+                computeTextMatchMarkerRectForRenderer(&downcast<SVGInlineTextBox>(*child).renderer());
 
             child->paint(paintInfo, paintOffset, 0, 0);
         }
@@ -95,13 +95,13 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
         FloatRect markerRect;
         for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (!box->isSVGInlineTextBox())
+            if (!is<SVGInlineTextBox>(*box))
                 continue;
 
-            SVGInlineTextBox* textBox = toSVGInlineTextBox(box);
+            auto& textBox = downcast<SVGInlineTextBox>(*box);
 
-            int markerStartPosition = std::max<int>(marker->startOffset() - textBox->start(), 0);
-            int markerEndPosition = std::min<int>(marker->endOffset() - textBox->start(), textBox->len());
+            int markerStartPosition = std::max<int>(marker->startOffset() - textBox.start(), 0);
+            int markerEndPosition = std::min<int>(marker->endOffset() - textBox.start(), textBox.len());
 
             if (markerStartPosition >= markerEndPosition)
                 continue;
@@ -109,17 +109,17 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             int fragmentStartPosition = 0;
             int fragmentEndPosition = 0;
 
-            const Vector<SVGTextFragment>& fragments = textBox->textFragments();
+            const Vector<SVGTextFragment>& fragments = textBox.textFragments();
             unsigned textFragmentsSize = fragments.size();
             for (unsigned i = 0; i < textFragmentsSize; ++i) {
                 const SVGTextFragment& fragment = fragments.at(i);
 
                 fragmentStartPosition = markerStartPosition;
                 fragmentEndPosition = markerEndPosition;
-                if (!textBox->mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
+                if (!textBox.mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
                     continue;
 
-                FloatRect fragmentRect = textBox->selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, &style);
+                FloatRect fragmentRect = textBox.selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, &style);
                 fragment.buildFragmentTransform(fragmentTransform);
                 if (!fragmentTransform.isIdentity())
                     fragmentRect = fragmentTransform.mapRect(fragmentRect);

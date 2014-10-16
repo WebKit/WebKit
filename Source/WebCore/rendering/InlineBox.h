@@ -24,6 +24,7 @@
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "TextDirection.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -421,9 +422,6 @@ private:
 #endif
 };
 
-#define INLINE_BOX_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, InlineBox, object, object->predicate, object.predicate)
-
 #if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 
 inline InlineBox::~InlineBox()
@@ -437,6 +435,11 @@ inline void InlineBox::assertNotDeleted() const
 #endif
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_INLINE_BOX(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::InlineBox& box) { return box.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.

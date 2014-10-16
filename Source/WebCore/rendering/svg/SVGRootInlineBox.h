@@ -57,8 +57,8 @@ private:
     float m_logicalHeight;
 };
 
-INLINE_BOX_OBJECT_TYPE_CASTS(SVGRootInlineBox, isSVGRootInlineBox())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(SVGRootInlineBox, isSVGRootInlineBox())
 
 #endif // SVGRootInlineBox_h

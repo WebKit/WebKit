@@ -89,17 +89,17 @@ void SVGTextQuery::collectTextBoxesInFlowBox(InlineFlowBox* flowBox)
         return;
 
     for (InlineBox* child = flowBox->firstChild(); child; child = child->nextOnLine()) {
-        if (child->isInlineFlowBox()) {
+        if (is<InlineFlowBox>(*child)) {
             // Skip generated content.
             if (!child->renderer().node())
                 continue;
 
-            collectTextBoxesInFlowBox(toInlineFlowBox(child));
+            collectTextBoxesInFlowBox(downcast<InlineFlowBox>(child));
             continue;
         }
 
-        if (child->isSVGInlineTextBox())
-            m_textBoxes.append(toSVGInlineTextBox(child));
+        if (is<SVGInlineTextBox>(*child))
+            m_textBoxes.append(downcast<SVGInlineTextBox>(child));
     }
 }
 

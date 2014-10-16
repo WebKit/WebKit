@@ -118,22 +118,22 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
 
 LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit*)
 {
-    if (!box || !box->isInlineTextBox())
+    if (!is<InlineTextBox>(box))
         return LayoutRect();
 
-    InlineTextBox* textBox = toInlineTextBox(box);
-    if (static_cast<unsigned>(caretOffset) < textBox->start() || static_cast<unsigned>(caretOffset) > textBox->start() + textBox->len())
+    auto& textBox = downcast<InlineTextBox>(*box);
+    if (static_cast<unsigned>(caretOffset) < textBox.start() || static_cast<unsigned>(caretOffset) > textBox.start() + textBox.len())
         return LayoutRect();
 
     // Use the edge of the selection rect to determine the caret rect.
-    if (static_cast<unsigned>(caretOffset) < textBox->start() + textBox->len()) {
-        LayoutRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
-        LayoutUnit x = box->isLeftToRightDirection() ? rect.x() : rect.maxX();
+    if (static_cast<unsigned>(caretOffset) < textBox.start() + textBox.len()) {
+        LayoutRect rect = textBox.localSelectionRect(caretOffset, caretOffset + 1);
+        LayoutUnit x = textBox.isLeftToRightDirection() ? rect.x() : rect.maxX();
         return LayoutRect(x, rect.y(), caretWidth, rect.height());
     }
 
-    LayoutRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
-    LayoutUnit x = box->isLeftToRightDirection() ? rect.maxX() : rect.x();
+    LayoutRect rect = textBox.localSelectionRect(caretOffset - 1, caretOffset);
+    LayoutUnit x = textBox.isLeftToRightDirection() ? rect.maxX() : rect.x();
     return LayoutRect(x, rect.y(), caretWidth, rect.height());
 }
 
@@ -182,16 +182,16 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
 
     float closestDistance = std::numeric_limits<float>::max();
     float closestDistancePosition = 0;
-    const SVGTextFragment* closestDistanceFragment = 0;
-    SVGInlineTextBox* closestDistanceBox = 0;
+    const SVGTextFragment* closestDistanceFragment = nullptr;
+    SVGInlineTextBox* closestDistanceBox = nullptr;
 
     AffineTransform fragmentTransform;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (!box->isSVGInlineTextBox())
+        if (!is<SVGInlineTextBox>(*box))
             continue;
 
-        SVGInlineTextBox* textBox = toSVGInlineTextBox(box);
-        Vector<SVGTextFragment>& fragments = textBox->textFragments();
+        auto& textBox = downcast<SVGInlineTextBox>(*box);
+        Vector<SVGTextFragment>& fragments = textBox.textFragments();
 
         unsigned textFragmentsSize = fragments.size();
         for (unsigned i = 0; i < textFragmentsSize; ++i) {
@@ -206,7 +206,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
 
             if (distance < closestDistance) {
                 closestDistance = distance;
-                closestDistanceBox = textBox;
+                closestDistanceBox = &textBox;
                 closestDistanceFragment = &fragment;
                 closestDistancePosition = fragmentRect.x();
             }

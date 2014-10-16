@@ -95,12 +95,9 @@ void RootInlineBox::clearTruncation()
 bool RootInlineBox::isHyphenated() const
 {
     for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild()) {
-        if (box->isInlineTextBox()) {
-            if (toInlineTextBox(box)->hasHyphen())
-                return true;
-        }
+        if (is<InlineTextBox>(*box) && downcast<InlineTextBox>(*box).hasHyphen())
+            return true;
     }
-
     return false;
 }
 
@@ -830,10 +827,10 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
 
     Vector<const SimpleFontData*>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
-    if (box.isInlineTextBox()) {
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(toInlineTextBox(&box));
-        usedFonts = it == textBoxDataMap.end() ? 0 : &it->value.first;
-        glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
+    if (is<InlineTextBox>(box)) {
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<InlineTextBox>(box));
+        usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;
+        glyphOverflow = it == textBoxDataMap.end() ? nullptr : &it->value.second;
     }
         
     bool includeLeading = includeLeadingForBox(box);
@@ -1017,7 +1014,7 @@ bool RootInlineBox::includeFontForBox(InlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && box.isInlineFlowBox() && !toInlineFlowBox(&box)->hasTextChildren())
+    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
         return false;
 
     // For now map "glyphs" to "font" in vertical text mode until the bounds returned by glyphs aren't garbage.
@@ -1030,7 +1027,7 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && box.isInlineFlowBox() && !toInlineFlowBox(&box)->hasTextChildren())
+    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
         return false;
 
     // FIXME: We can't fit to glyphs yet for vertical text, since the bounds returned are garbage.
@@ -1043,7 +1040,7 @@ bool RootInlineBox::includeInitialLetterForBox(InlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && box.isInlineFlowBox() && !toInlineFlowBox(&box)->hasTextChildren())
+    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
         return false;
 
     LineBoxContain lineBoxContain = renderer().style().lineBoxContain();

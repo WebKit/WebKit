@@ -3270,11 +3270,11 @@ Position RenderBlockFlow::positionForBox(InlineBox *box, bool start) const
     if (!box->renderer().nonPseudoNode())
         return createLegacyEditingPosition(nonPseudoElement(), start ? caretMinOffset() : caretMaxOffset());
 
-    if (!box->isInlineTextBox())
+    if (!is<InlineTextBox>(*box))
         return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
 
-    InlineTextBox* textBox = toInlineTextBox(box);
-    return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
+    auto& textBox = downcast<InlineTextBox>(*box);
+    return createLegacyEditingPosition(textBox.renderer().nonPseudoNode(), start ? textBox.start() : textBox.start() + textBox.len());
 }
 
 VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, const RenderRegion* region)

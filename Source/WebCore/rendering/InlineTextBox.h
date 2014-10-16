@@ -179,8 +179,8 @@ private:
     unsigned short m_truncation;
 };
 
-INLINE_BOX_OBJECT_TYPE_CASTS(InlineTextBox, isInlineTextBox())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineTextBox, isInlineTextBox())
 
 #endif // InlineTextBox_h

@@ -56,18 +56,18 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     PaintInfo childPaintInfo(paintInfo);
     if (hasSelection) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-            if (child->isSVGInlineTextBox())
-                toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
-            else if (child->isSVGInlineFlowBox())
-                toSVGInlineFlowBox(child)->paintSelectionBackground(childPaintInfo);
+            if (is<SVGInlineTextBox>(*child))
+                downcast<SVGInlineTextBox>(*child).paintSelectionBackground(childPaintInfo);
+            else if (is<SVGInlineFlowBox>(*child))
+                downcast<SVGInlineFlowBox>(*child).paintSelectionBackground(childPaintInfo);
         }
     }
 
     SVGRenderingContext renderingContext(renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-            if (child->isSVGInlineTextBox())
-                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(&toSVGInlineTextBox(child)->renderer());
+            if (is<SVGInlineTextBox>(*child))
+                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(&downcast<SVGInlineTextBox>(*child).renderer());
 
             child->paint(paintInfo, paintOffset, 0, 0);
         }
@@ -103,31 +103,27 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
 void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
 {
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
-        if (child->isSVGInlineTextBox()) {
-            ASSERT(child->renderer().isSVGInlineText());
-
-            SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
-            characterLayout.layoutInlineTextBox(textBox);
+        if (is<SVGInlineTextBox>(*child)) {
+            ASSERT(is<RenderSVGInlineText>(child->renderer()));
+            characterLayout.layoutInlineTextBox(downcast<SVGInlineTextBox>(child));
         } else {
             // Skip generated content.
             Node* node = child->renderer().node();
             if (!node)
                 continue;
 
-            ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
-
-            SVGInlineFlowBox* flowBox = toSVGInlineFlowBox(child);
+            auto& flowBox = downcast<SVGInlineFlowBox>(*child);
             bool isTextPath = node->hasTagName(SVGNames::textPathTag);
             if (isTextPath) {
                 // Build text chunks for all <textPath> children, using the line layout algorithm.
                 // This is needeed as text-anchor is just an additional startOffset for text paths.
                 SVGTextLayoutEngine lineLayout(characterLayout.layoutAttributes());
-                layoutCharactersInTextBoxes(flowBox, lineLayout);
+                layoutCharactersInTextBoxes(&flowBox, lineLayout);
 
                 characterLayout.beginTextPathLayout(&child->renderer(), lineLayout);
             }
 
-            layoutCharactersInTextBoxes(flowBox, characterLayout);
+            layoutCharactersInTextBoxes(&flowBox, characterLayout);
 
             if (isTextPath)
                 characterLayout.endTextPathLayout();
@@ -139,30 +135,28 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
 {
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
         FloatRect boxRect;
-        if (child->isSVGInlineTextBox()) {
-            ASSERT(child->renderer().isSVGInlineText());
+        if (is<SVGInlineTextBox>(*child)) {
+            ASSERT(is<RenderSVGInlineText>(child->renderer()));
 
-            SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
-            boxRect = textBox->calculateBoundaries();
-            textBox->setX(boxRect.x());
-            textBox->setY(boxRect.y());
-            textBox->setLogicalWidth(boxRect.width());
-            textBox->setLogicalHeight(boxRect.height());
+            auto& textBox = downcast<SVGInlineTextBox>(*child);
+            boxRect = textBox.calculateBoundaries();
+            textBox.setX(boxRect.x());
+            textBox.setY(boxRect.y());
+            textBox.setLogicalWidth(boxRect.width());
+            textBox.setLogicalHeight(boxRect.height());
         } else {
             // Skip generated content.
             if (!child->renderer().node())
                 continue;
 
-            ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
+            auto& flowBox = downcast<SVGInlineFlowBox>(*child);
+            layoutChildBoxes(&flowBox);
 
-            SVGInlineFlowBox* flowBox = toSVGInlineFlowBox(child);
-            layoutChildBoxes(flowBox);
-
-            boxRect = flowBox->calculateBoundaries();
-            flowBox->setX(boxRect.x());
-            flowBox->setY(boxRect.y());
-            flowBox->setLogicalWidth(boxRect.width());
-            flowBox->setLogicalHeight(boxRect.height());
+            boxRect = flowBox.calculateBoundaries();
+            flowBox.setX(boxRect.x());
+            flowBox.setY(boxRect.y());
+            flowBox.setLogicalWidth(boxRect.width());
+            flowBox.setLogicalHeight(boxRect.height());
         }
         if (childRect)
             childRect->unite(boxRect);
@@ -273,7 +267,7 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
         if (first == last || first == --last)
             return;
 
-        if (!(*last)->isSVGInlineTextBox() || !(*first)->isSVGInlineTextBox()) {
+        if (!is<SVGInlineTextBox>(**last) || !is<SVGInlineTextBox>(**first)) {
             InlineBox* temp = *first;
             *first = *last;
             *last = temp;
@@ -281,18 +275,18 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
             continue;
         }
 
-        SVGInlineTextBox* firstTextBox = toSVGInlineTextBox(*first);
-        SVGInlineTextBox* lastTextBox = toSVGInlineTextBox(*last);
+        auto& firstTextBox = downcast<SVGInlineTextBox>(**first);
+        auto& lastTextBox = downcast<SVGInlineTextBox>(**last);
 
         // Reordering is only necessary for BiDi text that is _absolutely_ positioned.
-        if (firstTextBox->len() == 1 && firstTextBox->len() == lastTextBox->len()) {
-            RenderSVGInlineText& firstContext = firstTextBox->renderer();
-            RenderSVGInlineText& lastContext = lastTextBox->renderer();
+        if (firstTextBox.len() == 1 && firstTextBox.len() == lastTextBox.len()) {
+            RenderSVGInlineText& firstContext = firstTextBox.renderer();
+            RenderSVGInlineText& lastContext = lastTextBox.renderer();
 
-            SVGTextLayoutAttributes* firstAttributes = 0;
-            SVGTextLayoutAttributes* lastAttributes = 0;
+            SVGTextLayoutAttributes* firstAttributes = nullptr;
+            SVGTextLayoutAttributes* lastAttributes = nullptr;
             findFirstAndLastAttributesInVector(attributes, &firstContext, &lastContext, firstAttributes, lastAttributes);
-            swapItemsInLayoutAttributes(firstAttributes, lastAttributes, firstTextBox->start(), lastTextBox->start());
+            swapItemsInLayoutAttributes(firstAttributes, lastAttributes, firstTextBox.start(), lastTextBox.start());
         }
 
         InlineBox* temp = *first;

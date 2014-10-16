@@ -92,8 +92,8 @@ private:
     Vector<SVGTextFragment> m_textFragments;
 };
 
-INLINE_BOX_OBJECT_TYPE_CASTS(SVGInlineTextBox, isSVGInlineTextBox())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(SVGInlineTextBox, isSVGInlineTextBox())
 
 #endif // SVGInlineTextBox_h

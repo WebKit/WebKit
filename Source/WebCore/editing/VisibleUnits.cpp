@@ -292,10 +292,10 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
 
     string.clear();
 
-    if (previousBox && previousBox->isInlineTextBox()) {
-        const InlineTextBox* previousTextBox = toInlineTextBox(previousBox);
-        previousBoxLength = previousTextBox->len();
-        append(string, StringView(previousTextBox->renderer().text()).substring(previousTextBox->start(), previousBoxLength));
+    if (is<InlineTextBox>(previousBox)) {
+        const auto& previousTextBox = downcast<InlineTextBox>(*previousBox);
+        previousBoxLength = previousTextBox.len();
+        append(string, StringView(previousTextBox.renderer().text()).substring(previousTextBox.start(), previousBoxLength));
     }
     append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
 
@@ -312,9 +312,9 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
 
     string.clear();
     append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
-    if (nextBox && nextBox->isInlineTextBox()) {
-        const InlineTextBox* nextTextBox = toInlineTextBox(nextBox);
-        append(string, StringView(nextTextBox->renderer().text()).substring(nextTextBox->start(), nextTextBox->len()));
+    if (is<InlineTextBox>(nextBox)) {
+        const auto& nextTextBox = downcast<InlineTextBox>(*nextBox);
+        append(string, StringView(nextTextBox.renderer().text()).substring(nextTextBox.start(), nextTextBox.len()));
     }
 
     return wordBreakIterator(StringView(string.data(), string.size()));
@@ -364,23 +364,23 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     
         if (!box)
             break;
-        if (!box->isInlineTextBox()) {
+        if (!is<InlineTextBox>(*box)) {
             current = adjacentCharacterPosition;
             continue;
         }
 
-        InlineTextBox* textBox = toInlineTextBox(box);
+        InlineTextBox& textBox = downcast<InlineTextBox>(*box);
         int previousBoxLength = 0;
         bool previousBoxInDifferentBlock = false;
         bool nextBoxInDifferentBlock = false;
         bool movingIntoNewBox = previouslyVisitedBox != box;
 
         if (offsetInBox == box->caretMinOffset())
-            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, textBox, previousBoxLength, previousBoxInDifferentBlock, string, leafBoxes);
+            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, &textBox, previousBoxLength, previousBoxInDifferentBlock, string, leafBoxes);
         else if (offsetInBox == box->caretMaxOffset())
-            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock, string, leafBoxes);
+            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, &textBox, nextBoxInDifferentBlock, string, leafBoxes);
         else if (movingIntoNewBox) {
-            iter = wordBreakIterator(StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
+            iter = wordBreakIterator(StringView(textBox.renderer().text()).substring(textBox.start(), textBox.len()));
             previouslyVisitedBox = box;
         }
 
@@ -388,17 +388,17 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
             break;
 
         textBreakFirst(iter);
-        int offsetInIterator = offsetInBox - textBox->start() + previousBoxLength;
+        int offsetInIterator = offsetInBox - textBox.start() + previousBoxLength;
 
         bool isWordBreak;
         bool boxHasSameDirectionalityAsBlock = box->direction() == blockDirection;
         bool movingBackward = (direction == MoveLeft && box->direction() == LTR) || (direction == MoveRight && box->direction() == RTL);
         if ((skipsSpaceWhenMovingRight && boxHasSameDirectionalityAsBlock)
             || (!skipsSpaceWhenMovingRight && movingBackward)) {
-            bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox->start()) && previousBoxInDifferentBlock;
+            bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox.start()) && previousBoxInDifferentBlock;
             isWordBreak = isLogicalStartOfWord(iter, offsetInIterator, logicalStartInRenderer);
         } else {
-            bool logicalEndInRenderer = offsetInBox == static_cast<int>(textBox->start() + textBox->len()) && nextBoxInDifferentBlock;
+            bool logicalEndInRenderer = offsetInBox == static_cast<int>(textBox.start() + textBox.len()) && nextBoxInDifferentBlock;
             isWordBreak = islogicalEndOfWord(iter, offsetInIterator, logicalEndInRenderer);
         }      
 
@@ -767,7 +767,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), toInlineTextBox(startBox)->start())
+    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<InlineTextBox>(*startBox).start())
         : positionBeforeNode(startNode);
 }
 
@@ -836,13 +836,13 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     }
 
     Position pos;
-    if (endNode->hasTagName(brTag))
+    if (is<HTMLBRElement>(*endNode))
         pos = positionBeforeNode(endNode);
-    else if (endBox->isInlineTextBox() && is<Text>(*endNode)) {
-        InlineTextBox* endTextBox = toInlineTextBox(endBox);
-        int endOffset = endTextBox->start();
-        if (!endTextBox->isLineBreak())
-            endOffset += endTextBox->len();
+    else if (is<InlineTextBox>(*endBox) && is<Text>(*endNode)) {
+        auto& endTextBox = downcast<InlineTextBox>(*endBox);
+        int endOffset = endTextBox.start();
+        if (!endTextBox.isLineBreak())
+            endOffset += endTextBox.len();
         pos = Position(downcast<Text>(endNode), endOffset);
     } else
         pos = positionAfterNode(endNode);

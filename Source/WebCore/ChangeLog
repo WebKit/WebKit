@@ -1,3 +1,93 @@
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for InlineBox subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137749
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for InlineBox subclasses and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        (WebCore::visualWordPosition):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::root):
+        (WebCore::InlineBox::nextLeafChild):
+        (WebCore::InlineBox::prevLeafChild):
+        (WebCore::InlineBox::nextLeafChildIgnoringLineBreak):
+        * rendering/InlineBox.h:
+        * rendering/InlineElementBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::getFlowSpacingLogicalWidth):
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::computeMaxLogicalTop):
+        (WebCore::InlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::firstLeafChild):
+        (WebCore::InlineFlowBox::lastLeafChild):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForBox):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::firstRootBox):
+        (WebCore::RenderBlockFlow::lastRootBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createLineBoxes):
+        (WebCore::RenderBlockFlow::constructLine):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::computeExpansionForJustifiedText):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        (WebCore::RenderBlockFlow::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::isHyphenated):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::nextRootBox):
+        (WebCore::RootInlineBox::prevRootBox):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground):
+        (WebCore::SVGInlineFlowBox::paint):
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        (WebCore::writeSVGInlineTextBoxes):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+
 2014-10-15  Roger Fong  <roger_fong@apple.com>
 
         glReadPixels on NVIDIA cards returns the wrong values for the alpha channel when alpha is off.

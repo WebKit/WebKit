@@ -55,8 +55,8 @@ private:
     virtual bool isInlineElementBox() const override final { return true; }
 };
 
-INLINE_BOX_OBJECT_TYPE_CASTS(InlineElementBox, isInlineElementBox())
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineElementBox, isInlineElementBox())
 
 #endif // InlineElementBox_h
