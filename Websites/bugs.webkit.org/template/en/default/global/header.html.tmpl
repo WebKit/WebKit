@@ -35,6 +35,7 @@
   # style_urls: list. List of URLs to CSS style sheets.
   # message: string. A message to display to the user. May contain HTML.
   # rsslink: RSS link URL, May contain HTML (WEBKIT_CHANGES)
+  # hide_content: boolean. Turns off content if not being used. (WEBKIT_CHANGES)
   #%]
 
 [% IF message %]
@@ -260,6 +261,8 @@
   # 'bannerhtml'
   #%]
 
+[% IF !hide_content %][%# WEBKIT_CHANGES #%]
+
 <div id="header">
 
 [%# if WEBKIT_CHANGES #%]
@@ -305,6 +308,8 @@
 
 [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
 </div> [%# header %]
+
+[% END %][%# !hide_content #%][%# WEBKIT_CHANGES #%]
 
 <div id="bugzilla-body">
 
