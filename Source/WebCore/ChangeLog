@@ -1,5 +1,21 @@
 2014-10-15  Chris Dumez  <cdumez@apple.com>
 
+        [Mac] Fix inefficiencies in ResourceResponse::platformLazyInit(InitLevel) - Part 2
+        https://bugs.webkit.org/show_bug.cgi?id=137721
+
+        Reviewed by Darin Adler.
+
+        Follow-up patch to r174717 addressing review comments made after the patch landed:
+        - Use modern C++ loop
+        - Remove explicit calls to String(NSString*) constructor
+
+        No new tests, no new tests.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
+2014-10-15  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for InlineBox subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137749
 
