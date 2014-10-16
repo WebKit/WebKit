@@ -10,7 +10,7 @@
            'RADIUS_email_suffix' => '',
            'RADIUS_secret' => '',
            'RADIUS_server' => '',
-           'ajax_user_autocompletion' => '1',
+           'ajax_user_autocompletion' => '0',
            'allow_attachment_deletion' => '1',
            'allow_attachment_display' => '1',
            'allowbugdeletion' => '1',
