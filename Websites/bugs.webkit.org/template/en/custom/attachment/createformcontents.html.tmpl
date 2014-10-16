@@ -91,6 +91,11 @@
     [% END %]
   </td>
 </tr>
+[%# if WEBKIT_CHANGES %]
+[% USE CGI %]
+[% cgi_product = CGI.param('product') %]
+[% PROCESS attachment/patchlegalese.html.tmpl product = cgi_product %]
+[%# endif // WEBKIT_CHANGES %]
 
 [% BLOCK content_types %]
 [%# WEBKIT_CHANGES: Added XHTML source and SVG image. %]

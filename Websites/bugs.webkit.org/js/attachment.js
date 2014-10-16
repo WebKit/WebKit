@@ -55,9 +55,23 @@ function setContentTypeDisabledState(form)
 // if WEBKIT_CHANGES
     if (isdisabled) {
         document.getElementById('legal').style.display = "table-row";
-        document.getElementById('create').value = "Agree and Submit";
+        var createButton = document.getElementById('create');
+        if (createButton && createButton.value == "Submit")
+            createButton.value = "Agree and Submit";
+        else {
+            var commitButton = document.getElementById('commit');
+            if (commitButton && commitButton.value == "Submit Bug")
+                commitButton.value = "Agree and Submit Bug";
+        }
     } else {
-        document.getElementById('create').value = "Submit";
+        var createButton = document.getElementById('create');
+        if (createButton && createButton.value == "Agree and Submit")
+            createButton.value = "Submit";
+        else {
+            var commitButton = document.getElementById('commit');
+            if (commitButton && commitButton.value == "Agree and Submit Bug")
+                commitButton.value = "Submit Bug";
+        }
         document.getElementById('legal').style.display = "none";
     }
 // endif WEBKIT_CHANGES
