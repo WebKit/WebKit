@@ -54,11 +54,11 @@ function setContentTypeDisabledState(form)
 
 // if WEBKIT_CHANGES
     if (isdisabled) {
-        document.getElementById('legal').style.visibility = "visible";
+        document.getElementById('legal').style.display = "table-row";
         document.getElementById('create').value = "Agree and Submit";
     } else {
         document.getElementById('create').value = "Submit";
-        document.getElementById('legal').style.visibility = "collapse";
+        document.getElementById('legal').style.display = "none";
     }
 // endif WEBKIT_CHANGES
 }
