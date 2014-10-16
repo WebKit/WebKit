@@ -104,9 +104,9 @@ void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("x-ansi", "US-ASCII");
 }
 
-static PassOwnPtr<TextCodec> newStreamingTextDecoderWindowsLatin1(const TextEncoding&, const void*)
+static std::unique_ptr<TextCodec> newStreamingTextDecoderWindowsLatin1(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecLatin1);
+    return std::make_unique<TextCodecLatin1>();
 }
 
 void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)

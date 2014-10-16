@@ -66,10 +66,10 @@ static UConverter*& cachedConverterICU()
     return threadGlobalData().cachedConverterICU().converter;
 }
 
-PassOwnPtr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, const void* additionalData)
+std::unique_ptr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, const void* additionalData)
 {
     // Name strings are persistently kept in TextEncodingRegistry maps, so they are never deleted.
-    return adoptPtr(new TextCodecICU(encoding.name(), static_cast<const char*>(additionalData)));
+    return std::make_unique<TextCodecICU>(encoding.name(), static_cast<const char*>(additionalData));
 }
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)

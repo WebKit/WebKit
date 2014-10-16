@@ -48,14 +48,14 @@ void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
     registrar("unicodeFFFE", "UTF-16BE");
 }
 
-static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16LE(const TextEncoding&, const void*)
+static std::unique_ptr<TextCodec> newStreamingTextDecoderUTF16LE(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecUTF16(true));
+    return std::make_unique<TextCodecUTF16>(true);
 }
 
-static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16BE(const TextEncoding&, const void*)
+static std::unique_ptr<TextCodec> newStreamingTextDecoderUTF16BE(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecUTF16(false));
+    return std::make_unique<TextCodecUTF16>(false);
 }
 
 void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)

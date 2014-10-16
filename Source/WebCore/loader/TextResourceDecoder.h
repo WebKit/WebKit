@@ -84,7 +84,7 @@ private:
 
     ContentType m_contentType;
     TextEncoding m_encoding;
-    OwnPtr<TextCodec> m_codec;
+    std::unique_ptr<TextCodec> m_codec;
     EncodingSource m_source;
     const char* m_hintEncoding;
     Vector<char> m_buffer;

@@ -292,7 +292,7 @@ static void extendTextCodecMaps()
     buildQuirksSets();
 }
 
-PassOwnPtr<TextCodec> newTextCodec(const TextEncoding& encoding)
+std::unique_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
 {
     std::lock_guard<std::mutex> lock(encodingRegistryMutex());
 

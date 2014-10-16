@@ -63,7 +63,7 @@ private:
     };
 
     std::unique_ptr<HTMLTokenizer> m_tokenizer;
-    OwnPtr<TextCodec> m_assumedCodec;
+    std::unique_ptr<TextCodec> m_assumedCodec;
     SegmentedString m_input;
     HTMLToken m_token;
     bool m_inHeadSection;

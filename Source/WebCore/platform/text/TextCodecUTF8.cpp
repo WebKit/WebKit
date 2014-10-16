@@ -38,9 +38,9 @@ namespace WebCore {
 
 const int nonCharacter = -1;
 
-PassOwnPtr<TextCodec> TextCodecUTF8::create(const TextEncoding&, const void*)
+std::unique_ptr<TextCodec> TextCodecUTF8::create(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecUTF8);
+    return std::make_unique<TextCodecUTF8>();
 }
 
 void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)

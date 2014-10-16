@@ -32,13 +32,16 @@ namespace WebCore {
 
 class TextCodecUTF8 : public TextCodec {
 public:
+    static std::unique_ptr<TextCodec> create(const TextEncoding&, const void*);
+    TextCodecUTF8()
+        : m_partialSequenceSize(0)
+    {
+    }
+
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
 private:
-    static PassOwnPtr<TextCodec> create(const TextEncoding&, const void*);
-    TextCodecUTF8() : m_partialSequenceSize(0) { }
-
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
     virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 

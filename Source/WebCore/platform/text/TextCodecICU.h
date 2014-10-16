@@ -36,15 +36,16 @@ namespace WebCore {
 
     class TextCodecICU : public TextCodec {
     public:
+        static std::unique_ptr<TextCodec> create(const TextEncoding&, const void* additionalData);
+
+        TextCodecICU(const char* encoding, const char* canonicalConverterName);
+
         static void registerEncodingNames(EncodingNameRegistrar);
         static void registerCodecs(TextCodecRegistrar);
 
         virtual ~TextCodecICU();
 
     private:
-        TextCodecICU(const char* encoding, const char* canonicalConverterName);
-        static PassOwnPtr<TextCodec> create(const TextEncoding&, const void* additionalData);
-
         virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
         virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 

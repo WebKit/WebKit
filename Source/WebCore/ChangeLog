@@ -1,3 +1,41 @@
+2014-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move TextCodec classes to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=137738
+
+        Reviewed by Darin Adler.
+
+        Replace uses of PassOwnPtr in code under TextCodecFoo class with std::unique_ptr.
+        To do this, ctor of TextCodecFoo classes is changed from private to public. Besides
+        related classes follow this change as well.
+
+        No new tests, no behavior change.
+
+        * html/parser/HTMLMetaCharsetParser.h:
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::setEncoding):
+        (WebCore::TextResourceDecoder::flush):
+        * loader/TextResourceDecoder.h:
+        * platform/text/TextCodec.h:
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::create):
+        * platform/text/TextCodecICU.h:
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::newStreamingTextDecoderWindowsLatin1):
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::newStreamingTextDecoderUTF16LE):
+        (WebCore::newStreamingTextDecoderUTF16BE):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::create):
+        * platform/text/TextCodecUTF8.h:
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::newStreamingTextDecoderUserDefined):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::newTextCodec):
+        * platform/text/TextEncodingRegistry.h:
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::newTextCodecMac):
+
 2014-10-15  Dean Jackson  <dino@apple.com>
 
         [Media] Reduce style updates (painting) in controls

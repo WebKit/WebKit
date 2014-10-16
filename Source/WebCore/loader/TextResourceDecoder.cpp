@@ -355,7 +355,7 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
     else
         m_encoding = encoding;
 
-    m_codec.clear();
+    m_codec = nullptr;
     m_source = source;
 }
 
@@ -660,7 +660,7 @@ String TextResourceDecoder::flush()
 
     String result = m_codec->decode(m_buffer.data(), m_buffer.size(), true, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
-    m_codec.clear();
+    m_codec = nullptr;
     m_checkedForBOM = false; // Skip BOM again when re-decoding.
     return result;
 }
