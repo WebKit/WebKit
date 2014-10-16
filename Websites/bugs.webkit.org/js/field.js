@@ -219,14 +219,23 @@ function setupEditLink(id) {
 }
 
 /* Hide input/select fields and show the text with (edit) next to it */
-function hideEditableField( container, input, action, field_id, original_value, new_value ) {
+function hideEditableField( container, input, action, field_array, original_value, new_value ) {
+    var field_id = field_array instanceof Array ? field_array.shift() : field_array;
     YAHOO.util.Dom.removeClass(container, 'bz_default_hidden');
     YAHOO.util.Dom.addClass(input, 'bz_default_hidden');
     YAHOO.util.Event.addListener(action, 'click', showEditableField,
                                  new Array(container, input, field_id, new_value));
     if(field_id != ""){
+        YAHOO.util.Event.addListener(field_id + '_nonedit_display', 'click', showEditableField,
+                                     new Array(container, input, undefined, undefined, field_id));
         YAHOO.util.Event.addListener(window, 'load', checkForChangedFieldValues,
                         new Array(container, input, field_id, original_value));
+    }
+    for (var field2_id in field_array){
+        if(field2_id != ""){
+            YAHOO.util.Event.addListener(field2_id + '_nonedit_display', 'click', showEditableField,
+                                         new Array(container, input, undefined, undefined, field2_id));
+        }
     }
 }
 
@@ -239,6 +248,7 @@ function hideEditableField( container, input, action, field_id, original_value, 
  * var ContainerInputArray[1]: the input area and label that will be displayed
  * var ContainerInputArray[2]: the input/select field id for which the new value must be set
  * var ContainerInputArray[3]: the new value to set the input/select field to when (take) is clicked
+ * var ContainerInputArray[4]: [optional] the id of the input element to focus
  */
 function showEditableField (e, ContainerInputArray) {
     var inputs = new Array();
@@ -272,10 +282,19 @@ function showEditableField (e, ContainerInputArray) {
                 }
             }
         }
-        // focus on the first field, this makes it easier to edit
-        inputs[0].focus();
-        if ( type == "input" ) {
-            inputs[0].select();
+        var elementToFocus = YAHOO.util.Dom.get(ContainerInputArray[4]);
+        if (elementToFocus) {
+            // focus on the requested field
+            elementToFocus.focus();
+            if ( elementToFocus.tagName.toLowerCase() == "input" ) {
+                elementToFocus.select();
+            }
+        } else {
+            // focus on the first field, this makes it easier to edit
+            inputs[0].focus();
+            if ( type == "input" ) {
+                inputs[0].select();
+            }
         }
     }
     YAHOO.util.Event.preventDefault(e);
@@ -322,7 +341,7 @@ function checkForChangedFieldValues(e, ContainerInputArray ) {
 function hideAliasAndSummary(short_desc_value, alias_value) {
     // check the short desc field
     hideEditableField( 'summary_alias_container','summary_alias_input',
-                       'editme_action','short_desc', short_desc_value);  
+                       'editme_action', new Array('short_desc', 'alias'), short_desc_value);  
     // check that the alias hasn't changed
     var bz_alias_check_array = new Array('summary_alias_container',
                                      'summary_alias_input', 'alias', alias_value);
