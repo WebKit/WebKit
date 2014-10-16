@@ -309,7 +309,7 @@ static void initialize()
             dllRegisterServer();
 
     // Init COM
-    OleInitialize(0);
+    OleInitialize(nullptr);
 
     static LPCTSTR fontsToInstall[] = {
         TEXT("AHEM____.ttf"),
@@ -1064,6 +1064,7 @@ static void runTest(const string& inputLine)
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
+    MSG msg = { 0 };
     HWND hostWindow;
     webView->hostWindow(&hostWindow);
 
@@ -1077,7 +1078,6 @@ static void runTest(const string& inputLine)
     request->setHTTPMethod(methodBStr);
     frame->loadRequest(request.get());
 
-    MSG msg;
     while (true) {
 #if USE(CF)
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
@@ -1241,6 +1241,11 @@ static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
 
 int main(int argc, const char* argv[])
 {
+#ifdef _CRTDBG_MAP_ALLOC
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+#endif
+
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
@@ -1399,6 +1404,11 @@ int main(int argc, const char* argv[])
 #endif
 
     shutDownWebKit();
+#ifdef _CRTDBG_MAP_ALLOC
+    _CrtDumpMemoryLeaks();
+#endif
+
+    ::OleUninitialize();
 
     return 0;
 }

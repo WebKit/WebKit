@@ -367,15 +367,19 @@ HRESULT UIDelegate::webViewFrame(IWebView* /*sender*/, RECT* frame)
 
 HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(IWebView* /*sender*/, BSTR message)
 {
-    printf("ALERT: %S\n", message ? message : L"");
-    fflush(stdout);
+    if (!done) {
+        printf("ALERT: %S\n", message ? message : L"");
+        fflush(stdout);
+    }
 
     return S_OK;
 }
 
 HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(IWebView* /*sender*/, BSTR message, BOOL* result)
 {
-    printf("CONFIRM: %S\n", message ? message : L"");
+    if (!done)
+        printf("CONFIRM: %S\n", message ? message : L"");
+
     *result = TRUE;
 
     return S_OK;
@@ -383,7 +387,9 @@ HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(IWebView* /*sender*/, B
 
 HRESULT UIDelegate::runJavaScriptTextInputPanelWithPrompt(IWebView* /*sender*/, BSTR message, BSTR defaultText, BSTR* result)
 {
-    printf("PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
+    if (!done)
+        printf("PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
+
     *result = SysAllocString(defaultText);
 
     return S_OK;
@@ -393,13 +399,20 @@ HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(IWebView* /*sender*/,
 {
     if (!result)
         return E_POINTER;
-    printf("CONFIRM NAVIGATION: %S\n", message ? message : L"");
+
+    if (!done)
+        printf("CONFIRM NAVIGATION: %S\n", message ? message : L"");
+
     *result = !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
+
     return S_OK;
 }
 
 HRESULT UIDelegate::webViewAddMessageToConsole(IWebView* /*sender*/, BSTR message, int lineNumber, BSTR url, BOOL isError)
 {
+    if (done)
+        return S_OK;
+
     wstring newMessage;
     if (message) {
         newMessage = message;

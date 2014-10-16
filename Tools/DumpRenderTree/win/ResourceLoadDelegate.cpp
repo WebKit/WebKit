@@ -35,6 +35,7 @@
 #include <comutil.h>
 #include <sstream>
 #include <tchar.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 using namespace std;
@@ -217,6 +218,17 @@ HRESULT ResourceLoadDelegate::removeIdentifierForRequest(
     return S_OK;
 }
 
+static bool isLocalhost(CFStringRef host)
+{
+    return kCFCompareEqualTo == CFStringCompare(host, CFSTR("127.0.0.1"), 0)
+        || kCFCompareEqualTo == CFStringCompare(host, CFSTR("localhost"), 0);
+}
+
+static bool hostIsUsedBySomeTestsToGenerateError(CFStringRef host)
+{
+    return kCFCompareEqualTo == CFStringCompare(host, CFSTR("255.255.255.255"), 0);
+}
+
 HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long identifier, IWebURLRequest* request,
     IWebURLResponse* redirectResponse, IWebDataSource* dataSource, IWebURLRequest** newRequest)
 {
@@ -229,20 +241,54 @@ HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long i
 
     if (!done && !gTestRunner->deferMainResourceDataLoad()) {
         COMPtr<IWebDataSourcePrivate> dataSourcePrivate(Query, dataSource);
-        if (!dataSourcePrivate)
+        if (!dataSourcePrivate) {
+            *newRequest = nullptr;
             return E_FAIL;
+        }
         dataSourcePrivate->setDeferMainResourceDataLoad(FALSE);
     }
 
     if (!done && gTestRunner->willSendRequestReturnsNull()) {
-        *newRequest = 0;
+        *newRequest = nullptr;
         return S_OK;
     }
 
     if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
         printf("Returning null for this redirect\n");
-        *newRequest = 0;
+        *newRequest = nullptr;
         return S_OK;
+    }
+
+    _bstr_t urlBstr;
+    if (FAILED(request->URL(&urlBstr.GetBSTR()))) {
+        printf("Request has no URL\n");
+        *newRequest = nullptr;
+        return E_FAIL;
+    }
+
+    RetainPtr<CFStringRef> str = adoptCF(CFStringCreateWithCString(0, static_cast<const char*>(urlBstr), kCFStringEncodingWindowsLatin1));
+    RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, str.get(), nullptr));
+    if (url) {
+        RetainPtr<CFStringRef> host = adoptCF(CFURLCopyHostName(url.get()));
+        RetainPtr<CFStringRef> scheme = adoptCF(CFURLCopyScheme(url.get()));
+
+        if (host && ((kCFCompareEqualTo == CFStringCompare(scheme.get(), CFSTR("http"), kCFCompareCaseInsensitive))
+            || (kCFCompareEqualTo == CFStringCompare(scheme.get(), CFSTR("https"), kCFCompareCaseInsensitive)))) {
+            RetainPtr<CFStringRef> testPathOrURL = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, gTestRunner->testPathOrURL().c_str(), kCFStringEncodingWindowsLatin1));
+            RetainPtr<CFMutableStringRef> lowercaseTestPathOrURL = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, CFStringGetLength(testPathOrURL.get()), testPathOrURL.get()));
+            RetainPtr<CFLocaleRef> locale = CFLocaleCopyCurrent();
+            CFStringLowercase(lowercaseTestPathOrURL.get(), locale.get());
+            RetainPtr<CFStringRef> testHost;
+            if (CFStringHasPrefix(lowercaseTestPathOrURL.get(), CFSTR("http:")) || CFStringHasPrefix(lowercaseTestPathOrURL.get(), CFSTR("https:"))) {
+                RetainPtr<CFURLRef> testPathURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, lowercaseTestPathOrURL.get(), nullptr));
+                testHost = adoptCF(CFURLCopyHostName(testPathURL.get()));
+            }
+            if (!isLocalhost(host.get()) && !hostIsUsedBySomeTestsToGenerateError(host.get()) && (!testHost || isLocalhost(testHost.get()))) {
+                printf("Blocked access to external URL %s\n", static_cast<const char*>(urlBstr));
+                *newRequest = nullptr;
+                return S_OK;
+            }
+        }
     }
 
     IWebMutableURLRequest* requestCopy = 0;

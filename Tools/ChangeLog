@@ -1,3 +1,38 @@
+2014-10-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update DRT to match Mac Logic
+        https://bugs.webkit.org/show_bug.cgi?id=137787
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize): 0 -> nullptr
+        (runTest): Initialize MSG structure before using.
+        (main): Add CRT debug flags if building DRT with debug malloc on Windows.
+        Also, cleanly shut down COM when exiting.
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didChangeLocationWithinPageForFrame): Move from
+        header and add printf to match Mac.
+        (FrameLoadDelegate::windowScriptObjectAvailable): Ditto.
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        (FrameLoadDelegate::didChangeLocationWithinPageForFrame): Deleted.
+        (FrameLoadDelegate::windowScriptObjectAvailable): Deleted.
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (isLocalhost): Added.
+        (hostIsUsedBySomeTestsToGenerateError): Added.
+        (ResourceLoadDelegate::willSendRequest): Add logic to mimic Mac's use
+        of certain error and redirect host names.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runJavaScriptAlertPanelWithMessage): Use 'done' flag to decide if
+        anything should be output to the console. This modifies behavior to match the Mac.
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage): Ditto.
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt): Ditto.
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage): Ditto.
+        (UIDelegate::webViewAddMessageToConsole): Ditto.
+        * WinLauncher/PageLoadTestClient.cpp:
+        (PageLoadTestClient::pageLoadEndedAtTime): Drive-by-fix for an assertion that I
+        added last week.
+
 2014-10-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174754.

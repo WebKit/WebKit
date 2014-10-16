@@ -121,7 +121,7 @@ void PageLoadTestClient::didEndResourceLoad(uint64_t resourceIdentifier)
 
 void PageLoadTestClient::pageLoadEndedAtTime(CFAbsoluteTime endTime)
 {
-    ASSERT(m_endTimes.size() == m_currentRepetition);
+    ASSERT(!m_pageLoadTesting || m_endTimes.size() == m_currentRepetition);
     m_endTimes.append(endTime);
 
     if (m_currentRepetition) {

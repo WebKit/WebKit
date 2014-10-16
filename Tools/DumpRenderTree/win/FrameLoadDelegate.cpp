@@ -139,6 +139,14 @@ HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(IW
     return S_OK;
 }
 
+HRESULT FrameLoadDelegate::didChangeLocationWithinPageForFrame(IWebView* , IWebFrame* frame)
+{
+    if (!done && gTestRunner->dumpFrameLoadCallbacks())
+        printf("%s - didChangeLocationWithinPageForFrame\n", descriptionSuitableForTestResult(frame).c_str());
+
+    return S_OK;
+}
+
 HRESULT FrameLoadDelegate::didFailProvisionalLoadWithError(IWebView* /*webView*/, IWebError* error, IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
@@ -280,6 +288,16 @@ HRESULT FrameLoadDelegate::didCancelClientRedirectForFrame(IWebView* /*webView*/
 HRESULT FrameLoadDelegate::willCloseFrame(IWebView* /*webView*/, IWebFrame* /*frame*/)
 {
     return E_NOTIMPL;
+}
+
+HRESULT FrameLoadDelegate::windowScriptObjectAvailable(IWebView*, JSContextRef, JSObjectRef)
+{
+    if (!done && gTestRunner->dumpFrameLoadCallbacks())
+        printf("?? - windowScriptObjectAvailable\n");
+
+    ASSERT_NOT_REACHED();
+
+    return S_OK;
 }
 
 HRESULT FrameLoadDelegate::didClearWindowObject(IWebView*, JSContextRef, JSObjectRef, IWebFrame*)
