@@ -64,8 +64,7 @@ use Apache2::SizeLimit;
 # not counting RAM it is sharing with the other httpd processes.
 #if WEBKIT_CHANGES
 # bugs.webkit.org children are normally about 400MB.
-#Apache2::SizeLimit->set_max_unshared_size(45_000);
-Apache2::SizeLimit->set_max_unshared_size(700_000);
+$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 700000;
 #endif // WEBKIT_CHANGES
 
 my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
