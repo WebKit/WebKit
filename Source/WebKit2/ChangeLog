@@ -1,3 +1,19 @@
+2014-10-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r173356): Downloading a disk image appends ".txt" to it
+        https://bugs.webkit.org/show_bug.cgi?id=137493
+        <rdar://problem/18321947>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::startWithHandle):
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::startWithHandle):
+
+            It appears that the synthesized NS/CFURLResponse fails to serialize the suggested filename correctly
+            unless it has been accessed first.
+
 2014-10-15  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] "Plug-in will handle load" error isn't declared in the modern API

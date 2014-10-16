@@ -73,6 +73,10 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
 
+    // FIXME: For some reason the filename needs to be accessed or it may be incorrect after
+    // NSURLResponse is serialized/deserialized (gains .txt extension)
+    response.suggestedFilename();
+
     m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
     m_nsURLDownload = [NSURLDownload _downloadWithLoadingConnection:handle->connection()
                                                             request:m_request.nsURLRequest(UpdateHTTPBody)

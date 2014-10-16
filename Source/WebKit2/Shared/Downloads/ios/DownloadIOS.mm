@@ -129,6 +129,10 @@ void Download::start()
 
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
+    // FIXME: For some reason the filename needs to be accessed or it may be incorrect after
+    // CFURLResponse is serialized/deserialized (gains .txt extension)
+    response.suggestedFilename();
+
     CFURLDownloadClient client;
     setUpDownloadClient(client, *this);
     m_download = adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(NULL, handle->releaseConnectionForDownload().get(), m_request.cfURLRequest(UpdateHTTPBody), response.cfURLResponse(), &client));
