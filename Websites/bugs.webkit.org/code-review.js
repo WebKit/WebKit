@@ -559,8 +559,13 @@ var CODE_REVIEW_UNITTEST;
           var text = $(this).find('.bz_comment_text').text();
 
           var comment_marker = 'Comment on attachment ' + attachment_id + ' .details.';
-          if (text.match(comment_marker))
+          if (text.match(comment_marker)) {
             $.merge(comments, scanForComments(author, text));
+          } else {
+              comment_marker = '(From update of attachment ' + attachment_id + ' .details.)';
+              if (text.match(comment_marker))
+                $.merge(comments, scanForComments(author, text));
+          }
 
           var style_queue_comment_marker = 'Attachment ' + attachment_id + ' .details. did not pass style-queue.'
           if (text.match(style_queue_comment_marker))
