@@ -56,6 +56,17 @@ void ResourceHandleCFURLConnectionDelegate::releaseHandle()
     m_handle = nullptr;
 }
 
+const void* ResourceHandleCFURLConnectionDelegate::retain(const void* clientInfo)
+{
+    static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->ref();
+    return clientInfo;
+}
+
+void ResourceHandleCFURLConnectionDelegate::release(const void* clientInfo)
+{
+    static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->deref();
+}
+
 CFURLRequestRef ResourceHandleCFURLConnectionDelegate::willSendRequestCallback(CFURLConnectionRef, CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse, const void* clientInfo)
 {
     return static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->willSendRequest(cfRequest, originalRedirectResponse);
@@ -173,7 +184,10 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
 
 CFURLConnectionClient_V6 ResourceHandleCFURLConnectionDelegate::makeConnectionClient() const
 {
-    CFURLConnectionClient_V6 client = { 6, this, 0, 0, 0,
+    CFURLConnectionClient_V6 client = { 6, this,
+        &ResourceHandleCFURLConnectionDelegate::retain,
+        &ResourceHandleCFURLConnectionDelegate::release,
+        0, // copyDescription
         &ResourceHandleCFURLConnectionDelegate::willSendRequestCallback,
         &ResourceHandleCFURLConnectionDelegate::didReceiveResponseCallback,
         &ResourceHandleCFURLConnectionDelegate::didReceiveDataCallback,
