@@ -2,9 +2,6 @@
 <FilesMatch (\.pm|\.pl|\.tmpl|localconfig.*)$>
   deny from all
 </FilesMatch>
-<FilesMatch ^(localconfig.js|localconfig.rdf)$>
-  allow from all
-</FilesMatch>
 <IfModule mod_expires.c>
 <IfModule mod_headers.c>
 <IfModule mod_env.c>
