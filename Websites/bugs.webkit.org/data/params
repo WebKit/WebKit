@@ -63,7 +63,7 @@
            'mybugstemplate' => 'buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=%userid%&amp;emailtype1=exact&amp;emailassigned_to1=1&amp;emailreporter1=1',
            'noresolveonopenblockers' => 0,
            'password_complexity' => 'no_constraints',
-           'proxy_url' => 'http://rpms.macosforge.org:3128/',
+           'proxy_url' => 'http://rpms2.macosforge.org:3128/',
            'querysharegroup' => 'editbugs',
            'quip_list_entry_control' => 'moderated',
            'rememberlogin' => 'on',
