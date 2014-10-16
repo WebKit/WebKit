@@ -1,5 +1,13 @@
 2014-10-15  Zalan Bujtas  <zalan@apple.com>
 
+        [Mac] Unreviewed gardening.
+
+        Unskip subpixel border tests.
+
+        * platform/mac/TestExpectations:
+
+2014-10-15  Zalan Bujtas  <zalan@apple.com>
+
         [Mac] Unreviewed gardening(mountain-lion).
 
         * platform/mac-mountainlion/fast/text/international/hindi-spacing-expected.txt: Added.
