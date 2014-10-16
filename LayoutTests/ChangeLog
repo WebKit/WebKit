@@ -2,6 +2,12 @@
 
         [Mac] Unreviewed gardening.
 
+        * platform/mac/TestExpectations:
+
+2014-10-16  Zalan Bujtas  <zalan@apple.com>
+
+        [Mac] Unreviewed gardening.
+
         Unskip more subpixel related tests.
 
         * platform/mac/TestExpectations:
