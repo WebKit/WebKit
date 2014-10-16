@@ -1069,7 +1069,7 @@ sub get_accessible_products {
                        @{$self->get_selectable_products},
                        @{$self->get_enterable_products};
     
-    return [ values %products ];
+    return [ sort { $a->name cmp $b->name } values %products ];
 }
 
 sub check_can_admin_product {
@@ -1528,6 +1528,8 @@ sub match_field {
         my @logins;
         for my $query (@queries) {
             $query = trim($query);
+            next if $query eq '';
+
             my $users = match(
                 $query,   # match string
                 $limit,   # match limit
@@ -2068,7 +2070,7 @@ sub validate_password {
     my $complexity_level = Bugzilla->params->{password_complexity};
     if ($complexity_level eq 'letters_numbers_specialchars') {
         ThrowUserError('password_not_complex')
-          if ($password !~ /\w/ || $password !~ /\d/ || $password !~ /[[:punct:]]/);
+          if ($password !~ /[[:alpha:]]/ || $password !~ /\d/ || $password !~ /[[:punct:]]/);
     } elsif ($complexity_level eq 'letters_numbers') {
         ThrowUserError('password_not_complex')
           if ($password !~ /[[:lower:]]/ || $password !~ /[[:upper:]]/ || $password !~ /\d/);
@@ -2196,6 +2198,35 @@ groups.
 
 Returns a hashref with tag IDs as key, and a hashref with tag 'id',
 'name' and 'bug_count' as value.
+
+=back
+
+=head2 Saved Recent Bug Lists
+
+=over
+
+=item C<recent_searches>
+
+Returns an arrayref of L<Bugzilla::Search::Recent> objects
+containing the user's recent searches.
+
+=item C<recent_search_containing(bug_id)>
+
+Returns a L<Bugzilla::Search::Recent> object that contains the most recent
+search by the user for the specified bug id. Retuns undef if no match is found.
+
+=item C<recent_search_for(bug)>
+
+Returns a L<Bugzilla::Search::Recent> object that contains a search by the
+user. Uses the list_id of the current loaded page, or the referrer page, and
+the bug id if that fails. Finally it will check the BUGLIST cookie, and create
+an object based on that, or undef if it does not exist.
+
+=item C<save_last_search>
+
+Saves the users most recent search in the database if logged in, or in the
+BUGLIST cookie if not logged in. Parameters are bug_ids, order, vars and
+list_id.
 
 =back
 
@@ -2397,7 +2428,8 @@ the database again. Used mostly by L<Bugzilla::Product>.
 
 =item C<can_enter_product($product_name, $warn)>
 
- Description: Returns 1 if the user can enter bugs into the specified product.
+ Description: Returns a product object if the user can enter bugs into the
+              specified product.
               If the user cannot enter bugs into the product, the behavior of
               this method depends on the value of $warn:
               - if $warn is false (or not given), a 'false' value is returned;
@@ -2408,7 +2440,7 @@ the database again. Used mostly by L<Bugzilla::Product>.
                               must be thrown if the user cannot enter bugs
                               into the specified product.
 
- Returns:     1 if the user can enter bugs into the product,
+ Returns:     A product object if the user can enter bugs into the product,
               0 if the user cannot enter bugs into the product and if $warn
               is false (an error is thrown if $warn is true).
 

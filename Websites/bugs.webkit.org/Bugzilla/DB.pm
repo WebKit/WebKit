@@ -405,8 +405,10 @@ sub sql_string_until {
 }
 
 sub sql_in {
-    my ($self, $column_name, $in_list_ref) = @_;
-    return " $column_name IN (" . join(',', @$in_list_ref) . ") ";
+    my ($self, $column_name, $in_list_ref, $negate) = @_;
+    return " $column_name "
+             . ($negate ? "NOT " : "")
+             . "IN (" . join(',', @$in_list_ref) . ") ";
 }
 
 sub sql_fulltext_search {

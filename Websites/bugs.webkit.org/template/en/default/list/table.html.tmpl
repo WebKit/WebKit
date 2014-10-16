@@ -133,7 +133,7 @@
       [% PROCESS new_order %]
       [%-#%]&amp;query_based_on=
       [% defaultsavename OR searchname FILTER uri %]">
-        [%- abbrev.$id.title || field_descs.$id || column.title -%]
+        [%- abbrev.$id.title || field_descs.$id || column.title FILTER html -%]
         [% PROCESS order_arrow ~%]
     </a>
   </th>

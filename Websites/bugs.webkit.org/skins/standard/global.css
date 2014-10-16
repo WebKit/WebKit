@@ -55,8 +55,8 @@
         border-left: 1px solid #747E93;
         border-right: 1px solid #747E93;
         border-bottom: 1px solid #747E93;
-        -moz-border-radius-bottomleft: 5px;
-        -moz-border-radius-bottomright: 5px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
         padding: 0.5em;
     }
 
@@ -105,8 +105,8 @@
         width: 100%;
         background-color: #404D6C;
         color: #fff;
-        -moz-border-radius-topleft: 5px;
-        -moz-border-radius-topright: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
         font-size: 110%;
         margin: 0;
         padding: 0.5em;

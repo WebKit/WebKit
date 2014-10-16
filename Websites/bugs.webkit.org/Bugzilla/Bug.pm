@@ -523,17 +523,14 @@ sub possible_duplicates {
     if ($dbh->FULLTEXT_OR) {
         my $joined_terms = join($dbh->FULLTEXT_OR, @words);
         ($where_sql, $relevance_sql) = 
-            $dbh->sql_fulltext_search('bugs_fulltext.short_desc', 
-                                      $joined_terms, 1);
+            $dbh->sql_fulltext_search('bugs_fulltext.short_desc', $joined_terms);
         $relevance_sql ||= $where_sql;
     }
     else {
         my (@where, @relevance);
-        my $count = 0;
         foreach my $word (@words) {
-            $count++;
             my ($term, $rel_term) = $dbh->sql_fulltext_search(
-                'bugs_fulltext.short_desc', $word, $count);
+                'bugs_fulltext.short_desc', $word);
             push(@where, $term);
             push(@relevance, $rel_term || $term);
         }
@@ -733,6 +730,17 @@ sub run_create_validators {
     my $class  = shift;
     my $params = $class->SUPER::run_create_validators(@_);
 
+    # Add classification for checking mandatory fields which depend on it
+    $params->{classification} = $params->{product}->classification->name;
+
+    my @mandatory_fields = @{ Bugzilla->fields({ is_mandatory => 1,
+                                                 enter_bug    => 1,
+                                                 obsolete     => 0 }) };
+    foreach my $field (@mandatory_fields) {
+        $class->_check_field_is_mandatory($params->{$field->name}, $field,
+                                          $params);
+    }
+
     my $product = delete $params->{product};
     $params->{product_id} = $product->id;
     my $component = delete $params->{component};
@@ -757,17 +765,10 @@ sub run_create_validators {
     delete $params->{resolution};
     delete $params->{lastdiffed};
     delete $params->{bug_id};
+    delete $params->{classification};
 
     Bugzilla::Hook::process('bug_end_of_create_validators',
                             { params => $params });
-
-    my @mandatory_fields = @{ Bugzilla->fields({ is_mandatory => 1,
-                                                 enter_bug    => 1,
-                                                 obsolete     => 0 }) };
-    foreach my $field (@mandatory_fields) {
-        $class->_check_field_is_mandatory($params->{$field->name}, $field,
-                                          $params);
-    }
 
     return $params;
 }
@@ -1371,7 +1372,7 @@ sub _check_bug_status {
     }
 
     # Check if a comment is required for this change.
-    if ($new_status->comment_required_on_change_from($old_status) && !$comment)
+    if ($new_status->comment_required_on_change_from($old_status) && !$comment->{'thetext'})
     {
         ThrowUserError('comment_required', { old => $old_status,
                                              new => $new_status });
@@ -1465,8 +1466,12 @@ sub _check_component {
     $name || ThrowUserError("require_component");
     my $product = blessed($invocant) ? $invocant->product_obj 
                                      : $params->{product};
-    my $obj = Bugzilla::Component->check({ product => $product, name => $name });
-    return $obj;
+    my $old_comp = blessed($invocant) ? $invocant->component : '';
+    my $object = Bugzilla::Component->check({ product => $product, name => $name });
+    if ($object->name ne $old_comp && !$object->is_active) {
+        ThrowUserError('value_inactive', { class => ref($object), value => $name });
+    }
+    return $object;
 }
 
 sub _check_creation_ts {
@@ -1908,10 +1913,14 @@ sub _check_target_milestone {
     my ($invocant, $target, undef, $params) = @_;
     my $product = blessed($invocant) ? $invocant->product_obj 
                                      : $params->{product};
+    my $old_target = blessed($invocant) ? $invocant->target_milestone : '';
     $target = trim($target);
     $target = $product->default_milestone if !defined $target;
     my $object = Bugzilla::Milestone->check(
         { product => $product, name => $target });
+    if ($old_target && $object->name ne $old_target && !$object->is_active) {
+        ThrowUserError('value_inactive', { class => ref($object),  value => $target });
+    }
     return $object->name;
 }
 
@@ -1934,8 +1943,11 @@ sub _check_version {
     $version = trim($version);
     my $product = blessed($invocant) ? $invocant->product_obj 
                                      : $params->{product};
-    my $object = 
-        Bugzilla::Version->check({ product => $product, name => $version });
+    my $old_vers = blessed($invocant) ? $invocant->version : '';
+    my $object = Bugzilla::Version->check({ product => $product, name => $version });
+    if ($object->name ne $old_vers && !$object->is_active) {
+        ThrowUserError('value_inactive', { class => ref($object), value => $version });
+    }
     return $object->name;
 }
 
@@ -1952,6 +1964,12 @@ sub _check_field_is_mandatory {
     return if !$field->is_mandatory;
 
     return if !$field->is_visible_on_bug($params || $invocant);
+
+    return if ($field->type == FIELD_TYPE_SINGLE_SELECT
+                 && scalar @{ get_legal_field_values($field->name) } == 1);
+
+    return if ($field->type == FIELD_TYPE_MULTI_SELECT
+                 && !scalar @{ get_legal_field_values($field->name) });
 
     if (ref($value) eq 'ARRAY') {
         $value = join('', @$value);
@@ -2464,9 +2482,9 @@ sub _set_product {
                 milestone => $milestone_ok ? $self->target_milestone
                                            : $product->default_milestone
             };
-            $vars{components} = [map { $_->name } @{$product->components}];
-            $vars{milestones} = [map { $_->name } @{$product->milestones}];
-            $vars{versions}   = [map { $_->name } @{$product->versions}];
+            $vars{components} = [map { $_->name } grep($_->is_active, @{$product->components})];
+            $vars{milestones} = [map { $_->name } grep($_->is_active, @{$product->milestones})];
+            $vars{versions}   = [map { $_->name } grep($_->is_active, @{$product->versions})];
         }
 
         if (!$verified) {
@@ -2872,7 +2890,8 @@ sub add_see_also {
         # ref bug id for sending changes email.
         my $ref_bug = delete $field_values->{ref_bug};
         if ($class->isa('Bugzilla::BugUrl::Bugzilla::Local')
-            and !$skip_recursion)
+            and !$skip_recursion
+            and $ref_bug->check_can_change_field('see_also', '', $self->id, \$privs))
         {
             $ref_bug->add_see_also($self->id, 'skip_recursion');
             push @{ $self->{_update_ref_bugs} }, $ref_bug;
@@ -2904,12 +2923,15 @@ sub remove_see_also {
     # we need to notify changes for that bug too.
     $removed_bug_url = $removed_bug_url->[0];
     if (!$skip_recursion and $removed_bug_url
-        and $removed_bug_url->isa('Bugzilla::BugUrl::Bugzilla::Local'))
+        and $removed_bug_url->isa('Bugzilla::BugUrl::Bugzilla::Local')
+        and $removed_bug_url->ref_bug_url)
     {
         my $ref_bug
             = Bugzilla::Bug->check($removed_bug_url->ref_bug_url->bug_id);
 
-        if (Bugzilla->user->can_edit_product($ref_bug->product_id)) {
+        if (Bugzilla->user->can_edit_product($ref_bug->product_id)
+            and $ref_bug->check_can_change_field('see_also', $self->id, '', \$privs))
+        {
             my $self_url = $removed_bug_url->local_uri($self->id);
             $ref_bug->remove_see_also($self_url, 'skip_recursion');
             push @{ $self->{_update_ref_bugs} }, $ref_bug;
@@ -3632,9 +3654,13 @@ sub bug_alias_to_id {
 # Subroutines
 #####################################################################
 
-# Represents which fields from the bugs table are handled by process_bug.cgi.
+# Returns a list of currently active and editable bug fields,
+# including multi-select fields.
 sub editable_bug_fields {
     my @fields = Bugzilla->dbh->bz_table_columns('bugs');
+    # Add multi-select fields
+    push(@fields, map { $_->name } @{Bugzilla->fields({obsolete => 0,
+                                                       type => FIELD_TYPE_MULTI_SELECT})});
     # Obsolete custom fields are not editable.
     my @obsolete_fields = @{ Bugzilla->fields({obsolete => 1, custom => 1}) };
     @obsolete_fields = map { $_->name } @obsolete_fields;
@@ -3642,7 +3668,7 @@ sub editable_bug_fields {
                         "lastdiffed", @obsolete_fields) 
     {
         my $location = firstidx { $_ eq $remove } @fields;
-        # Custom multi-select fields are not stored in the bugs table.
+        # Ensure field exists before attempting to remove it.
         splice(@fields, $location, 1) if ($location > -1);
     }
     # Sorted because the old @::log_columns variable, which this replaces,

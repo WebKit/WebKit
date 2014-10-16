@@ -275,12 +275,17 @@ sub Cancel {
 
     # Get information about the token being canceled.
     trick_taint($token);
-    my ($issuedate, $tokentype, $eventdata, $userid) =
-        $dbh->selectrow_array('SELECT ' . $dbh->sql_date_format('issuedate') . ',
+    my ($db_token, $issuedate, $tokentype, $eventdata, $userid) =
+        $dbh->selectrow_array('SELECT token, ' . $dbh->sql_date_format('issuedate') . ',
                                       tokentype, eventdata, userid
                                  FROM tokens
                                 WHERE token = ?',
                                 undef, $token);
+
+    # Some DBs such as MySQL are case-insensitive by default so we do
+    # a quick comparison to make sure the tokens are indeed the same.
+    (defined $db_token && $db_token eq $token)
+        || ThrowCodeError("cancel_token_does_not_exist");
 
     # If we are canceling the creation of a new user account, then there
     # is no entry in the 'profiles' table.
@@ -346,10 +351,17 @@ sub GetTokenData {
     $token = clean_text($token);
     trick_taint($token);
 
-    return $dbh->selectrow_array(
-        "SELECT userid, " . $dbh->sql_date_format('issuedate') . ", eventdata 
-         FROM   tokens 
+    my @token_data = $dbh->selectrow_array(
+        "SELECT token, userid, " . $dbh->sql_date_format('issuedate') . ", eventdata
+         FROM   tokens
          WHERE  token = ?", undef, $token);
+
+    # Some DBs such as MySQL are case-insensitive by default so we do
+    # a quick comparison to make sure the tokens are indeed the same.
+    my $db_token = shift @token_data;
+    return undef if (!defined $db_token || $db_token ne $token);
+
+    return @token_data;
 }
 
 # Deletes specified token

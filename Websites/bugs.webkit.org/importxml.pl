@@ -498,7 +498,7 @@ sub process_bug {
     foreach my $comment ( $bug->children('long_desc') ) {
         Debug( "Parsing Long Description", DEBUG_LEVEL );
         my %long_desc = ( who       => $comment->field('who'),
-                          bug_when  => $comment->field('bug_when'),
+                          bug_when  => format_time($comment->field('bug_when'), '%Y-%m-%d %T'),
                           isprivate => $comment->{'att'}->{'isprivate'} || 0 );
 
         # If the exporter is not in the insidergroup, keep the comment public.

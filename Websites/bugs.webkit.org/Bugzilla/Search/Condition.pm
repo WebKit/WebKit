@@ -32,8 +32,15 @@ sub new {
 }
 
 sub field    { return $_[0]->{field}    }
-sub operator { return $_[0]->{operator} }
 sub value    { return $_[0]->{value}    }
+
+sub operator {
+    my ($self, $value) = @_;
+    if (@_ == 2) {
+        $self->{operator} = $value;
+    }
+    return $self->{operator};
+}
 
 sub fov {
     my ($self) = @_;

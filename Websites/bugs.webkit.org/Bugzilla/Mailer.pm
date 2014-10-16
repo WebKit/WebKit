@@ -48,6 +48,12 @@ use Encode qw(encode);
 use Encode::MIME::Header;
 use Email::Address;
 use Email::MIME;
+# Return::Value 1.666002 pollutes the error log with warnings about this
+# deprecated module. We have to set NO_CLUCK = 1 before loading Email::Send
+# to disable these warnings.
+BEGIN {
+    $Return::Value::NO_CLUCK = 1;
+}
 use Email::Send;
 
 sub MessageToMTA {

@@ -93,25 +93,29 @@ sub walk_conditions {
 
 sub as_string {
     my ($self) = @_;
-    my @strings;
-    foreach my $child (@{ $self->children }) {
-        next if $child->isa(__PACKAGE__) && !$child->has_translated_conditions;
-        next if $child->isa('Bugzilla::Search::Condition')
-                && !$child->translated;
+    if (!$self->{sql}) {
+        my @strings;
+        foreach my $child (@{ $self->children }) {
+            next if $child->isa(__PACKAGE__) && !$child->has_translated_conditions;
+            next if $child->isa('Bugzilla::Search::Condition')
+                    && !$child->translated;
 
-        my $string = $child->as_string;
-        if ($self->joiner eq 'AND') {
-            $string = "( $string )" if $string =~ /OR/;
+            my $string = $child->as_string;
+            next unless $string;
+            if ($self->joiner eq 'AND') {
+                $string = "( $string )" if $string =~ /OR/;
+            }
+            else {
+                $string = "( $string )" if $string =~ /AND/;
+            }
+            push(@strings, $string);
         }
-        else {
-            $string = "( $string )" if $string =~ /AND/;
-        }
-        push(@strings, $string);
+
+        my $sql = join(' ' . $self->joiner . ' ', @strings);
+        $sql = "NOT( $sql )" if $sql && $self->negate;
+        $self->{sql} = $sql;
     }
-    
-    my $sql = join(' ' . $self->joiner . ' ', @strings);
-    $sql = "NOT( $sql )" if $sql && $self->negate;
-    return $sql;
+    return $self->{sql};
 }
 
 # Search.pm converts URL parameters to Clause objects. This helps do the

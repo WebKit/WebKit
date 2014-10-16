@@ -22,8 +22,14 @@
 #   Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
+
+use Cwd qw(abs_path);
 use File::Basename;
-BEGIN { chdir dirname($0); }
+BEGIN {
+    # Untaint the abs_path.
+    my ($a) = abs_path($0) =~ /^(.*)$/;
+    chdir dirname($a);
+}
 
 use lib qw(. lib);
 use Bugzilla;

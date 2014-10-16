@@ -189,7 +189,9 @@ sub check_members_are_visible {
     my $self = shift;
     my $user = Bugzilla->user;
     return if !Bugzilla->params->{'usevisibilitygroups'};
-    my $is_visible = grep { $_->id == $_ } @{ $user->visible_groups_inherited };
+
+    my $group_id = $self->id;
+    my $is_visible = grep { $_ == $group_id } @{ $user->visible_groups_inherited };
     if (!$is_visible) {
         ThrowUserError('group_not_visible', { group => $self });
     }

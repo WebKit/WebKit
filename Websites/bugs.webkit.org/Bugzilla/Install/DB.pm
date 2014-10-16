@@ -3538,9 +3538,6 @@ sub _migrate_user_tags {
                                      VALUES (?, ?)');
     my $sth_nq = $dbh->prepare('UPDATE namedqueries SET query = ?
                                 WHERE id = ?');
-    my $sth_nq_footer = $dbh->prepare(
-        'DELETE FROM namedqueries_link_in_footer 
-               WHERE user_id = ? AND namedquery_id = ?');
 
     if (scalar @$tags) {
         print install_string('update_queries_to_tags'), "\n";
@@ -3580,13 +3577,11 @@ sub _migrate_user_tags {
             next if !$bug_id;
             $sth_bug_tag->execute($bug_id, $tag_id);
         }
-        
+
         # Existing tags may be used in whines, or shared with
         # other users. So we convert them rather than delete them.
         $uri->query_param('tag', $tag_name);
         $sth_nq->execute($uri->query, $query_id);
-        # But we don't keep showing them in the footer.
-        $sth_nq_footer->execute($user_id, $query_id);
     }
 
     $dbh->bz_commit_transaction();

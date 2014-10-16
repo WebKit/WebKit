@@ -170,7 +170,7 @@
       this report</a>
     [% ELSE %]
       <a href="query.cgi?[% switchbase %]&amp;chart_format=
-        [% format %]&amp;format=report-graph&amp;cumulate=[% cumulate %]">
+        [% format FILTER uri %]&amp;format=report-graph&amp;cumulate=[% cumulate %]">
         Edit this report
       </a>
     [% END %]

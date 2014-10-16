@@ -39,6 +39,7 @@ use Bugzilla::Product;
 use Bugzilla::Keyword;
 use Bugzilla::Field;
 use Bugzilla::Install::Util qw(vers_cmp);
+use Bugzilla::Token;
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
@@ -51,6 +52,8 @@ my $userid = $user->id;
 
 if ($cgi->param('nukedefaultquery')) {
     if ($userid) {
+        my $token = $cgi->param('token');
+        check_hash_token($token, ['nukedefaultquery']);
         $dbh->do("DELETE FROM namedqueries" .
                  " WHERE userid = ? AND name = ?", 
                  undef, ($userid, DEFAULT_QUERY_NAME));
@@ -243,13 +246,6 @@ if (($cgi->param('query_format') || $cgi->param('format') || "")
     eq "create-series") {
     require Bugzilla::Chart;
     $vars->{'category'} = Bugzilla::Chart::getVisibleSeries();
-}
-
-if ($cgi->param('format') && $cgi->param('format') =~ /^report-(table|graph)$/) {
-    # Get legal custom fields for tabular and graphical reports.
-    my @custom_fields_for_reports =
-      grep { $_->type == FIELD_TYPE_SINGLE_SELECT } Bugzilla->active_custom_fields;
-    $vars->{'custom_fields'} = \@custom_fields_for_reports;
 }
 
 $vars->{'known_name'} = $cgi->param('known_name');

@@ -277,7 +277,7 @@ foreach my $dep_field (qw(dependson blocked)) {
     if (should_set($dep_field)) {
         if (my $dep_action = $cgi->param("${dep_field}_action")) {
             $set_all_fields{$dep_field}->{$dep_action} =
-                [split(/\s,/, $cgi->param($dep_field))];
+                [split(/[\s,]+/, $cgi->param($dep_field))];
         }
         else {
             $set_all_fields{$dep_field}->{set} = $cgi->param($dep_field);

@@ -290,12 +290,14 @@ use constant OPERATOR_FIELD_OVERRIDE => {
     },
     dependson        => MULTI_SELECT_OVERRIDE,
     keywords         => MULTI_SELECT_OVERRIDE,
-    'flagtypes.name' => MULTI_SELECT_OVERRIDE,
+    'flagtypes.name' => {
+        _non_changed => \&_flagtypes_nonchanged,
+    },
     longdesc => {
-        %{ MULTI_SELECT_OVERRIDE() },
         changedby     => \&_long_desc_changedby,
         changedbefore => \&_long_desc_changedbefore_after,
         changedafter  => \&_long_desc_changedbefore_after,
+        _non_changed  => \&_long_desc_nonchanged,
     },
     'longdescs.count' => {
         changedby     => \&_long_desc_changedby,
@@ -690,8 +692,16 @@ sub sql {
     my ($self) = @_;
     return $self->{sql} if $self->{sql};
     my $dbh = Bugzilla->dbh;
-    
+
     my ($joins, $clause) = $self->_charts_to_conditions();
+
+    if (!$clause->as_string
+        && !Bugzilla->params->{'search_allow_no_criteria'}
+        && !$self->{allow_unlimited})
+    {
+        ThrowUserError('buglist_parameters_required');
+    }
+
     my $select = join(', ', $self->_sql_select);
     my $from = $self->_sql_from($joins);
     my $where = $self->_sql_where($clause);
@@ -822,28 +832,47 @@ sub _add_extra_column {
 }
 
 # These are the columns that we're going to be actually SELECTing.
+sub _display_columns {
+    my ($self) = @_;
+    return @{ $self->{display_columns} } if $self->{display_columns};
+
+    # Do not alter the list from _input_columns at all, even if there are
+    # duplicated columns. Those are passed by the caller, and the caller
+    # expects to get them back in the exact same order.
+    my @columns = $self->_input_columns;
+
+    # Only add columns which are not already listed.
+    my %list = map { $_ => 1 } @columns;
+    foreach my $column ($self->_extra_columns) {
+        push(@columns, $column) unless $list{$column}++;
+    }
+    $self->{display_columns} = \@columns;
+    return @{ $self->{display_columns} };
+}
+
+# These are the columns that are involved in the query.
 sub _select_columns {
     my ($self) = @_;
     return @{ $self->{select_columns} } if $self->{select_columns};
 
     my @select_columns;
-    foreach my $column ($self->_input_columns, $self->_extra_columns) {
+    foreach my $column ($self->_display_columns) {
         if (my $add_first = COLUMN_DEPENDS->{$column}) {
             push(@select_columns, @$add_first);
         }
         push(@select_columns, $column);
     }
-    
+    # Remove duplicated columns.
     $self->{select_columns} = [uniq @select_columns];
     return @{ $self->{select_columns} };
 }
 
-# This takes _select_columns and translates it into the actual SQL that
+# This takes _display_columns and translates it into the actual SQL that
 # will go into the SELECT clause.
 sub _sql_select {
     my ($self) = @_;
     my @sql_fields;
-    foreach my $column ($self->_select_columns) {
+    foreach my $column ($self->_display_columns) {
         my $alias = $column;
         # Aliases cannot contain dots in them. We convert them to underscores.
         $alias =~ s/\./_/g;
@@ -1172,14 +1201,7 @@ sub _sql_where {
     # SQL a bit more readable for debugging.
     my $where = join("\n   AND ", $self->_standard_where);
     my $clause_sql = $main_clause->as_string;
-    if ($clause_sql) {
-        $where .= "\n   AND " . $clause_sql;
-    }
-    elsif (!Bugzilla->params->{'search_allow_no_criteria'}
-           && !$self->{allow_unlimited})
-    {
-        ThrowUserError('buglist_parameters_required');
-    }
+    $where .= "\n   AND " . $clause_sql if $clause_sql;
     return $where;
 }
 
@@ -1670,6 +1692,7 @@ sub _handle_chart {
         value      => $string_value,
         all_values => $value,
         joins      => [],
+        condition  => $condition,
     );
     $search_args{quoted} = $self->_quote_unless_numeric(\%search_args);
     # This should add a "term" selement to %search_args.
@@ -1747,7 +1770,9 @@ sub do_search_function {
 sub _do_operator_function {
     my ($self, $func_args) = @_;
     my $operator = $func_args->{operator};
-    my $operator_func = OPERATORS->{$operator};
+    my $operator_func = OPERATORS->{$operator}
+      || ThrowCodeError("search_field_operator_unsupported",
+                        { operator => $operator });
     $self->$operator_func($func_args);
 }
 
@@ -1840,8 +1865,14 @@ sub _quote_unless_numeric {
 }
 
 sub build_subselect {
-    my ($outer, $inner, $table, $cond) = @_;
-    return "$outer IN (SELECT $inner FROM $table WHERE $cond)";
+    my ($outer, $inner, $table, $cond, $negate) = @_;
+    # Execute subselects immediately to avoid dependent subqueries, which are
+    # large performance hits on MySql
+    my $q = "SELECT DISTINCT $inner FROM $table WHERE $cond";
+    my $dbh = Bugzilla->dbh;
+    my $list = $dbh->selectcol_arrayref($q);
+    return $negate ? "1=1" : "1=2" unless @$list;
+    return $dbh->sql_in($outer, $list, $negate);
 }
 
 # Used by anyexact to get the list of input values. This allows us to
@@ -2029,8 +2060,8 @@ sub _contact_pronoun {
     my ($self, $args) = @_;
     my $value = $args->{value};
     my $user = $self->_user;
-    
-    if ($value =~ /^\%group/) {
+
+    if ($value =~ /^\%group\.[^%]+%$/) {
         $self->_contact_exact_group($args);
     }
     elsif ($value =~ /^(%\w+%)$/) {
@@ -2047,11 +2078,17 @@ sub _contact_exact_group {
     my $dbh = Bugzilla->dbh;
     my $user = $self->_user;
     
+    # We already know $value will match this regexp, else we wouldn't be here.
     $value =~ /\%group\.([^%]+)%/;
-    my $group = Bugzilla::Group->check({ name => $1, _error => 'invalid_group_name' });
-    $group->check_members_are_visible();
+    my $group_name = $1;
+    my $group = Bugzilla::Group->check({ name => $group_name, _error => 'invalid_group_name' });
+    # Pass $group_name instead of $group->name to the error message
+    # to not leak the existence of the group.
     $user->in_group($group)
-      || ThrowUserError('invalid_group_name', {name => $group->name});
+      || ThrowUserError('invalid_group_name', { name => $group_name });
+    # Now that we know the user belongs to this group, it's safe
+    # to disclose more information.
+    $group->check_members_are_visible();
 
     my $group_ids = Bugzilla::Group->flatten_group_membership($group->id);
     my $table = "user_group_map_$chart_id";
@@ -2242,7 +2279,7 @@ sub _user_nonchanged {
             my $table = $first_join->{table};
             my $columns = "bug_id";
             $columns .= ",isprivate" if @{ $first_join->{extra} };
-            my $new_table = "SELECT $columns FROM $table AS $as $join_sql";
+            my $new_table = "SELECT DISTINCT $columns FROM $table AS $as $join_sql";
             $first_join->{table} = "($new_table)";
             # We always want to LEFT JOIN the generated table.
             delete $first_join->{join};
@@ -2292,6 +2329,48 @@ sub _long_desc_changedbefore_after {
     };
     push(@$joins, $join);
     $args->{term} = "$table.bug_when IS NOT NULL";
+
+    # If the user is not part of the insiders group, they cannot see
+    # private comments
+    if (!$self->_user->is_insider) {
+        $args->{term} .= " AND $table.isprivate = 0";
+    }
+}
+
+sub _long_desc_nonchanged {
+    my ($self, $args) = @_;
+    my ($chart_id, $operator, $value, $joins) =
+        @$args{qw(chart_id operator value joins)};
+    my $dbh = Bugzilla->dbh;
+
+    my $table = "longdescs_$chart_id";
+    my $join_args = {
+        chart_id   => $chart_id,
+        sequence   => $chart_id,
+        field      => 'longdesc',
+        full_field => "$table.thetext",
+        operator   => $operator,
+        value      => $value,
+        all_values => $value,
+        quoted     => $dbh->quote($value),
+        joins      => [],
+    };
+    $self->_do_operator_function($join_args);
+
+    # If the user is not part of the insiders group, they cannot see
+    # private comments
+    if (!$self->_user->is_insider) {
+        $join_args->{term} .= " AND $table.isprivate = 0";
+    }
+
+    my $join = {
+        table => 'longdescs',
+        as    => $table,
+        extra => [ $join_args->{term} ],
+    };
+    push(@$joins, $join);
+
+    $args->{term} =  "$table.comment_id IS NOT NULL";
 }
 
 sub _content_matches {
@@ -2299,9 +2378,9 @@ sub _content_matches {
     my ($chart_id, $joins, $fields, $operator, $value) =
         @$args{qw(chart_id joins fields operator value)};
     my $dbh = Bugzilla->dbh;
-    
+
     # "content" is an alias for columns containing text for which we
-    # can search a full-text index and retrieve results by relevance, 
+    # can search a full-text index and retrieve results by relevance,
     # currently just bug comments (and summaries to some degree).
     # There's only one way to search a full-text index, so we only
     # accept the "matches" operator, which is specific to full-text
@@ -2315,9 +2394,9 @@ sub _content_matches {
     
     # Create search terms to add to the SELECT and WHERE clauses.
     my ($term1, $rterm1) =
-        $dbh->sql_fulltext_search("$table.$comments_col", $value, 1);
+        $dbh->sql_fulltext_search("$table.$comments_col", $value);
     my ($term2, $rterm2) =
-        $dbh->sql_fulltext_search("$table.short_desc", $value, 2);
+        $dbh->sql_fulltext_search("$table.short_desc", $value);
     $rterm1 = $term1 if !$rterm1;
     $rterm2 = $term2 if !$rterm2;
 
@@ -2534,6 +2613,7 @@ sub _multiselect_multiple {
     
     my @terms;
     foreach my $word (@words) {
+        next if $word eq '';
         $args->{value} = $word;
         $args->{quoted} = $dbh->quote($word);
         push(@terms, $self->_multiselect_term($args));
@@ -2546,6 +2626,53 @@ sub _multiselect_multiple {
     else {
         $args->{term} = join("\n        AND ", @terms);
     }
+}
+
+sub _flagtypes_nonchanged {
+    my ($self, $args) = @_;
+    my ($chart_id, $operator, $value, $joins, $condition) =
+        @$args{qw(chart_id operator value joins condition)};
+    my $dbh = Bugzilla->dbh;
+
+    # For 'not' operators, we need to negate the whole term.
+    # If you search for "Flags" (does not contain) "approval+" we actually want
+    # to return *bugs* that don't contain an approval+ flag.  Without rewriting
+    # the negation we'll search for *flags* which don't contain approval+.
+    if ($operator =~ s/^not//) {
+        $args->{operator} = $operator;
+        $condition->operator($operator);
+        $condition->negate(1);
+    }
+
+    my $subselect_args = {
+        chart_id   => $chart_id,
+        sequence   => $chart_id,
+        field      => 'flagtypes.name',
+        full_field =>  $dbh->sql_string_concat("flagtypes_$chart_id.name", "flags_$chart_id.status"),
+        operator   => $operator,
+        value      => $value,
+        all_values => $value,
+        quoted     => $dbh->quote($value),
+        joins      => [],
+    };
+    $self->_do_operator_function($subselect_args);
+    my $subselect_term = $subselect_args->{term};
+
+    # don't call build_subselect as this must run as a true sub-select
+    $args->{term} = "EXISTS (
+        SELECT 1
+          FROM bugs bugs_$chart_id
+          LEFT JOIN attachments AS attachments_$chart_id
+                    ON bugs_$chart_id.bug_id = attachments_$chart_id.bug_id
+          LEFT JOIN flags AS flags_$chart_id
+                    ON bugs_$chart_id.bug_id = flags_$chart_id.bug_id
+                       AND (flags_$chart_id.attach_id = attachments_$chart_id.attach_id
+                            OR flags_$chart_id.attach_id IS NULL)
+          LEFT JOIN flagtypes AS flagtypes_$chart_id
+                    ON flags_$chart_id.type_id = flagtypes_$chart_id.id
+     WHERE bugs_$chart_id.bug_id = bugs.bug_id
+           AND $subselect_term
+    )";
 }
 
 sub _multiselect_nonchanged {
@@ -2625,8 +2752,7 @@ sub _multiselect_term {
     my $term = $args->{term};
     $term .= $args->{_extra_where} || '';
     my $select = $args->{_select_field} || 'bug_id';
-    my $not_sql = $not ? "NOT " : '';
-    return "bugs.bug_id ${not_sql}IN (SELECT $select FROM $table WHERE $term)";
+    return build_subselect("bugs.bug_id", $select, $table, $term, $not);
 }
 
 ###############################
@@ -2701,15 +2827,14 @@ sub _anyexact {
 
 sub _anywordsubstr {
     my ($self, $args) = @_;
-    my ($full_field, $value) = @$args{qw(full_field value)};
-    
+
     my @terms = $self->_substring_terms($args);
     $args->{term} = join("\n\tOR ", @terms);
 }
 
 sub _allwordssubstr {
     my ($self, $args) = @_;
-    
+
     my @terms = $self->_substring_terms($args);
     $args->{term} = join("\n\tAND ", @terms);
 }
@@ -2774,8 +2899,10 @@ sub _changedbefore_changedafter {
         extra => ["$table.fieldid = $field_id",
                   "$table.bug_when $sql_operator $sql_date"],
     };
-    push(@$joins, $join);
+
     $args->{term} = "$table.bug_when IS NOT NULL";
+    $self->_changed_security_check($args, $join);
+    push(@$joins, $join);
 }
 
 sub _changedfrom_changedto {
@@ -2794,9 +2921,10 @@ sub _changedfrom_changedto {
         extra => ["$table.fieldid = $field_id",
                   "$table.$column = $quoted"],
     };
-    push(@$joins, $join);
 
     $args->{term} = "$table.bug_when IS NOT NULL";
+    $self->_changed_security_check($args, $join);
+    push(@$joins, $join);
 }
 
 sub _changedby {
@@ -2815,8 +2943,32 @@ sub _changedby {
         extra => ["$table.fieldid = $field_id",
                   "$table.who = $user_id"],
     };
-    push(@$joins, $join);
+
     $args->{term} = "$table.bug_when IS NOT NULL";
+    $self->_changed_security_check($args, $join);
+    push(@$joins, $join);
+}
+
+sub _changed_security_check {
+    my ($self, $args, $join) = @_;
+    my ($chart_id, $field) = @$args{qw(chart_id field)};
+
+    my $field_object = $self->_chart_fields->{$field}
+        || ThrowCodeError("invalid_field_name", { field => $field });
+    my $field_id = $field_object->id;
+
+    # If the user is not part of the insiders group, they cannot see
+    # changes to attachments (including attachment flags) that are private
+    if ($field =~ /^(?:flagtypes\.name$|attach)/ and !$self->_user->is_insider) {
+        $join->{then_to} = {
+            as    => "attach_${field_id}_$chart_id",
+            table => 'attachments',
+            from  => "act_${field_id}_$chart_id.attach_id",
+            to    => 'attach_id',
+        };
+
+        $args->{term} .= " AND COALESCE(attach_${field_id}_$chart_id.isprivate, 0) = 0";
+    }
 }
 
 ######################

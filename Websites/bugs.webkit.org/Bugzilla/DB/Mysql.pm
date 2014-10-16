@@ -325,9 +325,8 @@ sub bz_setup_database {
     # hard to fix later. We do this up here because none of the code below
     # works if InnoDB is off. (Particularly if we've already converted the
     # tables to InnoDB.)
-    my ($innodb_on) = @{$self->selectcol_arrayref(
-        q{SHOW VARIABLES LIKE '%have_innodb%'}, {Columns=>[2]})};
-    if ($innodb_on ne 'YES') {
+    my %engines = @{$self->selectcol_arrayref('SHOW ENGINES', {Columns => [1,2]})};
+    if (!$engines{InnoDB} || $engines{InnoDB} !~ /^(YES|DEFAULT)$/) {
         die install_string('mysql_innodb_disabled');
     }
 
@@ -941,7 +940,9 @@ sub _bz_raw_column_info {
               $index = name of an index
  Returns:     An abstract index definition, always in hashref format.
               If the index does not exist, the function returns undef.
+
 =cut
+
 sub bz_index_info_real {
     my ($self, $table, $index) = @_;
 

@@ -35,34 +35,15 @@
     [% sort_order = "oldest_to_newest" %]
 [% END %]
 
-
-[%# Set up the variables as needed, depending on the sort order %]
-[% IF sort_order == "oldest_to_newest" %]
-    [% count = 0 %]
-    [% description = 0 %]
-    [% increment = 1 %]
-[% ELSE %]
-    [% increment = -1 %]
-    [% IF sort_order == "newest_to_oldest" %]
-        [% count = comments.size - 1 %]
-        [% description = 0 %]
-    [% ELSIF sort_order == "newest_to_oldest_desc_first" %]
-        [% count = comments.size %]
-        [% description = comments.size %]
-    [% END %]
-[% END %]
-
 <!-- This auto-sizes the comments and positions the collapse/expand links 
      to the right. -->
 <table class="bz_comment_table" cellpadding="0" cellspacing="0"><tr>
 <td>
 
 [% FOREACH comment = comments %]
-  [% IF count >= start_at %]
+  [% IF comment.count >= start_at %]
     [% PROCESS a_comment %]
   [% END %]
-  
-  [% count = count + increment %]
 [% END %]
 
 [% IF user.settings.comment_box_position.value == "before_comments" && user.id %]
@@ -105,15 +86,15 @@
   [% comment_text = comment.body_full %]
   [% RETURN IF comment_text == '' AND (comment.work_time - 0) != 0 AND !user.is_timetracker %]
 
-    <div id="c[% count %]" class="bz_comment[% " bz_private" IF comment.is_private %]
-                [% " bz_comment_hilite" IF marks.$count %]
-                [% " bz_first_comment" IF count == description %]">
-      [% IF count == description %]
+    <div id="c[% comment.count %]" class="bz_comment[% " bz_private" IF comment.is_private %]
+                [% " bz_comment_hilite" IF marks.${comment.count} %]
+                [% " bz_first_comment" IF comment.count == 0 %]">
+      [% IF comment.count == 0 %]
         [% class_name = "bz_first_comment_head" %]
         [% comment_label = "Description" %]
       [% ELSE %]
         [% class_name = "bz_comment_head" %]
-        [% comment_label = "Comment " _ count %]
+        [% comment_label = "Comment " _ comment.count %]
       [% END %]
 
       <div class="[% class_name FILTER html %]">
@@ -121,8 +102,8 @@
         [% IF mode == "edit" %]
           <span class="bz_comment_actions">
             <script type="text/javascript"><!--
-              addReplyLink([% count %], [% comment.id %]);
-              addCollapseLink([% count %], 'Toggle comment display'); // -->
+              addReplyLink([% comment.count %], [% comment.id %]);
+              addCollapseLink([% comment.count %], 'Toggle comment display'); // -->
             </script>
           </span>
         [% END %]
@@ -134,7 +115,7 @@
             <input type="checkbox"
                    name="isprivate_[% comment.id %]" value="1"
                    id="isprivate_[% comment.id %]"
-                   onClick="updateCommentPrivacy(this, [% count %])"
+                   onClick="updateCommentPrivacy(this, [% comment.count %])"
                    [% " checked=\"checked\"" IF comment.is_private %]>
             <label for="isprivate_[% comment.id %]">Private</label>
           </div>
@@ -142,7 +123,7 @@
 
         <span class="bz_comment_number">
           <a 
-             href="show_bug.cgi?id=[% bug.bug_id %]#c[% count %]">
+             href="show_bug.cgi?id=[% bug.bug_id %]#c[% comment.count %]">
             [%- comment_label FILTER html %]</a>
         </span>
 
@@ -175,7 +156,7 @@
   # generated HTML
   #%]
 <pre class="bz_comment_text" 
-     [% ' id="comment_text_' _ count _ '"' IF mode == "edit" %]>
+     [% ' id="comment_text_' _ comment.count _ '"' IF mode == "edit" %]>
   [%- comment_text FILTER quoteUrls(bug, comment) -%]
 </pre>
     </div>

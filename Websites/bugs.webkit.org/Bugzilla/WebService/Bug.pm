@@ -399,12 +399,23 @@ sub history {
 
 sub search {
     my ($self, $params) = @_;
-    
+
     if ( defined($params->{offset}) and !defined($params->{limit}) ) {
         ThrowCodeError('param_required', 
                        { param => 'limit', function => 'Bug.search()' });
     }
-    
+
+    my $max_results = Bugzilla->params->{max_search_results};
+    unless (defined $params->{limit} && $params->{limit} == 0) {
+        if (!defined $params->{limit} || $params->{limit} > $max_results) {
+            $params->{limit} = $max_results;
+        }
+    }
+    else {
+        delete $params->{limit};
+        delete $params->{offset};
+    }
+
     $params = Bugzilla::Bug::map_fields($params);
     delete $params->{WHERE};
 
@@ -431,7 +442,17 @@ sub search {
         my $clause = join(' OR ', @likes);
         $params->{WHERE}->{"($clause)"} = [map { "\%$_\%" } @strings];
     }
-   
+
+    # If no other parameters have been passed other than limit and offset
+    # and a WHERE parameter was not created earlier, then we throw error
+    # if system is configured to do so.
+    if (!$params->{WHERE}
+        && !grep(!/(limit|offset)/i, keys %$params)
+        && !Bugzilla->params->{search_allow_no_criteria})
+    {
+        ThrowUserError('buglist_parameters_required');
+    }
+
     # We want include_fields and exclude_fields to be passed to
     # _bug_to_hash but not to Bugzilla::Bug->match so we copy the 
     # params and delete those before passing to Bugzilla::Bug->match.
@@ -1997,6 +2018,59 @@ The same as L</get>.
 
 =back
 
+=head2 possible_duplicates
+
+B<UNSTABLE>
+
+=over
+
+=item B<Description>
+
+Allows a user to find possible duplicate bugs based on a set of keywords
+such as a user may use as a bug summary. Optionally the search can be
+narrowed down to specific products.
+
+=item B<Params>
+
+=over
+
+=item C<summary> (string) B<Required> - A string of keywords defining
+the type of bug you are trying to report.
+
+=item C<products> (array) - One or more product names to narrow the
+duplicate search to. If omitted, all bugs are searched.
+
+=back
+
+=item B<Returns>
+
+The same as L</get>.
+
+Note that you will only be returned information about bugs that you
+can see. Bugs that you can't see will be entirely excluded from the
+results. So, if you want to see private bugs, you will have to first 
+log in and I<then> call this method.
+
+=item B<Errors>
+
+=over
+
+=item 50 (Param Required)
+
+You must specify a value for C<summary> containing a string of keywords to 
+search for duplicates.
+
+=back
+
+=item B<History>
+
+=over
+
+=item Added in Bugzilla B<4.0>.
+
+=back
+
+=back
 
 =head2 search
 
@@ -2074,13 +2148,16 @@ May not be an array.
 
 =item C<limit>
 
-C<int> Limit the number of results returned to C<int> records.
+C<int> Limit the number of results returned to C<int> records. If the limit
+is more than zero and higher than the maximum limit set by the administrator,
+then the maximum limit will be used instead. If you set the limit equal to zero,
+then all matching results will be returned instead.
 
 =item C<offset>
 
-C<int> Used in conjunction with the C<limit> argument, C<offset> defines 
-the starting position for the search. For example, given a search that 
-would return 100 bugs, setting C<limit> to 10 and C<offset> to 10 would return 
+C<int> Used in conjunction with the C<limit> argument, C<offset> defines
+the starting position for the search. For example, given a search that
+would return 100 bugs, setting C<limit> to 10 and C<offset> to 10 would return
 bugs 11 through 20 from the set of 100.
 
 =item C<op_sys>
@@ -2166,10 +2243,16 @@ log in and I<then> call this method.
 
 =item B<Errors>
 
-Currently, this function doesn't throw any special errors (other than
-the ones that all webservice functions can throw). If you specify
-an invalid value for a particular field, you just won't get any results
-for that value.
+If you specify an invalid value for a particular field, you just won't
+get any results for that value.
+
+=over
+
+=item 1000 (Parameters Required)
+
+You may not search without any search terms.
+
+=back
 
 =item B<History>
 
@@ -2181,6 +2264,10 @@ for that value.
 
 =item The C<reporter> input parameter was renamed to C<creator>
 in Bugzilla B<4.0>.
+
+=item In B<4.2.6> and newer, added the ability to return all results if
+C<limit> is set equal to zero. Otherwise maximum results returned are limited
+by system configuration.
 
 =back
 
@@ -2198,8 +2285,9 @@ B<STABLE>
 =item B<Description>
 
 This allows you to create a new bug in Bugzilla. If you specify any
-invalid fields, they will be ignored. If you specify any fields you
-are not allowed to set, they will just be set to their defaults or ignored.
+invalid fields, an error will be thrown stating which field is invalid.
+If you specify any fields you are not allowed to set, they will just be
+set to their defaults or ignored.
 
 You cannot currently set all the items here that you can set on enter_bug.cgi.
 
@@ -2391,7 +2479,9 @@ these bugs.
 
 =item C<data>
 
-B<Required> C<base64> The content of the attachment.
+B<Required> C<base64> or C<string> The content of the attachment.
+If the content of the attachment is not ASCII text, you must encode
+it in base64 and declare it as the C<base64> type.
 
 =item C<file_name>
 

@@ -47,32 +47,42 @@
 [% END %]
 
 <script type="text/javascript">
+function bz_encode (str, decode) {
+  // First decode HTML entities, if requested.
+  if (decode)
+    str = str.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+             .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+$/,"");
+
+  // encodeURIComponent() doesn't escape single quotes.
+  return encodeURIComponent(str).replace(/'/g, escape);
+};
+
 YAHOO.util.Event.addListener(window, "load", function() {
   this.Linkify = function(elLiner, oRecord, oColumn, oData) {
     if (oData == 0)
       elLiner.innerHTML = ".";
     else if (oRecord.getData("row_title") == "Total")
-      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% col_field FILTER js %]="
-                          + oColumn.field + "[% '&amp;' _ row_vals IF row_vals %]'>"
-                          + oData + "</a>";
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% col_field FILTER uri FILTER js %]='
+                          + bz_encode(oColumn.field)
+                          + '[% "&amp;" _ row_vals IF row_vals %]">' + oData + '</a>';
     else
-      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% row_field FILTER js %]="
-                          + oRecord.getData("row_title").replace(/\s+$/,"")
-                          + "&amp;[% col_field FILTER js %]=" + oColumn.field
-                          + "'>" + oData + "</a>";
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% row_field FILTER uri FILTER js %]='
+                          + bz_encode(oRecord.getData("row_title"), 1)
+                          + '&amp;[% col_field FILTER uri FILTER js %]='
+                          + bz_encode(oColumn.field) + '">' + oData + '</a>';
   };
 
   this.LinkifyTotal = function(elLiner, oRecord, oColumn, oData) {
     if (oData == 0)
       elLiner.innerHTML = ".";
     else if (oRecord.getData("row_title") == "Total")
-      elLiner.innerHTML = "<a href='[% urlbase %][% '&amp;' _ row_vals IF row_vals %]
-                          [%~ '&amp;' _ col_vals IF col_vals %]'>"
-                          + oData + "</a>";
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %][% "&amp;" _ row_vals IF row_vals %]
+                          [%~ "&amp;" _ col_vals IF col_vals %]">'
+                          + oData + '</a>';
     else
-      elLiner.innerHTML = "<a href='[% urlbase %]&amp;[% row_field FILTER js %]="
-                          + oRecord.getData("row_title").replace(/\s+$/,"")
-                          + "[% '&amp;' _ col_vals IF col_vals %]'>" + oData + "</a>";
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% row_field FILTER uri FILTER js %]='
+                          + bz_encode(oRecord.getData("row_title"), 1)
+                          + '[% "&amp;" _ col_vals IF col_vals %]">' + oData + '</a>';
 
     YAHOO.util.Dom.addClass(elLiner.parentNode, "ttotal");
   };
@@ -102,7 +112,7 @@ YAHOO.util.Event.addListener(window, "load", function() {
   var myColumnDefs = [
         {key:"row_title", label:"", sortable:true, sortOptions: { sortFunction:totalNumberSorter }},
         [% FOREACH col = col_names %]
-          {key:"[% col FILTER js %]", label:"[% display_value(col_field, col) FILTER js %]", sortable:true,
+          {key:"[% col FILTER js %]", label:"[% display_value(col_field, col) FILTER html FILTER js %]", sortable:true,
            formatter:this.Linkify, sortOptions: { defaultDir: YAHOO.widget.DataTable.CLASS_DESC, sortFunction:totalNumberSorter }},
         [% END %]
         {key:"total", label:"Total", sortable:true, formatter:this.LinkifyTotal,
@@ -164,7 +174,7 @@ YAHOO.util.Event.addListener(window, "load", function() {
 [% col_idx = 0 %]
 [% row_idx = 0 %]
 [% grand_total = 0 %]
-<div id="tabular_report_container_[% tbl FILTER js %]">
+<div id="tabular_report_container_[% tbl FILTER html %]">
 <table id="tabular_report" border="1">
   [% IF col_field %]
     <thead>

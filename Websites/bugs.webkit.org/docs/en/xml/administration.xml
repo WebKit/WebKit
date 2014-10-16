@@ -1056,7 +1056,7 @@
             <para>
             <emphasis>Login Name</emphasis>: 
             This is generally the user's full email address. However, if you
-            have are using the <quote>emailsuffix</quote> parameter, this may
+            are using the <quote>emailsuffix</quote> parameter, this may
             just be the user's login name. Note that users can now change their
             login names themselves (to any valid email address).
             </para>
@@ -2425,37 +2425,72 @@ ReadOnly: ENTRY, NA/NA, CANEDIT
               <emphasis>Type:</emphasis>
               The type of field to create. There are
               several types available:
-               <simplelist>
-                 <member>
-                   Bug ID: A field where you can enter the ID of another bug from
-                   the same Bugzilla installation. To point to a bug in a remote
-                   installation, use the See Also field instead.
-                 </member>
-                 <member>
-                   Large Text Box: A multiple line box for entering free text.
-                 </member>
-                 <member>
-                   Free Text: A single line box for entering free text.
-                 </member>
-                 <member>
-                   Multiple-Selection Box: A list box where multiple options 
-                   can be selected. After creating this field, it must be edited
-                   to add the selection options. See 
-                   <xref linkend="edit-values-list" /> for information about 
-                   editing legal values.
-                 </member>
-                 <member>
-                   Drop Down: A list box where only one option can be selected.
-                   After creating this field, it must be edited to add the
-                   selection options. See 
-                   <xref linkend="edit-values-list" /> for information about 
-                   editing legal values.
-                 </member>
-                 <member>
-                   Date/Time: A date field. This field appears with a 
-                   calendar widget for choosing the date.
-                 </member>
-               </simplelist>
+              <variablelist>
+                <varlistentry>
+                  <term>Bug ID:</term>
+                  <listitem>
+                    <para>
+                      A field where you can enter the ID of another bug from
+                      the same Bugzilla installation. To point to a bug in a remote
+                      installation, use the See Also field instead.
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Large Text Box:</term>
+                  <listitem>
+                    <para>
+                      A multiple line box for entering free text.
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Free Text:</term>
+                  <listitem>
+                    <para>
+                      A single line box for entering free text.
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Multiple-Selection Box:</term>
+                  <listitem>
+                    <para>
+                      A list box where multiple options
+                      can be selected. After creating this field, it must be edited
+                      to add the selection options. See
+                      <xref linkend="edit-values-list" /> for information about
+                      editing legal values.
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Drop Down:</term>
+                  <listitem>
+                    <para>
+                      A list box where only one option can be selected.
+                      After creating this field, it must be edited to add the
+                      selection options. See
+                      <xref linkend="edit-values-list" /> for information about
+                      editing legal values.
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Date/Time:</term>
+                  <listitem>
+                    <para>
+                      A date field. This field appears with a
+                      calendar widget for choosing the date.
+                    </para>
+                  </listitem>
+                </varlistentry>
+              </variablelist>
             </para>
           </listitem>
 

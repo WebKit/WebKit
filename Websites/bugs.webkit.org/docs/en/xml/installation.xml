@@ -191,8 +191,8 @@
 
       <para>
         <ulink url="http://www.bugzilla.org/download/">Download a Bugzilla tarball</ulink>
-        (or check it out from CVS) and place
-        it in a suitable directory, accessible by the default web server user 
+        (or <ulink url="https://wiki.mozilla.org/Bugzilla:Bzr">check it out from Bzr</ulink>)
+        and place it in a suitable directory, accessible by the default web server user
         (probably <quote>apache</quote> or <quote>www</quote>). 
         Good locations are either directly in the web server's document directories or
         in <filename>/usr/local</filename> with a symbolic link to the web server's 
@@ -1582,33 +1582,6 @@ AddType application/rdf+xml .rdf</screen>
 C:\perl&gt; <command>ppm install &lt;module name&gt;</command>
         </programlisting>
 
-        <para>
-          The best source for the Windows PPM modules needed for Bugzilla
-          is probably the theory58S website, which you can add to your list
-          of repositories as follows (for Perl 5.8.x):
-        </para>
-
-        <programlisting>
-<command>ppm repo add theory58S http://theoryx5.uwinnipeg.ca/ppms/</command>
-        </programlisting>
-
-        <para>
-          If you are using Perl 5.10.x, you cannot use the same PPM modules as Perl
-          5.8.x as they are incompatible. In this case, you should add the following
-          repository:
-        </para>
-        <programlisting>
-<command>ppm repo add theory58S http://cpan.uwinnipeg.ca/PPMPackages/10xx/</command>
-        </programlisting>
-
-        <note>
-          <para>
-            In versions prior to 5.8.8 build 819 of PPM the command is 
-            <programlisting>
-<command>ppm repository add theory58S http://theoryx5.uwinnipeg.ca/ppms/</command>
-            </programlisting>
-          </para>
-        </note>
         <note>
           <para>
             The PPM repository stores modules in 'packages' that may have

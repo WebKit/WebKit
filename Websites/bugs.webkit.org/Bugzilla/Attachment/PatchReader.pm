@@ -37,7 +37,6 @@ sub process_diff {
         $last_reader->sends_data_to(new PatchReader::DiffPrinter::raw());
         # Actually print out the patch.
         print $cgi->header(-type => 'text/plain',
-                           -x_content_type_options => "nosniff",
                            -expires => '+3M');
         disable_utf8();
         $reader->iterate_string('Attachment ' . $attachment->id, $attachment->data);
@@ -119,7 +118,6 @@ sub process_interdiff {
         $last_reader->sends_data_to(new PatchReader::DiffPrinter::raw());
         # Actually print out the patch.
         print $cgi->header(-type => 'text/plain',
-                           -x_content_type_options => "nosniff",
                            -expires => '+3M');
         disable_utf8();
     }

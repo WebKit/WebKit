@@ -169,6 +169,16 @@ sub clean_search_url {
     # Delete leftovers from the login form
     $self->delete('Bugzilla_remember', 'GoAheadAndLogIn');
 
+    # Delete the token if we're not performing an action which needs it
+    unless ((defined $self->param('remtype')
+             && ($self->param('remtype') eq 'asdefault'
+                 || $self->param('remtype') eq 'asnamed'))
+            || (defined $self->param('remaction')
+                && $self->param('remaction') eq 'forget'))
+    {
+        $self->delete("token");
+    }
+
     foreach my $num (1,2,3) {
         # If there's no value in the email field, delete the related fields.
         if (!$self->param("email$num")) {
@@ -306,6 +316,14 @@ sub header {
         unshift(@_, '-x_frame_options' => 'SAMEORIGIN');
     }
 
+    # Add X-XSS-Protection header to prevent simple XSS attacks
+    # and enforce the blocking (rather than the rewriting) mode.
+    unshift(@_, '-x_xss_protection' => '1; mode=block');
+
+    # Add X-Content-Type-Options header to prevent browsers sniffing
+    # the MIME type away from the declared Content-Type.
+    unshift(@_, '-x_content_type_options' => 'nosniff');
+
     return $self->SUPER::header(@_) || "";
 }
 
@@ -353,7 +371,7 @@ sub param {
 sub _fix_utf8 {
     my $input = shift;
     # The is_utf8 is here in case CGI gets smart about utf8 someday.
-    utf8::decode($input) if defined $input && !utf8::is_utf8($input);
+    utf8::decode($input) if defined $input && !ref $input && !utf8::is_utf8($input);
     return $input;
 }
 

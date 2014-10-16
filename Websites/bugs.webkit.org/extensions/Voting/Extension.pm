@@ -40,7 +40,6 @@ use Bugzilla::Token;
 
 use List::Util qw(min);
 
-use constant NAME => 'Voting';
 use constant VERSION => BUGZILLA_VERSION;
 use constant DEFAULT_VOTES_PER_BUG => 1;
 # These came from Bugzilla itself, so they maintain the old numbers

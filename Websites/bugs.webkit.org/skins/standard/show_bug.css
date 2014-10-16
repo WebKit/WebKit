@@ -2,7 +2,7 @@
     margin: 8px 0; 
     padding: 0.3em; 
     background-color: rgb(208, 208, 208); 
-    -moz-border-radius: 0.5em; 
+    border-radius: 0.5em;
     font-size: 125%; 
     font-weight: bold;
 }

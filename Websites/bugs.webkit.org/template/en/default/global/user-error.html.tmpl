@@ -1177,7 +1177,7 @@
     [% title = "Missing Search" %]
     [% docslinks = {'query.html' => "Searching for $terms.bugs",
                     'query.html#list' => "$terms.Bug lists"} %]
-    The search named <em>[% queryname FILTER html %]</em>
+    The search named <em>[% name FILTER html %]</em>
     [% IF sharer_id && sharer_id != user.id %]
       has not been made visible to you.
     [% ELSE %]
@@ -1334,21 +1334,21 @@
     [%+ constants.USER_PASSWORD_MIN_LENGTH FILTER html %] characters long.
 
   [% ELSIF error == "password_not_complex" %]
-     [% title = "Password Fails Requirements" %]
-     [% passregex = Param('password_complexity') %]
-     The password must contain at least one:
-     <ul>
-       [% IF passregex.search('letters') %]
-         <li>UPPERCASE letter</li>
-         <li>lowercase letter</li>
-       [% END %]
-       [% IF passregex.search('numbers') %]
-         <li>digit</li>
-       [% END %]
-       [% IF passregex.search('specialchars') %]
-         <li>special character</li>
-       [% END %]
-     </ul>
+    [% title = "Password Fails Requirements" %]
+    [% passregex = Param('password_complexity') %]
+    The password must contain at least one:
+    <ul>
+      [% IF passregex == 'letters_numbers_specialchars' %]
+        <li>letter</li>
+        <li>special character</li>
+      [% ELSIF passregex.search('letters') %]
+        <li>UPPERCASE letter</li>
+        <li>lowercase letter</li>
+      [% END %]
+      [% IF passregex.search('numbers') %]
+        <li>digit</li>
+      [% END %]
+    </ul>
 
   [% ELSIF error == "product_access_denied" %]
     [% title = "Product Access Denied" %]
@@ -1639,6 +1639,11 @@
     [% title = "Unknown Tab" %]
     <code>[% current_tab_name FILTER html %]</code> is not a legal tab name.
 
+  [% ELSIF error == "value_inactive" %]
+    [% title = "Value is Not Active" %]
+    [% type = BLOCK %][% INCLUDE object_name class = class %][% END %]
+    The [% type FILTER html %] value '[% value FILTER html %]' is not active.
+
   [% ELSIF error == "version_already_exists" %]
     [% title = "Version Already Exists" %]
     [% admindocslinks = {'versions.html' => 'Administering versions'} %]
@@ -1809,7 +1814,7 @@
                   
     [% FOREACH q = Bugzilla.user.queries %]
       [% IF q.name == namedcmd %]
-        or <a href="query.cgi?[% q.url FILTER uri %]">edit</a>
+        or <a href="query.cgi?[% q.url FILTER html %]">edit</a>
       [% END %]
     [% END %]
     

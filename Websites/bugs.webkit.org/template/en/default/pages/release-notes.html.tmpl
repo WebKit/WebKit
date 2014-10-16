@@ -53,6 +53,221 @@
 
 <h2 id="v42_point">Updates in this 4.2.x Release</h2>
 
+<h3>4.2.7</h3>
+
+<p>This release fixes several security issues. See the
+  <a href="http://www.bugzilla.org/security/4.0.10/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following [% terms.bugs %] have been fixed in this release:</p>
+
+<ul>
+  <li>Internet Explorer 11 and KHTML-based browsers such as Konqueror can now
+    display buglists correctly.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=902515">[% terms.Bug %] 902515</a> and
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=914262">[% terms.bug %] 914262</a>)</li>
+  <li>When the <kbd>password_complexity</kbd> parameter was set to
+    'letters_numbers_specialchars', passwords containing numbers and special
+    characters only were accepted. Now it makes sure that a letter is also present.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=897264">[% terms.Bug %] 897264</a>)</li>
+  <li>With DB servers doing case-insensitive comparisons, such as MySQL, tokens
+    and login cookies were not correctly validated as the case was ignored.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=906745">[% terms.Bug %] 906745</a> and
+    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=907438">[% terms.bug %] 907438</a>)</li>
+  <li>All security headers (such as X-Frame-Options) are now returned when using XML-RPC.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=787328">[% terms.Bug %] 787328</a>)</li>
+  <li>Oracle crashed when reporting a new [% terms.bug %] if a custom free-text field
+    was non-mandatory and left empty.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=919475">[% terms.Bug %] 919475</a>)</li>
+  <li>It was not possible to import [% terms.bugs %] using <kbd>importxml.pl</kbd> with Oracle.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=848063">[% terms.Bug %] 848063</a>)</li>
+</ul>
+
+<h3>4.2.6</h3>
+
+<p>The following important fixes/changes have been made in this release:</p>
+
+<ul>
+  <li>MySQL 5.6 is now supported.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=852560">[% terms.Bug %] 852560</a>)</li>
+  <li>A regression introduced in [% terms.Bugzilla %] 4.2.4 made Oracle crash
+    when installing [% terms.Bugzilla %] for the first time.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=858911">[% terms.Bug %] 858911</a>)</li>
+  <li>If a custom field depends on a product, component or classification,
+    the "mandatory" bit was ignored on [% terms.bug %] creation.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=782210">[% terms.Bug %] 782210</a>)</li>
+  <li>Queries involving flags were broken in several ways. These queries
+    have been fixed.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=828344">[% terms.Bug %] 828344</a>)</li>
+  <li>Tabular reports involving the empty resolution did not link [% terms.bug %]
+    counts correctly.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=212471">[% terms.Bug %] 212471</a>)</li>
+  <li>The <kbd>B[%%]ug.search</kbd> WebService method was returning all visible
+    [%+ terms.bugs %] when called with no arguments, ignoring the
+    <kbd>max_search_results</kbd> and <kbd>search_allow_no_criteria</kbd> parameters.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=859118">[% terms.Bug %] 859118</a>)</li>
+</ul>
+
+<h3>4.2.5</h3>
+
+<p>This release fixes one security issue. See the
+  <a href="http://www.bugzilla.org/security/3.6.12/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following important fixes/changes have been made in this
+  release:</p>
+
+<ul>
+  <li>Queries involving commenters were slow to return results. These queries
+    have been optimized for better performance.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=818007">[% terms.Bug %] 818007</a>)</li>
+  <li>It is no longer possible to create a new [% terms.bug %] using a disabled
+    component, target milestone or version. These inactive values are also no
+    longer accessible when moving [% terms.abug %] into another product.
+    ([% terms.Bugs %] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=752946">752946</a>
+    and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=840824">840824</a>)</li>
+  <li>It was possible to create a new [% terms.bug %] with no description
+    despite the status workflow required one for new [% terms.bugs %].
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=818890">[% terms.Bug %] 818890</a>)</li>
+  <li>Custom multi-select fields are now available in the "Search By Change
+    History" section of the "Advanced Search" page.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=839950">[% terms.Bug %] 839950</a>)</li>
+  <li>A custom select field could have its list of values truncated if one
+    or more of its values were disabled and the visibility of the values were
+    controlled by another field.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=806809">[% terms.Bug %] 806809</a>)</li>
+  <li>Warnings thrown by Return::Value 1.666002 about this deprecated module
+    and which are polluting the web server error log are now disabled.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=826678">[% terms.Bug %] 826678</a>)</li>
+</ul>
+
+<h3>4.2.4</h3>
+
+<p>This release fixes several security issues. See the
+  <a href="http://www.bugzilla.org/security/3.6.11/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following important fixes/changes have been made in this
+  release:</p>
+
+<ul>
+  <li>Queries involving group substitution were crashing when the "usevisibilitygroups"
+    parameter was enabled. Also, CVE-2011-2979 was not fully fixed in
+    [%+ terms.Bugzilla %] 4.1.3.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=788098">[% terms.Bug %] 788098</a>)</li>
+  <li>Flag names were not properly escaped when displayed on the "confirm user
+    match" page. An admin could unintentionally break the display of this page
+    if a flag name contains a &lt; or &gt; character, because these characters
+    were not filtered.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=790215">[% terms.Bug %] 790215</a>)</li>
+  <li>We now prevent private WebServices methods from being called by external
+    applications.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=793826">[% terms.Bug %] 793826</a>)</li>
+  <li>PostgreSQL 9.2 requires DBD::Pg 2.19.3.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=799721">[% terms.Bug %] 799721</a>)</li>
+  <li>Oracle was crashing when listing keywords or flags in buglists.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=780053">[% terms.Bug %] 780053</a>)</li>
+  <li>Oracle was crashing when typing several bare words in the QuickSearch field.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=804505">[% terms.Bug %] 804505</a>)</li>
+  <li>[% terms.Bugs %] with the resolution MOVED couldn't be edited anymore.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=757935">[% terms.Bug %] 757935</a>)</li>
+  <li>Editing dependencies from the "Change Several [% terms.Bugs %] at Once"
+    page didn't work as expected. [% terms.Bug %] IDs were incorrectly parsed.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=790909">[% terms.Bug %] 790909</a>)</li>
+  <li>The "Actual Hours" axis now works correctly in tabular and graphical reports.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=794389">[% terms.Bug %] 794389</a>)</li>
+  <li><kbd>checksetup.pl</kbd> was failing to run if the Voting extension was
+    enabled on a fresh installation and some mandatory modules were missing.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=652047">[% terms.Bug %] 652047</a>)</li>
+  <li>[% terms.Bugzilla %] no longer crashes when viewing [% terms.abug %] while
+    a custom field is being added.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=531243">[% terms.Bug %] 531243</a>)</li>
+  <li>For improved security, we now send the "X-Content-Type-Options:&nbsp;nosniff"
+    and "X-XSS-Protection:&nbsp;block" headers with every response.
+    ([% terms.Bugs %] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=671612">671612</a>
+    and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=680771">680771</a>)</li>
+</ul>
+
+<h3>4.2.3</h3>
+
+<p>This release fixes two security issues. See the
+  <a href="http://www.bugzilla.org/security/3.6.10/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following important fixes/changes have been made in this
+  release:</p>
+
+<ul>
+  <li>Attaching a file to [% terms.abug %] was broken due to a change in
+    Perl 5.16.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=771100">[% terms.Bug %] 771100</a>)</li>
+  <li>A regression in [% terms.Bugzilla %] 4.2.2 made Oracle crash when
+    displaying a buglist.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=780028">[% terms.Bug %] 780028</a>)</li>
+  <li>It was possible to search on history for comments and attachments you
+    cannot see (though these private comments and attachments are never disclosed).
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=779709">[% terms.Bug %] 779709</a>)</li>
+  <li>PostgreSQL databases could be created with the wrong encoding despite
+    the utf8 parameter being enabled.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=783786">[% terms.Bug %] 783786</a>)</li>
+  <li>Scheduled whines could be sent at the wrong time on Oracle.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=559539">[% terms.Bug %] 559539</a>)</li>
+  <li>Tokens are no longer included in saved queries.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=772953">[% terms.Bug %] 772953</a>)</li>
+  <li>An admin could unintentionally break the display of buglists if a custom
+    field description contains a &lt; or &gt; character, because these characters
+    were not filtered.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=785917">[% terms.Bug %] 785917</a>)</li>
+  <li>Adding or removing a DB column in Oracle didn't handle SERIAL columns
+    correctly.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=731156">[% terms.Bug %] 731156</a>)</li>
+  <li>A minor CSRF vulnerability in token.cgi allowed possible unauthorized
+    password reset e-mail requests.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=706271">[% terms.Bug %] 706271</a>)</li>
+</ul>
+
+<h3>4.2.2</h3>
+
+<p>This release fixes two security issues. See the
+  <a href="http://www.bugzilla.org/security/3.6.9/">Security Advisory</a>
+  for details.</p>
+
+<p>In addition, the following important fixes/changes have been made in this
+  release:</p>
+
+<ul>
+  <li>A regression introduced in [% terms.Bugzilla %] 4.0 caused some login
+    names to be ignored when entered in the CC list of [% terms.bugs %].
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=756314">[% terms.Bug %] 756314</a>)</li>
+  <li>Some queries could trigger an invalid SQL query if strings entered by
+    the user contained leading or trailing whitespaces.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=760075">[% terms.Bug %] 760075</a>)</li>
+  <li>The auto-completion form for keywords no longer automatically selects
+    the first keyword in the list when the field is empty.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=764517">[% terms.Bug %] 764517</a>)</li>
+  <li>A regression in [% terms.Bugzilla %] 4.2 prevented classifications
+    from being used in graphical and tabular reports in the "Multiple Tables"
+    field.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=753688">[% terms.Bug %] 753688</a>)</li>
+  <li>Attachments created by the <kbd>email_in.pl</kbd> script were associated
+    to the wrong comment.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=762785">[% terms.Bug %] 762785</a>)</li>
+  <li>Very long dependency lists can now be viewed correctly.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=762783">[% terms.Bug %] 762783</a>)</li>
+  <li>Keywords are now correctly escaped in the auto-completion form to prevent
+    any XSS abuse.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=754561">[% terms.Bug %] 754561</a>)</li>
+  <li>A regression introduced in [% terms.Bugzilla %] 4.0rc2 when fixing
+    CVE-2011-0046 caused the "Un-forget the search" link to not work correctly
+    anymore when restoring a deleted saved search, because this link was
+    lacking a valid token.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=768870">[% terms.Bug %] 768870</a>)</li>
+  <li>Two minor CSRF vulnerabilities have been fixed which could let an attacker
+    alter your default search criteria in the Advanced Search page.
+    ([% terms.Bugs %] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=754672">754672</a>
+    and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=754673">754673</a>)</li>
+</ul>
+
 <h3>4.2.1</h3>
 
 <p>This release fixes two security issues. See the
@@ -390,6 +605,9 @@
     [%- terms.Bug %] 584742</a>: When viewing [% terms.abug %], WebKit-based
     browsers can automatically reset a field's selected value when the field
     has disabled values.</li>
+  <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=780053">
+    [%- terms.Bug %] 780053</a>: Oracle crashes when listing keywords, tags
+    or flags in buglists.</li>
 </ul>
 
 
@@ -530,8 +748,8 @@
     (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=640719">[% terms.Bug %] 640719</a>)</li>
   <li>Email notifications about dependencies and flags had the wrong
     timestamp.
-    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=643910">[% terms.Bug %] 643910</a>
-    and  (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=652165">[% terms.Bug %] 652165</a>)</li>
+    ([% terms.Bugs %] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=643910">643910</a>
+    and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=652165">652165</a>)</li>
   <li>You can now select "UTC" as a valid timezone in General Preferences.
     (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=646209">[% terms.Bug %] 646209</a>)</li>
   <li>Automatic duplicate detection now works on PostgreSQL (although

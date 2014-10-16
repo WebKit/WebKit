@@ -61,8 +61,16 @@ sub make_response {
 
     # XMLRPC::Transport::HTTP::CGI doesn't know about Bugzilla carrying around
     # its cookies in Bugzilla::CGI, so we need to copy them over.
-    foreach (@{Bugzilla->cgi->{'Bugzilla_cookie_list'}}) {
-        $self->response->headers->push_header('Set-Cookie', $_);
+    foreach my $cookie (@{Bugzilla->cgi->{'Bugzilla_cookie_list'}}) {
+        $self->response->headers->push_header('Set-Cookie', $cookie);
+    }
+
+    # Copy across security related headers from Bugzilla::CGI
+    foreach my $header (split(/[\r\n]+/, Bugzilla->cgi->header)) {
+        my ($name, $value) = $header =~ /^([^:]+): (.*)/;
+        if (!$self->response->headers->header($name)) {
+           $self->response->headers->header($name => $value);
+        }
     }
 }
 

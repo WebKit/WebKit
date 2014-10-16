@@ -249,7 +249,7 @@
   #%]
 
   <body onload="[% onload %]"
-        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') FILTER css_class_quote %]
                [% FOREACH class = bodyclasses %]
                  [% ' ' %][% class FILTER css_class_quote %]
                [% END %] yui-skin-sam">

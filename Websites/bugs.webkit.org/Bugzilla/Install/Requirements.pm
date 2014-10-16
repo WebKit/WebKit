@@ -32,6 +32,13 @@ use List::Util qw(max);
 use Safe;
 use Term::ANSIColor;
 
+# Return::Value 1.666002 pollutes the error log with warnings about this
+# deprecated module. We have to set NO_CLUCK = 1 before loading Email::Send
+# in have_vers() to disable these warnings.
+BEGIN {
+    $Return::Value::NO_CLUCK = 1;
+}
+
 use base qw(Exporter);
 our @EXPORT = qw(
     REQUIRED_MODULES
@@ -546,26 +553,6 @@ sub print_module_instructions {
     my $need_module_instructions =  
         ( (!$output and @{$check_results->{missing}})
           or ($output and $check_results->{any_missing}) ) ? 1 : 0;
-
-    # We only print the PPM repository note if we have to.
-    my $perl_ver = sprintf('%vd', $^V);
-    if ($need_module_instructions && ON_ACTIVESTATE && vers_cmp($perl_ver, '5.12') < 0) {
-        # URL when running Perl 5.8.x.
-        my $url_to_theory58S = 'http://theoryx5.uwinnipeg.ca/ppms';
-        # Packages for Perl 5.10 are not compatible with Perl 5.8.
-        if (vers_cmp($perl_ver, '5.10') > -1) {
-            $url_to_theory58S = 'http://cpan.uwinnipeg.ca/PPMPackages/10xx/';
-        }
-        print colored(
-            install_string('ppm_repo_add', 
-                           { theory_url => $url_to_theory58S }),
-            COLOR_ERROR);
-
-        # ActivePerls older than revision 819 require an additional command.
-        if (ON_ACTIVESTATE < 819) {
-            print install_string('ppm_repo_up');
-        }
-    }
 
     if ($need_module_instructions or @{ $check_results->{apache} }) {
         # If any output was required, we want to close the "table"

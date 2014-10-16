@@ -371,7 +371,13 @@ sub error_catch {
     my $new_error_msg = "Ah ah, you tried to access $page_id? Good try!";
     $new_error_msg = html_quote($new_error_msg);
     # There are better tools to parse an HTML page, but it's just an example.
-    $$page =~ s/(?<=<td id="error_msg" class="throw_error">).*(?=<\/td>)/$new_error_msg/si;
+    # Since Perl 5.16, we can no longer write "class" inside look-behind
+    # assertions, because "ss" is also seen as the german ß character, which
+    # makes Perl 5.16 complain. The right fix is to use the /aa modifier,
+    # but it's only understood since Perl 5.14. So the workaround is to write
+    # "clas[s]" instead of "class". Stupid and ugly hack, but it works with
+    # all Perl versions.
+    $$page =~ s/(?<=<td id="error_msg" clas[s]="throw_error">).*(?=<\/td>)/$new_error_msg/si;
 }
 
 sub flag_end_of_update {

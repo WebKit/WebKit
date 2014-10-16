@@ -233,12 +233,18 @@ sub _filter_users_by_group {
     # If no groups are specified, we return all users.
     return $users if (!$group_ids and !$group_names);
 
+    my $user = Bugzilla->user;
+
     my @groups = map { Bugzilla::Group->check({ id => $_ }) } 
                      @{ $group_ids || [] };
-    my @name_groups = map { Bugzilla::Group->check($_) } 
-                          @{ $group_names || [] };
-    push(@groups, @name_groups);
-    
+
+    if ($group_names) {
+        foreach my $name (@$group_names) {
+            my $group = Bugzilla::Group->check({ name => $name, _error => 'invalid_group_name' });
+            $user->in_group($group) || ThrowUserError('invalid_group_name', { name => $name });
+            push(@groups, $group);
+        }
+    }
 
     my @in_group = grep { $self->_user_in_any_group($_, \@groups) }
                         @$users;
@@ -586,10 +592,10 @@ C<real_name>, C<email>, and C<can_login> items.
 
 =over
 
-=item 51 (Bad Login Name or Group Name)
+=item 51 (Bad Login Name or Group ID)
 
 You passed an invalid login name in the "names" array or a bad
-group name/id in the C<groups>/C<group_ids> arguments.
+group ID in the C<group_ids> argument.
 
 =item 304 (Authorization Required)
 
@@ -600,6 +606,11 @@ wanted to get information about by user id.
 
 Logged-out users cannot use the "ids" or "match" arguments to this 
 function.
+
+=item 804 (Invalid Group Name)
+
+You passed a group name in the C<groups> argument which either does not
+exist or you do not belong to it.
 
 =back
 
@@ -613,6 +624,9 @@ function.
 
 =item C<include_disabled> added in Bugzilla B<4.0>. Default behavior 
 for C<match> has changed to only returning enabled accounts.
+
+=item Error 804 has been added in Bugzilla 4.0.9 and 4.2.4. It's now
+illegal to pass a group name you don't belong to.
 
 =back
 

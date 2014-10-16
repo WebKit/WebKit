@@ -125,58 +125,108 @@
     <orderedlist>
       <listitem>
         <para>
-        <emphasis>Product and Component</emphasis>: 
-        Bugs are divided up by Product and Component, with a Product
-        having one or more Components in it. For example,
-        bugzilla.mozilla.org's "Bugzilla" Product is composed of several
-        Components: 
-        <simplelist>
-        <member>
-        <emphasis>Administration:</emphasis>
-        Administration of a Bugzilla installation.</member>
+          <emphasis>Product and Component</emphasis>: 
+          Bugs are divided up by Product and Component, with a Product
+          having one or more Components in it. For example,
+          bugzilla.mozilla.org's "Bugzilla" Product is composed of several
+          Components:
+          <variablelist>
+            <varlistentry>
+              <term>Administration:</term>
+              <listitem>
+                <para>
+                  Administration of a Bugzilla installation.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Bugzilla-General:</emphasis>
-        Anything that doesn't fit in the other components, or spans
-        multiple components.</member>
+            <varlistentry>
+              <term>Bugzilla-General:</term>
+              <listitem>
+                <para>
+                  Anything that doesn't fit in the other components, or spans
+                  multiple components.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Creating/Changing Bugs:</emphasis>
-        Creating, changing, and viewing bugs.</member>
+            <varlistentry>
+              <term>Creating/Changing Bugs:</term>
+              <listitem>
+                <para>
+                  Creating, changing, and viewing bugs.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Documentation:</emphasis>
-        The Bugzilla documentation, including The Bugzilla Guide.</member>
+            <varlistentry>
+              <term>Documentation:</term>
+              <listitem>
+                <para>
+                  The Bugzilla documentation, including The Bugzilla Guide.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Email:</emphasis>
-        Anything to do with email sent by Bugzilla.</member>
+            <varlistentry>
+              <term>Email:</term>
+              <listitem>
+                <para>
+                  Anything to do with email sent by Bugzilla.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Installation:</emphasis>
-        The installation process of Bugzilla.</member>
+            <varlistentry>
+              <term>Installation:</term>
+              <listitem>
+                <para>
+                  The installation process of Bugzilla.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Query/Buglist:</emphasis>
-        Anything to do with searching for bugs and viewing the
-        buglists.</member>
+            <varlistentry>
+              <term>Query/Buglist:</term>
+              <listitem>
+                <para>
+                  Anything to do with searching for bugs and viewing the
+                  buglists.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>Reporting/Charting:</emphasis>
-        Getting reports from Bugzilla.</member>
+            <varlistentry>
+              <term>Reporting/Charting:</term>
+              <listitem>
+                <para>
+                  Getting reports from Bugzilla.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>User Accounts:</emphasis>
-        Anything about managing a user account from the user's perspective.
-        Saved queries, creating accounts, changing passwords, logging in,
-        etc.</member>
+            <varlistentry>
+              <term>User Accounts:</term>
+              <listitem>
+                <para>
+                  Anything about managing a user account from the user's perspective.
+                  Saved queries, creating accounts, changing passwords, logging in,
+                  etc.
+                </para>
+              </listitem>
+            </varlistentry>
 
-        <member>
-        <emphasis>User Interface:</emphasis>
-        General issues having to do with the user interface cosmetics (not
-        functionality) including cosmetic issues, HTML templates,
-        etc.</member>
-        </simplelist>
+            <varlistentry>
+              <term>User Interface:</term>
+              <listitem>
+                <para>
+                  General issues having to do with the user interface cosmetics (not
+                  functionality) including cosmetic issues, HTML templates,
+                  etc.
+                </para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
         </para>
       </listitem>
 
@@ -290,41 +340,76 @@
         This form can be used for time tracking.
         To use this feature, you have to be blessed group membership
         specified by the <quote>timetrackinggroup</quote> parameter.
-        <simplelist>
-        <member>
-        <emphasis>Orig. Est.:</emphasis>
-        This field shows the original estimated time.</member>
+        <variablelist>
+          <varlistentry>
+            <term>Orig. Est.:</term>
+            <listitem>
+              <para>
+                This field shows the original estimated time.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Current Est.:</emphasis>
-        This field shows the current estimated time.
-        This number is calculated from <quote>Hours Worked</quote>
-        and <quote>Hours Left</quote>.</member>
+          <varlistentry>
+            <term>Current Est.:</term>
+            <listitem>
+              <para>
+                This field shows the current estimated time.
+                This number is calculated from <quote>Hours Worked</quote>
+                and <quote>Hours Left</quote>.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Hours Worked:</emphasis>
-        This field shows the number of hours worked.</member>
+          <varlistentry>
+            <term>Hours Worked:</term>
+            <listitem>
+              <para>
+                This field shows the number of hours worked.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Hours Left:</emphasis>
-        This field shows the <quote>Current Est.</quote> -
-        <quote>Hours Worked</quote>.
-        This value + <quote>Hours Worked</quote> will become the
-        new Current Est.</member>
+          <varlistentry>
+            <term>Hours Left:</term>
+            <listitem>
+              <para>
+                This field shows the <quote>Current Est.</quote> -
+                <quote>Hours Worked</quote>.
+                This value + <quote>Hours Worked</quote> will become the
+                new Current Est.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>%Complete:</emphasis>
-        This field shows what percentage of the task is complete.</member>
+          <varlistentry>
+            <term>%Complete:</term>
+            <listitem>
+              <para>
+                This field shows what percentage of the task is complete.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Gain:</emphasis>
-        This field shows the number of hours that the bug is ahead of the
-        <quote>Orig. Est.</quote>.</member>
+          <varlistentry>
+            <term>Gain:</term>
+            <listitem>
+              <para>
+                This field shows the number of hours that the bug is ahead of the
+              <quote>Orig. Est.</quote>.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Deadline:</emphasis>
-        This field shows the deadline for this bug.</member>
-        </simplelist>
+          <varlistentry>
+            <term>Deadline:</term>
+            <listitem>
+              <para>
+                This field shows the deadline for this bug.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
         </para>
       </listitem>
 
@@ -591,73 +676,112 @@
       <para>The format of the list is configurable. For example, it can be
       sorted by clicking the column headings. Other useful features can be
       accessed using the links at the bottom of the list:
-      <simplelist>
-        <member>
-        <emphasis>Long Format:</emphasis>
+        <variablelist>
+          <varlistentry>
+            <term>Long Format:</term>
+            <listitem>
+              <para>
+                this gives you a large page with a non-editable summary of the fields
+                of each bug.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        this gives you a large page with a non-editable summary of the fields
-        of each bug.</member>
+          <varlistentry>
+            <term>XML:</term>
+            <listitem>
+              <para>
+                get the buglist in the XML format.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>XML:</emphasis>
+          <varlistentry>
+            <term>CSV:</term>
+            <listitem>
+              <para>
+                get the buglist as comma-separated values, for import into e.g.
+                a spreadsheet.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        get the buglist in the XML format.</member>
+          <varlistentry>
+            <term>Feed:</term>
+            <listitem>
+              <para>
+                get the buglist as an Atom feed.  Copy this link into your
+                favorite feed reader.  If you are using Firefox, you can also
+                save the list as a live bookmark by clicking the live bookmark
+                icon in the status bar.  To limit the number of bugs in the feed,
+                add a limit=n parameter to the URL.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>CSV:</emphasis>
+          <varlistentry>
+            <term>iCalendar:</term>
+            <listitem>
+              <para>
+                Get the buglist as an iCalendar file. Each bug is represented as a
+                to-do item in the imported calendar.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        get the buglist as comma-separated values, for import into e.g.
-        a spreadsheet.</member>
+          <varlistentry>
+            <term>Change Columns:</term>
+            <listitem>
+              <para>
+                change the bug attributes which appear in the list.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>Feed:</emphasis>
+          <varlistentry>
+            <term>Change several bugs at once:</term>
+            <listitem>
+              <para>
+                If your account is sufficiently empowered, and more than one bug
+                appear in the bug list, this link is displayed which lets you make
+                the same change to all the bugs in the list - for example, changing
+                their assignee.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        get the buglist as an Atom feed.  Copy this link into your
-        favorite feed reader.  If you are using Firefox, you can also
-        save the list as a live bookmark by clicking the live bookmark
-        icon in the status bar.  To limit the number of bugs in the feed,
-        add a limit=n parameter to the URL.</member>
+          <varlistentry>
+            <term>Send mail to bug assignees:</term>
+            <listitem>
+              <para>
+                If more than one bug appear in the bug list and there are at least
+                two distinct bug assignees, this links is displayed which lets you
+                easily send a mail to the assignees of all bugs on the list.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        <member>
-        <emphasis>iCalendar:</emphasis>
+          <varlistentry>
+            <term>Edit Search:</term>
+            <listitem>
+              <para>
+                If you didn't get exactly the results you were looking for, you can
+                return to the Query page through this link and make small revisions
+                to the query you just made so you get more accurate results.
+              </para>
+            </listitem>
+          </varlistentry>
 
-        Get the buglist as an iCalendar file. Each bug is represented as a
-        to-do item in the imported calendar.</member>
-
-        <member>
-        <emphasis>Change Columns:</emphasis>
-
-        change the bug attributes which appear in the list.</member>
-
-        <member>
-        <emphasis>Change several bugs at once:</emphasis>
-
-        If your account is sufficiently empowered, and more than one bug
-        appear in the bug list, this link is displayed which lets you make
-        the same change to all the bugs in the list - for example, changing
-        their assignee.</member>
-
-        <member>
-        <emphasis>Send mail to bug assignees:</emphasis>
-
-        If more than one bug appear in the bug list and there are at least
-        two distinct bug assignees, this links is displayed which lets you
-        easily send a mail to the assignees of all bugs on the list.</member>
-
-        <member>
-        <emphasis>Edit Search:</emphasis>
-
-        If you didn't get exactly the results you were looking for, you can
-        return to the Query page through this link and make small revisions
-        to the query you just made so you get more accurate results.</member>
-
-        <member>
-        <emphasis>Remember Search As:</emphasis>
-
-        You can give a search a name and remember it; a link will appear
-        in your page footer giving you quick access to run it again later.
-        </member>
-      </simplelist>
+          <varlistentry>
+            <term>Remember Search As:</term>
+            <listitem>
+              <para>
+                You can give a search a name and remember it; a link will appear
+                in your page footer giving you quick access to run it again later.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
       </para>
     </section>
 
@@ -665,14 +789,10 @@
       <title>Adding/removing tags to/from bugs</title>
       <para>
         You can add and remove tags from individual bugs, which let you find and
-        manage them more easily. Creating a new tag automatically generates a saved
-        search - whose name is the name of the tag - which lists bugs with this tag.
-        This saved search will be displayed in the footer of pages by default, as
-        all other saved searches. The main difference between tags and normal saved
-        searches is that saved searches, as described in the previous section, are
-        stored in the form of a list of matching criteria, while the saved search
-        generated by tags is a list of bug numbers. Consequently, you can easily
-        edit this list by either adding or removing tags from bugs. To enable this
+        manage bugs more easily. Tags are per-user and so are only visible and editable
+        by the user who created them. You can then run queries using tags as a criteria,
+        either by using the Advanced Search form, or simply by typing "tag:my_tag_name"
+        in the QuickSearch box at the top (or bottom) of the page. To enable this
         feature, you have to turn on the <quote>Enable tags for bugs</quote> user
         preference, see <xref linkend="userpreferences" />. This feature is disabled
         by default.
@@ -684,9 +804,7 @@
         these bugs and mixing all these reasons, you can now store these bugs in
         separate lists, e.g. <quote>Keep in mind</quote>, <quote>Interesting bugs</quote>,
         or <quote>Triage</quote>. One big advantage of this way to manage bugs
-        is that you can easily add or remove bugs one by one, which is not
-        possible to do with saved searches without having to edit the search
-        criteria again.
+        is that you can easily add or remove tags from bugs one by one.
       </para>
     </section>
   </section>

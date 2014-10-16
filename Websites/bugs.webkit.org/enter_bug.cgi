@@ -310,6 +310,7 @@ sub pickos {
               /\(.*Windows.*NT.*\)/ && do {push @os, "Windows NT";};
             };
             /\(.*Mac OS X.*\)/ && do {
+              /\(.*Mac OS X (?:|Mach-O |\()10.8.*\)/ && do {push @os, "Mac OS X 10.8";};
               /\(.*Mac OS X (?:|Mach-O |\()10.7.*\)/ && do {push @os, "Mac OS X 10.7";};
               /\(.*Mac OS X (?:|Mach-O |\()10.6.*\)/ && do {push @os, "Mac OS X 10.6";};
               /\(.*Mac OS X (?:|Mach-O |\()10.5.*\)/ && do {push @os, "Mac OS X 10.5";};

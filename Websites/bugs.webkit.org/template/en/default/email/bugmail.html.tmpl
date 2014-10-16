@@ -31,11 +31,12 @@
       [% FOREACH comment = new_comments.reverse %]
         <div>
           [% IF comment.count %]
-            <b>[% "Comment # ${comment.count}" FILTER bug_link( bug, 
-              {comment_num => comment.count, full_url => 1}) FILTER none %] 
+            <b>[% "Comment # ${comment.count}" FILTER bug_link(bug,
+              {comment_num => comment.count, full_url => 1, user => to_user}) FILTER none %]
+              on [% "$terms.bug $bug.id" FILTER bug_link(bug, { full_url => 1, user => to_user }) FILTER none %]
               from [% INCLUDE global/user.html.tmpl who = comment.author %]</b>
           [% END %]
-        <pre>[% comment.body_full({ wrap => 1 }) FILTER quoteUrls(bug, comment) %]</pre>
+        <pre>[% comment.body_full({ wrap => 1 }) FILTER quoteUrls(bug, comment, to_user) %]</pre>
         </div>
       [% END %]
       </p>
@@ -68,13 +69,14 @@
           [% SET in_table = 0 %]
         [% END %]
         [% IF change.blocker %]
-              [% "${terms.Bug} ${bug.id}" FILTER bug_link(bug, full_url => 1) FILTER none  %] depends 
-              on [% "${terms.bug} ${change.blocker.id}" 
-                  FILTER bug_link(change.blocker, full_url => 1) FILTER none %],
+              [% "${terms.Bug} ${bug.id}" FILTER bug_link(bug, {full_url => 1, user => to_user}) FILTER none %]
+              depends on
+              [%+ "${terms.bug} ${change.blocker.id}"
+                  FILTER bug_link(change.blocker, {full_url => 1, user => to_user}) FILTER none %],
               which changed state.
         [% ELSE %]
-              [% INCLUDE global/user.html.tmpl who = change.who %]
-              changed [% "${terms.Bug} ${bug.id}" FILTER bug_link(bug, full_url => 1) FILTER none %]
+              [% INCLUDE global/user.html.tmpl who = change.who %] changed
+              [%+ "${terms.bug} ${bug.id}" FILTER bug_link(bug, {full_url => 1, user => to_user}) FILTER none %]
         [% END %]
         <br>
           [% IF in_table == 0 %]
@@ -98,7 +100,7 @@
           <th>[% field_label FILTER html %]</th>
           <td>
             [% IF change.field_name == "bug_id" %]
-              [% new_value FILTER bug_link(bug, full_url => 1) FILTER none %]
+              [% new_value FILTER bug_link(bug, {full_url => 1, user => to_user}) FILTER none %]
             [% ELSE %]
               [% new_value FILTER html %]
             [% END %]

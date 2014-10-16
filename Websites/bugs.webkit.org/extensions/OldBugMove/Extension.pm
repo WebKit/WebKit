@@ -132,7 +132,9 @@ sub _check_bug_resolution {
     my $original_validator = shift;
     my ($invocant, $resolution) = @_;
 
-    if ($resolution eq 'MOVED' and !Bugzilla->input_params->{'oldbugmove'}) {
+    if ($resolution eq 'MOVED' && $invocant->resolution ne 'MOVED'
+        && !Bugzilla->input_params->{'oldbugmove'})
+    {
         # MOVED has a special meaning and can only be used when
         # really moving bugs to another installation.
         ThrowUserError('oldbugmove_no_manual_move');

@@ -244,8 +244,7 @@
     setting in [% constants.bz_locations.localconfig FILTER html %].
 
   [% ELSIF error == "mismatched_bug_ids_on_obsolete" %]
-    Attachment [% attach_id FILTER html %] ([% description FILTER html %]) 
-    is attached to [% terms.bug %] [%+ attach_bug_id FILTER html %], 
+    Attachment [% attach_id FILTER html %] is attached to another [% terms.bug %],
     but you tried to flag it as obsolete while creating a new attachment to 
     [%+ terms.bug %] [%+ my_bug_id FILTER html %].
 
@@ -439,6 +438,9 @@
   [% ELSIF error == "token_generation_error" %]
     Something is seriously wrong with the token generation system.
 
+  [% ELSIF error == "cancel_token_does_not_exist" %]
+    The token to be cancelled does not exist.
+
   [% ELSIF error == "template_error" %]
     [% template_error_msg FILTER html %]
 
@@ -466,6 +468,10 @@
 
   [% ELSIF error == "invalid_post_bug_submit_action" %]
     Invalid setting for post_bug_submit_action
+
+  [% ELSIF error == "search_field_operator_unsupported" %]
+    [% terms.Bugzilla %] does not support the search type
+    "[% operator FILTER html %]".
 
   [% ELSE %]
     [%# Try to find hooked error messages %]

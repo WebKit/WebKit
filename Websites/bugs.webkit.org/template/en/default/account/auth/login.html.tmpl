@@ -115,6 +115,7 @@
       enter your login name below and submit a request
       to change your password.<br>
       <input size="35" name="loginname">
+      <input type="hidden" id="token" name="token" value="[% issue_hash_token(['reqpw']) FILTER html %]">
       <input type="submit" id="request" value="Reset Password">
     </form>
   [% END %]

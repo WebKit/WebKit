@@ -156,6 +156,9 @@ if ($action eq 'list') {
     my $component_id = $component ? $component->id : 0;
     my $show_flag_counts = $cgi->param('show_flag_counts') ? 1 : 0;
     my $group_id = $cgi->param('group');
+    if ($group_id) {
+        detaint_natural($group_id) || ThrowUserError('invalid_group_ID');
+    }
 
     my $bug_flagtypes;
     my $attach_flagtypes;

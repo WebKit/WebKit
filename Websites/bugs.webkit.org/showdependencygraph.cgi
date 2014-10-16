@@ -120,7 +120,7 @@ chmod Bugzilla::Install::Filesystem::CGI_WRITE, $filename
     or warn install_string('chmod_failed', { path => $filename,
                                              error => $! });
 
-my $urlbase = Bugzilla->params->{'urlbase'};
+my $urlbase = correct_urlbase();
 
 print $fh "digraph G {";
 print $fh qq{

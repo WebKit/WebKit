@@ -110,14 +110,14 @@
         The first method of making customizations is to directly edit the
         templates found in <filename>template/en/default</filename>.
         This is probably the best way to go about it if you are going to
-        be upgrading Bugzilla through CVS, because if you then execute
-        a <command>cvs update</command>, any changes you have made will
+        be upgrading Bugzilla through Bzr, because if you then execute
+        a <command>bzr update</command>, any changes you have made will
         be merged automagically with the updated versions.
       </para>
 
       <note>
         <para>
-          If you use this method, and CVS conflicts occur during an
+          If you use this method, and Bzr conflicts occur during an
           update, the conflicted templates (and possibly other parts
           of your installation) will not work until they are resolved.
         </para>
@@ -143,7 +143,7 @@
         The second method of customization should be used if you 
         use the overwriting method of upgrade, because otherwise 
         your changes will be lost.  This method may also be better if
-        you are using the CVS method of upgrading and are going to make major
+        you are using the Bzr method of upgrading and are going to make major
         changes, because it is guaranteed that the contents of this directory
         will not be touched during an upgrade, and you can then decide whether
         to continue using your own templates, or make the effort to merge your

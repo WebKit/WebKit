@@ -183,6 +183,7 @@ sub is_set_on_bug {
     # This allows bug/create/create.html.tmpl to pass in a hashref that 
     # looks like a bug object.
     my $value = blessed($bug) ? $bug->$field_name : $bug->{$field_name};
+    $value = $value->name if blessed($value);
     return 0 if !defined $value;
 
     if ($self->field->type == FIELD_TYPE_BUG_URLS

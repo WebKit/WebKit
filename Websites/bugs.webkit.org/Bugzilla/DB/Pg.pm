@@ -215,11 +215,12 @@ sub bz_check_server_version {
     my $self = shift;
     my ($db) = @_;
     my $server_version = $self->SUPER::bz_check_server_version(@_);
-    my ($major_version) = $server_version =~ /^(\d+)/;
-    # Pg 9 requires DBD::Pg 2.17.2 in order to properly read bytea values.
+    my ($major_version, $minor_version) = $server_version =~ /^0*(\d+)\.0*(\d+)/;
+    # Pg 9.0 requires DBD::Pg 2.17.2 in order to properly read bytea values.
+    # Pg 9.2 requires DBD::Pg 2.19.3 as spclocation no longer exists.
     if ($major_version >= 9) {
-        local $db->{dbd}->{version} = '2.17.2';
-        local $db->{name} = $db->{name} . ' 9+';
+        local $db->{dbd}->{version} = ($minor_version >= 2) ? '2.19.3' : '2.17.2';
+        local $db->{name} = $db->{name} . " ${major_version}.$minor_version";
         Bugzilla::DB::_bz_check_dbd(@_);
     }
 }

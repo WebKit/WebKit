@@ -25,6 +25,9 @@ use Scalar::Util qw(blessed);
 
 sub handle_login {
     my ($self, $class, $method, $full_method) = @_;
+    # Throw error if the supplied class does not exist or the method is private
+    ThrowCodeError('unknown_method', {method => $full_method}) if (!$class or $method =~ /^_/);
+
     eval "require $class";
     ThrowCodeError('unknown_method', {method => $full_method}) if $@;
     return if ($class->login_exempt($method) 

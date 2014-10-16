@@ -235,7 +235,8 @@ sub process_bug {
 
     my $added_comment;
     if (trim($fields{'comment'})) {
-        $added_comment = $bug->comments->[-1];
+        # The "old" bug object doesn't contain the comment we just added.
+        $added_comment = Bugzilla::Bug->check($bug_id)->comments->[-1];
     }
     return ($bug, $added_comment);
 }

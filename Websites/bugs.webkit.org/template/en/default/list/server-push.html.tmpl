@@ -33,15 +33,10 @@
     <h1 style="margin-top: 20%; text-align: center;">Please stand by ...</h1>
 
     [% IF debug %]
-      <p>
-        [% FOREACH debugline = debugdata %]
-          <code>[% debugline FILTER html %]</code><br>
-        [% END %]
-      </p>
-      <p>
-        <code>[% query FILTER html %]</code>
-      </p>
+      <p>[% query FILTER html %]</p>
+      [% IF query_explain.defined %]
+        <pre>[% query_explain FILTER html %]</pre>
+      [% END %]
     [% END %]
-
   </body>
 </html>

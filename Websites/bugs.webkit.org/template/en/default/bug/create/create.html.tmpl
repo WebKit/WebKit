@@ -303,7 +303,7 @@ TUI_hide_default('attachment_text_field');
        bug = default, field = bug_fields.op_sys, editable = 1, 
        value = default.op_sys %]
   </tr>
-  [% IF !Param('defaultplatform') || !Param('defaultopsys') %]
+  [% IF (!Param('defaultplatform') || !Param('defaultopsys')) && !cloned_bug_id %]
     <tr>
       <th colspan="3">&nbsp;</th>
       <td id="os_guess_note" class="comment">

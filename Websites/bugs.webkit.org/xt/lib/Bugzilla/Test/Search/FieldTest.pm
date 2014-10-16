@@ -28,6 +28,7 @@ use strict;
 use warnings;
 use Bugzilla::Search;
 use Bugzilla::Test::Search::Constants;
+use Bugzilla::Util qw(trim);
 
 use Data::Dumper;
 use Scalar::Util qw(blessed);
@@ -71,6 +72,13 @@ sub bugs { return $_[0]->search_test->bugs }
 sub bug {
     my $self = shift;
     return $self->search_test->bug(@_);
+}
+sub number {
+    my ($self, $id) = @_;
+    foreach my $number (1..NUM_BUGS) {
+        return $number if $self->search_test->bug($number)->id == $id;
+    }
+    return 0;
 }
 
 # The name displayed for this test by Test::More. Used in test descriptions.
@@ -147,9 +155,18 @@ sub translated_value {
     return $self->{translated_value};
 }
 # Used in failure diagnostic messages.
-sub debug_value {
-    my ($self) = @_;
-    return "Value: '" . $self->translated_value . "'";
+sub debug_fail {
+    my ($self, $number, $results, $sql) = @_;
+    my @expected = @{ $self->test->{contains} };
+    my @results = sort
+                  map { $self->number($_) }
+                  map { $_->[0] }
+                  @$results;
+    return
+        "   Value: '" . $self->translated_value . "'\n" .
+        "Expected: [" . join(',', @expected) . "]\n" .
+        " Results: [" . join(',', @results) . "]\n" .
+        trim($sql) . "\n";
 }
 
 # True for a bug if we ran the "transform" function on it and the
@@ -184,6 +201,7 @@ sub bug_is_contained {
 # The tests we know are broken for this operator/field combination.
 sub _known_broken {
     my ($self, $constant, $skip_pg_check) = @_;
+
     $constant ||= KNOWN_BROKEN;
     my $field = $self->field;
     my $type = $self->field_object->type;
@@ -192,8 +210,8 @@ sub _known_broken {
     my $value_name = "$operator-$value";
     if (my $extra_name = $self->test->{extra_name}) {
         $value_name .= "-$extra_name";
-    }    
-    
+    }
+
     my $value_broken = $constant->{$value_name}->{$field};
     $value_broken ||= $constant->{$value_name}->{$type};
     return $value_broken if $value_broken;
@@ -601,12 +619,12 @@ sub _test_content_for_bug {
         if ($self->bug_is_contained($number)) {
             ok($result_ids{$bug_id},
                "$name: contains bug $number ($bug_id)")
-                or diag Dumper($results) . $self->debug_value . "\n\nSQL: $sql";
+                or diag $self->debug_fail($number, $results, $sql);
         }
         else {
             ok(!$result_ids{$bug_id},
                "$name: does not contain bug $number ($bug_id)")
-                or diag Dumper($results) . $self->debug_value . "\n\nSQL: $sql";
+                or diag $self->debug_fail($number, $results, $sql);
         }
     }
 }

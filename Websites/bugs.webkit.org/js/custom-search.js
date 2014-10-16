@@ -146,7 +146,15 @@ function fix_query_string(form_member) {
         return;
 
     var form = YAHOO.util.Dom.getAncestorByTagName(form_member, 'form');
+    // Disable the token field so setForm doesn't include it
+    var reenable_token = false;
+    if (form['token'] && !form['token'].disabled) {
+      form['token'].disabled = true;
+      reenable_token = true;
+    }
     var query = YAHOO.util.Connect.setForm(form);
+    if (reenable_token)
+      form['token'].disabled = false;
     window.History.replaceState(null, document.title, '?' + query);
 }
 

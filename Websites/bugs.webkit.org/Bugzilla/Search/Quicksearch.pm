@@ -377,9 +377,14 @@ sub _handle_field_names {
 
     # Flag and requestee shortcut
     if ($or_operand =~ /^(?:flag:)?([^\?]+\?)([^\?]*)$/) {
-        addChart('flagtypes.name', 'substring', $1, $negate);
-        $chart++; $and = $or = 0; # Next chart for boolean AND
-        addChart('requestees.login_name', 'substring', $2, $negate);
+        my ($flagtype, $requestee) = ($1, $2);
+        addChart('flagtypes.name', 'substring', $flagtype, $negate);
+        if ($requestee) {
+            # AND
+            $chart++;
+            $and = $or = 0;
+            addChart('requestees.login_name', 'substring', $requestee, $negate);
+        }
         return 1;
     }
 

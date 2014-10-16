@@ -51,9 +51,6 @@ if (!$cgi->param('id') && $single) {
     exit;
 }
 
-my $format = $template->get_format("bug/show", scalar $cgi->param('format'), 
-                                   scalar $cgi->param('ctype'));
-
 my @bugs;
 my %marks;
 

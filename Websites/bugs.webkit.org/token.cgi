@@ -67,9 +67,10 @@ if ($token) {
   trick_taint($token);
 
   # Make sure the token exists in the database.
-  my ($tokentype) = $dbh->selectrow_array('SELECT tokentype FROM tokens
-                                           WHERE token = ?', undef, $token);
-  $tokentype || ThrowUserError("token_does_not_exist");
+  my ($db_token, $tokentype) = $dbh->selectrow_array('SELECT token, tokentype FROM tokens
+                                                       WHERE token = ?', undef, $token);
+  (defined $db_token && $db_token eq $token)
+    || ThrowUserError("token_does_not_exist");
 
   # Make sure the token is the correct type for the action being taken.
   if ( grep($action eq $_ , qw(cfmpw cxlpw chgpw)) && $tokentype ne 'password' ) {
@@ -107,6 +108,11 @@ if ( $action eq 'reqpw' ) {
     unless (Bugzilla->user->authorizer->can_change_password) {
         ThrowUserError("password_change_requests_not_allowed");
     }
+
+    # Check the hash token to make sure this user actually submitted
+    # the forgotten password form.
+    my $token = $cgi->param('token');
+    check_hash_token($token, ['reqpw']);
 
     validate_email_syntax($login_name)
         || ThrowUserError('illegal_email_address', {addr => $login_name});

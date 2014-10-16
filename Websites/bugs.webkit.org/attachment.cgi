@@ -432,8 +432,7 @@ sub view {
     }
     print $cgi->header(-type=>"$contenttype; name=\"$filename\"",
                        -content_disposition=> "$disposition; filename=\"$filename\"",
-                       -content_length => $attachment->datasize,
-                       -x_content_type_options => "nosniff");
+                       -content_length => $attachment->datasize);
     disable_utf8();
     print $attachment->data;
 }
@@ -733,20 +732,23 @@ sub update {
         $attachment->set_filename(scalar $cgi->param('filename'));
 
         # Now make sure the attachment has not been edited since we loaded the page.
-        if (defined $cgi->param('delta_ts')
-            && $cgi->param('delta_ts') ne $attachment->modification_time)
-        {
-            ($vars->{'operations'}) =
-                Bugzilla::Bug::GetBugActivity($bug->id, $attachment->id, $cgi->param('delta_ts'));
+        my $delta_ts = $cgi->param('delta_ts');
+        my $modification_time = $attachment->modification_time;
 
-            # The token contains the old modification_time. We need a new one.
-            $cgi->param('token', issue_hash_token([$attachment->id, $attachment->modification_time]));
+        if ($delta_ts && $delta_ts ne $modification_time) {
+            datetime_from($delta_ts)
+              or ThrowCodeError('invalid_timestamp', { timestamp => $delta_ts });
+            ($vars->{'operations'}) =
+              Bugzilla::Bug::GetBugActivity($bug->id, $attachment->id, $delta_ts);
 
             # If the modification date changed but there is no entry in
             # the activity table, this means someone commented only.
             # In this case, there is no reason to midair.
             if (scalar(@{$vars->{'operations'}})) {
-                $cgi->param('delta_ts', $attachment->modification_time);
+                $cgi->param('delta_ts', $modification_time);
+                # The token contains the old modification_time. We need a new one.
+                $cgi->param('token', issue_hash_token([$attachment->id, $modification_time]));
+
                 $vars->{'attachment'} = $attachment;
 
                 print $cgi->header();

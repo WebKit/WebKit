@@ -391,9 +391,9 @@ Description: Determines if a given setting exists in the database.
 Params:      C<$setting_name> - string - the setting name
 Returns:     boolean - true if the setting already exists in the DB.
 
-=back
-
 =end private
+
+=back
 
 =head1 METHODS
 

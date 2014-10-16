@@ -109,7 +109,7 @@ sub check {
     if (!$search->shared_with_group
         or !$user->in_group($search->shared_with_group)) 
     {
-        ThrowUserError('missing_query', { queryname => $search->name, 
+        ThrowUserError('missing_query', { name => $search->name,
                                           sharer_id => $search->user->id });
     }
 

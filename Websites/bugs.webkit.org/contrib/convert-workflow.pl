@@ -20,7 +20,6 @@
 #   Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
-use warnings;
 use lib qw(. lib);
 
 use Bugzilla;
@@ -82,6 +81,8 @@ $dbh->bz_start_transaction();
 foreach my $pair (@translation) {
     my ($from, $to) = @$pair;
     print "Converting $from to $to...\n";
+    # There is no FK on bugs.bug_status pointing to bug_status.value,
+    # so it's fine to update the bugs table first.
     $dbh->do('UPDATE bugs SET bug_status = ? WHERE bug_status = ?',
              undef, $to, $from);
 
@@ -103,11 +104,53 @@ foreach my $pair (@translation) {
 
     # If the new status already exists, just delete the old one, but retain
     # the workflow items from it.
-    if (my $existing = new Bugzilla::Status({ name => $to })) {
+    my $new_status = new Bugzilla::Status({ name => $to });
+    my $old_status = new Bugzilla::Status({ name => $from });
+
+    if ($new_status && $old_status) {
+        my $to_id = $new_status->id;
+        my $from_id = $old_status->id;
+        # The subselect collects existing transitions from the target bug status.
+        # The main select collects existing transitions from the renamed bug status.
+        # The diff tells us which transitions are missing from the target bug status.
+        my $missing_transitions =
+          $dbh->selectcol_arrayref('SELECT sw1.new_status
+                                      FROM status_workflow sw1
+                                     WHERE sw1.old_status = ?
+                                       AND sw1.new_status NOT IN (SELECT sw2.new_status
+                                                                    FROM status_workflow sw2
+                                                                   WHERE sw2.old_status = ?)',
+                                     undef, ($from_id, $to_id));
+
+        $dbh->do('UPDATE status_workflow SET old_status = ? WHERE old_status = ? AND '
+                 . $dbh->sql_in('new_status', $missing_transitions),
+                 undef, ($to_id, $from_id)) if @$missing_transitions;
+
+        # The subselect collects existing transitions to the target bug status.
+        # The main select collects existing transitions to the renamed bug status.
+        # The diff tells us which transitions are missing to the target bug status.
+        # We have to explicitly exclude NULL from the subselect, because NOT IN
+        # doesn't know what to do with it (neither true nor false) and no data is returned.
+        $missing_transitions =
+          $dbh->selectcol_arrayref('SELECT sw1.old_status
+                                      FROM status_workflow sw1
+                                     WHERE sw1.new_status = ?
+                                       AND sw1.old_status NOT IN (SELECT sw2.old_status
+                                                                    FROM status_workflow sw2
+                                                                   WHERE sw2.new_status = ?
+                                                                     AND sw2.old_status IS NOT NULL)',
+                                     undef, ($from_id, $to_id));
+
+        $dbh->do('UPDATE status_workflow SET new_status = ? WHERE new_status = ? AND '
+                 . $dbh->sql_in('old_status', $missing_transitions),
+                 undef, ($to_id, $from_id)) if @$missing_transitions;
+
+        # Delete rows where old_status = new_status, and then the old status itself.
+        $dbh->do('DELETE FROM status_workflow WHERE old_status = new_status');
         $dbh->do('DELETE FROM bug_status WHERE value = ?', undef, $from);
     }
     # Otherwise, rename the old status to the new one.
-    else {
+    elsif ($old_status) {
         $dbh->do('UPDATE bug_status SET value = ? WHERE value = ?',
                  undef, $to, $from);
     }

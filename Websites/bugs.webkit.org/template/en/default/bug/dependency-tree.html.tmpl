@@ -81,11 +81,27 @@
     [% END %] 
   </h3>
   [% IF ids.size %]
-    ([% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END -%]
-    <a href="buglist.cgi?bug_id=[% ids.join(",") %]">view as [% terms.bug %] list</a>
-    [% IF user.in_group('editbugs') && ids.size > 1 %]
-      | <a href="buglist.cgi?bug_id=[% ids.join(",") %]&amp;tweak=1">change several</a>
-    [% END %])
+    [%# 27 chars is the length of buglist.cgi?tweak=&bug_id=" %]
+    [% use_post = (ids.join(",").length > constants.CGI_URI_LIMIT - 27 ) ? 1 : 0 %]
+    [% IF use_post %]
+      <form action="buglist.cgi" method="post">
+      <input type="hidden" name="bug_id" value="[% ids.join(",") %]">
+    [% END %]
+
+    [% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END -%]
+    [% IF use_post %]
+      <button>view as [% terms.bug %] list</button>
+      [% IF user.in_group('editbugs') && ids.size > 1 %]
+        | <button type="submit" name="tweak" value="1">change several</button>
+      [% END %]
+      </form>
+    [% ELSE %]
+      <a href="buglist.cgi?bug_id=[% ids.join(",") %]">view as [% terms.bug %] list</a>
+      [% IF user.in_group('editbugs') && ids.size > 1 %]
+        | <a href="buglist.cgi?bug_id=[% ids.join(",") %]&amp;tweak=1">change several</a>
+      [% END %]
+    [% END %]
+
     <ul class="tree">
       [% INCLUDE display_tree tree=$tree_name %]
     </ul>

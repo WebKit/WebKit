@@ -36,7 +36,9 @@
 [%# We use "FILTER none" here because link_title is filtered down below. %]
 [% link_title = BLOCK %]
   [% display_value('bug_status', bug.bug_status) FILTER none %]
-  [%+ display_value('resolution', bug.resolution) FILTER none %]
+  [% IF bug.resolution %]
+    [%+ display_value('resolution', bug.resolution) FILTER none %]
+  [% END %]
 [% END %]
 
 [% IF user.can_see_bug(bug) %]

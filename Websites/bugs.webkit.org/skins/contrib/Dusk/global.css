@@ -30,8 +30,8 @@ body {
 /* page title */
 
 #titles {
-    -moz-border-radius-topleft: 5px;
-    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 #header .links, #footer {
@@ -40,8 +40,8 @@ body {
 }
 
 #header {
-    -moz-border-radius-bottomleft: 5px;
-    -moz-border-radius-bottomright: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     border: none;
 }
 
@@ -61,7 +61,7 @@ body {
     border: 1px solid #747e93;
     padding: 10px;
     font-size: 10pt;
-    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 a {
@@ -174,7 +174,7 @@ hr {
 #footer {
     border: 1px solid #747e93;
     width: 100%;
-    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 #footer #links-actions,
