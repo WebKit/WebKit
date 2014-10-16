@@ -982,7 +982,6 @@ void Heap::collect(HeapOperation collectionType)
     if (vm()->typeProfiler()) {
         DeferGCForAWhile awhile(*this);
         vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
-        vm()->invalidateTypeSetCache();
     }
     
     if (vm()->callEdgeLog) {
@@ -1011,6 +1010,9 @@ void Heap::collect(HeapOperation collectionType)
     markRoots(gcStartTime);
 
     JAVASCRIPTCORE_GC_MARKED();
+
+    if (vm()->typeProfiler())
+        vm()->typeProfiler()->invalidateTypeSetCache();
 
     reapWeakHandles();
     sweepArrayBuffers();

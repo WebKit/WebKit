@@ -33,6 +33,11 @@ namespace JSC {
 
 static const bool verbose = false;
 
+TypeProfiler::TypeProfiler()
+    : m_nextUniqueVariableID(1)
+{ 
+}
+
 void TypeProfiler::logTypesForTypeLocation(TypeLocation* location)
 {
     TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == TypeProfilerReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn : TypeProfilerSearchDescriptorNormal;
@@ -134,6 +139,29 @@ TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, Type
     // FIXME: BestMatch should never be null past this point. This doesn't hold currently because we ignore var assignments when code contains eval/With (VarInjection). 
     // https://bugs.webkit.org/show_bug.cgi?id=135184
     return bestMatch;
+}
+
+TypeLocation* TypeProfiler::nextTypeLocation() 
+{ 
+    return m_typeLocationInfo.add(); 
+}
+
+void TypeProfiler::invalidateTypeSetCache()
+{
+    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo.begin(); !!iter; ++iter) {
+        TypeLocation* location = *iter;
+        location->m_instructionTypeSet->invalidateCache();
+        if (location->m_globalTypeSet)
+            location->m_globalTypeSet->invalidateCache();
+    }
+}
+
+void TypeProfiler::dumpTypeProfilerData()
+{
+    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo.begin(); !!iter; ++iter) {
+        TypeLocation* location = *iter;
+        logTypesForTypeLocation(location);
+    }
 }
 
 } // namespace JSC

@@ -191,7 +191,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_codeCache(CodeCache::create())
     , m_enabledProfiler(nullptr)
     , m_builtinExecutables(BuiltinExecutables::create(*this))
-    , m_nextUniqueVariableID(1)
     , m_typeProfilerEnabledCount(0)
 {
     interpreter = new Interpreter(*this);
@@ -898,20 +897,12 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
     }
 }
 
-TypeLocation* VM::nextTypeLocation() 
-{ 
-    RELEASE_ASSERT(!!m_typeLocationInfo);
-
-    return m_typeLocationInfo->add(); 
-}
-
 bool VM::enableTypeProfiler()
 {
     bool needsToRecompile = false;
     if (!m_typeProfilerEnabledCount) {
         m_typeProfiler = std::make_unique<TypeProfiler>();
         m_typeProfilerLog = std::make_unique<TypeProfilerLog>();
-        m_typeLocationInfo = std::make_unique<Bag<TypeLocation>>();
         needsToRecompile = true;
     }
     m_typeProfilerEnabledCount++;
@@ -928,7 +919,6 @@ bool VM::disableTypeProfiler()
     if (!m_typeProfilerEnabledCount) {
         m_typeProfiler.reset(nullptr);
         m_typeProfilerLog.reset(nullptr);
-        m_typeLocationInfo.reset(nullptr);
         needsToRecompile = true;
     }
 
@@ -941,23 +931,7 @@ void VM::dumpTypeProfilerData()
         return;
 
     typeProfilerLog()->processLogEntries(ASCIILiteral("VM Dump Types"));
-    TypeProfiler* profiler = m_typeProfiler.get();
-    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo->begin(); !!iter; ++iter) {
-        TypeLocation* location = *iter;
-        profiler->logTypesForTypeLocation(location);
-    }
-}
-
-void VM::invalidateTypeSetCache()
-{
-    RELEASE_ASSERT(typeProfiler());
-
-    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo->begin(); !!iter; ++iter) {
-        TypeLocation* location = *iter;
-        location->m_instructionTypeSet->invalidateCache();
-        if (location->m_globalTypeSet)
-            location->m_globalTypeSet->invalidateCache();
-    }
+    typeProfiler()->dumpTypeProfilerData();
 }
 
 void sanitizeStackForVM(VM* vm)

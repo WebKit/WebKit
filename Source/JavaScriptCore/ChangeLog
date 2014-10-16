@@ -1,3 +1,61 @@
+2014-10-16  Saam Barati  <saambarati1@gmail.com>
+
+        Have the ProfileType node in the DFG convert to a structure check where it can
+        https://bugs.webkit.org/show_bug.cgi?id=137596
+
+        Reviewed by Filip Pizlo.
+
+        TypeSet now keeps track of the live set of Structures it has seen.
+        It no longer nukes everything during GC. It now only removes unmarked
+        structures during GC. This modification allows the ProfileType node 
+        to convert into a CheckStructure node safely in the DFG. 
+
+        This change brings up the conversion rate from ProfileType to Check 
+        or CheckStructrue from ~45% to ~65%. This change also speeds the 
+        type profiler up significantly: consistently between 2x-20x faster. 
+
+        This patch also does some slight refactoring: a few type profiler
+        related fields are moved from VM to TypeProfiler.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToCheckStructure):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::uniqueIDForVariable):
+        * runtime/SymbolTable.h:
+        * runtime/TypeLocationCache.cpp:
+        (JSC::TypeLocationCache::getTypeLocation):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::TypeProfiler):
+        (JSC::TypeProfiler::nextTypeLocation):
+        (JSC::TypeProfiler::invalidateTypeSetCache):
+        (JSC::TypeProfiler::dumpTypeProfilerData):
+        * runtime/TypeProfiler.h:
+        (JSC::TypeProfiler::getNextUniqueVariableID):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::invalidateCache):
+        * runtime/TypeSet.h:
+        (JSC::TypeSet::structureSet):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::enableTypeProfiler):
+        (JSC::VM::disableTypeProfiler):
+        (JSC::VM::dumpTypeProfilerData):
+        (JSC::VM::nextTypeLocation): Deleted.
+        (JSC::VM::invalidateTypeSetCache): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::typeProfiler):
+        (JSC::VM::getNextUniqueVariableID): Deleted.
+        * tests/typeProfiler/dfg-jit-optimizations.js:
+
 2014-10-16  Adrien Destugues  <pulkomandy@gmail.com>
 
         Use isnan from std namespace in ProfileGenerator.cpp

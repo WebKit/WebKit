@@ -46,7 +46,6 @@
 #include "Strong.h"
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
-#include "TypeLocation.h"
 #include "VMEntryRecord.h"
 #include "Watchdog.h"
 #include "Watchpoint.h"
@@ -515,10 +514,7 @@ public:
     bool disableTypeProfiler();
     TypeProfilerLog* typeProfilerLog() { return m_typeProfilerLog.get(); }
     TypeProfiler* typeProfiler() { return m_typeProfiler.get(); }
-    TypeLocation* nextTypeLocation();
     JS_EXPORT_PRIVATE void dumpTypeProfilerData();
-    void invalidateTypeSetCache();
-    GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -570,9 +566,7 @@ private:
     HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
-    GlobalVariableID m_nextUniqueVariableID;
     unsigned m_typeProfilerEnabledCount;
-    std::unique_ptr<Bag<TypeLocation>> m_typeLocationInfo;
 };
 
 #if ENABLE(GC_VALIDATION)

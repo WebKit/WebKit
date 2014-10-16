@@ -380,6 +380,12 @@ struct Node {
     {
         setOpAndDefaultFlags(Check);
     }
+
+    void convertToCheckStructure(StructureSet* set)
+    {
+        setOpAndDefaultFlags(CheckStructure);
+        m_opInfo = bitwise_cast<uintptr_t>(set); 
+    }
     
     void replaceWith(Node* other)
     {

@@ -1135,6 +1135,12 @@ private:
             } else if (typeSet->doesTypeConformTo(TypeUndefined | TypeNull) && (seenTypes & TypeUndefined) && (seenTypes & TypeNull)) {
                 node->convertToCheck();
                 fixEdge<OtherUse>(node->child1());
+            } else if (typeSet->doesTypeConformTo(TypeObject)) {
+                StructureSet set = typeSet->structureSet();
+                if (!set.isEmpty()) {
+                    node->convertToCheckStructure(m_graph.addStructureSet(set));
+                    fixEdge<CellUse>(node->child1());
+                }
             }
 
             break;

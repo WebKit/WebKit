@@ -32,6 +32,7 @@
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
 #include "SlotVisitorInlines.h"
+#include "TypeProfiler.h"
 #include "VariableWatchpointSetInlines.h"
 
 namespace JSC {
@@ -211,7 +212,7 @@ GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, St
 
     GlobalVariableID id = iter->value;
     if (id == TypeProfilerNeedsUniqueIDGeneration) {
-        id = vm.getNextUniqueVariableID();
+        id = vm.typeProfiler()->getNextUniqueVariableID();
         m_typeProfilingRareData->m_uniqueIDMap.set(key, id);
         m_typeProfilingRareData->m_uniqueTypeSetMap.set(key, TypeSet::create()); // Make a new global typeset for this corresponding ID.
     }

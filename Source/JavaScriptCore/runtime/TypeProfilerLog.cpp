@@ -59,16 +59,18 @@ void TypeProfilerLog::processLogEntries(String reason)
 
     double before = currentTimeMS();
     LogEntry* entry = m_logStartPtr;
-    HashMap<StructureID, RefPtr<StructureShape>> seenShapes;
+    HashMap<Structure*, RefPtr<StructureShape>> seenShapes;
     while (entry != m_currentLogEntryPtr) {
         StructureID id = entry->structureID;
         RefPtr<StructureShape> shape; 
         JSValue value = entry->value;
+        Structure* structure = 0;
         if (id) {
-            auto iter = seenShapes.find(id);
+            structure = Heap::heap(value.asCell())->structureIDTable().get(id); 
+            auto iter = seenShapes.find(structure);
             if (iter == seenShapes.end()) {
-                shape = Heap::heap(value.asCell())->structureIDTable().get(entry->structureID)->toStructureShape(value);
-                seenShapes.set(id, shape);
+                shape = structure->toStructureShape(value);
+                seenShapes.set(structure, shape);
             } else
                 shape = iter->value;
         }
@@ -77,8 +79,8 @@ void TypeProfilerLog::processLogEntries(String reason)
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)
-            location->m_globalTypeSet->addTypeInformation(type, shape, id);
-        location->m_instructionTypeSet->addTypeInformation(type, shape, id);
+            location->m_globalTypeSet->addTypeInformation(type, shape, structure);
+        location->m_instructionTypeSet->addTypeInformation(type, shape, structure);
 
         entry++;
     }

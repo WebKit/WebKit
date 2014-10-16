@@ -67,17 +67,16 @@ RuntimeType TypeSet::getRuntimeTypeForValue(JSValue v)
     return ret;
 }
 
-void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> prpNewShape, StructureID id) 
+void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> prpNewShape, Structure* structure) 
 {
     RefPtr<StructureShape> newShape = prpNewShape;
     m_seenTypes = m_seenTypes | type;
 
-    if (id && newShape && type != TypeString) {
-        ASSERT(m_structureIDCache.isValidValue(id));
-        auto addResult = m_structureIDCache.add(id);
-        if (addResult.isNewEntry) {
+    if (structure && newShape && type != TypeString) {
+        if (!m_structureSet.contains(structure)) {
+            m_structureSet.add(structure);
             // Make one more pass making sure that: 
-            // - We don't have two instances of the same shape. (Same shapes may have different StructureIDs).
+            // - We don't have two instances of the same shape. (Same shapes may have different Structures).
             // - We don't have two shapes that share the same prototype chain. If these shapes share the same 
             //   prototype chain, they will be merged into one shape.
             bool found = false;
@@ -107,7 +106,8 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
 
 void TypeSet::invalidateCache()
 {
-    m_structureIDCache.clear();
+    auto keepMarkedStructuresFilter = [] (Structure* structure) -> bool { return Heap::isMarked(structure); };
+    m_structureSet.genericFilter(keepMarkedStructuresFilter);
 }
 
 String TypeSet::dumpTypes() const

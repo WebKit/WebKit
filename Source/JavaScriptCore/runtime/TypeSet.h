@@ -26,7 +26,7 @@
 #ifndef TypeSet_h
 #define TypeSet_h
 
-#include "StructureIDTable.h"
+#include "StructureSet.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -97,7 +97,7 @@ class TypeSet : public RefCounted<TypeSet> {
 public:
     static PassRefPtr<TypeSet> create() { return adoptRef(new TypeSet); }
     TypeSet();
-    void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, StructureID);
+    void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, Structure*);
     static RuntimeType getRuntimeTypeForValue(JSValue);
     void invalidateCache();
     String dumpTypes() const;
@@ -110,13 +110,13 @@ public:
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
     bool doesTypeConformTo(uint32_t test) const;
     uint32_t seenTypes() const { return m_seenTypes; }
+    StructureSet structureSet() const { return m_structureSet; };
 
 private:
-
     uint32_t m_seenTypes;
     bool m_isOverflown;
     Vector<RefPtr<StructureShape>> m_structureHistory;
-    HashSet<StructureID> m_structureIDCache;
+    StructureSet m_structureSet;
 };
 
 } //namespace JSC

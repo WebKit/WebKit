@@ -2005,6 +2005,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_profile_type: {
+            RELEASE_ASSERT(vm()->typeProfiler());
             // The format of this instruction is: op_profile_type regToProfile, TypeLocation*, flag, identifier?, resolveType?
             size_t instructionOffset = i + opLength - 1;
             unsigned divotStart, divotEnd;

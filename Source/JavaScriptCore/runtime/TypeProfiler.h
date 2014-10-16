@@ -28,7 +28,9 @@
 
 #include "CodeBlock.h"
 #include "FunctionHasExecutedCache.h"
+#include "TypeLocation.h"
 #include "TypeLocationCache.h"
+#include <wtf/Bag.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -38,8 +40,6 @@ class TypeDescription;
 }}}
 
 namespace JSC {
-
-class TypeLocation;
 
 struct QueryKey {
     QueryKey()
@@ -94,12 +94,17 @@ enum TypeProfilerSearchDescriptor {
 
 class TypeProfiler {
 public:
+    TypeProfiler();
     void logTypesForTypeLocation(TypeLocation*);
     JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, intptr_t sourceID);
     void insertNewLocation(TypeLocation*);
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
     TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor);
+    GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
+    TypeLocation* nextTypeLocation();
+    void invalidateTypeSetCache();
+    void dumpTypeProfilerData();
     
 private:
     typedef HashMap<intptr_t, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
@@ -108,6 +113,8 @@ private:
     TypeLocationCache m_typeLocationCache;
     typedef HashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;
     TypeLocationQueryCache m_queryCache;
+    GlobalVariableID m_nextUniqueVariableID;
+    Bag<TypeLocation> m_typeLocationInfo;
 };
 
 } // namespace JSC

@@ -31,7 +31,7 @@
 
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
-#include "TypeSet.h"
+#include "TypeLocation.h"
 #include "VariableWatchpointSet.h"
 #include <memory>
 #include <wtf/HashTraits.h>

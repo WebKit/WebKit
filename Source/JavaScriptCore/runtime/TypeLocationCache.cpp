@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TypeLocationCache.h"
 
+#include "TypeProfiler.h"
 #include "VM.h"
 
 namespace JSC {
@@ -41,7 +42,8 @@ std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariable
 
     bool isNewLocation = false;
     if (m_locationMap.find(key) == m_locationMap.end()) {
-        TypeLocation* location = vm->nextTypeLocation();
+        ASSERT(vm->typeProfiler());
+        TypeLocation* location = vm->typeProfiler()->nextTypeLocation();
         location->m_globalVariableID = globalVariableID;
         location->m_sourceID = sourceID;
         location->m_divotStart = start;

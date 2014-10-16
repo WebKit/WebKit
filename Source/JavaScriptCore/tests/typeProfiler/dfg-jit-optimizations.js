@@ -36,3 +36,17 @@ for (var i = 0; i < types.length; i++) {
         assert(typeInfo.instructionTypeSet.primitiveTypeNames.indexOf(types[j]) !== -1, "Should have seen type: " + types[j] + " " + i + "," + j);
     }
 }
+
+function testStrucure(obj) { return obj; }
+var obj = {x: 20};
+tierUpToDFG(testStrucure, obj);
+var types = findTypeForExpression(testStrucure, "obj");
+assert(types.instructionTypeSet.structures.length === 1, "variable 'test' should have exactly structure");
+assert(types.instructionTypeSet.structures[0].fields.length === 1, "variable 'test' should have exactly ONE field");
+assert(types.instructionTypeSet.structures[0].fields.indexOf("x") !== -1, "variable 'test' should have field 'x'");
+
+testStrucure({x:20, y: 40})
+types = findTypeForExpression(testStrucure, "obj");
+assert(types.instructionTypeSet.structures.length === 1, "variable 'test' should have still have exactly one structure");
+assert(types.instructionTypeSet.structures[0].fields.indexOf("x") !== -1, "variable 'test' should have field 'x'");
+assert(types.instructionTypeSet.structures[0].optionalFields.indexOf("y") !== -1, "variable 'test' should have field optional field 'y'");
