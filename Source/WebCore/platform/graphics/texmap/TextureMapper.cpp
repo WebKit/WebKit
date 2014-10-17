@@ -125,7 +125,7 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
 {
     RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, this);
     selectedTexture->reset(size, flags);
-    return selectedTexture;
+    return selectedTexture.release();
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::create(AccelerationMode mode)
