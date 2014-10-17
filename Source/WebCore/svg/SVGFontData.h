@@ -52,6 +52,8 @@ private:
     bool fillBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const SimpleFontData*) const;
     bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const SimpleFontData*) const;
 
+    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t, TypesettingFeatures) const = delete;
+
     // Ths SVGFontFaceElement is kept alive --
     // 1) in the external font case: by the CSSFontFaceSource, which holds a reference to the external SVG document
     //    containing the element;
