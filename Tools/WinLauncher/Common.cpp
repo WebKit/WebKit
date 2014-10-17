@@ -90,6 +90,7 @@ SIZE s_windowSize = { 800, 400 };
 ATOM MyRegisterClass(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK CustomUserAgent(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK EditProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
@@ -287,7 +288,7 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     ::DeleteDC(printDC);
 }
 
-static void ToggleMenuItem(HWND hWnd, UINT menuID)
+static void ToggleMenuFlag(HWND hWnd, UINT menuID)
 {
     HMENU menu = ::GetMenu(hWnd);
 
@@ -300,6 +301,48 @@ static void ToggleMenuItem(HWND hWnd, UINT menuID)
         return;
 
     BOOL newState = !(info.fState & MFS_CHECKED);
+    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
+
+    ::SetMenuItemInfo(menu, menuID, FALSE, &info);
+}
+
+static bool menuItemIsChecked(const MENUITEMINFO& info)
+{
+    return info.fState & MFS_CHECKED;
+}
+
+static void turnOffOtherUserAgents(HMENU menu)
+{
+    MENUITEMINFO info;
+    ::memset(&info, 0x00, sizeof(info));
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
+
+    // Must unset the other menu items:
+    for (UINT menuToClear = IDM_UA_DEFAULT; menuToClear <= IDM_UA_OTHER; ++menuToClear) {
+        if (!::GetMenuItemInfo(menu, menuToClear, FALSE, &info))
+            continue;
+        if (!menuItemIsChecked(info))
+            continue;
+
+        info.fState = MFS_UNCHECKED;
+        ::SetMenuItemInfo(menu, menuToClear, FALSE, &info);
+    }
+}
+
+static void ToggleMenuItem(HWND hWnd, UINT menuID)
+{
+    HMENU menu = ::GetMenu(hWnd);
+
+    MENUITEMINFO info;
+    ::memset(&info, 0x00, sizeof(info));
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
+
+    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
+        return;
+
+    BOOL newState = !menuItemIsChecked(info);
 
     if (!gWinLauncher->standardPreferences() || !gWinLauncher->privatePreferences())
         return;
@@ -330,6 +373,22 @@ static void ToggleMenuItem(HWND hWnd, UINT menuID)
     case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
         gWinLauncher->privatePreferences()->setAllowUniversalAccessFromFileURLs(newState);
         gWinLauncher->privatePreferences()->setAllowFileAccessFromFileURLs(newState);
+        break;
+    case IDM_UA_DEFAULT:
+    case IDM_UA_SAFARI_8_0:
+    case IDM_UA_SAFARI_IOS_8_IPHONE:
+    case IDM_UA_SAFARI_IOS_8_IPAD:
+    case IDM_UA_IE_11:
+    case IDM_UA_CHROME_MAC:
+    case IDM_UA_CHROME_WIN:
+    case IDM_UA_FIREFOX_MAC:
+    case IDM_UA_FIREFOX_WIN:
+        gWinLauncher->setUserAgent(menuID);
+        turnOffOtherUserAgents(menu);
+        break;
+    case IDM_UA_OTHER:
+        // The actual user agent string will be set by the custom user agent dialog
+        turnOffOtherUserAgents(menu);
         break;
     }
 
@@ -404,7 +463,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_DISABLE_STYLES:
         case IDM_DISABLE_JAVASCRIPT:
         case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
+        case IDM_UA_DEFAULT:
+        case IDM_UA_SAFARI_8_0:
+        case IDM_UA_SAFARI_IOS_8_IPHONE:
+        case IDM_UA_SAFARI_IOS_8_IPAD:
+        case IDM_UA_IE_11:
+        case IDM_UA_CHROME_MAC:
+        case IDM_UA_CHROME_WIN:
+        case IDM_UA_FIREFOX_MAC:
+        case IDM_UA_FIREFOX_WIN:
             ToggleMenuItem(hWnd, wmId);
+            break;
+        case IDM_UA_OTHER:
+            if (wmEvent)
+                ToggleMenuItem(hWnd, wmId);
+            else
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, CustomUserAgent);
             break;
         default:
             return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
@@ -514,6 +588,44 @@ INT_PTR CALLBACK Caches(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
 
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message) {
+    case WM_INITDIALOG: {
+        HWND edit = ::GetDlgItem(hDlg, IDC_USER_AGENT_INPUT);
+        _bstr_t userAgent;
+        if (gWinLauncher)
+            userAgent = gWinLauncher->userAgent();
+
+        ::SetWindowText(edit, static_cast<LPCTSTR>(userAgent));
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK) {
+            HWND edit = ::GetDlgItem(hDlg, IDC_USER_AGENT_INPUT);
+
+            TCHAR buffer[1024];
+            int strLen = ::GetWindowText(edit, buffer, 1024);
+            buffer[strLen] = 0;
+
+            _bstr_t bstr(buffer);
+            if (bstr.length()) {
+                gWinLauncher->setUserAgent(bstr);
+                ::PostMessage(hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_UA_OTHER, 1), 0);
+            }
+        }
+
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            ::EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
     return (INT_PTR)FALSE;
 }
 

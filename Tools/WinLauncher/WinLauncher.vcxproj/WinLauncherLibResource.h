@@ -25,6 +25,7 @@
 #define IDR_MAINFRAME                   128
 #define IDD_CACHES                      129
 #define IDM_HISTORY_BACKWARD            130
+#define IDD_USER_AGENT                  130
 #define IDM_HISTORY_FORWARD             131
 #define IDM_HISTORY_LINK0               150
 #define IDM_HISTORY_LINK1               151
@@ -37,6 +38,16 @@
 #define IDM_HISTORY_LINK8               158
 #define IDM_HISTORY_LINK9               159
 #define IDT_UPDATE_STATS                160
+#define IDM_UA_DEFAULT                  161
+#define IDM_UA_SAFARI_8_0               162
+#define IDM_UA_SAFARI_IOS_8_IPHONE      163
+#define IDM_UA_SAFARI_IOS_8_IPAD        164
+#define IDM_UA_IE_11                    165
+#define IDM_UA_CHROME_MAC               166
+#define IDM_UA_CHROME_WIN               167
+#define IDM_UA_FIREFOX_MAC              168
+#define IDM_UA_FIREFOX_WIN              169
+#define IDM_UA_OTHER                    170
 #define IDC_EMPTY_URL_CACHE             1000
 #define IDC_RETURN_FREE_MEMORY          1001
 #define IDC_EMPTY_WEBCORE_CACHE         1002
@@ -80,13 +91,15 @@
 #define IDC_JSC_HEAP_FREE               1042
 #define IDC_BUTTON5                     1043
 #define IDC_TOTAL_FONT_OBJECTS          1044
+#define IDC_Message                     1044
 #define IDC_INACTIVE_FONT_OBJECTS       1045
 #define IDC_GLYPH_PAGES                 1046
 #define IDC_PAGE_URL_MAPPINGS           1047
 #define IDC_RETAINED_PAGE_URLS          1048
 #define IDC_SITE_ICON_RECORDS           1049
 #define IDC_TOTAL_FONT_OBJECTS5         1050
-#define IDC_SITE_ICONS_WITH_DATA        1050
+#define IDC_SITE_ICONS_WITH_DATA        1051
+#define IDC_USER_AGENT_INPUT            1052
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -94,9 +107,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        171
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1044
+#define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

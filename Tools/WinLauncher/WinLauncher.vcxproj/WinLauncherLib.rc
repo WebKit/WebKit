@@ -62,6 +62,25 @@ BEGIN
     POPUP "D&evelop"
     BEGIN
         MENUITEM "Show Web Inspector",          IDM_WEB_INSPECTOR
+        POPUP "User Agent"
+        BEGIN
+            MENUITEM "Default (Automatically Chosen)", IDM_UA_DEFAULT
+            MENUITEM SEPARATOR
+            MENUITEM "Safari 8.0",                  IDM_UA_SAFARI_8_0
+            MENUITEM SEPARATOR
+            MENUITEM "Safari iOS 8 - iPhone",       IDM_UA_SAFARI_IOS_8_IPHONE
+            MENUITEM "Safari iOS 8 - iPad",         IDM_UA_SAFARI_IOS_8_IPAD
+            MENUITEM SEPARATOR
+            MENUITEM "Internet Explorer 11.0",      IDM_UA_IE_11
+            MENUITEM SEPARATOR
+            MENUITEM "Google Chrome - Mac",         IDM_UA_CHROME_MAC
+            MENUITEM "Google Chrome - Windows",     IDM_UA_CHROME_WIN
+            MENUITEM SEPARATOR
+            MENUITEM "Firefox - Mac",               IDM_UA_FIREFOX_MAC
+            MENUITEM "Firefox - Windows",           IDM_UA_FIREFOX_WIN
+            MENUITEM SEPARATOR
+            MENUITEM "Other",                       IDM_UA_OTHER
+        END
         MENUITEM SEPARATOR
         MENUITEM "Disable Images",              IDM_DISABLE_IMAGES
         MENUITEM "Disable Styles",              IDM_DISABLE_STYLES
@@ -199,6 +218,17 @@ BEGIN
     RTEXT           "0",IDC_SITE_ICONS_WITH_DATA,101,410,52,8
 END
 
+IDD_USER_AGENT DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Type a custom user agent string for this page.",IDC_Message,7,7,295,19
+    EDITTEXT        IDC_USER_AGENT_INPUT,7,34,295,117,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,198,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -246,6 +276,14 @@ BEGIN
         RIGHTMARGIN, 394
         TOPMARGIN, 7
         BOTTOMMARGIN, 449
+    END
+
+    IDD_USER_AGENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
     END
 END
 #endif    // APSTUDIO_INVOKED
