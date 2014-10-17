@@ -48,7 +48,7 @@ void setSharedTimerFireInterval(double interval)
     ASSERT(sharedTimerFiredFunction);
 
     gSharedTimer.scheduleAfterDelay("[WebKit] sharedTimerTimeoutCallback", std::function<void()>(sharedTimerFiredFunction),
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(interval)), GDK_PRIORITY_REDRAW);
+        std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(interval)), GDK_PRIORITY_REDRAW);
 }
 
 void stopSharedTimer()
