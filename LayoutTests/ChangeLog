@@ -1,3 +1,16 @@
+2014-10-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test gardening after r174796.
+
+        Now that Windows DRT matches Mac's output, we can get rid of some custom test expecations.
+
+        * platform/win/fast/dom/window-load-crash-expected.txt: Removed.
+        * platform/win/fast/images/crossfade-client-not-removed-crash-expected.txt: Removed.
+        * platform/win/fast/ruby/before-block-doesnt-crash-expected.txt: Removed.
+        * platform/win/fast/ruby/before-table-doesnt-crash-expected.txt: Removed.
+        * platform/win/fast/ruby/generated-before-counter-doesnt-crash-expected.txt: Removed.
+        * platform/win/loader/image-loader-adoptNode-assert-expected.txt: Removed.
+
 2014-10-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS Selectors Level 4: Implement :matches in SelectorChecker
