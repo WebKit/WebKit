@@ -51,4 +51,16 @@ TEST(OSObjectPtr, RetainRelease)
     EXPECT_EQ(1, CFGetRetainCount(foo));
 }
 
+TEST(OSObjectPtr, LeakRef)
+{
+    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+
+    dispatch_queue_t queue = foo.leakRef();
+    EXPECT_EQ(nullptr, foo.get());
+    EXPECT_EQ(1, CFGetRetainCount(queue));
+
+    WTF::releaseOSObject(queue);
+}
+
 } // namespace TestWebKitAPI

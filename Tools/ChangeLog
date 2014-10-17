@@ -1,3 +1,13 @@
+2014-10-16  Dan Bernstein  <mitz@apple.com>
+
+        OSObjectPtr is missing leakRef()
+        https://bugs.webkit.org/show_bug.cgi?id=137798
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtr.cpp:
+        (TestWebKitAPI::TEST(OSObjectPtr, LeakRef)): Added.
+
 2014-10-16  Lucas Forschler  <lforschler@apple.com>
 
         Update target platform to remove Leopard, Snow Leopard, Lion.
