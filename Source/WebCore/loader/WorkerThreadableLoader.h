@@ -35,7 +35,6 @@
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -104,7 +103,6 @@ namespace WebCore {
             void clearClientWrapper();
 
             // All executed on the main thread.
-            static void mainThreadCreateLoader(ScriptExecutionContext&, MainThreadBridge*, PassOwnPtr<CrossThreadResourceRequestData>, ThreadableLoaderOptions, const String& outgoingReferrer);
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
             virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
             virtual void didReceiveData(const char*, int dataLength) override;
