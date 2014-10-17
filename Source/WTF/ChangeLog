@@ -1,3 +1,9 @@
+2014-10-17  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Yosemite build.
+
+        * wtf/Threading.cpp:
+
 2014-10-16  Dan Bernstein  <mitz@apple.com>
 
         OSObjectPtr is missing leakRef()

@@ -28,6 +28,10 @@
 
 #include <string.h>
 
+#if HAVE(QOS_CLASSES)
+#include <sys/qos.h>
+#endif
+
 namespace WTF {
 
 struct NewThreadContext {
