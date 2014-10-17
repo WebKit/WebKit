@@ -1,5 +1,12 @@
 2014-10-17  Dana Burkart  <dburkart@apple.com>
 
+        Mark platform/mac/accessibility/select-text.html as Failure since we can't take
+        http://trac.webkit.org/changeset/172028 on branch
+
+        * platform/mac/TestExpectations:
+
+2014-10-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r171344
 
     2014-07-22  Alexey Proskuryakov  <ap@apple.com>
