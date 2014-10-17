@@ -588,6 +588,8 @@ void TestController::resetPreferencesToConsistentValues()
 #endif
 
     WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
+    
+    platformResetPreferencesToConsistentValues();
 }
 
 bool TestController::resetStateToConsistentValues()
@@ -728,6 +730,10 @@ void TestController::updateLayoutTypeForTest(const TestInvocation& test)
 
 #if !PLATFORM(COCOA)
 void TestController::platformConfigureViewForTest(const TestInvocation&)
+{
+}
+
+void TestController::platformResetPreferencesToConsistentValues()
 {
 }
 #endif

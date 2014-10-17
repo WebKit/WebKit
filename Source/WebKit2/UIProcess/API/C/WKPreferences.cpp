@@ -1285,3 +1285,13 @@ bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->longMousePressEnabled();
 }
+
+void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double size)
+{
+    toImpl(preferencesRef)->setMinimumZoomFontSize(size);
+}
+
+double WKPreferencesGetMinimumZoomFontSize(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->minimumZoomFontSize();
+}

@@ -1,3 +1,26 @@
+2014-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Turn off font autosizing for iOS WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=137806
+
+        Reviewed by Sam Weinig.
+
+        Confusingly, WKPreferencesSetTextAutosizingEnabled() does nothing on iOS.
+        Instead, we have to add WKPreferencesSetMinimumZoomFontSize() and set it to 0
+        to disable font autosizing.
+        
+        Add platformResetPreferencesToConsistentValues() and implement it in the iOS
+        test controller to set platform-specific prefs.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+
 2014-10-16  Dan Bernstein  <mitz@apple.com>
 
         OSObjectPtr is missing leakRef()

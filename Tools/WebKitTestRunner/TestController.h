@@ -121,6 +121,7 @@ private:
     void platformInitialize();
     void platformDestroy();
     void platformInitializeContext();
+    void platformResetPreferencesToConsistentValues();
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);
     void platformRunUntil(bool& done, double timeout);

@@ -30,8 +30,9 @@
 #import <Foundation/Foundation.h>
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKStringCF.h>
-#include <wtf/MainThread.h>
+#import <wtf/MainThread.h>
 
 namespace WTR {
 
@@ -77,6 +78,13 @@ void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 static bool shouldMakeViewportFlexible(const char* pathOrURL)
 {
     return strstr(pathOrURL, "viewport/");
+}
+
+void TestController::platformResetPreferencesToConsistentValues()
+{
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
+    // Note that WKPreferencesSetTextAutosizingEnabled has no effect on iOS.
+    WKPreferencesSetMinimumZoomFontSize(preferences, 0);
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

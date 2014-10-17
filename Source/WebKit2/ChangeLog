@@ -1,3 +1,19 @@
+2014-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Turn off font autosizing for iOS WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=137806
+
+        Reviewed by Sam Weinig.
+        
+        Confusingly, WKPreferencesSetTextAutosizingEnabled() does nothing on iOS.
+        Instead, we have to add WKPreferencesSetMinimumZoomFontSize() and set it to 0
+        to disable font autosizing.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMinimumZoomFontSize):
+        (WKPreferencesGetMinimumZoomFontSize):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] REGRESSION(r173929): It broke the Web Inspector

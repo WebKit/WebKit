@@ -78,6 +78,10 @@ static bool shouldUseThreadedScrolling(const char* pathOrURL)
     return strstr(pathOrURL, "tiled-drawing/");
 }
 
+void TestController::platformResetPreferencesToConsistentValues()
+{
+}
+
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
     auto viewOptions = adoptWK(WKMutableDictionaryCreate());
