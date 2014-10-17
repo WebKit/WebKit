@@ -1,3 +1,12 @@
+2014-10-17  Dana Burkart  <dburkart@apple.com>
+
+        Fix typos in the dashboard config file.
+
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2014-10-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Allow WinLauncher to specify Custom User Agent strings
