@@ -64,7 +64,8 @@ private:
     CachedResourceHandle<CachedImage> m_image;
 };
 
-STYLE_IMAGE_TYPE_CASTS(StyleCachedImage, StyleImage, isCachedImage)
+} // namespace WebCore
 
-}
-#endif
+SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleCachedImage, isCachedImage)
+
+#endif // StyleCachedImage_h

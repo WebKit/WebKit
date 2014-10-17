@@ -83,9 +83,9 @@ private:
     CSSImageSetValue* m_imageSetValue; // Not retained; it owns us.
 };
 
-STYLE_IMAGE_TYPE_CASTS(StyleCachedImageSet, StyleImage, isCachedImageSet)
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleCachedImageSet, isCachedImageSet)
 
 #endif // ENABLE(CSS_IMAGE_SET)
 

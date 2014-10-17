@@ -1,3 +1,41 @@
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for StyleImage
+        https://bugs.webkit.org/show_bug.cgi?id=137824
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for StyleImage and clean up the surrouding
+        code.
+
+        No new tests, no behavior change.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::detachPendingImage):
+        (WebCore::CSSCursorImageValue::cachedImage):
+        (WebCore::CSSCursorImageValue::cachedImageURL):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::detachPendingImage):
+        (WebCore::CSSImageSetValue::~CSSImageSetValue):
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        (WebCore::CSSImageSetValue::hasFailedOrCanceledSubresources):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::detachPendingImage):
+        (WebCore::CSSImageValue::cachedImage):
+        (WebCore::CSSImageValue::hasFailedOrCanceledSubresources):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingShapeImage):
+        (WebCore::StyleResolver::loadPendingImages):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForProperties):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+
 2014-10-17  Dean Jackson  <dino@apple.com>
 
         [Media] Always update controls for <audio> since they are always visible

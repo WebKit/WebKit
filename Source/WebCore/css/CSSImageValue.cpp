@@ -54,8 +54,8 @@ CSSImageValue::CSSImageValue(const String& url, StyleImage* image)
 
 inline void CSSImageValue::detachPendingImage()
 {
-    if (m_image && m_image->isPendingImage())
-        toStylePendingImage(*m_image).detachFromCSSValue();
+    if (is<StylePendingImage>(m_image.get()))
+        downcast<StylePendingImage>(*m_image).detachFromCSSValue();
 }
 
 CSSImageValue::~CSSImageValue()
@@ -93,7 +93,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         }
     }
 
-    return (m_image && m_image->isCachedImage()) ? toStyleCachedImage(m_image.get()) : nullptr;
+    return is<StyleCachedImage>(m_image.get()) ? downcast<StyleCachedImage>(m_image.get()) : nullptr;
 }
 
 StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
@@ -103,9 +103,9 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 
 bool CSSImageValue::hasFailedOrCanceledSubresources() const
 {
-    if (!m_image || !m_image->isCachedImage())
+    if (!is<StyleCachedImage>(m_image.get()))
         return false;
-    CachedResource* cachedResource = toStyleCachedImage(*m_image).cachedImage();
+    CachedResource* cachedResource = downcast<StyleCachedImage>(*m_image).cachedImage();
     if (!cachedResource)
         return true;
     return cachedResource->loadFailedOrCanceled();

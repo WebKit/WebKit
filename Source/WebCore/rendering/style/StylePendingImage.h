@@ -86,8 +86,8 @@ private:
     CSSValue* m_value; // Not retained; it owns us.
 };
 
-STYLE_IMAGE_TYPE_CASTS(StylePendingImage, StyleImage, isPendingImage)
+} // namespace WebCore
 
-}
+SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StylePendingImage, isPendingImage)
 
-#endif
+#endif // StylePendingImage_h

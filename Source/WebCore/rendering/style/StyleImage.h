@@ -30,6 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -92,8 +93,11 @@ protected:
     bool m_isCachedImageSet : 1;
 };
 
-#define STYLE_IMAGE_TYPE_CASTS(ToClassName, FromClassName, predicate) \
-    TYPE_CASTS_BASE(ToClassName, FromClassName, styleImage, styleImage->predicate(), styleImage.predicate())
+} // namespace WebCore
 
-}
-#endif
+#define SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(ToClassName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::StyleImage& image) { return image.predicate(); } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // StyleImage_h

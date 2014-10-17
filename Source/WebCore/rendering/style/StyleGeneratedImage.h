@@ -63,7 +63,8 @@ private:
     bool m_fixedSize;
 };
 
-STYLE_IMAGE_TYPE_CASTS(StyleGeneratedImage, StyleImage, isGeneratedImage)
+} // namespace WebCore
 
-}
-#endif
+SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(StyleGeneratedImage, isGeneratedImage)
+
+#endif // StyleGeneratedImage_h
