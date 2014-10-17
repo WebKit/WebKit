@@ -859,9 +859,10 @@ sub visible_bugs {
         my $user_id = $self->id;
         my $sth;
         # Speed up the can_see_bug case.
-        if (scalar(@check_ids) == 1) {
-            $sth = $self->{_sth_one_visible_bug};
-        }
+        # WEBKIT_CHANGES: Disable statement caching
+        #if (scalar(@check_ids) == 1) {
+        #    $sth = $self->{_sth_one_visible_bug};
+        #}
         $sth ||= $dbh->prepare(
             # This checks for groups that the bug is in that the user
             # *isn't* in. Then, in the Perl code below, we check if
@@ -885,9 +886,10 @@ sub visible_bugs {
                                      . $self->groups_as_string . ')
               WHERE bugs.bug_id IN (' . join(',', ('?') x @check_ids) . ')
                     AND creation_ts IS NOT NULL ');
-        if (scalar(@check_ids) == 1) {
-            $self->{_sth_one_visible_bug} = $sth;
-        }
+        # WEBKIT_CHANGES: Disable statement caching
+        #if (scalar(@check_ids) == 1) {
+        #    $self->{_sth_one_visible_bug} = $sth;
+        #}
 
         $sth->execute(@check_ids);
         my $use_qa_contact = Bugzilla->params->{'useqacontact'};
