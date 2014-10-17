@@ -1,3 +1,16 @@
+2014-10-16  Dana Burkart  <dburkart@apple.com>
+
+        Merge r171301
+
+    2014-07-21  Zalan Bujtas  <zalan@apple.com>
+
+            Unreviewed hidpi test gardening.
+
+            Use Ahem font to ensure font size predictability.
+
+            * fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl-expected.html:
+            * fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html:
+
 2014-10-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173674
