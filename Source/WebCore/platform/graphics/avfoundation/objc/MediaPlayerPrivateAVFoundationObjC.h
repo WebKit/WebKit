@@ -64,6 +64,7 @@ class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
 class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
+class MediaSelectionGroupAVFObjC;
 class VideoTrackPrivateAVFObjC;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
@@ -245,6 +246,8 @@ private:
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     void processMediaSelectionOptions();
     AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
+    AVMediaSelectionGroup* safeMediaSelectionGroupForAudibleMedia();
+    AVMediaSelectionGroup* safeMediaSelectionGroupForVisualMedia();
 #endif
 
 #if ENABLE(DATACUE_VALUE)
@@ -325,6 +328,10 @@ private:
 #if ENABLE(VIDEO_TRACK)
     Vector<RefPtr<AudioTrackPrivateAVFObjC>> m_audioTracks;
     Vector<RefPtr<VideoTrackPrivateAVFObjC>> m_videoTracks;
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+    RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
+    RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
+#endif
 #endif
 
     InbandTextTrackPrivateAVF* m_currentTextTrack;
