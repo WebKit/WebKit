@@ -249,7 +249,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     
                     variant = PutByIdVariant::setter(
                         structure, complexGetStatus.offset(), complexGetStatus.chain(),
-                        std::move(callLinkStatus));
+                        WTF::move(callLinkStatus));
                 } }
                 break;
             }

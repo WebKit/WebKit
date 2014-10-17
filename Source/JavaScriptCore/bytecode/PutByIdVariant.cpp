@@ -88,7 +88,7 @@ PutByIdVariant PutByIdVariant::setter(
         result.m_alternateBase = chain->terminalPrototype();
     }
     result.m_offset = offset;
-    result.m_callLinkStatus = std::move(callLinkStatus);
+    result.m_callLinkStatus = WTF::move(callLinkStatus);
     return result;
 }
 
