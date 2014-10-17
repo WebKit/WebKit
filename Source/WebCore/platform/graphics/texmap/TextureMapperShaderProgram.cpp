@@ -208,6 +208,8 @@ static const char* fragmentTemplate =
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
     STRINGIFY(
+        precision highp float;
+        uniform mat4 u_textureSpaceMatrix;
         precision mediump float;
         uniform SamplerType s_sampler;
         uniform sampler2D s_contentTexture;
@@ -220,7 +222,6 @@ static const char* fragmentTemplate =
         uniform vec2 u_shadowOffset;
         uniform vec4 u_color;
         uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
-        uniform mat4 u_textureSpaceMatrix;
 
         void noop(inout vec4 dummyParameter) { }
         void noop(inout vec4 dummyParameter, vec2 texCoord) { }

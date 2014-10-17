@@ -1,3 +1,49 @@
+2014-10-17  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=137345
+
+        Reviewed by Brent Fulgham.
+
+        This patch is based on GTK, and the texture mapper graphics layer type.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp: Added.
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::getWebViewSize):
+        (WebKit::AcceleratedCompositingContext::initialize):
+        (WebKit::AcceleratedCompositingContext::~AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::stopAnyPendingLayerFlush):
+        (WebKit::AcceleratedCompositingContext::enabled):
+        (WebKit::AcceleratedCompositingContext::prepareForRendering):
+        (WebKit::AcceleratedCompositingContext::startedAnimation):
+        (WebKit::AcceleratedCompositingContext::compositeLayersToContext):
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer):
+        (WebKit::AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay):
+        (WebKit::AcceleratedCompositingContext::setNeedsDisplayInRect):
+        (WebKit::AcceleratedCompositingContext::resizeRootLayer):
+        (WebKit::AcceleratedCompositingContext::scrollNonCompositedContents):
+        (WebKit::AcceleratedCompositingContext::scheduleLayerFlush):
+        (WebKit::AcceleratedCompositingContext::flushPendingLayerChanges):
+        (WebKit::AcceleratedCompositingContext::flushPendingLayerChangesSoon):
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers):
+        (WebKit::AcceleratedCompositingContext::layerFlushTimerFired):
+        (WebKit::AcceleratedCompositingContext::notifyAnimationStarted):
+        (WebKit::AcceleratedCompositingContext::notifyFlushRequired):
+        (WebKit::AcceleratedCompositingContext::paintContents):
+        * WebCoreSupport/AcceleratedCompositingContext.h: Added.
+        (WebKit::AcceleratedCompositingContext::LayerFlushTimer::LayerFlushTimer):
+        (WebKit::AcceleratedCompositingContext::LayerFlushTimer::fired):
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::addToDirtyRegion):
+        (WebView::scrollBackingStore):
+        (WebView::sizeChanged):
+        (WebView::paint):
+        (WebView::setRootChildLayer):
+        (WebView::flushPendingGraphicsLayerChangesSoon):
+        (WebView::setAcceleratedCompositing):
+        * WebView.h:
+
 2014-10-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174754.

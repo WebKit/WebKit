@@ -54,6 +54,7 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient& clie
     , m_contentsLayer(0)
     , m_animationStartTime(0)
     , m_isScrollable(false)
+    , m_startedAnimation(false)
 {
 }
 
@@ -591,6 +592,7 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
         m_animationStartTime = currentTime - timeOffset;
     notifyChange(AnimationChange);
     notifyChange(AnimationStarted);
+    m_startedAnimation = true;
     return true;
 }
 

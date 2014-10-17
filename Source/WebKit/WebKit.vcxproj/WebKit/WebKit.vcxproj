@@ -323,6 +323,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\win\WebCoreStatistics.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\EmbeddedWidget.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\WebChromeClient.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\WebContextMenuClient.cpp" />
@@ -460,6 +461,7 @@
     <ClInclude Include="..\..\win\WebCachedFramePlatformData.h" />
     <ClInclude Include="..\..\win\WebCookieManager.h" />
     <ClInclude Include="..\..\win\WebCoreStatistics.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\WebChromeClient.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\WebContextMenuClient.h" />

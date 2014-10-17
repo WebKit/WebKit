@@ -1,3 +1,21 @@
+2014-10-17  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=137345
+
+        Reviewed by Brent Fulgham.
+
+        This patch is based on GTK, and the texture mapper graphics layer type.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Copy texmap headers.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp: Added method and flag indicating whether animation has started.
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h: Ditto.
+        (WebCore::GraphicsLayerTextureMapper::startedAnimation):
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp: Use same precision for uniform in vertex shader as in fragment shader.
+        Otherwise glLinkProgram() will fail, and nothing will be rendered.
+
 2014-10-17  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] Crash when load is canceled while waiting for the user to type HTTP authentication credentials

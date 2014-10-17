@@ -170,6 +170,8 @@
 #if USE(CA)
 #include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/PlatformCALayer.h>
+#elif USE(TEXTURE_MAPPER_GL)
+#include "AcceleratedCompositingContext.h"
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -409,6 +411,9 @@ WebView::WebView()
     , m_lastSetCursor(0)
     , m_usesLayeredWindow(false)
     , m_needsDisplay(false)
+#if USE(TEXTURE_MAPPER_GL)
+    , m_acceleratedCompositingContext(nullptr)
+#endif
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
@@ -860,7 +865,11 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
     // http://webkit.org/b/29350.
 
     if (isAcceleratedCompositing()) {
+#if USE(CA)
         m_backingLayer->setNeedsDisplayInRect(dirtyRect);
+#elif USE(TEXTURE_MAPPER_GL)
+        m_acceleratedCompositingContext->setNeedsDisplayInRect(dirtyRect);
+#endif
         return;
     }
 
@@ -895,7 +904,11 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     if (isAcceleratedCompositing()) {
         // FIXME: We should be doing something smarter here, like moving tiles around and painting
         // any newly-exposed tiles. <http://webkit.org/b/52714>
+#if USE(CA)
         m_backingLayer->setNeedsDisplayInRect(scrollViewRect);
+#elif USE(TEXTURE_MAPPER_GL)
+        m_acceleratedCompositingContext->scrollNonCompositedContents(scrollViewRect, IntSize(dx, dy));
+#endif
         return;
     }
 
@@ -952,10 +965,14 @@ void WebView::sizeChanged(const IntSize& newSize)
 #if USE(CA)
     if (m_layerTreeHost)
         m_layerTreeHost->resize();
+
     if (m_backingLayer) {
         m_backingLayer->setSize(newSize);
         m_backingLayer->setNeedsDisplay();
     }
+#elif USE(TEXTURE_MAPPER_GL)
+    if (m_acceleratedCompositingContext)
+        m_acceleratedCompositingContext->resizeRootLayer(newSize);
 #endif
 }
 
@@ -1084,18 +1101,22 @@ void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
-#if USE(CA)
     if (isAcceleratedCompositing() && !usesLayeredWindow()) {
+#if USE(CA)
         m_layerTreeHost->flushPendingLayerChangesNow();
+#elif USE(TEXTURE_MAPPER_GL)
+        m_acceleratedCompositingContext->flushAndRenderLayers();
+#endif
         // Flushing might have taken us out of compositing mode.
         if (isAcceleratedCompositing()) {
+#if USE(CA)
             // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
             m_layerTreeHost->paint();
+#endif
             ::ValidateRect(m_viewWindow, 0);
             return;
         }
     }
-#endif
 
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
@@ -2393,8 +2414,10 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);
                 ::InvalidateRect(hWnd, &windowRect, false);
+#if USE(CA)
                 if (webView->isAcceleratedCompositing())
                     webView->m_backingLayer->setNeedsDisplay();
+#endif
            }
             break;
         case WM_MOUSEACTIVATE:
@@ -6551,9 +6574,15 @@ void WebView::downloadURL(const URL& url)
 void WebView::setRootChildLayer(GraphicsLayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
+#if USE(CA)
     if (!m_backingLayer)
         return;
     m_backingLayer->addChild(layer);
+#elif USE(TEXTURE_MAPPER_GL)
+    if (!m_acceleratedCompositingContext)
+        return;
+    m_acceleratedCompositingContext->setRootCompositingLayer(layer);
+#endif
 }
 
 void WebView::flushPendingGraphicsLayerChangesSoon()
@@ -6562,13 +6591,20 @@ void WebView::flushPendingGraphicsLayerChangesSoon()
     if (!m_layerTreeHost)
         return;
     m_layerTreeHost->flushPendingGraphicsLayerChangesSoon();
+#elif USE(TEXTURE_MAPPER_GL)
+    if (!m_acceleratedCompositingContext)
+        return;
+    m_acceleratedCompositingContext->flushPendingLayerChangesSoon();
 #endif
 }
 
 void WebView::setAcceleratedCompositing(bool accelerated)
 {
+    if (m_isAcceleratedCompositing == accelerated)
+        return;
+
 #if USE(CA)
-    if (m_isAcceleratedCompositing == accelerated || !CACFLayerTreeHost::acceleratedCompositingAvailable())
+    if (!CACFLayerTreeHost::acceleratedCompositingAvailable())
         return;
 
     if (accelerated) {
@@ -6608,6 +6644,10 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         m_backingLayer = nullptr;
         m_isAcceleratedCompositing = false;
     }
+#elif USE(TEXTURE_MAPPER_GL)
+    if (accelerated && !m_acceleratedCompositingContext)
+        m_acceleratedCompositingContext = std::make_unique<AcceleratedCompositingContext>(*this);
+    m_isAcceleratedCompositing = accelerated;
 #endif
 }
 
@@ -6752,14 +6792,18 @@ void WebView::flushPendingGraphicsLayerChanges()
     FrameView* view = coreFrame->view();
     if (!view)
         return;
+#if USE(CA)
     if (!m_backingLayer)
         return;
+#endif
 
     view->updateLayoutAndStyleIfNeededRecursive();
 
+#if USE(CA)
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)
         m_backingLayer->flushCompositingStateForThisLayerOnly();
+#endif
 
     view->flushCompositingStateIncludingSubframes();
 }

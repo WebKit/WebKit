@@ -100,6 +100,8 @@ public:
     float debugBorderWidth() const { return m_debugBorderWidth; }
     void setRepaintCount(int);
 
+    bool startedAnimation() const { return m_startedAnimation; }
+
 private:
     virtual void willBeDestroyed();
 
@@ -177,6 +179,7 @@ private:
 
     IntSize m_committedScrollOffset;
     bool m_isScrollable;
+    bool m_startedAnimation;
 };
 
 inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsLayer* layer)

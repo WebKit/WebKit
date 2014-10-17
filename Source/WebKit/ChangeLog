@@ -1,3 +1,15 @@
+2014-10-17  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=137345
+
+        Reviewed by Brent Fulgham.
+
+        This patch is based on GTK, and the texture mapper graphics layer type.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Added new accelerated compositing source files.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Ditto.
+
 2014-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Implement selection services menu for Legacy WebKit
