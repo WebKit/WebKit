@@ -1771,7 +1771,7 @@ void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpLi
 
                 if (nestedSelectorFragmentList.clobberElementAddressRegister) {
                     RELEASE_ASSERT(elementToTestIndex != std::numeric_limits<unsigned>::max());
-                    m_assembler.loadPtr(m_stackAllocator.addressOf(allocatedRegistersOnStack[elementToTestIndex], elementAddressRegister));
+                    m_assembler.loadPtr(m_stackAllocator.addressOf(allocatedRegistersOnStack[elementToTestIndex]), elementAddressRegister);
                 }
             } else
                 localFailureCases.append(localSelectorFailureCases);

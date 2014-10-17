@@ -1,5 +1,12 @@
 2014-10-17  Andreas Kling  <akling@apple.com>
 
+        Re-arrange parentheses for compilation purposes.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+
+2014-10-17  Andreas Kling  <akling@apple.com>
+
         Unreviewed build fix after r174838.
 
         Use StackAllocator::addressOf() instead of the old way of grabbing at a stack reference.
