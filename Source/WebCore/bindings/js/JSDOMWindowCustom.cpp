@@ -149,25 +149,17 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
     if (propertyName == exec->propertyNames().blur) {
-        if (!allowsAccess) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
-            return true;
-        }
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
+        return true;
     } else if (propertyName == exec->propertyNames().close) {
-        if (!allowsAccess) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
-            return true;
-        }
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+        return true;
     } else if (propertyName == exec->propertyNames().focus) {
-        if (!allowsAccess) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
-            return true;
-        }
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
+        return true;
     } else if (propertyName == exec->propertyNames().postMessage) {
-        if (!allowsAccess) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
-            return true;
-        }
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
+        return true;
     } else if (propertyName == exec->propertyNames().showModalDialog) {
         if (!DOMWindow::canShowModalDialog(thisObject->impl().frame())) {
             slot.setUndefined();

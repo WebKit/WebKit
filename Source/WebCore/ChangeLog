@@ -1,3 +1,24 @@
+2014-10-17  Michael Saboff  <msaboff@apple.com>
+
+        Don't create cached functions that access lexicalGlobalObject()
+        https://bugs.webkit.org/show_bug.cgi?id=137839
+
+        Reviewed by Geoffrey Garen.
+
+        Made it so that all the JSDOMWindow special functions blur(), close(), focus() and postMessage()
+        are always created as needed for every prototype.  Made it so that JSHTMLDocument does
+        the same for open().  Updated test to account for these methods not being cached
+
+        Updated tests accordingly.
+
+        * bindings/js/JSDOMWindowCustom.cpp: 
+        (WebCore::JSDOMWindow::getOwnPropertySlot): Updated to always create cached versions of the
+        special functions.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot): Added to create an uncached open() method when
+        it is first accessed.
+        * html/HTMLDocument.idl: Added CustomGetOwnPropertySlot and implemented it in JSHTMLDocumentCustom.cpp.
+
 2014-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Speculative fix for a crash under RenderLayerCompositor::updateScrollCoordinatedLayer()

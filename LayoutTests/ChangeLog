@@ -1,3 +1,25 @@
+2014-10-17  Michael Saboff  <msaboff@apple.com>
+
+        Don't create cached functions that access lexicalGlobalObject()
+        https://bugs.webkit.org/show_bug.cgi?id=137839
+
+        Reviewed by Geoffrey Garen.
+
+        Updadted test that check for 
+
+        * fast/dom/wrapper-scope-expected.txt:
+        * fast/dom/wrapper-scope.html:
+        Removed "close" and "postMessage" from functions to check for wrapper scope.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+        Removed "blur", "close" and "focus" from the functions to test, since this tests that
+        a parent's and child window's instances are the same.  Now they are always different.
+
+        * js/dom/global-function-resolve-expected.txt:
+        * js/dom/script-tests/global-function-resolve.js:
+        Removed "close" from this lists of functions to check.
+
 2014-10-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Make a better use of the available registers when compiling nested selector lists

@@ -6,7 +6,6 @@ var functionNames = [
     'clearInterval',
     'clearTimeout',
     'clientInformation',
-    'close',
     'closed',
     'confirm',
     'console',
