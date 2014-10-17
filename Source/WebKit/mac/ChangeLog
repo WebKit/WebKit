@@ -1,3 +1,11 @@
+2014-10-17  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix for 32-bit Yosemite
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuForEvent):
+        Avoid using NSItemProvider in 32-bit, because it doesn't exist.
+
 2014-10-17  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderBox

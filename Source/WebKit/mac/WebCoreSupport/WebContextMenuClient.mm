@@ -482,7 +482,7 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
     if (!page)
         return nil;
 
-#if ENABLE(SERVICE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS) && defined(__LP64__)
     if (Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
 
