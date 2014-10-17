@@ -3888,6 +3888,8 @@ struct VerifyCapturedDef {
 
         if (codeBlock->usesArguments() && virtualReg == codeBlock->argumentsRegister())
             return;
+        if (codeBlock->usesArguments() && virtualReg == unmodifiedArgumentsRegister(codeBlock->argumentsRegister()))
+            return;
 
         if (codeBlock->captureCount() && codeBlock->symbolTable()->isCaptured(operand)) {
             codeBlock->beginValidationDidFail();

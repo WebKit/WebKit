@@ -1,3 +1,45 @@
+2014-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Various arguments optimisations in codegen fail to account for arguments being in lexical record
+        https://bugs.webkit.org/show_bug.cgi?id=137617
+
+        Reviewed by Michael Saboff.
+
+        Rework the way we track |arguments| references so that we don't try
+        to use the |arguments| reference on the stack if it's not safe.
+
+        To do this without nuking performance it was necessary to update
+        the parser to track modification of the |arguments| reference
+        itself.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::willResolveToArguments):
+        (JSC::BytecodeGenerator::uncheckedLocalArgumentsRegister):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::uncheckedRegisterForArguments): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::hasSafeLocalArgumentsRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::getArgumentByVal):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::existingArguments):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::modifiesArguments):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        * parser/Parser.h:
+        (JSC::Scope::getCapturedVariables):
+        * parser/ParserModes.h:
+
 2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use WTF::move() instead of std::move() to help ensure move semantics in JavaScriptCore

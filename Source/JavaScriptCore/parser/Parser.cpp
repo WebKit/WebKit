@@ -271,7 +271,8 @@ String Parser<LexerType>::parseInner()
 
     IdentifierSet capturedVariables;
     bool modifiedParameter = false;
-    scope->getCapturedVariables(capturedVariables, modifiedParameter);
+    bool modifiedArguments = false;
+    scope->getCapturedVariables(capturedVariables, modifiedParameter, modifiedArguments);
     
     CodeFeatures features = context.features();
     if (scope->strictMode())
@@ -280,7 +281,8 @@ String Parser<LexerType>::parseInner()
         features |= ShadowsArgumentsFeature;
     if (modifiedParameter)
         features |= ModifiedParameterFeature;
-    
+    if (modifiedArguments)
+        features |= ModifiedArgumentsFeature;
     Vector<RefPtr<StringImpl>> closedVariables;
     if (m_parsingBuiltin) {
         RELEASE_ASSERT(!capturedVariables.size());
@@ -292,6 +294,10 @@ String Parser<LexerType>::parseInner()
             
             if (scope->hasDeclaredParameter(Identifier(m_vm, variable.get())))
                 continue;
+
+            if (variable == m_vm->propertyNames->arguments.impl())
+                continue;
+
             closedVariables.append(variable);
         }
     }
