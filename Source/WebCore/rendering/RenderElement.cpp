@@ -1006,7 +1006,7 @@ void RenderElement::willBeRemovedFromTree()
 
 void RenderElement::willBeDestroyed()
 {
-    animation().cancelAnimations(this);
+    animation().cancelAnimations(*this);
 
     destroyLeftoverChildren();
 
