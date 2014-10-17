@@ -1,3 +1,21 @@
+2014-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] window.screen.width returns wrong value if more displays are available
+        https://bugs.webkit.org/show_bug.cgi?id=137778
+
+        Reviewed by Gyuyoung Kim.
+
+        ecore_x_screen_size_get() retrieves the size of Ecore_X_Screen, for example,
+        having two displays of 1680x1050, it will return 3360x1050.
+
+        Unlike EFL's MiniBrowser, Firefox and Chrome return screen of the current display.
+
+        No new tests. Hardware specific bug including multiple displays.
+
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenRect):
+        Use ecore's xrandr to determine the screen on which browser window is displayed.
+
 2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds

@@ -91,7 +91,11 @@ FloatRect screenRect(Widget* widget)
     // and we cannot accurately detect the screen size.
     int width = 800;
     int height = 600;
-    ecore_x_screen_size_get(ecore_x_default_screen_get(), &width, &height);
+    Ecore_X_Window focusedWindow = ecore_x_window_focus_get();
+    if (ecore_x_randr_query() && focusedWindow)
+        ecore_x_randr_screen_primary_output_current_size_get(ecore_x_window_root_get(focusedWindow), &width, &height, 0, 0, 0);
+    else
+        ecore_x_screen_size_get(ecore_x_default_screen_get(), &width, &height);
     return FloatRect(0, 0, width, height);
 #else
     if (!widget || !widget->evas())
