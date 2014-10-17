@@ -139,8 +139,8 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.get().contentData();
-    if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        auto& styleImage = toImageContentData(contentData)->image();
+    if (contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
+        auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTF::move(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
         return WTF::move(image);

@@ -1462,12 +1462,12 @@ static PassRef<CSSValueList> contentToCSSValue(const RenderStyle* style)
 {
     auto list = CSSValueList::createSpaceSeparated();
     for (const ContentData* contentData = style->contentData(); contentData; contentData = contentData->next()) {
-        if (contentData->isCounter())
-            list.get().append(cssValuePool().createValue(toCounterContentData(contentData)->counter().identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
-        else if (contentData->isImage())
-            list.get().append(*toImageContentData(contentData)->image().cssValue());
-        else if (contentData->isText())
-            list.get().append(cssValuePool().createValue(toTextContentData(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
+        if (is<CounterContentData>(*contentData))
+            list.get().append(cssValuePool().createValue(downcast<CounterContentData>(*contentData).counter().identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
+        else if (is<ImageContentData>(*contentData))
+            list.get().append(*downcast<ImageContentData>(*contentData).image().cssValue());
+        else if (is<TextContentData>(*contentData))
+            list.get().append(cssValuePool().createValue(downcast<TextContentData>(*contentData).text(), CSSPrimitiveValue::CSS_STRING));
     }
     if (style->hasFlowFrom())
         list.get().append(cssValuePool().createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));

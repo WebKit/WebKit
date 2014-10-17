@@ -3713,12 +3713,12 @@ void StyleResolver::loadPendingImages()
         }
         case CSSPropertyContent: {
             for (ContentData* contentData = const_cast<ContentData*>(m_state.style()->contentData()); contentData; contentData = contentData->next()) {
-                if (contentData->isImage()) {
-                    auto& styleImage = toImageContentData(contentData)->image();
+                if (is<ImageContentData>(*contentData)) {
+                    auto& styleImage = downcast<ImageContentData>(*contentData).image();
                     if (styleImage.isPendingImage()) {
                         RefPtr<StyleImage> loadedImage = loadPendingImage(toStylePendingImage(styleImage));
                         if (loadedImage)
-                            toImageContentData(contentData)->setImage(loadedImage.release());
+                            downcast<ImageContentData>(*contentData).setImage(loadedImage.release());
                     }
                 }
             }

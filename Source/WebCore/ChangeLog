@@ -1,3 +1,25 @@
+2014-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for ContentData subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137768
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for ContentData subclasses.
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImages):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/style/ContentData.h:
+        (WebCore::operator==):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent):
+
 2014-10-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r174744.

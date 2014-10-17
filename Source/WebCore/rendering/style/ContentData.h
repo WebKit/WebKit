@@ -28,6 +28,7 @@
 #include "CounterContent.h"
 #include "StyleImage.h"
 #include "RenderPtr.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -77,9 +78,6 @@ private:
     Type m_type;
 };
 
-#define CONTENT_DATA_TYPE_CASTS(ToClassName, FromClassName, ContentDataName) \
-    TYPE_CASTS_BASE(ToClassName, FromClassName, resource, resource->is##ContentDataName(), resource.is##ContentDataName())
-
 class ImageContentData final : public ContentData {
 public:
     explicit ImageContentData(PassRefPtr<StyleImage> image)
@@ -106,8 +104,6 @@ private:
 
     RefPtr<StyleImage> m_image;
 };
-
-CONTENT_DATA_TYPE_CASTS(ImageContentData, ContentData, Image)
 
 inline bool operator==(const ImageContentData& a, const ImageContentData& b)
 {
@@ -137,8 +133,6 @@ private:
 
     String m_text;
 };
-
-CONTENT_DATA_TYPE_CASTS(TextContentData, ContentData, Text)
 
 inline bool operator==(const TextContentData& a, const TextContentData& b)
 {
@@ -178,8 +172,6 @@ private:
     std::unique_ptr<CounterContent> m_counter;
 };
 
-CONTENT_DATA_TYPE_CASTS(CounterContentData, ContentData, Counter)
-
 inline bool operator==(const CounterContentData& a, const CounterContentData& b)
 {
     return a.counter() == b.counter();
@@ -209,8 +201,6 @@ private:
     QuoteType m_quote;
 };
 
-CONTENT_DATA_TYPE_CASTS(QuoteContentData, ContentData, Quote)
-
 inline bool operator==(const QuoteContentData& a, const QuoteContentData& b)
 {
     return a.quote() == b.quote();
@@ -228,13 +218,13 @@ inline bool operator==(const ContentData& a, const ContentData& b)
 
     switch (a.type()) {
     case ContentData::CounterDataType:
-        return toCounterContentData(a) == toCounterContentData(b);
+        return downcast<CounterContentData>(a) == downcast<CounterContentData>(b);
     case ContentData::ImageDataType:
-        return toImageContentData(a) == toImageContentData(b);
+        return downcast<ImageContentData>(a) == downcast<ImageContentData>(b);
     case ContentData::QuoteDataType:
-        return toQuoteContentData(a) == toQuoteContentData(b);
+        return downcast<QuoteContentData>(a) == downcast<QuoteContentData>(b);
     case ContentData::TextDataType:
-        return toTextContentData(a) == toTextContentData(b);
+        return downcast<TextContentData>(a) == downcast<TextContentData>(b);
     }
 
     ASSERT_NOT_REACHED();
@@ -247,5 +237,15 @@ inline bool operator!=(const ContentData& a, const ContentData& b)
 }
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(ToClassName, ContentDataName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::ContentData& contentData) { return contentData.is##ContentDataName(); } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(ImageContentData, Image)
+SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(TextContentData, Text)
+SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(CounterContentData, Counter)
+SPECIALIZE_TYPE_TRAITS_CONTENT_DATA(QuoteContentData, Quote)
 
 #endif // ContentData_h

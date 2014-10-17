@@ -904,9 +904,9 @@ void RenderStyle::setContent(const String& string, bool add)
 
         if (lastContent) {
             // We attempt to merge with the last ContentData if possible.
-            if (lastContent->isText()) {
-                TextContentData* textContent = toTextContentData(lastContent);
-                textContent->setText(textContent->text() + string);
+            if (is<TextContentData>(*lastContent)) {
+                TextContentData& textContent = downcast<TextContentData>(*lastContent);
+                textContent.setText(textContent.text() + string);
             } else
                 lastContent->setNext(std::make_unique<TextContentData>(string));
 
