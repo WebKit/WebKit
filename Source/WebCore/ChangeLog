@@ -1,3 +1,10 @@
+2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption):
+
 2014-10-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Represent AVMediaSelectionOptions as AudioTracks

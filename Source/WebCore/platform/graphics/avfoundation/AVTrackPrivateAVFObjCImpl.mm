@@ -234,7 +234,7 @@ String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
 
 String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(AVMediaSelectionOption* option)
 {
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     NSString *language = [option extendedLanguageTag];
 #else
     NSString *language = nil;
