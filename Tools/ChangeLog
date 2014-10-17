@@ -1,3 +1,13 @@
+2014-10-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove run-inspector-perf-tests.py there is no PerformanceTests/inspector anymore
+        https://bugs.webkit.org/show_bug.cgi?id=137835
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/run-inspector-perf-tests.py: Removed.
+        This script is stale, as PerformanceTests/inspector no longer exists.
+
 2014-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix typo: should be ios-simulator-wk2, not ios-simulator_wk2.
