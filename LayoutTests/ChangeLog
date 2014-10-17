@@ -1,3 +1,26 @@
+2014-10-17  Andreas Kling  <akling@apple.com>
+
+        Add test for innerHTML mutations that yield identical DOM.
+        <https://webkit.org/b/137823>
+
+        Reviewed by Chris Dumez.
+
+        I made this test while working on an optimization, and it seems useful
+        to have in the tree since it adds additional coverage. The optimization
+        may come later.
+
+        The test works by creating little DOM subtrees like so:
+
+            <foo><bar>some text</bar></foo>
+
+        It then overwrites that subtree with an identical one by mutating the
+        containing element's innerHTML property. It then verifies that the DOM
+        structure is correct and that Node wrappers retain any custom properties
+        set on them.
+
+        * fast/innerHTML/identical-mutations-expected.txt: Added.
+        * fast/innerHTML/identical-mutations.html: Added.
+
 2014-10-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Represent AVMediaSelectionOptions as AudioTracks
