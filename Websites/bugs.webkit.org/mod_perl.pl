@@ -15,7 +15,7 @@
 #
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
-use lib qw(/var/www/html); # WEBKIT_CHANGES
+use lib qw(/var/www/html /var/www/html/lib); # WEBKIT_CHANGES
 package Bugzilla::ModPerl;
 use strict;
 use warnings;
