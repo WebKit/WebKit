@@ -86,11 +86,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, readonly*)
     return &jsreadonlyOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, readonly*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, readonly*);
 
 

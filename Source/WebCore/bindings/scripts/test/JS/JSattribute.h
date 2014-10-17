@@ -87,11 +87,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
     return &jsattributeOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, attribute*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
 
 

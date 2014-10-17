@@ -92,11 +92,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSerializedScript
     return &jsTestSerializedScriptValueInterfaceOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, TestSerializedScriptValueInterface*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
 
 

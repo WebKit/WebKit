@@ -115,11 +115,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterface*)
     return &jsTestInterfaceOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, TestInterface*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
 
 

@@ -86,11 +86,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestGenerateIsReacha
     return &jsTestGenerateIsReachableOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, TestGenerateIsReachable*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestGenerateIsReachable*);
 
 

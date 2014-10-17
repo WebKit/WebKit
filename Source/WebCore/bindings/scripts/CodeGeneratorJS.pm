@@ -1168,11 +1168,6 @@ sub GenerateHeader
         push(@headerContent, "    return &js${interfaceName}Owner;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
-        push(@headerContent, "inline void* wrapperContext(DOMWrapperWorld& world, $implType*)\n");
-        push(@headerContent, "{\n");
-        push(@headerContent, "    return &world;\n");
-        push(@headerContent, "}\n");
-        push(@headerContent, "\n");
     }
     if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
         push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");

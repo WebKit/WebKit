@@ -86,11 +86,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMediaQueryListLi
     return &jsTestMediaQueryListListenerOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, TestMediaQueryListListener*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
 
 

@@ -88,11 +88,6 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestTypedefs*)
     return &jsTestTypedefsOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld& world, TestTypedefs*)
-{
-    return &world;
-}
-
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*);
 
 

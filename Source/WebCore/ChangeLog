@@ -1,3 +1,22 @@
+2014-10-17  Andreas Kling  <akling@apple.com>
+
+        Get rid of wrapperContext() in DOM bindings.
+        <https://webkit.org/b/137834>
+
+        Reviewed by Chris Dumez.
+
+        The "wrapper context" is always the DOMWrapperWorld, and since we're passing that around
+        already, we don't need a separate mechanism to get at the context.
+
+        The context is extra data stored in the DOM object's JSC::Weak (the wrapper GC object.)
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::wrapperContext): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2014-10-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Make a better use of the available registers when compiling nested selector lists
