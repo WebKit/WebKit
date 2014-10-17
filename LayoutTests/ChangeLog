@@ -1,3 +1,9 @@
+2014-10-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening. Mark some tests as passing that have benefitted from recent bug fixes.
+
+        * platform/win/TestExpectations:
+
 2014-10-17  Andreas Kling  <akling@apple.com>
 
         Add test for innerHTML mutations that yield identical DOM.
