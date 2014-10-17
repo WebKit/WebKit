@@ -34,8 +34,6 @@ crypto/subtle/rsa-indexeddb.html
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 css3/blending/background-blend-mode-gif-color-2.html [ ImageOnlyFailure Pass ]
-media/track/track-in-band-subtitles-too-large.html [ Failure ]
-media/track/track-long-word-container-sizing.html [ Failure ]
 
 # Plug-in blocking callback doesn't exist in WebKit1.
 plugins/unavailable-plugin-indicator-obscurity.html
