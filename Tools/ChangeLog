@@ -1,3 +1,21 @@
+2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Simplify test fallback paths for iOS Simulator testing
+        https://bugs.webkit.org/show_bug.cgi?id=137830
+
+        Reviewed by Zalan Bujtas.
+        
+        Make the fallback paths be:
+            ios-simulator -> generic
+            ios-simulator-wk2->ios-simulator -> generic
+        
+        so don't include mac in the fallback path. Also remove the
+        version handling for simplicity.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.default_baseline_search_path):
+
 2014-10-17  Dana Burkart  <dburkart@apple.com>
 
         Fix typos in the dashboard config file.
