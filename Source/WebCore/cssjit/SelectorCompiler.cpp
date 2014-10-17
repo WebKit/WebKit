@@ -1550,10 +1550,8 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (m_visitedMode == VisitedMode::Visited) {
         m_lastVisitedElement = temporaryStack.takeLast();
         m_startElement = temporaryStack.takeLast();
-        unsigned offsetToStartElement = m_stackAllocator.offsetToStackReference(m_startElement);
-        m_assembler.storePtr(elementAddressRegister, Assembler::Address(Assembler::stackPointerRegister, offsetToStartElement));
-        unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
-        m_assembler.storePtr(Assembler::TrustedImmPtr(nullptr), Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement));
+        m_assembler.storePtr(elementAddressRegister, m_stackAllocator.addressOf(m_startElement));
+        m_assembler.storePtr(Assembler::TrustedImmPtr(nullptr), m_stackAllocator.addressOf(m_lastVisitedElement));
     }
 
     m_backtrackingStack = temporaryStack;
@@ -1568,8 +1566,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
     if (m_visitedMode == VisitedMode::Visited) {
         LocalRegister lastVisitedElement(m_registerAllocator);
-        unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
-        m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement), lastVisitedElement);
+        m_assembler.loadPtr(m_stackAllocator.addressOf(m_lastVisitedElement), lastVisitedElement);
         Assembler::Jump noLastVisitedElement = m_assembler.branchTestPtr(Assembler::Zero, lastVisitedElement);
         generateElementIsFirstLink(failureCases, lastVisitedElement);
         noLastVisitedElement.link(&m_assembler);
@@ -1740,8 +1737,7 @@ void SelectorCodeGenerator::generateParentElementTreeWalker(Assembler::JumpList&
             ASSERT(!currentBacktrackingLevel.descendantBacktrackingStart.isValid());
             currentBacktrackingLevel.descendantBacktrackingStart = m_backtrackingStack.takeLast();
 
-            unsigned offsetToDescendantBacktrackingStart = m_stackAllocator.offsetToStackReference(currentBacktrackingLevel.descendantBacktrackingStart);
-            m_assembler.storePtr(elementAddressRegister, Assembler::Address(Assembler::stackPointerRegister, offsetToDescendantBacktrackingStart));
+            m_assembler.storePtr(elementAddressRegister, m_stackAllocator.addressOf(currentBacktrackingLevel.descendantBacktrackingStart));
         }
     }
 }
@@ -1826,8 +1822,7 @@ void SelectorCodeGenerator::generateDirectAdjacentTreeWalker(Assembler::JumpList
         ASSERT(!currentBacktrackingLevel.adjacentBacktrackingStart.isValid());
         currentBacktrackingLevel.adjacentBacktrackingStart = m_backtrackingStack.takeLast();
 
-        unsigned offsetToAdjacentBacktrackingStart = m_stackAllocator.offsetToStackReference(currentBacktrackingLevel.adjacentBacktrackingStart);
-        m_assembler.storePtr(elementAddressRegister, Assembler::Address(Assembler::stackPointerRegister, offsetToAdjacentBacktrackingStart));
+        m_assembler.storePtr(elementAddressRegister, m_stackAllocator.addressOf(currentBacktrackingLevel.adjacentBacktrackingStart));
     }
 }
 
@@ -1903,8 +1898,7 @@ void SelectorCodeGenerator::loadCheckingContext(Assembler::RegisterID checkingCo
 {
     // Get the checking context.
     RELEASE_ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
-    unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
-    m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
+    m_assembler.loadPtr(m_stackAllocator.addressOf(m_checkingContextStackReference), checkingContext);
 }
 
 Assembler::Jump SelectorCodeGenerator::branchOnResolvingModeWithCheckingContext(Assembler::RelationalCondition condition, SelectorChecker::Mode mode, Assembler::RegisterID checkingContext)
@@ -2155,11 +2149,10 @@ void SelectorCodeGenerator::generateAdjacentBacktrackingTail()
     m_backtrackingLevels.last().adjacentBacktrackingFailureCases.clear();
 
     BacktrackingLevel& currentBacktrackingLevel = m_backtrackingLevels.last();
-    unsigned offsetToAdjacentBacktrackingStart = m_stackAllocator.offsetToStackReference(currentBacktrackingLevel.adjacentBacktrackingStart);
+    m_assembler.loadPtr(m_stackAllocator.addressOf(currentBacktrackingLevel.adjacentBacktrackingStart), elementAddressRegister);
     m_backtrackingStack.append(currentBacktrackingLevel.adjacentBacktrackingStart);
     currentBacktrackingLevel.adjacentBacktrackingStart = StackAllocator::StackReference();
 
-    m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToAdjacentBacktrackingStart), elementAddressRegister);
     m_assembler.jump(m_backtrackingLevels.last().indirectAdjacentEntryPoint);
 }
 
@@ -2174,8 +2167,7 @@ void SelectorCodeGenerator::generateDescendantBacktrackingTail()
         m_registerAllocator.deallocateRegister(m_descendantBacktrackingStart);
         m_descendantBacktrackingStartInUse = false;
     } else {
-        unsigned offsetToDescendantBacktrackingStart = m_stackAllocator.offsetToStackReference(currentBacktrackingLevel.descendantBacktrackingStart);
-        m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToDescendantBacktrackingStart), elementAddressRegister);
+        m_assembler.loadPtr(m_stackAllocator.addressOf(currentBacktrackingLevel.descendantBacktrackingStart), elementAddressRegister);
         m_backtrackingStack.append(currentBacktrackingLevel.descendantBacktrackingStart);
         currentBacktrackingLevel.descendantBacktrackingStart = StackAllocator::StackReference();
     }
@@ -3438,8 +3430,7 @@ void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failure
 void SelectorCodeGenerator::generateElementIsFirstLink(Assembler::JumpList& failureCases, Assembler::RegisterID element)
 {
     LocalRegister currentElement(m_registerAllocator);
-    unsigned offsetToStartElement = m_stackAllocator.offsetToStackReference(m_startElement);
-    m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToStartElement), currentElement);
+    m_assembler.loadPtr(m_stackAllocator.addressOf(m_startElement), currentElement);
 
     // Tree walking up to the provided element until link node is found.
     Assembler::Label loopStart(m_assembler.label());
@@ -3460,8 +3451,7 @@ void SelectorCodeGenerator::generateElementIsFirstLink(Assembler::JumpList& fail
 
 void SelectorCodeGenerator::generateStoreLastVisitedElement(Assembler::RegisterID element)
 {
-    unsigned offsetToLastVisitedElement = m_stackAllocator.offsetToStackReference(m_lastVisitedElement);
-    m_assembler.storePtr(element, Assembler::Address(Assembler::stackPointerRegister, offsetToLastVisitedElement));
+    m_assembler.storePtr(element, m_stackAllocator.addressOf(m_lastVisitedElement));
 }
 
 void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

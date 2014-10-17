@@ -1,3 +1,25 @@
+2014-10-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Introduce StackAllocator::addressOf
+        https://bugs.webkit.org/show_bug.cgi?id=137771
+
+        Reviewed by Benjamin Poulain.
+
+        Introduce StackAllocator::addressOf and drop offsetToStackReference, it's too primitive.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateParentElementTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::loadCheckingContext):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAdjacentBacktrackingTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDescendantBacktrackingTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstLink):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateStoreLastVisitedElement):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::addressOf):
+        (WebCore::StackAllocator::offsetToStackReference):
+
 2014-10-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r169024): Undetermined text is not displayed in the search field of Adobe Help Website

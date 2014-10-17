@@ -227,16 +227,21 @@ public:
         stackC.reset();
     }
 
-    unsigned offsetToStackReference(StackReference stackReference)
+    JSC::MacroAssembler::Address addressOf(StackReference stackReference)
     {
-        RELEASE_ASSERT(m_offsetFromTop >= stackReference);
-        return m_offsetFromTop - stackReference;
+        return JSC::MacroAssembler::Address(JSC::MacroAssembler::stackPointerRegister, offsetToStackReference(stackReference));
     }
 
 private:
     static unsigned stackUnitInBytes()
     {
         return JSC::MacroAssembler::pushToSaveByteOffset();
+    }
+
+    unsigned offsetToStackReference(StackReference stackReference)
+    {
+        RELEASE_ASSERT(m_offsetFromTop >= stackReference);
+        return m_offsetFromTop - stackReference;
     }
 
     void reset()
