@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 messages -> CustomProtocolManager {
     DidFailWithError(uint64_t customProtocolID, WebCore::ResourceError error)
     DidLoadData(uint64_t customProtocolID, IPC::DataReference data)
@@ -31,5 +29,3 @@ messages -> CustomProtocolManager {
     RegisterScheme(String name)
     UnregisterScheme(String name)
 }
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

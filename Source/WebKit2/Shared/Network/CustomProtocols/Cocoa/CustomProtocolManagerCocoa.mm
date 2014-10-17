@@ -26,8 +26,6 @@
 #import "config.h"
 #import "CustomProtocolManager.h"
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #import "ChildProcess.h"
 #import "CustomProtocolManagerMessages.h"
 #import "CustomProtocolManagerProxyMessages.h"
@@ -274,5 +272,3 @@ RetainPtr<WKCustomProtocol> CustomProtocolManager::protocolForID(uint64_t custom
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

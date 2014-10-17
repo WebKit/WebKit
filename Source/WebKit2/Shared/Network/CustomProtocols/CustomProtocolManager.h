@@ -26,8 +26,6 @@
 #ifndef CustomProtocolManager_h
 #define CustomProtocolManager_h
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "Connection.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
@@ -118,7 +116,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 #endif // CustomProtocolManager_h

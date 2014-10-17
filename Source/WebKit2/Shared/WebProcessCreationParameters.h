@@ -91,9 +91,7 @@ struct WebProcessCreationParameters {
 #if ENABLE(CACHE_PARTITIONING)
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
     Vector<String> urlSchemesRegisteredForCustomProtocols;
-#endif
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     uint32_t cookiePersistentStorageType;

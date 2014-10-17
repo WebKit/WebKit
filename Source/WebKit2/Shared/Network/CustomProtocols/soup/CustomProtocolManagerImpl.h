@@ -20,8 +20,6 @@
 #ifndef CustomProtocolManagerImpl_h
 #define CustomProtocolManagerImpl_h
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -68,7 +66,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 #endif // CustomProtocolManagerImpl_h

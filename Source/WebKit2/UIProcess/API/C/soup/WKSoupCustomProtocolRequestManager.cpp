@@ -33,19 +33,10 @@ using namespace WebKit;
 
 WKTypeID WKSoupCustomProtocolRequestManagerGetTypeID()
 {
-#if ENABLE(CUSTOM_PROTOCOLS)
     return toAPI(WebSoupCustomProtocolRequestManager::APIType);
-#else
-    return 0;
-#endif
 }
 
 void WKSoupCustomProtocolRequestManagerSetClient(WKSoupCustomProtocolRequestManagerRef soupRequestManagerRef, const WKSoupCustomProtocolRequestManagerClientBase* wkClient)
 {
-#if ENABLE(CUSTOM_PROTOCOLS)
     toImpl(soupRequestManagerRef)->initializeClient(wkClient);
-#else
-    UNUSED_PARAM(soupRequestManagerRef);
-    UNUSED_PARAM(wkClient);
-#endif
 }

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebSoupCustomProtocolRequestManager.h"
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "APIData.h"
 #include "CustomProtocolManagerMessages.h"
 #include "WebContext.h"
@@ -146,5 +144,3 @@ void WebSoupCustomProtocolRequestManager::didFinishLoading(uint64_t customProtoc
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

@@ -208,10 +208,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(NETWORK_PROCESS)
     if (!m_usesNetworkProcess) {
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
         for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
             parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-#endif
 #if ENABLE(NETWORK_PROCESS)
     }
 #endif
@@ -245,10 +243,8 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
-#if ENABLE(CUSTOM_PROTOCOLS)
     for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-#endif
 
     parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
     parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];

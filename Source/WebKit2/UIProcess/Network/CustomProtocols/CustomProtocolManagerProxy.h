@@ -26,8 +26,6 @@
 #ifndef CustomProtocolManagerProxy_h
 #define CustomProtocolManagerProxy_h
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "MessageReceiver.h"
 
 #if PLATFORM(COCOA)
@@ -66,7 +64,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 #endif // CustomProtocolManagerProxy_h

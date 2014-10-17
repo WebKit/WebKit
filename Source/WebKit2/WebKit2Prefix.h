@@ -42,8 +42,6 @@
 
 #define ENABLE_MEMORY_SAMPLER 1
 
-#define ENABLE_CUSTOM_PROTOCOLS 1
-
 #define ENABLE_SHAREABLE_RESOURCE 1
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -80,7 +78,6 @@
 
 #if PLATFORM(GTK)
 #define ENABLE_NETWORK_PROCESS 1
-#define ENABLE_CUSTOM_PROTOCOLS 1
 #endif
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|

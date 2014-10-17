@@ -92,9 +92,7 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
     : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
-#if ENABLE(CUSTOM_PROTOCOLS)
     , m_customProtocolManagerProxy(this, context)
-#endif
 #if PLATFORM(COCOA)
     , m_processSuppressionEnabled(false)
 #endif

@@ -28,6 +28,7 @@
 
 #include "APISession.h"
 #include "ChildProcessProxy.h"
+#include "CustomProtocolManagerProxy.h"
 #include "MessageReceiverMap.h"
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
@@ -42,10 +43,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-#include "CustomProtocolManagerProxy.h"
-#endif
 
 #if PLATFORM(IOS)
 #include "ProcessThrottler.h"
@@ -224,10 +221,7 @@ private:
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
-
-#if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
-#endif
 
 #if PLATFORM(COCOA)
     HashSet<uint64_t> m_processSuppressiblePages;

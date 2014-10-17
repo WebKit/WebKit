@@ -28,6 +28,7 @@
 
 #include "APIFrameHandle.h"
 #include "AuthenticationManager.h"
+#include "CustomProtocolManager.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -98,10 +99,6 @@
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"
-#endif
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-#include "CustomProtocolManager.h"
 #endif
 
 #if ENABLE(DATABASE_PROCESS)
@@ -194,9 +191,7 @@ WebProcess::WebProcess()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
     addSupplement<CustomProtocolManager>();
-#endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManager>();
 #endif

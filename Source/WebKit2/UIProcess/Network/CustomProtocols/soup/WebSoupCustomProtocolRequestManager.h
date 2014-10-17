@@ -20,8 +20,6 @@
 #ifndef WebSoupCustomProtocolRequestManager_h
 #define WebSoupCustomProtocolRequestManager_h
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "APIObject.h"
 #include "WebContextSupplement.h"
 #include "WebSoupCustomProtocolRequestManagerClient.h"
@@ -82,7 +80,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 #endif // WebSoupCustomProtocolRequestManager_h

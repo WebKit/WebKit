@@ -29,14 +29,11 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "ChildProcessProxy.h"
+#include "CustomProtocolManagerProxy.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
 #include <memory>
 #include <wtf/Deque.h>
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-#include "CustomProtocolManagerProxy.h"
-#endif
 
 #if PLATFORM(IOS)
 #include "ProcessAssertion.h"
@@ -98,10 +95,7 @@ private:
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
-
-#if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
-#endif
     
 #if PLATFORM(IOS)
     std::unique_ptr<ProcessAssertion> m_assertion;

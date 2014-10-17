@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CustomProtocolManagerProxy.h"
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerMessages.h"
 #include "CustomProtocolManagerProxyMessages.h"
@@ -50,5 +48,3 @@ void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

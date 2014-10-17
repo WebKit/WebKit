@@ -69,9 +69,7 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldUseTestingNetworkSession;
 
-#if ENABLE(CUSTOM_PROTOCOLS)
     Vector<String> urlSchemesRegisteredForCustomProtocols;
-#endif
 
 #if PLATFORM(COCOA)
     String parentProcessName;

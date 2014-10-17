@@ -1,3 +1,60 @@
+2014-10-16  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Removing CUSTOM_PROTOCOLS guard
+        https://bugs.webkit.org/show_bug.cgi?id=137741
+
+        Reviewed by Benjamin Poulain.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/soup/WKAPICastSoup.h:
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp:
+        (WKSoupCustomProtocolRequestManagerGetTypeID):
+        (WKSoupCustomProtocolRequestManagerSetClient):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h:
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp:
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        (WebKit::WebContext::unregisterSchemeForCustomProtocol):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+        * WebKit2Prefix.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync):
+        (webkitSoupRequestGenericSendFinish):
+        * WebProcess/soup/WebKitSoupRequestGeneric.h:
+
 2014-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under RemoteLayerTreeHost::getLayer() when closing a tab

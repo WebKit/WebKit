@@ -1,3 +1,12 @@
+2014-10-16  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Removing CUSTOM_PROTOCOLS guard
+        https://bugs.webkit.org/show_bug.cgi?id=137741
+
+        Reviewed by Benjamin Poulain.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-10-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Enable WebP support.

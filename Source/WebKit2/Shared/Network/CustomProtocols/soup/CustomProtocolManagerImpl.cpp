@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CustomProtocolManagerImpl.h"
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "ChildProcess.h"
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
@@ -203,5 +201,3 @@ GInputStream* CustomProtocolManagerImpl::finish(GTask* task, GError** error)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

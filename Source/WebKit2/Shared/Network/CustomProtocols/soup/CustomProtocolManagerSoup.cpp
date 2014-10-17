@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CustomProtocolManager.h"
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-
 #include "ChildProcess.h"
 #include "CustomProtocolManagerImpl.h"
 #include "CustomProtocolManagerMessages.h"
@@ -109,5 +107,3 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(CUSTOM_PROTOCOLS)

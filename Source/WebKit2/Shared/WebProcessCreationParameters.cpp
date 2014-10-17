@@ -84,9 +84,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if ENABLE(CACHE_PARTITIONING)
     encoder << urlSchemesRegisteredAsCachePartitioned;
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
-#endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
@@ -192,10 +190,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.urlSchemesRegisteredAsCachePartitioned))
         return false;
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
     if (!decoder.decode(parameters.urlSchemesRegisteredForCustomProtocols))
         return false;
-#endif
 #if USE(SOUP)
     if (!decoder.decode(parameters.cookiePersistentStoragePath))
         return false;
