@@ -1,5 +1,12 @@
 2014-10-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix typo: should be ios-simulator-wk2, not ios-simulator_wk2.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_baseline_search_path):
+
+2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Simplify test fallback paths for iOS Simulator testing
         https://bugs.webkit.org/show_bug.cgi?id=137830
 
