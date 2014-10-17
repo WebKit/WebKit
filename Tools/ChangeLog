@@ -1,3 +1,13 @@
+2014-10-16  Lucas Forschler  <lforschler@apple.com>
+
+        Update target platform to remove Leopard, Snow Leopard, Lion.
+        Add Yosemite. 
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+
 2014-10-16  David Kilzer  <ddkilzer@apple.com>
 
         commit-queue: fails to replace OO-PS! with reviewer name
