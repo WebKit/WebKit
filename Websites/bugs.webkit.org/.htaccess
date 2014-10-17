@@ -1,5 +1,5 @@
 # Don't allow people to retrieve non-cgi executable files or our private data
-<FilesMatch (\.pm|\.pl|\.tmpl|localconfig.*)$>
+<FilesMatch ^(lib|.*\.pm|.*\.pl|.*localconfig.*)$>
   deny from all
 </FilesMatch>
 <IfModule mod_expires.c>
