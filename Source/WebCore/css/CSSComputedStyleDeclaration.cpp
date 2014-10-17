@@ -1693,7 +1693,7 @@ static PassRef<CSSValue> shapePropertyValue(const RenderStyle* style, const Shap
     ASSERT(shapeValue->type() == ShapeValue::Type::Shape);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(valueForBasicShape(style, shapeValue->shape()));
+    list->append(valueForBasicShape(style, *shapeValue->shape()));
     if (shapeValue->cssBox() != BoxMissing)
         list->append(cssValuePool().createValue(shapeValue->cssBox()));
     return list.releaseNonNull();

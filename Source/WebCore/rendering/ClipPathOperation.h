@@ -96,18 +96,17 @@ private:
 
 class ShapeClipPathOperation : public ClipPathOperation {
 public:
-    static PassRefPtr<ShapeClipPathOperation> create(PassRefPtr<BasicShape> shape)
+    static PassRefPtr<ShapeClipPathOperation> create(PassRef<BasicShape> shape)
     {
-        return adoptRef(new ShapeClipPathOperation(shape));
+        return adoptRef(new ShapeClipPathOperation(WTF::move(shape)));
     }
 
-    const BasicShape* basicShape() const { return m_shape.get(); }
-    WindRule windRule() const { return m_shape->windRule(); }
-    const Path pathForReferenceRect(const FloatRect& boundingRect) const
+    const BasicShape& basicShape() const { return m_shape.get(); }
+    WindRule windRule() const { return m_shape.get().windRule(); }
+    const Path pathForReferenceRect(const FloatRect& boundingRect)
     {
-        ASSERT(m_shape);
         Path path;
-        m_shape->path(path, boundingRect);
+        m_shape.get().path(path, boundingRect);
         return path;
     }
 
@@ -115,22 +114,22 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& o) const override
+    virtual bool operator==(const ClipPathOperation& other) const override
     {
-        if (!isSameType(o))
+        if (!isSameType(other))
             return false;
-        const ShapeClipPathOperation* other = static_cast<const ShapeClipPathOperation*>(&o);
-        return m_shape == other->m_shape;
+        const auto& shapeClip = downcast<ShapeClipPathOperation>(other);
+        return &m_shape.get() == &shapeClip.m_shape.get();
     }
 
-    explicit ShapeClipPathOperation(PassRefPtr<BasicShape> shape)
+    explicit ShapeClipPathOperation(PassRef<BasicShape> shape)
         : ClipPathOperation(Shape)
-        , m_shape(shape)
+        , m_shape(WTF::move(shape))
         , m_referenceBox(BoxMissing)
     {
     }
 
-    RefPtr<BasicShape> m_shape;
+    Ref<BasicShape> m_shape;
     CSSBoxType m_referenceBox;
 };
 

@@ -177,7 +177,7 @@ const Shape& ShapeOutsideInfo::computedShape() const
     switch (shapeValue.type()) {
     case ShapeValue::Type::Shape:
         ASSERT(shapeValue.shape());
-        m_shape = Shape::createShape(shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin);
+        m_shape = Shape::createShape(*shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin);
         break;
     case ShapeValue::Type::Image:
         ASSERT(shapeValue.isImageValid());

@@ -130,13 +130,13 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
     if (from->type() != ClipPathOperation::Shape || to->type() != ClipPathOperation::Shape)
         return to;
 
-    const BasicShape* fromShape = static_cast<ShapeClipPathOperation*>(from)->basicShape();
-    const BasicShape* toShape = static_cast<ShapeClipPathOperation*>(to)->basicShape();
+    const BasicShape& fromShape = downcast<ShapeClipPathOperation>(*from).basicShape();
+    const BasicShape& toShape = downcast<ShapeClipPathOperation>(*to).basicShape();
 
-    if (!fromShape->canBlend(toShape))
+    if (!fromShape.canBlend(toShape))
         return to;
 
-    return ShapeClipPathOperation::create(toShape->blend(fromShape, progress));
+    return ShapeClipPathOperation::create(toShape.blend(fromShape, progress));
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -151,13 +151,13 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     if (from->cssBox() != to->cssBox())
         return to;
 
-    const BasicShape* fromShape = from->shape();
-    const BasicShape* toShape = to->shape();
+    const BasicShape& fromShape = *from->shape();
+    const BasicShape& toShape = *to->shape();
 
-    if (!fromShape->canBlend(toShape))
+    if (!fromShape.canBlend(toShape))
         return to;
 
-    return ShapeValue::createShapeValue(toShape->blend(fromShape, progress), to->cssBox());
+    return ShapeValue::createShapeValue(toShape.blend(fromShape, progress), to->cssBox());
 }
 #endif
 

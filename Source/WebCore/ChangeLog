@@ -1,5 +1,57 @@
 2014-10-16  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for BasicShape subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137766
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for BasicShape subclasses and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * rendering/ClipPathOperation.h:
+        (WebCore::ShapeClipPathOperation::create):
+        Take a PassRef<BasicShape> in argument to make it obvious it is never
+        null.
+
+        (WebCore::ShapeClipPathOperation::basicShape):
+        Return a reference instead of a pointer as it can never return null.
+
+        (WebCore::ShapeClipPathOperation::windRule):
+        (WebCore::ShapeClipPathOperation::pathForReferenceRect):
+        Make it non-const due to the const-correctness of Ref::get().
+
+        (WebCore::ShapeClipPathOperation::ShapeClipPathOperation):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computedShape):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        (WebCore::BasicShapeCircle::blend):
+        (WebCore::BasicShapeEllipse::blend):
+        (WebCore::BasicShapePolygon::blend):
+        (WebCore::BasicShapeInset::blend):
+        * rendering/style/BasicShapes.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
+2014-10-16  Chris Dumez  <cdumez@apple.com>
+
         Leverage the new RenderElement::m_isCSSAnimating flag in more places
         https://bugs.webkit.org/show_bug.cgi?id=137786
 

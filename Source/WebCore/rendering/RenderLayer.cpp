@@ -3920,7 +3920,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     RenderStyle& style = renderer().style();
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath())) {
-        const auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
+        auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
 
         LayoutRect referenceBox = computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds);
         context->save();
@@ -3929,7 +3929,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     }
 
     if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
-        const auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
+        auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
 
         RoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer()));
         shapeRect.move(offsetFromRoot);

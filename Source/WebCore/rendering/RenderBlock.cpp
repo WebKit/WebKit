@@ -2467,7 +2467,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (style().clipPath()) {
         switch (style().clipPath()->type()) {
         case ClipPathOperation::Shape: {
-            const auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
+            auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
 
             LayoutRect referenceBoxRect;
             switch (clipPath.referenceBox()) {

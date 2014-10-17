@@ -36,6 +36,7 @@
 #include "WindRule.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -55,17 +56,14 @@ public:
         BasicShapeInsetType
     };
 
-    bool canBlend(const BasicShape*) const;
+    bool canBlend(const BasicShape&) const;
 
     virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
+    virtual PassRef<BasicShape> blend(const BasicShape&, double) const = 0;
 
     virtual Type type() const = 0;
 };
-
-#define BASIC_SHAPES_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, BasicShape, basicShape, basicShape->type() == predicate, basicShape.type() == predicate)
 
 class BasicShapeCenterCoordinate {
 public:
@@ -161,7 +159,7 @@ public:
     void setRadius(BasicShapeRadius radius) { m_radius = WTF::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
+    virtual PassRef<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeCircleType; }
 private:
@@ -171,8 +169,6 @@ private:
     BasicShapeCenterCoordinate m_centerY;
     BasicShapeRadius m_radius;
 };
-
-BASIC_SHAPES_TYPE_CASTS(BasicShapeCircle, BasicShape::BasicShapeCircleType)
 
 class BasicShapeEllipse : public BasicShape {
 public:
@@ -190,7 +186,7 @@ public:
     void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = WTF::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
+    virtual PassRef<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeEllipseType; }
 private:
@@ -201,8 +197,6 @@ private:
     BasicShapeRadius m_radiusX;
     BasicShapeRadius m_radiusY;
 };
-
-BASIC_SHAPES_TYPE_CASTS(BasicShapeEllipse, BasicShape::BasicShapeEllipseType)
 
 class BasicShapePolygon : public BasicShape {
 public:
@@ -216,7 +210,7 @@ public:
     void appendPoint(Length x, Length y) { m_values.append(WTF::move(x)); m_values.append(WTF::move(y)); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
+    virtual PassRef<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual WindRule windRule() const override { return m_windRule; }
 
@@ -229,8 +223,6 @@ private:
     WindRule m_windRule;
     Vector<Length> m_values;
 };
-
-BASIC_SHAPES_TYPE_CASTS(BasicShapePolygon, BasicShape::BasicShapePolygonType)
 
 class BasicShapeInset : public BasicShape {
 public:
@@ -257,7 +249,7 @@ public:
     void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = WTF::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
+    virtual PassRef<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeInsetType; }
 private:
@@ -274,7 +266,16 @@ private:
     LengthSize m_bottomLeftRadius;
 };
 
-BASIC_SHAPES_TYPE_CASTS(BasicShapeInset, BasicShape::BasicShapeInsetType)
+} // namespace WebCore
 
-}
-#endif
+#define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::BasicShape& basicShape) { return basicShape.type() == WebCore::predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeCircle, BasicShape::BasicShapeCircleType)
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeEllipse, BasicShape::BasicShapeEllipseType)
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapePolygon, BasicShape::BasicShapePolygonType)
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeInset, BasicShape::BasicShapeInsetType)
+
+#endif // BasicShapes_h

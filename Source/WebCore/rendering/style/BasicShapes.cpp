@@ -58,34 +58,34 @@ void BasicShapeCenterCoordinate::updateComputedLength()
     m_computedLength = Length(CalculationValue::create(WTF::move(op), CalculationRangeAll));
 }
 
-bool BasicShape::canBlend(const BasicShape* other) const
+bool BasicShape::canBlend(const BasicShape& other) const
 {
     // FIXME: Support animations between different shapes in the future.
-    if (type() != other->type())
+    if (type() != other.type())
         return false;
 
     // Just polygons with same number of vertices can be animated.
-    if (type() == BasicShape::BasicShapePolygonType
-        && (toBasicShapePolygon(this)->values().size() != toBasicShapePolygon(other)->values().size()
-        || toBasicShapePolygon(this)->windRule() != toBasicShapePolygon(other)->windRule()))
+    if (is<BasicShapePolygon>(*this)
+        && (downcast<BasicShapePolygon>(*this).values().size() != downcast<BasicShapePolygon>(other).values().size()
+        || downcast<BasicShapePolygon>(*this).windRule() != downcast<BasicShapePolygon>(other).windRule()))
         return false;
 
     // Circles with keywords for radii coordinates cannot be animated.
-    if (type() == BasicShape::BasicShapeCircleType) {
-        const BasicShapeCircle* thisCircle = toBasicShapeCircle(this);
-        const BasicShapeCircle* otherCircle = toBasicShapeCircle(other);
-        if (!thisCircle->radius().canBlend(otherCircle->radius()))
+    if (is<BasicShapeCircle>(*this)) {
+        const auto& thisCircle = downcast<BasicShapeCircle>(*this);
+        const auto& otherCircle = downcast<BasicShapeCircle>(other);
+        if (!thisCircle.radius().canBlend(otherCircle.radius()))
             return false;
     }
 
     // Ellipses with keywords for radii coordinates cannot be animated.
-    if (type() != BasicShape::BasicShapeEllipseType)
+    if (!is<BasicShapeEllipse>(*this))
         return true;
 
-    const BasicShapeEllipse* thisEllipse = toBasicShapeEllipse(this);
-    const BasicShapeEllipse* otherEllipse = toBasicShapeEllipse(other);
-    return (thisEllipse->radiusX().canBlend(otherEllipse->radiusX())
-        && thisEllipse->radiusY().canBlend(otherEllipse->radiusY()));
+    const auto& thisEllipse = downcast<BasicShapeEllipse>(*this);
+    const auto& otherEllipse = downcast<BasicShapeEllipse>(other);
+    return (thisEllipse.radiusX().canBlend(otherEllipse.radiusX())
+        && thisEllipse.radiusY().canBlend(otherEllipse.radiusY()));
 }
 
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
@@ -118,16 +118,16 @@ void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double progress) const
+PassRef<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress) const
 {
-    ASSERT(type() == other->type());
-    const BasicShapeCircle* o = toBasicShapeCircle(other);
+    ASSERT(type() == other.type());
+    const auto& otherCircle = downcast<BasicShapeCircle>(other);
     RefPtr<BasicShapeCircle> result =  BasicShapeCircle::create();
 
-    result->setCenterX(m_centerX.blend(o->centerX(), progress));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress));
-    result->setRadius(m_radius.blend(o->radius(), progress));
-    return result.release();
+    result->setCenterX(m_centerX.blend(otherCircle.centerX(), progress));
+    result->setCenterY(m_centerY.blend(otherCircle.centerY(), progress));
+    result->setRadius(m_radius.blend(otherCircle.radius(), progress));
+    return result.releaseNonNull();
 }
 
 float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
@@ -157,26 +157,26 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
         radiusY * 2));
 }
 
-PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
+PassRef<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progress) const
 {
-    ASSERT(type() == other->type());
-    const BasicShapeEllipse* o = toBasicShapeEllipse(other);
+    ASSERT(type() == other.type());
+    const auto& otherEllipse = downcast<BasicShapeEllipse>(other);
     RefPtr<BasicShapeEllipse> result = BasicShapeEllipse::create();
 
-    if (m_radiusX.type() != BasicShapeRadius::Value || o->radiusX().type() != BasicShapeRadius::Value
-        || m_radiusY.type() != BasicShapeRadius::Value || o->radiusY().type() != BasicShapeRadius::Value) {
-        result->setCenterX(o->centerX());
-        result->setCenterY(o->centerY());
-        result->setRadiusX(o->radiusX());
-        result->setRadiusY(o->radiusY());
-        return result;
+    if (m_radiusX.type() != BasicShapeRadius::Value || otherEllipse.radiusX().type() != BasicShapeRadius::Value
+        || m_radiusY.type() != BasicShapeRadius::Value || otherEllipse.radiusY().type() != BasicShapeRadius::Value) {
+        result->setCenterX(otherEllipse.centerX());
+        result->setCenterY(otherEllipse.centerY());
+        result->setRadiusX(otherEllipse.radiusX());
+        result->setRadiusY(otherEllipse.radiusY());
+        return result.releaseNonNull();
     }
 
-    result->setCenterX(m_centerX.blend(o->centerX(), progress));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress));
-    result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));
-    result->setRadiusY(m_radiusY.blend(o->radiusY(), progress));
-    return result.release();
+    result->setCenterX(m_centerX.blend(otherEllipse.centerX(), progress));
+    result->setCenterY(m_centerY.blend(otherEllipse.centerY(), progress));
+    result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), progress));
+    result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), progress));
+    return result.releaseNonNull();
 }
 
 void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
@@ -197,27 +197,27 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
     path.closeSubpath();
 }
 
-PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double progress) const
+PassRef<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progress) const
 {
-    ASSERT(type() == other->type());
+    ASSERT(type() == other.type());
 
-    const BasicShapePolygon* o = toBasicShapePolygon(other);
-    ASSERT(m_values.size() == o->values().size());
+    const auto& otherPolygon = downcast<BasicShapePolygon>(other);
+    ASSERT(m_values.size() == otherPolygon.values().size());
     ASSERT(!(m_values.size() % 2));
 
     size_t length = m_values.size();
     RefPtr<BasicShapePolygon> result = BasicShapePolygon::create();
     if (!length)
-        return result.release();
+        return result.releaseNonNull();
 
-    result->setWindRule(o->windRule());
+    result->setWindRule(otherPolygon.windRule());
 
     for (size_t i = 0; i < length; i = i + 2) {
-        result->appendPoint(m_values.at(i).blend(o->values().at(i), progress),
-            m_values.at(i + 1).blend(o->values().at(i + 1), progress));
+        result->appendPoint(m_values.at(i).blend(otherPolygon.values().at(i), progress),
+            m_values.at(i + 1).blend(otherPolygon.values().at(i + 1), progress));
     }
 
-    return result.release();
+    return result.releaseNonNull();
 }
 
 static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatRect& boundingBox)
@@ -246,22 +246,22 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
     path.addRoundedRect(r);
 }
 
-PassRefPtr<BasicShape> BasicShapeInset::blend(const BasicShape* other, double progress) const
+PassRef<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress) const
 {
-    ASSERT(type() == other->type());
+    ASSERT(type() == other.type());
 
-    const BasicShapeInset* o = toBasicShapeInset(other);
+    const auto& otherInset = downcast<BasicShapeInset>(other);
     RefPtr<BasicShapeInset> result =  BasicShapeInset::create();
-    result->setTop(m_top.blend(o->top(), progress));
-    result->setRight(m_right.blend(o->right(), progress));
-    result->setBottom(m_bottom.blend(o->bottom(), progress));
-    result->setLeft(m_left.blend(o->left(), progress));
+    result->setTop(m_top.blend(otherInset.top(), progress));
+    result->setRight(m_right.blend(otherInset.right(), progress));
+    result->setBottom(m_bottom.blend(otherInset.bottom(), progress));
+    result->setLeft(m_left.blend(otherInset.left(), progress));
 
-    result->setTopLeftRadius(m_topLeftRadius.blend(o->topLeftRadius(), progress));
-    result->setTopRightRadius(m_topRightRadius.blend(o->topRightRadius(), progress));
-    result->setBottomRightRadius(m_bottomRightRadius.blend(o->bottomRightRadius(), progress));
-    result->setBottomLeftRadius(m_bottomLeftRadius.blend(o->bottomLeftRadius(), progress));
+    result->setTopLeftRadius(m_topLeftRadius.blend(otherInset.topLeftRadius(), progress));
+    result->setTopRightRadius(m_topRightRadius.blend(otherInset.topRightRadius(), progress));
+    result->setBottomRightRadius(m_bottomRightRadius.blend(otherInset.bottomRightRadius(), progress));
+    result->setBottomLeftRadius(m_bottomLeftRadius.blend(otherInset.bottomLeftRadius(), progress));
 
-    return result.release();
+    return result.releaseNonNull();
 }
 }

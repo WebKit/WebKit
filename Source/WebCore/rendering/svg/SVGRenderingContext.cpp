@@ -137,7 +137,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     ClipPathOperation* clipPathOperation = style.clipPath();
     if (is<ShapeClipPathOperation>(clipPathOperation)) {
-        const auto& clipPath = downcast<ShapeClipPathOperation>(*clipPathOperation);
+        auto& clipPath = downcast<ShapeClipPathOperation>(*clipPathOperation);
         FloatRect referenceBox;
         if (clipPath.referenceBox() == Stroke)
             // FIXME: strokeBoundingBox() takes dasharray into account but shouldn't.
