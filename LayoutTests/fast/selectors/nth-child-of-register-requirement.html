@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <testcaseA id="testcase1" type="foobar" attribute1="value1" class="bar baz bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase1"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase2" type="foobar" class="bar baz bazoo" attribute2="value2" attribute3="value3"></testcaseB>
+        <testcaseA id="testcase3" type="foobar" attribute1="value1" class="foo baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase2"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase4" type="foobar" attribute1="value1" class="foo bar bazoo"><span><span><span><span><span><innerTestCase id="innertestcase3"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase5" type="foobar" class="foo baz bazoo" attribute2="value2" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase4"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase6" type="foobar" attribute1="value1" class="foo bar baz" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase5"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase7" type="foobar" attribute1="value1" class="bar baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase6"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase8" type="foobar" attribute1="value1" class="foo baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase7"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase9" type="foobar" class="foo bar bazoo" attribute2="value2" attribute3="value3"></testcaseA>
+        <testcaseB id="testcase10" type="foobar" attribute1="value1" class="foo bar bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase8"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase11" type="foobar" attribute1="value1" class="foo bar baz"><span><span><span><span><span><innerTestCase id="innertestcase9"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase12" type="foobar" attribute1="value1" class="bar baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase10"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase13" type="foobar" attribute1="value1" class="foo baz bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase11"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase14" type="foobar" class="foo bar baz" attribute2="value2"><span><span><span><span><span><innerTestCase id="innertestcase12"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase15" type="foobar" attribute1="value1" class="foo bar bazoo"><span><span><span><span><span><innerTestCase id="innertestcase13"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase16" type="foobar" attribute1="value1" class="foo bar baz" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase14"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase17" type="foobar" attribute1="value1" class="bar baz bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase15"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase18" type="foobar" attribute1="value1" class="foo baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase16"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase19" type="foobar" attribute1="value1" class="foo bar bazoo"><span><span><span><span><span><innerTestCase id="innertestcase17"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase20" type="foobar" class="bar baz bazoo" attribute2="value2" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase18"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase21" type="foobar" attribute1="value1" class="foo bar baz" attribute3="value3"></testcaseA>
+        <testcaseB id="testcase22" type="foobar" attribute1="value1" class="bar baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase19"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase23" type="foobar" attribute1="value1" class="foo baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase20"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase24" type="foobar" attribute1="value1" class="foo bar bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase21"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase25" type="foobar" attribute1="value1" class="foo bar baz" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase22"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase26" type="foobar" attribute1="value1" class="bar baz bazoo"><span><span><span><span><span><innerTestCase id="innertestcase23"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase27" type="foobar" class="foo baz bazoo" attribute2="value2"></testcaseA>
+        <testcaseB id="testcase28" type="foobar" attribute1="value1" class="foo baz bazoo" attribute3="value3"><span><span><span><span><span><innerTestCase id="innertestcase24"></innerTestCase></span></span></span></span></span></testcaseB>
+        <testcaseA id="testcase29" type="foobar" attribute1="value1" class="foo bar bazoo"><span><span><span><span><span><innerTestCase id="innertestcase25"></innerTestCase></span></span></span></span></span></testcaseA>
+        <testcaseB id="testcase30" type="foobar" attribute1="value1" class="foo bar baz"><span><span><span><span><span><innerTestCase id="innertestcase26"></innerTestCase></span></span></span></span></span></testcaseB>
+    </div>
+</body>
+<script>
+description('Check various cases of register pressure inside ":nth-child(An+B of selectorList)".');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+// First, test various case of simple register pressure.
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][type])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][type=foobar])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of testcaseA:nth-child(2n+1))", ["testcase3", "testcase7", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1))", ["testcase3", "testcase11", "testcase15", "testcase19", "testcase23", "testcase29"]);
+
+// Next, let's check those are handed correctly if combined in a selector list.
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][type])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][type=foobar])", ["testcase3", "testcase6", "testcase8", "testcase11", "testcase13", "testcase16", "testcase18", "testcase21", "testcase23", "testcase25", "testcase28", "testcase30"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), testcaseA:nth-child(2n+1))", ["testcase3", "testcase7", "testcase11", "testcase15", "testcase19", "testcase23", "testcase27"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1))", ["testcase3", "testcase11", "testcase15", "testcase19", "testcase23", "testcase29"]);
+
+// Let's add even more register pressure, let's add a backtracking chain.
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class][type]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class][type]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class][type=foobar]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][class][type=foobar]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of testcaseA:nth-child(2n+1)) > * > * innerTestCase", ["innertestcase2", "innertestcase6", "innertestcase9", "innertestcase13", "innertestcase17", "innertestcase20"]);
+testSelector(":nth-child(2n of testcaseA:nth-child(2n+1)) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1)) > * > * innerTestCase", ["innertestcase2", "innertestcase9", "innertestcase13", "innertestcase17", "innertestcase20", "innertestcase25"]);
+testSelector(":nth-child(2n of [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1)) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class][type]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class][type]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class][type=foobar]) > * > * innerTestCase", ["innertestcase2", "innertestcase5", "innertestcase7", "innertestcase9", "innertestcase11", "innertestcase14", "innertestcase16", "innertestcase20", "innertestcase22", "innertestcase24", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][class][type=foobar]) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), testcaseA:nth-child(2n+1)) > * > * innerTestCase", ["innertestcase2", "innertestcase6", "innertestcase9", "innertestcase13", "innertestcase17", "innertestcase20"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), testcaseA:nth-child(2n+1)) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1)) > * > * innerTestCase", ["innertestcase2", "innertestcase9", "innertestcase13", "innertestcase17", "innertestcase20", "innertestcase25"]);
+testSelector(":nth-child(2n of some, noise, those.selectors, are#not, matched.in#this:not(.tree), [id^=testcase][attribute1=value1][type=foobar]:nth-child(2n+1)) + * + * ~ * > * > * innerTestCase", ["innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8", "innertestcase9", "innertestcase10", "innertestcase11", "innertestcase12", "innertestcase13", "innertestcase14", "innertestcase15", "innertestcase16", "innertestcase17", "innertestcase18", "innertestcase19", "innertestcase20", "innertestcase21", "innertestcase22", "innertestcase23", "innertestcase24", "innertestcase25", "innertestcase26"]);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

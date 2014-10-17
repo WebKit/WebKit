@@ -1,3 +1,55 @@
+2014-10-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make a better use of the available registers when compiling nested selector lists
+        https://bugs.webkit.org/show_bug.cgi?id=137802
+
+        Reviewed by Andreas Kling.
+
+        Previously, when compiling a nested selector list, the compiler would start by pushing all
+        the allocated registers to the stack to free them for the compiled selector list.
+        While neat to ensure register allocation is correct, this is very inefficient.
+
+        This patch brings the first step for reducing the overhead. Instead of pushing everything
+        to the stack, we just push as many registers as we need for compiling the selector list.
+
+        In most cases, we have so many registers that we don't even need to push anything to the stack.
+
+        Test: fast/selectors/nth-child-of-register-requirement.html
+
+        * cssjit/SelectorCompiler.cpp:
+        Add an explicit type for SelectorList to keep information aggregated from all
+        SelectorFragmentList inside it.
+
+        SelectorFragmentList is also extended to include its register and stack requirements.
+        This information is then used to create a SelectorList and to compile the SelectorFragmentList.
+
+        (WebCore::SelectorCompiler::hasAnyCombinators):
+        We only change the elementAddressRegister when moving over combinators. This is used to detect
+        if a selector list clobber the elementAddressRegister or leave it untouched.
+
+        (WebCore::SelectorCompiler::computeBacktrackingMemoryRequirements):
+        (WebCore::SelectorCompiler::computeBacktrackingInformation):
+        Instead of returning a BacktrackingMemoryRequirements, update the SelectorFragmentList and SelectorList directly.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+        This is where the fun happen.
+        First step is keep the input untouched. For now it is simply pushed on the stack. This can be improved later.
+
+        Then we find how many allocated registers we need to save to compile the input selector list. We push those registers
+        to the stack and give them back to the register allocator.
+
+        With enough registers we can now compile the nested selector list. The code has changed a bit for efficiency. Instead
+        of creating a shortcut for success case, the code now exit on error and proceed on success. This is the general pattern
+        of SelectorCompiler and it is quite a bit more efficient in the common cases.
+
+        Finally, we reallocate the registers and get their values back from the stack. The "tail" is duplicated but that's fine
+        because in the vast majority of cases it is 1 or 2 pop.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::push):
+
 2014-10-17  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for StyleImage

@@ -1,3 +1,17 @@
+2014-10-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make a better use of the available registers when compiling nested selector lists
+        https://bugs.webkit.org/show_bug.cgi?id=137802
+
+        Reviewed by Andreas Kling.
+
+        The register pressure cases are already well covered by fast/selectors/nth-child-of-boundaries-*.
+        The new test covers the maximum register pressure inside :nth-child(of) and having the selector with
+        max pressure inside a selector list instead of being alone/first.
+
+        * fast/selectors/nth-child-of-register-requirement-expected.txt: Added.
+        * fast/selectors/nth-child-of-register-requirement.html: Added.
+
 2014-10-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening. Mark some tests as passing that have benefitted from recent bug fixes.

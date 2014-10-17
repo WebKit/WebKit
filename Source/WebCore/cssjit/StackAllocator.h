@@ -103,7 +103,12 @@ public:
     StackReferenceVector push(const Vector<JSC::MacroAssembler::RegisterID>& registerIDs)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
+
         StackReferenceVector stackReferences;
+
+        if (registerIDs.isEmpty())
+            return stackReferences;
+
 #if CPU(ARM64)
         unsigned pushRegisterCount = registerIDs.size();
         for (unsigned i = 0; i < pushRegisterCount - 1; i += 2) {
