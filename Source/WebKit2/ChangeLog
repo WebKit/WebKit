@@ -1,3 +1,18 @@
+2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] REGRESSION(r173929): It broke the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=137522
+
+        Reviewed by Csaba Osztrogonác.
+
+        r173929 let web inspector use a separate web process. Besides it changed that the inspector is shown
+        as docking mode by default. However EFL port doesn't support to show web inspector as docking window yet.
+        This patch is to show web inspector on EFL new window as before. Docking mode should be implemented by
+        upcoming patch.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformAttach):
+
 2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds

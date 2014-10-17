@@ -204,7 +204,8 @@ unsigned WebInspectorProxy::platformInspectedWindowWidth()
 
 void WebInspectorProxy::platformAttach()
 {
-    notImplemented();
+    // FIXME: EFL port doesn't support to attach inspector view to browser window yet. For now new inspector window is shown instead.
+    createInspectorWindow();
 }
 
 void WebInspectorProxy::platformDetach()
