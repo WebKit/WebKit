@@ -1,3 +1,17 @@
+2014-10-17  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Add ESLint open source library to the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=137714
+
+        Reviewed by Joseph Pecoraro.
+
+        This adds back the eslint.js external library with a correction to Scripts/copy-user-interface-resources.pl
+        to prevent a build failure.
+
+        * Scripts/copy-user-interface-resources.pl: Added copy commands for ESLint.js.
+        * UserInterface/External/ESLint/LICENSE: Added.
+        * UserInterface/External/ESLint/eslint.js: Added.
+
 2014-10-14  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Add ESLint open source library to the inspector
