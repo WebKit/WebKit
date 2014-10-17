@@ -48,9 +48,9 @@ void LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInf
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
         RenderObject& object = *iterator.renderer();
         if (object.isOutOfFlowPositioned())
-            setStaticPositions(m_block, toRenderBox(object));
+            setStaticPositions(m_block, downcast<RenderBox>(object));
         else if (object.isFloating())
-            m_block.insertFloatingObject(toRenderBox(object));
+            m_block.insertFloatingObject(downcast<RenderBox>(object));
         iterator.increment();
     }
 }
@@ -60,13 +60,13 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject& object = *resolver.position().renderer();
         if (object.isOutOfFlowPositioned()) {
-            setStaticPositions(m_block, toRenderBox(object));
+            setStaticPositions(m_block, downcast<RenderBox>(object));
             if (object.style().isOriginalDisplayInlineType()) {
                 resolver.runs().addRun(new BidiRun(0, 1, object, resolver.context(), resolver.dir()));
                 lineInfo.incrementRunsFromLeadingWhitespace();
             }
         } else if (object.isFloating())
-            m_block.positionNewFloatOnLine(m_block.insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
+            m_block.positionNewFloatOnLine(m_block.insertFloatingObject(downcast<RenderBox>(object)), lastFloatFromPreviousLine, lineInfo, width);
         else if (object.isText() && object.style().hasTextCombine() && object.isCombineText() && !toRenderCombineText(object).isCombined()) {
             toRenderCombineText(object).combineText();
             if (toRenderCombineText(object).isCombined())

@@ -267,7 +267,7 @@ RenderBox* SVGImage::embeddedContentBox() const
     SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return nullptr;
-    return toRenderBox(rootElement->renderer());
+    return downcast<RenderBox>(rootElement->renderer());
 }
 
 FrameView* SVGImage::frameView() const

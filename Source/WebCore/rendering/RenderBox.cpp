@@ -919,14 +919,14 @@ IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) con
 
 RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 {
-    while (renderer && !(renderer->isBox() && toRenderBox(renderer)->canAutoscroll())) {
-        if (renderer->isRenderView() && renderer->document().ownerElement())
+    while (renderer && !(is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canAutoscroll())) {
+        if (is<RenderView>(*renderer) && renderer->document().ownerElement())
             renderer = renderer->document().ownerElement()->renderer();
         else
             renderer = renderer->parent();
     }
 
-    return renderer && renderer->isBox() ? toRenderBox(renderer) : 0;
+    return is<RenderBox>(renderer) ? downcast<RenderBox>(renderer) : nullptr;
 }
 
 void RenderBox::panScroll(const IntPoint& source)
@@ -3559,9 +3559,9 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     
     // FIXME: The static distance computation has not been patched for mixed writing modes.
     LayoutUnit staticLogicalTop = child->layer()->staticBlockPosition() - containerBlock->borderBefore();
-    for (RenderElement* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
-        if (curr->isBox() && !curr->isTableRow())
-            staticLogicalTop += toRenderBox(curr)->logicalTop();
+    for (RenderElement* container = child->parent(); container && container != containerBlock; container = container->container()) {
+        if (is<RenderBox>(*container) && !is<RenderTableRow>(*container))
+            staticLogicalTop += downcast<RenderBox>(*container).logicalTop();
     }
     logicalTop.setValue(Fixed, staticLogicalTop);
 }
@@ -4199,30 +4199,30 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
         adjustedPoint.moveBy(location());
 
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
-        if (!renderObject->isBox())
+        if (!is<RenderBox>(*renderObject))
             continue;
 
-        if (isRenderFlowThread()) {
+        if (is<RenderFlowThread>(*this)) {
             ASSERT(region);
-            if (!toRenderFlowThread(this)->objectShouldFragmentInFlowRegion(renderObject, region))
+            if (!downcast<RenderFlowThread>(*this).objectShouldFragmentInFlowRegion(renderObject, region))
                 continue;
         }
 
-        RenderBox* renderer = toRenderBox(renderObject);
+        auto& renderer = downcast<RenderBox>(*renderObject);
 
-        if ((!renderer->firstChild() && !renderer->isInline() && !renderer->isRenderBlockFlow() )
-            || renderer->style().visibility() != VISIBLE)
+        if ((!renderer.firstChild() && !renderer.isInline() && !is<RenderBlockFlow>(renderer))
+            || renderer.style().visibility() != VISIBLE)
             continue;
 
-        LayoutUnit top = renderer->borderTop() + renderer->paddingTop() + (isTableRow() ? LayoutUnit() : renderer->y());
-        LayoutUnit bottom = top + renderer->contentHeight();
-        LayoutUnit left = renderer->borderLeft() + renderer->paddingLeft() + (isTableRow() ? LayoutUnit() : renderer->x());
-        LayoutUnit right = left + renderer->contentWidth();
+        LayoutUnit top = renderer.borderTop() + renderer.paddingTop() + (is<RenderTableRow>(*this) ? LayoutUnit() : renderer.y());
+        LayoutUnit bottom = top + renderer.contentHeight();
+        LayoutUnit left = renderer.borderLeft() + renderer.paddingLeft() + (is<RenderTableRow>(*this) ? LayoutUnit() : renderer.x());
+        LayoutUnit right = left + renderer.contentWidth();
         
         if (point.x() <= right && point.x() >= left && point.y() <= top && point.y() >= bottom) {
-            if (renderer->isTableRow())
-                return renderer->positionForPoint(point + adjustedPoint - renderer->locationOffset(), region);
-            return renderer->positionForPoint(point - renderer->locationOffset(), region);
+            if (is<RenderTableRow>(renderer))
+                return renderer.positionForPoint(point + adjustedPoint - renderer.locationOffset(), region);
+            return renderer.positionForPoint(point - renderer.locationOffset(), region);
         }
 
         // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
@@ -4253,7 +4253,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
 
         LayoutUnit dist = difference.width() * difference.width() + difference.height() * difference.height();
         if (dist < minDist) {
-            closestRenderer = renderer;
+            closestRenderer = &renderer;
             minDist = dist;
         }
     }
@@ -4764,28 +4764,28 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
     bool didSplitParentAnonymousBoxes = false;
 
     while (beforeChild->parent() != this) {
-        RenderBox* boxToSplit = toRenderBox(beforeChild->parent());
-        if (boxToSplit->firstChild() != beforeChild && boxToSplit->isAnonymous()) {
+        auto& boxToSplit = downcast<RenderBox>(*beforeChild->parent());
+        if (boxToSplit.firstChild() != beforeChild && boxToSplit.isAnonymous()) {
             didSplitParentAnonymousBoxes = true;
 
             // We have to split the parent box into two boxes and move children
             // from |beforeChild| to end into the new post box.
-            RenderBox* postBox = boxToSplit->createAnonymousBoxWithSameTypeAs(this);
-            postBox->setChildrenInline(boxToSplit->childrenInline());
-            RenderBox* parentBox = toRenderBox(boxToSplit->parent());
+            RenderBox* postBox = boxToSplit.createAnonymousBoxWithSameTypeAs(this);
+            postBox->setChildrenInline(boxToSplit.childrenInline());
+            RenderBox* parentBox = downcast<RenderBox>(boxToSplit.parent());
             // We need to invalidate the |parentBox| before inserting the new node
             // so that the table repainting logic knows the structure is dirty.
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
-            parentBox->insertChildInternal(postBox, boxToSplit->nextSibling(), NotifyChildren);
-            boxToSplit->moveChildrenTo(postBox, beforeChild, 0, true);
+            parentBox->insertChildInternal(postBox, boxToSplit.nextSibling(), NotifyChildren);
+            boxToSplit.moveChildrenTo(postBox, beforeChild, 0, true);
 
-            markBoxForRelayoutAfterSplit(*boxToSplit);
+            markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(*postBox);
 
             beforeChild = postBox;
         } else
-            beforeChild = boxToSplit;
+            beforeChild = &boxToSplit;
     }
 
     if (didSplitParentAnonymousBoxes)

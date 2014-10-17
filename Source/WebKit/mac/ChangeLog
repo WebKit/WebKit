@@ -1,3 +1,18 @@
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=137804
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for RenderBox and clean up the surrounding
+        code.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::clientFloatRectForNode):
+        * WebView/WebFrame.mm:
+        (-[WebFrame renderedSizeOfNode:constrainedToWidth:]):
+
 2014-10-17  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build with the public SDK.

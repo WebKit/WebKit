@@ -1185,11 +1185,11 @@ void PluginView::invalidateWindowlessPluginRect(const IntRect& rect)
     
     if (!m_element->renderer())
         return;
-    RenderBox* renderer = toRenderBox(m_element->renderer());
+    auto& renderer = downcast<RenderBox>(*m_element->renderer());
     
     IntRect dirtyRect = rect;
-    dirtyRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
-    renderer->repaintRectangle(dirtyRect);
+    dirtyRect.move(renderer.borderLeft() + renderer.paddingLeft(), renderer.borderTop() + renderer.paddingTop());
+    renderer.repaintRectangle(dirtyRect);
 }
 
 void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect& rect)

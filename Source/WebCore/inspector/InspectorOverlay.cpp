@@ -729,9 +729,9 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     }
 
 #if ENABLE(CSS_SHAPES)
-    if (renderer->isBox()) {
-        RenderBox* renderBox = toRenderBox(renderer);
-        if (RefPtr<InspectorObject> shapeObject = buildObjectForShapeOutside(containingFrame, renderBox))
+    if (is<RenderBox>(*renderer)) {
+        auto& renderBox = downcast<RenderBox>(*renderer);
+        if (RefPtr<InspectorObject> shapeObject = buildObjectForShapeOutside(containingFrame, &renderBox))
             elementInfo->setObject("shapeOutsideInfo", shapeObject.release());
     }
 #endif

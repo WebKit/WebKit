@@ -106,15 +106,13 @@ PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const Rend
 RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayoutChildren)
 {
     RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);
-    if (!placeholderRenderer)
-        return 0;
-    if (!placeholderRenderer->isBox())
-        return placeholderRenderer;
-    RenderBox* placeholderBox = toRenderBox(placeholderRenderer);
-    placeholderBox->style().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth(), Fixed));
-    placeholderBox->layoutIfNeeded();
-    placeholderBox->setX(borderLeft() + paddingLeft());
-    placeholderBox->setY(borderTop() + paddingTop());
+    if (is<RenderBox>(placeholderRenderer)) {
+        auto& placeholderBox = downcast<RenderBox>(*placeholderRenderer);
+        placeholderBox.style().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox.borderAndPaddingLogicalWidth(), Fixed));
+        placeholderBox.layoutIfNeeded();
+        placeholderBox.setX(borderLeft() + paddingLeft());
+        placeholderBox.setY(borderTop() + paddingTop());
+    }
     return placeholderRenderer;
 }
     

@@ -422,10 +422,10 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
 
 int RenderThemeIOS::baselinePosition(const RenderObject& renderer) const
 {
-    if (!renderer.isBox())
+    if (!is<RenderBox>(renderer))
         return 0;
 
-    const RenderBox& box = *toRenderBox(&renderer);
+    const auto& box = downcast<RenderBox>(renderer);
 
     if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
         return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.

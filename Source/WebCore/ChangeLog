@@ -1,3 +1,217 @@
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=137804
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for RenderBox and clean up the surrounding
+        code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityRenderObject::scrollTo):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement scrollYOffset]):
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMNode borderRadii]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::sizingBox):
+        (WebCore::computedTransform):
+        (WebCore::zoomAdjustedPaddingOrMarginPixelValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        * dom/Element.cpp:
+        (WebCore::Element::scrollByUnits):
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * dom/Position.cpp:
+        (WebCore::endsOfNodeAreVisuallyDistinctPositions):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::paintCaret):
+        * editing/TextIterator.cpp:
+        (WebCore::fullyClipsContents):
+        (WebCore::shouldEmitExtraNewlineForNode):
+        * editing/htmlediting.cpp:
+        (WebCore::absoluteBoundsForLocalCaretRect):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::checkSizeChangeForSnapshotting):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::updateAutoscrollRenderer):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::startPanScrolling):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::embeddedContentBox):
+        * page/GestureTapHighlighter.cpp:
+        * page/SpatialNavigation.cpp:
+        (WebCore::isScrollableNode):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::baselinePosition):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::invalidateWindowlessPluginRect):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        (WebCore::InlineBox::adjustPosition):
+        * rendering/InlineElementBox.cpp:
+        (WebCore::InlineElementBox::deleteLine):
+        (WebCore::InlineElementBox::extractLine):
+        (WebCore::InlineElementBox::attachLine):
+        (WebCore::InlineElementBox::paint):
+        (WebCore::InlineElementBox::nodeAtPoint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::addReplacedChildOverflow):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+        (WebCore::RenderBlock::clearPercentHeightDescendantsFrom):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::findAutoscrollable):
+        (WebCore::computeBlockStaticDistance):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::previousSiblingBox):
+        (WebCore::RenderBox::nextSiblingBox):
+        (WebCore::RenderBox::parentBox):
+        (WebCore::RenderBox::firstChildBox):
+        (WebCore::RenderBox::lastChildBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeChildInternal):
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderFlowThread::currentActiveRenderBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layoutShadowControls):
+        (WebCore::RenderImage::computeIntrinsicRatioInformation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::perspectiveTransform):
+        (WebCore::RenderLayer::perspectiveOrigin):
+        (WebCore::parentLayerCrossFrame):
+        (WebCore::RenderLayer::enclosingScrollableLayer):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::scrollsOverflow):
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateTransform):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        (WebCore::RenderLayerBacking::contentsBox):
+        (WebCore::RenderLayerBacking::backgroundBoxForPainting):
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        * rendering/RenderMediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::layout):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::firstColumnSetOrSpanner):
+        (WebCore::RenderMultiColumnFlowThread::nextColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlowThread::previousColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlowThread::resolveMovedChild):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderMultiColumnFlowThread::handleSpannerRemoval):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::showRegionsInformation):
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::pushMappingToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::addAnnotatedRegions):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::layoutSpecialExcludedChild):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::baselinePosition):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::baselinePosition):
+        (WebCore::centerRectVerticallyInParentInputElement):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::baselinePosition):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::baselinePosition):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::externalRepresentation):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::setLineBreakInfo):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::BreakingContext::handleReplaced):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::embeddedContentBox):
+
 2014-10-17  Andreas Kling  <akling@apple.com>
 
         Get rid of wrapperContext() in DOM bindings.

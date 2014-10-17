@@ -251,13 +251,13 @@ static unsigned verticalScrollDistance(Frame& frame)
     Element* focusedElement = frame.document()->focusedElement();
     if (!focusedElement)
         return 0;
-    auto renderer = focusedElement->renderer();
-    if (!renderer || !renderer->isBox())
+    auto* renderer = focusedElement->renderer();
+    if (!is<RenderBox>(renderer))
         return 0;
     const RenderStyle& style = renderer->style();
     if (!(style.overflowY() == OSCROLL || style.overflowY() == OAUTO || focusedElement->hasEditableStyle()))
         return 0;
-    int height = std::min<int>(toRenderBox(renderer)->clientHeight(), frame.view()->visibleHeight());
+    int height = std::min<int>(downcast<RenderBox>(*renderer).clientHeight(), frame.view()->visibleHeight());
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 

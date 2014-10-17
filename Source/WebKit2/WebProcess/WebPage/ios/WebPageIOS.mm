@@ -534,10 +534,8 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
         }
 
         RoundedRect::Radii borderRadii;
-        if (renderer->isBox()) {
-            RenderBox* box = toRenderBox(renderer);
-            borderRadii = box->borderRadii();
-        }
+        if (is<RenderBox>(*renderer))
+            borderRadii = downcast<RenderBox>(*renderer).borderRadii();
 
         send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight())));
     }

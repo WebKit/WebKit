@@ -685,7 +685,7 @@ void RenderImage::layout()
 
 void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
 {
-    RenderBox* controlsRenderer = toRenderBox(firstChild());
+    auto* controlsRenderer = downcast<RenderBox>(firstChild());
     if (!controlsRenderer)
         return;
     
@@ -727,10 +727,10 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, dou
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
     if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
         RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
-        if (containingBlock->isBox()) {
-            RenderBox* box = toRenderBox(containingBlock);
-            intrinsicSize.setWidth(box->availableLogicalWidth());
-            intrinsicSize.setHeight(box->availableLogicalHeight(IncludeMarginBorderPadding));
+        if (is<RenderBox>(*containingBlock)) {
+            auto& box = downcast<RenderBox>(*containingBlock);
+            intrinsicSize.setWidth(box.availableLogicalWidth());
+            intrinsicSize.setHeight(box.availableLogicalHeight(IncludeMarginBorderPadding));
         }
     }
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.

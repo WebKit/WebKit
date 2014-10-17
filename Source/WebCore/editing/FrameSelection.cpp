@@ -1482,8 +1482,8 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 
     LayoutRect drawingRect = localCaretRectWithoutUpdate();
     RenderObject* renderer = rendererForCaretPainting(node);
-    if (renderer && renderer->isBox())
-        toRenderBox(renderer)->flipForWritingMode(drawingRect);
+    if (is<RenderBox>(renderer))
+        downcast<RenderBox>(*renderer).flipForWritingMode(drawingRect);
     drawingRect.moveBy(roundedIntPoint(paintOffset));
     LayoutRect caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())

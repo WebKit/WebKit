@@ -1361,7 +1361,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 
             mouseEvent.setDefaultHandled();
         }
-    } else if (event->type() == eventNames().mousemoveEvent && is<MouseEvent>(*event) && !toRenderBox(renderer())->canBeScrolledAndHasScrollableArea()) {
+    } else if (event->type() == eventNames().mousemoveEvent && is<MouseEvent>(*event) && !downcast<RenderBox>(*renderer()).canBeScrolledAndHasScrollableArea()) {
         MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
         if (mouseEvent.button() != LeftButton || !mouseEvent.buttonDown())
             return;

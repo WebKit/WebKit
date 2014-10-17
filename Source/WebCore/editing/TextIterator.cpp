@@ -207,9 +207,9 @@ static Node* nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContainer, int
 static inline bool fullyClipsContents(Node& node)
 {
     auto* renderer = node.renderer();
-    if (!renderer || !renderer->isBox() || !renderer->hasOverflowClip())
+    if (!is<RenderBox>(renderer) || !renderer->hasOverflowClip())
         return false;
-    return toRenderBox(renderer)->size().isEmpty();
+    return downcast<RenderBox>(*renderer).size().isEmpty();
 }
 
 static inline bool ignoresContainerClip(Node& node)
@@ -881,7 +881,7 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
     // will work right even if both the <div> and the <p> have bottom margins.
 
     auto* renderer = node.renderer();
-    if (!renderer || !renderer->isBox())
+    if (!is<RenderBox>(renderer))
         return false;
 
     // NOTE: We only do this for a select set of nodes, and WinIE appears not to do this at all.
@@ -892,8 +892,8 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
     if (!hasHeaderTag(element) && !is<HTMLParagraphElement>(element))
         return false;
 
-    int bottomMargin = toRenderBox(renderer)->collapsedMarginAfter();
-    int fontSize = toRenderBox(renderer)->style().fontDescription().computedPixelSize();
+    int bottomMargin = downcast<RenderBox>(*renderer).collapsedMarginAfter();
+    int fontSize = downcast<RenderBox>(*renderer).style().fontDescription().computedPixelSize();
     return bottomMargin * 2 >= fontSize;
 }
 

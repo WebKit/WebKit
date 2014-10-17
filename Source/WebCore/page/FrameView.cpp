@@ -1404,12 +1404,10 @@ RenderBox* FrameView::embeddedContentBox() const
         return nullptr;
 
     RenderObject* firstChild = renderView->firstChild();
-    if (!firstChild || !firstChild->isBox())
-        return nullptr;
 
     // Curently only embedded SVG documents participate in the size-negotiation logic.
-    if (toRenderBox(firstChild)->isSVGRoot())
-        return toRenderBox(firstChild);
+    if (is<RenderSVGRoot>(firstChild))
+        return downcast<RenderSVGRoot>(firstChild);
 
     return nullptr;
 }

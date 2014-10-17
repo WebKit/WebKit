@@ -608,7 +608,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
         units = -units;
     }
     Element* stopElement = this;
-    toRenderBox(renderer())->scroll(direction, granularity, units, &stopElement);
+    downcast<RenderBox>(*renderer()).scroll(direction, granularity, units, &stopElement);
 }
 
 void Element::scrollByLines(int lines)

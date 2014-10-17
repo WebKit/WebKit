@@ -1,3 +1,16 @@
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=137804
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for RenderBox and clean up the surrounding
+        code.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+
 2014-10-17  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Accelerated compositing is not implemented.

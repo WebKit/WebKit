@@ -39,6 +39,8 @@
 #include "Page.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
+#include "RenderTable.h"
+#include "RenderTableCell.h"
 #include "StyleProperties.h"
 
 namespace WebCore {
@@ -72,7 +74,7 @@ static bool isDeletableElement(const Node* node)
     const unsigned minimumVisibleBorders = 1;
 
     RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isBox())
+    if (!is<RenderBox>(renderer))
         return false;
 
     // Disallow the body element since it isn't practical to delete, and the deletion UI would be clipped.
@@ -87,30 +89,30 @@ static bool isDeletableElement(const Node* node)
     if (isMailBlockquote(node))
         return false;
 
-    RenderBox* box = toRenderBox(renderer);
-    IntRect borderBoundingBox = box->borderBoundingBox();
+    RenderBox& box = downcast<RenderBox>(*renderer);
+    IntRect borderBoundingBox = box.borderBoundingBox();
     if (borderBoundingBox.width() < minimumWidth || borderBoundingBox.height() < minimumHeight)
         return false;
 
     if ((borderBoundingBox.width() * borderBoundingBox.height()) < minimumArea)
         return false;
 
-    if (box->isTable())
+    if (is<RenderTable>(box))
         return true;
 
-    if (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(iframeTag))
+    if (is<HTMLUListElement>(*node) || is<HTMLOListElement>(*node) || is<HTMLIFrameElement>(*node))
         return true;
 
-    if (box->isOutOfFlowPositioned())
+    if (box.isOutOfFlowPositioned())
         return true;
 
-    if (box->isRenderBlock() && !box->isTableCell()) {
-        const RenderStyle& style = box->style();
+    if (is<RenderBlock>(box) && !is<RenderTableCell>(box)) {
+        const RenderStyle& style = box.style();
 
         // Allow blocks that have background images
         if (style.hasBackgroundImage()) {
             for (const FillLayer* background = style.backgroundLayers(); background; background = background->next()) {
-                if (background->image() && background->image()->canRender(box, 1))
+                if (background->image() && background->image()->canRender(&box, 1))
                     return true;
             }
         }
@@ -125,13 +127,13 @@ static bool isDeletableElement(const Node* node)
         if (!parentNode)
             return false;
 
-        auto parentRenderer = parentNode->renderer();
+        auto* parentRenderer = parentNode->renderer();
         if (!parentRenderer)
             return false;
 
         const RenderStyle& parentStyle = parentRenderer->style();
 
-        if (box->hasBackground() && (!parentRenderer->hasBackground() || style.visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle.visitedDependentColor(CSSPropertyBackgroundColor)))
+        if (box.hasBackground() && (!parentRenderer->hasBackground() || style.visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle.visitedDependentColor(CSSPropertyBackgroundColor)))
             return true;
     }
 

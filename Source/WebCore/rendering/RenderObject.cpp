@@ -1355,15 +1355,14 @@ void RenderObject::computeRectForRepaint(const RenderLayerModelObject* repaintCo
     if (repaintContainer == this)
         return;
 
-    if (auto o = parent()) {
-        if (o->hasOverflowClip()) {
-            RenderBox* boxParent = toRenderBox(o);
-            boxParent->applyCachedClipAndScrollOffsetForRepaint(rect);
+    if (auto* parent = this->parent()) {
+        if (parent->hasOverflowClip()) {
+            downcast<RenderBox>(*parent).applyCachedClipAndScrollOffsetForRepaint(rect);
             if (rect.isEmpty())
                 return;
         }
 
-        o->computeRectForRepaint(repaintContainer, rect, fixed);
+        parent->computeRectForRepaint(repaintContainer, rect, fixed);
     }
 }
 
@@ -1407,11 +1406,10 @@ void RenderObject::showLineTreeForThis() const
 void RenderObject::showRegionsInformation() const
 {
     if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
-        const RenderBox* box = isBox() ? toRenderBox(this) : nullptr;
-        if (box) {
+        if (is<RenderBox>(*this)) {
             RenderRegion* startRegion = nullptr;
             RenderRegion* endRegion = nullptr;
-            flowThread->getRegionRangeForBox(box, startRegion, endRegion);
+            flowThread->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
             fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
         }
     }
@@ -1509,9 +1507,9 @@ void RenderObject::showRenderObject(bool mark, int depth) const
     else
         fprintf(stderr, "%s", name.utf8().data());
 
-    if (isBox()) {
-        const RenderBox* box = toRenderBox(this);
-        fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", box->x().toFloat(), box->y().toFloat(), box->width().toFloat(), box->height().toFloat());
+    if (is<RenderBox>(*this)) {
+        const auto& box = downcast<RenderBox>(*this);
+        fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", box.x().toFloat(), box.y().toFloat(), box.width().toFloat(), box.height().toFloat());
     }
 
     fprintf(stderr, " renderer->(%p)", this);
@@ -1713,36 +1711,36 @@ void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     if (repaintContainer == this)
         return;
 
-    auto o = parent();
-    if (!o)
+    auto* parent = this->parent();
+    if (!parent)
         return;
 
     // FIXME: this should call offsetFromContainer to share code, but I'm not sure it's ever called.
     LayoutPoint centerPoint(transformState.mappedPoint());
-    if (mode & ApplyContainerFlip && o->isBox()) {
-        if (o->style().isFlippedBlocksWritingMode())
-            transformState.move(toRenderBox(o)->flipForWritingMode(LayoutPoint(transformState.mappedPoint())) - centerPoint);
+    if (mode & ApplyContainerFlip && is<RenderBox>(*parent)) {
+        if (parent->style().isFlippedBlocksWritingMode())
+            transformState.move(downcast<RenderBox>(parent)->flipForWritingMode(LayoutPoint(transformState.mappedPoint())) - centerPoint);
         mode &= ~ApplyContainerFlip;
     }
 
-    if (o->isBox())
-        transformState.move(-toRenderBox(o)->scrolledContentOffset());
+    if (is<RenderBox>(*parent))
+        transformState.move(-downcast<RenderBox>(*parent).scrolledContentOffset());
 
-    o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT_UNUSED(ancestorToStopAt, ancestorToStopAt != this);
 
-    auto container = parent();
+    auto* container = parent();
     if (!container)
-        return 0;
+        return nullptr;
 
     // FIXME: this should call offsetFromContainer to share code, but I'm not sure it's ever called.
     LayoutSize offset;
-    if (container->isBox())
-        offset = -toRenderBox(container)->scrolledContentOffset();
+    if (is<RenderBox>(*container))
+        offset = -downcast<RenderBox>(*container).scrolledContentOffset();
 
     geometryMap.push(this, offset, false);
     
@@ -1751,11 +1749,10 @@ const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelO
 
 void RenderObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    auto o = parent();
-    if (o) {
-        o->mapAbsoluteToLocalPoint(mode, transformState);
-        if (o->isBox())
-            transformState.move(toRenderBox(o)->scrolledContentOffset());
+    if (auto* parent = this->parent()) {
+        parent->mapAbsoluteToLocalPoint(mode, transformState);
+        if (is<RenderBox>(*parent))
+            transformState.move(downcast<RenderBox>(*parent).scrolledContentOffset());
     }
 }
 
@@ -2303,19 +2300,16 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
-    if (style().visibility() != VISIBLE || !isBox())
+    if (style().visibility() != VISIBLE || !is<RenderBox>(*this))
         return;
     
-    RenderBox* box = toRenderBox(this);
+    auto& box = downcast<RenderBox>(*this);
     FloatPoint absPos = localToAbsolute();
 
     const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
-    unsigned i, count = styleRegions.size();
-    for (i = 0; i < count; i++) {
-        StyleDashboardRegion styleRegion = styleRegions[i];
-
-        LayoutUnit w = box->width();
-        LayoutUnit h = box->height();
+    for (const auto& styleRegion : styleRegions) {
+        LayoutUnit w = box.width();
+        LayoutUnit h = box.height();
 
         AnnotatedRegionValue region;
         region.label = styleRegion.label;

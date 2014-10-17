@@ -1329,10 +1329,10 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (CGSize)renderedSizeOfNode:(DOMNode *)node constrainedToWidth:(float)width
 {
-    Node *n = core(node);
-    RenderObject *r = n ? n->renderer() : 0;
-    float w = std::min((float)r->maxPreferredLogicalWidth(), width);
-    return r && r->isBox() ? CGSizeMake(w, toRenderBox(r)->height()) : CGSizeMake(0,0);
+    Node* n = core(node);
+    RenderObject* renderer = n ? n->renderer() : nullptr;
+    float w = std::min((float)renderer->maxPreferredLogicalWidth(), width);
+    return is<RenderBox>(renderer) ? CGSizeMake(w, downcast<RenderBox>(*renderer).height()) : CGSizeMake(0, 0);
 }
 
 - (DOMNode *)deepestNodeAtViewportLocation:(CGPoint)aViewportLocation

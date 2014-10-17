@@ -44,17 +44,17 @@ void RenderMediaVolumeSliderContainer::layout()
 {
     RenderBlockFlow::layout();
 
-    if (style().display() == NONE || !nextSibling() || !nextSibling()->isBox())
+    if (style().display() == NONE || !is<RenderBox>(nextSibling()))
         return;
 
-    RenderBox* buttonBox = toRenderBox(nextSibling());
-    int absoluteOffsetTop = buttonBox->localToAbsolute(FloatPoint(0, -size().height())).y();
+    RenderBox& buttonBox = downcast<RenderBox>(*nextSibling());
+    int absoluteOffsetTop = buttonBox.localToAbsolute(FloatPoint(0, -size().height())).y();
 
     LayoutStateDisabler layoutStateDisabler(&view());
 
     // If the slider would be rendered outside the page, it should be moved below the controls.
     if (UNLIKELY(absoluteOffsetTop < 0))
-        setY(buttonBox->offsetTop() + theme().volumeSliderOffsetFromMuteButton(buttonBox, pixelSnappedSize()).y());
+        setY(buttonBox.offsetTop() + theme().volumeSliderOffsetFromMuteButton(&buttonBox, pixelSnappedSize()).y());
 }
 
 // ----------------------------

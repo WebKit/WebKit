@@ -71,29 +71,27 @@ using namespace WebCore;
     if (!renderer)
         return 0;
 
-    if (!renderer->isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
 
-    if (!renderer->isBox() || !renderer->hasOverflowClip())
+    if (!is<RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    RenderBox *renderBox = toRenderBox(renderer);
-    return renderBox->layer()->scrollXOffset();
+    return downcast<RenderBox>(*renderer).layer()->scrollXOffset();
 }
 
 - (int)scrollYOffset
 {
-    RenderObject *renderer = core(self)->renderer();
+    RenderObject* renderer = core(self)->renderer();
     if (!renderer)
         return 0;
 
-    if (!renderer->isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!renderer->isBox() || !renderer->hasOverflowClip())
+    if (!is<RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    RenderBox *renderBox = toRenderBox(renderer);
-    return renderBox->layer()->scrollYOffset();
+    return downcast<RenderBox>(*renderer).layer()->scrollYOffset();
 }
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y
@@ -103,17 +101,16 @@ using namespace WebCore;
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y adjustForIOSCaret:(BOOL)adjustForIOSCaret
 {
-    RenderObject *renderer = core(self)->renderer();
+    RenderObject* renderer = core(self)->renderer();
     if (!renderer)
         return;
 
-    if (!renderer->isRenderBlockFlow())
+    if (!is<RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!renderer->hasOverflowClip() || !renderer->isBox())
+    if (!renderer->hasOverflowClip() || !is<RenderBox>(*renderer))
         return;
 
-    RenderBox *renderBox = toRenderBox(renderer);
-    RenderLayer *layer = renderBox->layer();
+    RenderLayer* layer = downcast<RenderBox>(*renderer).layer();
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(true);
     layer->scrollToOffset(IntSize(x, y));

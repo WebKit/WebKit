@@ -250,7 +250,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     
     LayoutUnit logicalLeftOffset = 0;
     if (prev)
-        logicalTopOffset -= toRenderBox(prev)->logicalTop();
+        logicalTopOffset -= downcast<RenderBox>(*prev).logicalTop();
     else {
         prev = &parentBlock;
         logicalLeftOffset += parentBlock.logicalLeftOffsetForContent();
@@ -3344,7 +3344,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer().isReplaced())
-            return positionForPointRespectingEditingBoundaries(*this, toRenderBox(closestBox->renderer()), point);
+            return positionForPointRespectingEditingBoundaries(*this, downcast<RenderBox>(closestBox->renderer()), point);
         return closestBox->renderer().positionForPoint(point, nullptr);
     }
 

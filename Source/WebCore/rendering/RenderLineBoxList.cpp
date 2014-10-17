@@ -149,11 +149,12 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
+// FIXME: This should take a RenderBoxModelObject&.
 bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, LayoutUnit logicalTop, LayoutUnit logicalBottom, const LayoutRect& rect, const LayoutPoint& offset) const
 {
     RenderBox* block;
-    if (renderer->isBox())
-        block = toRenderBox(renderer);
+    if (is<RenderBox>(*renderer))
+        block = downcast<RenderBox>(renderer);
     else
         block = renderer->containingBlock();
     LayoutUnit physicalStart = block->flipForWritingMode(logicalTop);

@@ -686,7 +686,7 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
     bool needsWordSpacing;
 
     if (firstRun && firstRun->renderer().isReplaced()) {
-        RenderBox& renderBox = toRenderBox(firstRun->renderer());
+        RenderBox& renderBox = downcast<RenderBox>(firstRun->renderer());
         updateLogicalInlinePositions(*this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight());
     }
 
@@ -1466,7 +1466,7 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
                 hasInlineChild = true;
 
             if (o.isReplaced() || o.isFloating() || o.isOutOfFlowPositioned()) {
-                RenderBox& box = toRenderBox(o);
+                RenderBox& box = downcast<RenderBox>(o);
 
                 if (relayoutChildren || box.hasRelativeDimensions())
                     box.setChildNeedsLayout(MarkOnlyThis);

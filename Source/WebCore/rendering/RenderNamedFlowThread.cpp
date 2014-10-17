@@ -672,8 +672,8 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
                 boundingBox = downcast<RenderText>(*renderer).linesBoundingBox();
             else if (is<RenderLineBreak>(*renderer))
                 boundingBox = downcast<RenderLineBreak>(*renderer).linesBoundingBox();
-            else if (renderer->isBox()) {
-                RenderBox& renderBox = downcast<RenderBox>(*renderer);
+            else if (is<RenderBox>(*renderer)) {
+                auto& renderBox = downcast<RenderBox>(*renderer);
                 boundingBox = renderBox.frameRect();
                 if (renderBox.isRelPositioned())
                     boundingBox.move(renderBox.relativePositionLogicalOffset());

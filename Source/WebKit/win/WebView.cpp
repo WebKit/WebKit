@@ -1646,7 +1646,7 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     bool canBeScrolled = false;
     if (m_gestureTargetNode) {
         for (RenderObject* renderer = m_gestureTargetNode->renderer(); renderer; renderer = renderer->parent()) {
-            if (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()) {
+            if (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()) {
                 canBeScrolled = true;
                 break;
             }

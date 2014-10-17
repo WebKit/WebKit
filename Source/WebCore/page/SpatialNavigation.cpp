@@ -424,7 +424,7 @@ bool isScrollableNode(const Node* node)
         return false;
 
     if (RenderObject* renderer = node->renderer())
-        return renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea() && node->hasChildNodes();
+        return is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea() && node->hasChildNodes();
 
     return false;
 }

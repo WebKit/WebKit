@@ -373,19 +373,18 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject& o) const
     return isEnabled(o);
 }
 
-int RenderThemeGtk::baselinePosition(const RenderObject& o) const
+int RenderThemeGtk::baselinePosition(const RenderObject& renderer) const
 {
-    if (!o.isBox())
+    if (!is<RenderBox>(renderer))
         return 0;
 
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
-    if (o.style().appearance() == CheckboxPart
-        || o.style().appearance() == RadioPart) {
-        const RenderBox* box = toRenderBox(&o);
-        return box->marginTop() + box->height() - 2;
+    if (renderer.style().appearance() == CheckboxPart || renderer.style().appearance() == RadioPart) {
+        const auto& box = downcast<RenderBox>(renderer);
+        return box.marginTop() + box.height() - 2;
     }
 
-    return RenderTheme::baselinePosition(o);
+    return RenderTheme::baselinePosition(renderer);
 }
 
 static GtkTextDirection gtkTextDirection(TextDirection direction)
@@ -990,13 +989,13 @@ static IntRect centerRectVerticallyInParentInputElement(const RenderObject& rend
     Node* input = renderObject.node()->shadowHost();
     if (!input)
         input = renderObject.node();
-    if (!input->renderer()->isBox())
+    if (!is<RenderBox>(*input->renderer()))
         return IntRect();
 
     // If possible center the y-coordinate of the rect vertically in the parent input element.
     // We also add one pixel here to ensure that the y coordinate is rounded up for box heights
     // that are even, which looks in relation to the box text.
-    IntRect inputContentBox = toRenderBox(input->renderer())->absoluteContentBox();
+    IntRect inputContentBox = downcast<RenderBox>(*input->renderer()).absoluteContentBox();
 
     // Make sure the scaled decoration stays square and will fit in its parent's box.
     int iconSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), rect.height()));

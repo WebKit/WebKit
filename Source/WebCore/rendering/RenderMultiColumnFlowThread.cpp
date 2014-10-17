@@ -90,9 +90,9 @@ RenderMultiColumnSet* RenderMultiColumnFlowThread::lastMultiColumnSet() const
 RenderBox* RenderMultiColumnFlowThread::firstColumnSetOrSpanner() const
 {
     if (RenderObject* sibling = nextSibling()) {
-        ASSERT(sibling->isBox());
-        ASSERT(sibling->isRenderMultiColumnSet() || findColumnSpannerPlaceholder(toRenderBox(sibling)));
-        return toRenderBox(sibling);
+        ASSERT(is<RenderBox>(*sibling));
+        ASSERT(is<RenderMultiColumnSet>(*sibling) || findColumnSpannerPlaceholder(downcast<RenderBox>(sibling)));
+        return downcast<RenderBox>(sibling);
     }
     return nullptr;
 }
@@ -101,10 +101,8 @@ RenderBox* RenderMultiColumnFlowThread::nextColumnSetOrSpannerSiblingOf(const Re
 {
     if (!child)
         return nullptr;
-    if (RenderObject* sibling = child->nextSibling()) {
-        ASSERT(sibling->isBox());
-        return toRenderBox(sibling);
-    }
+    if (RenderObject* sibling = child->nextSibling())
+        return downcast<RenderBox>(sibling);
     return nullptr;
 }
 
@@ -113,10 +111,9 @@ RenderBox* RenderMultiColumnFlowThread::previousColumnSetOrSpannerSiblingOf(cons
     if (!child)
         return nullptr;
     if (RenderObject* sibling = child->previousSibling()) {
-        ASSERT(sibling->isBox());
-        if (sibling->isRenderFlowThread())
+        if (is<RenderFlowThread>(*sibling))
             return nullptr;
-        return toRenderBox(sibling);
+        return downcast<RenderBox>(sibling);
     }
     return nullptr;
 }
@@ -222,7 +219,7 @@ void RenderMultiColumnFlowThread::willBeRemovedFromTree()
 
 RenderObject* RenderMultiColumnFlowThread::resolveMovedChild(RenderObject* child) const
 {
-    if (child->style().columnSpan() != ColumnSpanAll || !child->isBox()) {
+    if (child->style().columnSpan() != ColumnSpanAll || !is<RenderBox>(*child)) {
         // We only need to resolve for column spanners.
         return child;
     }
@@ -232,7 +229,7 @@ RenderObject* RenderMultiColumnFlowThread::resolveMovedChild(RenderObject* child
     // create and insert a renderer for the sibling node immediately preceding the spanner, we need
     // to map that spanner renderer to the spanner's placeholder, which is where the new inserted
     // renderer belongs.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = findColumnSpannerPlaceholder(toRenderBox(child)))
+    if (RenderMultiColumnSpannerPlaceholder* placeholder = findColumnSpannerPlaceholder(downcast<RenderBox>(child)))
         return placeholder;
 
     // This is an invalid spanner, or its placeholder hasn't been created yet. This happens when
@@ -253,11 +250,11 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
     
     // First make sure that the renderer itself has the right properties for becoming a spanner.
     RenderStyle& style = descendant->style();
-    if (style.columnSpan() != ColumnSpanAll || !descendant->isBox() || descendant->isFloatingOrOutOfFlowPositioned())
+    if (style.columnSpan() != ColumnSpanAll || !is<RenderBox>(*descendant) || descendant->isFloatingOrOutOfFlowPositioned())
         return false;
 
     RenderBlock* container = descendant->containingBlock();
-    if (!container->isRenderBlockFlow() || container->childrenInline()) {
+    if (!is<RenderBlockFlow>(*container) || container->childrenInline()) {
         // Needs to be block-level.
         return false;
     }
@@ -268,7 +265,7 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
         return false;
 
     // This looks like a spanner, but if we're inside something unbreakable, it's not to be treated as one.
-    for (RenderBox* ancestor = toRenderBox(descendant)->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+    for (RenderBox* ancestor = downcast<RenderBox>(*descendant).containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         if (ancestor->isRenderFlowThread()) {
             // Don't allow any intervening non-multicol fragmentation contexts. The spec doesn't say
             // anything about disallowing this, but it's just going to be too complicated to
@@ -410,9 +407,9 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
 void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject* spanner)
 {
      // The placeholder may already have been removed, but if it hasn't, do so now.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(toRenderBox(spanner))) {
+    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(downcast<RenderBox>(spanner))) {
         placeholder->parent()->removeChild(*placeholder);
-        m_spannerMap.remove(toRenderBox(spanner));
+        m_spannerMap.remove(downcast<RenderBox>(spanner));
     }
 
     if (RenderObject* next = spanner->nextSibling()) {

@@ -37,6 +37,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
+#include "RenderListMarker.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -665,9 +666,9 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accu
     generateLineBoxRects(context);
 
     if (RenderBoxModelObject* continuation = this->continuation()) {
-        if (continuation->isBox()) {
-            RenderBox* box = toRenderBox(continuation);
-            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->locationOffset()));
+        if (is<RenderBox>(*continuation)) {
+            auto& box = downcast<RenderBox>(*continuation);
+            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box.locationOffset()));
         } else
             continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }
@@ -1468,14 +1469,14 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
     generateLineBoxRects(context);
 
     for (auto& child : childrenOfType<RenderElement>(*this)) {
-        if (child.isListMarker())
+        if (is<RenderListMarker>(child))
             continue;
         FloatPoint pos(additionalOffset);
         // FIXME: This doesn't work correctly with transforms.
         if (child.hasLayer())
             pos = child.localToContainerPoint(FloatPoint(), paintContainer);
-        else if (child.isBox())
-            pos.move(toRenderBox(child).locationOffset());
+        else if (is<RenderBox>(child))
+            pos.move(downcast<RenderBox>(child).locationOffset());
         child.addFocusRingRects(rects, flooredIntPoint(pos), paintContainer);
     }
 
@@ -1483,7 +1484,7 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
         if (continuation->isInline())
             continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + continuation->containingBlock()->location() - containingBlock()->location())), paintContainer);
         else
-            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + toRenderBox(continuation)->location() - containingBlock()->location())), paintContainer);
+            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + downcast<RenderBox>(*continuation).location() - containingBlock()->location())), paintContainer);
     }
 }
 

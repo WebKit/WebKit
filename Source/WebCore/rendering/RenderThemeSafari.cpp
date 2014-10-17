@@ -317,17 +317,17 @@ IntRect RenderThemeSafari::inflateRect(const IntRect& r, const IntSize& size, co
     return result;
 }
 
-int RenderThemeSafari::baselinePosition(const RenderObject& o) const
+int RenderThemeSafari::baselinePosition(const RenderObject& renderer) const
 {
-    if (!o.isBox())
+    if (!is<RenderBox>(renderer))
         return 0;
 
-    if (o.style().appearance() == CheckboxPart || o.style().appearance() == RadioPart) {
-        const RenderBox& box = toRenderBox(o);
+    if (renderer.style().appearance() == CheckboxPart || renderer.style().appearance() == RadioPart) {
+        const auto& box = downcast<RenderBox>(renderer);
         return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     }
 
-    return RenderTheme::baselinePosition(o);
+    return RenderTheme::baselinePosition(renderer);
 }
 
 bool RenderThemeSafari::controlSupportsTints(const RenderObject& o) const

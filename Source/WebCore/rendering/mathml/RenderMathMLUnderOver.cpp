@@ -90,8 +90,8 @@ void RenderMathMLUnderOver::layout()
 
         // Skipping the embellished op does not work for nested structures like
         // <munder><mover><mo>_</mo>...</mover> <mo>_</mo></munder>.
-        if (child->isBox())
-            stretchWidth = std::max<LayoutUnit>(stretchWidth, toRenderBox(child)->logicalWidth());
+        if (is<RenderBox>(*child))
+            stretchWidth = std::max<LayoutUnit>(stretchWidth, downcast<RenderBox>(*child).logicalWidth());
     }
 
     // Set the sizes of (possibly embellished) stretchy operator children.

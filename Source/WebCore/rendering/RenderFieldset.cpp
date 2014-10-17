@@ -130,8 +130,8 @@ RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
         if (option == IgnoreFloatingOrOutOfFlow && legend->isFloatingOrOutOfFlowPositioned())
             continue;
         
-        if (legend->node() && (legend->node()->hasTagName(legendTag)))
-            return toRenderBox(legend);
+        if (is<HTMLLegendElement>(legend->node()))
+            return downcast<RenderBox>(legend);
     }
     return nullptr;
 }

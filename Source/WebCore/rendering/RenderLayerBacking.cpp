@@ -356,7 +356,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     // baked into it, and we don't want that.
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
-        RenderBox& renderBox = toRenderBox(renderer());
+        auto& renderBox = downcast<RenderBox>(renderer());
         style.applyTransform(t, snapRectToDevicePixels(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
@@ -720,7 +720,7 @@ void RenderLayerBacking::updateGeometry()
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
         // FIXME: need to do some pixel snapping here.
-        LayoutRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
+        LayoutRect clippingBox = clipBox(downcast<RenderBox>(compAncestor->renderer()));
         graphicsLayerParentLocation = clippingBox.location();
     } else if (compAncestor)
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
@@ -729,10 +729,10 @@ void RenderLayerBacking::updateGeometry()
 
 #if PLATFORM(IOS)
     if (compAncestor && compAncestor->hasTouchScrollableOverflow()) {
-        RenderBox* renderBox = toRenderBox(&compAncestor->renderer());
-        LayoutRect paddingBox(renderBox->borderLeft(), renderBox->borderTop(),
-            renderBox->width() - renderBox->borderLeft() - renderBox->borderRight(),
-            renderBox->height() - renderBox->borderTop() - renderBox->borderBottom());
+        auto& renderBox = downcast<RenderBox>(compAncestor->renderer());
+        LayoutRect paddingBox(renderBox.borderLeft(), renderBox.borderTop(),
+            renderBox.width() - renderBox.borderLeft() - renderBox.borderRight(),
+            renderBox.height() - renderBox.borderTop() - renderBox.borderBottom());
 
         IntSize scrollOffset = compAncestor->scrolledContentOffset();
         // FIXME: pixel snap the padding box.
@@ -740,7 +740,7 @@ void RenderLayerBacking::updateGeometry()
     }
 #else
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
-        RenderBox& renderBox = toRenderBox(compAncestor->renderer());
+        auto& renderBox = downcast<RenderBox>(compAncestor->renderer());
         LayoutSize scrollOffset = compAncestor->scrolledContentOffset();
         LayoutPoint scrollOrigin(renderBox.borderLeft(), renderBox.borderTop());
         graphicsLayerParentLocation = scrollOrigin - scrollOffset;
@@ -793,7 +793,7 @@ void RenderLayerBacking::updateGeometry()
     LayoutRect clippingBox;
     if (GraphicsLayer* clipLayer = clippingLayer()) {
         // FIXME: need to do some pixel snapping here.
-        clippingBox = clipBox(toRenderBox(renderer()));
+        clippingBox = clipBox(downcast<RenderBox>(renderer()));
         clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
         clipLayer->setOffsetFromRenderer(toFloatSize(clippingBox.location()));
@@ -807,7 +807,7 @@ void RenderLayerBacking::updateGeometry()
     
     if (m_owningLayer.hasTransform()) {
         // Update properties that depend on layer dimensions.
-        FloatPoint3D transformOrigin = computeTransformOriginForPainting(toRenderBox(renderer()).borderBoxRect());
+        FloatPoint3D transformOrigin = computeTransformOriginForPainting(downcast<RenderBox>(renderer()).borderBoxRect());
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
         FloatPoint layerOffset = roundPointToDevicePixels(offsetFromParent, deviceScaleFactor);
         // Compute the anchor point, which is in the center of the renderer box unless transform-origin is set.
@@ -884,7 +884,7 @@ void RenderLayerBacking::updateGeometry()
 
     if (m_scrollingLayer) {
         ASSERT(m_scrollingContentsLayer);
-        RenderBox& renderBox = toRenderBox(renderer());
+        auto& renderBox = downcast<RenderBox>(renderer());
         LayoutRect paddingBox(renderBox.borderLeft(), renderBox.borderTop(), renderBox.width() - renderBox.borderLeft() - renderBox.borderRight(), renderBox.height() - renderBox.borderTop() - renderBox.borderBottom());
         LayoutSize scrollOffset = m_owningLayer.scrollOffset();
 
@@ -1081,8 +1081,8 @@ void RenderLayerBacking::resetContentsRect()
     m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
     
     LayoutRect contentsClippingRect;
-    if (renderer().isBox())
-        contentsClippingRect = toRenderBox(renderer()).contentBoxRect();
+    if (is<RenderBox>(renderer()))
+        contentsClippingRect = downcast<RenderBox>(renderer()).contentBoxRect();
 
     contentsClippingRect.move(contentOffsetInCompostingLayer());
     m_graphicsLayer->setContentsClippingRect(snappedIntRect(contentsClippingRect));
@@ -1243,7 +1243,7 @@ void RenderLayerBacking::positionOverflowControlsLayers()
     if (!m_owningLayer.hasScrollbars())
         return;
 
-    const IntRect borderBox = toRenderBox(renderer()).pixelSnappedBorderBoxRect();
+    const IntRect borderBox = downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect();
 
     FloatSize offsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
     if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
@@ -1594,7 +1594,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     FloatSize tileSize;
 
     RefPtr<Image> image = style.backgroundLayers()->image()->cachedImage()->image();
-    toRenderBox(renderer()).getGeometryForBackgroundImage(&renderer(), destRect, phase, tileSize);
+    downcast<RenderBox>(renderer()).getGeometryForBackgroundImage(&renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
@@ -1921,7 +1921,7 @@ LayoutRect RenderLayerBacking::contentsBox() const
     if (!is<RenderBox>(renderer()))
         return LayoutRect();
 
-    RenderBox& renderBox = downcast<RenderBox>(renderer());
+    auto& renderBox = downcast<RenderBox>(renderer());
     LayoutRect contentsRect;
 #if ENABLE(VIDEO)
     if (is<RenderVideo>(renderBox))
@@ -1957,10 +1957,10 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
 
 FloatRect RenderLayerBacking::backgroundBoxForPainting() const
 {
-    if (!renderer().isBox())
+    if (!is<RenderBox>(renderer()))
         return FloatRect();
 
-    LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(renderer()));
+    LayoutRect backgroundBox = backgroundRectForBox(downcast<RenderBox>(renderer()));
     backgroundBox.move(contentOffsetInCompostingLayer());
     return snapRectToDevicePixels(backgroundBox, deviceScaleFactor());
 }
@@ -2357,7 +2357,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 
     bool didAnimate = false;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
@@ -2406,7 +2406,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
             transformVector.insert(TransformAnimationValue::create(0, fromStyle->transform()));
             transformVector.insert(TransformAnimationValue::create(1, toStyle->transform()));
-            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
+            if (m_graphicsLayer->addAnimation(transformVector, downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final transform.
                 updateTransform(*toStyle);
                 didAnimate = true;

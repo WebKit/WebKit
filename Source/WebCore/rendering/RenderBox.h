@@ -723,31 +723,29 @@ private:
     static bool s_hadOverflowClip;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderBox, isBox())
-
 inline RenderBox* RenderBox::previousSiblingBox() const
 {
-    return toRenderBox(previousSibling());
+    return downcast<RenderBox>(previousSibling());
 }
 
 inline RenderBox* RenderBox::nextSiblingBox() const
 { 
-    return toRenderBox(nextSibling());
+    return downcast<RenderBox>(nextSibling());
 }
 
 inline RenderBox* RenderBox::parentBox() const
 {
-    return toRenderBox(parent());
+    return downcast<RenderBox>(parent());
 }
 
 inline RenderBox* RenderBox::firstChildBox() const
 {
-    return toRenderBox(firstChild());
+    return downcast<RenderBox>(firstChild());
 }
 
 inline RenderBox* RenderBox::lastChildBox() const
 {
-    return toRenderBox(lastChild());
+    return downcast<RenderBox>(lastChild());
 }
 
 inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)

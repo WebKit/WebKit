@@ -167,8 +167,8 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
             // We have to clear the override size, because as a flexbox, we
             // may have set one on the child, and we don't want to leave that
             // lying around on the child.
-            if (child->isBox())
-                toRenderBox(child)->clearOverrideSize();
+            if (is<RenderBox>(*child))
+                downcast<RenderBox>(*child).clearOverrideSize();
             child->removeFromParent();
             parent()->addChild(child, this);
             parent()->setNeedsLayoutAndPrefWidthsRecalc();

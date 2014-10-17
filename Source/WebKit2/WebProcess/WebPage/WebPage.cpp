@@ -4577,7 +4577,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
             auto pluginRenderer = plugInImageElement.renderer();
             if (!pluginRenderer || !pluginRenderer->isBox())
                 continue;
-            auto& pluginRenderBox = toRenderBox(*pluginRenderer);
+            auto& pluginRenderBox = downcast<RenderBox>(*pluginRenderer);
             if (!plugInIntersectsSearchRect(plugInImageElement))
                 continue;
 
@@ -4669,7 +4669,7 @@ bool WebPage::plugInIntersectsSearchRect(HTMLPlugInImageElement& plugInImageElem
 
 bool WebPage::plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& plugInImageElement, unsigned& candidatePlugInArea)
 {
-    auto& pluginRenderBox = toRenderBox(*(plugInImageElement.renderer()));
+    auto& pluginRenderBox = downcast<RenderBox>(*plugInImageElement.renderer());
     if (pluginRenderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || pluginRenderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
         return false;
 

@@ -226,8 +226,7 @@ Path absolutePathForRenderer(RenderObject* const o)
                     ringRect = LayoutRect();
                 currentRenderer = layerRenderer;
 
-                ASSERT(layerRenderer->isBox());
-                ringRect.intersect(toRenderBox(layerRenderer)->borderBoxRect());
+                ringRect.intersect(downcast<RenderBox>(*layerRenderer).borderBoxRect());
 
                 if (ringRect.isEmpty())
                     break;

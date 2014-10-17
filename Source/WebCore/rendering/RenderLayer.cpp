@@ -1213,18 +1213,18 @@ bool RenderLayer::updateLayerPosition()
     if (!renderer().isOutOfFlowPositioned() && renderer().parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
-        RenderElement* curr = renderer().parent();
-        while (curr && !curr->hasLayer()) {
-            if (curr->isBox() && !curr->isTableRow()) {
+        RenderElement* ancestor = renderer().parent();
+        while (ancestor && !ancestor->hasLayer()) {
+            if (is<RenderBox>(*ancestor) && !is<RenderTableRow>(*ancestor)) {
                 // Rows and cells share the same coordinate space (that of the section).
                 // Omit them when computing our xpos/ypos.
-                localPoint += toRenderBox(curr)->topLeftLocationOffset();
+                localPoint += downcast<RenderBox>(*ancestor).topLeftLocationOffset();
             }
-            curr = curr->parent();
+            ancestor = ancestor->parent();
         }
-        if (curr->isBox() && curr->isTableRow()) {
+        if (is<RenderBox>(*ancestor) && is<RenderTableRow>(*ancestor)) {
             // Put ourselves into the row coordinate space.
-            localPoint -= toRenderBox(curr)->topLeftLocationOffset();
+            localPoint -= downcast<RenderBox>(*ancestor).topLeftLocationOffset();
         }
     }
     
@@ -1239,7 +1239,7 @@ bool RenderLayer::updateLayerPosition()
         }
         
         if (renderer().isOutOfFlowPositioned() && positionedParent->renderer().isInFlowPositioned() && is<RenderInline>(positionedParent->renderer())) {
-            LayoutSize offset = downcast<RenderInline>(positionedParent->renderer()).offsetForInFlowPositionedInline(&toRenderBox(renderer()));
+            LayoutSize offset = downcast<RenderInline>(positionedParent->renderer()).offsetForInFlowPositionedInline(&downcast<RenderBox>(renderer()));
             localPoint += offset;
         }
     } else if (parent()) {
@@ -1277,7 +1277,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
         return TransformationMatrix();
 
     // Maybe fetch the perspective from the backing?
-    const IntRect borderBox = toRenderBox(renderer()).pixelSnappedBorderBoxRect();
+    const IntRect borderBox = downcast<RenderBox>(renderer()).pixelSnappedBorderBoxRect();
     const float boxWidth = borderBox.width();
     const float boxHeight = borderBox.height();
 
@@ -1302,7 +1302,7 @@ FloatPoint RenderLayer::perspectiveOrigin() const
     if (!renderer().hasTransform())
         return FloatPoint();
 
-    const LayoutRect borderBox = toRenderBox(renderer()).borderBoxRect();
+    const LayoutRect borderBox = downcast<RenderBox>(renderer()).borderBoxRect();
     const RenderStyle& style = renderer().style();
 
     return FloatPoint(floatValueForLength(style.perspectiveOriginX(), borderBox.width()),
@@ -1346,11 +1346,11 @@ static RenderLayer* parentLayerCrossFrame(const RenderLayer* layer)
 
     HTMLFrameOwnerElement* ownerElement = layer->renderer().document().ownerElement();
     if (!ownerElement)
-        return 0;
+        return nullptr;
 
     RenderElement* ownerRenderer = ownerElement->renderer();
     if (!ownerRenderer)
-        return 0;
+        return nullptr;
 
     return ownerRenderer->enclosingLayer();
 }
@@ -1358,11 +1358,11 @@ static RenderLayer* parentLayerCrossFrame(const RenderLayer* layer)
 RenderLayer* RenderLayer::enclosingScrollableLayer() const
 {
     for (RenderLayer* nextLayer = parentLayerCrossFrame(this); nextLayer; nextLayer = parentLayerCrossFrame(nextLayer)) {
-        if (nextLayer->renderer().isBox() && toRenderBox(nextLayer->renderer()).canBeScrolledAndHasScrollableArea())
+        if (is<RenderBox>(nextLayer->renderer()) && downcast<RenderBox>(nextLayer->renderer()).canBeScrolledAndHasScrollableArea())
             return nextLayer;
     }
 
-    return 0;
+    return nullptr;
 }
 
 IntRect RenderLayer::scrollableAreaBoundingBox() const
@@ -2530,7 +2530,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     // FIXME: The only case where renderer->element()->renderer() != renderer is with continuations. Do they matter here?
     // If they do it would still be better to deal with them explicitly.
     Element* element = renderer().element();
-    RenderBox* renderer = toRenderBox(element->renderer());
+    auto* renderer = downcast<RenderBox>(element->renderer());
 
     Document& document = element->document();
     if (!document.frame()->eventHandler().mousePressed())
@@ -2977,10 +2977,10 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 
 bool RenderLayer::scrollsOverflow() const
 {
-    if (!renderer().isBox())
+    if (!is<RenderBox>(renderer()))
         return false;
 
-    return toRenderBox(renderer()).scrollsOverflow();
+    return downcast<RenderBox>(renderer()).scrollsOverflow();
 }
 
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
@@ -3880,7 +3880,7 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
         return rootRelativeBounds;
 
     LayoutRect referenceBox;
-    const RenderBox& box = toRenderBox(renderer);
+    const auto& box = downcast<RenderBox>(renderer);
     switch (clippingPath.referenceBox()) {
     case ContentBox:
         referenceBox = box.contentBoxRect();
@@ -5303,14 +5303,14 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             offset -= renderer().view().frameView().scrollOffsetForFixedPosition();
         
         if (renderer().hasOverflowClip()) {
-            ClipRect newOverflowClip = toRenderBox(renderer()).overflowClipRectForChildLayers(offset, currentRenderNamedFlowFragment(), clipRectsContext.overlayScrollbarSizeRelevancy);
+            ClipRect newOverflowClip = downcast<RenderBox>(renderer()).overflowClipRectForChildLayers(offset, currentRenderNamedFlowFragment(), clipRectsContext.overlayScrollbarSizeRelevancy);
             newOverflowClip.setHasRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().isPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer().hasClip()) {
-            LayoutRect newPosClip = toRenderBox(renderer()).clipRect(offset, currentRenderNamedFlowFragment());
+            LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(offset, currentRenderNamedFlowFragment());
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -5427,14 +5427,14 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     if (renderer().hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
         if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
-            foregroundRect.intersect(toRenderBox(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment, clipRectsContext.overlayScrollbarSizeRelevancy));
+            foregroundRect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment, clipRectsContext.overlayScrollbarSizeRelevancy));
             if (renderer().style().hasBorderRadius())
                 foregroundRect.setHasRadius(true);
         }
 
         if (renderer().hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            LayoutRect newPosClip = toRenderBox(renderer()).clipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment);
+            LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -5520,7 +5520,7 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
 
     if (renderer().hasClip()) {
         // CSS clip may be larger than our border box.
-        LayoutRect cssClipRect = toRenderBox(renderer()).clipRect(toLayoutPoint(offsetFromRoot), currentRenderNamedFlowFragment());
+        LayoutRect cssClipRect = downcast<RenderBox>(renderer()).clipRect(toLayoutPoint(offsetFromRoot), currentRenderNamedFlowFragment());
         clipExceedsBounds = !clipRect.contains(cssClipRect);
     }
 
@@ -5551,9 +5551,9 @@ void RenderLayer::repaintBlockSelectionGaps()
     LayoutRect rect = m_blockSelectionGapsBounds;
     rect.move(-scrolledContentOffset());
     if (renderer().hasOverflowClip() && !usesCompositedScrolling())
-        rect.intersect(toRenderBox(renderer()).overflowClipRect(LayoutPoint(), nullptr)); // FIXME: Regions not accounted for.
+        rect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(LayoutPoint(), nullptr)); // FIXME: Regions not accounted for.
     if (renderer().hasClip())
-        rect.intersect(toRenderBox(renderer()).clipRect(LayoutPoint(), nullptr)); // FIXME: Regions not accounted for.
+        rect.intersect(downcast<RenderBox>(renderer()).clipRect(LayoutPoint(), nullptr)); // FIXME: Regions not accounted for.
     if (!rect.isEmpty())
         renderer().repaintRectangle(rect);
 }
@@ -5706,8 +5706,8 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 
     LayoutRect boundingBoxRect = localBoundingBox(flags);
 
-    if (renderer().isBox())
-        toRenderBox(renderer()).flipForWritingMode(boundingBoxRect);
+    if (is<RenderBox>(renderer()))
+        downcast<RenderBox>(renderer()).flipForWritingMode(boundingBoxRect);
     else
         renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
 
@@ -6697,7 +6697,7 @@ void RenderLayer::filterNeedsRepaint()
 
 void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, RenderNamedFlowFragment* region, LayoutRect paintDirtyRect, LayoutPoint paintOffset, PaintBehavior paintBehavior, PaintLayerFlags paintFlags)
 {
-    LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
+    LayoutRect regionContentBox = downcast<RenderBox>(region->layerOwner()).contentBoxRect();
     CurrentRenderRegionMaintainer regionMaintainer(*region);
     region->setRegionObjectsRegionStyle();
 

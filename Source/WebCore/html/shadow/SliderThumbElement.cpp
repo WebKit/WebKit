@@ -256,7 +256,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         return;
 
     // Do all the tracking math relative to the input's renderer's box.
-    RenderBox& inputRenderer = *toRenderBox(input->renderer());
+    RenderBox& inputRenderer = downcast<RenderBox>(*input->renderer());
     RenderBox& trackRenderer = *trackElement->renderBox();
 
     bool isVertical = hasVerticalAppearance(input.get());

@@ -5457,9 +5457,9 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     // a box will have a frameRect.  The placeholder will be created in setFullScreenRenderer()
     // during layout.
     auto renderer = m_fullScreenElement->renderer();
-    bool shouldCreatePlaceholder = renderer && renderer->isBox();
+    bool shouldCreatePlaceholder = is<RenderBox>(renderer);
     if (shouldCreatePlaceholder) {
-        m_savedPlaceholderFrameRect = toRenderBox(renderer)->frameRect();
+        m_savedPlaceholderFrameRect = downcast<RenderBox>(*renderer).frameRect();
         m_savedPlaceholderRenderStyle = RenderStyle::clone(&renderer->style());
     }
 

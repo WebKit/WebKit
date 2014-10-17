@@ -48,6 +48,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTable.h"
+#include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderView.h"
@@ -310,8 +311,8 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     // return the distance between the canvas origin and the left border edge 
     // of the element and stop this algorithm.
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
-        if (offsetParent->isBox() && !offsetParent->isBody() && !offsetParent->isTable())
-            referencePoint.move(-toRenderBox(offsetParent)->borderLeft(), -toRenderBox(offsetParent)->borderTop());
+        if (is<RenderBox>(*offsetParent) && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
+            referencePoint.move(-downcast<RenderBox>(*offsetParent).borderLeft(), -downcast<RenderBox>(*offsetParent).borderTop());
         if (!isOutOfFlowPositioned() || flowThreadContainingBlock()) {
             if (isRelPositioned())
                 referencePoint.move(relativePositionOffset());
@@ -321,29 +322,29 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             // CSS regions specification says that region flows should return the body element as their offsetParent.
             // Since we will bypass the body’s renderer anyway, just end the loop if we encounter a region flow (named flow thread).
             // See http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
-            auto curr = parent();
-            while (curr != offsetParent && !curr->isRenderNamedFlowThread()) {
+            auto* ancestor = parent();
+            while (ancestor != offsetParent && !is<RenderNamedFlowThread>(*ancestor)) {
                 // FIXME: What are we supposed to do inside SVG content?
                 
-                if (curr->isInFlowRenderFlowThread()) {
+                if (is<RenderMultiColumnFlowThread>(*ancestor)) {
                     // We need to apply a translation based off what region we are inside.
-                    RenderRegion* region = toRenderMultiColumnFlowThread(curr)->physicalTranslationFromFlowToRegion(referencePoint);
+                    RenderRegion* region = downcast<RenderMultiColumnFlowThread>(*ancestor).physicalTranslationFromFlowToRegion(referencePoint);
                     if (region)
                         referencePoint.moveBy(region->topLeftLocation());
                 } else if (!isOutOfFlowPositioned()) {
-                    if (curr->isBox() && !curr->isTableRow())
-                        referencePoint.moveBy(toRenderBox(curr)->topLeftLocation());
+                    if (is<RenderBox>(*ancestor) && !is<RenderTableRow>(*ancestor))
+                        referencePoint.moveBy(downcast<RenderBox>(*ancestor).topLeftLocation());
                 }
                 
-                curr = curr->parent();
+                ancestor = ancestor->parent();
             }
             
             // Compute the offset position for elements inside named flow threads for which the offsetParent was the body.
             // See https://bugs.webkit.org/show_bug.cgi?id=115899
-            if (curr->isRenderNamedFlowThread())
-                referencePoint = toRenderNamedFlowThread(curr)->adjustedPositionRelativeToOffsetParent(*this, referencePoint);
-            else if (offsetParent->isBox() && offsetParent->isBody() && !offsetParent->isPositioned())
-                referencePoint.moveBy(toRenderBox(offsetParent)->topLeftLocation());
+            if (is<RenderNamedFlowThread>(*ancestor))
+                referencePoint = downcast<RenderNamedFlowThread>(*ancestor).adjustedPositionRelativeToOffsetParent(*this, referencePoint);
+            else if (is<RenderBox>(*offsetParent) && offsetParent->isBody() && !offsetParent->isPositioned())
+                referencePoint.moveBy(downcast<RenderBox>(*offsetParent).topLeftLocation());
         }
     }
 
@@ -356,7 +357,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     RenderBlock* containingBlock = this->containingBlock();
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
-    RenderBox& enclosingClippingBox = enclosingClippingLayer ? toRenderBox(enclosingClippingLayer->renderer()) : view();
+    RenderBox& enclosingClippingBox = enclosingClippingLayer ? downcast<RenderBox>(enclosingClippingLayer->renderer()) : view();
 
     LayoutRect containerContentRect;
     if (!enclosingClippingLayer || (containingBlock != &enclosingClippingBox))
@@ -436,7 +437,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 {
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
     if (enclosingClippingLayer) {
-        RenderBox& enclosingClippingBox = toRenderBox(enclosingClippingLayer->renderer());
+        RenderBox& enclosingClippingBox = downcast<RenderBox>(enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox.overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
         clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
             enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
@@ -719,11 +720,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     LayoutRect scrolledPaintRect = rect;
     if (clippedWithLocalScrolling) {
         // Clip to the overflow area.
-        RenderBox* thisBox = toRenderBox(this);
-        context->clip(thisBox->overflowClipRect(rect.location(), currentRenderNamedFlowFragment()));
+        auto& thisBox = downcast<RenderBox>(*this);
+        context->clip(thisBox.overflowClipRect(rect.location(), currentRenderNamedFlowFragment()));
         
         // Adjust the paint rect to reflect a scrolled content box with borders at the ends.
-        IntSize offset = thisBox->scrolledContentOffset();
+        IntSize offset = thisBox.scrolledContentOffset();
         scrolledPaintRect.move(-offset);
         scrolledPaintRect.setWidth(bLeft + layer()->scrollWidth() + bRight);
         scrolledPaintRect.setHeight(borderTop() + layer()->scrollHeight() + borderBottom());
@@ -1110,7 +1111,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         // its margins. Since those were added in already, we have to factor them out when computing
         // the background positioning area.
         if (isRoot()) {
-            positioningAreaSize = toRenderBox(this)->size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = downcast<RenderBox>(*this).size() - LayoutSize(left + right, top + bottom);
             if (view().frameView().hasExtendedBackgroundRectForPainting()) {
                 LayoutRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
                 left += (marginLeft() - extendedBackgroundRect.x());

@@ -1310,8 +1310,8 @@ IntRect absoluteBoundsForLocalCaretRect(RenderObject* rendererForCaretPainting, 
         return IntRect();
 
     LayoutRect localRect(rect);
-    if (rendererForCaretPainting->isBox())
-        toRenderBox(rendererForCaretPainting)->flipForWritingMode(localRect);
+    if (is<RenderBox>(*rendererForCaretPainting))
+        downcast<RenderBox>(*rendererForCaretPainting).flipForWritingMode(localRect);
     return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 

@@ -37,10 +37,10 @@ namespace WebCore {
 void InlineElementBox::deleteLine()
 {
     if (!extracted()) {
-        if (renderer().isBox())
-            toRenderBox(renderer()).setInlineBoxWrapper(nullptr);
-        else if (renderer().isLineBreak())
-            toRenderLineBreak(renderer()).setInlineBoxWrapper(nullptr);
+        if (is<RenderBox>(renderer()))
+            downcast<RenderBox>(renderer()).setInlineBoxWrapper(nullptr);
+        else if (is<RenderLineBreak>(renderer()))
+            downcast<RenderLineBreak>(renderer()).setInlineBoxWrapper(nullptr);
     }
     delete this;
 }
@@ -48,19 +48,19 @@ void InlineElementBox::deleteLine()
 void InlineElementBox::extractLine()
 {
     setExtracted(true);
-    if (renderer().isBox())
-        toRenderBox(renderer()).setInlineBoxWrapper(nullptr);
-    else if (renderer().isLineBreak())
-        toRenderLineBreak(renderer()).setInlineBoxWrapper(nullptr);
+    if (is<RenderBox>(renderer()))
+        downcast<RenderBox>(renderer()).setInlineBoxWrapper(nullptr);
+    else if (is<RenderLineBreak>(renderer()))
+        downcast<RenderLineBreak>(renderer()).setInlineBoxWrapper(nullptr);
 }
 
 void InlineElementBox::attachLine()
 {
     setExtracted(false);
-    if (renderer().isBox())
-        toRenderBox(renderer()).setInlineBoxWrapper(this);
-    else if (renderer().isLineBreak())
-        toRenderLineBreak(renderer()).setInlineBoxWrapper(this);
+    if (is<RenderBox>(renderer()))
+        downcast<RenderBox>(renderer()).setInlineBoxWrapper(this);
+    else if (is<RenderLineBreak>(renderer()))
+        downcast<RenderLineBreak>(renderer()).setInlineBoxWrapper(this);
 }
 
 void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
@@ -69,8 +69,8 @@ void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         return;
 
     LayoutPoint childPoint = paintOffset;
-    if (renderer().isBox() && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
-        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
+    if (is<RenderBox>(renderer()) && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
+        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&downcast<RenderBox>(renderer()), childPoint);
 
     // Paint all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
@@ -97,8 +97,8 @@ bool InlineElementBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     LayoutPoint childPoint = accumulatedOffset;
-    if (renderer().isBox() && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
-        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
+    if (is<RenderBox>(renderer()) && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
+        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&downcast<RenderBox>(renderer()), childPoint);
 
     return renderer().hitTest(request, result, locationInContainer, childPoint);
 }

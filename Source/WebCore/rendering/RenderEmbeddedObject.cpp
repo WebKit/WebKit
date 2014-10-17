@@ -511,12 +511,9 @@ void RenderEmbeddedObject::layout()
     if (!child)
         return;
 
-    RenderBox* childBox = toRenderBox(child);
+    auto& childBox = downcast<RenderBox>(*child);
 
-    if (!childBox)
-        return;
-
-    if (newSize == oldSize && !childBox->needsLayout())
+    if (newSize == oldSize && !childBox.needsLayout())
         return;
     
     // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or
@@ -524,11 +521,11 @@ void RenderEmbeddedObject::layout()
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
     
-    childBox->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
-    childBox->style().setHeight(Length(newSize.height(), Fixed));
-    childBox->style().setWidth(Length(newSize.width(), Fixed));
-    childBox->setNeedsLayout(MarkOnlyThis);
-    childBox->layout();
+    childBox.setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
+    childBox.style().setHeight(Length(newSize.height(), Fixed));
+    childBox.style().setWidth(Length(newSize.width(), Fixed));
+    childBox.setNeedsLayout(MarkOnlyThis);
+    childBox.layout();
     clearChildNeedsLayout();
     
     statePusher.pop();

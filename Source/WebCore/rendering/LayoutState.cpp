@@ -142,9 +142,9 @@ LayoutState::LayoutState(RenderObject& root)
 
     if (container->hasOverflowClip()) {
         m_clipped = true;
-        RenderBox* containerBox = toRenderBox(container);
-        m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox->cachedSizeForOverflowClip());
-        m_paintOffset -= containerBox->scrolledContentOffset();
+        auto& containerBox = downcast<RenderBox>(*container);
+        m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
+        m_paintOffset -= containerBox.scrolledContentOffset();
     }
 }
 void LayoutState::clearPaginationInformation()

@@ -633,12 +633,12 @@ bool RenderThemeEfl::controlSupportsTints(const RenderObject& object) const
 
 int RenderThemeEfl::baselinePosition(const RenderObject& object) const
 {
-    if (!object.isBox())
+    if (!is<RenderBox>(object))
         return 0;
 
     if (object.style().appearance() == CheckboxPart
     ||  object.style().appearance() == RadioPart)
-        return toRenderBox(&object)->marginTop() + toRenderBox(&object)->height() - 3;
+        return downcast<RenderBox>(object).marginTop() + downcast<RenderBox>(object).height() - 3;
 
     return RenderTheme::baselinePosition(object);
 }

@@ -870,8 +870,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
 
     RenderObject* o = renderer();
     if (!o->isInline() || o->isReplaced()) {
-        RenderBox* box = toRenderBox(o);
-        point = o->localToAbsolute(LayoutPoint(box->size()), UseTransforms);
+        point = o->localToAbsolute(LayoutPoint(downcast<RenderBox>(*o).size()), UseTransforms);
         return true;
     }
 

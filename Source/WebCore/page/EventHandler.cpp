@@ -1067,9 +1067,9 @@ void EventHandler::didPanScrollStop()
 void EventHandler::startPanScrolling(RenderElement* renderer)
 {
 #if !PLATFORM(IOS)
-    if (!renderer->isBox())
+    if (!is<RenderBox>(*renderer))
         return;
-    m_autoscrollController->startPanScrolling(toRenderBox(renderer), lastKnownMousePosition());
+    m_autoscrollController->startPanScrolling(downcast<RenderBox>(renderer), lastKnownMousePosition());
     invalidateClick();
 #endif
 }

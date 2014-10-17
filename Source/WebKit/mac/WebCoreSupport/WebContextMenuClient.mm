@@ -376,12 +376,12 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
         return false;
     }
 
-    if (!renderer->isBox())
+    if (!is<RenderBox>(*renderer))
         return false;
-    RenderBox* renderBox = toRenderBox(renderer);
+    auto& renderBox = downcast<RenderBox>(*renderer);
 
-    LayoutRect layoutRect = renderBox->clientBoxRect();
-    FloatQuad floatQuad = renderBox->localToAbsoluteQuad(FloatQuad(layoutRect));
+    LayoutRect layoutRect = renderBox.clientBoxRect();
+    FloatQuad floatQuad = renderBox.localToAbsoluteQuad(FloatQuad(layoutRect));
     rect = floatQuad.boundingBox();
 
     return true;

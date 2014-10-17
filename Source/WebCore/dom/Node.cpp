@@ -2126,12 +2126,12 @@ void Node::defaultEventHandler(Event* event)
                 return;
 
             RenderObject* renderer = this->renderer();
-            while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
+            while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
                 renderer = renderer->parent();
 
             if (renderer) {
                 if (Frame* frame = document().frame())
-                    frame->eventHandler().startPanScrolling(toRenderBox(renderer));
+                    frame->eventHandler().startPanScrolling(downcast<RenderBox>(renderer));
             }
         }
 #endif
@@ -2149,7 +2149,7 @@ void Node::defaultEventHandler(Event* event)
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     } else if (is<TouchEvent>(*event) && eventNames().isTouchEventType(eventType)) {
         RenderObject* renderer = this->renderer();
-        while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()))
+        while (renderer && (!is<RenderBox>(*renderer) || !downcast<RenderBox>(*renderer).canBeScrolledAndHasScrollableArea()))
             renderer = renderer->parent();
 
         if (renderer && renderer->node()) {

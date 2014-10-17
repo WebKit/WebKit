@@ -431,8 +431,8 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
             
             // Since we're looking for the offset relative to the body, we must also
             // take into consideration the borders of the region's offsetParent.
-            if (currOffsetParent->isBox() && !currOffsetParent->isBody())
-                referencePoint.move(toRenderBox(currOffsetParent)->borderLeft(), toRenderBox(currOffsetParent)->borderTop());
+            if (is<RenderBox>(*currOffsetParent) && !currOffsetParent->isBody())
+                referencePoint.move(downcast<RenderBox>(*currOffsetParent).borderLeft(), downcast<RenderBox>(*currOffsetParent).borderTop());
             
             currObject = currOffsetParent;
         }
@@ -453,9 +453,9 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
         }
         
         if (wasComputedRelativeToOtherRegion) {
-            if (boxModelObject.isBox()) {
+            if (is<RenderBox>(boxModelObject)) {
                 // Use borderBoxRectInRegion to account for variations such as percentage margins.
-                LayoutRect borderBoxRect = toRenderBox(boxModelObject).borderBoxRectInRegion(startRegion, RenderBox::DoNotCacheRenderBoxRegionInfo);
+                LayoutRect borderBoxRect = downcast<RenderBox>(boxModelObject).borderBoxRectInRegion(startRegion, RenderBox::DoNotCacheRenderBoxRegionInfo);
                 referencePoint.move(borderBoxRect.location().x(), 0);
             }
             
@@ -1187,7 +1187,7 @@ const RenderBox* RenderFlowThread::currentActiveRenderBox() const
         return nullptr;
 
     const RenderObject* currentObject = m_activeObjectsStack.last();
-    return currentObject->isBox() ? toRenderBox(currentObject) : nullptr;
+    return is<RenderBox>(*currentObject) ? downcast<RenderBox>(currentObject) : nullptr;
 }
 
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)

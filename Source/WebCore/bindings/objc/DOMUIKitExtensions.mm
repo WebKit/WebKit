@@ -193,9 +193,8 @@ using WebCore::VisiblePosition;
 {
     RenderObject* renderer = core(self)->renderer();
     
-
-    if (renderer && renderer->isBox()) {
-        RoundedRect::Radii radii = toRenderBox(renderer)->borderRadii();
+    if (is<RenderBox>(renderer)) {
+        RoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
         return @[[NSValue valueWithSize:(FloatSize)radii.topLeft()],
                  [NSValue valueWithSize:(FloatSize)radii.topRight()],
                  [NSValue valueWithSize:(FloatSize)radii.bottomLeft()],
