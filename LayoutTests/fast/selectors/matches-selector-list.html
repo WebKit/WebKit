@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <testcaseA id="testcase1" attribute1="value1" class="bar baz bazoo" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase2" class="bar baz bazoo" attribute2="value2" attribute3="value3"></testcaseB>
+        <testcaseA id="testcase3" attribute1="value1" class="foo baz bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase4" attribute1="value1" class="foo bar bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase5" class="foo baz bazoo" attribute2="value2" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase6" attribute1="value1" class="foo bar baz" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase7" attribute1="value1" class="bar baz bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase8" attribute1="value1" class="foo baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase9" class="foo bar bazoo" attribute2="value2" attribute3="value3"></testcaseA>
+        <testcaseB id="testcase10" attribute1="value1" class="foo bar bazoo" attribute3="value3">Not empty</testcaseB>
+    </div>
+</body>
+<script>
+description('Check the ":matches(selectorList)" pseudo class with selector lists.');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", 'testcase' + expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(Number(allTestCases[i].id.substring(8))) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+// Simple selectors.
+testSelector(":matches(testcaseA)", [1, 3, 5, 7, 9]);
+testSelector(":matches(testcaseA, testcaseB)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+testSelector(":matches(#testcase1, #testcase2, #testcase3, #testcase4, #testcase5)", [1, 2, 3, 4, 5]);
+testSelector(":matches(#testcase1, #testcase2, #testcase3, #testcase4, #testcase5, #testcase6, #testcase7, #testcase8, #testcase9, #testcase10)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+testSelector(":matches(testcaseA, #testcase1, #testcase2)", [1, 2, 3, 5, 7, 9]);
+testSelector(":matches([attribute3], [attribute2=value2])", [1, 2, 5, 6, 9, 10]);
+testSelector(":matches([attribute3], [attribute2=value2], testcaseB)", [1, 2, 4, 5, 6, 8, 9, 10]);
+testSelector(":matches(.bar)", [1, 2, 4, 6, 7, 9, 10]);
+testSelector(":matches(.bar, .bazoo)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+testSelector(":matches(.foo, .bar)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+testSelector(":matches(.baz, .foo)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+// Compound selectors.
+testSelector(":matches(.bar.bazoo, .bar.baz)", [1, 2, 4, 6, 7, 9, 10]);
+testSelector(":matches(testcaseeA.bar.bazoo, .bar.baz)", [1, 2, 6, 7]);
+testSelector(":matches(testcaseB.bar, .baz.foo.bar)", [2, 4, 6, 10]);
+testSelector(":matches(.baz.foo.bar, testcaseA[attribute1^=value])", [1, 3, 6, 7]);
+testSelector(":matches(testcaseA[attribute1^=value], .foo:empty)", [1, 3, 7, 9]);
+testSelector(":matches(.foo:empty, .bar.baz)", [1, 2, 6, 7, 9]);
+
+testSelector(":matches(.bar.bazoo, .bar.baz, testcaseeA.bar.bazoo, .baz.foo.bar, testcaseA[attribute1^=value])", [1, 2, 3, 4, 6, 7, 9, 10]);
+testSelector(":matches(testcaseeA.bar.bazoo, .bar.baz, .foo:empty)", [1, 2, 6, 7, 9]);
+testSelector(":matches(testcaseB.bar, .baz.foo.bar, testcaseA[attribute1^=value])", [1, 2, 3, 4, 6, 7, 10]);
+
+// Complex selectors.
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar)", [2, 4, 6, 10]);
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value])", [1, 2, 3, 4, 6, 7, 10]);
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty)", [1, 2, 3, 4, 6, 7, 9, 10]);
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *)", [1, 2, 3, 4, 5, 6, 7, 9, 10]);
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *)", [1, 2, 3, 4, 5, 6, 7, 9, 10]);
+testSelector(":matches(html>body testcaseB.bar, html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *, testcaseA ~ *)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value])", [1, 3, 6, 7]);
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty)", [1, 3, 6, 7, 9]);
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *)", [1, 3, 5, 6, 7, 9]);
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *)", [1, 3, 5, 6, 7, 9]);
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *, testcaseA + testcaseB ~ testcaseB)", [1, 3, 4, 5, 6, 7, 8, 9, 10]);
+testSelector(":matches(html body div .baz.foo.bar, :root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *, testcaseA + testcaseB ~ testcaseB, testcaseA ~ *)", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+testSelector(":matches(:root div>testcaseA[attribute1^=value], body>div .foo:empty)", [1, 3, 7, 9]);
+testSelector(":matches(:root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *)", [1, 3, 5, 7, 9]);
+testSelector(":matches(:root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *)", [1, 3, 5, 7, 9]);
+testSelector(":matches(:root div>testcaseA[attribute1^=value], body>div .foo:empty, testcaseB + *, :root body>div testcaseB + *, testcaseA + testcaseB ~ testcaseB)", [1, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

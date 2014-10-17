@@ -1,3 +1,18 @@
+2014-10-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS Selectors Level 4: Implement :matches in SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=137393
+
+        Reviewed by Benjamin Poulain.
+
+        In this patch, we introduce initial :matches implementation.
+        In this current implementation, we don't consider pseudo elements.
+
+        Test: fast/selectors/querySelector-matches.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
 2014-10-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Introduce StackAllocator::addressOf

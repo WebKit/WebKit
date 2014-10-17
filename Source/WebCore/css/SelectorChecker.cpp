@@ -664,8 +664,16 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
             }
             break;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        // FIXME: Implement :matches.
         case CSSSelector::PseudoClassMatches:
+            for (const CSSSelector* subselector = selector->selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+                CheckingContextWithStatus subcontext(context);
+                subcontext.inFunctionalPseudoClass = true;
+                subcontext.selector = subselector;
+                subcontext.firstSelectorOfTheFragment = subselector;
+                PseudoId ignoreDynamicPseudo = NOPSEUDO;
+                if (matchRecursively(subcontext, ignoreDynamicPseudo) == SelectorMatches)
+                    return true;
+            }
             return false;
 
         case CSSSelector::PseudoClassPlaceholderShown:

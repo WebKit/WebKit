@@ -1,0 +1,25 @@
+Test queries with the :matches selectors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.querySelectorAll('#area1 > :matches(div, p)').length is 6
+PASS document.body.querySelectorAll('#area1 > :matches(p, span)').length is 2
+PASS document.body.querySelectorAll('#area1 > :matches(div, p, span)').length is 7
+PASS document.body.querySelectorAll('#area1 > :matches(:not(div), :not(p))').length is 8
+PASS document.body.querySelectorAll('#area1 > :matches(.cocoa, .cappuccino)').length is 4
+PASS document.body.querySelectorAll('#area2 :matches(p > .cocoa, p > .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area2 :matches(.cocoa, p > .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area2 :matches(div > .cocoa, p > .cappuccino)').length is 1
+PASS document.body.querySelectorAll('#area2 :matches(.cappuccino, p) > span').length is 3
+PASS document.body.querySelectorAll('#area3 :matches(.cocoa .cappuccino, .tea)').length is 3
+PASS document.body.querySelectorAll('#area3 :matches(.cocoa > .cappuccino, .tea)').length is 1
+PASS document.body.querySelectorAll('#area4 :matches(.cocoa + .cappuccino)').length is 1
+PASS document.body.querySelectorAll('#area4 :matches(.cocoa ~ .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area4 :matches(.cocoa ~ :matches(.cocoa, .cappuccino))').length is 3
+PASS document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter)').length is 0
+PASS document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter, .cocoa)').length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
