@@ -1,5 +1,11 @@
 2014-10-17  Dan Bernstein  <mitz@apple.com>
 
+        Reverted incorrect build fix attempt.
+
+        * wtf/Threading.cpp:
+
+2014-10-17  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the Yosemite build.
 
         * wtf/Threading.cpp:
