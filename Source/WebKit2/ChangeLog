@@ -1,3 +1,35 @@
+2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move touch events handling from Platform to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=137735
+
+        Reviewed by Sergio Villar Senin.
+
+        GtkTouchContextHelper was only used by WebKitWebViewBase, since
+        it's the only one that can create touch events. The code has been
+        simplified by processing the events in the view, and the native
+        touch events are now created with the native event and touch points.
+
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::touchContext): Deleted.
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent): Pass touch
+        points instead of touch context to WebEventFactory::createWebTouchEvent().
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent): Create the
+        WebTouchEvent for the given native event and points.
+        (WebKit::touchPhaseFromEvents): Deleted.
+        (WebKit::appendTouchEvent): Deleted.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (appendTouchEvent): Helper function to create a
+        WebPlatformTouchPoint for the given native event and add it to the
+        list of touch points.
+        (webkitWebViewBaseGetTouchPointForEvent): Build the touch point
+        list for the event.
+        (webkitWebViewBaseTouchEvent): Process the touch event.
+        (webkitWebViewBaseDragDataReceived): Deleted.
+
 2014-10-16  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Removing CUSTOM_PROTOCOLS guard

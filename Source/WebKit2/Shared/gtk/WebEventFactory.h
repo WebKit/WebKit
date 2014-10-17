@@ -29,7 +29,6 @@
 
 #include "WebEvent.h"
 #include <WebCore/CompositionResults.h>
-#include <WebCore/GtkTouchContextHelper.h>
 
 typedef union _GdkEvent GdkEvent;
 
@@ -40,7 +39,7 @@ public:
     static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const WebCore::GtkTouchContextHelper&);
+    static WebTouchEvent createWebTouchEvent(const GdkEvent*, const Vector<WebPlatformTouchPoint>&);
 };
 
 } // namespace WebKit

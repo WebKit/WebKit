@@ -55,7 +55,6 @@
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkClickCounter.h>
 #include <WebCore/GtkDragAndDropHelper.h>
-#include <WebCore/GtkTouchContextHelper.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
@@ -88,6 +87,7 @@ using namespace WebKit;
 using namespace WebCore;
 
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
+typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 void redirectedWindowDamagedCallback(void* data);
@@ -117,7 +117,7 @@ struct _WebKitWebViewBasePrivate {
     GUniquePtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
     WebViewBaseInputMethodFilter inputMethodFilter;
-    GtkTouchContextHelper touchContext;
+    TouchEventsMap touchEvents;
 
     GtkWindow* toplevelOnScreenWindow;
 #if !GTK_CHECK_VERSION(3, 13, 4)
@@ -741,6 +741,48 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return TRUE;
 }
 
+static void appendTouchEvent(Vector<WebPlatformTouchPoint>& touchPoints, const GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
+{
+    gdouble x, y;
+    gdk_event_get_coords(event, &x, &y);
+
+    gdouble xRoot, yRoot;
+    gdk_event_get_root_coords(event, &xRoot, &yRoot);
+
+    uint32_t identifier = GPOINTER_TO_UINT(gdk_event_get_event_sequence(event));
+    touchPoints.uncheckedAppend(WebPlatformTouchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y)));
+}
+
+static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(const GdkEvent* current, const GdkEvent* event)
+{
+    if (gdk_event_get_event_sequence(current) != gdk_event_get_event_sequence(event))
+        return WebPlatformTouchPoint::TouchStationary;
+
+    switch (current->type) {
+    case GDK_TOUCH_UPDATE:
+        return WebPlatformTouchPoint::TouchMoved;
+    case GDK_TOUCH_BEGIN:
+        return WebPlatformTouchPoint::TouchPressed;
+    case GDK_TOUCH_END:
+        return WebPlatformTouchPoint::TouchReleased;
+    default:
+        return WebPlatformTouchPoint::TouchStationary;
+    }
+}
+
+static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Vector<WebPlatformTouchPoint>& touchPoints)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    touchPoints.reserveInitialCapacity(event->type == GDK_TOUCH_END ? priv->touchEvents.size() + 1 : priv->touchEvents.size());
+
+    for (const auto& it : priv->touchEvents)
+        appendTouchEvent(touchPoints, it.value.get(), touchPointStateForEvents(it.value.get(), event));
+
+    // Touch was already removed from the TouchEventsMap, add it here.
+    if (event->type == GDK_TOUCH_END)
+        appendTouchEvent(touchPoints, event, WebPlatformTouchPoint::TouchReleased);
+}
+
 static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* event)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
@@ -748,8 +790,33 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     if (priv->authenticationDialog)
         return TRUE;
 
-    priv->touchContext.handleEvent(reinterpret_cast<GdkEvent*>(event));
-    priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), priv->touchContext));
+    GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
+    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
+
+    switch (touchEvent->type) {
+    case GDK_TOUCH_BEGIN: {
+        ASSERT(!priv->touchEvents.contains(sequence));
+        GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
+        priv->touchEvents.add(sequence, WTF::move(event));
+        break;
+    }
+    case GDK_TOUCH_UPDATE: {
+        auto it = priv->touchEvents.find(sequence);
+        ASSERT(it != priv->touchEvents.end());
+        it->value.reset(gdk_event_copy(touchEvent));
+        break;
+    }
+    case GDK_TOUCH_END:
+        ASSERT(priv->touchEvents.contains(sequence));
+        priv->touchEvents.remove(sequence);
+        break;
+    default:
+        break;
+    }
+
+    Vector<WebPlatformTouchPoint> touchPoints;
+    webkitWebViewBaseGetTouchPointsForEvent(WEBKIT_WEB_VIEW_BASE(widget), touchEvent, touchPoints);
+    priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), touchPoints));
 
     return TRUE;
 }

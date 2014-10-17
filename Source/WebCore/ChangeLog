@@ -1,3 +1,16 @@
+2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move touch events handling from Platform to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=137735
+
+        Reviewed by Sergio Villar Senin.
+
+        Remove GtkTouchContextHelper.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/GtkTouchContextHelper.cpp: Removed.
+        * platform/gtk/GtkTouchContextHelper.h: Removed.
+
 2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unused function in WorkerThreadableLoader.h 

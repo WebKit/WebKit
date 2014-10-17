@@ -31,17 +31,15 @@
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, WebCore::GtkTouchContextHelper& context)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, context))
+NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, const Vector<WebPlatformTouchPoint>& touchPoints)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, touchPoints))
     , m_nativeEvent(gdk_event_copy(event))
-    , m_touchContext(context)
 {
 }
 
 NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), event.touchContext()))
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), event.touchPoints()))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
-    , m_touchContext(event.touchContext())
 {
 }
 
