@@ -48,7 +48,6 @@ public:
 
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
-    void setNeedsDisplayInRect(const WebCore::IntRect&);
     void scheduleLayerFlush();
     void resizeRootLayer(const WebCore::IntSize&);
     bool enabled();

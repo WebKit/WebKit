@@ -216,18 +216,6 @@ void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const In
     scheduleLayerFlush();
 }
 
-void AcceleratedCompositingContext::setNeedsDisplayInRect(const IntRect& rect)
-{
-    if (!m_rootLayer)
-        return;
-    if (rect.isEmpty()) {
-        m_rootLayer->setNeedsDisplay();
-        return;
-    }
-    m_rootLayer->setNeedsDisplayInRect(rect);
-    scheduleLayerFlush();
-}
-
 void AcceleratedCompositingContext::resizeRootLayer(const IntSize& newSize)
 {
     if (!enabled())
@@ -302,8 +290,7 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     if (m_context && !m_context->makeContextCurrent())
         return;
 
-    if (!flushPendingLayerChanges())
-        return;
+    flushPendingLayerChanges();
 
     compositeLayersToContext();
 }

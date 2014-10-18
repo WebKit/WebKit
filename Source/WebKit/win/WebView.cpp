@@ -868,7 +868,7 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
 #if USE(CA)
         m_backingLayer->setNeedsDisplayInRect(dirtyRect);
 #elif USE(TEXTURE_MAPPER_GL)
-        m_acceleratedCompositingContext->setNeedsDisplayInRect(dirtyRect);
+        m_acceleratedCompositingContext->setNonCompositedContentsNeedDisplay(dirtyRect);
 #endif
         return;
     }
@@ -6792,10 +6792,9 @@ void WebView::flushPendingGraphicsLayerChanges()
     FrameView* view = coreFrame->view();
     if (!view)
         return;
-#if USE(CA)
-    if (!m_backingLayer)
+
+    if (!isAcceleratedCompositing())
         return;
-#endif
 
     view->updateLayoutAndStyleIfNeededRecursive();
 
@@ -6803,9 +6802,12 @@ void WebView::flushPendingGraphicsLayerChanges()
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)
         m_backingLayer->flushCompositingStateForThisLayerOnly();
-#endif
 
     view->flushCompositingStateIncludingSubframes();
+#elif USE(TEXTURE_MAPPER_GL)
+    if (isAcceleratedCompositing())
+        m_acceleratedCompositingContext->flushPendingLayerChanges();
+#endif
 }
 
 class EnumTextMatches : public IEnumTextMatches

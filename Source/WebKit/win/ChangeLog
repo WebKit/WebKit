@@ -1,3 +1,22 @@
+2014-10-18  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Repaint issues with accelerated compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=137850
+
+        Reviewed by Brent Fulgham.
+
+        There is sometimes missing content in accelerated compositing mode.
+        This is caused by not invalidating the non composited layer,
+        and not rendering when a flush did not complete.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::flushAndRenderLayers): Also render when flush did not complete.
+        (AcceleratedCompositingContext::setNeedsDisplayInRect): Deleted.
+        * WebCoreSupport/AcceleratedCompositingContext.h: Ditto.
+        * WebView.cpp:
+        (WebView::addToDirtyRegion): Invalidate non composited layer.
+        (WebView::flushPendingGraphicsLayerChanges): Flush layers.
+
 2014-10-17  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderBox
