@@ -41,7 +41,6 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 #include <runtime/VM.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace Inspector;
 
@@ -106,7 +105,7 @@ void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::JSValue
     WebCore::reportException(exec, exception);
 }
 
-void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>)
+void WorkerScriptDebugServer::interruptAndRunTask(std::unique_ptr<ScriptDebugServer::Task>)
 {
 }
 

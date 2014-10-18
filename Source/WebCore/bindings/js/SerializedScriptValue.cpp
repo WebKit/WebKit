@@ -2563,15 +2563,15 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<Str
         addBlobURL(string);
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray)
-    : m_arrayBufferContentsArray(arrayBufferContentsArray)
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray)
+    : m_arrayBufferContentsArray(WTF::move(arrayBufferContentsArray))
 {
     m_data.swap(buffer);
     for (auto& string : blobURLs)
         addBlobURL(string);
 }
 
-PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
+std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
     ExecState* exec, ArrayBufferArray& arrayBuffers, SerializationReturnCode& code)
 {
     for (size_t i = 0; i < arrayBuffers.size(); i++) {
@@ -2581,7 +2581,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
         }
     }
 
-    OwnPtr<ArrayBufferContentsArray> contents = adoptPtr(new ArrayBufferContentsArray(arrayBuffers.size()));
+    auto contents = std::make_unique<ArrayBufferContentsArray>(arrayBuffers.size());
     Vector<Ref<DOMWrapperWorld>> worlds;
     static_cast<WebCoreJSClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
 
@@ -2597,9 +2597,8 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
             return nullptr;
         }
     }
-    return contents.release();
+    return contents;
 }
-
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value,
                                                                 MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
@@ -2609,7 +2608,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
     Vector<String> blobURLs;
     SerializationReturnCode code = CloneSerializer::serialize(exec, value, messagePorts, arrayBuffers, blobURLs, buffer);
 
-    OwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray;
+    std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray;
 
     if (arrayBuffers && serializationDidCompleteSuccessfully(code))
         arrayBufferContentsArray = transferArrayBuffers(exec, *arrayBuffers, code);
@@ -2620,7 +2619,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
     if (!serializationDidCompleteSuccessfully(code))
         return 0;
 
-    return adoptRef(new SerializedScriptValue(buffer, blobURLs, arrayBufferContentsArray.release()));
+    return adoptRef(new SerializedScriptValue(buffer, blobURLs, WTF::move(arrayBufferContentsArray)));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string)

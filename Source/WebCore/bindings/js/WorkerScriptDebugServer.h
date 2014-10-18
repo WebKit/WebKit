@@ -50,7 +50,7 @@ public:
     void addListener(Inspector::ScriptDebugListener*);
     void removeListener(Inspector::ScriptDebugListener*, bool skipRecompile);
 
-    void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
+    void interruptAndRunTask(std::unique_ptr<ScriptDebugServer::Task>);
 
 private:
     virtual ListenerSet& getListeners() override { return m_listeners; }

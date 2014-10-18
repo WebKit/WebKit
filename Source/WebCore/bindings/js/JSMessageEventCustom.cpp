@@ -97,10 +97,10 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     const String lastEventIdArg = exec->argument(5).toString(exec)->value(exec);
     DOMWindow* sourceArg = JSDOMWindow::toWrapped(exec->argument(6));
     std::unique_ptr<MessagePortArray> messagePorts;
-    OwnPtr<ArrayBufferArray> arrayBuffers;
+    std::unique_ptr<ArrayBufferArray> arrayBuffers;
     if (!exec->argument(7).isUndefinedOrNull()) {
         messagePorts = std::make_unique<MessagePortArray>();
-        arrayBuffers = adoptPtr(new ArrayBufferArray);
+        arrayBuffers = std::make_unique<ArrayBufferArray>();
         fillMessagePortArray(exec, exec->argument(7), *messagePorts, *arrayBuffers);
         if (exec->hadException())
             return jsUndefined();

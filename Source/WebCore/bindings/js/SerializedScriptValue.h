@@ -109,16 +109,16 @@ private:
     typedef Vector<JSC::ArrayBufferContents> ArrayBufferContentsArray;
     static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
-    static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(JSC::ExecState*, ArrayBufferArray&, SerializationReturnCode&);
+    static std::unique_ptr<ArrayBufferContentsArray> transferArrayBuffers(JSC::ExecState*, ArrayBufferArray&, SerializationReturnCode&);
     void addBlobURL(const String&);
 
     SerializedScriptValue(const Vector<unsigned char>&);
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs);
-    SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray>);
+    SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>);
 
     Vector<unsigned char> m_data;
-    OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
+    std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     Vector<Vector<uint16_t>> m_blobURLs;
 };
 

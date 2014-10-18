@@ -1,3 +1,29 @@
+2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr in WebCore/bindings
+        https://bugs.webkit.org/show_bug.cgi?id=137808
+
+        Reviewed by Andreas Kling.
+
+        Clean up PassOwnPtr|OwnPtr in WebCore/bindings by using std::unique_ptr, std::make_unique
+        and WTF::move.
+
+        No new tests, no behavior changes.
+
+        * bindings/generic/ActiveDOMCallback.h:
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::interruptAndRunTask):
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::interruptAndDispatchInspectorCommands):
+
 2014-10-16  Roger Fong  <roger_fong@apple.com>
 
         Calling glReadPixels with BGRA format on an NVIDIA machine with an opaque context returns the wrong alpha values.
