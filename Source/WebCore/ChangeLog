@@ -1,3 +1,22 @@
+2014-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Use Fast enumeration consistently in WebFontCache.mm
+        https://bugs.webkit.org/show_bug.cgi?id=137791
+
+        Reviewed by Darin Adler.
+
+        Use fast enumeration consistently in WebFontCache.mm as this results in
+        more efficient, concise and safer code.
+
+        No new tests, no behavior change.
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache getTraits:inFamily:]):
+        Reserve Vector capacity before the loop as we know how many traits we
+        are going to append. Also use uncheckedAppend() for performance.
+
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]):
+
 2014-10-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Tables with <colgroups> are not reporting table column headers

@@ -146,18 +146,15 @@ static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desir
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    NSEnumerator *e = [[fontManager availableFontFamilies] objectEnumerator];
     NSString *availableFamily;
-    while ((availableFamily = [e nextObject])) {
+    for (availableFamily in [fontManager availableFontFamilies]) {
         if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
             break;
     }
 
     if (!availableFamily) {
         // Match by PostScript name.
-        NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
-        NSString *availableFont;
-        while ((availableFont = [availableFonts nextObject])) {
+        for (NSString *availableFont in [fontManager availableFonts]) {
             if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
                 NSFont *font = [NSFont fontWithName:availableFont size:10];
                 NSInteger weight = [fontManager weightOfFont:font];
@@ -168,15 +165,13 @@ static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desir
         return;
     }
 
-    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];    
-    unsigned n = [fonts count];
-    unsigned i;
-    for (i = 0; i < n; i++) {
-        NSArray *fontInfo = [fonts objectAtIndex:i];
+    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];
+    traitsMasks.reserveCapacity([fonts count]);
+    for (NSArray *fontInfo in fonts) {
         // Array indices must be hard coded because of lame AppKit API.
         NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
-        traitsMasks.append(toTraitsMask(fontTraits, fontWeight));
+        traitsMasks.uncheckedAppend(toTraitsMask(fontTraits, fontWeight));
     }
 }
 
@@ -242,12 +237,8 @@ static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desir
     NSFontTraitMask chosenTraits = 0;
     NSString *chosenFullName = 0;
 
-    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];    
-    unsigned n = [fonts count];
-    unsigned i;
-    for (i = 0; i < n; i++) {
-        NSArray *fontInfo = [fonts objectAtIndex:i];
-
+    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];
+    for (NSArray *fontInfo in fonts) {
         // Array indices must be hard coded because of lame AppKit API.
         NSString *fontFullName = [fontInfo objectAtIndex:0];
         NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
