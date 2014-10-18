@@ -87,6 +87,33 @@ private:
         m_insertionSet.execute(block);
     }
     
+    inline unsigned indexOfNode(Node* node, unsigned indexToSearchFrom)
+    {
+        unsigned index = indexToSearchFrom;
+        while (index) {
+            if (m_block->at(index) == node)
+                break;
+            index--;
+        }
+        ASSERT(m_block->at(index) == node);
+        return index;
+    }
+
+    inline unsigned indexOfFirstNodeOfExitOrigin(CodeOrigin& originForExit, unsigned indexToSearchFrom)
+    {
+        unsigned index = indexToSearchFrom;
+        ASSERT(m_block->at(index)->origin.forExit == originForExit);
+        while (index) {
+            index--;
+            if (m_block->at(index)->origin.forExit != originForExit) {
+                index++;
+                break;
+            }
+        }
+        ASSERT(m_block->at(index)->origin.forExit == originForExit);
+        return index;
+    }
+    
     void fixupNode(Node* node)
     {
         NodeType op = node->op();
@@ -943,7 +970,7 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
             break;
         }
             
@@ -1710,7 +1737,20 @@ private:
     void insertCheck(unsigned indexInBlock, Node* node)
     {
         observeUseKindOnNode<useKind>(node);
-        m_insertionSet.insertNode(
+        CodeOrigin& checkedNodeOrigin = node->origin.forExit;
+        CodeOrigin& currentNodeOrigin = m_currentNode->origin.forExit;
+        if (currentNodeOrigin == checkedNodeOrigin) {
+            // The checked node is within the same bytecode. Hence, the earliest
+            // position we can insert the check is right after the checked node.
+            indexInBlock = indexOfNode(node, indexInBlock);
+            indexInBlock++;
+        } else {
+            // The checked node is from a preceding bytecode. Hence, the earliest
+            // position we can insert the check is at the start of the current
+            // bytecode.
+            indexInBlock = indexOfFirstNodeOfExitOrigin(currentNodeOrigin, indexInBlock);
+        }
+        m_insertionSet.insertOutOfOrderNode(
             indexInBlock, SpecNone, Check, m_currentNode->origin, Edge(node, useKind));
     }
 
