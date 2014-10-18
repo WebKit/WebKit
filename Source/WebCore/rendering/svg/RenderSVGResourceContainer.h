@@ -75,8 +75,6 @@ private:
     HashSet<RenderLayer*> m_clientLayers;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceContainer, isSVGResourceContainer())
-
 inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document& document, const AtomicString& id)
 {
     if (id.isEmpty())

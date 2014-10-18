@@ -125,14 +125,13 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
 
 void RenderLayer::FilterInfo::removeReferenceFilterClients()
 {
-    for (size_t i = 0, size = m_externalSVGReferences.size(); i < size; ++i)
-        m_externalSVGReferences[i]->removeClient(this);
+    for (auto& resourceHandle : m_externalSVGReferences)
+        resourceHandle->removeClient(this);
     m_externalSVGReferences.clear();
-    for (size_t i = 0, size = m_internalSVGReferences.size(); i < size; ++i) {
-        Element* filter = m_internalSVGReferences[i].get();
+    for (const auto& filter : m_internalSVGReferences) {
         if (!filter->renderer())
             continue;
-        toRenderSVGResourceContainer(*filter->renderer()).removeClientRenderLayer(&m_layer);
+        downcast<RenderSVGResourceContainer>(*filter->renderer()).removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();
 }

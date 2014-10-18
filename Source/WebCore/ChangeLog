@@ -1,5 +1,78 @@
 2014-10-17  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for all SVG RenderObjects
+        https://bugs.webkit.org/show_bug.cgi?id=137840
+
+        Reviewed by Benjamin Poulain.
+
+        Use is<>() / downcast<>() for all SVG RenderObjects and clean up the
+        surrounding code.
+
+        No new tests, no behaviro change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsPath):
+        (WebCore::AccessibilityRenderObject::elementPath):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addResourceForClientInvalidation):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::collectLayoutAttributes):
+        (WebCore::RenderSVGText::subtreeChildWillBeRemoved):
+        (WebCore::RenderSVGText::subtreeTextDidChange):
+        (WebCore::updateFontInAllDescendants):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        (WebCore::SVGRenderSupport::pushMappingToContainer):
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::bufferForeground):
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resolveCycles):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::renderSVGText):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::didAttachRenderers):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        (WebCore::SVGSVGElement::currentViewBoxRect):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::containerSize):
+
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
         Avoid unnecessary isSVGFont() check in SimpleFontData::applyTransforms()
         https://bugs.webkit.org/show_bug.cgi?id=137836
 

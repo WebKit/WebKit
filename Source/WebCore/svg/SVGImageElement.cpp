@@ -143,12 +143,12 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    auto renderer = this->renderer();
+    auto* renderer = this->renderer();
     if (!renderer)
         return;
 
     if (isLengthAttribute) {
-        if (toRenderSVGImage(renderer)->updateImageViewport())
+        if (downcast<RenderSVGImage>(*renderer).updateImageViewport())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
@@ -175,7 +175,7 @@ bool SVGImageElement::haveLoadedRequiredResources()
 
 void SVGImageElement::didAttachRenderers()
 {
-    if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
+    if (auto* imageObj = downcast<RenderSVGImage>(renderer())) {
         if (imageObj->imageResource().hasImage())
             return;
 

@@ -258,8 +258,8 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
         writeNameValuePair(ts, "transform", renderer.localTransform());
     writeIfNotDefault(ts, "image rendering", style.imageRendering(), RenderStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity", style.opacity(), RenderStyle::initialOpacity());
-    if (renderer.isSVGShape()) {
-        const auto& shape = toRenderSVGShape(renderer);
+    if (is<RenderSVGShape>(renderer)) {
+        const auto& shape = downcast<RenderSVGShape>(renderer);
 
         Color fallbackColor;
         if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor)) {

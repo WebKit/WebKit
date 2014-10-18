@@ -345,7 +345,7 @@ void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
 bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBuffer)
 {
     ASSERT(m_paintInfo);
-    ASSERT(m_renderer->isSVGImage());
+    ASSERT(is<RenderSVGImage>(*m_renderer));
     FloatRect boundingBox = m_renderer->objectBoundingBox();
 
     // Invalidate an existing buffer if the scale is not correct.
@@ -364,7 +364,7 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
             bufferedRenderingContext->translate(-boundingBox.x(), -boundingBox.y());
             PaintInfo bufferedInfo(*m_paintInfo);
             bufferedInfo.context = bufferedRenderingContext;
-            toRenderSVGImage(m_renderer)->paintForeground(bufferedInfo);
+            downcast<RenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);
         } else
             return false;
     }

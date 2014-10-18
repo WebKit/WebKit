@@ -111,7 +111,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
-    RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
+    auto* renderer = downcast<RenderSVGShape>(this->renderer());
     if (!renderer)
         return;
 

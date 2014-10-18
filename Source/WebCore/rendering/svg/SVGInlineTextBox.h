@@ -35,7 +35,7 @@ class SVGInlineTextBox final : public InlineTextBox {
 public:
     explicit SVGInlineTextBox(RenderSVGInlineText&);
 
-    RenderSVGInlineText& renderer() const { return toRenderSVGInlineText(InlineTextBox::renderer()); }
+    RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(InlineTextBox::renderer()); }
 
     virtual float virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }

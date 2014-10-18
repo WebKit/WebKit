@@ -122,8 +122,6 @@ private:
     bool m_hasBoxDecorations : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGRoot, isSVGRoot())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGRoot, isSVGRoot())

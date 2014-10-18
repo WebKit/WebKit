@@ -125,8 +125,8 @@ void SVGResourcesCycleSolver::resolveCycles()
         m_allResources.add(resource);
 
     // If we're a resource, add ourselves to the HashSet.
-    if (m_renderer.isSVGResourceContainer())
-        m_allResources.add(&toRenderSVGResourceContainer(m_renderer));
+    if (is<RenderSVGResourceContainer>(m_renderer))
+        m_allResources.add(&downcast<RenderSVGResourceContainer>(m_renderer));
 
     ASSERT(!m_allResources.isEmpty());
 

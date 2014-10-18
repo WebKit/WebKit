@@ -117,7 +117,7 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
     if (isLengthAttribute)
         updateRelativeLengthsInformation();
 
-    RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
+    auto* renderer = downcast<RenderSVGShape>(this->renderer());
     if (!renderer)
         return;
 

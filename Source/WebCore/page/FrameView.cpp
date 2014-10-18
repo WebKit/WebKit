@@ -590,7 +590,7 @@ void FrameView::adjustViewSize()
     setContentsSize(size);
 }
 
-void FrameView::applyOverflowToViewport(RenderElement* o, ScrollbarMode& hMode, ScrollbarMode& vMode)
+void FrameView::applyOverflowToViewport(RenderElement* renderer, ScrollbarMode& hMode, ScrollbarMode& vMode)
 {
     // Handle the overflow:hidden/scroll case for the body/html elements.  WinIE treats
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
@@ -603,13 +603,13 @@ void FrameView::applyOverflowToViewport(RenderElement* o, ScrollbarMode& hMode, 
 
     bool overrideHidden = frame().isMainFrame() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
-    EOverflow overflowX = o->style().overflowX();
-    EOverflow overflowY = o->style().overflowY();
+    EOverflow overflowX = renderer->style().overflowX();
+    EOverflow overflowY = renderer->style().overflowY();
 
-    if (o->isSVGRoot()) {
+    if (is<RenderSVGRoot>(*renderer)) {
         // FIXME: evaluate if we can allow overflow for these cases too.
         // Overflow is always hidden when stand-alone SVG documents are embedded.
-        if (toRenderSVGRoot(o)->isEmbeddedThroughFrameContainingSVGDocument()) {
+        if (downcast<RenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument()) {
             overflowX = OHIDDEN;
             overflowY = OHIDDEN;
         }
@@ -651,7 +651,7 @@ void FrameView::applyOverflowToViewport(RenderElement* o, ScrollbarMode& hMode, 
             ;
     }
 
-    m_viewportRenderer = o;
+    m_viewportRenderer = renderer;
 }
 
 void FrameView::applyPaginationToViewport()
@@ -1088,8 +1088,8 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     if (!contentBox)
         return;
 
-    RenderSVGRoot* svgRoot = toRenderSVGRoot(contentBox);
-    if (svgRoot->everHadLayout() && !svgRoot->needsLayout())
+    auto& svgRoot = downcast<RenderSVGRoot>(*contentBox);
+    if (svgRoot.everHadLayout() && !svgRoot.needsLayout())
         return;
 
     // If the embedded SVG document appears the first time, the ownerRenderer has already finished

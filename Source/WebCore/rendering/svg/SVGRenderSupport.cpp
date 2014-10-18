@@ -91,8 +91,8 @@ void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const 
     // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
     // to map an element from SVG viewport coordinates to CSS box coordinates.
     // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
-    if (parent.isSVGRoot())
-        transformState.applyTransform(toRenderSVGRoot(parent).localToBorderBoxTransform());
+    if (is<RenderSVGRoot>(parent))
+        transformState.applyTransform(downcast<RenderSVGRoot>(parent).localToBorderBoxTransform());
 
     transformState.applyTransform(renderer.localToParentTransform());
 
@@ -110,9 +110,9 @@ const RenderElement* SVGRenderSupport::pushMappingToContainer(const RenderElemen
     // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
     // to map an element from SVG viewport coordinates to CSS box coordinates.
     // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
-    if (parent.isSVGRoot()) {
+    if (is<RenderSVGRoot>(parent)) {
         TransformationMatrix matrix(renderer.localToParentTransform());
-        matrix.multiply(toRenderSVGRoot(parent).localToBorderBoxTransform());
+        matrix.multiply(downcast<RenderSVGRoot>(parent).localToBorderBoxTransform());
         geometryMap.push(&renderer, matrix);
     } else
         geometryMap.push(&renderer, renderer.localToParentTransform());
@@ -160,7 +160,7 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
             continue;
 
         // Don't include elements in the union that do not render.
-        if (current->isSVGShape() && toRenderSVGShape(current)->isRenderingDisabled())
+        if (is<RenderSVGShape>(*current) && downcast<RenderSVGShape>(*current).isRenderingDisabled())
             continue;
 
         const AffineTransform& transform = current->localToParentTransform();

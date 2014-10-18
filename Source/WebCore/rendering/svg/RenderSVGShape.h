@@ -133,8 +133,6 @@ private:
     bool m_needsTransformUpdate : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGShape, isSVGShape())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGShape, isSVGShape())

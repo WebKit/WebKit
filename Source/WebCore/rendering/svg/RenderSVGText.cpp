@@ -117,8 +117,8 @@ const RenderObject* RenderSVGText::pushMappingToContainer(const RenderLayerModel
 static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLayoutAttributes*>& attributes)
 {
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
-        if (descendant->isSVGInlineText())
-            attributes.append(toRenderSVGInlineText(descendant)->layoutAttributes());
+        if (is<RenderSVGInlineText>(*descendant))
+            attributes.append(downcast<RenderSVGInlineText>(*descendant).layoutAttributes());
     }
 }
 
@@ -254,19 +254,19 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
         return;
 
     // This logic requires that the 'text' child is still inserted in the tree.
-    RenderSVGInlineText* text = toRenderSVGInlineText(child);
+    auto& text = downcast<RenderSVGInlineText>(*child);
     bool stopAfterNext = false;
-    SVGTextLayoutAttributes* previous = 0;
-    SVGTextLayoutAttributes* next = 0;
+    SVGTextLayoutAttributes* previous = nullptr;
+    SVGTextLayoutAttributes* next = nullptr;
     if (!documentBeingDestroyed())
-        findPreviousAndNextAttributes(this, text, stopAfterNext, previous, next);
+        findPreviousAndNextAttributes(this, &text, stopAfterNext, previous, next);
 
     if (previous)
         affectedAttributes.append(previous);
     if (next)
         affectedAttributes.append(next);
 
-    size_t position = m_layoutAttributes.find(text->layoutAttributes());
+    size_t position = m_layoutAttributes.find(text.layoutAttributes());
     ASSERT(position != notFound);
     m_layoutAttributes.remove(position);
 }
@@ -326,17 +326,17 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
 
     checkLayoutAttributesConsistency(this, m_layoutAttributes);
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
-        if (descendant->isSVGInlineText())
-            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(*descendant));
+        if (is<RenderSVGInlineText>(*descendant))
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
     }
 }
 
-static inline void updateFontInAllDescendants(RenderObject* start, SVGTextLayoutAttributesBuilder* builder = 0)
+static inline void updateFontInAllDescendants(RenderObject* start, SVGTextLayoutAttributesBuilder* builder = nullptr)
 {
     for (RenderObject* descendant = start; descendant; descendant = descendant->nextInPreOrder(start)) {
-        if (!descendant->isSVGInlineText())
+        if (!is<RenderSVGInlineText>(*descendant))
             continue;
-        RenderSVGInlineText& text = toRenderSVGInlineText(*descendant);
+        auto& text = downcast<RenderSVGInlineText>(*descendant);
         text.updateScaledFont();
         if (builder)
             builder->rebuildMetricsForTextRenderer(text);

@@ -423,7 +423,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
         SVGLengthContext lengthContext(this);
         transform.translate(x().value(lengthContext), y().value(lengthContext));
     } else if (mode == SVGLocatable::ScreenScope) {
-        if (RenderObject* renderer = this->renderer()) {
+        if (RenderElement* renderer = this->renderer()) {
             FloatPoint location;
             float zoomFactor = 1;
 
@@ -431,8 +431,8 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             // to map an element from SVG viewport coordinates to CSS box coordinates.
             // RenderSVGRoot's localToAbsolute method expects CSS box coordinates.
             // We also need to adjust for the zoom level factored into CSS coordinates (bug #96361).
-            if (renderer->isSVGRoot()) {
-                location = toRenderSVGRoot(renderer)->localToBorderBoxTransform().mapPoint(location);
+            if (is<RenderSVGRoot>(*renderer)) {
+                location = downcast<RenderSVGRoot>(*renderer).localToBorderBoxTransform().mapPoint(location);
                 zoomFactor = 1 / renderer->style().effectiveZoom();
             }
 
@@ -546,9 +546,9 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
     FloatRect useViewBox = viewBox();
     if (!useViewBox.isEmpty())
         return useViewBox;
-    if (!renderer() || !renderer()->isSVGRoot())
+    if (!is<RenderSVGRoot>(renderer()))
         return FloatRect();
-    if (!toRenderSVGRoot(renderer())->isEmbeddedThroughSVGImage())
+    if (!downcast<RenderSVGRoot>(*renderer()).isEmbeddedThroughSVGImage())
         return FloatRect();
 
     Length intrinsicWidth = this->intrinsicWidth();

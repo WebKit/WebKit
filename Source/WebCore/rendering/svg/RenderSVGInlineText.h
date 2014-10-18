@@ -69,8 +69,6 @@ private:
     SVGTextLayoutAttributes m_layoutAttributes;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGInlineText, isSVGInlineText())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInlineText, isSVGInlineText())

@@ -93,7 +93,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
     SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return;
-    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
+    auto* renderer = downcast<RenderSVGRoot>(rootElement->renderer());
     if (!renderer)
         return;
 
@@ -109,7 +109,7 @@ IntSize SVGImage::containerSize() const
     if (!rootElement)
         return IntSize();
 
-    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
+    auto* renderer = downcast<RenderSVGRoot>(rootElement->renderer());
     if (!renderer)
         return IntSize();
 

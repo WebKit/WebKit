@@ -90,8 +90,6 @@ private:
     std::unique_ptr<ImageBuffer> m_bufferedForeground;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGImage, isSVGImage())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isSVGImage())

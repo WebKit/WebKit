@@ -96,8 +96,8 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     bool markForInvalidation = mode != ParentOnlyInvalidation;
 
     for (auto* client : m_clients) {
-        if (client->isSVGResourceContainer()) {
-            toRenderSVGResourceContainer(*client).removeAllClientsFromCache(markForInvalidation);
+        if (is<RenderSVGResourceContainer>(*client)) {
+            downcast<RenderSVGResourceContainer>(*client).removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 

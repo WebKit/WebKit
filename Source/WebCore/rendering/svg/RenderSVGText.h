@@ -105,8 +105,6 @@ private:
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderSVGText, isSVGText())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGText, isSVGText())

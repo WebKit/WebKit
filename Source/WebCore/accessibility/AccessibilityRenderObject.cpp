@@ -852,16 +852,13 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     
 bool AccessibilityRenderObject::supportsPath() const
 {
-    if (m_renderer && m_renderer->isSVGShape())
-        return true;
-    
-    return false;
+    return is<RenderSVGShape>(m_renderer);
 }
 
 Path AccessibilityRenderObject::elementPath() const
 {
-    if (m_renderer && m_renderer->isSVGShape() && toRenderSVGShape(m_renderer)->hasPath()) {
-        Path path = toRenderSVGShape(m_renderer)->path();
+    if (is<RenderSVGShape>(m_renderer) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
+        Path path = downcast<RenderSVGShape>(*m_renderer).path();
         
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {

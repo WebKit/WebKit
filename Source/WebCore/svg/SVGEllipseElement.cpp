@@ -118,7 +118,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
+    auto* renderer = downcast<RenderSVGShape>(this->renderer());
     if (!renderer)
         return;
 

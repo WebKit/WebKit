@@ -52,11 +52,11 @@ void RenderSVGGradientStop::styleDidChange(StyleDifference diff, const RenderSty
     if (!gradient)
         return;
 
-    RenderObject* renderer = gradient->renderer();
+    RenderElement* renderer = gradient->renderer();
     if (!renderer)
         return;
 
-    toRenderSVGResourceContainer(*renderer).removeAllClientsFromCache();
+    downcast<RenderSVGResourceContainer>(*renderer).removeAllClientsFromCache();
 }
 
 void RenderSVGGradientStop::layout()

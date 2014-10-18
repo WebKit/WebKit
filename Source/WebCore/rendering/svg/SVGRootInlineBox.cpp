@@ -42,7 +42,7 @@ SVGRootInlineBox::SVGRootInlineBox(RenderSVGText& renderSVGText)
 
 RenderSVGText& SVGRootInlineBox::renderSVGText()
 {
-    return toRenderSVGText(blockFlow());
+    return downcast<RenderSVGText>(blockFlow());
 }
 
 void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
@@ -76,14 +76,13 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
 void SVGRootInlineBox::computePerCharacterLayoutInformation()
 {
-    RenderSVGText* textRoot = toRenderSVGText(&blockFlow());
-    ASSERT(textRoot);
+    auto& textRoot = downcast<RenderSVGText>(blockFlow());
 
-    Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot->layoutAttributes();
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot.layoutAttributes();
     if (layoutAttributes.isEmpty())
         return;
 
-    if (textRoot->needsReordering())
+    if (textRoot.needsReordering())
         reorderValueLists(layoutAttributes);
 
     // Perform SVG text layout phase two (see SVGTextLayoutEngine for details).
