@@ -220,7 +220,7 @@ public:
     Ref<FontGlyphs> glyphs;
 };
 
-typedef HashMap<unsigned, OwnPtr<FontGlyphsCacheEntry>, AlreadyHashed> FontGlyphsCache;
+typedef HashMap<unsigned, std::unique_ptr<FontGlyphsCacheEntry>, AlreadyHashed> FontGlyphsCache;
 
 static bool operator==(const FontGlyphsCacheKey& a, const FontGlyphsCacheKey& b)
 {
@@ -302,12 +302,12 @@ static PassRef<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& 
     makeFontGlyphsCacheKey(key, fontDescription, fontSelector.get());
 
     unsigned hash = computeFontGlyphsCacheHash(key);
-    FontGlyphsCache::AddResult addResult = fontGlyphsCache().add(hash, PassOwnPtr<FontGlyphsCacheEntry>());
+    FontGlyphsCache::AddResult addResult = fontGlyphsCache().add(hash, std::unique_ptr<FontGlyphsCacheEntry>());
     if (!addResult.isNewEntry && addResult.iterator->value->key == key)
         return addResult.iterator->value->glyphs.get();
 
-    OwnPtr<FontGlyphsCacheEntry>& newEntry = addResult.iterator->value;
-    newEntry = adoptPtr(new FontGlyphsCacheEntry(WTF::move(key), FontGlyphs::create(fontSelector)));
+    std::unique_ptr<FontGlyphsCacheEntry>& newEntry = addResult.iterator->value;
+    newEntry = std::make_unique<FontGlyphsCacheEntry>(WTF::move(key), FontGlyphs::create(fontSelector));
     PassRef<FontGlyphs> glyphs = newEntry->glyphs.get();
 
     static const unsigned unreferencedPruneInterval = 50;

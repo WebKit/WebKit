@@ -99,7 +99,7 @@ const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *
 {
     if (key && !CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort"))) {
         if (!m_derivedFontData)
-            m_derivedFontData = DerivedFontData::create(isCustomFont());
+            m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
         if (!m_derivedFontData->compositeFontReferences)
             m_derivedFontData->compositeFontReferences = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, NULL));
         else {

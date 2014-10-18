@@ -52,7 +52,7 @@ public:
     TextLayout(RenderText* text, const Font& font, float xPos)
         : m_font(font)
         , m_run(constructTextRun(text, font, xPos))
-        , m_controller(adoptPtr(new ComplexTextController(&m_font, m_run, true)))
+        , m_controller(std::make_unique<ComplexTextController>(&m_font, m_run, true))
     {
     }
 
@@ -81,7 +81,7 @@ private:
     // ComplexTextController has only references to its Font and TextRun so they must be kept alive here.
     Font m_font;
     TextRun m_run;
-    OwnPtr<ComplexTextController> m_controller;
+    std::unique_ptr<ComplexTextController> m_controller;
 };
 
 PassOwnPtr<TextLayout> Font::createLayout(RenderText* text, float xPos, bool collapseWhiteSpace) const

@@ -181,7 +181,7 @@ bool SimpleFontData::isSegmented() const
 PassRefPtr<SimpleFontData> SimpleFontData::verticalRightOrientationFontData() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->verticalRightOrientation) {
         FontPlatformData verticalRightPlatformData(m_platformData);
         verticalRightPlatformData.setOrientation(Horizontal);
@@ -193,7 +193,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::verticalRightOrientationFontData() co
 PassRefPtr<SimpleFontData> SimpleFontData::uprightOrientationFontData() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->uprightOrientation)
         m_derivedFontData->uprightOrientation = create(m_platformData, isCustomFont(), false, true);
     return m_derivedFontData->uprightOrientation;
@@ -202,7 +202,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::uprightOrientationFontData() const
 PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFontSizeMultiplier);
 
@@ -212,7 +212,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescripti
 PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, emphasisMarkFontSizeMultiplier);
 
@@ -222,7 +222,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescri
 PassRefPtr<SimpleFontData> SimpleFontData::brokenIdeographFontData() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->brokenIdeograph) {
         m_derivedFontData->brokenIdeograph = create(m_platformData, isCustomFont(), false);
         m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
@@ -233,7 +233,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::brokenIdeographFontData() const
 PassRefPtr<SimpleFontData> SimpleFontData::nonSyntheticItalicFontData() const
 {
     if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->nonSyntheticItalic) {
         FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
 #if PLATFORM(COCOA)
@@ -266,11 +266,6 @@ const OpenTypeMathData* SimpleFontData::mathData() const
             m_mathData.clear();
     }
     return m_mathData.get();
-}
-
-PassOwnPtr<SimpleFontData::DerivedFontData> SimpleFontData::DerivedFontData::create(bool forCustomFont)
-{
-    return adoptPtr(new DerivedFontData(forCustomFont));
 }
 
 SimpleFontData::DerivedFontData::~DerivedFontData()

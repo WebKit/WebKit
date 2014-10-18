@@ -38,7 +38,6 @@
 #endif
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
@@ -302,7 +301,10 @@ private:
     GlyphData m_missingGlyphData;
 
     struct DerivedFontData {
-        static PassOwnPtr<DerivedFontData> create(bool forCustomFont);
+        explicit DerivedFontData(bool custom)
+            : forCustomFont(custom)
+        {
+        }
         ~DerivedFontData();
 
         bool forCustomFont;
@@ -315,15 +317,9 @@ private:
 #if PLATFORM(COCOA)
         mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
 #endif
-
-    private:
-        DerivedFontData(bool custom)
-            : forCustomFont(custom)
-        {
-        }
     };
 
-    mutable OwnPtr<DerivedFontData> m_derivedFontData;
+    mutable std::unique_ptr<DerivedFontData> m_derivedFontData;
 
 #if USE(CG) || USE(CAIRO)
     float m_syntheticBoldOffset;

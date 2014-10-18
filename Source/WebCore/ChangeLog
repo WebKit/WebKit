@@ -1,5 +1,26 @@
 2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Apply std::unique_ptr to FooFont classes
+        https://bugs.webkit.org/show_bug.cgi?id=137769
+
+        Reviewed by Andreas Kling.
+
+        As a step to use std::unique_ptr, this patch applies std::unique_ptr to Font classes.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::retrieveOrAddCachedFontGlyphs):
+        (WebCore::Font::createLayout):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::DerivedFontData::create):
+        * platform/graphics/SimpleFontData.h:
+        Remove create() factory function because public ctor and std::make_unique<> can replace it.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::Font::createLayout):
+
+2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Use std::unique_ptr in WebCore/bindings
         https://bugs.webkit.org/show_bug.cgi?id=137808
 
