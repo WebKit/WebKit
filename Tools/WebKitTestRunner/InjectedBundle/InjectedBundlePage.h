@@ -169,6 +169,7 @@ private:
     void dumpDOMAsWebArchive(WKBundleFrameRef, WTF::StringBuilder&);
 
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
+    String platformResponseMimeType(WKURLResponseRef);
 
     void frameDidChangeLocation(WKBundleFrameRef, bool shouldDump = false);
 

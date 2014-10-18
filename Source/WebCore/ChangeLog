@@ -1,3 +1,20 @@
+2014-10-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r173356): Safari can't install a profile, gets 'Download Failed error
+        https://bugs.webkit.org/show_bug.cgi?id=137855
+
+        Reviewed by Dan Bernstein.
+
+        We lose the sniffed MIME type for the response when synthesizing an NSURLResponse. Sniffing requires
+        backchannel data that the synthesized response doesn't have.
+
+        Test: http/tests/mime/mime-type-sniff.html
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse):
+
+            When synthesizing NSURLResponse explicitly set the Content-type header to the sniffed type.
+
 2014-10-18  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Use Fast enumeration consistently in WebFontCache.mm

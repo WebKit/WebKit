@@ -66,6 +66,9 @@ void ResourceResponse::initNSURLResponse() const
         [headerDictionary setObject:(NSString *)header.value forKey:(NSString *)header.key];
 
     m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary]);
+
+    // Mime type sniffing doesn't work with a synthesized response.
+    [m_nsResponse.get() _setMIMEType:(NSString *)m_mimeType];
 }
 
 #if USE(CFNETWORK)

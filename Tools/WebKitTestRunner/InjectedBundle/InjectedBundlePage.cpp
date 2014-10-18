@@ -1131,7 +1131,15 @@ void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKB
     stringBuilder.append(toWTFString(urlString));
     stringBuilder.appendLiteral(" has MIME type ");
     stringBuilder.append(toWTFString(mimeTypeString));
+
+    String platformMimeType = platformResponseMimeType(response);
+    if (!platformMimeType.isEmpty() && platformMimeType != toWTFString(mimeTypeString)) {
+        stringBuilder.appendLiteral(" but platform response has ");
+        stringBuilder.append(platformMimeType);
+    }
+
     stringBuilder.append('\n');
+
     InjectedBundle::shared().outputText(stringBuilder.toString());
 }
 
@@ -1866,6 +1874,11 @@ void InjectedBundlePage::dumpBackForwardList(StringBuilder& stringBuilder)
 #if !PLATFORM(COCOA)
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
 {
+}
+
+String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
+{
+    return String();
 }
 #endif
 

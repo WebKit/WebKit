@@ -30,6 +30,7 @@
 #import <WebKit/WKBundleFrame.h>
 #import <WebKit/WKBundlePagePrivate.h>
 #import <WebKit/WKURLCF.h>
+#import <WebKit/WKURLResponseNS.h>
 
 namespace WTR {
 
@@ -46,6 +47,12 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
 #if PLATFORM(IOS)
     WKBundlePageSetUseTestingViewportConfiguration(page(), true);
 #endif
+}
+
+String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef response)
+{
+    RetainPtr<NSURLResponse> nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
+    return [nsURLResponse.get() MIMEType];
 }
 
 } // namespace WTR
