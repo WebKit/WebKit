@@ -1,3 +1,17 @@
+2014-10-18  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] build break occurs on webkit efl build.
+        https://bugs.webkit.org/show_bug.cgi?id=137844
+
+        Reviewed by Gyuyoung Kim.
+
+        As local variable elementAddressRegisterIndex is assigned but not used, there is build break for the webkit efl.
+
+        No new tests because it's just to fix build break.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+
 2014-10-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Apply std::unique_ptr to FooFont classes

@@ -1698,7 +1698,7 @@ void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpLi
     // because they are used by the matcher itself.
     // To simplify things for now, we just always preserve them on the stack.
     unsigned elementAddressRegisterIndex = std::numeric_limits<unsigned>::max();
-    unsigned elementToTestIndex = std::numeric_limits<unsigned>::max();
+    unsigned elementToTestIndex = elementAddressRegisterIndex;
     bool isElementToMatchOnStack = false;
     if (selectorList.clobberElementAddressRegister) {
         if (elementToMatch != elementAddressRegister) {
