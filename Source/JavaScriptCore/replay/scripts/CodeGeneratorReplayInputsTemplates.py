@@ -209,7 +209,7 @@ bool EncodingTraits<${enumName}>::decodeValue(EncodedValue& encodedValue, ${enum
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
 ${decodeCases}
     }
 
@@ -224,7 +224,7 @@ ${decodeCases}
     }""")
 
     EnumDecodeCase = (
-    """        if (enumString == "${enumStringValue}")
+    """        ${branchKeyword} (enumString == "${enumStringValue}")
             enumValue = static_cast<${qualifiedEnumName}>(enumValue | ${qualifiedEnumValue});""")
 
     InputClassImplementation = (

@@ -129,15 +129,61 @@ bool EncodingTraits<WebCore::MouseButton>::decodeValue(EncodedValue& encodedValu
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
         if (enumString == "NoButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::NoButton);
-        if (enumString == "LeftButton")
+        else if (enumString == "LeftButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::LeftButton);
-        if (enumString == "MiddleButton")
+        else if (enumString == "MiddleButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::MiddleButton);
-        if (enumString == "RightButton")
+        else if (enumString == "RightButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::RightButton);
+    }
+
+    return true;
+}
+
+EncodedValue EncodingTraits<WebCore::PlatformEvent::Type>::encodeValue(const WebCore::PlatformEvent::Type& enumValue)
+{
+    EncodedValue encodedValue = EncodedValue::createArray();
+    if (enumValue & WebCore::PlatformEvent::Mouse) {
+        encodedValue.append<String>(ASCIILiteral("Mouse"));
+        if (enumValue == WebCore::PlatformEvent::Mouse)
+            return encodedValue;
+    }
+    if (enumValue & WebCore::PlatformEvent::Key) {
+        encodedValue.append<String>(ASCIILiteral("Key"));
+        if (enumValue == WebCore::PlatformEvent::Key)
+            return encodedValue;
+    }
+    if (enumValue & WebCore::PlatformEvent::Touch) {
+        encodedValue.append<String>(ASCIILiteral("Touch"));
+        if (enumValue == WebCore::PlatformEvent::Touch)
+            return encodedValue;
+    }
+    if (enumValue & WebCore::PlatformEvent::Wheel) {
+        encodedValue.append<String>(ASCIILiteral("Wheel"));
+        if (enumValue == WebCore::PlatformEvent::Wheel)
+            return encodedValue;
+    }
+    return encodedValue;
+}
+
+bool EncodingTraits<WebCore::PlatformEvent::Type>::decodeValue(EncodedValue& encodedValue, WebCore::PlatformEvent::Type& enumValue)
+{
+    Vector<String> enumStrings;
+    if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
+        return false;
+
+    for (const String& enumString : enumStrings) {
+        if (enumString == "Mouse")
+            enumValue = static_cast<WebCore::PlatformEvent::Type>(enumValue | WebCore::PlatformEvent::Mouse);
+        else if (enumString == "Key")
+            enumValue = static_cast<WebCore::PlatformEvent::Type>(enumValue | WebCore::PlatformEvent::Key);
+        else if (enumString == "Touch")
+            enumValue = static_cast<WebCore::PlatformEvent::Type>(enumValue | WebCore::PlatformEvent::Touch);
+        else if (enumString == "Wheel")
+            enumValue = static_cast<WebCore::PlatformEvent::Type>(enumValue | WebCore::PlatformEvent::Wheel);
     }
 
     return true;

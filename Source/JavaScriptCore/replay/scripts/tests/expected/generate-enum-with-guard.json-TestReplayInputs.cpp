@@ -86,7 +86,7 @@ bool EncodingTraits<WebCore::PlatformWheelEventPhase>::decodeValue(EncodedValue&
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
         if (enumString == "PlatformWheelEventPhaseNone")
             enumValue = static_cast<WebCore::PlatformWheelEventPhase>(enumValue | WebCore::PlatformWheelEventPhaseNone);
     }

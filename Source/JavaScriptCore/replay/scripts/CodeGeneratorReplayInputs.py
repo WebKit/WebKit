@@ -454,8 +454,8 @@ class InputsModel:
             if not isinstance(json['values'], list) or len(_type.values) == 0:
                 raise ParseException("Malformed specification: enum %s does not supply a list of values" % type_name)
 
-            if _type.is_enum() and "storage" not in json:
-                raise ParseException("Could not parse enum %s: C-style enums must also specify their storage type so they can be forward declared." % type_name)
+            if _type.is_enum() and enclosing_class is None and type_storage is None:
+                raise ParseException("Could not parse enum %s: C-style enums not enclosed by a class must specify their storage type so they can be forward declared." % type_name)
 
         self.types.append(_type)
 
@@ -835,8 +835,10 @@ class Generator:
 
         # Generate body for decode.
         decodeLines = []
-        for _value in _type.values:
+        for i, _value in enumerate(_type.values):
+
             template_arguments = {
+                'branchKeyword': "else if" if i > 0 else "if",
                 'enumStringValue': _value,
                 'qualifiedEnumValue': "%s%s" % (enum_prefix, _value),
                 'qualifiedEnumName': _type.type_name(qualified=should_qualify_type)
@@ -845,8 +847,9 @@ class Generator:
 
         for guard, guard_values in _type.guard_values_map.iteritems():
             guardedLines = []
-            for guard_value in guard_values:
+            for i, guard_value in enumerate(guard_values):
                 template_arguments = {
+                    'branchKeyword': "else if" if i > 0 else "if",
                     'enumStringValue': guard_value,
                     'qualifiedEnumValue': "%s%s" % (enum_prefix, guard_value),
                     'qualifiedEnumName': _type.type_name(qualified=should_qualify_type)

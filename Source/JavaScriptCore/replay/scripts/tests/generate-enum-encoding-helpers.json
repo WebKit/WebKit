@@ -14,6 +14,13 @@
                 "flags": ["ENUM"],
                 "values": ["NoButton", "LeftButton", "MiddleButton", "RightButton"],
                 "header": "platform/PlatformMouseEvent.h"
+            },
+            {
+                "name": "Type", "mode": "SCALAR",
+                "flags": ["ENUM"],
+                "enclosing_class": "PlatformEvent",
+                "values": ["Mouse", "Key", "Touch", "Wheel"],
+                "header": "platform/PlatformEvent.h"
             }
         ]
     },

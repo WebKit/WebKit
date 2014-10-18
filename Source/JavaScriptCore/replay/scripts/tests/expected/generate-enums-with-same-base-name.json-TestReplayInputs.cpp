@@ -107,10 +107,10 @@ bool EncodingTraits<WebCore::FormData1::Type>::decodeValue(EncodedValue& encoded
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
         if (enumString == "Text")
             enumValue = static_cast<WebCore::FormData1::Type>(enumValue | WebCore::FormData1::Text);
-        if (enumString == "Blob")
+        else if (enumString == "Blob")
             enumValue = static_cast<WebCore::FormData1::Type>(enumValue | WebCore::FormData1::Blob);
     }
 
@@ -162,10 +162,10 @@ bool EncodingTraits<PlatformEvent1::Type>::decodeValue(EncodedValue& encodedValu
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
         if (enumString == "Mouse")
             enumValue = static_cast<PlatformEvent1::Type>(enumValue | PlatformEvent1::Mouse);
-        if (enumString == "Keyboard")
+        else if (enumString == "Keyboard")
             enumValue = static_cast<PlatformEvent1::Type>(enumValue | PlatformEvent1::Keyboard);
     }
 

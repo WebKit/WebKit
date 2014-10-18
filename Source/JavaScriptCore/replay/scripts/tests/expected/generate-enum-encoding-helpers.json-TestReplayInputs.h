@@ -33,6 +33,7 @@
 #if ENABLE(WEB_REPLAY)
 #include "InternalNamespaceHeaderIncludeDummy.h"
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
+#include <platform/PlatformEvent.h>
 
 namespace WebCore {
 enum MouseButton : unsigned;
@@ -67,6 +68,13 @@ template<> struct EncodingTraits<WebCore::MouseButton> {
 
     static EncodedValue encodeValue(const WebCore::MouseButton& value);
     static bool decodeValue(EncodedValue&, WebCore::MouseButton& value);
+};
+
+template<> struct EncodingTraits<WebCore::PlatformEvent::Type> {
+    typedef WebCore::PlatformEvent::Type DecodedType;
+
+    static EncodedValue encodeValue(const WebCore::PlatformEvent::Type& value);
+    static bool decodeValue(EncodedValue&, WebCore::PlatformEvent::Type& value);
 };
 } // namespace JSC
 

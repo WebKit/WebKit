@@ -1,3 +1,40 @@
+2014-10-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: code generator shouldn't complain about enums without a storage type if they are in an enclosing scope
+        https://bugs.webkit.org/show_bug.cgi?id=137084
+
+        Reviewed by Joseph Pecoraro.
+
+        In order to generate encode/decode method declarations without pulling in lots of headers,
+        the generator must forward declare enums (for enum classes or enums with explicit sizes).
+
+        Change the generator to not require an explicit size if an enum is declared inside a struct
+        or class definition. In that case, it must pull in headers since scoped enums can't be
+        forward declared.
+
+        This patch also fixes some chained if-statements that should be if-else statements.
+
+        Test: updated replay/scripts/tests/generate-enum-encoding-helpers.json to cover the new case.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (InputsModel.parse_type_with_framework_name.is):
+        (InputsModel.parse_type_with_framework_name.is.must):
+        (Generator.generate_enum_trait_implementation):
+        (InputsModel.parse_type_with_framework_name): Deleted.
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py:
+        * replay/scripts/tests/expected/fail-on-c-style-enum-no-storage.json-error:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp:
+        (JSC::EncodingTraits<WebCore::MouseButton>::decodeValue):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp:
+        (JSC::EncodingTraits<WebCore::MouseButton>::decodeValue):
+        (JSC::EncodingTraits<WebCore::PlatformEvent::Type>::encodeValue):
+        (JSC::EncodingTraits<WebCore::PlatformEvent::Type>::decodeValue):
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp:
+        (JSC::EncodingTraits<WebCore::FormData1::Type>::decodeValue):
+        (JSC::EncodingTraits<PlatformEvent1::Type>::decodeValue):
+        * replay/scripts/tests/generate-enum-encoding-helpers.json: Added a new input to cover this case.
+
 2014-10-17  Mark Lam  <mark.lam@apple.com>
 
         Web Process crash when starting the web inspector after r174025.

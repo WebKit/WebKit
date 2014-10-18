@@ -119,19 +119,19 @@ bool EncodingTraits<WebCore::MouseButton>::decodeValue(EncodedValue& encodedValu
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
         return false;
 
-    for (String enumString : enumStrings) {
+    for (const String& enumString : enumStrings) {
         if (enumString == "NoButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::NoButton);
-        if (enumString == "LeftButton")
+        else if (enumString == "LeftButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::LeftButton);
-        if (enumString == "MiddleButton")
+        else if (enumString == "MiddleButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::MiddleButton);
-        if (enumString == "RightButton")
+        else if (enumString == "RightButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::RightButton);
 #if ENABLE(SIDE_BUTTONS)
         if (enumString == "LeftSideButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::LeftSideButton);
-        if (enumString == "RightSideButton")
+        else if (enumString == "RightSideButton")
             enumValue = static_cast<WebCore::MouseButton>(enumValue | WebCore::RightSideButton);
 #endif // ENABLE(SIDE_BUTTONS)
 #if PLATFORM(WINDOWS)
