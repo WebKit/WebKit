@@ -76,13 +76,13 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
         vImage_Buffer src;
         src.height = height;
         src.width = width;
-        src.rowBytes = width*4;
+        src.rowBytes = width * 4;
         src.data = pixels;
 
         vImage_Buffer dest;
         dest.height = height;
         dest.width = width;
-        dest.rowBytes = width*4;
+        dest.rowBytes = width * 4;
         dest.data = pixels;
 
         // Swap pixel channels from RGBA to BGRA.

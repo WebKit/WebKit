@@ -1,3 +1,10 @@
+2014-10-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Style fix following r174855.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+
 2014-10-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r173356): Safari can't install a profile, gets 'Download Failed error
