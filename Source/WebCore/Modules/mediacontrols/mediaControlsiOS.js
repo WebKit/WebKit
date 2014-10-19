@@ -54,6 +54,8 @@ ControllerIOS.prototype = {
         this.listenFor(this.base, 'touchstart', this.handleWrapperTouchStart);
         this.stopListeningFor(this.base, 'mousemove', this.handleWrapperMouseMove);
         this.stopListeningFor(this.base, 'mouseout', this.handleWrapperMouseOut);
+
+        this.listenFor(document, 'visibilitychange', this.handleVisibilityChange);
     },
 
     shouldHaveStartPlaybackButton: function() {
@@ -177,7 +179,7 @@ ControllerIOS.prototype = {
         else
             this.removeStartPlaybackControls();
 
-        this.setShouldListenForPlaybackTargetAvailabilityEvent(type !== ControllerIOS.StartPlaybackControls);
+        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
 
     addStartPlaybackControls: function() {
@@ -207,6 +209,16 @@ ControllerIOS.prototype = {
 
     configureFullScreenControls: function() {
         // Do nothing
+    },
+
+    hideControls: function() {
+        Controller.prototype.hideControls.call(this);
+        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
+    },
+
+    showControls: function() {
+        Controller.prototype.showControls.call(this);
+        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
 
     updateControls: function() {
@@ -347,6 +359,10 @@ ControllerIOS.prototype = {
         this.video.style.removeProperty('-webkit-user-select');
     },
 
+    handleVisibilityChange: function(event) {
+        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
+    },
+
     isFullScreen: function()
     {
         return this.video.webkitDisplayingFullscreen;
@@ -431,10 +447,23 @@ ControllerIOS.prototype = {
         return true;
     },
 
+    updateShouldListenForPlaybackTargetAvailabilityEvent: function() {
+        var shouldListen = true;
+        if (this.video.error)
+            shouldListen = false;
+        if (this.controlsType === ControllerIOS.StartPlaybackControls)
+            shouldListen = false;
+        if (!this.isAudio() && !this.video.paused && this.controlsAreHidden())
+            shouldListen = false;
+        if (document.hidden)
+            shouldListen = false;
+
+        this.setShouldListenForPlaybackTargetAvailabilityEvent(shouldListen);
+    },
+
     updateStatusDisplay: function(event)
     {
-        if (this.video.error)
-            setShouldListenForPlaybackTargetAvailabilityEvent(false);
+        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
         Controller.prototype.updateStatusDisplay.call(this, event);
     },

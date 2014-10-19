@@ -262,6 +262,10 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 
 - (void)stopMonitoringAirPlayRoutes
 {
+    if (!_airPlayPresenceRoutingController)
+        return;
+
+    [_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
     _airPlayPresenceRoutingController = nil;
 }
 
