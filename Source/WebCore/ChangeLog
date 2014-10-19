@@ -1,3 +1,29 @@
+2014-10-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r174073.
+
+    2014-09-29  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] Optimize media controls AirPlay discovery
+            https://bugs.webkit.org/show_bug.cgi?id=137180
+
+            Reviewed by Darin Adler.
+        
+            AirPlay discovery mode uses increases power consumption, so don't enable it when there
+            is no chance an AirPlay target picker will be useful.
+
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS): Initialize isListeningForPlaybackTargetAvailabilityEvent.
+            (ControllerIOS.prototype.addVideoListeners): Don't enable register wireless playback event
+                listeners, it isn't possible to show the target picker until there is an inline controller.
+            (ControllerIOS.prototype.removeVideoListeners): Call setShouldListenForPlaybackTargetAvailabilityEvent.
+            (ControllerIOS.prototype.setControlsType): Add wireless event listers on when not showing 
+                the one button controller.
+            (ControllerIOS.prototype.updateStatusDisplay): Unregister wireless event listeners when the
+                media element is in an error state.
+            (ControllerIOS.prototype.setShouldListenForPlaybackTargetAvailabilityEvent): New, add or
+                remove event listeners.
+
 2014-10-03  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r174277.

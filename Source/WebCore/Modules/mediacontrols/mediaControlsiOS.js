@@ -7,6 +7,7 @@ function ControllerIOS(root, video, host)
 {
     this.hasWirelessPlaybackTargets = false;
     this._pageScaleFactor = 1;
+    this.isListeningForPlaybackTargetAvailabilityEvent = false;
     Controller.call(this, root, video, host);
 
     this.updateWirelessTargetAvailable();
@@ -29,11 +30,6 @@ ControllerIOS.prototype = {
 
         this.listenFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.listenFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
-
-        if (window.WebKitPlaybackTargetAvailabilityEvent) {
-            this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
-            this.listenFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
-        }
     },
 
     removeVideoListeners: function() {
@@ -42,10 +38,7 @@ ControllerIOS.prototype = {
         this.stopListeningFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.stopListeningFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
 
-        if (window.WebKitPlaybackTargetAvailabilityEvent) {
-            this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
-            this.stopListeningFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
-        }
+        this.setShouldListenForPlaybackTargetAvailabilityEvent(false);
     },
 
     createBase: function() {
@@ -183,6 +176,8 @@ ControllerIOS.prototype = {
             this.addStartPlaybackControls();
         else
             this.removeStartPlaybackControls();
+
+        this.setShouldListenForPlaybackTargetAvailabilityEvent(type !== ControllerIOS.StartPlaybackControls);
     },
 
     addStartPlaybackControls: function() {
@@ -438,6 +433,8 @@ ControllerIOS.prototype = {
 
     updateStatusDisplay: function(event)
     {
+        if (this.video.error)
+            setShouldListenForPlaybackTargetAvailabilityEvent(false);
         this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
         Controller.prototype.updateStatusDisplay.call(this, event);
     },
@@ -446,6 +443,24 @@ ControllerIOS.prototype = {
     {
         this.updateControls();
         Controller.prototype.setPlaying.call(this, isPlaying);
+    },
+
+    setShouldListenForPlaybackTargetAvailabilityEvent: function(shouldListen)
+    {
+        if (!window.WebKitPlaybackTargetAvailabilityEvent || this.isListeningForPlaybackTargetAvailabilityEvent == shouldListen)
+            return;
+
+        if (shouldListen && (this.shouldHaveStartPlaybackButton() || this.video.error))
+            return;
+
+        this.isListeningForPlaybackTargetAvailabilityEvent = shouldListen;
+        if (shouldListen) {
+            this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+            this.listenFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
+        } else {
+            this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+            this.stopListeningFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
+        }
     },
 
     get pageScaleFactor() {
