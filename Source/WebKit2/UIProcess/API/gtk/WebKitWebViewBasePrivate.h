@@ -28,6 +28,7 @@
 #ifndef WebKitWebViewBasePrivate_h
 #define WebKitWebViewBasePrivate_h
 
+#include "DragAndDropHandler.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebInspectorProxy.h"
 #include "WebKitPrivate.h"
@@ -41,7 +42,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebKit::WebContext*, Web
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<WebKit::ShareableBitmap> dragImage);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
@@ -73,5 +73,9 @@ void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, GtkWidget* aut
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
+
+#if ENABLE(DRAG_SUPPORT)
+WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);
+#endif
 
 #endif // WebKitWebViewBasePrivate_h
