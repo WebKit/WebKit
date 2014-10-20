@@ -129,6 +129,9 @@
     <ClCompile Include="..\assembler\MacroAssembler.cpp">
       <Filter>assembler</Filter>
     </ClCompile>
+    <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp">
+      <Filter>assembler</Filter>
+    </ClCompile>
     <ClCompile Include="..\builtins\BuiltinExecutables.cpp">
       <Filter>builtins</Filter>
     </ClCompile>
@@ -3033,9 +3036,6 @@
     <ClInclude Include="..\runtime\VMEntryScope.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp">
-      <Filter>assembler</Filter>
-    </ClCompile>
     <ClInclude Include="..\runtime\IntendedStructureChain.h">
       <Filter>runtime</Filter>
     </ClInclude>

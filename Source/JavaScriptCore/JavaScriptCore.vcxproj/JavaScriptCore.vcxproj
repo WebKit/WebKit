@@ -304,7 +304,6 @@
     <ClCompile Include="..\API\OpaqueJSString.cpp" />
     <ClCompile Include="..\assembler\LinkBuffer.cpp" />
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
-    <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
     <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
     <ClCompile Include="..\bindings\ScriptObject.cpp" />
@@ -623,8 +622,10 @@
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\Reg.cpp" />
     <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
+    <ClCompile Include="..\jit\RegisterSet.cpp" />
     <ClCompile Include="..\jit\Repatch.cpp" />
     <ClCompile Include="..\jit\ScratchRegisterAllocator.cpp" />
+    <ClCompile Include="..\jit\TempRegisterSet.cpp" />
     <ClCompile Include="..\jit\ThunkGenerators.cpp" />
     <ClCompile Include="..\llint\LLIntCLoop.cpp" />
     <ClCompile Include="..\llint\LLIntData.cpp" />
@@ -876,6 +877,7 @@
     <ClInclude Include="..\API\JSAPIWrapperObject.h" />
     <ClInclude Include="..\API\JSBase.h" />
     <ClInclude Include="..\API\JSBasePrivate.h" />
+    <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
     <ClInclude Include="..\API\JSCallbackConstructor.h" />
     <ClInclude Include="..\API\JSCallbackFunction.h" />
     <ClInclude Include="..\API\JSCallbackObject.h" />
@@ -1349,14 +1351,12 @@
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
-    <ClCompile Include="..\jit\RegisterSet.cpp" />
     <ClInclude Include="..\jit\Reg.h" />
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />
     <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
     <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
-    <ClCompile Include="..\jit\TempRegisterSet.cpp" />
     <ClInclude Include="..\jit\TempRegisterSet.h" />
     <ClInclude Include="..\jit\ThunkGenerator.h" />
     <ClInclude Include="..\jit\ThunkGenerators.h" />

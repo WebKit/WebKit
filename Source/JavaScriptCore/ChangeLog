@@ -1,3 +1,19 @@
+2014-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Fix placement of a few items in vcxproj ItemGroups.
+        <https://webkit.org/b/137886>
+
+        Reviewed by Geoffrey Garen.
+
+        https://webkit.org/b/137873 is likely a cut-and-paste error that manifested
+        because we had ClCompile and ClInclude entries mixed up in the wrong ItemGroups.
+        We should fix these so that ClCompile entries are in the ClCompile ItemGroup,
+        and ClInclude entries in the ClInclude ItemGroup.  This will help reduce the
+        chance of future cut-and-paste errors of this nature.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows Build Fix after r174892.
