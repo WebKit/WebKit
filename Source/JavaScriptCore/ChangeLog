@@ -1,5 +1,12 @@
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed add back copyright line that was accidentally removed.
+
+        * inspector/scripts/codegen/generator_templates.py:
+        (GeneratorTemplates):
+
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: InspectorBackendCommands should include when to activate particular domains
         https://bugs.webkit.org/show_bug.cgi?id=137753
 
