@@ -1,3 +1,22 @@
+2014-10-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update the <link>'s link status
+        https://bugs.webkit.org/show_bug.cgi?id=137861
+
+        Reviewed by Chris Dumez.
+
+        * fast/css/link-basics-expected.html: Added.
+        * fast/css/link-basics.html: Added.
+        * fast/selectors/link-basics-expected.txt: Added.
+        * fast/selectors/link-basics-xhtml-expected.txt: Added.
+        * fast/selectors/link-basics-xhtml.xhtml: Added.
+        * fast/selectors/link-basics.html: Added.
+        * fast/selectors/resources/html-link-type-tests.js: Added.
+        (testHTMLElement):
+        (testHTMLTagsForLink):
+        * fast/selectors/webkit-any-link-basics-expected.txt: Added.
+        * fast/selectors/webkit-any-link-basics.html: Added.
+
 2014-10-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r173356): Safari can't install a profile, gets 'Download Failed error

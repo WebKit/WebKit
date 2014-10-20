@@ -1,0 +1,819 @@
+Test the :link pseudo class on various elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing a
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing abbr
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing acronym
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing address
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing applet
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing area
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing article
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing aside
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing audio
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing b
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing base
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing basefont
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing bdi
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing bdo
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing bgsound
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing big
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing blockquote
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing body
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing br
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing button
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing canvas
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing caption
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing center
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing cite
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing code
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing col
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing colgroup
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing command
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing webkitShadowContent
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing datalist
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing dd
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing del
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing details
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing dfn
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing dir
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing div
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing dl
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing dt
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing em
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing embed
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing fieldset
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing figcaption
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing figure
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing font
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing footer
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing form
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing frame
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing frameset
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h1
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h2
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h3
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h4
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h5
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing h6
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing head
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing header
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing hgroup
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing hr
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing html
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing i
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing iframe
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing image
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing img
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing input
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing ins
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing isindex
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing kbd
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing keygen
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing label
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing layer
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing legend
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing li
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing link
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is true
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing listing
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing main
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing map
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing mark
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing marquee
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing menu
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing meta
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing meter
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing nav
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing nobr
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing noembed
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing noframes
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing nolayer
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing object
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing ol
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing optgroup
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing option
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing output
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing p
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing param
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing plaintext
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing pre
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing progress
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing q
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing rb
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing rp
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing rt
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing rtc
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing ruby
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing s
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing samp
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing script
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing section
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing select
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing small
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing source
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing span
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing strike
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing strong
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing style
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing sub
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing summary
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing sup
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing table
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing tbody
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing td
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing template
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing textarea
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing tfoot
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing th
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing thead
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing title
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing tr
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing track
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing tt
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing u
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing ul
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing var
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing video
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing wbr
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing xmp
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+Testing noscript
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS document.getElementById("target").matches(":link") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

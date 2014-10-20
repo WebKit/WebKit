@@ -1,3 +1,24 @@
+2014-10-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update the <link>'s link status
+        https://bugs.webkit.org/show_bug.cgi?id=137861
+
+        Reviewed by Chris Dumez.
+
+        In the latest HTML spec, <link> has the link status
+        if it has a 'href' attribute, exactly like <a> and <area>:
+            https://html.spec.whatwg.org/multipage/scripting.html#selector-link
+
+        This patch updates WebKit accordingly.
+
+        Tests: fast/css/link-basics.html
+               fast/selectors/link-basics-xhtml.xhtml
+               fast/selectors/link-basics.html
+               fast/selectors/webkit-any-link-basics.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Optimize cookiesForDOM() by filtering and serializing cookies in a single pass

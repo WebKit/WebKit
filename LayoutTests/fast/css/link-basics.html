@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test styling with the :link selector</title>
+    <style>
+        :link {
+            color: lime;
+        }
+        area, link {
+            display: block;
+        }
+        :matches(area, link)::before {
+            content: "WebKit";
+        }
+        :matches(area, link)[href]::before {
+            content: "GREEN";
+        }
+    </style>
+</head>
+<body>
+    <p>Test styling with the :link selector. Any type the text is <em>GREEN</em>, its color should be green.</p>
+    <p><a>WebKit</a> <a href=" ">GREEN</a> <a href="http://www.webkit.org/notvisited.html">GREEN</a></p>
+    <p><link> <link href=" "> <link href="http://www.webkit.org/notvisited.html"></p>
+    <p><area> <area href=" "> <area href="http://www.webkit.org/notvisited.html"></p>
+</body>
+</html>
