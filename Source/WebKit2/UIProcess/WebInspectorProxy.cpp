@@ -388,6 +388,13 @@ static bool isMainOrTestInspectorPage(const WebInspectorProxy* webInspectorProxy
     return decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
+static void processDidCrash(WKPageRef, const void* clientInfo)
+{
+    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(webInspectorProxy);
+    webInspectorProxy->close();
+}
+
 static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
 {
     // Allow non-main frames to navigate anywhere.
@@ -447,15 +454,59 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
 
     WKPagePolicyClientV1 policyClient = {
         { 1, this },
-        0, /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
-        0, /* decidePolicyForNewWindowAction */
-        0, /* decidePolicyForResponse_deprecatedForUseWithV0 */
-        0, /* unableToImplementPolicy */
+        nullptr, // decidePolicyForNavigationAction_deprecatedForUseWithV0
+        nullptr, // decidePolicyForNewWindowAction
+        nullptr, // decidePolicyForResponse_deprecatedForUseWithV0
+        nullptr, // unableToImplementPolicy
         decidePolicyForNavigationAction,
-        0, /* decidePolicyForResponse */
+        nullptr, // decidePolicyForResponse
+    };
+
+    WKPageLoaderClientV5 loaderClient = {
+        { 5, this },
+        nullptr, // didStartProvisionalLoadForFrame
+        nullptr, // didReceiveServerRedirectForProvisionalLoadForFrame
+        nullptr, // didFailProvisionalLoadWithErrorForFrame
+        nullptr, // didCommitLoadForFrame
+        nullptr, // didFinishDocumentLoadForFrame
+        nullptr, // didFinishLoadForFrame
+        nullptr, // didFailLoadWithErrorForFrame
+        nullptr, // didSameDocumentNavigationForFrame
+        nullptr, // didReceiveTitleForFrame
+        nullptr, // didFirstLayoutForFrame
+        nullptr, // didFirstVisuallyNonEmptyLayoutForFrame
+        nullptr, // didRemoveFrameFromHierarchy
+        nullptr, // didDisplayInsecureContentForFrame
+        nullptr, // didRunInsecureContentForFrame
+        nullptr, // canAuthenticateAgainstProtectionSpaceInFrame
+        nullptr, // didReceiveAuthenticationChallengeInFrame
+        nullptr, // didStartProgress
+        nullptr, // didChangeProgress
+        nullptr, // didFinishProgress
+        nullptr, // didBecomeUnresponsive
+        nullptr, // didBecomeResponsive
+        processDidCrash,
+        nullptr, // didChangeBackForwardList
+        nullptr, // shouldGoToBackForwardListItem
+        nullptr, // didFailToInitializePlugin_deprecatedForUseWithV0
+        nullptr, // didDetectXSSForFrame
+        nullptr, // didNewFirstVisuallyNonEmptyLayout_unavailable
+        nullptr, // willGoToBackForwardListItem
+        nullptr, // interactionOccurredWhileProcessUnresponsive
+        nullptr, // pluginDidFail_deprecatedForUseWithV1
+        nullptr, // didReceiveIntentForFrame_unavailable
+        nullptr, // registerIntentServiceForFrame_unavailable
+        nullptr, // didLayout
+        nullptr, // pluginLoadPolicy_deprecatedForUseWithV2
+        nullptr, // pluginDidFail
+        nullptr, // pluginLoadPolicy
+        nullptr, // webGLLoadPolicy
+        nullptr, // resolveWebGLLoadPolicy
+        nullptr, // shouldKeepCurrentBackForwardListItemInList
     };
 
     WKPageSetPagePolicyClient(toAPI(m_inspectorPage), &policyClient.base);
+    WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(inspectorBaseURL());
