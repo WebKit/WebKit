@@ -54,6 +54,7 @@ namespace WebCore {
 class QuickLookHandleClient;
 class ResourceHandle;
 class ResourceLoader;
+class ResourceResponse;
 class SynchronousResourceHandleCFURLConnectionDelegate;
 
 Class QLPreviewConverterClass();
@@ -82,11 +83,15 @@ WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 class QuickLookHandle {
     WTF_MAKE_NONCOPYABLE(QuickLookHandle);
 public:
+    WEBCORE_EXPORT static bool shouldCreateForMIMEType(const String&);
+
     static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
 #if USE(CFNETWORK)
     static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
 #endif
-    WEBCORE_EXPORT static std::unique_ptr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *);
+    // FIXME: Use of ResourceLoader here is a platform violation.
+    WEBCORE_EXPORT static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
+
     WEBCORE_EXPORT ~QuickLookHandle();
 
     WEBCORE_EXPORT bool didReceiveDataArray(CFArrayRef);

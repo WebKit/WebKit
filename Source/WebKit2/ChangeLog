@@ -1,3 +1,15 @@
+2014-10-19  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary NSURLResponse construction for QuickLook on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=137876
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+
+            Switch to the modified QuickLookHandle interface that does not need NSURLResponse.
+
 2014-10-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Capture WKActionSheetAssistant's interaction with WKContentView in a @protocol
