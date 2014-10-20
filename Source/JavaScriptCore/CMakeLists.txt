@@ -1075,9 +1075,6 @@ elseif (WTF_CPU_S390X)
 elseif (WTF_CPU_MIPS)
 elseif (WTF_CPU_SH4)
 elseif (WTF_CPU_X86)
-    list(APPEND JavaScriptCore_SOURCES
-        assembler/MacroAssemblerX86Common.cpp
-    )
 elseif (WTF_CPU_X86_64)
     if (MSVC AND ENABLE_JIT)
         add_custom_command(
@@ -1088,9 +1085,6 @@ elseif (WTF_CPU_X86_64)
 
         list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
     endif ()
-    list(APPEND JavaScriptCore_SOURCES
-        assembler/MacroAssemblerX86Common.cpp
-    )
 else ()
     message(FATAL_ERROR "Unknown CPU")
 endif ()
