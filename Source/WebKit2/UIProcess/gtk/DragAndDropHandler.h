@@ -49,7 +49,7 @@ class WebPageProxy;
 class DragAndDropHandler {
     WTF_MAKE_NONCOPYABLE(DragAndDropHandler);
 public:
-    static std::unique_ptr<DragAndDropHandler> create(WebPageProxy&);
+    DragAndDropHandler(WebPageProxy&);
 
     void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     void fillDragData(GdkDragContext*, GtkSelectionData*, unsigned info);
@@ -70,8 +70,6 @@ private:
         unsigned pendingDataRequests;
         bool dropHappened;
     };
-
-    DragAndDropHandler(WebPageProxy&);
 
     WebCore::DataObjectGtk* dataObjectForDropData(GdkDragContext*, GtkSelectionData*, unsigned info, WebCore::IntPoint& position);
     WebCore::DataObjectGtk* requestDragData(GdkDragContext*, const WebCore::IntPoint& position, unsigned time);

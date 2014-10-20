@@ -43,11 +43,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-std::unique_ptr<DragAndDropHandler> DragAndDropHandler::create(WebPageProxy& page)
-{
-    return std::unique_ptr<DragAndDropHandler>(new DragAndDropHandler(page));
-}
-
 DragAndDropHandler::DragAndDropHandler(WebPageProxy& page)
     : m_page(page)
 {

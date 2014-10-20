@@ -1092,7 +1092,7 @@ DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase* webVi
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->dragAndDropHandler)
-        priv->dragAndDropHandler = DragAndDropHandler::create(*priv->pageProxy);
+        priv->dragAndDropHandler = std::make_unique<DragAndDropHandler>(*priv->pageProxy);
     return *priv->dragAndDropHandler;
 }
 #endif // ENABLE(DRAG_SUPPORT)

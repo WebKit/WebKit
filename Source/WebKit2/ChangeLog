@@ -1,5 +1,20 @@
 2014-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Remove the factory method from DragAndDropHandler
+        https://bugs.webkit.org/show_bug.cgi?id=137872
+
+        Reviewed by Sergio Villar Senin.
+
+        Make the constructor public and use std::make_unique instead.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDragAndDropHandler):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::create): Deleted.
+        * UIProcess/gtk/DragAndDropHandler.h:
+
+2014-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add initial gestures support
         https://bugs.webkit.org/show_bug.cgi?id=137812
 
