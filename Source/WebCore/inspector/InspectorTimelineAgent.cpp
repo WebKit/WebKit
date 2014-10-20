@@ -41,7 +41,6 @@
 #include "InspectorClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMWindow.h"
@@ -644,7 +643,7 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, TimelineRecordType type)
 {
-    prpRecord->setString("type", Inspector::Protocol::getWebEnumConstantValue(toProtocol(type)));
+    prpRecord->setString("type", Inspector::Protocol::getEnumConstantValue(toProtocol(type)));
 
     RefPtr<Inspector::Protocol::Timeline::TimelineEvent> record = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(prpRecord);
 

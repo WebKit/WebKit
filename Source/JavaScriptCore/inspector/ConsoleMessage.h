@@ -34,7 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "ConsoleTypes.h"
-#include "InspectorJSFrontendDispatchers.h"
+#include "InspectorFrontendDispatchers.h"
 #include <wtf/Forward.h>
 
 namespace JSC {

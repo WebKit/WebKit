@@ -41,7 +41,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include "Pasteboard.h"
 #include "Storage.h"
 #include "markup.h"

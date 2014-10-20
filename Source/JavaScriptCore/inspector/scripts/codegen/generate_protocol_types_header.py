@@ -42,7 +42,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sProtocolTypes.h" % self.model().framework.setting('prefix')
+        return "InspectorProtocolObjects.h"
 
     def generate_output(self):
         domains = self.domains_to_generate()
@@ -54,11 +54,7 @@ class ProtocolTypesHeaderGenerator(Generator):
             '<wtf/PassRefPtr.h>'
         ])
 
-        if self.model().framework is not Frameworks.JavaScriptCore:
-            headers.add('<inspector/InspectorJSProtocolTypes.h>')
-
         export_macro = self.model().framework.setting('export_macro', None)
-        framework_prefix = self.model().framework.setting('prefix')
 
         header_args = {
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
@@ -77,11 +73,11 @@ class ProtocolTypesHeaderGenerator(Generator):
         sections.append('namespace Protocol {')
         sections.append(self._generate_forward_declarations(domains))
         sections.append(self._generate_typedefs(domains))
-        sections.append('%s get%sEnumConstantValue(int code);' % (' '.join(return_type_with_export_macro), framework_prefix))
+        sections.append('%s getEnumConstantValue(int code);' % ' '.join(return_type_with_export_macro))
         sections.append('\n'.join([
-            'template<typename T> %s get%sEnumConstantValue(T enumValue)' % (return_type, framework_prefix),
+            'template<typename T> %s getEnumConstantValue(T enumValue)' % return_type,
             '{',
-            '    return get%sEnumConstantValue(static_cast<int>(enumValue));' % framework_prefix,
+            '    return getEnumConstantValue(static_cast<int>(enumValue));',
             '}']))
 
         builder_sections = map(self._generate_builders_for_domain, domains)
@@ -218,7 +214,8 @@ class ProtocolTypesHeaderGenerator(Generator):
             lines.append('')
             lines.append('    // Property names for type generated as open.')
             for type_member in type_declaration.type_members:
-                lines.append('    static const char* %s;' % ucfirst(type_member.member_name))
+                export_macro = self.model().framework.setting('export_macro', None)
+                lines.append('    %s static const char* %s;' % (export_macro, ucfirst(type_member.member_name)))
 
         lines.append('};')
         lines.append('')
@@ -271,7 +268,6 @@ class ProtocolTypesHeaderGenerator(Generator):
     def _generate_builder_setter_for_member(self, type_member, domain):
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'frameworkPrefix': self.model().framework.setting('prefix'),
             'keyedSet': Generator.keyed_set_method_for_type(type_member.type),
             'name': type_member.member_name,
             'parameterType': Generator.type_string_for_type_member(type_member)
@@ -284,7 +280,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(name)s_already_set);' % setter_args)
 
         if isinstance(type_member.type, EnumType):
-            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
         else:
             lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
@@ -294,7 +290,6 @@ class ProtocolTypesHeaderGenerator(Generator):
     def _generate_unchecked_setter_for_member(self, type_member, domain):
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'frameworkPrefix': self.model().framework.setting('prefix'),
             'keyedSet': Generator.keyed_set_method_for_type(type_member.type),
             'name': type_member.member_name,
             'parameterType': Generator.type_string_for_type_member(type_member)
@@ -305,7 +300,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         lines.append('    void set%(camelName)s(%(parameterType)s value)' % setter_args)
         lines.append('    {')
         if isinstance(type_member.type, EnumType):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
         else:
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('    }')

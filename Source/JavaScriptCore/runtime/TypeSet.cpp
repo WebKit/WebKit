@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TypeSet.h"
 
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
 #include <wtf/text/CString.h>

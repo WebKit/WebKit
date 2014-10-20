@@ -32,9 +32,9 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
-#include "InspectorWebProtocolTypes.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
+#include <inspector/InspectorProtocolObjects.h>
 #include "RenderLayer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>

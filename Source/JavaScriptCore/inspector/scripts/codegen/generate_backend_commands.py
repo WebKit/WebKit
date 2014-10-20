@@ -41,7 +41,7 @@ class BackendCommandsGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sBackendCommands.js" % self.model().framework.setting('prefix')
+        return "InspectorBackendCommands.js"
 
     def domains_to_generate(self):
         def should_generate_domain(domain):

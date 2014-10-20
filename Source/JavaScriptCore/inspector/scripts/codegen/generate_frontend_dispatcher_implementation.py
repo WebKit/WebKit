@@ -41,7 +41,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sFrontendDispatchers.cpp" % self.model().framework.setting('prefix')
+        return "InspectorFrontendDispatchers.cpp"
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.events) > 0, Generator.domains_to_generate(self))
@@ -50,7 +50,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
         secondary_headers = ['<wtf/text/CString.h>']
 
         header_args = {
-            'primaryInclude': '"Inspector%sFrontendDispatchers.h"' % self.model().framework.setting('prefix'),
+            'primaryInclude': '"InspectorFrontendDispatchers.h"',
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
         }
 
@@ -81,8 +81,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
             if parameter.is_optional and not Generator.should_pass_by_copy_for_return_type(parameter.type):
                 parameter_value = '*' + parameter_value
             if parameter.type.is_enum():
-                framework_prefix = self.model().framework.setting('prefix')
-                parameter_value = 'Inspector::Protocol::get%sEnumConstantValue(%s)' % (framework_prefix, parameter_value)
+                parameter_value = 'Inspector::Protocol::getEnumConstantValue(%s)' % parameter_value
 
             parameter_args = {
                 'parameterType': Generator.type_string_for_stack_out_parameter(parameter),

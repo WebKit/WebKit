@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TypeProfiler.h"
 
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #include "TypeLocation.h"
 
 namespace JSC {

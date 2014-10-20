@@ -109,8 +109,7 @@ my $eslintLicense = readLicenseFile(File::Spec->catfile($eslintPath, 'LICENSE'))
 make_path($protocolDir, $targetResourcePath);
 
 # Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
-copy(File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorJSBackendCommands.js'), File::Spec->catfile($protocolDir, 'InspectorJSBackendCommands.js')) or die "Copy of InspectorJSBackendCommands.js failed: $!";
-copy(File::Spec->catfile($ENV{'WEBCORE_PRIVATE_HEADERS_DIR'}, 'InspectorWebBackendCommands.js'), File::Spec->catfile($protocolDir, 'InspectorWebBackendCommands.js')) or die "Copy of InspectorWebBackendCommands.js failed: $!";
+copy(File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorBackendCommands.js'), File::Spec->catfile($protocolDir, 'InspectorBackendCommands.js')) or die "Copy of InspectorBackendCommands.js failed: $!";
 
 if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESOURCES'} eq 'YES')) {
     my $combineResourcesCmd = File::Spec->catfile($scriptsRoot, 'combine-resources.pl');

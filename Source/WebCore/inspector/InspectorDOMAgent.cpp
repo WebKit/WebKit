@@ -58,7 +58,6 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "EventTarget.h"
 #include "ExceptionCodeDescription.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
@@ -68,9 +67,7 @@
 #include "HitTestResult.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
-#include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSEventListener.h"
@@ -97,8 +94,6 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <runtime/JSCInlines.h>
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -1557,9 +1552,9 @@ PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent:
                 String ariaRelevantAttrValue = axObject->ariaLiveRegionRelevant();
                 if (!ariaRelevantAttrValue.isEmpty()) {
                     // FIXME: Pass enum values rather than strings once unblocked. http://webkit.org/b/133711
-                    String ariaRelevantAdditions = Inspector::Protocol::getWebEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
-                    String ariaRelevantRemovals = Inspector::Protocol::getWebEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Removals);
-                    String ariaRelevantText = Inspector::Protocol::getWebEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Text);
+                    String ariaRelevantAdditions = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
+                    String ariaRelevantRemovals = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Removals);
+                    String ariaRelevantText = Inspector::Protocol::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Text);
                     liveRegionRelevant = Inspector::Protocol::Array<String>::create();
                     const SpaceSplitString& values = SpaceSplitString(ariaRelevantAttrValue, true);
                     // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.

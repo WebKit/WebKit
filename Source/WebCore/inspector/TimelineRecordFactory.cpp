@@ -37,12 +37,12 @@
 
 #include "Event.h"
 #include "FloatQuad.h"
-#include "InspectorWebProtocolTypes.h"
 #include "IntRect.h"
 #include "JSMainThreadExecState.h"
 #include "LayoutRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <inspector/InspectorProtocolObjects.h>
 #include <inspector/ScriptBreakpoint.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>

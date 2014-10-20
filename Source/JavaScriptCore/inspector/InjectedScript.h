@@ -35,7 +35,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "InjectedScriptBase.h"
-#include "InspectorJSProtocolTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>

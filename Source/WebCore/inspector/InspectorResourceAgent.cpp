@@ -47,7 +47,6 @@
 #include "IconController.h"
 #include "InspectorClient.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
 #include "MemoryCache.h"

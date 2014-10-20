@@ -42,14 +42,14 @@ class FrontendDispatcherHeaderGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sFrontendDispatchers.h" % self.model().framework.setting('prefix')
+        return "InspectorFrontendDispatchers.h"
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.events) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"Inspector%sProtocolTypes.h"' % self.model().framework.setting('prefix'),
+            '"InspectorProtocolObjects.h"',
             '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorValues.h>',
             '<wtf/PassRefPtr.h>',

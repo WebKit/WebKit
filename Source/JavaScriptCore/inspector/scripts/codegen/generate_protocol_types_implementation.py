@@ -41,7 +41,7 @@ class ProtocolTypesImplementationGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sProtocolTypes.cpp" % self.model().framework.setting('prefix')
+        return "InspectorProtocolObjects.cpp"
 
     def generate_output(self):
         domains = self.domains_to_generate()
@@ -50,7 +50,7 @@ class ProtocolTypesImplementationGenerator(Generator):
         secondary_headers = ['<wtf/text/CString.h>']
 
         header_args = {
-            'primaryInclude': '"Inspector%sProtocolTypes.h"' % self.model().framework.setting('prefix'),
+            'primaryInclude': '"InspectorProtocolObjects.h"',
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
         }
 
@@ -70,17 +70,14 @@ class ProtocolTypesImplementationGenerator(Generator):
     # Private methods.
 
     def _generate_enum_mapping(self):
-        framework_prefix = self.model().framework.setting('prefix')
         lines = []
-
         lines.append('static const char* const enum_constant_values[] = {')
         lines.extend(['    "%s",' % enum_value for enum_value in self.assigned_enum_values()])
         lines.append('};')
         lines.append('')
-        lines.append('String get%sEnumConstantValue(int code) {' % framework_prefix)
+        lines.append('String getEnumConstantValue(int code) {')
         lines.append('    return enum_constant_values[code];')
         lines.append('}')
-
         return '\n'.join(lines)
 
     def _generate_open_field_names(self):

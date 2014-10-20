@@ -35,10 +35,10 @@
 #include "InspectorWorkerAgent.h"
 
 #include "InspectorForwarding.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
 #include "WorkerGlobalScopeProxy.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/RefPtr.h>
 

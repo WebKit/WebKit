@@ -57,7 +57,6 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
@@ -75,7 +74,6 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>

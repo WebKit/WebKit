@@ -19,13 +19,11 @@ Dir.mktmpdir do |tmpdir|
   FileUtils.mkdir_p $output_directory
   
   # Create empty derived sources expected to exist.
-  FileUtils.touch(File.join(tmpdir, 'InspectorJSBackendCommands.js'))
-  FileUtils.touch(File.join(tmpdir, 'InspectorWebBackendCommands.js'))
+  FileUtils.touch(File.join(tmpdir, 'InspectorBackendCommands.js'))
   
   # Setup the environment and run.
   ENV["DERIVED_SOURCES_DIR"] = tmpdir
   ENV["JAVASCRIPTCORE_PRIVATE_HEADERS_DIR"] = tmpdir
-  ENV["WEBCORE_PRIVATE_HEADERS_DIR"] = tmpdir
   ENV["SRCROOT"] = WEB_INSPECTOR_PATH
   ENV["TARGET_BUILD_DIR"] = $output_directory
   ENV["UNLOCALIZED_RESOURCES_FOLDER_PATH"] = ""

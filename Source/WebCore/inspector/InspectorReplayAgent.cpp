@@ -37,7 +37,7 @@
 #include "FunctorInputCursor.h"
 #include "InspectorController.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebProtocolTypes.h"
+#include <inspector/InspectorProtocolObjects.h>
 #include "InstrumentingAgents.h"
 #include "Logging.h"
 #include "Page.h"

@@ -48,13 +48,10 @@
 #include "InspectorIndexedDBAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorLayerTreeAgent.h"
-#include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InspectorReplayAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
@@ -71,6 +68,8 @@
 #include "WebInjectedScriptManager.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorBackendDispatcher.h>
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <profiler/LegacyProfiler.h>
 #include <runtime/JSLock.h>

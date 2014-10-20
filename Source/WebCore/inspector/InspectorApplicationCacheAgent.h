@@ -29,8 +29,8 @@
 
 #include "ApplicationCacheHost.h"
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/Noncopyable.h>
 
 namespace Inspector {

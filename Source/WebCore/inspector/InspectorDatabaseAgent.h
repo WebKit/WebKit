@@ -32,8 +32,8 @@
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

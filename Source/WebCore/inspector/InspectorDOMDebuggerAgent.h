@@ -34,7 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/agents/InspectorDebuggerAgent.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

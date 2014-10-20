@@ -33,10 +33,10 @@
 #include "EventTarget.h"
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "RenderLayer.h"
 #include "Timer.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>

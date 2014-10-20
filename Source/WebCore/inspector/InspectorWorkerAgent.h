@@ -32,7 +32,7 @@
 #define InspectorWorkerAgent_h
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 

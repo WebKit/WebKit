@@ -58,8 +58,6 @@
 #include "StyleSheetList.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <inspector/ContentSearchUtilities.h>
-#include <inspector/InspectorValues.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
 

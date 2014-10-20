@@ -42,14 +42,14 @@ class BackendDispatcherHeaderGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sBackendDispatchers.h" % self.model().framework.setting('prefix')
+        return "InspectorBackendDispatchers.h"
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.commands) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"Inspector%sProtocolTypes.h"' % self.model().framework.setting('prefix'),
+            '"InspectorProtocolObjects.h"',
             '<inspector/InspectorBackendDispatcher.h>',
             '<wtf/PassRefPtr.h>',
             '<wtf/text/WTFString.h>']

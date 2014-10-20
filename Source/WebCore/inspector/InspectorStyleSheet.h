@@ -29,7 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "ExceptionCode.h"
 #include "InspectorStyleTextEditor.h"
-#include "InspectorWebProtocolTypes.h"
+#include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

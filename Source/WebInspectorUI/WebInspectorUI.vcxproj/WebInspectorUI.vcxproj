@@ -685,8 +685,9 @@
     <None Include="..\UserInterface\LayoutTimelineDataGrid.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
     <None Include="..\UserInterface\LayoutTimelineRecord.js" />
-    <None Include="..\UserInterface\Legacy\6.0\InspectorWebBackendCommands.js" />
-    <None Include="..\UserInterface\Legacy\7.0\InspectorWebBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\7.0\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\8.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\LoadInspectorBackendCommands.js" />
     <None Include="..\UserInterface\LoadLocalizedStrings.js" />
     <None Include="..\UserInterface\LogContentView.css" />

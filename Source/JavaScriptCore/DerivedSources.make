@@ -113,12 +113,34 @@ InitBytecodes.asm: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/b
 # Inspector interfaces
 
 INSPECTOR_DOMAINS = \
+    $(JavaScriptCore)/inspector/protocol/ApplicationCache.json \
+    $(JavaScriptCore)/inspector/protocol/CSS.json \
     $(JavaScriptCore)/inspector/protocol/Console.json \
+    $(JavaScriptCore)/inspector/protocol/DOM.json \
+    $(JavaScriptCore)/inspector/protocol/DOMDebugger.json \
+    $(JavaScriptCore)/inspector/protocol/DOMStorage.json \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
     $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
+    $(JavaScriptCore)/inspector/protocol/LayerTree.json \
+    $(JavaScriptCore)/inspector/protocol/Network.json \
+    $(JavaScriptCore)/inspector/protocol/Page.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
+    $(JavaScriptCore)/inspector/protocol/Timeline.json \
+    $(JavaScriptCore)/inspector/protocol/Worker.json \
 #
+
+ifeq ($(findstring ENABLE_SQL_DATABASE,$(FEATURE_DEFINES)), ENABLE_SQL_DATABASE)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/Database.json
+endif
+
+ifeq ($(findstring ENABLE_INDEXED_DATABASE,$(FEATURE_DEFINES)), ENABLE_INDEXED_DATABASE)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/IndexedDB.json
+endif
+
+ifeq ($(findstring ENABLE_WEB_REPLAY,$(FEATURE_DEFINES)), ENABLE_WEB_REPLAY)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/Replay.json
+endif
 
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/__init__.py \
@@ -137,8 +159,8 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 #
 
 all : \
-    InspectorJS.json \
-    InspectorJSFrontendDispatchers.h \
+    Inspector.json \
+    InspectorFrontendDispatchers.h \
     InjectedScriptSource.h \
 #
 
@@ -149,12 +171,12 @@ all : \
 EnabledInspectorDomains : force
 	echo '$(INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(INSPECTOR_DOMAINS)' > $@
 
-InspectorJS.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./InspectorJS.json
+Inspector.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./Inspector.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
-InspectorJSFrontendDispatchers.h : InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./InspectorJS.json
+InspectorFrontendDispatchers.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./Inspector.json
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/inspector/scripts/jsmin.py $(JavaScriptCore)/inspector/scripts/xxd.pl
 	echo "//# sourceURL=__WebInspectorInjectedScript__" > ./InjectedScriptSource.min.js

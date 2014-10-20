@@ -785,35 +785,6 @@ set(WebCore_IDL_FILES
 
 set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
-set(WebCore_INSPECTOR_PROTOCOL_SCRIPTS
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_commands.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_header.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_implementation.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_header.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_implementation.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_header.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_implementation.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/models.py
-)
-
-set(WebCore_INSPECTOR_DOMAINS
-    ${WEBCORE_DIR}/inspector/protocol/ApplicationCache.json
-    ${WEBCORE_DIR}/inspector/protocol/CSS.json
-    ${WEBCORE_DIR}/inspector/protocol/DOM.json
-    ${WEBCORE_DIR}/inspector/protocol/DOMDebugger.json
-    ${WEBCORE_DIR}/inspector/protocol/DOMStorage.json
-    ${WEBCORE_DIR}/inspector/protocol/IndexedDB.json
-    ${WEBCORE_DIR}/inspector/protocol/LayerTree.json
-    ${WEBCORE_DIR}/inspector/protocol/Network.json
-    ${WEBCORE_DIR}/inspector/protocol/Page.json
-    ${WEBCORE_DIR}/inspector/protocol/Timeline.json
-    ${WEBCORE_DIR}/inspector/protocol/Worker.json
-)
-
 set(WebCore_SOURCES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 
@@ -2797,10 +2768,6 @@ if (ENABLE_SQL_DATABASE)
     list(APPEND WebCore_IDL_FILES
         Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl
     )
-
-    list(APPEND WebCore_INSPECTOR_DOMAINS
-        ${WEBCORE_DIR}/inspector/protocol/Database.json
-    )
 endif ()
 
 if (NOT ENABLE_NETSCAPE_PLUGIN_API)
@@ -3105,9 +3072,6 @@ if (WTF_USE_3D_GRAPHICS)
 endif ()
 
 if (ENABLE_WEB_REPLAY)
-    list(APPEND WebCore_INSPECTOR_DOMAINS
-        ${WEBCORE_DIR}/inspector/protocol/Replay.json
-    )
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${JAVASCRIPTCORE_DIR}/inspector"
         "${JAVASCRIPTCORE_DIR}/replay"
@@ -3206,36 +3170,6 @@ set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-# Generate InspectorWeb.json
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
-    MAIN_DEPENDENCY ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py
-    DEPENDS ${WebCore_INSPECTOR_DOMAINS}
-    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${WebCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
-    VERBATIM)
-
-# All Web Inspector generated files are created with this one call to generate-inspector-protocol-bindings.py
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.cpp
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.h
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.cpp
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.h
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.cpp
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.h
-           ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorWebBackendCommands.js
-    MAIN_DEPENDENCY ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
-    DEPENDS ${WebCore_INSPECTOR_PROTOCOL_SCRIPTS}
-            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
-    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --framework WebCore ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json && cp ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
-    VERBATIM)
-
-list(APPEND WebCore_SOURCES
-    ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.cpp
-)
-
 
 # Generate InspectorOverlayPage.h
 add_custom_command(

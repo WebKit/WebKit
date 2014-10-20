@@ -109,6 +109,5 @@ xcopy /y /d "%ProjectDir%..\testing\js\WebCoreTestSupport.h" "%CONFIGURATIONBUIL
 
 set DerivedSourcesDirectory=%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebCore\DerivedSources
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\WebCore
-xcopy /y "%DerivedSourcesDirectory%\InspectorWebBackendCommands.js" "%PrivateHeadersDirectory%"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

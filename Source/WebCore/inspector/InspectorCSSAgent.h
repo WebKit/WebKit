@@ -30,8 +30,8 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
 #include "SecurityContext.h"
+#include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

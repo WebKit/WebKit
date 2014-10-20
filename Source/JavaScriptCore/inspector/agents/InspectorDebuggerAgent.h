@@ -32,8 +32,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorJSBackendDispatchers.h"
-#include "InspectorJSFrontendDispatchers.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorFrontendDispatchers.h"
 #include "bindings/ScriptValue.h"
 #include "debugger/Debugger.h"
 #include "inspector/InspectorAgentBase.h"

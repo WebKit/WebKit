@@ -33,7 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include <inspector/InspectorJSFrontendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/agents/InspectorRuntimeAgent.h>
 
 namespace JSC {

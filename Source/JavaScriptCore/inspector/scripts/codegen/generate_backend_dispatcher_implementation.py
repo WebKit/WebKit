@@ -41,7 +41,7 @@ class BackendDispatcherImplementationGenerator(Generator):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sBackendDispatchers.cpp" % self.model().framework.setting('prefix')
+        return "InspectorBackendDispatchers.cpp"
 
     def domains_to_generate(self):
         return filter(lambda domain: len(domain.commands) > 0, Generator.domains_to_generate(self))
@@ -53,7 +53,7 @@ class BackendDispatcherImplementationGenerator(Generator):
             '<wtf/text/CString.h>']
 
         header_args = {
-            'primaryInclude': '"Inspector%sBackendDispatchers.h"' % self.model().framework.setting('prefix'),
+            'primaryInclude': '"InspectorBackendDispatchers.h"',
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
         }
 
@@ -131,7 +131,6 @@ class BackendDispatcherImplementationGenerator(Generator):
 
         for parameter in command.return_parameters:
             param_args = {
-                'frameworkPrefix': self.model().framework.setting('prefix'),
                 'keyedSetMethod': Generator.keyed_set_method_for_type(parameter.type),
                 'parameterName': parameter.parameter_name,
                 'parameterType': Generator.type_string_for_stack_in_parameter(parameter),
@@ -147,7 +146,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterName)s);' % param_args)
             elif parameter.type.is_enum():
-                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(%(parameterName)s));' % param_args)
+                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::getEnumConstantValue(%(parameterName)s));' % param_args)
             else:
                 out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterName)s);' % param_args)
 
@@ -202,7 +201,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                     'parameterType': Generator.type_string_for_stack_out_parameter(parameter),
                     'parameterName': parameter.parameter_name,
                     'keyedSetMethod': Generator.keyed_set_method_for_type(parameter.type),
-                    'frameworkPrefix': self.model().framework.setting('prefix')
+
                 }
 
                 out_parameter_declarations.append('    %(parameterType)s out_%(parameterName)s;' % param_args)
@@ -214,7 +213,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s);' % param_args)
                 elif parameter.type.is_enum():
-                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(out_%(parameterName)s));' % param_args)
+                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::getEnumConstantValue(out_%(parameterName)s));' % param_args)
                 else:
                     out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s);' % param_args)
 

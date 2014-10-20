@@ -35,7 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorEnvironment.h"
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #include "bindings/ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>

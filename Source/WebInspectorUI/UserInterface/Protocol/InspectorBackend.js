@@ -99,6 +99,21 @@ InspectorBackendClass.prototype = {
             this._deferredScripts.push(script);
     },
 
+    activateDomains: function(domains)
+    {
+        for (var domainName of domains) {
+            var agent = this._agents[domainName];
+            if (agent)
+                agent.activate();
+        }
+    },
+
+    activateAllDomains: function()
+    {
+        for (var domainName in this._agents)
+            this._agents[domainName].activate();
+    },
+
     // Private
 
     _agentForDomain: function(domainName)
@@ -108,7 +123,6 @@ InspectorBackendClass.prototype = {
 
         var agent = new InspectorBackend.Agent(domainName);
         this._agents[domainName] = agent;
-        window[domainName + "Agent"] = agent;
         return agent;
     },
 
@@ -197,6 +211,11 @@ InspectorBackendClass.prototype = {
         }
 
         var agent = this._agentForDomain(domainName);
+        if (!agent.active) {
+            console.error("Protocol Error: Attempted to dispatch method for domain '" + domainName + "' which exists but is not active.");
+            return;
+        }
+
         var event = agent.getEvent(eventName);
         if (!event) {
             console.error("Protocol Error: Attempted to dispatch an unspecified method '" + qualifiedName + "'");
@@ -269,6 +288,9 @@ InspectorBackend.Agent = function(domainName)
 {
     this._domainName = domainName;
 
+    // Agents are always created, but are only useable after they are activated.
+    this._active = false;
+
     // Commands are stored directly on the Agent instance using their unqualified
     // method name as the property. Thus, callers can write: FooAgent.methodName().
     // Enums are stored similarly based on the unqualified type name.
@@ -279,6 +301,11 @@ InspectorBackend.Agent.prototype = {
     get domainName()
     {
         return this._domainName;
+    },
+
+    get active()
+    {
+        return this._active;
     },
 
     set dispatcher(value)
@@ -309,6 +336,12 @@ InspectorBackend.Agent.prototype = {
     hasEvent: function(eventName)
     {
         return eventName in this._events;
+    },
+
+    activate: function()
+    {
+        this._active = true;
+        window[this._domainName + "Agent"] = this;
     },
 
     dispatchEvent: function(eventName, eventArguments)

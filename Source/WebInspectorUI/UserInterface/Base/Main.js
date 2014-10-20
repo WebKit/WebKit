@@ -52,6 +52,14 @@ WebInspector.loaded = function()
     // Initialize WebSocket to communication.
     this._initializeWebSocketIfNeeded();
 
+    this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
+
+    // FIXME: <https://webkit.org/b/137753> Web Inspector: InspectorBackendCommands should include when to activate particular domains
+    if (this.debuggableType === WebInspector.DebuggableType.JavaScript)
+        InspectorBackend.activateDomains(["Inspector", "Console", "Debugger", "Runtime", "Profiler"]);
+    else
+        InspectorBackend.activateAllDomains();
+
     // Register observers for events from the InspectorBackend.
     if (InspectorBackend.registerInspectorDispatcher)
         InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
@@ -163,11 +171,11 @@ WebInspector.loaded = function()
     this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
-    if (this.showJavaScriptTypeInformationSetting.value && RuntimeAgent && RuntimeAgent.enableTypeProfiler)
+    if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler)
         RuntimeAgent.enableTypeProfiler();
 
     this.showPaintRectsSetting = new WebInspector.Setting("show-paint-rects", false);
-    if (this.showPaintRectsSetting.value && PageAgent && PageAgent.setShowPaintRects)
+    if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
         PageAgent.setShowPaintRects(true);
 
     this.mouseCoords = {
@@ -205,7 +213,6 @@ WebInspector.contentLoaded = function()
     if (WebInspector.Platform.version.name)
         document.body.classList.add(WebInspector.Platform.version.name);
 
-    this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
     document.body.classList.add(this.debuggableType);
 
     // Create the user interface elements.

@@ -59,11 +59,11 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "SecurityOrigin.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>

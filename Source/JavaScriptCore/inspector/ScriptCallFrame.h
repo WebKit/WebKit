@@ -36,7 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #endif
 
 namespace Inspector {

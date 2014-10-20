@@ -31,11 +31,8 @@
             backendURLs = suggestedBackendCommandsURLs;
     }
 
-    if (!backendURLs) {
-        backendURLs = ["Protocol/InspectorJSBackendCommands.js"];
-        if (InspectorFrontendHost.debuggableType() === "web")
-            backendURLs.push("Protocol/InspectorWebBackendCommands.js");
-    }
+    if (!backendURLs)
+        backendURLs = ["Protocol/InspectorBackendCommands.js"];
 
     console.assert(backendURLs.length);
     for (var backendCommandsURL of backendURLs)

@@ -1136,64 +1136,7 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTOR
 
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
 
-# Inspector interfaces generator
-
-INSPECTOR_DOMAINS = \
-    $(WebCore)/inspector/protocol/ApplicationCache.json \
-    $(WebCore)/inspector/protocol/CSS.json \
-    $(WebCore)/inspector/protocol/DOM.json \
-    $(WebCore)/inspector/protocol/DOMDebugger.json \
-    $(WebCore)/inspector/protocol/DOMStorage.json \
-    $(WebCore)/inspector/protocol/LayerTree.json \
-    $(WebCore)/inspector/protocol/Network.json \
-    $(WebCore)/inspector/protocol/Page.json \
-    $(WebCore)/inspector/protocol/Timeline.json \
-    $(WebCore)/inspector/protocol/Worker.json \
-#
-
-ifeq ($(findstring ENABLE_SQL_DATABASE,$(FEATURE_DEFINES)), ENABLE_SQL_DATABASE)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/Database.json
-endif
-
-ifeq ($(findstring ENABLE_INDEXED_DATABASE,$(FEATURE_DEFINES)), ENABLE_INDEXED_DATABASE)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/IndexedDB.json
-endif
-
-ifeq ($(findstring ENABLE_WEB_REPLAY,$(FEATURE_DEFINES)), ENABLE_WEB_REPLAY)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/Replay.json
-endif
-
-INSPECTOR_GENERATOR_SCRIPTS = \
-    $(InspectorScripts)/generate_backend_commands.py \
-    $(InspectorScripts)/generate_backend_dispatcher_header.py \
-    $(InspectorScripts)/generate_backend_dispatcher_implementation.py \
-    $(InspectorScripts)/generate_frontend_dispatcher_header.py \
-    $(InspectorScripts)/generate_frontend_dispatcher_implementation.py \
-    $(InspectorScripts)/generate_protocol_types_header.py \
-    $(InspectorScripts)/generate_protocol_types_implementation.py \
-    $(InspectorScripts)/generator_templates.py \
-    $(InspectorScripts)/generator.py \
-    $(InspectorScripts)/generate-combined-inspector-json.py \
-    $(InspectorScripts)/generate-inspector-protocol-bindings.py \
-    $(InspectorScripts)/models.py \
-#
-
-all : InspectorWeb.json
-
-# The combined JSON file depends on the actual set of domains and their file contents, so that
-# adding, modifying, or removing domains will trigger regeneration of inspector files.
-
-.PHONY: force
-EnabledInspectorDomains : force
-	echo '$(INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(INSPECTOR_DOMAINS)' > $@
-
-InspectorWeb.json : $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
-	$(PYTHON) $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./InspectorWeb.json
-
-all : InspectorWebFrontendDispatchers.h
-
-InspectorWebFrontendDispatchers.h : InspectorWeb.json $(InspectorScripts)/InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(InspectorScripts)/generate-inspector-protocol-bindings.py --framework WebCore --outputDir . ./InspectorWeb.json $(InspectorScripts)/InspectorJS.json
+# Inspector interfaces
 
 all : InspectorOverlayPage.h
 

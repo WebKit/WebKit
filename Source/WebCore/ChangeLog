@@ -1,3 +1,64 @@
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generate all Inspector domains together in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=137748
+
+        Reviewed by Brian Burg.
+
+        After moving the json files into JavaScriptCore update the includes,
+        and names of functions that were previously prefixed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/inspector/InspectorBackendDispatchers.h: Added.
+        * ForwardingHeaders/inspector/InspectorFrontendDispatchers.h: Added.
+        * ForwardingHeaders/inspector/InspectorJSBackendDispatchers.h: Removed.
+        * ForwardingHeaders/inspector/InspectorJSFrontendDispatchers.h: Removed.
+        * ForwardingHeaders/inspector/InspectorJSProtocolTypes.h: Removed.
+        * ForwardingHeaders/inspector/InspectorProtocolTypesBase.h: Added.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/WorkerInspectorController.cpp:
+
 2014-10-20  Andy Estes  <aestes@apple.com>
 
         Fix the GTK build.

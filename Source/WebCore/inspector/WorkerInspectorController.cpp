@@ -39,8 +39,6 @@
 #include "InspectorForwarding.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorTimelineAgent.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
 #include "WebInjectedScriptHost.h"
@@ -52,6 +50,7 @@
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include <inspector/InspectorBackendDispatcher.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 
 using namespace Inspector;
 

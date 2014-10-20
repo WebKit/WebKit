@@ -43,7 +43,6 @@
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
-#include "InspectorWebProtocolTypes.h"
 #include "InstrumentingAgents.h"
 #include "NamedFlowCollection.h"
 #include "Node.h"
@@ -56,7 +55,7 @@
 #include "StyleRule.h"
 #include "StyleSheetList.h"
 #include "WebKitNamedFlow.h"
-#include <inspector/InspectorValues.h>
+#include <inspector/InspectorProtocolObjects.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>

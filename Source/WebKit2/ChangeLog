@@ -1,3 +1,12 @@
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generate all Inspector domains together in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=137748
+
+        Reviewed by Brian Burg.
+
+        * PlatformGTK.cmake:
+
 2014-10-19  Antti Koivisto  <antti@apple.com>
 
         Avoid unnecessary NSURLResponse construction for QuickLook on iOS

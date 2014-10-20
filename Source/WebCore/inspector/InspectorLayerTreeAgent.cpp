@@ -35,7 +35,7 @@
 #include "InspectorLayerTreeAgent.h"
 
 #include "InspectorDOMAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "PseudoElement.h"

@@ -32,8 +32,8 @@
 #define InspectorResourceAgent_h
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

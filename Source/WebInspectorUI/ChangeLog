@@ -1,3 +1,53 @@
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Generate all Inspector domains together in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=137748
+
+        Reviewed by Brian Burg.
+
+        Change the frontend to always load all agents, but only activate a subset
+        of the agents depending on the type of the backend.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomains):
+        (InspectorBackendClass.prototype.activateAllDomains):
+        (InspectorBackendClass.prototype._agentForDomain):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        (InspectorBackend.Agent):
+        (InspectorBackend.Agent.prototype.get active):
+        (InspectorBackend.Agent.prototype.activate):
+        * UserInterface/Base/Test.js:
+        Only expose "window.FooAgent" or allow dispatches in the "Foo" domain
+        when that particular agent is activated. Currently we hardcode the list
+        of agents to activate for a debuggable type. This should be generated.
+
+        * UserInterface/Protocol/LoadInspectorBackendCommands.js:
+        Now there should always be a single "InspectorBackendCommands.js" file to load.
+        We may want to change the RWI path to return a single file instead of an array.
+
+        * Scripts/update-LegacyInspectorBackendCommands.rb:
+        * UserInterface/Protocol/Legacy/6.0/InspectorBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/Protocol/Legacy/6.0/InspectorWebBackendCommands.js.
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js.
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/Protocol/Legacy/8.0/InspectorWebBackendCommands.js.
+        * UserInterface/Protocol/Legacy/8.0/InspectorJSBackendCommands.js: Removed.
+        * Versions/Inspector-iOS-8.0.json: Renamed from Source/WebInspectorUI/Versions/InspectorWeb-iOS-8.0.json.
+        * Versions/InspectorJS-iOS-8.0.json: Removed.
+        Update Legacy versions to output a single InspectorBackendCommands.js file.
+        Do a straightforward merge of the iOS 8 JS/Web inputs to a single json file.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebInspectorUIFramework.xcconfig:
+        * Scripts/copy-user-interface-resources-dryrun.rb:
+        * Scripts/copy-user-interface-resources.pl:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl:
+        We no longer needed WebCore's Private Headers, so simplify build files
+        and update file names where appropriate.
+
 2014-10-17  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Add ESLint open source library to the inspector

@@ -35,9 +35,9 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "LayoutRect.h"
+#include <inspector/InspectorBackendDispatchers.h>
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptDebugListener.h>
 #include <wtf/Vector.h>

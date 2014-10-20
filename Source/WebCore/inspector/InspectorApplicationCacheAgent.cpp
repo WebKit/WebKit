@@ -34,11 +34,11 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "NetworkStateNotifier.h"
 #include "Page.h"
 #include "ResourceResponse.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 

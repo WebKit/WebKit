@@ -40,15 +40,14 @@
 #include "ExceptionCodeDescription.h"
 #include "Frame.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
 #include "Storage.h"
-#include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "VoidCallback.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 

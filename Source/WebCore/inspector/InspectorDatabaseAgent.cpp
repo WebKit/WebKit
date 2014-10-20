@@ -36,7 +36,6 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "InspectorDatabaseResource.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
 #include "SQLResultSet.h"

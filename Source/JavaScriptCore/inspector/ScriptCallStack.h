@@ -38,7 +38,7 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #endif
 
 namespace Inspector {

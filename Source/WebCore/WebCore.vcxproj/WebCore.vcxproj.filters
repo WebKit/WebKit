@@ -5200,15 +5200,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLNames.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebBackendDispatchers.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -12303,13 +12294,13 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSBackendDispatchers.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorBackendDispatchers.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSFrontendDispatchers.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendDispatchers.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSProtocolTypes.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolObjects.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolTypes.h">
@@ -13119,15 +13110,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorOverlayPage.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebBackendDispatchers.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.h">

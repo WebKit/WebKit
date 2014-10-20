@@ -44,7 +44,6 @@
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebBackendDispatchers.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -55,9 +54,9 @@
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/InspectorBackendDispatchers.h>
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 using namespace Inspector;
 

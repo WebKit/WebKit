@@ -34,7 +34,7 @@
 #if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
 
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
+#include <inspector/InspectorBackendDispatchers.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

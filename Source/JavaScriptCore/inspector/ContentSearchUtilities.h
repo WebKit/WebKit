@@ -31,7 +31,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorJSProtocolTypes.h"
+#include "InspectorProtocolObjects.h"
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>

@@ -36,10 +36,9 @@
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
+#include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/text/WTFString.h>
 
 namespace {
 

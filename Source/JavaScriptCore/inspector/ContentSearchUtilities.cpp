@@ -31,7 +31,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorJSProtocolTypes.h"
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "Yarr.h"

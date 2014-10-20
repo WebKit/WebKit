@@ -35,18 +35,12 @@ def ucfirst(str):
 
 _FRAMEWORK_CONFIG_MAP = {
     "Global": {
-        "prefix": "",
     },
     "JavaScriptCore": {
-        "prefix": "JS",
         "export_macro": "JS_EXPORT_PRIVATE"
-    },
-    "WebCore": {
-        "prefix": "Web",
     },
     # Used for code generator tests.
     "Test": {
-        "prefix": "Test",
     }
 }
 
@@ -75,9 +69,6 @@ class Framework:
         if frameworkString == "JavaScriptCore":
             return Frameworks.JavaScriptCore
 
-        if frameworkString == "WebCore":
-            return Frameworks.WebCore
-
         if frameworkString == "Test":
             return Frameworks.Test
 
@@ -87,7 +78,6 @@ class Framework:
 class Frameworks:
     Global = Framework("Global")
     JavaScriptCore = Framework("JavaScriptCore")
-    WebCore = Framework("WebCore")
     Test = Framework("Test")
 
 
