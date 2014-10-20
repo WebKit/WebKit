@@ -25,9 +25,6 @@
 
 WebInspector.loaded = function()
 {
-    // FIXME: <https://webkit.org/b/137753> Web Inspector: InspectorBackendCommands should include when to activate particular domains
-    InspectorBackend.activateAllDomains();
-
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);

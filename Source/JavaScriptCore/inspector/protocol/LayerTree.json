@@ -1,5 +1,6 @@
 {
     "domain": "LayerTree",
+    "availability": "web",
     "types": [
         {
             "id": "LayerId",

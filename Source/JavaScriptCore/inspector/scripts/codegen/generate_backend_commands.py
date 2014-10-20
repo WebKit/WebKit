@@ -114,4 +114,14 @@ class BackendCommandsGenerator(Generator):
             }
             lines.append('InspectorBackend.registerCommand("%(domain)s.%(commandName)s", [%(callParams)s], [%(returnParams)s]);' % command_args)
 
+        if domain.commands or domain.events:
+            activate_args = {
+                'domain': domain.domain_name,
+                'availability': domain.availability,
+            }
+            if domain.availability:
+                lines.append('InspectorBackend.activateDomain("%(domain)s", "%(availability)s");' % activate_args)
+            else:
+                lines.append('InspectorBackend.activateDomain("%(domain)s");' % activate_args)
+
         return "\n".join(lines)

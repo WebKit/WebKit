@@ -1,5 +1,31 @@
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: InspectorBackendCommands should include when to activate particular domains
+        https://bugs.webkit.org/show_bug.cgi?id=137753
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        Activation now happens automatically so remove the hardcoded activations.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        Given no filter, always activate a domain. Otherwise only activate
+        if the debuggable type matches the provided filter.
+
+        * UserInterface/Protocol/Legacy/6.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        Only web debuggables are supported in iOS 6 and 7. The JSON files do not
+        need to change, all agents will auto activate.
+
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-8.0.json:
+        Specify which are web debuggables in iOS 8 since JS inspection is possible.
+
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Generate all Inspector domains together in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=137748
 

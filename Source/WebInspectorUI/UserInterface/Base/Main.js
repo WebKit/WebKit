@@ -54,12 +54,6 @@ WebInspector.loaded = function()
 
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
 
-    // FIXME: <https://webkit.org/b/137753> Web Inspector: InspectorBackendCommands should include when to activate particular domains
-    if (this.debuggableType === WebInspector.DebuggableType.JavaScript)
-        InspectorBackend.activateDomains(["Inspector", "Console", "Debugger", "Runtime", "Profiler"]);
-    else
-        InspectorBackend.activateAllDomains();
-
     // Register observers for events from the InspectorBackend.
     if (InspectorBackend.registerInspectorDispatcher)
         InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);

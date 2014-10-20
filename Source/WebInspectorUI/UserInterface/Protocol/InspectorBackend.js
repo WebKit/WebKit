@@ -99,18 +99,9 @@ InspectorBackendClass.prototype = {
             this._deferredScripts.push(script);
     },
 
-    activateDomains: function(domains)
+    activateDomain: function(domainName, activationDebuggableType)
     {
-        for (var domainName of domains) {
-            var agent = this._agents[domainName];
-            if (agent)
-                agent.activate();
-        }
-    },
-
-    activateAllDomains: function()
-    {
-        for (var domainName in this._agents)
+        if (!activationDebuggableType || InspectorFrontendHost.debuggableType() === activationDebuggableType)
             this._agents[domainName].activate();
     },
 

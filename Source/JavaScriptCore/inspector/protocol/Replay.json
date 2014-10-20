@@ -2,6 +2,7 @@
     "domain": "Replay",
     "description": "Controls web replay, and manages recording sessions and segments.",
     "featureGuard": "ENABLE(WEB_REPLAY)",
+    "availability": "web",
     "types": [
         {
             "id": "SessionIdentifier", "description": "Unique replay session identifier.",

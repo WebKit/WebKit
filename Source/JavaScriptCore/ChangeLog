@@ -1,5 +1,54 @@
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: InspectorBackendCommands should include when to activate particular domains
+        https://bugs.webkit.org/show_bug.cgi?id=137753
+
+        Reviewed by Timothy Hatcher.
+
+        Add an availability property to domains that only activate for
+        particular debuggable types. If missing, the domain is always
+        activated. Otherwise it must be a debuggable type string.
+        When a frontend is opened for that debuggable type, the domain
+        will be activated.
+
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_domain):
+        (Domain.__init__):
+        (Domains):
+        Parse and validate the Domain's "availability" property.
+
+        * inspector/scripts/codegen/generate_backend_commands.py:
+        (BackendCommandsGenerator.generate_domain):
+        Emit InspectorBackend.activateDomain with debuggable type filter.
+
+        * inspector/protocol/ApplicationCache.json:
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMDebugger.json:
+        * inspector/protocol/DOMStorage.json:
+        * inspector/protocol/Database.json:
+        * inspector/protocol/IndexedDB.json:
+        * inspector/protocol/LayerTree.json:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Replay.json:
+        * inspector/protocol/Timeline.json:
+        * inspector/protocol/Worker.json:
+        These domains only activate for Web debuggables.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        Update existing tests that now have activate output.
+
+        * inspector/scripts/tests/expected/fail-on-domain-availability.json-error: Added.
+        * inspector/scripts/tests/fail-on-domain-availability.json: Added.
+        Add a test for "availability" validation.
+
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         [Win] Build fix for generated inspector files.
 
         Rubberstamped by Brent Fulgham.

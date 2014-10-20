@@ -1,5 +1,6 @@
 {
     "domain": "ApplicationCache",
+    "availability": "web",
     "types": [
         {
             "id": "ApplicationCacheResource",
