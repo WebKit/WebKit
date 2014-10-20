@@ -1,3 +1,20 @@
+2014-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Factor out JITCode::typeName() for debugging use.
+        <https://webkit.org/b/137888>
+
+        Reviewed by Geoffrey Garen.
+
+        JITCode's printInternal() currently decodes the JITType into a string and
+        prints it.  This change factors out the part that decodes the JITType into
+        JITCode::typeName() so that we can call it from lldb while debugging to
+        quickly decode a JITType value.
+
+        * jit/JITCode.cpp:
+        (JSC::JITCode::typeName):
+        (WTF::printInternal):
+        * jit/JITCode.h:
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows Build Fix #2 after r174892.

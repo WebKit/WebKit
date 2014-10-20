@@ -62,6 +62,8 @@ public:
         FTLJIT
     };
     
+    static const char* typeName(JITType);
+
     static JITType bottomTierJIT()
     {
         return BaselineJIT;
