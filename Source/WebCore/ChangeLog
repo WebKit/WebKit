@@ -1,3 +1,18 @@
+2014-10-20  Beth Dakin  <bdakin@apple.com>
+
+        Add support for action menus
+        https://bugs.webkit.org/show_bug.cgi?id=137891
+        rdar://problem/18451638
+        rdar://problem/18694470
+
+        Reviewed by Anders Carlsson.
+
+        New SPI that is needed for this.
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/mac: Added.
+        * platform/spi/mac/NSViewSPI.h: Added.
+
 2014-10-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Support "inverted-colors" and "monochrome" media feature.

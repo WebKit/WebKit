@@ -3223,6 +3223,7 @@
 		9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 9343CB8012F25E510033C5EE /* TextCodecUTF8.h */; };
 		93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */; };
 		93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */; };
+		9348428219F1A9190009D5AE /* NSViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9348428119F1A9190009D5AE /* NSViewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC1090EDB223900A658F2 /* ScriptSourceCode.h */; };
 		934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */; };
@@ -10352,6 +10353,7 @@
 		9343CB8012F25E510033C5EE /* TextCodecUTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF8.h; sourceTree = "<group>"; };
 		93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowsCollection.h; sourceTree = "<group>"; };
 		93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableRowsCollection.cpp; sourceTree = "<group>"; };
+		9348428119F1A9190009D5AE /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
 		934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextCG.h; sourceTree = "<group>"; };
 		934CC1090EDB223900A658F2 /* ScriptSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceCode.h; sourceTree = "<group>"; };
 		934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSStringExtras.mm; sourceTree = "<group>"; };
@@ -16164,6 +16166,7 @@
 				65086DA619AC1719009AF46B /* cf */,
 				653EF83719A043AE0052202C /* cocoa */,
 				A172182419DE182B00464D17 /* ios */,
+				9348428019F1A9190009D5AE /* mac */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -17511,6 +17514,14 @@
 				9332AB8C1653A97900D827EC /* NEONHelpers.h */,
 			);
 			path = filters;
+			sourceTree = "<group>";
+		};
+		9348428019F1A9190009D5AE /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				9348428119F1A9190009D5AE /* NSViewSPI.h */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		93A1EAA20A5634D8006960A0 /* mac */ = {
@@ -25913,6 +25924,7 @@
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
 				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
+				9348428219F1A9190009D5AE /* NSViewSPI.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
 				CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */,
 				CD641EB41818F5ED00EE4C41 /* SourceBufferPrivate.h in Headers */,
