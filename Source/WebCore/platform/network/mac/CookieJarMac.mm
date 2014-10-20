@@ -34,6 +34,7 @@
 #import "URL.h"
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/text/StringBuilder.h>
 
 enum {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
@@ -69,26 +70,41 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
     return filteredCookies;
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
+static String cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSArray *cookies = wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
-    return [[NSHTTPCookie requestHeaderFieldsWithCookies:filterCookies(cookies).get()] objectForKey:@"Cookie"];
+    StringBuilder cookiesBuilder;
+    for (NSHTTPCookie *cookie in cookies) {
+        if (![[cookie name] length])
+            continue;
+
+        if (!includeHTTPOnly && [cookie isHTTPOnly])
+            continue;
+
+        if (!cookiesBuilder.isEmpty())
+            cookiesBuilder.appendLiteral("; ");
+
+        cookiesBuilder.append(String([cookie name]));
+        cookiesBuilder.append('=');
+        cookiesBuilder.append(String([cookie value]));
+    }
+    return cookiesBuilder.toString();
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
+String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+{
+    return cookiesForSession(session, firstParty, url, DoNotIncludeHTTPOnly);
+}
+
 String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSArray *cookies = wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
-    return [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] objectForKey:@"Cookie"];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieStr)

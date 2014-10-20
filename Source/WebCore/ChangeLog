@@ -1,3 +1,45 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Optimize cookiesForDOM() by filtering and serializing cookies in a single pass
+        https://bugs.webkit.org/show_bug.cgi?id=137869
+
+        Reviewed by Darin Adler.
+
+        Optimize cookiesForDOM() by filtering and serializing in 1 pass instead of 2.
+
+        Previously, when accessing document.cookie, we ended up doing the following:
+        1. Call wkHTTPCookiesForURL() to get an NSArray of NSHTTPCookies.
+        2. Call filterCookies() to filter out cookies that are httpOnly or with an
+           empty name, thus allocating a new NSMutableArray.
+        3. Call NSHTTPCookie's requestHeaderFieldsWithCookies() to serialize the
+           cookies
+        4. Construct a WTF::String from the NSString*
+
+        There were several inefficiencies here:
+        1. We needed to pre-filter the cookies and allocate a new NSMutableArray
+           before calling requestHeaderFieldsWithCookies()
+        2. requestHeaderFieldsWithCookies() does more things that we actually need.
+           It constructs a Dictionary of header fields, of which we query the
+           "Cookie" field, even though we merely want a ';'-separated string
+           representation of the cookies in "key=value" form.
+
+        With this patch, we now take care of the string serialization ourselves,
+        using a StringBuilder as it is trivial to do. This also allows us to filter
+        out the httpOnly/invalid cookies as we do the serialization instead of
+        having a first pass to do so.
+
+        When scrolling the http://www.apple.com/iphone/ entire page down, then up,
+        se were spending ~13.1% of the NetworkProcess time in cookiesForDOM()
+        (~96ms) on my machine. With the patch, we spend ~23% less time in
+        cookiesForDOM() (~74ms).
+
+        No new tests, no behavior change.
+
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForSession):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2014-10-19  Chris Dumez  <cdumez@apple.com>
 
         Kill toRenderedDocumentMarker() by using tighter typing
