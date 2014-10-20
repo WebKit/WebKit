@@ -1742,8 +1742,7 @@ private:
         if (currentNodeOrigin == checkedNodeOrigin) {
             // The checked node is within the same bytecode. Hence, the earliest
             // position we can insert the check is right after the checked node.
-            indexInBlock = indexOfNode(node, indexInBlock);
-            indexInBlock++;
+            indexInBlock = indexOfNode(node, indexInBlock) + 1;
         } else {
             // The checked node is from a preceding bytecode. Hence, the earliest
             // position we can insert the check is at the start of the current

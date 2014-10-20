@@ -1,5 +1,20 @@
 2014-10-20  Mark Lam  <mark.lam@apple.com>
 
+        [Follow up] Web Process crash when starting the web inspector after r174025.
+        <https://webkit.org/b/137340>
+
+        Reviewed by Geoffrey Garen.
+
+        Applied Geoff's feedback to clean up some code for better clarity after
+        r174856.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::insertCheck):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertOutOfOrder):
+
+2014-10-20  Mark Lam  <mark.lam@apple.com>
+
         Factor out JITCode::typeName() for debugging use.
         <https://webkit.org/b/137888>
 

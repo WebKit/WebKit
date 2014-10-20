@@ -120,14 +120,12 @@ public:
     {
         size_t targetIndex = insertion.index();
         size_t entry = m_insertions.size();
-        if (entry) {
-            do {
-                entry--;
-                if (m_insertions[entry].index() <= targetIndex) {
-                    entry++;
-                    break;
-                }
-            } while (entry);
+        while (entry) {
+            entry--;
+            if (m_insertions[entry].index() <= targetIndex) {
+                entry++;
+                break;
+            }
         }
         m_insertions.insert(entry, insertion);
         return insertion.element();
