@@ -151,10 +151,10 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
     if (!cache)
         return nullptr;
 
-    AccessibilityScrollbar* scrollBarObject = toAccessibilityScrollbar(cache->getOrCreate(scrollbar));
-    scrollBarObject->setParent(this);
-    m_children.append(scrollBarObject);
-    return scrollBarObject;
+    auto& scrollBarObject = downcast<AccessibilityScrollbar>(*cache->getOrCreate(scrollbar));
+    scrollBarObject.setParent(this);
+    m_children.append(&scrollBarObject);
+    return &scrollBarObject;
 }
         
 void AccessibilityScrollView::clearChildren()

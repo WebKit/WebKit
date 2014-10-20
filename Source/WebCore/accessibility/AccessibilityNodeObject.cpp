@@ -1669,9 +1669,9 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
         if (!shouldUseAccessiblityObjectInnerText(child, mode))
             continue;
 
-        if (child->isAccessibilityNodeObject()) {
+        if (is<AccessibilityNodeObject>(*child)) {
             Vector<AccessibilityText> textOrder;
-            toAccessibilityNodeObject(child)->alternativeText(textOrder);
+            downcast<AccessibilityNodeObject>(*child).alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
                 appendNameToStringBuilder(builder, textOrder[0].text);
                 continue;

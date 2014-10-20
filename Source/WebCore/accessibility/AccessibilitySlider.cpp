@@ -84,15 +84,15 @@ void AccessibilitySlider::addChildren()
 
     AXObjectCache* cache = m_renderer->document().axObjectCache();
 
-    AccessibilitySliderThumb* thumb = toAccessibilitySliderThumb(cache->getOrCreate(SliderThumbRole));
-    thumb->setParent(this);
+    auto& thumb = downcast<AccessibilitySliderThumb>(*cache->getOrCreate(SliderThumbRole));
+    thumb.setParent(this);
 
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
-    if (thumb->accessibilityIsIgnored())
-        cache->remove(thumb->axObjectID());
+    if (thumb.accessibilityIsIgnored())
+        cache->remove(thumb.axObjectID());
     else
-        m_children.append(thumb);
+        m_children.append(&thumb);
 }
 
 const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const

@@ -66,8 +66,8 @@ private:
     virtual bool computeAccessibilityIsIgnored() const override;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableColumn, isTableColumn())
-
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableColumn, isTableColumn())
 
 #endif // AccessibilityTableColumn_h

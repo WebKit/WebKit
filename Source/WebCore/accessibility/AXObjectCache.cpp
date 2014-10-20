@@ -159,10 +159,10 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
         return nullptr;
     
     for (const auto& child : axRenderImage->children()) {
-        if (!child->isImageMapLink())
+        if (!is<AccessibilityImageMapLink>(*child))
             continue;
         
-        if (toAccessibilityImageMapLink(child.get())->areaElement() == areaElement)
+        if (downcast<AccessibilityImageMapLink>(*child).areaElement() == areaElement)
             return child.get();
     }    
     
@@ -720,10 +720,8 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
 #ifndef NDEBUG
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
-        if (obj->isAccessibilityRenderObject()) {
-            AccessibilityRenderObject* renderObj = toAccessibilityRenderObject(obj);
-            RenderObject* renderer = renderObj->renderer();
-            if (renderer)
+        if (is<AccessibilityRenderObject>(*obj)) {
+            if (auto* renderer = downcast<AccessibilityRenderObject>(*obj).renderer())
                 ASSERT(!renderer->view().layoutState());
         }
 #endif

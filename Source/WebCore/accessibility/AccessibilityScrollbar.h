@@ -62,8 +62,8 @@ private:
     RefPtr<Scrollbar> m_scrollbar;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityScrollbar, isAccessibilityScrollbar())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollbar, isAccessibilityScrollbar())
 
 #endif // AccessibilityScrollbar_h

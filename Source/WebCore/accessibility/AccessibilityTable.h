@@ -75,6 +75,9 @@ public:
     // an object that contains, as children, all the objects that act as headers
     AccessibilityObject* headerContainer();
 
+    // isAccessibilityTable is whether it is exposed as an AccessibilityTable to the platform.
+    virtual bool isAccessibilityTable() const override final;
+
 protected:
     AccessibilityChildrenVector m_rows;
     AccessibilityChildrenVector m_columns;
@@ -86,8 +89,6 @@ protected:
 
     // isTable is whether it's an AccessibilityTable object.
     virtual bool isTable() const override { return true; }
-    // isAccessibilityTable is whether it is exposed as an AccessibilityTable to the platform.
-    virtual bool isAccessibilityTable() const override;
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
     virtual bool isDataTable() const override;
@@ -101,8 +102,8 @@ private:
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())
-
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTable, isTable())
 
 #endif // AccessibilityTable_h

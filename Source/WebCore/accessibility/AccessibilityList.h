@@ -52,8 +52,8 @@ private:
     virtual AccessibilityRole determineAccessibilityRole() override;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityList, isList())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityList, isList())
 
 #endif // AccessibilityList_h

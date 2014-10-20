@@ -66,7 +66,7 @@ void AccessibilityMenuList::addChildren()
     if (!list)
         return;
 
-    toAccessibilityMockObject(list)->setParent(this);
+    downcast<AccessibilityMockObject>(*list).setParent(this);
     if (list->accessibilityIsIgnored()) {
         cache->remove(list->axObjectID());
         return;
@@ -111,7 +111,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
     const auto& childObjects = children();
     if (!childObjects.isEmpty()) {
         ASSERT(childObjects.size() == 1);
-        ASSERT(childObjects[0]->isMenuListPopup());
+        ASSERT(is<AccessibilityMenuListPopup>(*childObjects[0]));
 
         // We might be calling this method in situations where the renderers for list items
         // associated to the menu list have not been created (e.g. they might be rendered
@@ -121,10 +121,8 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
         // You can reproduce the issue in the GTK+ port by removing this check and running
         // accessibility/insert-selected-option-into-select-causes-crash.html (will crash).
         int popupChildrenSize = static_cast<int>(childObjects[0]->children().size());
-        if (childObjects[0]->isMenuListPopup() && optionIndex >= 0 && optionIndex < popupChildrenSize) {
-            if (AccessibilityMenuListPopup* popup = toAccessibilityMenuListPopup(childObjects[0].get()))
-                popup->didUpdateActiveOption(optionIndex);
-        }
+        if (is<AccessibilityMenuListPopup>(*childObjects[0]) && optionIndex >= 0 && optionIndex < popupChildrenSize)
+            downcast<AccessibilityMenuListPopup>(*childObjects[0]).didUpdateActiveOption(optionIndex);
     }
 
     cache->postNotification(this, &document.get(), AXObjectCache::AXMenuListValueChanged, TargetElement, PostSynchronously);

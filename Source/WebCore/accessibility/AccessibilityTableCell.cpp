@@ -89,9 +89,9 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     // always be the case when AT clients access a table.
     // https://bugs.webkit.org/show_bug.cgi?id=42652
     AccessibilityObject* parentTable = axObjectCache()->get(downcast<RenderTableCell>(*m_renderer).table());
-    if (!parentTable || !parentTable->isTable())
+    if (!is<AccessibilityTable>(parentTable))
         return nullptr;
-    return toAccessibilityTable(parentTable);
+    return downcast<AccessibilityTable>(parentTable);
 }
     
 bool AccessibilityTableCell::isTableCell() const

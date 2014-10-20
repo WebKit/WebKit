@@ -1738,13 +1738,13 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
         } else {
             Node* parent = curr->parentNode();
             if (is<HTMLAreaElement>(*curr) && is<HTMLMapElement>(parent)) {
-                AccessibilityImageMapLink* areaObject = toAccessibilityImageMapLink(axObjectCache()->getOrCreate(ImageMapLinkRole));
+                auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->getOrCreate(ImageMapLinkRole));
                 HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
-                areaObject->setHTMLAreaElement(downcast<HTMLAreaElement>(curr));
-                areaObject->setHTMLMapElement(&map);
-                areaObject->setParent(accessibilityParentForImageMap(&map));
+                areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(curr));
+                areaObject.setHTMLMapElement(&map);
+                areaObject.setParent(accessibilityParentForImageMap(&map));
 
-                result.append(areaObject);
+                result.append(&areaObject);
             }
         }
     }
@@ -2328,7 +2328,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     if (!renderer()->frame().selection().isFocusedAndActive() || renderer()->document().focusedElement() != element)
         return;
 
-    if (toAccessibilityRenderObject(activeDescendant()) && shouldNotifyActiveDescendant())
+    if (activeDescendant() && shouldNotifyActiveDescendant())
         renderer()->document().axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged);
 }
 
@@ -2685,10 +2685,10 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         return false;
     
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
-        if (!parent->isAccessibilityRenderObject())
+        if (!is<AccessibilityRenderObject>(*parent))
             continue;
         
-        Node* node = toAccessibilityRenderObject(parent)->node();
+        Node* node = downcast<AccessibilityRenderObject>(*parent).node();
         if (!is<Element>(node))
             continue;
         
@@ -2807,14 +2807,14 @@ void AccessibilityRenderObject::addImageMapChildren()
         // add an <area> element for this child if it has a link
         if (!area.isLink())
             continue;
-        AccessibilityImageMapLink* areaObject = toAccessibilityImageMapLink(axObjectCache()->getOrCreate(ImageMapLinkRole));
-        areaObject->setHTMLAreaElement(&area);
-        areaObject->setHTMLMapElement(map);
-        areaObject->setParent(this);
-        if (!areaObject->accessibilityIsIgnored())
-            m_children.append(areaObject);
+        auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->getOrCreate(ImageMapLinkRole));
+        areaObject.setHTMLAreaElement(&area);
+        areaObject.setHTMLMapElement(map);
+        areaObject.setParent(this);
+        if (!areaObject.accessibilityIsIgnored())
+            m_children.append(&areaObject);
         else
-            axObjectCache()->remove(areaObject->axObjectID());
+            axObjectCache()->remove(areaObject.axObjectID());
     }
 }
 
@@ -2837,10 +2837,11 @@ void AccessibilityRenderObject::addTextFieldChildren()
     if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
         return;
 
-    AccessibilitySpinButton* axSpinButton = toAccessibilitySpinButton(axObjectCache()->getOrCreate(SpinButtonRole));
-    axSpinButton->setSpinButtonElement(static_cast<SpinButtonElement*>(spinButtonElement));
-    axSpinButton->setParent(this);
-    m_children.append(axSpinButton);
+    auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->getOrCreate(SpinButtonRole));
+    // FIXME: We should use is<>() / downcast<>() for SpinButtonElement.
+    axSpinButton.setSpinButtonElement(static_cast<SpinButtonElement*>(spinButtonElement));
+    axSpinButton.setParent(this);
+    m_children.append(&axSpinButton);
 }
     
 bool AccessibilityRenderObject::isSVGImage() const
@@ -2890,11 +2891,11 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
 
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
-    ASSERT(rootSVGObject && rootSVGObject->isAccessibilitySVGRoot());
-    if (!rootSVGObject->isAccessibilitySVGRoot())
+    ASSERT(rootSVGObject);
+    if (!is<AccessibilitySVGRoot>(*rootSVGObject))
         return nullptr;
     
-    return toAccessibilitySVGRoot(rootSVGObject);
+    return downcast<AccessibilitySVGRoot>(rootSVGObject);
 }
     
 void AccessibilityRenderObject::addRemoteSVGChildren()
@@ -3134,8 +3135,8 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
         AccessibilityChildrenVector allRows;
         ariaTreeRows(allRows);
         rowsIteration(allRows);
-    } else if (isAccessibilityTable() && toAccessibilityTable(this)->supportsSelectedRows())
-        rowsIteration(toAccessibilityTable(this)->rows());
+    } else if (isAccessibilityTable() && downcast<AccessibilityTable>(*this).supportsSelectedRows())
+        rowsIteration(downcast<AccessibilityTable>(*this).rows());
 }
     
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)

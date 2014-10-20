@@ -62,8 +62,8 @@ private:
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMenuListPopup, isMenuListPopup())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuListPopup, isMenuListPopup())
 
 #endif // AccessibilityMenuListPopup_h

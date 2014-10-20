@@ -73,7 +73,7 @@ void AccessibilityTableHeaderContainer::addChildren()
     if (!m_parent || !m_parent->isAccessibilityTable())
         return;
     
-    toAccessibilityTable(m_parent)->columnHeaders(m_children);
+    downcast<AccessibilityTable>(*m_parent).columnHeaders(m_children);
     
     for (const auto& child : m_children)
         m_headerRect.unite(child->elementRect());

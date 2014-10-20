@@ -73,10 +73,10 @@ private:
     virtual bool isSpinButtonPart() const override { return true; }
     virtual LayoutRect elementRect() const override;
 };
-
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySpinButton, isNativeSpinButton())
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySpinButtonPart, isSpinButtonPart())
     
-} // namespace WebCore 
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySpinButton, isNativeSpinButton())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySpinButtonPart, isSpinButtonPart())
 
 #endif // AccessibilitySpinButton_h

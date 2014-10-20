@@ -73,7 +73,7 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
         return;
     
     unsigned level = hierarchicalLevel();
-    auto& allRows = toAccessibilityTable(parent)->rows();
+    auto& allRows = downcast<AccessibilityTable>(*parent).rows();
     int rowCount = allRows.size();
     for (int k = index + 1; k < rowCount; ++k) {
         AccessibilityObject* row = allRows[k].get();
@@ -100,7 +100,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     
     // Search for the previous row that matches the correct level.
     int index = rowIndex();
-    auto& allRows = toAccessibilityTable(parent)->rows();
+    auto& allRows = downcast<AccessibilityTable>(parent)->rows();
     int rowCount = allRows.size();
     if (index >= rowCount)
         return nullptr;
@@ -120,8 +120,8 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         // The parent table for an ARIA grid row should be an ARIA table.
-        if (parent->isTable() && parent->isAccessibilityTable() && toAccessibilityTable(parent)->isAriaTable())
-            return toAccessibilityTable(parent);
+        if (parent->isAccessibilityTable() && downcast<AccessibilityTable>(*parent).isAriaTable())
+            return downcast<AccessibilityTable>(parent);
     }
     
     return nullptr;

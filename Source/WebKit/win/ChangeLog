@@ -1,3 +1,17 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Accessibility objects
+        https://bugs.webkit.org/show_bug.cgi?id=137286
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Accessibility objects.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accSelect):
+        * AccessibleImage.cpp:
+        (AccessibleImage::name):
+
 2014-10-18  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Repaint issues with accelerated compositing.

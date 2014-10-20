@@ -74,9 +74,9 @@ private:
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual bool computeAccessibilityIsIgnored() const override;
 };
-
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityListBoxOption, isListBoxOption())
     
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBoxOption, isListBoxOption())
 
 #endif // AccessibilityListBoxOption_h

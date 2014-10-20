@@ -1005,9 +1005,11 @@ inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { 
 inline void AccessibilityObject::updateBackingStore() { }
 #endif
 
-#define ACCESSIBILITY_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, AccessibilityObject, object, object->predicate, object.predicate)
-
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // AccessibilityObject_h

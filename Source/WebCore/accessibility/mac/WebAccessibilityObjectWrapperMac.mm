@@ -994,10 +994,10 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
     if (!AXAttributedStringRangeIsValid(attrString, range))
         return;
     
-    if (object && object->isAccessibilityRenderObject()) {
+    if (is<AccessibilityRenderObject>(object)) {
         // make a serializable AX object
         
-        RenderObject* renderer = toAccessibilityRenderObject(object)->renderer();
+        RenderObject* renderer = downcast<AccessibilityRenderObject>(*object).renderer();
         if (!renderer)
             return;
         
@@ -1199,7 +1199,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (m_object->supportsARIADropping())
         [additional addObject:NSAccessibilityDropEffectsAttribute];
     
-    if (m_object->isAccessibilityTable() && toAccessibilityTable(m_object)->supportsSelectedRows())
+    if (m_object->isAccessibilityTable() && downcast<AccessibilityTable>(*m_object).supportsSelectedRows())
         [additional addObject:NSAccessibilitySelectedRowsAttribute];
     
     if (m_object->supportsARIALiveRegion()) {
@@ -1752,8 +1752,8 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
         ScrollView* scrollView = nullptr;
         AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->isAccessibilityScrollView()) {
-                scrollView = toAccessibilityScrollView(parent)->scrollView();
+            if (is<AccessibilityScrollView>(*parent)) {
+                scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
                 break;
             }
         }
@@ -1992,8 +1992,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->roleValue() == HorizontalRuleRole)
         return NSAccessibilityContentSeparatorSubrole;
     
-    if (m_object->isSpinButtonPart()) {
-        if (toAccessibilitySpinButtonPart(m_object)->isIncrementor())
+    if (is<AccessibilitySpinButtonPart>(*m_object)) {
+        if (downcast<AccessibilitySpinButtonPart>(*m_object).isIncrementor())
             return NSAccessibilityIncrementArrowSubrole;
         
         return NSAccessibilityDecrementArrowSubrole;
@@ -2005,11 +2005,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isTreeItem())
         return NSAccessibilityOutlineRowSubrole;
     
-    if (m_object->isList()) {
-        AccessibilityList* listObject = toAccessibilityList(m_object);
-        if (listObject->isUnorderedList() || listObject->isOrderedList())
+    if (is<AccessibilityList>(*m_object)) {
+        auto& listObject = downcast<AccessibilityList>(*m_object);
+        if (listObject.isUnorderedList() || listObject.isOrderedList())
             return NSAccessibilityContentListSubrole;
-        if (listObject->isDescriptionList()) {
+        if (listObject.isDescriptionList()) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
             return NSAccessibilityDefinitionListSubrole;
 #else
@@ -2179,9 +2179,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     // Only returning for DL (not UL or OL) because description changed with HTML5 from 'definition list' to
     // superset 'description list' and does not return the same values in AX API on some OS versions. 
-    if (m_object->isList()) {
-        AccessibilityList* listObject = toAccessibilityList(m_object);
-        if (listObject->isDescriptionList())
+    if (is<AccessibilityList>(*m_object)) {
+        if (downcast<AccessibilityList>(*m_object).isDescriptionList())
             return AXDescriptionListText();
     }
     
@@ -2217,7 +2216,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (id)scrollViewParent
 {
-    if (!m_object || !m_object->isAccessibilityScrollView())
+    if (!is<AccessibilityScrollView>(m_object))
         return nil;
     
     // If this scroll view provides it's parent object (because it's a sub-frame), then
@@ -2225,8 +2224,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->parentObject())
         return nil;
     
-    AccessibilityScrollView* scrollView = toAccessibilityScrollView(m_object);
-    ScrollView* scroll = scrollView->scrollView();
+    ScrollView* scroll = downcast<AccessibilityScrollView>(*m_object).scrollView();
     if (!scroll)
         return nil;
     
@@ -2333,7 +2331,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString:@"AXLinkUIElements"]) {
             AccessibilityObject::AccessibilityChildrenVector links;
-            toAccessibilityRenderObject(m_object)->getDocumentLinks(links);
+            downcast<AccessibilityRenderObject>(*m_object).getDocumentLinks(links);
             return convertToNSArray(links);
         }
         if ([attributeName isEqualToString:@"AXLoaded"])
@@ -2392,11 +2390,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
 
     // Only native spin buttons have increment and decrement buttons.
-    if (m_object->isNativeSpinButton()) {
+    if (is<AccessibilitySpinButton>(*m_object)) {
         if ([attributeName isEqualToString:NSAccessibilityIncrementButtonAttribute])
-            return toAccessibilitySpinButton(m_object)->incrementButton()->wrapper();
+            return downcast<AccessibilitySpinButton>(*m_object).incrementButton()->wrapper();
         if ([attributeName isEqualToString:NSAccessibilityDecrementButtonAttribute])
-            return toAccessibilitySpinButton(m_object)->decrementButton()->wrapper();
+            return downcast<AccessibilitySpinButton>(*m_object).decrementButton()->wrapper();
     }
     
     if ([attributeName isEqualToString: @"AXVisited"])
@@ -2557,19 +2555,20 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if (m_object->isAccessibilityTable()) {
+        auto& table = downcast<AccessibilityTable>(*m_object);
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])
-            return convertToNSArray(toAccessibilityTable(m_object)->rows());
+            return convertToNSArray(table.rows());
         
         if ([attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector visibleRows;
-            toAccessibilityTable(m_object)->visibleRows(visibleRows);
+            table.visibleRows(visibleRows);
             return convertToNSArray(visibleRows);
         }
         
         // TODO: distinguish between visible and non-visible columns
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute]) {
-            return convertToNSArray(toAccessibilityTable(m_object)->columns());
+            return convertToNSArray(table.columns());
         }
         
         if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
@@ -2585,12 +2584,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-            toAccessibilityTable(m_object)->columnHeaders(columnHeaders);
+            table.columnHeaders(columnHeaders);
             return convertToNSArray(columnHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AccessibilityObject* headerContainer = toAccessibilityTable(m_object)->headerContainer();
+            AccessibilityObject* headerContainer = table.headerContainer();
             if (headerContainer)
                 return headerContainer->wrapper();
             return nil;
@@ -2598,59 +2597,61 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-            toAccessibilityTable(m_object)->rowHeaders(rowHeaders);
+            table.rowHeaders(rowHeaders);
             return convertToNSArray(rowHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityVisibleCellsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector cells;
-            toAccessibilityTable(m_object)->cells(cells);
+            table.cells(cells);
             return convertToNSArray(cells);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityColumnCountAttribute])
-            return @(toAccessibilityTable(m_object)->columnCount());
+            return @(table.columnCount());
         
         if ([attributeName isEqualToString:NSAccessibilityRowCountAttribute])
-            return @(toAccessibilityTable(m_object)->rowCount());
+            return @(table.rowCount());
     }
     
-    if (m_object->isTableColumn()) {
+    if (is<AccessibilityTableColumn>(*m_object)) {
+        auto& column = downcast<AccessibilityTableColumn>(*m_object);
         if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-            return [NSNumber numberWithInt:toAccessibilityTableColumn(m_object)->columnIndex()];
+            return [NSNumber numberWithInt:column.columnIndex()];
         
         // rows attribute for a column is the list of all the elements in that column at each row
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
-            return convertToNSArray(toAccessibilityTableColumn(m_object)->children());
+            return convertToNSArray(column.children());
         }
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AccessibilityObject* header = toAccessibilityTableColumn(m_object)->headerObject();
+            AccessibilityObject* header = column.headerObject();
             if (!header)
                 return nil;
             return header->wrapper();
         }
     }
     
-    if (m_object->isTableCell()) {
+    if (is<AccessibilityTableCell>(*m_object)) {
+        auto& cell = downcast<AccessibilityTableCell>(*m_object);
         if ([attributeName isEqualToString:NSAccessibilityRowIndexRangeAttribute]) {
             std::pair<unsigned, unsigned> rowRange;
-            toAccessibilityTableCell(m_object)->rowIndexRange(rowRange);
+            cell.rowIndexRange(rowRange);
             return [NSValue valueWithRange:NSMakeRange(rowRange.first, rowRange.second)];
         }
         if ([attributeName isEqualToString:NSAccessibilityColumnIndexRangeAttribute]) {
             std::pair<unsigned, unsigned> columnRange;
-            toAccessibilityTableCell(m_object)->columnIndexRange(columnRange);
+            cell.columnIndexRange(columnRange);
             return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
         }
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-            toAccessibilityTableCell(m_object)->columnHeaders(columnHeaders);
+            cell.columnHeaders(columnHeaders);
             return convertToNSArray(columnHeaders);
         }
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-            toAccessibilityTableCell(m_object)->rowHeaders(rowHeaders);
+            cell.rowHeaders(rowHeaders);
             return convertToNSArray(rowHeaders);
         }
     }
@@ -2691,9 +2692,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             
             return nil;
         }
-        if (m_object->isTableRow()) {
+        if (is<AccessibilityTableRow>(*m_object)) {
             if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-                return [NSNumber numberWithInt:toAccessibilityTableRow(m_object)->rowIndex()];
+                return [NSNumber numberWithInt:downcast<AccessibilityTableRow>(*m_object).rowIndex()];
         }
     }
     
@@ -2703,9 +2704,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             m_object->ariaTreeItemDisclosedRows(rowsCopy);
             return convertToNSArray(rowsCopy);
-        } else if (m_object->isARIATreeGridRow()) {
+        } else if (is<AccessibilityARIAGridRow>(*m_object)) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            toAccessibilityARIAGridRow(m_object)->disclosedRows(rowsCopy);
+            downcast<AccessibilityARIAGridRow>(*m_object).disclosedRows(rowsCopy);
             return convertToNSArray(rowsCopy);
         }
     }
@@ -2723,8 +2724,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 parent = parent->parentObject();
             }
             return nil;
-        } else if (m_object->isARIATreeGridRow()) {
-            AccessibilityObject* row = toAccessibilityARIAGridRow(m_object)->disclosedByRow();
+        } else if (is<AccessibilityARIAGridRow>(*m_object)) {
+            AccessibilityObject* row = downcast<AccessibilityARIAGridRow>(*m_object).disclosedByRow();
             if (!row)
                 return nil;
             return row->wrapper();
@@ -2769,7 +2770,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool:m_object->isSelected()];
     
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
-        AccessibilityObject* uiElement = toAccessibilityRenderObject(m_object)->menuForMenuButton();
+        AccessibilityObject* uiElement = downcast<AccessibilityRenderObject>(*m_object).menuForMenuButton();
         if (uiElement)
             return [NSArray arrayWithObject:uiElement->wrapper()];
     }
@@ -3197,8 +3198,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (frameView && !frameView->platformWidget()) {
         // Find the appropriate scroll view to use to convert the contents to the window.
         for (AccessibilityObject* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->isAccessibilityScrollView()) {
-                ScrollView* scrollView = toAccessibilityScrollView(parent)->scrollView();
+            if (is<AccessibilityScrollView>(*parent)) {
+                ScrollView* scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
                 rect = scrollView->contentsToRootView(rect);
                 break;
             }
@@ -3299,7 +3300,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return;
         AccessibilityObject::AccessibilityChildrenVector selectedChildren;
         convertToVector(array, selectedChildren);
-        toAccessibilityListBox(m_object)->setSelectedChildren(selectedChildren);
+        downcast<AccessibilityListBox>(*m_object).setSelectedChildren(selectedChildren);
     } else if (m_object->isTextControl()) {
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             m_object->setSelectedText(string);
@@ -3706,7 +3707,7 @@ static RenderObject* rendererForView(NSView* view)
         if ([attribute isEqualToString:NSAccessibilityCellForColumnAndRowParameterizedAttribute]) {
             if (array == nil || [array count] != 2)
                 return nil;
-            AccessibilityTableCell* cell = toAccessibilityTable(m_object)->cellForColumnAndRow([[array objectAtIndex:0] unsignedIntValue], [[array objectAtIndex:1] unsignedIntValue]);
+            AccessibilityTableCell* cell = downcast<AccessibilityTable>(*m_object).cellForColumnAndRow([[array objectAtIndex:0] unsignedIntValue], [[array objectAtIndex:1] unsignedIntValue]);
             if (!cell)
                 return nil;
             

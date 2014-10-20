@@ -64,10 +64,10 @@ private:
     
     virtual AccessibilityObject* observableObject() const override;
     virtual bool computeAccessibilityIsIgnored() const override;
-}; 
+};
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableRow, isTableRow())
+} // namespace WebCore
 
-} // namespace WebCore 
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableRow, isTableRow())
 
 #endif // AccessibilityTableRow_h

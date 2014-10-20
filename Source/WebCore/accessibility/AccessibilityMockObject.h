@@ -51,10 +51,10 @@ private:
     virtual bool isMockObject() const override { return true; }
 
     virtual bool computeAccessibilityIsIgnored() const override;
-}; 
+};
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMockObject, isMockObject())
-    
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMockObject, isMockObject())
 
 #endif // AccessibilityMockObject_h

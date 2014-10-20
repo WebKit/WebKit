@@ -83,9 +83,9 @@ private:
     RefPtr<AccessibilityObject> m_verticalScrollbar;
     bool m_childrenDirty;
 };
-
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityScrollView, isAccessibilityScrollView())
     
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollView, isAccessibilityScrollView())
 
 #endif // AccessibilityScrollView_h

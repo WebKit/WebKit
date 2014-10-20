@@ -1580,8 +1580,8 @@ PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent:
                     liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
             }
 
-            if (axObject->isAccessibilityNodeObject())
-                mouseEventNode = toAccessibilityNodeObject(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
+            if (is<AccessibilityNodeObject>(*axObject))
+                mouseEventNode = downcast<AccessibilityNodeObject>(*axObject).mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
 
             if (axObject->supportsARIAOwns()) {
                 Vector<Element*> ownedElements;

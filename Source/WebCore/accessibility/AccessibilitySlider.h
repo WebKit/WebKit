@@ -84,8 +84,8 @@ private:
     virtual bool computeAccessibilityIsIgnored() const override;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySliderThumb, isSliderThumb())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySliderThumb, isSliderThumb())
 
 #endif // AccessibilitySlider_h

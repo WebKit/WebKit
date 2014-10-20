@@ -502,7 +502,7 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
 {
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    const auto& searchChildren = object->isAccessibilityTable() ? toAccessibilityTable(object)->rows() : object->children();
+    const auto& searchChildren = object->isAccessibilityTable() ? downcast<AccessibilityTable>(*object).rows() : object->children();
 
     size_t childrenSize = searchChildren.size();
 
@@ -1536,8 +1536,8 @@ void AccessibilityObject::updateBackingStore()
 ScrollView* AccessibilityObject::scrollViewAncestor() const
 {
     for (const AccessibilityObject* scrollParent = this; scrollParent; scrollParent = scrollParent->parentObject()) {
-        if (scrollParent->isAccessibilityScrollView())
-            return toAccessibilityScrollView(scrollParent)->scrollView();
+        if (is<AccessibilityScrollView>(*scrollParent))
+            return downcast<AccessibilityScrollView>(*scrollParent).scrollView();
     }
     
     return nullptr;

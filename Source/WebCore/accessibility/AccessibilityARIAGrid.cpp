@@ -55,29 +55,29 @@ PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* re
 
 bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
-    if (!child || (!child->isTableRow() && child->ariaRoleAttribute() != RowRole))
+    if (!child || (!is<AccessibilityTableRow>(*child) && !is<AccessibilityARIAGridRow>(*child)))
         return false;
         
-    AccessibilityTableRow* row = toAccessibilityTableRow(child);
-    if (appendedRows.contains(row))
+    auto& row = downcast<AccessibilityTableRow>(*child);
+    if (appendedRows.contains(&row))
         return false;
         
     // store the maximum number of columns
-    unsigned rowCellCount = row->children().size();
+    unsigned rowCellCount = row.children().size();
     if (rowCellCount > columnCount)
         columnCount = rowCellCount;
     
-    row->setRowIndex((int)m_rows.size());        
-    m_rows.append(row);
+    row.setRowIndex((int)m_rows.size());
+    m_rows.append(&row);
 
     // Try adding the row if it's not ignoring accessibility,
     // otherwise add its children (the cells) as the grid's children.
-    if (!row->accessibilityIsIgnored())
-        m_children.append(row);
+    if (!row.accessibilityIsIgnored())
+        m_children.append(&row);
     else
-        m_children.appendVector(row->children());
+        m_children.appendVector(row.children());
 
-    appendedRows.add(row);
+    appendedRows.add(&row);
     return true;
 }
 
@@ -134,12 +134,12 @@ void AccessibilityARIAGrid::addChildren()
     
     // make the columns based on the number of columns in the first body
     for (unsigned i = 0; i < columnCount; ++i) {
-        AccessibilityTableColumn* column = toAccessibilityTableColumn(axCache->getOrCreate(ColumnRole));
-        column->setColumnIndex((int)i);
-        column->setParent(this);
-        m_columns.append(column);
-        if (!column->accessibilityIsIgnored())
-            m_children.append(column);
+        auto& column = downcast<AccessibilityTableColumn>(*axCache->getOrCreate(ColumnRole));
+        column.setColumnIndex(static_cast<int>(i));
+        column.setParent(this);
+        m_columns.append(&column);
+        if (!column.accessibilityIsIgnored())
+            m_children.append(&column);
     }
     
     AccessibilityObject* headerContainerObject = headerContainer();

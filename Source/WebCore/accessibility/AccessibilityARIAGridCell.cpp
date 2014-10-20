@@ -56,7 +56,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
         return nullptr;
     
     if (parent->isAccessibilityTable())
-        return toAccessibilityTable(parent);
+        return downcast<AccessibilityTable>(parent);
 
     // It could happen that we hadn't reached the parent table yet (in
     // case objects for rows were not ignoring accessibility) so for
@@ -65,7 +65,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     if (!parent || !parent->isAccessibilityTable())
         return nullptr;
     
-    return toAccessibilityTable(parent);
+    return downcast<AccessibilityTable>(parent);
 }
     
 void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange)
@@ -74,13 +74,13 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
     if (!parent)
         return;
 
-    if (parent->isTableRow()) {
+    if (is<AccessibilityTableRow>(*parent)) {
         // We already got a table row, use its API.
-        rowRange.first = toAccessibilityTableRow(parent)->rowIndex();
+        rowRange.first = downcast<AccessibilityTableRow>(*parent).rowIndex();
     } else if (parent->isAccessibilityTable()) {
         // We reached the parent table, so we need to inspect its
         // children to determine the row index for the cell in it.
-        unsigned columnCount = toAccessibilityTable(parent)->columnCount();
+        unsigned columnCount = downcast<AccessibilityTable>(*parent).columnCount();
         if (!columnCount)
             return;
 

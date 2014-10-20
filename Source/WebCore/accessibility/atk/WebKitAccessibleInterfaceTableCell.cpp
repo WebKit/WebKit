@@ -54,11 +54,11 @@ GPtrArray* webkitAccessibleTableCellGetColumnHeaderCells(AtkTableCell* cell)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), nullptr);
 
     AccessibilityObject* axObject = core(cell);
-    if (!axObject || !axObject->isTableCell())
+    if (!is<AccessibilityTableCell>(axObject))
         return nullptr;
 
     AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-    toAccessibilityTableCell(axObject)->columnHeaders(columnHeaders);
+    downcast<AccessibilityTableCell>(*axObject).columnHeaders(columnHeaders);
 
     return convertToGPtrArray(columnHeaders);
 }
@@ -69,11 +69,11 @@ GPtrArray* webkitAccessibleTableCellGetRowHeaderCells(AtkTableCell* cell)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), nullptr);
 
     AccessibilityObject* axObject = core(cell);
-    if (!axObject || !axObject->isTableCell())
+    if (!is<AccessibilityTableCell>(axObject))
         return nullptr;
 
     AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-    toAccessibilityTableCell(axObject)->rowHeaders(rowHeaders);
+    downcast<AccessibilityTableCell>(*axObject).rowHeaders(rowHeaders);
 
     return convertToGPtrArray(rowHeaders);
 }
@@ -84,11 +84,11 @@ gint webkitAccessibleTableCellGetColumnSpan(AtkTableCell* cell)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), 0);
 
     AccessibilityObject* axObject = core(cell);
-    if (!axObject || !axObject->isTableCell())
+    if (!is<AccessibilityTableCell>(axObject))
         return 0;
 
     std::pair<unsigned, unsigned> columnRange;
-    toAccessibilityTableCell(axObject)->columnIndexRange(columnRange);
+    downcast<AccessibilityTableCell>(*axObject).columnIndexRange(columnRange);
 
     return columnRange.second;
 }
@@ -99,11 +99,11 @@ gint webkitAccessibleTableCellGetRowSpan(AtkTableCell* cell)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), 0);
 
     AccessibilityObject* axObject = core(cell);
-    if (!axObject || !axObject->isTableCell())
+    if (!is<AccessibilityTableCell>(axObject))
         return 0;
 
     std::pair<unsigned, unsigned> rowRange;
-    toAccessibilityTableCell(axObject)->rowIndexRange(rowRange);
+    downcast<AccessibilityTableCell>(*axObject).rowIndexRange(rowRange);
 
     return rowRange.second;
 }
@@ -114,16 +114,16 @@ gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gin
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(cell), false);
 
     AccessibilityObject* axObject = core(cell);
-    if (!axObject || !axObject->isTableCell())
+    if (!is<AccessibilityTableCell>(axObject))
         return false;
 
     std::pair<unsigned, unsigned> columnRowRange;
     if (row) {
-        toAccessibilityTableCell(axObject)->rowIndexRange(columnRowRange);
+        downcast<AccessibilityTableCell>(*axObject).rowIndexRange(columnRowRange);
         *row = columnRowRange.first;
     }
     if (column) {
-        toAccessibilityTableCell(axObject)->columnIndexRange(columnRowRange);
+        downcast<AccessibilityTableCell>(*axObject).columnIndexRange(columnRowRange);
         *column = columnRowRange.first;
     }
 

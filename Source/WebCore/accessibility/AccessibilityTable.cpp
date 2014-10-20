@@ -379,12 +379,12 @@ void AccessibilityTable::addChildren()
     // make the columns based on the number of columns in the first body
     unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
-        AccessibilityTableColumn* column = toAccessibilityTableColumn(axCache->getOrCreate(ColumnRole));
-        column->setColumnIndex((int)i);
-        column->setParent(this);
-        m_columns.append(column);
-        if (!column->accessibilityIsIgnored())
-            m_children.append(column);
+        auto& column = downcast<AccessibilityTableColumn>(*axCache->getOrCreate(ColumnRole));
+        column.setColumnIndex((int)i);
+        column.setParent(this);
+        m_columns.append(&column);
+        if (!column.accessibilityIsIgnored())
+            m_children.append(&column);
     }
     
     AccessibilityObject* headerContainerObject = headerContainer();
@@ -407,25 +407,25 @@ void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection
         if (!renderRow)
             continue;
         
-        AccessibilityObject* rowObject = axCache->getOrCreate(renderRow);
-        if (!rowObject->isTableRow())
+        AccessibilityObject& rowObject = *axCache->getOrCreate(renderRow);
+        if (!is<AccessibilityTableRow>(rowObject))
             continue;
         
-        AccessibilityTableRow* row = toAccessibilityTableRow(rowObject);
+        auto& row = downcast<AccessibilityTableRow>(rowObject);
         // We need to check every cell for a new row, because cell spans
         // can cause us to miss rows if we just check the first column.
-        if (appendedRows.contains(row))
+        if (appendedRows.contains(&row))
             continue;
         
-        row->setRowIndex(static_cast<int>(m_rows.size()));
-        m_rows.append(row);
-        if (!row->accessibilityIsIgnored())
-            m_children.append(row);
+        row.setRowIndex(static_cast<int>(m_rows.size()));
+        m_rows.append(&row);
+        if (!row.accessibilityIsIgnored())
+            m_children.append(&row);
 #if PLATFORM(GTK) || PLATFORM(EFL)
         else
-            m_children.appendVector(row->children());
+            m_children.appendVector(row.children());
 #endif
-        appendedRows.add(row);
+        appendedRows.add(&row);
     }
     
     maxColumnCount = std::max(tableSection->numColumns(), maxColumnCount);
@@ -436,10 +436,10 @@ AccessibilityObject* AccessibilityTable::headerContainer()
     if (m_headerContainer)
         return m_headerContainer.get();
     
-    AccessibilityMockObject* tableHeader = toAccessibilityMockObject(axObjectCache()->getOrCreate(TableHeaderContainerRole));
-    tableHeader->setParent(this);
+    auto& tableHeader = downcast<AccessibilityMockObject>(*axObjectCache()->getOrCreate(TableHeaderContainerRole));
+    tableHeader.setParent(this);
 
-    m_headerContainer = tableHeader;
+    m_headerContainer = &tableHeader;
     return m_headerContainer.get();
 }
 
@@ -465,7 +465,7 @@ void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
     updateChildrenIfNecessary();
     
     for (const auto& column : m_columns) {
-        if (AccessibilityObject* header = toAccessibilityTableColumn(column.get())->headerObject())
+        if (AccessibilityObject* header = downcast<AccessibilityTableColumn>(*column).headerObject())
             headers.append(header);
     }
 }
@@ -478,7 +478,7 @@ void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
     updateChildrenIfNecessary();
     
     for (const auto& row : m_rows) {
-        if (AccessibilityObject* header = toAccessibilityTableRow(row.get())->headerObject())
+        if (AccessibilityObject* header = downcast<AccessibilityTableRow>(*row).headerObject())
             headers.append(header);
     }
 }
@@ -547,19 +547,19 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {
             unsigned colIndex = colIndexCounter - 1;
             AccessibilityObject* child = children[colIndex].get();
-            ASSERT(child->isTableCell());
-            if (!child->isTableCell())
+            ASSERT(is<AccessibilityTableCell>(*child));
+            if (!is<AccessibilityTableCell>(*child))
                 continue;
             
             std::pair<unsigned, unsigned> columnRange;
             std::pair<unsigned, unsigned> rowRange;
-            AccessibilityTableCell* tableCellChild = toAccessibilityTableCell(child);
-            tableCellChild->columnIndexRange(columnRange);
-            tableCellChild->rowIndexRange(rowRange);
+            auto& tableCellChild = downcast<AccessibilityTableCell>(*child);
+            tableCellChild.columnIndexRange(columnRange);
+            tableCellChild.rowIndexRange(rowRange);
             
             if ((column >= columnRange.first && column < (columnRange.first + columnRange.second))
                 && (row >= rowRange.first && row < (rowRange.first + rowRange.second)))
-                return tableCellChild;
+                return &tableCellChild;
         }
     }
     

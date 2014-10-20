@@ -62,8 +62,8 @@ private:
     RefPtr<HTMLElement> m_element;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMenuListOption, isMenuListOption())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuListOption, isMenuListOption())
 
 #endif // AccessibilityMenuListOption_h

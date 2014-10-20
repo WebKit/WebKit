@@ -1114,8 +1114,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         ScrollView* scrollView = nullptr;
         AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->isAccessibilityScrollView()) {
-                scrollView = toAccessibilityScrollView(parent)->scrollView();
+            if (is<AccessibilityScrollView>(*parent)) {
+                scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
                 break;
             }
         }
@@ -1168,8 +1168,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         ScrollView* scrollView = nullptr;
         AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->isAccessibilityScrollView()) {
-                scrollView = toAccessibilityScrollView(parent)->scrollView();
+            if (is<AccessibilityScrollView>(*parent)) {
+                scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
                 break;
             }
         }

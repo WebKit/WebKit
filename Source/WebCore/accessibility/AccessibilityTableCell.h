@@ -73,8 +73,8 @@ private:
     bool isTableCellInSameColGroup(AccessibilityTableCell*);
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableCell, isTableCell())
-
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableCell, isTableCell())
 
 #endif // AccessibilityTableCell_h

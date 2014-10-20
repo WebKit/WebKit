@@ -82,15 +82,15 @@ void AccessibilitySpinButton::addChildren()
 {
     m_haveChildren = true;
     
-    AccessibilitySpinButtonPart* incrementor = toAccessibilitySpinButtonPart(axObjectCache()->getOrCreate(SpinButtonPartRole));
-    incrementor->setIsIncrementor(true);
-    incrementor->setParent(this);
-    m_children.append(incrementor);
+    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*axObjectCache()->getOrCreate(SpinButtonPartRole));
+    incrementor.setIsIncrementor(true);
+    incrementor.setParent(this);
+    m_children.append(&incrementor);
 
-    AccessibilitySpinButtonPart* decrementor = toAccessibilitySpinButtonPart(axObjectCache()->getOrCreate(SpinButtonPartRole));
-    decrementor->setIsIncrementor(false);
-    decrementor->setParent(this);
-    m_children.append(decrementor);
+    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*axObjectCache()->getOrCreate(SpinButtonPartRole));
+    decrementor.setIsIncrementor(false);
+    decrementor.setParent(this);
+    m_children.append(&decrementor);
 }
     
 void AccessibilitySpinButton::step(int amount)
@@ -132,14 +132,14 @@ LayoutRect AccessibilitySpinButtonPart::elementRect() const
 
 bool AccessibilitySpinButtonPart::press()
 {
-    if (!m_parent || !m_parent->isSpinButton())
+    if (!is<AccessibilitySpinButton>(m_parent))
         return false;
     
-    AccessibilitySpinButton* spinButton = toAccessibilitySpinButton(parentObject());
+    auto& spinButton = downcast<AccessibilitySpinButton>(*m_parent);
     if (m_isIncrementor)
-        spinButton->step(1);
+        spinButton.step(1);
     else
-        spinButton->step(-1);
+        spinButton.step(-1);
     
     return true;
 }

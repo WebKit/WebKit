@@ -207,8 +207,8 @@ private:
     bool usesAltTagForTextComputation() const;
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityNodeObject, isAccessibilityNodeObject())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityNodeObject, isAccessibilityNodeObject())
 
 #endif // AccessibilityNodeObject_h

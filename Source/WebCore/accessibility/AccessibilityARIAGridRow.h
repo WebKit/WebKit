@@ -53,8 +53,8 @@ private:
     virtual AccessibilityTable* parentTable() const override;
 }; 
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityARIAGridRow, isARIATreeGridRow())
-
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityARIAGridRow, isARIATreeGridRow())
 
 #endif // AccessibilityARIAGridRow_h

@@ -616,10 +616,10 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT
         return E_INVALIDARG;
 
     if (selectionFlags & SELFLAG_TAKESELECTION) {
-        if (parentObject->isListBox()) {
+        if (is<AccessibilityListBox>(*parentObject)) {
             Vector<RefPtr<AccessibilityObject> > selectedChildren(1);
             selectedChildren[0] = childObject;
-            toAccessibilityListBox(parentObject)->setSelectedChildren(selectedChildren);
+            downcast<AccessibilityListBox>(*parentObject).setSelectedChildren(selectedChildren);
         } else { // any element may be selectable by virtue of it having the aria-selected property
             ASSERT(!parentObject->isMultiSelectable());
             childObject->setSelected(true);

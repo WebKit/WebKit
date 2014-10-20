@@ -338,8 +338,8 @@ private:
 #endif
 };
 
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityRenderObject, isAccessibilityRenderObject())
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityRenderObject, isAccessibilityRenderObject())
 
 #endif // AccessibilityRenderObject_h

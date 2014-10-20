@@ -1,3 +1,142 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for Accessibility objects
+        https://bugs.webkit.org/show_bug.cgi?id=137286
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for Accessibility objects and clean up the
+        surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable):
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedRows):
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow):
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::imageMapLinkRenderer):
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::setSelectedChildren):
+        (WebCore::AccessibilityListBox::selectedChildren):
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren):
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListOption.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityMockObject.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::scrollViewAncestor):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        (WebCore::AccessibilityRenderObject::ariaSelectedRows):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGRoot.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::addChildScrollbar):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::addChildren):
+        (WebCore::AccessibilitySpinButtonPart::press):
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::addChildrenFromSection):
+        (WebCore::AccessibilityTable::headerContainer):
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTable.h:
+        Make isAccessibilityTable() public and mark as final so that callers
+        can benefit from tighter typing, as isAccessibilityTable() is
+        stricter than isTable(). isTable() indicates that the object is an
+        AccessibilityTable and is equivalent to is<AccessibilityTable>(object).
+        isAccessibilityTable() is equivalent to "isTable() && renderer()".
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::parentTable):
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/AccessibilityTableRow.h:
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionClearSelection):
+        (webkitAccessibleSelectionSelectAllSelection):
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (core):
+        (cell):
+        (cellAtIndex):
+        (webkitAccessibleTableGetIndexAt):
+        (webkitAccessibleTableGetNColumns):
+        (webkitAccessibleTableGetNRows):
+        (webkitAccessibleTableGetColumnHeader):
+        (webkitAccessibleTableGetRowHeader):
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        (webkitAccessibleTableCellGetColumnHeaderCells):
+        (webkitAccessibleTableCellGetRowHeaderCells):
+        (webkitAccessibleTableCellGetColumnSpan):
+        (webkitAccessibleTableCellGetRowSpan):
+        (webkitAccessibleTableCellGetPosition):
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::accessibilityPasswordFieldLength):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetElement):
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (-[WebAccessibilityObjectWrapper scrollViewParent]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::didUpdateActiveOption):
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generate all Inspector domains together in JavaScriptCore

@@ -49,9 +49,9 @@ private:
     virtual AccessibilityObject* parentObject() const override;
     virtual bool isAccessibilitySVGRoot() const override { return true; }
 };
-
-ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySVGRoot, isAccessibilitySVGRoot())
     
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySVGRoot, isAccessibilitySVGRoot())
 
 #endif // AccessibilitySVGRoot_h

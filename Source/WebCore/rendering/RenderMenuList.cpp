@@ -437,7 +437,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
         return;
 
     if (AXObjectCache* cache = document().existingAXObjectCache()) {
-        if (AccessibilityMenuList* menuList = toAccessibilityMenuList(cache->get(this)))
+        if (AccessibilityMenuList* menuList = downcast<AccessibilityMenuList>(cache->get(this)))
             menuList->didUpdateActiveOption(optionIndex);
     }
 }
