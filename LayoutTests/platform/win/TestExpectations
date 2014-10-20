@@ -1293,8 +1293,6 @@ webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Failure ]
 
 webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure ]
 
-webkit.org/b/58421 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
-
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
 storage/storageinfo-no-callbacks.html
@@ -1406,9 +1404,12 @@ fast/css/draggable-region-parser.html
 # Tests for MediaSource API. Feature is not yet functional.
 webkit.org/b/64731 http/tests/media/media-source/ [ Skip ]
 
-# Encrypted Media Extensions are not enabled.
-# media/encrypted-media/ [ Skip ]
-fast/events/constructors/media-key-event-constructor.html [ Skip ]
+# These tests are for an obsolete version of the EME spec.
+fast/events/constructors/media-key-event-constructor.html [ WontFix ]
+media/encrypted-media/encrypted-media-can-play-type-webm.html [ WontFix ]
+media/encrypted-media/encrypted-media-events.html [ WontFix ]
+media/encrypted-media/encrypted-media-not-loaded.html [ WontFix ]
+media/encrypted-media/encrypted-media-syntax.html [ WontFix ]
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
@@ -2579,7 +2580,6 @@ fast/writing-mode/block-level-images.html [ Pass Timeout ]
 html5lib/generated/run-entities01-write.html [ Pass Failure ]
 html5lib/generated/run-pending-spec-changes-write.html [ Pass Timeout ]
 html5lib/generated/run-tests4-data.html [ Pass Timeout ]
-html5lib/generated/run-tests16-data.html [ Crash ]
 ietestcenter/css3/bordersbackgrounds [ Pass Failure Timeout ]
 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
@@ -2794,10 +2794,7 @@ fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
 fast/regions/subtree-with-vert-lr.html [ Crash Pass ]
 fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
 mathml/presentation/style-changed.html [ Crash Pass ]
-fast/dom/HTMLAnchorElement/set-href-attribute-pathname.html [ Crash ]
-ietestcenter/css3/bordersbackgrounds/background-color-applied-to-rounded-inline-element.htm [ Crash ]
 fast/regions/overflow/overflow-3dtransformed-region.html [ Crash Failure ]
-svg/filters/shadow-on-filter.svg [ Crash ]
 fast/dom/HTMLTableElement/colSpan.html	[ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html [ Skip ]
 svg/custom/object-sizing-explicit-width.xhtml [ ImageOnlyFailure Timeout ]

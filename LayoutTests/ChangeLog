@@ -1,3 +1,12 @@
+2014-10-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Mark a few tests as no-longer failing.
+
+        It looks like Said's work on SVG has fixed a number of things!
+
+        * platform/win/TestExpectations: Remove 'crash' and 'failures' cases
+        for a few things that are now reliably passing.
+
 2014-10-20  Dean Jackson  <dino@apple.com>
 
         [Mac] Support "inverted-colors" and "monochrome" media feature.
