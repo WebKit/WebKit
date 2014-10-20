@@ -35,7 +35,6 @@
 
 @property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
 @property (nonatomic) UIPopoverArrowDirection arrowDirections;
-- (id)initWithView:(WKContentView *)view;
 - (void)doneWithSheet;
 - (BOOL)presentSheet;
 - (BOOL)presentSheetFromRect:(CGRect)presentationRect;
@@ -47,6 +46,7 @@
 - (UIView *)hostViewForSheet;
 - (CGRect)initialPresentationRectInHostViewForSheet;
 - (CGRect)presentationRectInHostViewForSheet;
+- (void)updatePositionInformation;
 @end
 
 #endif // PLATFORM(IOS)

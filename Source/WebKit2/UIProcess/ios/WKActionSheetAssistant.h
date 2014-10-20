@@ -25,23 +25,34 @@
 
 #if PLATFORM(IOS)
 
+#import "GestureTypes.h"
 #import "WKActionSheet.h"
-
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/UIPopoverController.h>
-#import <WebKit/WKDeclarationSpecifiers.h>
 #import <wtf/RetainPtr.h>
-
-@protocol WKActionSheetDelegate;
-@class WKContentView;
 
 namespace WebKit {
 class WebPageProxy;
+struct InteractionInformationAtPosition;
 }
 
-@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
+@protocol WKActionSheetDelegate;
+@class _WKActivatedElementInfo;
 
-- (id)initWithView:(WKContentView *)view;
+@protocol WKActionSheetAssistantDelegate
+@required
+@property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
+- (void)updatePositionInformation;
+- (void)performAction:(WebKit::SheetAction)action;
+- (void)openElementAtLocation:(CGPoint)location;
+- (RetainPtr<NSArray>)actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions;
+- (void)startInteractionWithElement:(_WKActivatedElementInfo *)element;
+- (void)stopInteraction;
+@end
+
+@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
+@property (nonatomic, weak) id <WKActionSheetAssistantDelegate> delegate;
+- (id)initWithView:(UIView *)view;
 - (void)showLinkSheet;
 - (void)showImageSheet;
 - (void)showDataDetectorsSheet;

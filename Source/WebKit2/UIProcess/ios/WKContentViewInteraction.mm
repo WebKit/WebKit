@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "APIUIClient.h"
 #import "EditingRange.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
@@ -270,6 +271,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self useSelectionAssistantWithMode:toUIWebSelectionMode([[_webView configuration] selectionGranularity])];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
+    [_actionSheetAssistant setDelegate:self];
     _smartMagnificationController = std::make_unique<SmartMagnificationController>(self);
 }
 
@@ -802,12 +804,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         _page->getPositionInformation(roundedIntPoint(point), _positionInformation);
         _hasValidPositionInformation = YES;
     }
-}
-
-- (void)_updatePositionInformation
-{
-    _hasValidPositionInformation = NO;
-    _page->requestPositionInformation(_positionInformation.point);
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -1368,11 +1364,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     _showingTextStyleOptions = NO;
     [_textSelectionAssistant hideTextStyleOptions];
-}
-
-- (void)_performAction:(SheetAction)action
-{
-    _page->performActionOnElement((uint32_t)action);
 }
 
 - (void)copy:(id)sender
@@ -2693,6 +2684,39 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (BOOL)isAnyTouchOverActiveArea:(NSSet *)touches
 {
     return YES;
+}
+
+#pragma mark - Implementation of WKActionSheetAssistantDelegate.
+
+- (void)updatePositionInformation
+{
+    _hasValidPositionInformation = NO;
+    _page->requestPositionInformation(_positionInformation.point);
+}
+
+- (void)performAction:(WebKit::SheetAction)action
+{
+    _page->performActionOnElement((uint32_t)action);
+}
+
+- (void)openElementAtLocation:(CGPoint)location
+{
+    [self _attemptClickAtLocation:location];
+}
+
+- (RetainPtr<NSArray>)actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
+{
+    return _page->uiClient().actionsForElement(element, WTF::move(defaultActions));
+}
+
+- (void)startInteractionWithElement:(_WKActivatedElementInfo *)element
+{
+    _page->startInteractionWithElementAtPosition(_positionInformation.point);
+}
+
+- (void)stopInteraction
+{
+    _page->stopInteraction();
 }
 
 @end
