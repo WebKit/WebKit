@@ -83,6 +83,10 @@ bool screenIsMonochrome(Widget* widget)
     return screenDepth(widget) < 2;
 }
 
+bool screenHasInvertedColors()
+{
+    return false;
+}
 
 static GdkScreen* getScreen(GtkWidget* widget)
 {

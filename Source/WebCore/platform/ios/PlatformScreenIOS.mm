@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,15 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 #import "IntRect.h"
+#import "SoftLinking.h"
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
 #import <MobileGestalt.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK(UIKit, UIAccessibilityIsGrayscaleEnabled, bool, (void), ())
+SOFT_LINK(UIKit, UIAccessibilityIsInvertColorsEnabled, bool, (void), ())
 
 namespace WebCore {
 
@@ -51,7 +56,12 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    return false;
+    return UIAccessibilityIsGrayscaleEnabled();
+}
+
+bool screenHasInvertedColors()
+{
+    return UIAccessibilityIsInvertColorsEnabled();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations

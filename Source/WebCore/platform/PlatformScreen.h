@@ -53,6 +53,8 @@ namespace WebCore {
     int screenDepthPerComponent(Widget*);
     bool screenIsMonochrome(Widget*);
 
+    bool screenHasInvertedColors();
+
     FloatRect screenRect(Widget*);
     FloatRect screenAvailableRect(Widget*);
 

@@ -1,3 +1,62 @@
+2014-10-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Support "inverted-colors" and "monochrome" media feature.
+        https://bugs.webkit.org/show_bug.cgi?id=137535
+        <rdar://problem/18586398>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new media query from CSS Level 4, "inverted-colors", and
+        implement the Apple backends for the "monochrome" media query.
+
+        The platform code went into PlatformScreenMac, which already
+        had a screenIsMonochrome method. This now calls into Core
+        Graphics via SPI. I added a screenHasInvertedColors
+        method which tests for inversion. On iOS, there is public API
+        for both queries. On Windows, we try to use CoreGraphics.
+
+        At the moment neither of these media queries re-evaluate
+        automatically if the user changes their mode. The page will
+        need to be reloaded. It is possible to detect a change on iOS,
+        but not OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=137868
+
+        I decided to not add an ENABLE flag for this, mostly because it
+        is such an isolated feature and seems very unlikely to be
+        controversial. I don't expect the syntax to change. (I'm sure
+        this comment will come back to haunt me.)
+
+        Testing this automatically is slightly tricky. We'd need
+        to expose SPI to invert the user's screen, but then we get
+        inverted images from our testing which could interfere with concurrent
+        operations. Instead I've included some tests that exercise
+        the "false" parts of the media query, with explanations as
+        to why they would fail if the display is inverted.
+
+        Tests: fast/media/mq-inverted-colors.html
+               fast/media/mq-monochrome.html
+
+        * css/CSSValueKeywords.in: Add the "inverted" keyword for "inverted-colors".
+        * css/MediaFeatureNames.h: Add the "inverted-colors" feature name.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::inverted_colorsMediaFeatureEval): Implementation of the new media query.
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithCSSValueID): The new query takes an id...
+        (WebCore::featureWithoutValue): ... or no value.
+        * platform/PlatformScreen.h: Add "screenHasInvertedColors".
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenHasInvertedColors): Stub implementation.
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenHasInvertedColors): Ditto.
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenHasInvertedColors): Call into the platform accessibility API.
+        (WebCore::screenIsMonochrome): Ditto.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenIsMonochrome): Call into the CoreGraphics SPI.
+        (WebCore::screenHasInvertedColors): Call into the CoreGraphics SPI.
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenHasInvertedColors): Call into CoreGraphics if we're using it.
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Accessibility objects

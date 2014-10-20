@@ -36,6 +36,12 @@
 #include "Page.h"
 #include <windows.h>
 
+#if USE(CG)
+extern "C" {
+bool CGDisplayUsesInvertedPolarity(void);
+}
+#endif
+
 namespace WebCore {
 
 // Returns info for the default monitor if widget is NULL
@@ -82,6 +88,15 @@ bool screenIsMonochrome(Widget* widget)
 {
     DEVMODE deviceInfo = deviceInfoForWidget(widget);
     return deviceInfo.dmColor == DMCOLOR_MONOCHROME;
+}
+
+bool screenHasInvertedColors()
+{
+#if USE(CG)
+    return CGDisplayUsesInvertedPolarity();
+#else
+    return false;
+#endif
 }
 
 FloatRect screenRect(Widget* widget)

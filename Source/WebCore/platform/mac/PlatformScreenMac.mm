@@ -30,6 +30,11 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 
+extern "C" {
+bool CGDisplayUsesInvertedPolarity(void);
+bool CGDisplayUsesForceToGray(void);
+}
+
 namespace WebCore {
 
 static PlatformDisplayID displayIDFromScreen(NSScreen *screen)
@@ -58,10 +63,15 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    return false;
+    return CGDisplayUsesForceToGray();
 }
 
-// These functions scale between screen and page coordinates because JavaScript/DOM operations 
+bool screenHasInvertedColors()
+{
+    return CGDisplayUsesInvertedPolarity();
+}
+
+// These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 
 static PlatformDisplayID displayFromWidget(Widget* widget)

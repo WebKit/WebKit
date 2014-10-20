@@ -45,6 +45,7 @@ namespace WebCore {
     macro(device_pixel_ratio, "-webkit-device-pixel-ratio") \
     macro(device_height, "device-height") \
     macro(device_width, "device-width") \
+    macro(inverted_colors, "inverted-colors") \
     macro(max_color, "max-color") \
     macro(max_color_index, "max-color-index") \
     macro(max_aspect_ratio, "max-aspect-ratio") \

@@ -237,6 +237,17 @@ static bool monochromeMediaFeatureEval(CSSValue* value, const CSSToLengthConvers
     return colorMediaFeatureEval(value, conversionData, frame, op);
 }
 
+static bool inverted_colorsMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+{
+    bool isInverted = screenHasInvertedColors();
+
+    if (!value)
+        return isInverted;
+
+    const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
+    return (isInverted && id == CSSValueInverted) || (!isInverted && id == CSSValueNone);
+}
+
 static bool orientationMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
 {
     FrameView* view = frame->view();

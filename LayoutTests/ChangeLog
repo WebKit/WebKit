@@ -1,3 +1,22 @@
+2014-10-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Support "inverted-colors" and "monochrome" media feature.
+        https://bugs.webkit.org/show_bug.cgi?id=137535
+        <rdar://problem/18586398>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests for the new "inverted-colors" media feature, and
+        another test for the "monochrome" feature. Note that these
+        tests don't actually exercise the positive values of the
+        query, since that requires the screen to be changed and would
+        interfere with concurrent tests.
+
+        * fast/media/mq-inverted-colors.html: Added.
+        * fast/media/mq-monochrome.html: Added.
+        * fast/media/mq-inverted-colors-expected.html: Added.
+        * fast/media/mq-monochrome-expected.html: Added.
+
 2014-10-20  Alexey Proskuryakov  <ap@apple.com>
 
         Eight transitions tests are very flaky, frequently failing all at once

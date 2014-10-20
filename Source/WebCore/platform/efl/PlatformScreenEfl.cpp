@@ -83,6 +83,11 @@ bool screenIsMonochrome(Widget* widget)
     return screenDepth(widget) < 2;
 }
 
+bool screenHasInvertedColors()
+{
+    return false;
+}
+
 FloatRect screenRect(Widget* widget)
 {
 #ifdef HAVE_ECORE_X
