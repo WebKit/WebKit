@@ -30,6 +30,7 @@
 #include "AccessibilityARIAGrid.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityARIAGridRow.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
