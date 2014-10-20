@@ -1499,3 +1499,6 @@ webkit.org/b/136109 [ Yosemite ] fast/multicol/mixed-opacity-fixed-test.html  [ 
 [ Yosemite ] inspector/event-listener.html [ Failure Crash ]
 [ Yosemite ] inspector/model/parse-script-syntax-tree.html [ Failure Crash ]
 [ Yosemite ] inspector/protocol-promise-result.html [ Failure Crash ]
+
+webkit.org/b/137882 http/tests/media/hls/video-controls-live-stream.html [ Failure ]
+webkit.org/b/137882 http/tests/media/track-in-band-hls-metadata.html [ Failure ]
