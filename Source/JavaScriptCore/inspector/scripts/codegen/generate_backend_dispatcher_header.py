@@ -148,7 +148,13 @@ class BackendDispatcherHeaderGenerator(Generator):
         for _parameter in command.return_parameters:
             out_parameters.append("%s %s" % (Generator.type_string_for_formal_async_parameter(_parameter), _parameter.parameter_name))
 
+        class_components = ['class']
+        export_macro = self.model().framework.setting('export_macro', None)
+        if export_macro:
+            class_components.append(export_macro)
+
         command_args = {
+            'classAndExportMacro': ' '.join(class_components),
             'callbackName': callbackName,
             'commandName': command.command_name,
             'inParameters': ", ".join(in_parameters),

@@ -1,3 +1,14 @@
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Win] Build fix for generated inspector files.
+
+        Rubberstamped by Brent Fulgham.
+
+        * inspector/scripts/codegen/generate_backend_dispatcher_header.py:
+        (BackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        * inspector/scripts/codegen/generator_templates.py:
+        (GeneratorTemplates):
+
 2014-10-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

@@ -31,7 +31,6 @@
 class GeneratorTemplates:
     CopyrightBlock = (
     """/*
- * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
  *
@@ -115,7 +114,7 @@ private:
 };""")
 
     BackendDispatcherHeaderAsyncCommandDeclaration = (
-    """    class ${callbackName} : public Inspector::InspectorBackendDispatcher::CallbackBase {
+    """    ${classAndExportMacro} ${callbackName} : public Inspector::InspectorBackendDispatcher::CallbackBase {
     public:
         ${callbackName}(PassRefPtr<Inspector::InspectorBackendDispatcher>, int id);
         void sendSuccess(${outParameters});
