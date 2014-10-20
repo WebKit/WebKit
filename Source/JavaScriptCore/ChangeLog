@@ -1,3 +1,14 @@
+2014-10-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        We need to (1) pass the 'windows' argument to our script for checking feature definitions,
+        and (2) we must use Cwd::realpath on our path input arguments to avoid Cygwin and Windows
+        getting confused about path separators versus escape characters.
+
+
+        * JavaScriptCore.vcxproj/build-generated-files.pl:
+
 2014-10-20  Mark Lam  <mark.lam@apple.com>
 
         [Follow up] Web Process crash when starting the web inspector after r174025.
