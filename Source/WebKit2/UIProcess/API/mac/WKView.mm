@@ -56,6 +56,7 @@
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
+#import "WKActionMenuItemTypes.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
 #import "WKProcessPoolInternal.h"
@@ -3680,16 +3681,19 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     RetainPtr<NSMenuItem> openLinkItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Open" action:@selector(_openURLFromActionMenu:) keyEquivalent:@""]);
     [openLinkItem setImage:[[NSBundle bundleForClass:[WKView class]] imageForResource:@"OpenInNewWindowTemplate"]];
     [openLinkItem setTarget:self];
+    [openLinkItem setTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
     [menuItems addObject:openLinkItem.get()];
 
     RetainPtr<NSMenuItem> previewLinkItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Preview" action:@selector(_quickLookURLFromActionMenu:) keyEquivalent:@""]);
     [previewLinkItem setImage:[NSImage imageNamed:NSImageNameQuickLookTemplate]];
     [previewLinkItem setTarget:self];
+    [previewLinkItem setTag:kWKContextActionItemTagPreviewLink];
     [menuItems addObject:previewLinkItem.get()];
 
     RetainPtr<NSMenuItem> readingListItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Add to Safari Reading List" action:@selector(_addToReadingListFromActionMenu:) keyEquivalent:@""]);
     [readingListItem setImage:[NSImage imageNamed:NSImageNameBookmarksTemplate]];
     [readingListItem setTarget:self];
+    [readingListItem setTag:kWKContextActionItemTagAddLinkToSafariReadingList];
     [menuItems addObject:readingListItem.get()];
 
     // FIXME: Required to work around <rdar://18684207>.
