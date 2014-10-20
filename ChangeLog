@@ -1,3 +1,15 @@
+2014-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add initial gestures support
+        https://bugs.webkit.org/show_bug.cgi?id=137812
+
+        Reviewed by Sergio Villar Senin.
+
+        Check if the GTK+ version supports gestures or not.
+
+        * Source/cmake/FindGTK3.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(CMake): [GTK] WebKitSettings:enable-smooth-scrolling does nothing

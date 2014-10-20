@@ -138,6 +138,10 @@ struct _WebKitWebViewBasePrivate {
 #if ENABLE(DRAG_SUPPORT)
     std::unique_ptr<DragAndDropHandler> dragAndDropHandler;
 #endif
+
+#if HAVE(GTK_GESTURES)
+    std::unique_ptr<GestureController> gestureController;
+#endif
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -777,14 +781,25 @@ static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBa
 
 static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* event)
 {
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
         return TRUE;
 
     GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
-    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
 
+#if HAVE(GTK_GESTURES)
+    GestureController& gestureController = webkitWebViewBaseGestureController(webViewBase);
+    if (gestureController.isProcessingGestures()) {
+        // If we are already processing gestures is because the WebProcess didn't handle the
+        // BEGIN touch event, so pass subsequent events to the GestureController.
+        gestureController.handleEvent(touchEvent);
+        return TRUE;
+    }
+#endif
+
+    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
     switch (touchEvent->type) {
     case GDK_TOUCH_BEGIN: {
         ASSERT(!priv->touchEvents.contains(sequence));
@@ -807,11 +822,21 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     }
 
     Vector<WebPlatformTouchPoint> touchPoints;
-    webkitWebViewBaseGetTouchPointsForEvent(WEBKIT_WEB_VIEW_BASE(widget), touchEvent, touchPoints);
+    webkitWebViewBaseGetTouchPointsForEvent(webViewBase, touchEvent, touchPoints);
     priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), touchPoints));
 
     return TRUE;
 }
+
+#if HAVE(GTK_GESTURES)
+GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (!priv->gestureController)
+        priv->gestureController = std::make_unique<GestureController>(*priv->pageProxy);
+    return *priv->gestureController;
+}
+#endif
 
 static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint /* x */, gint /* y */, gboolean keyboardMode, GtkTooltip* tooltip)
 {

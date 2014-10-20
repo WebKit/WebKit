@@ -261,6 +261,10 @@ if (ENABLE_CREDENTIAL_STORAGE)
     set(ENABLE_CREDENTIAL_STORAGE 1)
 endif ()
 
+if (GTK_SUPPORTS_GESTURES)
+    add_definitions(-DHAVE_GTK_GESTURES=1)
+endif ()
+
 # This part can be simplified once CMake 2.8.6 is required and
 # CMakePushCheckState can be used. We need to have OPENGL_INCLUDE_DIR as part
 # of the directories check_include_files() looks for in case OpenGL is

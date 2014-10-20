@@ -29,6 +29,7 @@
 #define WebKitWebViewBasePrivate_h
 
 #include "DragAndDropHandler.h"
+#include "GestureController.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebInspectorProxy.h"
 #include "WebKitPrivate.h"
@@ -76,6 +77,10 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
 
 #if ENABLE(DRAG_SUPPORT)
 WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);
+#endif
+
+#if HAVE(GTK_GESTURES)
+WebKit::GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase*);
 #endif
 
 #endif // WebKitWebViewBasePrivate_h

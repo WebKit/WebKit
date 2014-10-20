@@ -253,6 +253,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/gtk/DragAndDropHandler.cpp
     UIProcess/gtk/ExperimentalFeatures.cpp
+    UIProcess/gtk/GestureController.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
     UIProcess/gtk/WebContextGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp

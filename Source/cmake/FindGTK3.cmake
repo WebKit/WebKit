@@ -64,5 +64,11 @@ if (NOT(ENABLE_X11_TARGET OR ENABLE_WAYLAND_TARGET))
         "be enabled and also supported by the GTK+ dependency: X11, Wayland")
 endif ()
 
+if (GTK3_VERSION AND VERSION_OK AND NOT("${GTK3_VERSION}" VERSION_LESS "3.14.0"))
+    set(GTK_SUPPORTS_GESTURES ON)
+else ()
+    set(GTK_SUPPORTS_GESTURES OFF)
+endif ()
+
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARIES VERSION_OK)

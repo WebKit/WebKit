@@ -1,3 +1,64 @@
+2014-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add initial gestures support
+        https://bugs.webkit.org/show_bug.cgi?id=137812
+
+        Reviewed by Sergio Villar Senin.
+
+        Now that GTK+ has support for gestures, we can use it to handle
+        touch events and allow to scroll, zoom and tap with the fingers.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): When the touch event
+        hasn't been handled by the web process pass it to the
+        GestureController and only fallback to pointer emulation when the
+        GestureController doesn't handle the event.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchEvent): If the GestureController is
+        currently processing gestures is because the START touch event was
+        not handled by the web process, so pass any successive touch
+        events to the GestureController directly.
+        (webkitWebViewBaseGestureController): Create the GestureController
+        on demand and return a reference.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/GestureController.cpp: Added.
+        (WebKit::GestureController::create): Create a GestureController.
+        (WebKit::GestureController::GestureController): Initialize the
+        Gesture memebers.
+        (WebKit::GestureController::handleEvent): Pass the event to the gestures.
+        (WebKit::GestureController::isProcessingGestures): Whether
+        Gestures are active.
+        (WebKit::GestureController::Gesture::Gesture): Base class for gestures.
+        (WebKit::GestureController::Gesture::isActive): Whether the
+        gesture is active.
+        (WebKit::GestureController::Gesture::handleEvent): Pass the event
+        to the GtkGesture to process it.
+        (WebKit::GestureController::DragGesture::handleDrag): Send a wheel
+        event corresponding to the drag gesture to the web process.
+        (WebKit::GestureController::DragGesture::handleTap): Send move,
+        press and release events corresponding to a tap gesture to the web process.
+        (WebKit::GestureController::DragGesture::begin): Start a drag
+        gesture and schedule a timer to discard tap gesture in case of
+        long press.
+        (WebKit::GestureController::DragGesture::update): If the actual
+        drag hasn't started yet, check the drag threshold to decide
+        whether to start the drag or not. Otherwise call handleDrag() to
+        send the appropriate events to the web process.
+        (WebKit::GestureController::DragGesture::end): If the drag gesture
+        finishes and the drag didn't happen (it wasn't a long press and
+        drag threshold was not reached), call handleTap() to emulate a
+        click event.
+        (WebKit::GestureController::DragGesture::DragGesture): Initialize
+        the GtkGestureDrag.
+        (WebKit::GestureController::ZoomGesture::begin): Save the current
+        page scale factor and the center point of the gesture.
+        (WebKit::GestureController::ZoomGesture::scaleChanged): Schedule a
+        page scale change in an idle for the given scale value.
+        (WebKit::GestureController::ZoomGesture::ZoomGesture): Initialize
+        the GtkGestureZoom.
+        * UIProcess/gtk/GestureController.h: Added.
+
 2014-10-19  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for all remaining RenderObject subclasses
