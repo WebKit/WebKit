@@ -305,7 +305,7 @@
     <ClCompile Include="..\assembler\LinkBuffer.cpp" />
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
     <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
-    <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
+    <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
     <ClCompile Include="..\bindings\ScriptObject.cpp" />
     <ClCompile Include="..\bindings\ScriptValue.cpp" />
