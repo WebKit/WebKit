@@ -1,3 +1,14 @@
+2014-10-19  Chris Dumez  <cdumez@apple.com>
+
+        Kill toRenderedDocumentMarker() by using tighter typing
+        https://bugs.webkit.org/show_bug.cgi?id=137858
+
+        Reviewed by Darin Adler.
+
+        Update symbol export for Windows due to argument type change.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-10-17  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Accelerated compositing is not implemented.

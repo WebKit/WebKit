@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct CompositionUnderline;
-class DocumentMarker;
+class RenderedDocumentMarker;
 class TextPainter;
 
 const unsigned short cNoTruncation = USHRT_MAX;
@@ -148,17 +148,17 @@ public:
     virtual float positionForOffset(int offset) const;
 
 protected:
-    void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
-    void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
-    void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
+    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
+    void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
 private:
     void paintDecoration(GraphicsContext&, const FloatPoint& boxOrigin, TextDecoration, TextDecorationStyle, const ShadowData*, TextPainter&);
-    void paintSelection(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
-    void paintDocumentMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const Font&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const Font&);
 
-    void computeRectForReplacementMarker(DocumentMarker*, const RenderStyle&, const Font&);
+    void computeRectForReplacementMarker(RenderedDocumentMarker&, const RenderStyle&, const Font&);
 
     TextRun::ExpansionBehavior expansionBehavior() const
     {

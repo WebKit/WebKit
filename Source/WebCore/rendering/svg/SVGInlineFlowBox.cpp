@@ -83,12 +83,8 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
     RenderStyle& style = textRenderer->style();
 
     AffineTransform fragmentTransform;
-    Vector<DocumentMarker*> markers = textRenderer->document().markers().markersFor(&textNode);
-
-    Vector<DocumentMarker*>::iterator markerEnd = markers.end();
-    for (Vector<DocumentMarker*>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
-        DocumentMarker* marker = *markerIt;
-
+    Vector<RenderedDocumentMarker*> markers = textRenderer->document().markers().markersFor(&textNode);
+    for (auto* marker : markers) {
         // SVG is only interessted in the TextMatch marker, for now.
         if (marker->type() != DocumentMarker::TextMatch)
             continue;
@@ -128,7 +124,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             }
         }
 
-        toRenderedDocumentMarker(marker)->setRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
+        marker->setRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
     }
 }
 

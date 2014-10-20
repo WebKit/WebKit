@@ -71,6 +71,7 @@
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
 #include "RenderTextControl.h"
+#include "RenderedDocumentMarker.h"
 #include "RenderedPosition.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
@@ -2753,9 +2754,9 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // of marker that contains the word in question, and remove marker on that whole range.
     RefPtr<Range> wordRange = Range::create(document(), startOfFirstWord.deepEquivalent(), endOfLastWord.deepEquivalent());
 
-    Vector<DocumentMarker*> markers = document().markers().markersInRange(wordRange.get(), DocumentMarker::DictationAlternatives);
-    for (size_t i = 0; i < markers.size(); ++i)
-        m_alternativeTextController->removeDictationAlternativesForMarker(markers[i]);
+    Vector<RenderedDocumentMarker*> markers = document().markers().markersInRange(wordRange.get(), DocumentMarker::DictationAlternatives);
+    for (auto* marker : markers)
+        m_alternativeTextController->removeDictationAlternativesForMarker(marker);
 
 #if PLATFORM(IOS)
     document().markers().removeMarkers(wordRange.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption | DocumentMarker::DictationAlternatives | DocumentMarker::DictationPhraseWithAlternatives, DocumentMarkerController::RemovePartiallyOverlappingMarker);
@@ -3542,9 +3543,8 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, i
 
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);
-    Vector<DocumentMarker*> markers = document().markers().markersFor(node);
-    for (size_t i = 0; i < markers.size(); ++i) {
-        DocumentMarker* marker = markers[i];
+    Vector<RenderedDocumentMarker*> markers = document().markers().markersFor(node);
+    for (auto* marker : markers) {
         if (marker->startOffset() <= startOffset && endOffset <= marker->endOffset() && marker->type() == markerType)
             return true;
     }

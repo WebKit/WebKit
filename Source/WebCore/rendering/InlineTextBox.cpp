@@ -509,7 +509,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         }
     }
 
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = *paintInfo.context;
 
     const RenderStyle& lineStyle = this->lineStyle();
     
@@ -523,7 +523,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)
-        context->concatCTM(rotation(boxRect, Clockwise));
+        context.concatCTM(rotation(boxRect, Clockwise));
 
     // Determine whether or not we have composition underlines to draw.
     bool containsComposition = renderer().textNode() && renderer().frame().editor().compositionNode() == renderer().textNode();
@@ -616,18 +616,18 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     else
         textOrigin.setX(roundToDevicePixel(LayoutUnit(textOrigin.x()), renderer().document().deviceScaleFactor()));
 
-    TextPainter textPainter(*context, paintSelectedTextOnly, paintSelectedTextSeparately, font, sPos, ePos, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
+    TextPainter textPainter(context, paintSelectedTextOnly, paintSelectedTextSeparately, font, sPos, ePos, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
     textPainter.paintText();
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
     if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
-        updateGraphicsContext(*context, textPaintStyle);
+        updateGraphicsContext(context, textPaintStyle);
         if (combinedText)
-            context->concatCTM(rotation(boxRect, Clockwise));
-        paintDecoration(*context, boxOrigin, textDecorations, lineStyle.textDecorationStyle(), textShadow, textPainter);
+            context.concatCTM(rotation(boxRect, Clockwise));
+        paintDecoration(context, boxOrigin, textDecorations, lineStyle.textDecorationStyle(), textShadow, textPainter);
         if (combinedText)
-            context->concatCTM(rotation(boxRect, Counterclockwise));
+            context.concatCTM(rotation(boxRect, Counterclockwise));
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
@@ -660,7 +660,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
     
     if (shouldRotate)
-        context->concatCTM(rotation(boxRect, Counterclockwise));
+        context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
 void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
@@ -681,10 +681,10 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = std::min(endPos - m_start, (int)m_len);
 }
 
-void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
 {
 #if ENABLE(TEXT_SELECTION)
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
     // See if we have a selection to paint at all.
@@ -702,8 +702,8 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    GraphicsContextStateSaver stateSaver(*context);
-    updateGraphicsContext(*context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
+    GraphicsContextStateSaver stateSaver(context);
+    updateGraphicsContext(context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
     
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
@@ -730,7 +730,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);
@@ -740,7 +740,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 #endif
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
+void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
 {
     int offset = m_start;
     int sPos = std::max(startPos - offset, 0);
@@ -749,15 +749,15 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     if (sPos >= ePos)
         return;
 
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
     Color compositionColor = Color::compositionFill;
-    updateGraphicsContext(*context, TextPaintStyle(compositionColor, style.colorSpace())); // Don't draw text at all!
+    updateGraphicsContext(context, TextPaintStyle(compositionColor, style.colorSpace())); // Don't draw text at all!
 
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
     TextRun textRun = constructTextRun(style, font);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor, style.colorSpace());
 }
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
@@ -1061,7 +1061,7 @@ static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentM
     }
 }
 
-void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, const RenderStyle& style, const Font& font, bool grammar)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -1075,17 +1075,17 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
 
     // Determine whether we need to measure text
     bool markerSpansWholeBox = true;
-    if (m_start <= (int)marker->startOffset())
+    if (m_start <= (int)marker.startOffset())
         markerSpansWholeBox = false;
-    if ((end() + 1) != marker->endOffset()) // end points at the last char, not past it
+    if ((end() + 1) != marker.endOffset()) // end points at the last char, not past it
         markerSpansWholeBox = false;
     if (m_truncation != cNoTruncation)
         markerSpansWholeBox = false;
 
-    bool isDictationMarker = marker->type() == DocumentMarker::DictationAlternatives;
+    bool isDictationMarker = marker.type() == DocumentMarker::DictationAlternatives;
     if (!markerSpansWholeBox || grammar || isDictationMarker) {
-        int startPosition = std::max<int>(marker->startOffset() - m_start, 0);
-        int endPosition = std::min<int>(marker->endOffset() - m_start, m_len);
+        int startPosition = std::max<int>(marker.startOffset() - m_start, 0);
+        int endPosition = std::min<int>(marker.endOffset() - m_start, m_len);
         
         if (m_truncation != cNoTruncation)
             endPosition = std::min<int>(endPosition, m_truncation);
@@ -1107,7 +1107,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
         if (grammar || isDictationMarker) {
             markerRect.move(-boxOrigin.x(), -boxOrigin.y());
             markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-            toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
+            marker.setRenderedRect(markerRect);
         }
     }
     
@@ -1128,15 +1128,15 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
-    pt->drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker->type()));
+    context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker.type()));
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPoint& boxOrigin, DocumentMarker* marker, const RenderStyle& style, const Font& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font)
 {
     LayoutUnit selectionHeight = this->selectionHeight();
 
-    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
-    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max(marker.startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker.endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
@@ -1145,31 +1145,31 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* context, const FloatPo
     font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
     IntRect markerRect = enclosingIntRect(renderedRect);
     markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
-    toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
+    marker.setRenderedRect(markerRect);
     
     // Optionally highlight the text
     if (renderer().frame().editor().markedTextMatchesAreHighlighted()) {
-        Color color = marker->activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-        GraphicsContextStateSaver stateSaver(*context);
-        updateGraphicsContext(*context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
+        Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+        GraphicsContextStateSaver stateSaver(context);
+        updateGraphicsContext(context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
 
         // Use same y positioning and height as for selection, so that when the selection and this highlight are on
         // the same word there are no pieces sticking out.
         LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight);
         font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
-        context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
+        context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
     }
 }
 
-void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, const RenderStyle& style, const Font& font)
+void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
     LayoutUnit top = selectionTop();
     LayoutUnit h = selectionHeight();
     
-    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
-    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max(marker.startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker.endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Compute and store the rect associated with this marker.
@@ -1177,22 +1177,19 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, cons
     font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
     IntRect markerRect = enclosingIntRect(selectionRect);
     markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
+    marker.setRenderedRect(markerRect);
 }
     
-void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, bool background)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, bool background)
 {
     if (!renderer().textNode())
         return;
 
-    Vector<DocumentMarker*> markers = renderer().document().markers().markersFor(renderer().textNode());
-    Vector<DocumentMarker*>::const_iterator markerIt = markers.begin();
+    Vector<RenderedDocumentMarker*> markers = renderer().document().markers().markersFor(renderer().textNode());
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
-    for ( ; markerIt != markers.end(); ++markerIt) {
-        DocumentMarker* marker = *markerIt;
-        
+    for (auto* marker : markers) {
         // Paint either the background markers or the foreground markers, but not both
         switch (marker->type()) {
             case DocumentMarker::Grammar:
@@ -1232,22 +1229,22 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
             case DocumentMarker::Spelling:
             case DocumentMarker::CorrectionIndicator:
             case DocumentMarker::DictationAlternatives:
-                paintDocumentMarker(pt, boxOrigin, marker, style, font, false);
+                paintDocumentMarker(context, boxOrigin, *marker, style, font, false);
                 break;
             case DocumentMarker::Grammar:
-                paintDocumentMarker(pt, boxOrigin, marker, style, font, true);
+                paintDocumentMarker(context, boxOrigin, *marker, style, font, true);
                 break;
 #if PLATFORM(IOS)
             // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
             case DocumentMarker::DictationPhraseWithAlternatives:
-                paintDocumentMarker(pt, boxOrigin, marker, style, font, true);
+                paintDocumentMarker(context, boxOrigin, *marker, style, font, true);
                 break;
 #endif
             case DocumentMarker::TextMatch:
-                paintTextMatchMarker(pt, boxOrigin, marker, style, font);
+                paintTextMatchMarker(context, boxOrigin, *marker, style, font);
                 break;
             case DocumentMarker::Replacement:
-                computeRectForReplacementMarker(marker, style, font);
+                computeRectForReplacementMarker(*marker, style, font);
                 break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
             case DocumentMarker::TelephoneNumber:
@@ -1260,7 +1257,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
     }
 }
 
-void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatPoint& boxOrigin, const CompositionUnderline& underline)
+void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const FloatPoint& boxOrigin, const CompositionUnderline& underline)
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1300,9 +1297,9 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
     start += 1;
     width -= 2;
 
-    ctx->setStrokeColor(underline.color, renderer().style().colorSpace());
-    ctx->setStrokeThickness(lineThickness);
-    ctx->drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
+    context.setStrokeColor(underline.color, renderer().style().colorSpace());
+    context.setStrokeThickness(lineThickness);
+    context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
 }
 
 int InlineTextBox::caretMinOffset() const

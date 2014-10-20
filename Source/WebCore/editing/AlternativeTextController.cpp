@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "RenderedDocumentMarker.h"
 #include "SpellingCorrectionCommand.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -114,7 +115,7 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationA
     return markerTypesForAppliedDictationAlternative;
 }
 
-static bool markersHaveIdenticalDescription(const Vector<DocumentMarker*>& markers)
+static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*>& markers)
 {
     if (markers.isEmpty())
         return true;
@@ -469,13 +470,8 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     Node* node = position.containerNode();
-    Vector<DocumentMarker*> markers = node->document().markers().markersFor(node);
-    size_t markerCount = markers.size();
-    for (size_t i = 0; i < markerCount; ++i) {
-        const DocumentMarker* marker = markers[i];
-        if (!marker)
-            continue;
-
+    for (auto* marker : node->document().markers().markersFor(node)) {
+        ASSERT(marker);
         if (respondToMarkerAtEndOfWord(*marker, position))
             break;
     }
@@ -554,7 +550,7 @@ void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(
     if (!rangeOfCorrection)
         return;
     DocumentMarkerController& markers = rangeOfCorrection->startContainer()->document().markers();
-    Vector<DocumentMarker*> correctedOnceMarkers = markers.markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
+    Vector<RenderedDocumentMarker*> correctedOnceMarkers = markers.markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
     if (correctedOnceMarkers.isEmpty())
         return;
 
@@ -613,10 +609,9 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
     Position precedingCharacterPosition = beginningOfRange.previous();
     RefPtr<Range> precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, beginningOfRange);
 
-    Vector<DocumentMarker*> markers = markerController.markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
-
-    for (size_t i = 0; i < markers.size(); ++i) {
-        if (markers[i]->description() == stringToBeReplaced)
+    Vector<RenderedDocumentMarker*> markers = markerController.markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
+    for (const auto* marker : markers) {
+        if (marker->description() == stringToBeReplaced)
             return false;
     }
 
@@ -735,9 +730,9 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
     if (!selection || !editor.shouldInsertText(alternativeString, selection.get(), EditorInsertActionPasted))
         return;
     DocumentMarkerController& markers = selection->startContainer()->document().markers();
-    Vector<DocumentMarker*> dictationAlternativesMarkers = markers.markersInRange(selection.get(), DocumentMarker::DictationAlternatives);
-    for (size_t i = 0; i < dictationAlternativesMarkers.size(); ++i)
-        removeDictationAlternativesForMarker(dictationAlternativesMarkers[i]);
+    Vector<RenderedDocumentMarker*> dictationAlternativesMarkers = markers.markersInRange(selection.get(), DocumentMarker::DictationAlternatives);
+    for (auto* marker : dictationAlternativesMarkers)
+        removeDictationAlternativesForMarker(marker);
 
     applyAlternativeTextToRange(selection.get(), alternativeString, AlternativeTextTypeDictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else

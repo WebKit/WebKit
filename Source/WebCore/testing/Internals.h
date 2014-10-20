@@ -46,7 +46,6 @@ class ClientRectList;
 class DOMStringList;
 class DOMWindow;
 class Document;
-class DocumentMarker;
 class Element;
 class Frame;
 class InspectorFrontendChannelDummy;
@@ -57,6 +56,7 @@ class MemoryInfo;
 class Node;
 class Page;
 class Range;
+class RenderedDocumentMarker;
 class ScriptExecutionContext;
 class SerializedScriptValue;
 class SourceBuffer;
@@ -351,7 +351,7 @@ private:
     Frame* frame() const;
     Vector<String> iconURLs(Document*, int iconTypesMask) const;
 
-    DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    RenderedDocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
 #if ENABLE(INSPECTOR)
     RefPtr<DOMWindow> m_frontendWindow;
     std::unique_ptr<InspectorFrontendClientDummy> m_frontendClient;

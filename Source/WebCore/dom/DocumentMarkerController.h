@@ -84,8 +84,8 @@ public:
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
     DocumentMarker* markerContainingPoint(const LayoutPoint&, DocumentMarker::MarkerType);
-    WEBCORE_EXPORT Vector<DocumentMarker*> markersFor(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
-    WEBCORE_EXPORT Vector<DocumentMarker*> markersInRange(Range*, DocumentMarker::MarkerTypes);
+    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
+    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(Range*, DocumentMarker::MarkerTypes);
     WEBCORE_EXPORT Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 

@@ -1,5 +1,53 @@
 2014-10-19  Chris Dumez  <cdumez@apple.com>
 
+        Kill toRenderedDocumentMarker() by using tighter typing
+        https://bugs.webkit.org/show_bug.cgi?id=137858
+
+        Reviewed by Darin Adler.
+
+        Kill toRenderedDocumentMarker() by using tighter typing. This method
+        was doing no type validation, just a static_cast<>().
+
+        No new tests, no behavior change.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addTextMatchMarker):
+        (WebCore::DocumentMarkerController::markersFor):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (DocumentMarkerController::hasMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/RenderedDocumentMarker.h:
+        (WebCore::toRenderedDocumentMarker): Deleted.
+        * editing/AlternativeTextController.cpp:
+        (WebCore::markersHaveIdenticalDescription):
+        (WebCore::AlternativeTextController::respondToChangedSelection):
+        (WebCore::AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::copyMarkers):
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerAt):
+        (WebCore::Internals::markerRangeForNode):
+        (WebCore::Internals::markerDescriptionForNode):
+        * testing/Internals.h:
+
+2014-10-19  Chris Dumez  <cdumez@apple.com>
+
         Use is<>() / downcast<>() for all remaining RenderObject subclasses
         https://bugs.webkit.org/show_bug.cgi?id=137845
 

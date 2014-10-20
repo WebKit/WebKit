@@ -57,6 +57,7 @@
 #include "RemoveNodePreservingChildrenCommand.h"
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
+#include "RenderedDocumentMarker.h"
 #include "ReplaceNodeWithSpanCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "ScopedEventQueue.h"
@@ -574,7 +575,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     return Position(textNode.release(), start.offsetInContainerNode() + text.length());
 }
 
-static void copyMarkers(const Vector<DocumentMarker*>& markerPointers, Vector<DocumentMarker>& markers)
+static void copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers, Vector<RenderedDocumentMarker>& markers)
 {
     size_t arraySize = markerPointers.size();
     markers.reserveCapacity(arraySize);
@@ -586,15 +587,15 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> p
 {
     RefPtr<Text> node(prpNode);
     DocumentMarkerController& markerController = document().markers();
-    Vector<DocumentMarker> markers;
+    Vector<RenderedDocumentMarker> markers;
     copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers()), markers);
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
-    for (size_t i = 0; i < markers.size(); ++i)
+    for (const auto& marker : markers)
 #if PLATFORM(IOS)
-        markerController.addMarker(newRange.get(), markers[i].type(), markers[i].description(), markers[i].alternatives(), markers[i].metadata());
+        markerController.addMarker(newRange.get(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
 #else
-        markerController.addMarker(newRange.get(), markers[i].type(), markers[i].description());
+        markerController.addMarker(newRange.get(), marker.type(), marker.description());
 #endif // PLATFORM(IOS)
 }
 

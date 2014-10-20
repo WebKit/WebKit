@@ -41,6 +41,7 @@
 #include "NodeTraversal.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
+#include "RenderedDocumentMarker.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 
@@ -765,9 +766,8 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
         return String();
 
     RefPtr<Range> rangeOfFirstCharacter = Range::create(document(), startOfSelection.deepEquivalent(), nextPosition.deepEquivalent());
-    Vector<DocumentMarker*> markers = document().markers().markersInRange(rangeOfFirstCharacter.get(), DocumentMarker::Autocorrected);
-    for (size_t i = 0; i < markers.size(); ++i) {
-        const DocumentMarker* marker = markers[i];
+    Vector<RenderedDocumentMarker*> markers = document().markers().markersInRange(rangeOfFirstCharacter.get(), DocumentMarker::Autocorrected);
+    for (auto* marker : markers) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
             return marker->description();
