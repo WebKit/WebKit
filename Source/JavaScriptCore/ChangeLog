@@ -1,3 +1,11 @@
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows Build Fix #2 after r174892.
+
+        * JavaScriptCore.vcxproj/build-generated-files.pl:
+        Define FEATURE_DEFINES for JavaScriptCore's DerivedSources.make.
+        This uses the same technique as WebCore.
+
 2014-10-20  Mark Lam  <mark.lam@apple.com>
 
         Fix placement of a few items in vcxproj ItemGroups.

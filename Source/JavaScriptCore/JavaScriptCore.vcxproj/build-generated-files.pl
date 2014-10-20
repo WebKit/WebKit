@@ -65,6 +65,11 @@ unless (-d $DERIVED_SOURCES_DIR) {
 
 chdir $DERIVED_SOURCES_DIR or die "Couldn't change directory to $DERIVED_SOURCES_DIR: $!";
 
+my $featureDefinesCommand = File::Spec->catfile($SDKROOT, 'tools', 'scripts', 'feature-defines.pl');
+my $featureDefines = `$featureDefinesCommand $SDKROOT $ARGV[2]`;
+chomp($featureDefines);
+$ENV{'FEATURE_DEFINES'} = $featureDefines;
+
 $ENV{'JavaScriptCore'} = $XSRCROOT;
 $ENV{'DFTABLES_EXTENSION'} = '.exe';
 
