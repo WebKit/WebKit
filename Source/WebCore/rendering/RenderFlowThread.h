@@ -376,8 +376,6 @@ protected:
     bool m_layersToRegionMappingsDirty : 1;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderFlowThread, isRenderFlowThread())
-
 // This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
 template <> struct ValueToString<RenderRegion*> {

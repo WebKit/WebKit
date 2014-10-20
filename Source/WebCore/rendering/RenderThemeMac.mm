@@ -967,12 +967,12 @@ IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const
 
 bool RenderThemeMac::paintMeter(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject.isMeter())
+    if (!is<RenderMeter>(renderObject))
         return true;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
-    NSLevelIndicatorCell* cell = levelIndicatorFor(toRenderMeter(renderObject));
+    NSLevelIndicatorCell* cell = levelIndicatorFor(downcast<RenderMeter>(renderObject));
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     [cell drawWithFrame:rect inView:documentViewFor(renderObject)];
@@ -1115,13 +1115,13 @@ void RenderThemeMac::adjustProgressBarStyle(StyleResolver&, RenderStyle&, Elemen
 
 bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject.isProgress())
+    if (!is<RenderProgress>(renderObject))
         return true;
 
     IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
     NSControlSize controlSize = controlSizeForFont(renderObject.style());
 
-    const RenderProgress& renderProgress = *toRenderProgress(&renderObject);
+    const auto& renderProgress = downcast<RenderProgress>(renderObject);
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
     if (controlSize == NSRegularControlSize)

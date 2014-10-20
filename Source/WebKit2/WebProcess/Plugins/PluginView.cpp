@@ -1466,16 +1466,12 @@ void PluginView::pluginProcessCrashed()
 {
     m_pluginProcessHasCrashed = true;
 
-    if (!m_pluginElement->renderer())
-        return;
-
-    if (!m_pluginElement->renderer()->isEmbeddedObject())
+    if (!is<RenderEmbeddedObject>(m_pluginElement->renderer()))
         return;
 
     m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
 
-    RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer());
-    renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
+    downcast<RenderEmbeddedObject>(*m_pluginElement->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
     
     Widget::invalidate();
 }

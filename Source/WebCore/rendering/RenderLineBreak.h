@@ -93,8 +93,6 @@ private:
     bool m_isWBR;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderLineBreak, isLineBreak())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLineBreak, isLineBreak())

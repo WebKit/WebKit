@@ -849,7 +849,7 @@ double RenderThemeIOS::animationDurationForProgressBar(RenderProgress&) const
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderer.isProgress())
+    if (!is<RenderProgress>(renderer))
         return true;
 
     const int progressBarHeight = 9;
@@ -897,7 +897,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 
     context->fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
 
-    const RenderProgress& renderProgress = *toRenderProgress(&renderer);
+    const auto& renderProgress = downcast<RenderProgress>(renderer);
     if (renderProgress.isDeterminate()) {
         // 2) Draw the progress bar.
         double position = clampTo(renderProgress.position(), 0.0, 1.0);

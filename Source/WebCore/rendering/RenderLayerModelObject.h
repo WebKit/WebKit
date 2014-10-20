@@ -69,8 +69,6 @@ private:
     static bool s_layerWasSelfPainting;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderLayerModelObject, isRenderLayerModelObject())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLayerModelObject, isRenderLayerModelObject())

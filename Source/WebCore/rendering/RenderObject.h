@@ -1122,10 +1122,6 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
 }
 
-// FIXME: Remove this macro and use SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT() instead.
-#define RENDER_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, renderer, is<ToValueTypeName>(*renderer), is<ToValueTypeName>(renderer))
-
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(ToValueTypeName, predicate) \

@@ -1,5 +1,233 @@
 2014-10-19  Chris Dumez  <cdumez@apple.com>
 
+        Use is<>() / downcast<>() for all remaining RenderObject subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137845
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for all remaining RenderObject subclasses and
+        clean up the surrounding code.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::progressElement):
+        (WebCore::AccessibilityProgressIndicator::meterElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::layoutCount):
+        (WebCore::AccessibilityRenderObject::widgetForAttachmentView):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * dom/Document.cpp:
+        (WebCore::widgetForElement):
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::overset):
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex):
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        * editing/FrameSelection.cpp:
+        (WebCore::isFrameElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::findWidgetRenderer):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement):
+        (WebCore::HTMLFrameOwnerElement::renderWidget):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::renderMeter):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::supportsFocus):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::renderEmbeddedObject):
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::renderProgress):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::pluginWidget):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * page/Frame.cpp:
+        (WebCore::Frame::ownerRenderer):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::widgetForEventTarget):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeRTLState):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::fontToUse):
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove):
+        (WebCore::InlineTextBox::paint):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::hitTestFloats):
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scroll):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        * rendering/RenderCombineText.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference):
+        (WebCore::addLayers):
+        (WebCore::RenderElement::removeLayers):
+        (WebCore::RenderElement::moveLayers):
+        (WebCore::RenderElement::setNeedsPositionedMovementLayout):
+        (WebCore::RenderElement::renderNamedFlowThreadWrapper):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::hasCompositingRegionDescendant):
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::initializeRegionsComputedAutoHeight):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::transparencyClipBox):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::isRestartedPlugin):
+        (WebCore::isCompositedPlugin):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::firstMultiColumnSet):
+        (WebCore::RenderMultiColumnFlowThread::lastMultiColumnSet):
+        (WebCore::RenderMultiColumnFlowThread::layout):
+        (WebCore::RenderMultiColumnFlowThread::addRegionToThread):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantBoxLaidOut):
+        (WebCore::RenderMultiColumnFlowThread::setPageBreak):
+        (WebCore::RenderMultiColumnFlowThread::updateMinimumPageHeight):
+        (WebCore::RenderMultiColumnFlowThread::setRegionRangeForBox):
+        (WebCore::RenderMultiColumnFlowThread::addForcedRegionBreak):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::nextSiblingMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::previousSiblingMultiColumnSet):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::checkRegionStyle):
+        (WebCore::RenderNamedFlowFragment::namedFlowThread):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::updateWritingMode):
+        (WebCore::addFragmentToList):
+        (WebCore::RenderNamedFlowThread::addRegionToThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread):
+        (WebCore::RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock):
+        (WebCore::RenderNamedFlowThread::fragmentFromAbsolutePointAndBox):
+        (WebCore::RenderNamedFlowThread::checkInvalidRegions):
+        (WebCore::RenderNamedFlowThread::checkRegionsWithStyling):
+        (WebCore::RenderNamedFlowThread::clearRenderObjectCustomStyle):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::scheduleRelayoutForSubtree):
+        (WebCore::RenderObject::setLayerNeedsFullRepaint):
+        (WebCore::RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout):
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::selectionRoot):
+        (WebCore::RenderObject::shouldUseTransformFromContainer):
+        (WebCore::RenderObject::getTransformFromContainer):
+        (WebCore::RenderObject::isRooted):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::isComposited):
+        (WebCore::RenderObject::currentRenderNamedFlowFragment):
+        * rendering/RenderObject.h:
+        * rendering/RenderProgress.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::lastRubyRun):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::rubyRun):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderSlider.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::calculateProgressRect):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMeter):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintMeter):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+        (WebCore::writeLayers):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::SelectionIterator::checkForSpanner):
+        (WebCore::isComposited):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured):
+
+2014-10-19  Chris Dumez  <cdumez@apple.com>
+
         Use SPECIALIZE_TYPE_TRAITS_*() macro for RenderScrollbar
         https://bugs.webkit.org/show_bug.cgi?id=137854
 

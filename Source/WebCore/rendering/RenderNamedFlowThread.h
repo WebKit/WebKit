@@ -159,8 +159,6 @@ private:
     LayoutUnit m_flowContentBottom;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowThread, isRenderNamedFlowThread())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderNamedFlowThread, isRenderNamedFlowThread())

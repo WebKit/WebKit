@@ -1175,10 +1175,10 @@ IntSize RenderThemeWin::meterSizeForBounds(const RenderMeter&, const IntRect& bo
 
 bool RenderThemeWin::paintMeter(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject.isMeter())
+    if (!is<RenderMeter>(renderObject))
         return true;
 
-    HTMLMeterElement* element = toRenderMeter(renderObject).meterElement();
+    HTMLMeterElement* element = downcast<RenderMeter>(renderObject).meterElement();
 
     ThemeData theme = getThemeData(renderObject);
 

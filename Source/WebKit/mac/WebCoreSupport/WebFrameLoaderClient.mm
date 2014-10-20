@@ -1962,8 +1962,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     if (pluginPackage) {
         if (WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
             errorCode = WebKitErrorBlockedPlugInVersion;
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            if (is<RenderEmbeddedObject>(*element->renderer()))
+                downcast<RenderEmbeddedObject>(*element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
                 view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
@@ -2067,8 +2067,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     if (pluginPackage) {
         if (WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
             errorCode = WebKitErrorBlockedPlugInVersion;
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            if (is<RenderEmbeddedObject>(*element->renderer()))
+                downcast<RenderEmbeddedObject>(*element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         } else {
 #if ENABLE(NETSCAPE_PLUGIN_API)
             if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {

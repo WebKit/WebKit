@@ -101,8 +101,6 @@ private:
     String m_unavailabilityDescription;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderEmbeddedObject, isEmbeddedObject())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderEmbeddedObject, isEmbeddedObject())

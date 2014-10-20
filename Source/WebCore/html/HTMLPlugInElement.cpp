@@ -275,9 +275,9 @@ bool HTMLPlugInElement::supportsFocus() const
     if (HTMLFrameOwnerElement::supportsFocus())
         return true;
 
-    if (useFallbackContent() || !renderer() || !renderer()->isEmbeddedObject())
+    if (useFallbackContent() || !is<RenderEmbeddedObject>(renderer()))
         return false;
-    return !toRenderEmbeddedObject(renderer())->isPluginUnavailable();
+    return !downcast<RenderEmbeddedObject>(*renderer()).isPluginUnavailable();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

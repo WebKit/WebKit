@@ -705,8 +705,8 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock& parent, RenderBlock* ch
     RenderObject* nextSibling = child->nextSibling();
 
     RenderFlowThread* childFlowThread = child->flowThreadContainingBlock();
-    if (childFlowThread && childFlowThread->isRenderNamedFlowThread())
-        toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
+    if (is<RenderNamedFlowThread>(childFlowThread))
+        downcast<RenderNamedFlowThread>(*childFlowThread).removeFlowChildInfo(child);
 
     parent.removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
     child->moveAllChildrenTo(&parent, nextSibling, child->hasLayer());
@@ -1268,8 +1268,8 @@ bool RenderBlock::simplifiedLayout()
 
     // Make sure a forced break is applied after the content if we are a flow thread in a simplified layout.
     // This ensures the size information is correctly computed for the last auto-height region receiving content.
-    if (isRenderFlowThread())
-        toRenderFlowThread(this)->applyBreakAfterContent(clientLogicalBottom());
+    if (is<RenderFlowThread>(*this))
+        downcast<RenderFlowThread>(*this).applyBreakAfterContent(clientLogicalBottom());
 
     // Lay out our positioned objects if our positioned child bit is set.
     // Also, if an absolute position element inside a relative positioned container moves, and the absolute element has a fixed position
@@ -1580,7 +1580,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             bool didClipToRegion = false;
             
             RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
-            if (paintInfo.paintContainer && namedFlowFragment && paintInfo.paintContainer->isRenderNamedFlowThread()) {
+            if (namedFlowFragment && is<RenderNamedFlowThread>(paintInfo.paintContainer)) {
                 // If this box goes beyond the current region, then make sure not to overflow the region.
                 // This (overflowing region X altough also fragmented to region X+1) could happen when one of this box's children
                 // overflows region X and is an unsplittable element (like an image).
@@ -1589,7 +1589,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
                 paintInfo.context->save();
                 didClipToRegion = true;
 
-                paintInfo.context->clip(toRenderNamedFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInNamedFlowFragment(*this, *namedFlowFragment));
+                paintInfo.context->clip(downcast<RenderNamedFlowThread>(*paintInfo.paintContainer).decorationsClipRectForBoxInNamedFlowFragment(*this, *namedFlowFragment));
             }
 
             paintBoxDecorations(paintInfo, paintOffset);
@@ -1898,9 +1898,9 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     }
     
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
-    if (paintInfo && namedFlowFragment && paintInfo->paintContainer->isRenderFlowThread()) {
+    if (paintInfo && namedFlowFragment && is<RenderFlowThread>(*paintInfo->paintContainer)) {
         // Make sure the current object is actually flowed into the region being painted.
-        if (!toRenderFlowThread(paintInfo->paintContainer)->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
+        if (!downcast<RenderFlowThread>(*paintInfo->paintContainer).objectShouldFragmentInFlowRegion(this, namedFlowFragment))
             return result;
     }
 
@@ -2442,7 +2442,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    RenderNamedFlowFragment* namedFlowFragment = flowThread ? toRenderNamedFlowFragment(flowThread->currentRegion()) : nullptr;
+    RenderNamedFlowFragment* namedFlowFragment = flowThread ? downcast<RenderNamedFlowFragment>(flowThread->currentRegion()) : nullptr;
     // If we are now searching inside a region, make sure this element
     // is being fragmented into this region.
     if (namedFlowFragment && !flowThread->objectShouldFragmentInFlowRegion(this, namedFlowFragment))

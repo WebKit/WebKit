@@ -72,9 +72,9 @@ bool HTMLProgressElement::childShouldCreateRenderer(const Node& child) const
 
 RenderProgress* HTMLProgressElement::renderProgress() const
 {
-    if (renderer() && renderer()->isProgress())
-        return toRenderProgress(renderer());
-    return toRenderProgress(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
+    if (is<RenderProgress>(renderer()))
+        return downcast<RenderProgress>(renderer());
+    return downcast<RenderProgress>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
 }
 
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

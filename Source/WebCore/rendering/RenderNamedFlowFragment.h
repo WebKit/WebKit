@@ -77,7 +77,7 @@ public:
     // parent renderer instead.
     // This method returns that renderer holding the layer.
     // The return value cannot be null because CSS Regions create Stacking Contexts (which means they create layers).
-    RenderLayerModelObject& layerOwner() const { return *toRenderLayerModelObject(parent()); }
+    RenderLayerModelObject& layerOwner() const { return downcast<RenderLayerModelObject>(*parent()); }
 
     bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
     void clearObjectStyleInRegion(const RenderObject*);
@@ -162,8 +162,6 @@ private:
 
     LayoutUnit m_computedAutoHeight;
 };
-
-RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowFragment, isRenderNamedFlowFragment())
 
 } // namespace WebCore
 

@@ -94,10 +94,10 @@ static RenderBlock* createAnonymousRubyInlineBlock(RenderObject& ruby)
 static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
 {
     RenderObject* child = ruby->lastChild();
-    if (child && !child->isRubyRun())
+    if (child && !is<RenderRubyRun>(*child))
         child = child->previousSibling();
-    ASSERT(!child || child->isRubyRun() || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
-    return child && child->isRubyRun() ? toRenderRubyRun(child) : 0;
+    ASSERT(!child || is<RenderRubyRun>(*child) || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
+    return downcast<RenderRubyRun>(child);
 }
 
 static inline RenderRubyRun& findRubyRunParent(RenderObject& child)

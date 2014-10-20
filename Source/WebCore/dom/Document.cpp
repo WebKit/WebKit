@@ -327,10 +327,10 @@ static Widget* widgetForElement(Element* focusedElement)
 {
     if (!focusedElement)
         return nullptr;
-    auto renderer = focusedElement->renderer();
-    if (!renderer || !renderer->isWidget())
+    auto* renderer = focusedElement->renderer();
+    if (!is<RenderWidget>(renderer))
         return nullptr;
-    return toRenderWidget(renderer)->widget();
+    return downcast<RenderWidget>(*renderer).widget();
 }
 
 static bool acceptsEditingFocus(Node* node)

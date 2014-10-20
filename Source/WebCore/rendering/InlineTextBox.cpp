@@ -248,8 +248,8 @@ RenderObject::SelectionState InlineTextBox::selectionState()
 
 static const Font& fontToUse(const RenderStyle& style, const RenderText& renderer)
 {
-    if (style.hasTextCombine() && renderer.isCombineText()) {
-        const RenderCombineText& textCombineRenderer = toRenderCombineText(renderer);
+    if (style.hasTextCombine() && is<RenderCombineText>(renderer)) {
+        const auto& textCombineRenderer = downcast<RenderCombineText>(renderer);
         if (textCombineRenderer.isCombined())
             return textCombineRenderer.textCombineFont();
     }
@@ -454,10 +454,10 @@ bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool&
     if (!containingBlock->isRubyBase())
         return true; // This text is not inside a ruby base, so it does not have ruby text over it.
 
-    if (!containingBlock->parent()->isRubyRun())
+    if (!is<RenderRubyRun>(*containingBlock->parent()))
         return true; // Cannot get the ruby text.
 
-    RenderRubyText* rubyText = toRenderRubyRun(containingBlock->parent())->rubyText();
+    RenderRubyText* rubyText = downcast<RenderRubyRun>(*containingBlock->parent()).rubyText();
 
     // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
     return !rubyText || !rubyText->hasLines();
@@ -519,7 +519,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     boxOrigin.moveBy(localPaintOffset);
     FloatRect boxRect(boxOrigin, FloatSize(logicalWidth(), logicalHeight()));
 
-    RenderCombineText* combinedText = lineStyle.hasTextCombine() && renderer().isCombineText() && toRenderCombineText(renderer()).isCombined() ? &toRenderCombineText(renderer()) : 0;
+    RenderCombineText* combinedText = lineStyle.hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)

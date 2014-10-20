@@ -1216,10 +1216,10 @@ bool RenderThemeSafari::paintMeter(const RenderObject& renderObject, const Paint
 {
     // NOTE: This routine is for testing only. It should be fleshed out with a real CG-based implementation.
     // Right now it uses a slider, with the thumb positioned at the meter point.
-    if (!renderObject.isMeter())
+    if (!is<RenderMeter>(renderObject))
         return true;
 
-    HTMLMeterElement* element = toRenderMeter(renderObject).meterElement();
+    HTMLMeterElement* element = downcast<RenderMeter>(renderObject).meterElement();
 
     int remaining = static_cast<int>((1.0 - element->valueRatio()) * static_cast<double>(rect.size().width()));
 

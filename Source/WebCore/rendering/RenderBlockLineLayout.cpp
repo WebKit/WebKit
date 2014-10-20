@@ -734,7 +734,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             setLogicalWidthForTextRun(lineBox, run, &renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             bool encounteredJustifiedRuby = false;
-            if (is<RenderRubyRun>(run->renderer()) && textAlign == JUSTIFY && run != trailingSpaceRun && toRenderRubyRun(run->renderer()).rubyBase()) {
+            if (is<RenderRubyRun>(run->renderer()) && textAlign == JUSTIFY && run != trailingSpaceRun && downcast<RenderRubyRun>(run->renderer()).rubyBase()) {
                 auto* rubyBase = downcast<RenderRubyRun>(run->renderer()).rubyBase();
                 if (rubyBase->firstRootBox() && !rubyBase->firstRootBox()->nextRootBox() && run->renderer().style().collapseWhiteSpace()) {
                     for (auto* leafChild = rubyBase->firstRootBox()->firstLeafChild(); leafChild; leafChild = leafChild->nextLeafChild()) {

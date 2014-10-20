@@ -501,8 +501,8 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
 
     // Before updating the final size of the flow thread make sure a forced break is applied after the content.
     // This ensures the size information is correctly computed for the last auto-height region receiving content.
-    if (isRenderFlowThread())
-        toRenderFlowThread(this)->applyBreakAfterContent(oldClientAfterEdge);
+    if (is<RenderFlowThread>(*this))
+        downcast<RenderFlowThread>(*this).applyBreakAfterContent(oldClientAfterEdge);
 
     updateLogicalHeight();
     LayoutUnit newHeight = logicalHeight();
@@ -2826,8 +2826,8 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
         return false;
 
     LayoutPoint adjustedLocation = accumulatedOffset;
-    if (isRenderView())
-        adjustedLocation += toLayoutSize(toRenderView(*this).frameView().scrollPosition());
+    if (is<RenderView>(*this))
+        adjustedLocation += toLayoutSize(downcast<RenderView>(*this).frameView().scrollPosition());
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     auto begin = floatingObjectSet.begin();
@@ -3724,8 +3724,8 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
         flowThread->setColumnHeightAvailable(std::max<LayoutUnit>(columnHeight, 0));
         if (oldHeightAvailable != flowThread->columnHeightAvailable())
             relayoutChildren = true;
-    } else if (isRenderFlowThread()) {
-        RenderFlowThread* flowThread = toRenderFlowThread(this);
+    } else if (is<RenderFlowThread>(*this)) {
+        RenderFlowThread& flowThread = downcast<RenderFlowThread>(*this);
 
         // FIXME: This is a hack to always make sure we have a page logical height, if said height
         // is known. The page logical height thing in LayoutState is meaningless for flow
@@ -3736,9 +3736,9 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
         // it's unknown, we need to prevent the pagination code from assuming page breaks everywhere
         // and thereby eating every top margin. It should be trivial to clean up and get rid of this
         // hack once the old multicol implementation is gone.
-        pageLogicalHeight = flowThread->isPageLogicalHeightKnown() ? LayoutUnit(1) : LayoutUnit(0);
+        pageLogicalHeight = flowThread.isPageLogicalHeightKnown() ? LayoutUnit(1) : LayoutUnit(0);
 
-        pageLogicalHeightChanged = flowThread->pageLogicalSizeChanged();
+        pageLogicalHeightChanged = flowThread.pageLogicalSizeChanged();
     }
 }
 

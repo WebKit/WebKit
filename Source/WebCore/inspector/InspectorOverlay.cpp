@@ -722,9 +722,9 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     }
 
     RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
-    if (containingFlowThread && containingFlowThread->isRenderNamedFlowThread()) {
+    if (is<RenderNamedFlowThread>(containingFlowThread)) {
         RefPtr<InspectorObject> contentFlowInfo = InspectorObject::create();
-        contentFlowInfo->setString("name", toRenderNamedFlowThread(containingFlowThread)->flowThreadName());
+        contentFlowInfo->setString("name", downcast<RenderNamedFlowThread>(*containingFlowThread).flowThreadName());
         elementInfo->setObject("contentFlowInfo", contentFlowInfo.release());
     }
 

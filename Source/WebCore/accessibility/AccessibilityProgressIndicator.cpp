@@ -122,19 +122,19 @@ float AccessibilityProgressIndicator::minValueForRange() const
 
 HTMLProgressElement* AccessibilityProgressIndicator::progressElement() const
 {
-    if (!m_renderer->isProgress())
+    if (!is<RenderProgress>(*m_renderer))
         return nullptr;
     
-    return toRenderProgress(m_renderer)->progressElement();
+    return downcast<RenderProgress>(*m_renderer).progressElement();
 }
 
 #if ENABLE(METER_ELEMENT)
 HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 {
-    if (!m_renderer->isMeter())
+    if (!is<RenderMeter>(*m_renderer))
         return nullptr;
 
-    return toRenderMeter(m_renderer)->meterElement();
+    return downcast<RenderMeter>(*m_renderer).meterElement();
 }
 #endif
 

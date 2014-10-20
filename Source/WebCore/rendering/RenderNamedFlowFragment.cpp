@@ -344,7 +344,7 @@ void RenderNamedFlowFragment::checkRegionStyle()
     if (!isPseudoElement())
         customRegionStyle = view().document().ensureStyleResolver().checkRegionStyle(generatingElement());
     setHasCustomRegionStyle(customRegionStyle);
-    toRenderNamedFlowThread(m_flowThread)->checkRegionsWithStyling();
+    downcast<RenderNamedFlowThread>(*m_flowThread).checkRegionsWithStyling();
 }
 
 PassRefPtr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, RenderStyle& parentStyle) const
@@ -489,7 +489,7 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
 
 RenderNamedFlowThread* RenderNamedFlowFragment::namedFlowThread() const
 {
-    return toRenderNamedFlowThread(flowThread());
+    return downcast<RenderNamedFlowThread>(flowThread());
 }
 
 LayoutRect RenderNamedFlowFragment::visualOverflowRect() const

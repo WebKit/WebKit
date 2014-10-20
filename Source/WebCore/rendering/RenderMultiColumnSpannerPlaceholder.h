@@ -55,8 +55,6 @@ private:
     RenderMultiColumnFlowThread* m_flowThread;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnSpannerPlaceholder, isRenderMultiColumnSpannerPlaceholder())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnSpannerPlaceholder, isRenderMultiColumnSpannerPlaceholder())

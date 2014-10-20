@@ -104,8 +104,6 @@ private:
     IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so it is stored in content view coordinates, and not clipped to window.
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderWidget, isWidget())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isWidget())

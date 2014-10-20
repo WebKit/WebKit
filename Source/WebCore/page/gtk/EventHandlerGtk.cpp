@@ -61,10 +61,10 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : 0;
-    if (!target || !target->isWidget())
+    RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
+    if (!is<RenderWidget>(target))
         return false;
-    return passMouseDownEventToWidget(toRenderWidget(target)->widget());
+    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)

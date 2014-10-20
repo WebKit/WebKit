@@ -158,8 +158,6 @@ private:
     static bool gShiftingSpanner;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())

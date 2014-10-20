@@ -430,10 +430,8 @@ extern "C" {
 
 - (void)pluginHostDied
 {
-    if (_element->renderer() && _element->renderer()->isEmbeddedObject()) {
-        RenderEmbeddedObject* renderer = toRenderEmbeddedObject(_element->renderer());
-        renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
-    }
+    if (is<RenderEmbeddedObject>(_element->renderer()))
+        downcast<RenderEmbeddedObject>(*_element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
 
     _pluginLayer = nil;
     _proxy = 0;

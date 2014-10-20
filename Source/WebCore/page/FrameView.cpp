@@ -1237,7 +1237,7 @@ void FrameView::layout(bool allowSubtree)
 
         autoSizeIfEnabled();
 
-        m_needsFullRepaint = !subtree && (m_firstLayout || toRenderView(*root).printing());
+        m_needsFullRepaint = !subtree && (m_firstLayout || downcast<RenderView>(*root).printing());
 
         if (!subtree) {
             ScrollbarMode hMode;
@@ -1325,7 +1325,7 @@ void FrameView::layout(bool allowSubtree)
         if (subtree)
             root->view().popLayoutState(*root);
 
-        m_layoutRoot = 0;
+        m_layoutRoot = nullptr;
 
         // Close block here to end the scope of changeSchedulingEnabled and layoutStateDisabler.
     }
@@ -1334,7 +1334,7 @@ void FrameView::layout(bool allowSubtree)
 
     bool neededFullRepaint = m_needsFullRepaint;
 
-    if (!subtree && !toRenderView(*root).printing())
+    if (!subtree && !downcast<RenderView>(*root).printing())
         adjustViewSize();
 
     m_layoutPhase = InPostLayout;

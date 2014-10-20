@@ -34,7 +34,7 @@ namespace WebCore {
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_contentFrame(0)
+    , m_contentFrame(nullptr)
     , m_sandboxFlags(SandboxNone)
 {
 }
@@ -43,9 +43,9 @@ RenderWidget* HTMLFrameOwnerElement::renderWidget() const
 {
     // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers
     // when using fallback content.
-    if (!renderer() || !renderer()->isWidget())
-        return 0;
-    return toRenderWidget(renderer());
+    if (!is<RenderWidget>(renderer()))
+        return nullptr;
+    return downcast<RenderWidget>(renderer());
 }
 
 void HTMLFrameOwnerElement::setContentFrame(Frame* frame)

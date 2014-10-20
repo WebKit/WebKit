@@ -804,9 +804,9 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
         return true;
 
     RenderBlock* nextScrollBlock = containingBlock();
-    if (nextScrollBlock && nextScrollBlock->isRenderNamedFlowThread()) {
+    if (is<RenderNamedFlowThread>(nextScrollBlock)) {
         ASSERT(startBox);
-        nextScrollBlock = toRenderNamedFlowThread(nextScrollBlock)->fragmentFromAbsolutePointAndBox(wheelEventAbsolutePoint, *startBox);
+        nextScrollBlock = downcast<RenderNamedFlowThread>(*nextScrollBlock).fragmentFromAbsolutePointAndBox(wheelEventAbsolutePoint, *startBox);
     }
 
     if (nextScrollBlock && !nextScrollBlock->isRenderView())
@@ -1166,7 +1166,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     }
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    RenderRegion* regionToUse = flowThread ? toRenderNamedFlowFragment(flowThread->currentRegion()) : nullptr;
+    RenderRegion* regionToUse = flowThread ? downcast<RenderNamedFlowFragment>(flowThread->currentRegion()) : nullptr;
 
     // If the box is not contained by this region there's no point in going further.
     if (regionToUse && !flowThread->objectShouldFragmentInFlowRegion(this, regionToUse))
@@ -1640,7 +1640,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground)
 {
     LayoutRect rendererRect;
-    RenderBox* layerRenderer = 0;
+    RenderBox* layerRenderer = nullptr;
 
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
         if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(this, style().effectiveZoom())) {
@@ -1650,8 +1650,8 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 if (drawingRootBackground) {
                     layerRenderer = &view();
 
-                    LayoutUnit rw = toRenderView(*layerRenderer).frameView().contentsWidth();
-                    LayoutUnit rh = toRenderView(*layerRenderer).frameView().contentsHeight();
+                    LayoutUnit rw = downcast<RenderView>(*layerRenderer).frameView().contentsWidth();
+                    LayoutUnit rh = downcast<RenderView>(*layerRenderer).frameView().contentsHeight();
 
                     rendererRect = LayoutRect(-layerRenderer->marginLeft(),
                         -layerRenderer->marginTop(),
@@ -1664,7 +1664,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             }
 
             BackgroundImageGeometry geometry;
-            layerRenderer->calculateBackgroundImageGeometry(0, curLayer, rendererRect, geometry);
+            layerRenderer->calculateBackgroundImageGeometry(nullptr, curLayer, rendererRect, geometry);
             if (geometry.hasNonLocalGeometry()) {
                 // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
                 // in order to get the right destRect, just repaint the entire renderer.
@@ -1958,7 +1958,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (!container->isOutOfFlowRenderFlowThread() || !fixedPositionedWithNamedFlowContainingBlock())
         container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     else
-        container->mapLocalToContainer(toRenderLayerModelObject(container), transformState, mode, wasFixed);
+        container->mapLocalToContainer(downcast<RenderLayerModelObject>(container), transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -3097,15 +3097,15 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         const RenderBlock& cb = downcast<RenderBlock>(*containingBlock);
         RenderBoxRegionInfo* boxInfo = nullptr;
         if (!region) {
-            if (containingBlock->isRenderFlowThread() && !checkForPerpendicularWritingMode)
-                return toRenderFlowThread(containingBlock)->contentLogicalWidthOfFirstRegion();
+            if (is<RenderFlowThread>(*containingBlock) && !checkForPerpendicularWritingMode)
+                return downcast<RenderFlowThread>(*containingBlock).contentLogicalWidthOfFirstRegion();
             if (isWritingModeRoot()) {
                 LayoutUnit cbPageOffset = cb.offsetFromLogicalTopOfFirstPage();
                 RenderRegion* cbRegion = cb.regionAtBlockOffset(cbPageOffset);
                 if (cbRegion)
                     boxInfo = cb.renderBoxRegionInfo(cbRegion);
             }
-        } else if (region && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
+        } else if (flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
             RenderRegion* containingBlockRegion = cb.clampToStartAndEndRegions(region);
             boxInfo = cb.renderBoxRegionInfo(containingBlockRegion);
         }

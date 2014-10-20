@@ -256,7 +256,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
         // Text nodes share style with their parents but transforms don't apply to them,
         // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
-        if (!hasLayer() || !toRenderLayerModelObject(this)->layer()->isComposited()) {
+        if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited()) {
             // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
             // then we actually need SimplifiedLayoutAndPositionedMovement.
             if (!hasLayer())
@@ -272,14 +272,14 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     // If opacity changed, and we are not composited, need to repaint (also
     // ignoring text nodes)
     if (contextSensitiveProperties & ContextSensitivePropertyOpacity) {
-        if (!hasLayer() || !toRenderLayerModelObject(this)->layer()->isComposited())
+        if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited())
             diff = StyleDifferenceRepaintLayer;
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
 
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
-        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
+        RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
             diff = StyleDifferenceRepaintLayer;
         else if (diff < StyleDifferenceRecompositeLayer)
@@ -290,7 +290,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
     if (diff == StyleDifferenceEqual && isRenderLayerModelObject()) {
-        if (hasLayer() != toRenderLayerModelObject(this)->requiresLayer())
+        if (hasLayer() != downcast<RenderLayerModelObject>(*this).requiresLayer())
             diff = StyleDifferenceLayout;
     }
 
@@ -658,7 +658,7 @@ static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderE
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = nullptr;
         }
-        parentLayer->addChild(toRenderLayerModelObject(renderer).layer(), beforeChild);
+        parentLayer->addChild(downcast<RenderLayerModelObject>(renderer).layer(), beforeChild);
         return;
     }
 
@@ -682,7 +682,7 @@ void RenderElement::removeLayers(RenderLayer* parentLayer)
         return;
 
     if (hasLayer()) {
-        parentLayer->removeChild(toRenderLayerModelObject(this)->layer());
+        parentLayer->removeChild(downcast<RenderLayerModelObject>(*this).layer());
         return;
     }
 
@@ -696,7 +696,7 @@ void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
 
     if (hasLayer()) {
-        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
+        RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         ASSERT(oldParent == layer->parent());
         if (oldParent)
             oldParent->removeChild(layer);
@@ -1034,7 +1034,7 @@ void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle
     setNeedsPositionedMovementLayoutBit(true);
     markContainingBlocksForLayout();
     if (hasLayer()) {
-        if (oldStyle && style().diffRequiresLayerRepaint(*oldStyle, toRenderLayerModelObject(this)->layer()->isComposited()))
+        if (oldStyle && style().diffRequiresLayerRepaint(*oldStyle, downcast<RenderLayerModelObject>(*this).layer()->isComposited()))
             setLayerNeedsFullRepaint();
         else
             setLayerNeedsFullRepaintForPositionedMovementLayout();
@@ -1331,10 +1331,10 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
 RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()
 {
-    auto renderer = this;
-    while (renderer && renderer->isAnonymousBlock() && !renderer->isRenderNamedFlowThread())
+    auto* renderer = this;
+    while (renderer && renderer->isAnonymousBlock() && !is<RenderNamedFlowThread>(*renderer))
         renderer = renderer->parent();
-    return renderer && renderer->isRenderNamedFlowThread() ? toRenderNamedFlowThread(renderer) : nullptr;
+    return is<RenderNamedFlowThread>(renderer) ? downcast<RenderNamedFlowThread>(renderer) : nullptr;
 }
 
 bool RenderElement::hasControlStatesForRenderer(const RenderObject* o)

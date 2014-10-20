@@ -369,8 +369,6 @@ private:
 #endif
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderView, isRenderView())
-
 // Stack-based class to assist with LayoutState push/pop
 class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);

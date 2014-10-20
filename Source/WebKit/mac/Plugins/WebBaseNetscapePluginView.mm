@@ -290,11 +290,11 @@ using namespace WebCore;
 
 - (NSRect)_windowClipRect
 {
-    RenderObject* renderer = _element->renderer();
+    auto* renderer = _element->renderer();
     if (!renderer)
         return NSZeroRect;
 
-    return toRenderWidget(renderer)->windowClipRect();
+    return downcast<RenderWidget>(*renderer).windowClipRect();
 }
 
 - (NSRect)visibleRect
@@ -874,13 +874,13 @@ using namespace WebCore;
 
 - (NSRect)actualVisibleRectInWindow
 {
-    RenderObject* renderer = _element->renderer();
+    auto* renderer = _element->renderer();
     if (!renderer)
         return NSZeroRect;
 
     IntRect widgetRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
     widgetRect = renderer->view().frameView().contentsToWindow(widgetRect);
-    return intersection(toRenderWidget(renderer)->windowClipRect(), widgetRect);
+    return intersection(downcast<RenderWidget>(*renderer).windowClipRect(), widgetRect);
 }
 
 - (CALayer *)pluginLayer

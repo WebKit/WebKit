@@ -163,15 +163,15 @@ RenderObject* RenderRubyRun::removeChild(RenderObject& child)
     if (!beingDestroyed() && !documentBeingDestroyed() && child.isRubyText()) {
         RenderRubyBase* base = rubyBase();
         RenderObject* rightNeighbour = nextSibling();
-        if (base && rightNeighbour && rightNeighbour->isRubyRun()) {
+        if (base && is<RenderRubyRun>(rightNeighbour)) {
             // Ruby run without a base can happen only at the first run.
-            RenderRubyRun* rightRun = toRenderRubyRun(rightNeighbour);
-            if (rightRun->hasRubyBase()) {
-                RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
+            RenderRubyRun& rightRun = downcast<RenderRubyRun>(*rightNeighbour);
+            if (rightRun.hasRubyBase()) {
+                RenderRubyBase* rightBase = rightRun.rubyBaseSafe();
                 // Collect all children in a single base, then swap the bases.
                 rightBase->mergeChildrenWithBase(base);
-                moveChildTo(rightRun, base);
-                rightRun->moveChildTo(this, rightBase);
+                moveChildTo(&rightRun, base);
+                rightRun.moveChildTo(this, rightBase);
                 // The now empty ruby base will be removed below.
                 ASSERT(!rubyBase()->firstChild());
             }

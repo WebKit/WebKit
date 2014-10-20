@@ -169,15 +169,15 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    auto target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
-    if (!target || !target->isWidget())
+    auto* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
+    if (!is<RenderWidget>(target))
         return false;
 
     // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget() will
     // just pass currentEvent down to the widget, we don't want to call it for events that
     // don't correspond to Cocoa events. The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    return passMouseDownEventToWidget(toRenderWidget(target)->widget());
+    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
@@ -363,13 +363,13 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             Node* node = event.targetNode();
             if (!node)
                 return false;
-            auto renderer = node->renderer();
-            if (!renderer || !renderer->isWidget())
+            auto* renderer = node->renderer();
+            if (!is<RenderWidget>(renderer))
                 return false;
-            Widget* widget = toRenderWidget(renderer)->widget();
+            Widget* widget = downcast<RenderWidget>(*renderer).widget();
             if (!widget || !widget->isFrameView())
                 return false;
-            if (!passWidgetMouseDownEventToWidget(toRenderWidget(renderer)))
+            if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
                 return false;
             m_mouseDownWasInSubframe = true;
             return true;

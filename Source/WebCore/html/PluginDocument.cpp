@@ -155,11 +155,9 @@ PassRefPtr<DocumentParser> PluginDocument::createParser()
 
 Widget* PluginDocument::pluginWidget()
 {
-    if (m_pluginElement && m_pluginElement->renderer()) {
-        ASSERT(m_pluginElement->renderer()->isEmbeddedObject());
-        return toRenderEmbeddedObject(m_pluginElement->renderer())->widget();
-    }
-    return 0;
+    if (m_pluginElement && m_pluginElement->renderer())
+        return downcast<RenderEmbeddedObject>(*m_pluginElement->renderer()).widget();
+    return nullptr;
 }
 
 void PluginDocument::setPluginElement(PassRefPtr<HTMLPlugInElement> element)

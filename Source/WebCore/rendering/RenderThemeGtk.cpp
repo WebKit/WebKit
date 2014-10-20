@@ -1620,7 +1620,7 @@ double RenderThemeGtk::animationDurationForProgressBar(RenderProgress&) const
 IntRect RenderThemeGtk::calculateProgressRect(const RenderObject& renderObject, const IntRect& fullBarRect)
 {
     IntRect progressRect(fullBarRect);
-    const RenderProgress& renderProgress = toRenderProgress(renderObject);
+    const auto& renderProgress = downcast<RenderProgress>(renderObject);
     if (renderProgress.isDeterminate()) {
         int progressWidth = progressRect.width() * renderProgress.position();
         if (renderObject.style().direction() == RTL)

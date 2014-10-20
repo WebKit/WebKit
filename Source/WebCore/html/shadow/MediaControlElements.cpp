@@ -872,8 +872,8 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime())
         mediaController()->setCurrentTime(time);
 
-    RenderSlider* slider = toRenderSlider(renderer());
-    if (slider && slider->inDragMode())
+    RenderSlider& slider = downcast<RenderSlider>(*renderer());
+    if (slider.inDragMode())
         m_controls->updateCurrentTimeDisplay();
 }
 
@@ -1337,9 +1337,9 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     if (m_textTrackRepresentation)
         videoBox = m_textTrackRepresentation->bounds();
     else {
-        if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
+        if (!is<RenderVideo>(mediaElement->renderer()))
             return;
-        videoBox = toRenderVideo(*mediaElement->renderer()).videoBox();
+        videoBox = downcast<RenderVideo>(*mediaElement->renderer()).videoBox();
     }
 
     if (!forceUpdate && m_videoDisplaySize == videoBox)
@@ -1363,14 +1363,14 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
 
     document().updateLayout();
 
-    auto renderer = this->renderer();
+    auto* renderer = this->renderer();
     if (!renderer)
         return nullptr;
 
     if (!renderer->hasLayer())
         return nullptr;
 
-    RenderLayer* layer = toRenderLayerModelObject(renderer)->layer();
+    RenderLayer* layer = downcast<RenderLayerModelObject>(*renderer).layer();
 
     float deviceScaleFactor = 1;
     if (Page* page = document().page())

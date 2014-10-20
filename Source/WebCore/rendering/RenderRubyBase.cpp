@@ -131,9 +131,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* bef
 RenderRubyRun* RenderRubyBase::rubyRun() const
 {
     ASSERT(parent());
-    ASSERT(parent()->isRubyRun());
-
-    return &toRenderRubyRun(*parent());
+    return downcast<RenderRubyRun>(parent());
 }
 
 ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) const

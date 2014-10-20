@@ -301,11 +301,10 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, const ControlSt
 void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, const RenderObject& object, FormType type, const IntRect& rect)
 {
     if (type == SliderVertical || type == SliderHorizontal) {
-        if (!object.isSlider())
+        if (!is<RenderSlider>(object))
             return; // probably have -webkit-appearance: slider..
 
-        const RenderSlider* renderSlider = toRenderSlider(&object);
-        HTMLInputElement& input = renderSlider->element();
+        HTMLInputElement& input = downcast<RenderSlider>(object).element();
         double valueRange = input.maximum() - input.minimum();
 
         OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
@@ -323,7 +322,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, const RenderObject& ob
         msg->val[1] = (input.valueAsNumber() - input.minimum()) / valueRange;
         edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
     } else if (type == ProgressBar) {
-        const RenderProgress& renderProgress = toRenderProgress(object);
+        const auto& renderProgress = downcast<RenderProgress>(object);
 
         int max = rect.width();
         double value = renderProgress.position();

@@ -225,8 +225,6 @@ private:
     Vector<ContentRun, 1> m_contentRuns;
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnSet, isRenderMultiColumnSet())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnSet, isRenderMultiColumnSet())

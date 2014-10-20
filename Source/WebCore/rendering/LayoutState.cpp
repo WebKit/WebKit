@@ -112,8 +112,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     m_layoutDeltaYSaturated = m_next->m_layoutDeltaYSaturated;
 #endif
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && renderer->isRenderMultiColumnFlowThread())
-        toRenderMultiColumnFlowThread(renderer)->computeLineGridPaginationOrigin(*this);
+    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && is<RenderMultiColumnFlowThread>(*renderer))
+        downcast<RenderMultiColumnFlowThread>(*renderer).computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
     if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(*renderer))

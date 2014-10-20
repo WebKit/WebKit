@@ -66,11 +66,11 @@ struct SelectionIterator {
     
     void checkForSpanner()
     {
-        if (!m_current || !m_current->isRenderMultiColumnSpannerPlaceholder())
+        if (!is<RenderMultiColumnSpannerPlaceholder>(m_current))
             return;
-        RenderMultiColumnSpannerPlaceholder* placeholder = toRenderMultiColumnSpannerPlaceholder(m_current);
-        m_spannerStack.append(placeholder);
-        m_current = placeholder->spanner();
+        auto& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*m_current);
+        m_spannerStack.append(&placeholder);
+        m_current = placeholder.spanner();
     }
     
     RenderObject* current()
@@ -503,7 +503,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 static inline bool isComposited(RenderElement* object)
 {
-    return object->hasLayer() && toRenderLayerModelObject(object)->layer()->isComposited();
+    return object->hasLayer() && downcast<RenderLayerModelObject>(*object).layer()->isComposited();
 }
 
 static inline bool rendererObscuresBackground(RenderElement* rootObject)

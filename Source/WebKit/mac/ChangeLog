@@ -1,3 +1,22 @@
+2014-10-19  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for all remaining RenderObject subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=137845
+
+        Reviewed by Darin Adler.
+
+        Use is<>() / downcast<>() for all remaining RenderObject subclasses and 
+        clean up the surrounding code.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginHostDied]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _windowClipRect]):
+        (-[WebBaseNetscapePluginView actualVisibleRectInWindow]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+
 2014-10-17  Tim Horton  <timothy_horton@apple.com>
 
         Build fix for 32-bit Yosemite

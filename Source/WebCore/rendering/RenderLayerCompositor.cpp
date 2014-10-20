@@ -943,10 +943,10 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
             // its replica GraphicsLayer. In practice this should never happen because reflectee and reflection 
             // are both either composited, or not composited.
             if (layer.isReflection()) {
-                RenderLayer* sourceLayer = toRenderLayerModelObject(layer.renderer().parent())->layer();
+                RenderLayer* sourceLayer = downcast<RenderLayerModelObject>(*layer.renderer().parent()).layer();
                 if (RenderLayerBacking* backing = sourceLayer->backing()) {
                     ASSERT(backing->graphicsLayer()->replicaLayer() == layer.backing()->graphicsLayer());
-                    backing->graphicsLayer()->setReplicatedByLayer(0);
+                    backing->graphicsLayer()->setReplicatedByLayer(nullptr);
                 }
             }
 
@@ -966,14 +966,14 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
     }
     
 #if ENABLE(VIDEO)
-    if (layerChanged && layer.renderer().isVideo()) {
+    if (layerChanged && is<RenderVideo>(layer.renderer())) {
         // If it's a video, give the media player a chance to hook up to the layer.
-        toRenderVideo(layer.renderer()).acceleratedRenderingStateChanged();
+        downcast<RenderVideo>(layer.renderer()).acceleratedRenderingStateChanged();
     }
 #endif
 
-    if (layerChanged && layer.renderer().isWidget()) {
-        RenderLayerCompositor* innerCompositor = frameContentsCompositor(toRenderWidget(&layer.renderer()));
+    if (layerChanged && is<RenderWidget>(layer.renderer())) {
+        RenderLayerCompositor* innerCompositor = frameContentsCompositor(&downcast<RenderWidget>(layer.renderer()));
         if (innerCompositor && innerCompositor->inCompositingMode())
             innerCompositor->updateRootLayerAttachment();
     }
@@ -1175,7 +1175,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     layer.updateLayerListsIfNeeded();
 
     if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
-        RenderFlowThread& flowThread = toRenderFlowThread(layer.renderer());
+        auto& flowThread = downcast<RenderFlowThread>(layer.renderer());
         layer.setHasCompositingDescendant(flowThread.hasCompositingRegionDescendant());
 
         // Before returning, we need to update the lists of all child layers. This is required because,
@@ -1548,8 +1548,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
 
     if (layerBacking) {
         bool parented = false;
-        if (layer.renderer().isWidget())
-            parented = parentFrameContentLayers(toRenderWidget(&layer.renderer()));
+        if (is<RenderWidget>(layer.renderer()))
+            parented = parentFrameContentLayers(&downcast<RenderWidget>(layer.renderer()));
 
         if (!parented)
             layerBacking->parentForSublayers()->setChildren(layerChildren);
@@ -2090,11 +2090,11 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer& layer, Render
 // static
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
-    auto renderer = &layer.renderer();
+    auto* renderer = &layer.renderer();
 
     // The compositing state of a reflection should match that of its reflected layer.
     if (layer.isReflection())
-        renderer = toRenderLayerModelObject(renderer->parent()); // The RenderReplica's parent is the object being reflected.
+        renderer = downcast<RenderLayerModelObject>(renderer->parent()); // The RenderReplica's parent is the object being reflected.
 
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(*renderer)
@@ -2183,9 +2183,9 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
     if (!layer.isComposited())
         return reasons;
 
-    auto renderer = &layer.renderer();
+    auto* renderer = &layer.renderer();
     if (layer.isReflection())
-        renderer = toRenderLayerModelObject(renderer->parent());
+        renderer = downcast<RenderLayerModelObject>(renderer->parent());
 
     if (requiresCompositingForTransform(*renderer))
         reasons |= CompositingReason3DTransform;
@@ -2450,8 +2450,8 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& 
     if (!(m_compositingTriggers & ChromeClient::VideoTrigger))
         return false;
 #if ENABLE(VIDEO)
-    if (renderer.isVideo()) {
-        RenderVideo& video = toRenderVideo(renderer);
+    if (is<RenderVideo>(renderer)) {
+        auto& video = downcast<RenderVideo>(renderer);
         return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
     }
 #else
@@ -2484,13 +2484,13 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     if (!(m_compositingTriggers & ChromeClient::PluginTrigger))
         return false;
 
-    bool composite = renderer.isEmbeddedObject() && toRenderEmbeddedObject(&renderer)->allowsAcceleratedCompositing();
+    bool composite = is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
     if (!composite)
         return false;
 
     m_reevaluateCompositingAfterLayout = true;
     
-    RenderWidget& pluginRenderer = *toRenderWidget(&renderer);
+    RenderWidget& pluginRenderer = downcast<RenderWidget>(renderer);
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
     if (pluginRenderer.needsLayout())
         return pluginRenderer.hasLayer() && pluginRenderer.layer()->isComposited();
@@ -2502,10 +2502,10 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
 
 bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& renderer) const
 {
-    if (!renderer.isWidget())
+    if (!is<RenderWidget>(renderer))
         return false;
 
-    RenderWidget& frameRenderer = *toRenderWidget(&renderer);
+    auto& frameRenderer = downcast<RenderWidget>(renderer);
 
     if (!frameRenderer.requiresAcceleratedCompositing())
         return false;

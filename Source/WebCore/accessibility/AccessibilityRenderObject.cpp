@@ -1387,9 +1387,9 @@ double AccessibilityRenderObject::estimatedLoadingProgress() const
     
 int AccessibilityRenderObject::layoutCount() const
 {
-    if (!m_renderer->isRenderView())
+    if (!is<RenderView>(*m_renderer))
         return 0;
-    return toRenderView(*m_renderer).frameView().layoutCount();
+    return downcast<RenderView>(*m_renderer).frameView().layoutCount();
 }
 
 String AccessibilityRenderObject::text() const
@@ -1763,7 +1763,7 @@ Widget* AccessibilityRenderObject::widgetForAttachmentView() const
 {
     if (!isAttachment())
         return nullptr;
-    return toRenderWidget(m_renderer)->widget();
+    return downcast<RenderWidget>(*m_renderer).widget();
 }
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
@@ -1996,11 +1996,11 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         pointResult = result.localPoint();
 
         // done if hit something other than a widget
-        if (!renderer->isWidget())
+        if (!is<RenderWidget>(*renderer))
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        Widget* widget = toRenderWidget(renderer)->widget();
+        Widget* widget = downcast<RenderWidget>(*renderer).widget();
         if (!is<FrameView>(widget))
             break;
         Frame& frame = downcast<FrameView>(*widget).frame();

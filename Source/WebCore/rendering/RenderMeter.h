@@ -47,8 +47,6 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
-RENDER_OBJECT_TYPE_CASTS(RenderMeter, isMeter())
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMeter, isMeter())

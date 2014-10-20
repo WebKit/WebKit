@@ -652,8 +652,8 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
 
         Element* generatingElement = renderRegion->generatingElement();
         if (generatingElement) {
-            bool isRenderNamedFlowFragment = renderRegion->isRenderNamedFlowFragment();
-            if (isRenderNamedFlowFragment && toRenderNamedFlowFragment(renderRegion)->hasCustomRegionStyle())
+            bool isRenderNamedFlowFragment = is<RenderNamedFlowFragment>(*renderRegion);
+            if (isRenderNamedFlowFragment && downcast<RenderNamedFlowFragment>(*renderRegion).hasCustomRegionStyle())
                 ts << " region style: 1";
             if (renderRegion->hasAutoLogicalHeight())
                 ts << " hasAutoLogicalHeight";
@@ -802,8 +802,8 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
     // so we have to treat it as a special case.
-    if (l->renderer().isRenderView())
-        writeRenderNamedFlowThreads(ts, toRenderView(l->renderer()), rootLayer, paintDirtyRect, indent, behavior);
+    if (is<RenderView>(l->renderer()))
+        writeRenderNamedFlowThreads(ts, downcast<RenderView>(l->renderer()), rootLayer, paintDirtyRect, indent, behavior);
 }
 
 static String nodePosition(Node* node)

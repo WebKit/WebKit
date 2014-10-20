@@ -569,13 +569,13 @@ void RenderObject::clearNeedsLayout()
 
 static void scheduleRelayoutForSubtree(RenderElement& renderer)
 {
-    if (!renderer.isRenderView()) {
+    if (!is<RenderView>(renderer)) {
         if (!renderer.isRooted())
             return;
         renderer.view().frameView().scheduleRelayoutOfSubtree(renderer);
         return;
     }
-    toRenderView(renderer).frameView().scheduleRelayout();
+    downcast<RenderView>(renderer).frameView().scheduleRelayout();
 }
 
 void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderElement* newRoot)
@@ -677,13 +677,13 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 void RenderObject::setLayerNeedsFullRepaint()
 {
     ASSERT(hasLayer());
-    toRenderLayerModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaint);
+    downcast<RenderLayerModelObject>(*this).layer()->setRepaintStatus(NeedsFullRepaint);
 }
 
 void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 {
     ASSERT(hasLayer());
-    toRenderLayerModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
+    downcast<RenderLayerModelObject>(*this).layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
 }
 
 RenderBlock* RenderObject::containingBlock() const
@@ -1237,8 +1237,8 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         return;
     }
 
-    if (repaintContainer->isRenderFlowThread()) {
-        toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r);
+    if (is<RenderFlowThread>(*repaintContainer)) {
+        downcast<RenderFlowThread>(*repaintContainer).repaintRectangleInRegions(r);
         return;
     }
 
@@ -1624,8 +1624,8 @@ Color RenderObject::selectionEmphasisMarkColor() const
 SelectionSubtreeRoot& RenderObject::selectionRoot() const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && flowThread->isRenderNamedFlowThread())
-        return *toRenderNamedFlowThread(flowThread);
+    if (is<RenderNamedFlowThread>(flowThread))
+        return downcast<RenderNamedFlowThread>(*flowThread);
 
     return view();
 }
@@ -1761,7 +1761,7 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderObject* container
 #if ENABLE(3D_RENDERING)
     // hasTransform() indicates whether the object has transform, transform-style or perspective. We just care about transform,
     // so check the layer's transform directly.
-    return (hasLayer() && toRenderLayerModelObject(this)->layer()->transform()) || (containerObject && containerObject->style().hasPerspective());
+    return (hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->transform()) || (containerObject && containerObject->style().hasPerspective());
 #else
     UNUSED_PARAM(containerObject);
     return hasTransform();
@@ -1773,14 +1773,14 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
     transform.makeIdentity();
     transform.translate(offsetInContainer.width(), offsetInContainer.height());
     RenderLayer* layer;
-    if (hasLayer() && (layer = toRenderLayerModelObject(this)->layer()) && layer->transform())
+    if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
     
 #if ENABLE(3D_RENDERING)
     if (containerObject && containerObject->hasLayer() && containerObject->style().hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.
         ASSERT(containerObject->hasLayer());
-        FloatPoint perspectiveOrigin = toRenderLayerModelObject(containerObject)->layer()->perspectiveOrigin();
+        FloatPoint perspectiveOrigin = downcast<RenderLayerModelObject>(*containerObject).layer()->perspectiveOrigin();
 
         TransformationMatrix perspectiveMatrix;
         perspectiveMatrix.applyPerspective(containerObject->style().perspective());
@@ -1858,15 +1858,15 @@ LayoutRect RenderObject::localCaretRect(InlineBox*, int, LayoutUnit* extraWidthT
 
 bool RenderObject::isRooted(RenderView** view) const
 {
-    const RenderObject* o = this;
-    while (o->parent())
-        o = o->parent();
+    const RenderObject* renderer = this;
+    while (renderer->parent())
+        renderer = renderer->parent();
 
-    if (!o->isRenderView())
+    if (!is<RenderView>(*renderer))
         return false;
 
     if (view)
-        *view = &const_cast<RenderView&>(toRenderView(*o));
+        *view = const_cast<RenderView*>(downcast<RenderView>(renderer));
 
     return true;
 }
@@ -1999,7 +1999,7 @@ void RenderObject::willBeDestroyed()
     // be moved into RenderBoxModelObject::destroy.
     if (hasLayer()) {
         setHasLayer(false);
-        toRenderLayerModelObject(this)->destroyLayer();
+        downcast<RenderLayerModelObject>(*this).destroyLayer();
     }
 
     clearLayoutRootIfNeeded();
@@ -2132,7 +2132,7 @@ void RenderObject::updateDragState(bool dragOn)
 
 bool RenderObject::isComposited() const
 {
-    return hasLayer() && toRenderLayerModelObject(this)->layer()->isComposited();
+    return hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->isComposited();
 }
 
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter)
@@ -2579,7 +2579,7 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread || !flowThread->isRenderNamedFlowThread())
+    if (!is<RenderNamedFlowThread>(flowThread))
         return nullptr;
 
     // FIXME: Once regions are fully integrated with the compositing system we should uncomment this assert.
@@ -2587,7 +2587,7 @@ RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
     // a layer without knowing the containing region in advance.
     // ASSERT(flowThread->currentRegion() && flowThread->currentRegion()->isRenderNamedFlowFragment());
 
-    return toRenderNamedFlowFragment(flowThread->currentRegion());
+    return downcast<RenderNamedFlowFragment>(flowThread->currentRegion());
 }
 
 RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const

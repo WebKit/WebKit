@@ -1497,7 +1497,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
     }
     
     if (parentLayer->isRootLayer()) {
-        toRenderView(parentLayer->renderer()).repaintViewRectangle(parentLayerRect);
+        downcast<RenderView>(parentLayer->renderer()).repaintViewRectangle(parentLayerRect);
         return;
     }
     
@@ -1652,7 +1652,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // We have to break up the transformed extent across our columns.
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
-        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
+        auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
         result = enclosingFlowThread.fragmentsBoundingBox(result);
         result.move(paginationLayer->offsetFromAncestor(rootLayer));
         return result;
@@ -1990,8 +1990,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
     if (adjustForColumns == RenderLayer::AdjustForColumns) {
         if (RenderLayer* parentLayer = layer->parent()) {
-            if (parentLayer->renderer().isRenderMultiColumnFlowThread()) {
-                RenderRegion* region = toRenderMultiColumnFlowThread(parentLayer->renderer()).physicalTranslationFromFlowToRegion(location);
+            if (is<RenderMultiColumnFlowThread>(parentLayer->renderer())) {
+                RenderRegion* region = downcast<RenderMultiColumnFlowThread>(parentLayer->renderer()).physicalTranslationFromFlowToRegion(location);
                 if (region)
                     location.moveBy(region->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
             }
@@ -4304,7 +4304,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     LayoutRect layerBoundingBoxInFlowThread = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, offsetWithinPaginatedLayer);
     layerBoundingBoxInFlowThread.intersect(backgroundRectInFlowThread.rect());
     
-    RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
+    auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
     RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
     LayerFragments ancestorFragments;
     if (parentPaginationLayer) {
@@ -4627,7 +4627,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
     ASSERT(!renderer().view().needsLayout());
 
-    LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(&renderer())->visualOverflowRect() : renderer().view().documentRect();
+    LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? downcast<RenderFlowThread>(renderer()).visualOverflowRect() : renderer().view().documentRect();
     if (!request.ignoreClipping())
         hitTestArea.intersect(renderer().view().frameView().visibleContentRect(LegacyIOSDocumentVisibleRect));
 
@@ -4637,7 +4637,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
         if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRootLayer()) {
-            renderer().updateHitTestResult(result, toRenderView(renderer()).flipForWritingMode(hitTestLocation.point()));
+            renderer().updateHitTestResult(result, downcast<RenderView>(renderer()).flipForWritingMode(hitTestLocation.point()));
             insideLayer = this;
         }
     }
@@ -4675,7 +4675,7 @@ RenderLayer* RenderLayer::enclosingFlowThreadAncestor() const
 
 bool RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions() const
 {
-    return renderer().isRenderFlowThread() && toRenderFlowThread(renderer()).collectsGraphicsLayersUnderRegions();
+    return is<RenderFlowThread>(renderer()) && downcast<RenderFlowThread>(renderer()).collectsGraphicsLayersUnderRegions();
 }
 
 // Compute the z-offset of the point in the transformState.
@@ -5662,7 +5662,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         // get our true bounding box.
         result.move(childLayer->offsetFromAncestor(paginationLayer));
 
-        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
+        auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
         result = enclosingFlowThread.fragmentsBoundingBox(result);
         
         childLayer = paginationLayer;
@@ -5970,7 +5970,7 @@ void RenderLayer::dirtyZOrderLists()
 
     if (!renderer().documentBeingDestroyed()) {
         if (isFlowThreadCollectingGraphicsLayersUnderRegions())
-            toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
+            downcast<RenderFlowThread>(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor().setShouldReevaluateCompositingAfterLayout();
@@ -5994,7 +5994,7 @@ void RenderLayer::dirtyNormalFlowList()
 
     if (!renderer().documentBeingDestroyed()) {
         if (isFlowThreadCollectingGraphicsLayersUnderRegions())
-            toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
+            downcast<RenderFlowThread>(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor().setShouldReevaluateCompositingAfterLayout();

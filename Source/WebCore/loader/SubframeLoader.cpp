@@ -328,10 +328,10 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     // FIXME: Can we remove this entirely? m_isComplete normally gets set to false when a load is committed.
     frame->loader().started();
    
-    RenderObject* renderer = ownerElement.renderer();
+    auto* renderer = ownerElement.renderer();
     FrameView* view = frame->view();
-    if (renderer && renderer->isWidget() && view)
-        toRenderWidget(renderer)->setWidget(view);
+    if (is<RenderWidget>(renderer) && view)
+        downcast<RenderWidget>(*renderer).setWidget(view);
     
     m_frame.loader().checkCallImplicitClose();
     

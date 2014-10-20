@@ -2220,14 +2220,13 @@ bool Internals::isPluginUnavailabilityIndicatorObscured(Element* element, Except
         return false;
     }
 
-    auto renderer = element->renderer();
-    if (!renderer || !renderer->isEmbeddedObject()) {
+    auto* renderer = element->renderer();
+    if (!is<RenderEmbeddedObject>(renderer)) {
         ec = INVALID_ACCESS_ERR;
         return false;
     }
 
-    RenderEmbeddedObject* embed = toRenderEmbeddedObject(renderer);
-    return embed->isReplacementObscured();
+    return downcast<RenderEmbeddedObject>(*renderer).isReplacementObscured();
 }
     
 bool Internals::isPluginSnapshotted(Element* element, ExceptionCode& ec)

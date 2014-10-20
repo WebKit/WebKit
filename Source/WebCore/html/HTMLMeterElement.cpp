@@ -220,9 +220,9 @@ void HTMLMeterElement::didElementStateChange()
 
 RenderMeter* HTMLMeterElement::renderMeter() const
 {
-    if (renderer() && renderer()->isMeter())
-        return toRenderMeter(renderer());
-    return toRenderMeter(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
+    if (is<RenderMeter>(renderer()))
+        return downcast<RenderMeter>(renderer());
+    return downcast<RenderMeter>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
 }
 
 void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)

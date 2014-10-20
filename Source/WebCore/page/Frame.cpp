@@ -735,17 +735,17 @@ RenderWidget* Frame::ownerRenderer() const
 {
     HTMLFrameOwnerElement* ownerElement = m_ownerElement;
     if (!ownerElement)
-        return 0;
-    auto object = ownerElement->renderer();
+        return nullptr;
+    auto* object = ownerElement->renderer();
     if (!object)
-        return 0;
+        return nullptr;
     // FIXME: If <object> is ever fixed to disassociate itself from frames
     // that it has started but canceled, then this can turn into an ASSERT
     // since m_ownerElement would be 0 when the load is canceled.
     // https://bugs.webkit.org/show_bug.cgi?id=18585
-    if (!object->isWidget())
-        return 0;
-    return toRenderWidget(object);
+    if (!is<RenderWidget>(*object))
+        return nullptr;
+    return downcast<RenderWidget>(object);
 }
 
 Frame* Frame::frameForWidget(const Widget* widget)
