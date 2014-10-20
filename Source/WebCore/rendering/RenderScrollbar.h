@@ -88,15 +88,10 @@ private:
     HashMap<unsigned, RenderPtr<RenderScrollbarPart>> m_parts;
 };
 
-inline RenderScrollbar* toRenderScrollbar(ScrollbarThemeClient* scrollbar)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!scrollbar || scrollbar->isCustomScrollbar());
-    return static_cast<RenderScrollbar*>(scrollbar);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderScrollbar(const RenderScrollbar*);
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderScrollbar)
+    static bool isType(const WebCore::ScrollbarThemeClient& scrollbar) { return scrollbar.isCustomScrollbar(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // RenderScrollbar_h
