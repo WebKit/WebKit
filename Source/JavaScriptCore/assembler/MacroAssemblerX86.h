@@ -287,7 +287,6 @@ public:
     }
 
     static bool supportsFloatingPoint() { return isSSE2Present(); }
-    // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     static bool supportsFloatingPointTruncate() { return isSSE2Present(); }
     static bool supportsFloatingPointSqrt() { return isSSE2Present(); }
     static bool supportsFloatingPointAbs() { return isSSE2Present(); }

@@ -1,5 +1,18 @@
 2014-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Remove obsolete comments after r99798
+        https://bugs.webkit.org/show_bug.cgi?id=137871
+
+        Reviewed by Darin Adler.
+
+        r99798 removed the comment in MacroAssemblerARMv7::supportsFloatingPointTruncate(),
+        so we should remove the stale references to this removed comment.
+
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86_64.h:
+
+2014-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         MacroAssemblerX86Common.cpp should be built on Windows too
         https://bugs.webkit.org/show_bug.cgi?id=137873
 
