@@ -287,7 +287,7 @@ namespace WebCore {
         Vector<IntRect> m_invalidRects;
 
         void performRequest(PluginRequest*);
-        void scheduleRequest(PassOwnPtr<PluginRequest>);
+        void scheduleRequest(std::unique_ptr<PluginRequest>);
         void requestTimerFired(Timer<PluginView>*);
         void invalidateTimerFired(Timer<PluginView>*);
         Timer<PluginView> m_requestTimer;
@@ -345,7 +345,7 @@ namespace WebCore {
         Vector<bool, 4> m_popupStateStack;
 
         HashSet<RefPtr<PluginStream> > m_streams;
-        Vector<OwnPtr<PluginRequest> > m_requests;
+        Vector<std::unique_ptr<PluginRequest>> m_requests;
 
         bool m_isWindowed;
         bool m_isTransparent;

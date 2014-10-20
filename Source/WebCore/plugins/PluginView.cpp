@@ -485,7 +485,7 @@ void PluginView::requestTimerFired(Timer<PluginView>* timer)
     ASSERT(!m_requests.isEmpty());
     ASSERT(!m_isJavaScriptPaused);
 
-    OwnPtr<PluginRequest> request = m_requests[0].release();
+    std::unique_ptr<PluginRequest> request = WTF::move(m_requests[0]);
     m_requests.remove(0);
     
     // Schedule a new request before calling performRequest since the call to
@@ -496,9 +496,9 @@ void PluginView::requestTimerFired(Timer<PluginView>* timer)
     performRequest(request.get());
 }
 
-void PluginView::scheduleRequest(PassOwnPtr<PluginRequest> request)
+void PluginView::scheduleRequest(std::unique_ptr<PluginRequest> request)
 {
-    m_requests.append(request);
+    m_requests.append(WTF::move(request));
 
     if (!m_isJavaScriptPaused)
         m_requestTimer.startOneShot(0);
@@ -532,7 +532,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     } else if (!m_parentFrame->document()->securityOrigin()->canDisplay(url))
         return NPERR_GENERIC_ERROR;
 
-    scheduleRequest(adoptPtr(new PluginRequest(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed())));
+    scheduleRequest(std::make_unique<PluginRequest>(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed()));
 
     return NPERR_NO_ERROR;
 }

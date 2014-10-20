@@ -1,3 +1,18 @@
+2014-10-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr<>|make_unique<> in PluginView::scheduleRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=137874
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no behavior change.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::requestTimerFired):
+        (WebCore::PluginView::scheduleRequest): Replace PassOwnPtr with std::unique_ptr.
+        (WebCore::PluginView::load): Create PluginRequest using std::make_unique.
+        * plugins/PluginView.h:
+
 2014-10-20  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.
