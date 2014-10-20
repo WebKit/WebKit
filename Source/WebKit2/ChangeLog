@@ -1,3 +1,29 @@
+2014-10-20  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Improve zooming gesture positioning
+        https://bugs.webkit.org/show_bug.cgi?id=137822
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::ZoomGesture::center):
+        (WebKit::GestureController::ZoomGesture::begin):
+        (WebKit::GestureController::ZoomGesture::handleZoom):
+        (WebKit::GestureController::ZoomGesture::scaleChanged): Calculate
+        the proper view coordinates for the current offset/scale, based
+        on the initial gesture center point in document coordinates, and
+        the current center/scale.
+        * UIProcess/gtk/GestureController.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getCenterForZoomGesture): Added. Synchronous
+        call to retrieve the zoom gesture anchor point, in document coordinates.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added stub.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::getCenterForZoomGesture): Added. Getter for the
+        translated coordinates used as the anchor point of the zoom gesture.
+
 2014-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove the factory method from DragAndDropHandler

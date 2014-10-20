@@ -142,4 +142,11 @@ void WebPageProxy::setAcceleratedCompositingWindowId(uint64_t nativeWindowId)
 }
 #endif
 
+#if HAVE(GTK_GESTURES)
+void WebPageProxy::getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center)
+{
+    process().sendSync(Messages::WebPage::GetCenterForZoomGesture(centerInViewCoordinates), Messages::WebPage::GetCenterForZoomGesture::Reply(center), m_pageID);
+}
+#endif
+
 } // namespace WebKit

@@ -37,6 +37,7 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PasteboardHelper.h>
@@ -180,5 +181,14 @@ String WebPage::platformUserAgent(const URL& url) const
 
     return WebCore::standardUserAgentForURL(url);
 }
+
+#if HAVE(GTK_GESTURES)
+void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, IntPoint& result)
+{
+    result = mainFrameView()->rootViewToContents(centerInViewCoordinates);
+    double scale = m_page->pageScaleFactor();
+    result.scale(1 / scale, 1 / scale);
+}
+#endif
 
 } // namespace WebKit

@@ -578,6 +578,10 @@ public:
     void cancelComposition();
 #endif
 
+#if PLATFORM (GTK) && HAVE(GTK_GESTURES)
+    void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& result);
+#endif
+
     void didChangeSelection();
 
 #if PLATFORM(COCOA)

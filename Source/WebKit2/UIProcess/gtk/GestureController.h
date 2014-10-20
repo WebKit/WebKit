@@ -86,12 +86,16 @@ private:
         ZoomGesture(WebPageProxy&);
 
     private:
+        WebCore::IntPoint center() const;
+        void handleZoom();
+
         static void begin(ZoomGesture*, GdkEventSequence*, GtkGesture*);
         static void scaleChanged(ZoomGesture*, double scale, GtkGesture*);
 
         gdouble m_initialScale;
         gdouble m_scale;
-        WebCore::IntPoint m_point;
+        WebCore::IntPoint m_initialPoint;
+        WebCore::IntPoint m_viewPoint;
         GMainLoopSource m_idle;
     };
 

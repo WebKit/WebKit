@@ -168,26 +168,41 @@ GestureController::DragGesture::DragGesture(WebPageProxy& page)
     g_signal_connect_swapped(m_gesture.get(), "end", G_CALLBACK(end), this);
 }
 
+IntPoint GestureController::ZoomGesture::center() const
+{
+    double x, y;
+    gtk_gesture_get_bounding_box_center(m_gesture.get(), &x, &y);
+    return IntPoint(x, y);
+}
+
 void GestureController::ZoomGesture::begin(ZoomGesture* zoomGesture, GdkEventSequence*, GtkGesture* gesture)
 {
     gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_CLAIMED);
 
     zoomGesture->m_initialScale = zoomGesture->m_page.pageScaleFactor();
-    double x, y;
-    gtk_gesture_get_bounding_box_center(gesture, &x, &y);
-    zoomGesture->m_point = IntPoint(x, y);
+    zoomGesture->m_page.getCenterForZoomGesture(zoomGesture->center(), zoomGesture->m_initialPoint);
+}
+
+void GestureController::ZoomGesture::handleZoom()
+{
+    IntPoint scaledOriginOffset = m_viewPoint;
+    scaledOriginOffset.scale(1 / m_scale, 1 / m_scale);
+
+    IntPoint newOrigin = m_initialPoint;
+    newOrigin.moveBy(-scaledOriginOffset);
+    newOrigin.scale(m_scale, m_scale);
+
+    m_page.scalePage(m_scale, newOrigin);
 }
 
 void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, double scale, GtkGesture*)
 {
     zoomGesture->m_scale = zoomGesture->m_initialScale * scale;
+    zoomGesture->m_viewPoint = zoomGesture->center();
     if (zoomGesture->m_idle.isScheduled())
         return;
 
-    zoomGesture->m_idle.schedule("[WebKit] Zoom Gesture Idle", [zoomGesture]() {
-        // FIXME: Zoomed area is not correctly centered.
-        zoomGesture->m_page.scalePage(zoomGesture->m_scale, zoomGesture->m_point);
-    });
+    zoomGesture->m_idle.schedule("[WebKit] Zoom Gesture Idle", std::bind(&GestureController::ZoomGesture::handleZoom, zoomGesture));
 }
 
 GestureController::ZoomGesture::ZoomGesture(WebPageProxy& page)

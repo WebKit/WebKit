@@ -310,6 +310,10 @@ messages -> WebPage LegacyReceiver {
     CancelComposition()
 #endif
 
+#if PLATFORM (GTK) && HAVE(GTK_GESTURES)
+    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center)
+#endif
+
 #if PLATFORM(COCOA)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
