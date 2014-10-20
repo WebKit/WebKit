@@ -1125,7 +1125,7 @@
 		A532438B18568335002ED692 /* InspectorProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438518568317002ED692 /* InspectorProtocolObjects.cpp */; };
 		A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438618568317002ED692 /* InspectorProtocolObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */ = {isa = PBXBuildFile; fileRef = A5324391185696E6002ED692 /* generate-combined-inspector-json.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		A53243981856A489002ED692 /* Inspector.json in Headers */ = {isa = PBXBuildFile; fileRef = A53243951856A475002ED692 /* Inspector.json */; settings = {ATTRIBUTES = (Private, ); }; };
+		A53243981856A489002ED692 /* CombinedDomains.json in Headers */ = {isa = PBXBuildFile; fileRef = A53243951856A475002ED692 /* CombinedDomains.json */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */; };
 		A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */; };
 		A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */; };
@@ -2797,7 +2797,7 @@
 		A532438618568317002ED692 /* InspectorProtocolObjects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorProtocolObjects.h; sourceTree = "<group>"; };
 		A532438D185696CA002ED692 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
 		A5324391185696E6002ED692 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
-		A53243951856A475002ED692 /* Inspector.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Inspector.json; sourceTree = "<group>"; };
+		A53243951856A475002ED692 /* CombinedDomains.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CombinedDomains.json; sourceTree = "<group>"; };
 		A53243961856A475002ED692 /* InspectorBackendCommands.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorBackendCommands.js; sourceTree = "<group>"; };
 		A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsolePrototype.cpp; sourceTree = "<group>"; };
 		A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsolePrototype.h; sourceTree = "<group>"; };
@@ -4007,10 +4007,10 @@
 			children = (
 				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
 				6514F21718B3E1670098FF8B /* Bytecodes.h */,
+				A53243951856A475002ED692 /* CombinedDomains.json */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
-				A53243951856A475002ED692 /* Inspector.json */,
 				A53243961856A475002ED692 /* InspectorBackendCommands.js */,
 				A532438118568317002ED692 /* InspectorBackendDispatchers.cpp */,
 				A532438218568317002ED692 /* InspectorBackendDispatchers.h */,
@@ -5708,7 +5708,7 @@
 				A57D23E61890CEBF0031C7FA /* InspectorDebuggerAgent.h in Headers */,
 				A5D0A1BB1862301B00C7B496 /* InspectorEnvironment.h in Headers */,
 				A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */,
-				A53243981856A489002ED692 /* Inspector.json in Headers */,
+				A53243981856A489002ED692 /* CombinedDomains.json in Headers */,
 				A532438818568335002ED692 /* InspectorBackendDispatchers.h in Headers */,
 				A532438A18568335002ED692 /* InspectorFrontendDispatchers.h in Headers */,
 				8606DDEA18DA44AB00A383D0 /* IdentifierInlines.h in Headers */,

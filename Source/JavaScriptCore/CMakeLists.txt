@@ -971,7 +971,7 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMStorage.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
-    ${JAVASCRIPTCORE_DIR}/inspector/protocol/InspectorDomain.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Inspector.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/LayerTree.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Network.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Page.json
@@ -999,10 +999,10 @@ if (ENABLE_WEB_REPLAY)
 endif ()
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Inspector.json
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
     MAIN_DEPENDENCY ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py
     DEPENDS ${JavaScriptCore_INSPECTOR_DOMAINS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Inspector.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
@@ -1014,9 +1014,9 @@ add_custom_command(
            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.cpp
            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
            ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
-    MAIN_DEPENDENCY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Inspector.json
+    MAIN_DEPENDENCY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}" --framework JavaScriptCore ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Inspector.json && mkdir -p ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorFrontendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorFrontendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorProtocolObjects.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorProtocolObjects.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && mkdir -p ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}" --framework JavaScriptCore ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json && mkdir -p ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorFrontendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorFrontendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorProtocolObjects.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorProtocolObjects.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && mkdir -p ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
     VERBATIM)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector)
 

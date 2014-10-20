@@ -121,7 +121,7 @@ INSPECTOR_DOMAINS = \
     $(JavaScriptCore)/inspector/protocol/DOMStorage.json \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
-    $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
+    $(JavaScriptCore)/inspector/protocol/Inspector.json \
     $(JavaScriptCore)/inspector/protocol/LayerTree.json \
     $(JavaScriptCore)/inspector/protocol/Network.json \
     $(JavaScriptCore)/inspector/protocol/Page.json \
@@ -159,7 +159,7 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 #
 
 all : \
-    Inspector.json \
+    CombinedDomains.json \
     InspectorFrontendDispatchers.h \
     InjectedScriptSource.h \
 #
@@ -171,12 +171,12 @@ all : \
 EnabledInspectorDomains : force
 	echo '$(INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(INSPECTOR_DOMAINS)' > $@
 
-Inspector.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./Inspector.json
+CombinedDomains.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
-InspectorFrontendDispatchers.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./Inspector.json
+InspectorFrontendDispatchers.h : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS)
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./CombinedDomains.json
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/inspector/scripts/jsmin.py $(JavaScriptCore)/inspector/scripts/xxd.pl
 	echo "//# sourceURL=__WebInspectorInjectedScript__" > ./InjectedScriptSource.min.js

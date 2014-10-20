@@ -1,5 +1,18 @@
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Rename generated Inspector.json to CombinedDomains.json to prevent name collisions
+        https://bugs.webkit.org/show_bug.cgi?id=137825
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/protocol/Inspector.json: Renamed from Source/JavaScriptCore/inspector/protocol/InspectorDomain.json.
+
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Generate all Inspector domains together in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=137748
 

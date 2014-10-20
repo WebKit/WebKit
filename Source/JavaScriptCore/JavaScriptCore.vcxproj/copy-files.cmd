@@ -70,7 +70,7 @@ for %%d in (
 )
 
 echo Copying Inspector generated files as if they were private headers...
-xcopy /y "%DerivedSourcesDirectory%\Inspector.json" "%PrivateHeadersDirectory%" >NUL
+xcopy /y "%DerivedSourcesDirectory%\CombinedDomains.json" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\InspectorProtocolObjects.h" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\InspectorBackendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\InspectorFrontendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
