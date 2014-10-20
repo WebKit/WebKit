@@ -35,6 +35,7 @@
 #import <WebCore/Position.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderTextControl.h>
+#import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextBoundaries.h>
 #import <WebCore/TextDirection.h>
 #import <WebCore/TextGranularity.h>
@@ -422,7 +423,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     Node* node = p.deepEquivalent().anchorNode();
     Document& document = node->document();
     
-    const Vector<DocumentMarker*>& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives));
+    const auto& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives));
     if (markers.isEmpty())
         return nil;
         
@@ -456,7 +457,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     Node* node = p.deepEquivalent().anchorNode();
     Document& document = node->document();
     
-    const Vector<DocumentMarker*>& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::Spelling));
+    const auto& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::Spelling));
     if (markers.isEmpty())
         return nil;
     

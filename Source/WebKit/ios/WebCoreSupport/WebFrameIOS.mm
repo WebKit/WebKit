@@ -42,6 +42,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderText.h>
+#import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/SelectionRect.h>
 #import <WebCore/TextBoundaries.h>
 #import <WebCore/TextDirection.h>
@@ -859,7 +860,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         
         RefPtr<Range> graphemeRange = Range::create(document, previousVisiblePosition.deepEquivalent(), currentVisiblePosition.deepEquivalent());
         
-        Vector<DocumentMarker*> markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
+        auto markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
         if (markers.isEmpty())
             return currentWebVisiblePosition;
         
@@ -868,7 +869,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         // ASSERT(markers.size() == 1);
         if (markers.size() > 1)
             return currentWebVisiblePosition;
-        DocumentMarker* resultMarker = markers.at(0);
+        RenderedDocumentMarker* resultMarker = markers.at(0);
         
         // FIXME: WebCore doesn't always update markers correctly during editing. Bail if resultMarker extends off the edge of 
         // this node, because that means it's invalid.
@@ -915,7 +916,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         
         RefPtr<Range> graphemeRange = Range::create(document, currentVisiblePosition.deepEquivalent(), nextVisiblePosition.deepEquivalent());
         
-        Vector<DocumentMarker*> markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
+        auto markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
         if (markers.isEmpty())
             return currentWebVisiblePosition;
         

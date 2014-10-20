@@ -35,7 +35,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMWindow.h"
 #import "Document.h"
-#import "DocumentMarker.h"
 #import "DocumentMarkerController.h"
 #import "Editor.h"
 #import "EditorClient.h"
@@ -63,6 +62,7 @@
 #import "RenderLayerCompositor.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
+#import "RenderedDocumentMarker.h"
 #import "TextBoundaries.h"
 #import "TextIterator.h"
 #import "VisiblePosition.h"
@@ -748,7 +748,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     unsigned rootChildCount = root->countChildNodes();
     RefPtr<Range> rangeOfRootContents = Range::create(*document(), createLegacyEditingPosition(root, 0), createLegacyEditingPosition(root, rootChildCount));
 
-    Vector<DocumentMarker*> markersInRoot = document()->markers().markersInRange(rangeOfRootContents.get(), DocumentMarker::DictationPhraseWithAlternatives);
+    auto markersInRoot = document()->markers().markersInRange(rangeOfRootContents.get(), DocumentMarker::DictationPhraseWithAlternatives);
 
     // There are no phrases with alternatives, so there is just one interpretation.
     if (markersInRoot.isEmpty())

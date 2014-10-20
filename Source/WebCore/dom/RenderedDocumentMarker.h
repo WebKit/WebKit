@@ -27,7 +27,7 @@
 #ifndef RenderedDocumentMarker_h
 #define RenderedDocumentMarker_h
 
-#include "DocumentMarker.h"
+#include <WebCore/DocumentMarker.h>
 
 namespace WebCore {
 

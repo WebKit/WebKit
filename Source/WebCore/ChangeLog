@@ -1,3 +1,12 @@
+2014-10-20  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/RenderedDocumentMarker.h:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot):
+
 2014-10-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Update the <link>'s link status

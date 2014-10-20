@@ -1,3 +1,14 @@
+2014-10-20  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame previousUnperturbedDictationResultBoundaryFromPosition:]):
+        (-[WebFrame nextUnperturbedDictationResultBoundaryFromPosition:]):
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]):
+
 2014-10-15  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for RenderTextControl / RenderTextControlSingleLine
