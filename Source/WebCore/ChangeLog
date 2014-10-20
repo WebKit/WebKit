@@ -1,3 +1,14 @@
+2014-10-20  Dean Jackson  <dino@apple.com>
+
+        [Mac] Support "inverted-colors" and "monochrome" media feature.
+        https://bugs.webkit.org/show_bug.cgi?id=137535
+        <rdar://problem/18586398>
+
+        Rolling out the Windows part of this to fix the build.
+
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenHasInvertedColors): Revert to a stub function.
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed EFL / GTK build fix after r174898.
