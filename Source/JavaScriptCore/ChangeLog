@@ -1,5 +1,12 @@
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed Windows Build Fix after r174892.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        Update file name to the new generated file name.
+
+2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Rename generated Inspector.json to CombinedDomains.json to prevent name collisions
         https://bugs.webkit.org/show_bug.cgi?id=137825
 
