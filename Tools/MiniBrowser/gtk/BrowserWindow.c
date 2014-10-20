@@ -552,7 +552,9 @@ static void reloadPageIgnoringCache(BrowserWindow *window, gpointer user_data)
 
 static void stopPageLoad(BrowserWindow *window, gpointer user_data)
 {
-    if (webkit_web_view_is_loading(window->webView))
+    if (gtk_widget_get_visible(GTK_WIDGET(window->searchBar))) 
+        browser_search_bar_close(window->searchBar);
+    else if (webkit_web_view_is_loading(window->webView))
         webkit_web_view_stop_loading(window->webView);
 }
 
