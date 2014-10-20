@@ -1,3 +1,12 @@
+2014-10-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Eight transitions tests are very flaky, frequently failing all at once
+        https://bugs.webkit.org/show_bug.cgi?id=137883
+
+        Marking them as flaky. Enough is enough.
+
+        * TestExpectations:
+
 2014-10-20  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r174823): Two new failing HLS tests

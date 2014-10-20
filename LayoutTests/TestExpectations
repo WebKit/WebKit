@@ -218,3 +218,12 @@ webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
+
+webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
+webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass ]
+webkit.org/b/137883 transitions/change-values-during-transition.html [ Failure Pass ]
+webkit.org/b/137883 transitions/clip-transition.html [ Failure Pass ]
+webkit.org/b/137883 transitions/color-transition-all.html [ Failure Pass ]
+webkit.org/b/137883 transitions/color-transition-premultiplied.html [ Failure Pass ]
+webkit.org/b/137883 transitions/color-transition-rounding.html [ Failure Pass ]
+webkit.org/b/137883 transitions/created-while-suspended.html [ Failure Pass ]
