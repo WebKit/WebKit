@@ -269,14 +269,14 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDes
 PassRefPtr<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
 {
     return Inspector::Protocol::Runtime::TypeSet::create()
-        .setIsFunction(doesTypeConformTo(TypeFunction))
-        .setIsUndefined(doesTypeConformTo(TypeUndefined))
-        .setIsNull(doesTypeConformTo(TypeNull))
-        .setIsBoolean(doesTypeConformTo(TypeBoolean))
-        .setIsInteger(doesTypeConformTo(TypeMachineInt))
-        .setIsNumber(doesTypeConformTo(TypeNumber))
-        .setIsString(doesTypeConformTo(TypeString))
-        .setIsObject(doesTypeConformTo(TypeObject))
+        .setIsFunction((m_seenTypes & TypeFunction) != TypeNothing)
+        .setIsUndefined((m_seenTypes & TypeUndefined) != TypeNothing)
+        .setIsNull((m_seenTypes & TypeNull) != TypeNothing)
+        .setIsBoolean((m_seenTypes & TypeBoolean) != TypeNothing)
+        .setIsInteger((m_seenTypes & TypeMachineInt) != TypeNothing)
+        .setIsNumber((m_seenTypes & TypeNumber) != TypeNothing)
+        .setIsString((m_seenTypes & TypeString) != TypeNothing)
+        .setIsObject((m_seenTypes & TypeObject) != TypeNothing)
         .release();
 }
 #endif

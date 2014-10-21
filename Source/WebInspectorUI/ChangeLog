@@ -1,3 +1,20 @@
+2014-09-21  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: fix TypeSet hierarchy in TypeTokenView
+        https://bugs.webkit.org/show_bug.cgi?id=136982
+
+        Reviewed by Joseph Pecoraro.
+
+        The protocol object representation of TypeSet was being computed 
+        incorrectly in JSC::TypeSet. This patch fixes that problem
+        and also asserts that the type information that the Web Inspector
+        receives is not empty.
+
+        * UserInterface/Models/TypeSet.js:
+        (WebInspector.TypeSet):
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
