@@ -141,6 +141,11 @@ inline bool operator==(PropertyName a, PropertyName b)
     return a.uid() == b.uid();
 }
 
+inline bool operator==(PropertyName a, const char* b)
+{
+    return equal(a.uid(), b);
+}
+
 inline bool operator!=(PropertyName a, const Identifier& b)
 {
     return a.uid() != b.impl();

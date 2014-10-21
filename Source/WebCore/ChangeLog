@@ -1,3 +1,15 @@
+2014-10-21  Michael Saboff  <msaboff@apple.com>
+
+        Add operator==(PropertyName, const char*)
+        https://bugs.webkit.org/show_bug.cgi?id=137925
+
+        Reviewed by Mark Lam.
+
+        Use new == operator to compare a PropertyName with a string literal.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+
 2014-10-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r174921.

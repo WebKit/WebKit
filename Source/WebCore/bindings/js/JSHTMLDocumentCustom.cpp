@@ -62,15 +62,15 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     JSHTMLDocument* thisObject = jsCast<JSHTMLDocument*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (equal(propertyName.publicName(), "open")) {
+    if (propertyName == "open") {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
         return true;
     }
-    if (equal(propertyName.publicName(), "write")) {
+    if (propertyName == "write") {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionWrite, 1>);
         return true;
     }
-    if (equal(propertyName.publicName(), "writeln")) {
+    if (propertyName == "writeln") {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionWriteln, 1>);
         return true;
     }

@@ -1,5 +1,16 @@
 2014-10-21  Michael Saboff  <msaboff@apple.com>
 
+        Add operator==(PropertyName, const char*)
+        https://bugs.webkit.org/show_bug.cgi?id=137925
+
+        Reviewed by Mark Lam.
+
+        * runtime/PropertyName.h:
+        (JSC::operator==): Added to simplify comparison with string literals.
+
+
+2014-10-21  Michael Saboff  <msaboff@apple.com>
+
         Change native call frames to use the scope from their Callee instead of their caller's scope
         https://bugs.webkit.org/show_bug.cgi?id=137907
 
