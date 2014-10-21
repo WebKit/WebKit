@@ -1,3 +1,17 @@
+2014-10-20  Michael Saboff  <msaboff@apple.com>
+
+        Don't create cached functions for HTMLDocument.write*()
+        https://bugs.webkit.org/show_bug.cgi?id=137906
+
+        Reviewed by Darin Adler.
+
+        Made it so that JSHTMLDocument::write() and ::writeln() are always created for every prototype.
+        This is similar to the change in r174847.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+        * html/HTMLDocument.idl:
+
 2014-10-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r174676): It broke the !ENABLE(VIDEO) build

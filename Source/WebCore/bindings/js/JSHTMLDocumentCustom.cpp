@@ -66,6 +66,14 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
         return true;
     }
+    if (equal(propertyName.publicName(), "write")) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionWrite, 1>);
+        return true;
+    }
+    if (equal(propertyName.publicName(), "writeln")) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionWriteln, 1>);
+        return true;
+    }
 
     if (canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
