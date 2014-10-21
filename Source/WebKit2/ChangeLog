@@ -1,3 +1,17 @@
+2014-10-21  Anders Carlsson  <andersca@apple.com>
+
+        WKRemoteObjectCoder should handle floats
+        https://bugs.webkit.org/show_bug.cgi?id=137926
+        <rdar://problem/18695126>
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        (-[WKRemoteObjectEncoder encodeFloat:forKey:]):
+        (decodeInvocationArguments):
+        (-[WKRemoteObjectDecoder decodeFloatForKey:]):
+
 2014-10-21  Jeff Miller  <jeffm@apple.com>
 
         WKContext needs to provide an API to resume a download

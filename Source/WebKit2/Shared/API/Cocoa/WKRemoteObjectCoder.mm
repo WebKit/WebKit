@@ -137,6 +137,15 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             break;
         }
 
+        // float
+        case 'f': {
+            float value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
         // int
         case 'i': {
             int value;
@@ -300,6 +309,11 @@ static NSString *escapeKey(NSString *key)
     return [self encodeInt64:intv forKey:key];
 }
 
+- (void)encodeFloat:(float)value forKey:(NSString *)key
+{
+    _currentDictionary->set(escapeKey(key), API::Double::create(value));
+}
+
 - (void)encodeDouble:(double)value forKey:(NSString *)key
 {
     _currentDictionary->set(escapeKey(key), API::Double::create(value));
@@ -424,6 +438,13 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         // double
         case 'd': {
             double value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) doubleValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // float
+        case 'f': {
+            float value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) floatValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
@@ -583,6 +604,14 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 - (NSInteger)decodeIntegerForKey:(NSString *)key
 {
     return [self decodeInt64ForKey:key];
+}
+
+- (float)decodeFloatForKey:(NSString *)key
+{
+    const API::Double* value = _currentDictionary->get<API::Double>(escapeKey(key));
+    if (!value)
+        return 0;
+    return value->value();
 }
 
 - (double)decodeDoubleForKey:(NSString *)key
