@@ -1,3 +1,49 @@
+2014-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new RenderElement::m_isCSSAnimating flag in more places
+        https://bugs.webkit.org/show_bug.cgi?id=137786
+
+        Reviewed by Simon Fraser.
+
+        Leverage the new RenderElement::m_isCSSAnimating flag that was introduced
+        in r174703 in more places, for performance. This avoids doing extra work
+        for renderers on which we are not running animations on. This patch also
+        updates the API a bit to use more references instead of pointers, making
+        it clear the RenderElement cannot be null and thus avoiding unnecessary
+        null checks.
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::updateAnimationTimerForRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+        (WebCore::AnimationController::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::notifyAnimationStarted):
+        (WebCore::AnimationController::isRunningAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAcceleratedAnimationOnRenderer):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::notifyAnimationStarted):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        (WebCore::RenderLayerCompositor::isRunningAcceleratedTransformAnimation):
+
 2014-10-14  Chris Dumez  <cdumez@apple.com>
 
         Introduce an isCSSAnimated flag on RenderElement for performance

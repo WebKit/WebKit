@@ -47,19 +47,19 @@ public:
     explicit AnimationController(Frame&);
     ~AnimationController();
 
-    void cancelAnimations(RenderElement*);
+    void cancelAnimations(RenderElement&);
     PassRef<RenderStyle> updateAnimations(RenderElement&, PassRef<RenderStyle> newStyle);
-    PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderElement*);
+    PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderElement&);
 
     // This is called when an accelerated animation or transition has actually started to animate.
-    void notifyAnimationStarted(RenderElement*, double startTime);
+    void notifyAnimationStarted(RenderElement&, double startTime);
 
     WEBCORE_EXPORT bool pauseAnimationAtTime(RenderElement*, const AtomicString& name, double t); // To be used only for testing
     WEBCORE_EXPORT bool pauseTransitionAtTime(RenderElement*, const String& property, double t); // To be used only for testing
     WEBCORE_EXPORT unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
     
-    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
+    bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
 
     WEBCORE_EXPORT bool isSuspended() const;
     WEBCORE_EXPORT void suspendAnimations();
