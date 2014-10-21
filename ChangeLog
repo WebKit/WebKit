@@ -1,3 +1,17 @@
+2014-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMake): [GTK] WebKitSettings:enable-smooth-scrolling does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=137781
+
+        Reviewed by Martin Robinson.
+
+        We used to enable smooth scrolling unconditionally in autotools
+        (via WebKitFeatures.m4), but since the switch to CMake it's
+        unconditionally disabled, so changing the setting doesn't have any
+        effect.
+
+        * Source/cmake/OptionsGTK.cmake: Enable smooth scrolling.
+
 2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.1 release.
