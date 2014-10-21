@@ -281,7 +281,7 @@ void LayerTreeHostGtk::layerFlushTimerFired()
         const double targetFPS = 60;
         double nextFlush = std::max((1 / targetFPS) - (currentTime() - m_lastFlushTime), 0.0);
         m_layerFlushTimerCallback.scheduleAfterDelay("[WebKit] layerFlushTimer", std::bind(&LayerTreeHostGtk::layerFlushTimerFired, this),
-            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(nextFlush)), GDK_PRIORITY_EVENTS);
+            std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(nextFlush)), GDK_PRIORITY_EVENTS);
     }
 }
 

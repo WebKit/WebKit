@@ -1,3 +1,21 @@
+2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds
+        https://bugs.webkit.org/show_bug.cgi?id=137782
+
+        Reviewed by Sergio Villar Senin.
+
+        In some cases when we have a double with the time in seconds, the
+        conversion to milliseconds ends up truncating the value to 0, and
+        the source scheduled immediately.
+
+        * wtf/gobject/GMainLoopSource.cpp:
+        (WTF::createMicrosecondsTimeoutSource): Use a custom timeout
+        source that handles the interval in microseconds instead of milliseconds.
+        (WTF::GMainLoopSource::scheduleAfterDelay): Use MicrosecondsTimeoutSource.
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy): Ditto.
+        * wtf/gobject/GMainLoopSource.h:
+
 2014-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Split GMainLoopSource moving thread safe implementation to its own class GThreadSafeMainLoopSource

@@ -1,3 +1,14 @@
+2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds
+        https://bugs.webkit.org/show_bug.cgi?id=137782
+
+        Reviewed by Sergio Villar Senin.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::layerFlushTimerFired): Use microseconds
+        instead of milliseconds.
+
 2014-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.1 release.

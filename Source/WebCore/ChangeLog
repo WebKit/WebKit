@@ -1,3 +1,14 @@
+2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds
+        https://bugs.webkit.org/show_bug.cgi?id=137782
+
+        Reviewed by Sergio Villar Senin.
+
+        * platform/gtk/SharedTimerGtk.cpp:
+        (WebCore::setSharedTimerFireInterval): Use microseconds instead of
+        milliseconds.
+
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several labels are white instead of black
