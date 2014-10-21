@@ -3185,13 +3185,20 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
  * @certificate: (out) (transfer none): return location for a #GTlsCertificate
  * @errors: (out): return location for a #GTlsCertificateFlags the verification status of @certificate
  *
- * Retrieves the #GTlsCertificate associated with the @web_view connection,
+ * Retrieves the #GTlsCertificate associated with the main resource of @web_view,
  * and the #GTlsCertificateFlags showing what problems, if any, have been found
  * with that certificate.
  * If the connection is not HTTPS, this function returns %FALSE.
  * This function should be called after a response has been received from the
  * server, so you can connect to #WebKitWebView::load-changed and call this function
  * when it's emitted with %WEBKIT_LOAD_COMMITTED event.
+ *
+ * Note that this function provides no information about the security of the web
+ * page if the current #WebKitTLSErrorsPolicy is %WEBKIT_TLS_ERRORS_POLICY_IGNORE,
+ * as subresources of the page may be controlled by an attacker. This function
+ * may safely be used to determine the security status of the current page only
+ * if the current #WebKitTLSErrorsPolicy is %WEBKIT_TLS_ERRORS_POLICY_FAIL, in
+ * which case subresources that fail certificate verification will be blocked.
  *
  * Returns: %TRUE if the @web_view connection uses HTTPS and a response has been received
  *    from the server, or %FALSE otherwise.
