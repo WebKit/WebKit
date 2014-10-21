@@ -195,7 +195,7 @@ struct SelectorFragment {
     Vector<AttributeMatchingInfo, 4> attributes;
     Vector<std::pair<int, int>, 2> nthChildFilters;
     Vector<NthChildOfSelectorInfo> nthChildOfFilters;
-    Vector<SelectorFragment> notFilters;
+    SelectorList notFilters;
     Vector<Vector<SelectorFragment>> anyFilters;
     const CSSSelector* pseudoElementSelector;
 
@@ -661,33 +661,28 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         {
             const CSSSelectorList* selectorList = selector.selectorList();
 
+            ASSERT_WITH_MESSAGE(selectorList, "The CSS Parser should never produce valid :not() CSSSelector with an empty selectorList.");
             if (!selectorList)
                 return FunctionType::CannotMatchAnything;
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-            if (selectorList->first()->tagHistory() || CSSSelectorList::next(selectorList->first()))
-                return FunctionType::CannotCompile;
-#endif
+            FunctionType functionType = FunctionType::SimpleSelectorChecker;
+            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+                SelectorFragmentList selectorFragments;
+                VisitedMode ignoreVisitedMode = VisitedMode::None;
+                FunctionType localFunctionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode);
+                ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
-            SelectorFragmentList notFragments;
-            VisitedMode ignoreVisitedMode = VisitedMode::None;
-            FunctionType functionType = constructFragments(selectorList->first(), selectorContext, notFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode);
-            ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
+                // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
+                if (localFunctionType == FunctionType::CannotMatchAnything)
+                    continue;
 
-            // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
-            if (functionType == FunctionType::CannotMatchAnything)
-                return FunctionType::SimpleSelectorChecker;
+                if (localFunctionType == FunctionType::CannotCompile)
+                    return FunctionType::CannotCompile;
 
-            if (functionType == FunctionType::CannotCompile)
-                return functionType;
+                functionType = std::max(functionType, localFunctionType);
+                fragment.notFilters.append(selectorFragments);
+            }
 
-            ASSERT(notFragments.size() == 1);
-            if (notFragments.size() != 1)
-                return FunctionType::CannotCompile;
-
-            const SelectorFragment& subFragment = notFragments.first();
-
-            fragment.notFilters.append(subFragment);
             return functionType;
         }
 
@@ -982,12 +977,6 @@ static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFrag
         minimum = std::max(minimum, minimumRequiredRegisterCountForNthChildFilter);
 #endif
 
-    // :not pseudo class filters cause some register pressure.
-    for (const SelectorFragment& subFragment : selectorFragment.notFilters) {
-        unsigned notFilterMinimum = minimumRegisterRequirements(subFragment);
-        minimum = std::max(minimum, notFilterMinimum);
-    }
-
     // :any pseudo class filters cause some register pressure.
     for (const auto& subFragments : selectorFragment.anyFilters) {
         for (const SelectorFragment& subFragment : subFragments) {
@@ -1019,6 +1008,8 @@ bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorF
         return false;
     if (selectorFragmentList.size() != 1)
         return true;
+    if (hasAnyCombinators(selectorFragmentList.first().notFilters))
+        return true;
     for (const NthChildOfSelectorInfo& nthChildOfSelectorInfo : selectorFragmentList.first().nthChildOfFilters) {
         if (hasAnyCombinators(nthChildOfSelectorInfo.selectorList))
             return true;
@@ -1029,7 +1020,31 @@ bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorF
 // The CSS JIT has only been validated with a strict minimum of 6 allocated registers.
 const unsigned minimumRegisterRequirement = 6;
 
-static void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false)
+void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false);
+
+static void computeBacktrackingMemoryRequirements(SelectorList& selectorList, unsigned& totalRegisterRequirements, unsigned& totalStackRequirements, bool backtrackingRegisterReservedForFragment = false)
+{
+    unsigned selectorListRegisterRequirements = 0;
+    unsigned selectorListStackRequirements = 0;
+    bool clobberElementAddressRegister = false;
+
+    for (SelectorFragmentList& selectorFragmentList : selectorList) {
+        computeBacktrackingMemoryRequirements(selectorFragmentList, backtrackingRegisterReservedForFragment);
+
+        selectorListRegisterRequirements = std::max(selectorListRegisterRequirements, selectorFragmentList.registerRequirements);
+        selectorListStackRequirements = std::max(selectorListStackRequirements, selectorFragmentList.stackRequirements);
+        clobberElementAddressRegister = clobberElementAddressRegister || selectorFragmentList.clobberElementAddressRegister;
+    }
+
+    totalRegisterRequirements = std::max(totalRegisterRequirements, selectorListRegisterRequirements);
+    totalStackRequirements = std::max(totalStackRequirements, selectorListStackRequirements);
+
+    selectorList.registerRequirements = std::max(selectorListRegisterRequirements, minimumRegisterRequirement);
+    selectorList.stackRequirements = selectorListStackRequirements;
+    selectorList.clobberElementAddressRegister = clobberElementAddressRegister;
+}
+
+void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved)
 {
     selectorFragments.registerRequirements = minimumRegisterRequirement;
     selectorFragments.stackRequirements = 0;
@@ -1039,26 +1054,12 @@ static void computeBacktrackingMemoryRequirements(SelectorFragmentList& selector
         unsigned fragmentRegisterRequirements = minimumRegisterRequirements(selectorFragment);
         unsigned fragmentStackRequirements = 0;
 
-        if (!selectorFragment.nthChildOfFilters.isEmpty()) {
-            bool backtrackingRegisterReservedForFragment = backtrackingRegisterReserved || selectorFragment.backtrackingFlags & BacktrackingFlag::InChainWithDescendantTail;
+        bool backtrackingRegisterReservedForFragment = backtrackingRegisterReserved || selectorFragment.backtrackingFlags & BacktrackingFlag::InChainWithDescendantTail;
 
-            for (NthChildOfSelectorInfo& nthChildOfSelectorInfo : selectorFragment.nthChildOfFilters) {
-                unsigned nthChildOfSelectorInfoRegisterRequirements = minimumRegisterRequirement;
-                bool clobberElementAddressRegister = false;
+        computeBacktrackingMemoryRequirements(selectorFragment.notFilters, fragmentRegisterRequirements, fragmentStackRequirements, backtrackingRegisterReservedForFragment);
 
-                for (SelectorFragmentList& nestedSelectorFragmentList : nthChildOfSelectorInfo.selectorList) {
-                    computeBacktrackingMemoryRequirements(nestedSelectorFragmentList, backtrackingRegisterReservedForFragment);
-
-                    nthChildOfSelectorInfoRegisterRequirements = std::max(nthChildOfSelectorInfoRegisterRequirements, nestedSelectorFragmentList.registerRequirements);
-                    clobberElementAddressRegister = clobberElementAddressRegister || nestedSelectorFragmentList.clobberElementAddressRegister;
-
-                    fragmentStackRequirements = std::max(fragmentStackRequirements, nestedSelectorFragmentList.stackRequirements);
-                }
-                fragmentRegisterRequirements = std::max(fragmentRegisterRequirements, nthChildOfSelectorInfoRegisterRequirements);
-                nthChildOfSelectorInfo.selectorList.registerRequirements = nthChildOfSelectorInfoRegisterRequirements;
-                nthChildOfSelectorInfo.selectorList.clobberElementAddressRegister = clobberElementAddressRegister;
-            }
-        }
+        for (NthChildOfSelectorInfo& nthChildOfSelectorInfo : selectorFragment.nthChildOfFilters)
+            computeBacktrackingMemoryRequirements(nthChildOfSelectorInfo.selectorList, fragmentRegisterRequirements, fragmentStackRequirements, backtrackingRegisterReservedForFragment);
 
         if (selectorFragment.backtrackingFlags & BacktrackingFlag::InChainWithDescendantTail) {
             if (!backtrackingRegisterReserved)
@@ -1466,6 +1467,18 @@ void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, uns
                     selectorFragments[j].backtrackingFlags |= BacktrackingFlag::InChainWithDescendantTail;
             }
             saveDescendantBacktrackingStartFragmentIndex = std::numeric_limits<unsigned>::max();
+        }
+    }
+
+    for (SelectorFragment& fragment : selectorFragments) {
+        if (!fragment.notFilters.isEmpty()) {
+#if CSS_SELECTOR_JIT_DEBUGGING
+            dataLogF("  ");
+            dataLogF("Subselectors for :not():\n");
+#endif
+
+            for (SelectorFragmentList& selectorList : fragment.notFilters)
+                computeBacktrackingInformation(selectorList, level + 1);
         }
     }
 
@@ -3453,13 +3466,11 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
 
 void SelectorCodeGenerator::generateElementMatchesNotPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    for (const auto& subFragment : fragment.notFilters) {
-        Assembler::JumpList localFailureCases;
-        generateElementMatching(localFailureCases, localFailureCases, subFragment);
-        // Since this is a not pseudo class filter, reaching here is a failure.
-        failureCases.append(m_assembler.jump());
-        localFailureCases.link(&m_assembler);
-    }
+    Assembler::JumpList localFailureCases;
+    generateElementMatchesSelectorList(localFailureCases, elementAddressRegister, fragment.notFilters);
+    // Since this is a not pseudo class filter, reaching here is a failure.
+    failureCases.append(m_assembler.jump());
+    localFailureCases.link(&m_assembler);
 }
 
 void SelectorCodeGenerator::generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

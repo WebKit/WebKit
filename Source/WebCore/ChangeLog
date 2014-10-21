@@ -1,3 +1,36 @@
+2014-10-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generalize the compilation of :not() to support arbitrary selector lists
+        https://bugs.webkit.org/show_bug.cgi?id=137843
+
+        Reviewed by Andreas Kling.
+
+        This builds :not() on top of the code created for :nth-child(An+B of selectorList)
+        to support any selector list.
+
+        The tests for the JIT were added previously:
+        -not-boundaries.html
+        -not-backtracking.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        Any :not() of a selector is handled through a simple selector list. Cases like
+        :not(foo, bar) simply generate not([fragmentFoo, bragmentBar]).
+
+        Old cases like :not(foo):not(bar) simply add those cases to the selector list,
+        generating not([fragmentFoo, bragmentBar]).
+
+        (WebCore::SelectorCompiler::minimumRegisterRequirements):
+        Register pressure is now tracked through computeBacktrackingMemoryRequirements.
+
+        (WebCore::SelectorCompiler::hasAnyCombinators):
+        (WebCore::SelectorCompiler::computeBacktrackingMemoryRequirements):
+        (WebCore::SelectorCompiler::computeBacktrackingInformation):
+        Abstract the code creating Selector Lists from :nth-child(of). Use that for :not()
+        and  :nth-child(of).
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesNotPseudoClass):
+
 2014-10-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr<>|make_unique<> in PluginView::scheduleRequest()
