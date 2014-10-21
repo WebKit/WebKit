@@ -1,3 +1,15 @@
+2014-10-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [JHBuild] Switch sourceware.org mirror to http.
+
+        Unreviewed.
+
+        The ftp access is recently failing to work as expected, and the
+        bots fail to download the file.
+        The same mirror is available via http and seems to work better.
+
+        * gtk/jhbuild.modules:
+
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
