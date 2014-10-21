@@ -1840,7 +1840,6 @@ _llint_op_tear_off_lexical_environment:
 _llint_op_tear_off_arguments:
     traceExecution()
     loadisFromInstruction(1, t0)
-    addq 1, t0   # Get the unmodifiedArgumentsRegister
     btqz [cfr, t0, 8], .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:

@@ -364,8 +364,8 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     VirtualRegister arguments = VirtualRegister(currentInstruction[1].u.operand);
     int lexicalEnvironment = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments).offset()), TrustedImm32(JSValue::EmptyValueTag));
-    emitLoadPayload(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT0);
+    Jump argsNotCreated = branch32(Equal, tagFor(arguments.offset()), TrustedImm32(JSValue::EmptyValueTag));
+    emitLoadPayload(arguments.offset(), regT0);
     emitLoadPayload(lexicalEnvironment, regT1);
     callOperation(operationTearOffArguments, regT0, regT1);
     argsNotCreated.link(this);

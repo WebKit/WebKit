@@ -3409,7 +3409,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_tear_off_arguments: {
             m_graph.m_hasArguments = true;
-            addToGraph(TearOffArguments, get(unmodifiedArgumentsRegister(VirtualRegister(currentInstruction[1].u.operand))), get(VirtualRegister(currentInstruction[2].u.operand)));
+            addToGraph(TearOffArguments, get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand)));
             NEXT_OPCODE(op_tear_off_arguments);
         }
             

@@ -1862,7 +1862,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 
     if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
-        instructions().append(m_codeBlock->argumentsRegister().offset());
+        instructions().append(unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
         instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 

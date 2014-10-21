@@ -1,3 +1,27 @@
+2014-10-03  Oliver Hunt  <oliver@apple.com>
+
+        tearoff_arguments should always refer to the unmodified arguments register
+        https://bugs.webkit.org/show_bug.cgi?id=137406
+
+        Reviewed by Michael Saboff.
+
+        To simplify subsequent work, and remove unnecessary work from
+        actual execution this patch simply ensures that tear_off_arguments
+        refers to the actual unmodified arguments register.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_tear_off_arguments):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_tear_off_arguments):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-10-03  Saam Barati  <saambarati1@gmail.com>
 
         Change how 32-bit JSValues check if they are a Boolean

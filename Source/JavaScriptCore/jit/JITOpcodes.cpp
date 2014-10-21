@@ -247,8 +247,8 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     int arguments = currentInstruction[1].u.operand;
     int lexicalEnvironment = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset())));
-    emitGetVirtualRegister(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT0);
+    Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (VirtualRegister(arguments).offset())));
+    emitGetVirtualRegister(VirtualRegister(arguments).offset(), regT0);
     emitGetVirtualRegister(lexicalEnvironment, regT1);
     callOperation(operationTearOffArguments, regT0, regT1);
     argsNotCreated.link(this);
