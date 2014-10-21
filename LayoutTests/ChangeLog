@@ -1,3 +1,19 @@
+2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] CSS-generated text content not exposed to assistive technologies
+        https://bugs.webkit.org/show_bug.cgi?id=137669
+
+        Reviewed by Chris Fleizach.
+
+        Moved the Mac platform test and modified it to dump the accessible tree
+        and string values rather than a platform-specific hierarchy so that it
+        could be shared across platforms.
+
+        * accessibility/css-content-attribute.html: Added.
+        * platform/gtk/accessibility/css-content-attribute-expected.txt: Added.
+        * platform/mac/accessibility/css-content-attribute-expected.txt: Modified to reflect new output.
+        * platform/mac/accessibility/css-content-attribute.html: Removed.
+
 2014-10-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Google Search (mobile) video thumbnails are too large.

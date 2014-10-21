@@ -6,12 +6,8 @@ This tests that when the content attribute in CSS is used, the correct values ar
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXWebArea AXValue: 
-  AXRole: AXHeading AXValue: 1
-    AXRole: AXStaticText AXValue: This is a
-    AXRole: AXStaticText AXValue: SAMPLE
-    AXRole: AXStaticText AXValue: Headline
-  AXRole: AXGroup AXValue: 
+AXRole: AXWebArea 
+  AXRole: AXHeading AXValue: This is a SAMPLE Headline
 PASS successfullyParsed is true
 
 TEST COMPLETE
