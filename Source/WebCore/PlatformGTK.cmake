@@ -213,7 +213,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/graphics/gtk/ImageBufferGtk.cpp
     platform/graphics/gtk/ImageGtk.cpp
 
-    platform/gtk/ClipboardUtilitiesGtk.cpp
     platform/gtk/ContextMenuGtk.cpp
     platform/gtk/ContextMenuItemGtk.cpp
     platform/gtk/CursorGtk.cpp
@@ -223,7 +222,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/DragImageGtk.cpp
     platform/gtk/GRefPtrGtk.cpp
     platform/gtk/GtkClickCounter.cpp
-    platform/gtk/GtkDragAndDropHelper.cpp
     platform/gtk/GtkInputMethodFilter.cpp
     platform/gtk/GtkTouchContextHelper.cpp
     platform/gtk/GtkUtilities.cpp

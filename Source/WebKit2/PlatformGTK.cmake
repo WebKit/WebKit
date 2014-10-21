@@ -251,6 +251,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/gtk/DragAndDropHandler.cpp
     UIProcess/gtk/ExperimentalFeatures.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
     UIProcess/gtk/WebContextGtk.cpp

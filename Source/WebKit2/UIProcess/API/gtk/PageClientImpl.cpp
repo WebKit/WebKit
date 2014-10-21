@@ -271,7 +271,12 @@ void PageClientImpl::updateTextInputState()
 #if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
-    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), dragData, dragImage);
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+    webkitWebViewBaseDragAndDropHandler(webView).startDrag(dragData, dragImage);
+
+    // A drag starting should prevent a double-click from happening. This might
+    // happen if a drag is followed very quickly by another click (like in the WTR).
+    webkitWebViewBaseResetClickCounter(webView);
 }
 #endif
 
