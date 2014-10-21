@@ -1,3 +1,20 @@
+2014-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary isSVGFont() check in SimpleFontData::applyTransforms()
+        https://bugs.webkit.org/show_bug.cgi?id=137836
+
+        Reviewed by Andreas Kling.
+
+        Avoid unnecessary isSVGFont() check in SimpleFontData::applyTransforms().
+        This function is only called from WidthIterator::applyFontTransforms(),
+        which already makes sure to call applyTransforms() if isSVGFont()
+        returns false. This patch replaces the check with a simple assertion.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/SimpleFontData.h:
+        * svg/SVGFontData.h:
+
 2014-10-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r169024): Undetermined text is not displayed in the search field of Adobe Help Website

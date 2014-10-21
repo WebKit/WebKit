@@ -218,8 +218,8 @@ public:
 
     bool applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, TypesettingFeatures typesettingFeatures) const
     {
-        if (isSVGFont())
-            return false;
+        // We need to handle transforms on SVG fonts internally, since they are rendered internally.
+        ASSERT(!isSVGFont());
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
         wkCTFontTransformOptions options = (typesettingFeatures & Kerning ? wkCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? wkCTFontTransformApplyShaping : 0);
         return wkCTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
