@@ -334,7 +334,8 @@ Controller.prototype = {
         timeline.setAttribute('aria-label', this.UIString('Duration'));
         timeline.type = 'range';
         timeline.value = 0;
-        this.listenFor(timeline, 'input', this.handleTimelineChange);
+        this.listenFor(timeline, 'input', this.handleTimelineInput);
+        this.listenFor(timeline, 'change', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
         this.listenFor(timeline, 'mouseout', this.handleTimelineMouseOut);
         this.listenFor(timeline, 'mousemove', this.handleTimelineMouseMove);
@@ -385,7 +386,7 @@ Controller.prototype = {
         volume.min = 0;
         volume.max = 1;
         volume.step = .01;
-        this.listenFor(volume, 'change', this.handleVolumeSliderChange);
+        this.listenFor(volume, 'input', this.handleVolumeSliderInput);
 
         var captionButton = this.controls.captionButton = document.createElement('button');
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
@@ -740,9 +741,14 @@ Controller.prototype = {
         return true;
     },
 
-    handleTimelineChange: function(event)
+    handleTimelineInput: function(event)
     {
         this.video.fastSeek(this.controls.timeline.value);
+    },
+
+    handleTimelineChange: function(event)
+    {
+        this.video.currentTime = this.controls.timeline.value;
     },
 
     handleTimelineDown: function(event)
@@ -804,9 +810,6 @@ Controller.prototype = {
     handleTimelineMouseUp: function(event)
     {
         this.scrubbing = false;
-
-        // Do a precise seek when we lift the mouse:
-        this.video.currentTime = this.controls.timeline.value;
     },
 
     handleMuteButtonClicked: function(event)
@@ -836,7 +839,7 @@ Controller.prototype = {
         this.video.volume = 1;
     },
 
-    handleVolumeSliderChange: function(event)
+    handleVolumeSliderInput: function(event)
     {
         if (this.video.muted) {
             this.video.muted = false;
