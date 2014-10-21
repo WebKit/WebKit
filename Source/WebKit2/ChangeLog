@@ -1,3 +1,15 @@
+2014-10-03  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView snapshot of Daring Fireball has the wrong color in the obscured inset
+        https://bugs.webkit.org/show_bug.cgi?id=137383
+        <rdar://problem/18535439>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotAtSize):
+        Use documentBackgroundColor instead of baseBackgroundColor if backgroundShouldExtendBeyondPage is set.
+
 2014-10-02  JinYoung Hur  <hurims@gmail.com>
 
         Minor bug in UIClient::exceededDatabaseQuota()

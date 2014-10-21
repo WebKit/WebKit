@@ -570,8 +570,8 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         rootObscuresBackground = rendererObscuresBackground(rootRenderer);
     }
 
-    compositor().setRootExtendedBackgroundColor(frameView().frame().settings().backgroundShouldExtendBeyondPage()
-        ? frameView().documentBackgroundColor() : Color());
+    bool backgroundShouldExtendBeyondPage = frameView().frame().settings().backgroundShouldExtendBeyondPage();
+    compositor().setRootExtendedBackgroundColor(backgroundShouldExtendBeyondPage ? frameView().documentBackgroundColor() : Color());
 
     Page* page = document().page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
@@ -582,12 +582,14 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 
     // This code typically only executes if the root element's visibility has been set to hidden,
     // if there is a transform on the <html>, or if there is a page scale factor less than 1.
-    // Only fill with the base background color (typically white) if we're the root document, 
+    // Only fill with a background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
+    // We use the base background color unless the backgroundShouldExtendBeyondPage setting is set,
+    // in which case we use the document's background color.
     if (frameView().isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
         frameView().setCannotBlitToWindow(); // The parent must show behind the child.
     else {
-        Color backgroundColor = frameView().baseBackgroundColor();
+        Color backgroundColor = backgroundShouldExtendBeyondPage ? frameView().documentBackgroundColor() : frameView().baseBackgroundColor();
         if (backgroundColor.alpha()) {
             CompositeOperator previousOperator = paintInfo.context->compositeOperation();
             paintInfo.context->setCompositeOperation(CompositeCopy);

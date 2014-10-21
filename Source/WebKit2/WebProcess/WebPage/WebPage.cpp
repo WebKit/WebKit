@@ -1667,7 +1667,8 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
-    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), frameView->baseBackgroundColor(), ColorSpaceDeviceRGB);
+    Color backgroundColor = coreFrame->settings().backgroundShouldExtendBeyondPage() ? frameView->documentBackgroundColor() : frameView->baseBackgroundColor();
+    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor, ColorSpaceDeviceRGB);
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
