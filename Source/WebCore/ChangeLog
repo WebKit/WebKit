@@ -1,3 +1,25 @@
+2014-10-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Performance: Certain Web site causes Safari to hang completely while entering form data
+        https://bugs.webkit.org/show_bug.cgi?id=137420
+
+        Reviewed by Mario Sanchez Prada.
+
+        If a website has multiple nested tables that are not "accessibility" tables, the performance of accessibility slows to a crawl because:
+          1) We are re-computing accessibilityIsIgnored many times.
+               As a solution, we can enable the isIgnoredCache when updating children.
+          2) When asking if an object isTableCell, we'd go up the parent chain, asking each of those parents the same question, which exploded into calling this many times.
+              As a solution, I've changed our determination of isTableCell to instead check if the parent is an accessibiltyTable which should be much faster.
+
+        No new functionality. Existing tests cover changes.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        (WebCore::AccessibilityTableCell::isTableCell):
+
 2014-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GtkDragAndDropHelper from Platform to WebKit2
