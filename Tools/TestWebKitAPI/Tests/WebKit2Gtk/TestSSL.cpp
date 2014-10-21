@@ -67,6 +67,10 @@ public:
 
 static void testSSL(SSLTest* test, gconstpointer)
 {
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_certificate);
@@ -80,6 +84,8 @@ static void testSSL(SSLTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert(!test->m_certificate);
     g_assert(!test->m_tlsErrors);
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
 
 class InsecureContentTest: public WebViewTest {
@@ -110,38 +116,55 @@ public:
 
 static void testInsecureContent(InsecureContentTest* test, gconstpointer)
 {
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
     test->loadURI(kHttpsServer->getURIForPath("/insecure-content/").data());
     test->waitUntilLoadFinished();
 
     g_assert(test->m_insecureContentRun);
     g_assert(test->m_insecureContentDisplayed);
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
 
 static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
 {
     WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
-    // TLS errors are ignored by default.
+    // TLS errors are treated as transport failures by default.
+    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadFailed);
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
+    test->m_loadFailed = false;
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(!test->m_loadFailed);
 
     webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
-    test->loadURI(kHttpsServer->getURIForPath("/").data());
-    test->waitUntilLoadFinished();
-    g_assert(test->m_loadFailed);
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_FAIL);
 }
 
 static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
 {
-    webkit_web_context_set_tls_errors_policy(webkit_web_view_get_context(test->m_webView), WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
+
     test->loadURI(kHttpsServer->getURIForPath("/redirect").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_loadFailed);
     g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
 
 static gboolean webViewAuthenticationCallback(WebKitWebView*, WebKitAuthenticationRequest* request)
@@ -153,13 +176,18 @@ static gboolean webViewAuthenticationCallback(WebKitWebView*, WebKitAuthenticati
 
 static void testTLSErrorsHTTPAuth(SSLTest* test, gconstpointer)
 {
-    webkit_web_context_set_tls_errors_policy(webkit_web_view_get_context(test->m_webView), WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
+
     g_signal_connect(test->m_webView, "authenticate", G_CALLBACK(webViewAuthenticationCallback), NULL);
     test->loadURI(kHttpsServer->getURIForPath("/auth").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_loadFailed);
     g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
 
 class TLSErrorsTest: public SSLTest {
@@ -204,6 +232,7 @@ private:
 static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
 {
     WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
     webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
     // The load-failed-with-tls-errors signal should be emitted when there is a TLS failure.
@@ -226,6 +255,8 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, TLSExpectedSuccessTitle);
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
 
 
@@ -298,9 +329,9 @@ void beforeAll()
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);
     InsecureContentTest::add("WebKitWebView", "insecure-content", testInsecureContent);
-    // In this case the order of the tests does matter because tls-errors-policy tests the default policy,
-    // and expects that no exception will have been added for this certificate and host pair as is
-    // done in the tls-permission-request test.
+    // In this case the order of the tests does matter because tls-errors-policy expects
+    // that no exception will have been added for this certificate and host pair as is
+    // done in the load-failed-with-tls-errors test.
     SSLTest::add("WebKitWebView", "tls-errors-policy", testTLSErrorsPolicy);
     SSLTest::add("WebKitWebView", "tls-errors-redirect-to-http", testTLSErrorsRedirect);
     SSLTest::add("WebKitWebView", "tls-http-auth", testTLSErrorsHTTPAuth);

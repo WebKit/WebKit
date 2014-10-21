@@ -1,3 +1,24 @@
+2014-10-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Change the default TLS errors policy to WEBKIT_TLS_ERRORS_POLICY_FAIL
+        https://bugs.webkit.org/show_bug.cgi?id=137832
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure each test sets the TLS errors policy that it really needs.
+        Have each test except testTLSErrorsPolicy stash and restore the original
+        TLS errors policy. Update testTLSErrorsPolicy to account for the new
+        default policy.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (testSSL):
+        (testInsecureContent):
+        (testTLSErrorsPolicy):
+        (testTLSErrorsRedirect):
+        (testTLSErrorsHTTPAuth):
+        (testLoadFailedWithTLSErrors):
+        (beforeAll):
+
 2014-10-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [JHBuild] Switch sourceware.org mirror to http.
