@@ -62,7 +62,7 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     JSHTMLDocument* thisObject = jsCast<JSHTMLDocument*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (propertyName == Identifier(exec, "open")) {
+    if (equal(propertyName.publicName(), "open")) {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
         return true;
     }
@@ -72,8 +72,7 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
         return true;
     }
 
-    const HashTableValue* entry = JSHTMLDocument::info()->staticPropHashTable->entry(propertyName);
-    if (entry) {
+    if (const HashTableValue* entry = JSHTMLDocument::info()->staticPropHashTable->entry(propertyName)) {
         slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
     }

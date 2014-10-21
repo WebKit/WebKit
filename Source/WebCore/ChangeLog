@@ -1,3 +1,16 @@
+2014-10-20  Michael Saboff  <msaboff@apple.com>
+
+        Make post checkin suggested changes to r174847
+        https://bugs.webkit.org/show_bug.cgi?id=137885
+
+        Reviewed by Mark Lam.
+
+        Eliminated the creation of a temporary Identifier when comparing propertyName to "open".
+        Made the suggested post checkin change to put the declaration of "entry" into the if.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for SpinButtonElement
