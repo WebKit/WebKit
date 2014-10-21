@@ -1,3 +1,15 @@
+2014-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Enable multiple stack references allocation by allocateUninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=135293
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::stackTop):
+            Add stackTop method to check references are allocated easily.
+        (WebCore::StackAllocator::allocateUninitialized):
+
 2014-09-29  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: InspectorValues should use references for out parameters
