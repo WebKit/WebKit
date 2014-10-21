@@ -1,3 +1,10 @@
+2014-10-06  Oliver Hunt  <oliver@apple.com>
+
+        Fix cloop build
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+
 2014-10-03  Saam Barati  <saambarati1@gmail.com>
 
         Implement op_profile_type in the 32-bit baseline JIT
