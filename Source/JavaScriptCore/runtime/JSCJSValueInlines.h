@@ -327,7 +327,7 @@ inline bool JSValue::isNumber() const
 
 inline bool JSValue::isBoolean() const
 {
-    return isTrue() || isFalse();
+    return tag() == BooleanTag;
 }
 
 inline bool JSValue::asBoolean() const

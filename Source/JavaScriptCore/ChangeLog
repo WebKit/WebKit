@@ -1,3 +1,15 @@
+2014-10-03  Saam Barati  <saambarati1@gmail.com>
+
+        Change how 32-bit JSValues check if they are a Boolean
+
+        Rubber stamped by Filip Pizlo.
+
+        32-bit JSValue::isBoolean can simply check if its tag corresponds 
+        to the boolean tag instead of checking if it's either true or false.
+
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isBoolean):
+
 2014-10-01  Anders Carlsson  <andersca@apple.com>
 
         Use variadic templates for jsMakeNontrivialString
