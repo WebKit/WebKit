@@ -32,8 +32,7 @@ static const int TOOL_BAR_ICON_SIZE = 24;
 static const int TOOL_BAR_BUTTON_SIZE = 32;
 static const int SEARCH_FIELD_SIZE = 200;
 static const int SEARCH_BUTTON_SIZE = 30;
-static const int MAX_SEARCH_COUNT = 100;
-static const int DEFAULT_SEARCH_FLAGS = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_CASE_INSENSITIVE | EWK_FIND_OPTIONS_WRAP_AROUND;
+static const int MAX_SEARCH_COUNT = 1000;
 static const double TOOLTIP_DELAY_SECONDS = 1.0;
 static const double LONGPRESS_INTERVAL_SECONDS = 1.5;
 static const double LIST_ITEM_HEIGHT = 24.35;
@@ -62,6 +61,7 @@ static Eina_Bool separated_process_enabled = EINA_FALSE;
 static Eina_Bool longpress_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
+static int search_flags = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_WRAP_AROUND | EWK_FIND_OPTIONS_CASE_INSENSITIVE;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
  * scale factor unless it's required by the User. */
 static double device_pixel_ratio = 0;
@@ -115,6 +115,8 @@ typedef struct _Browser_Window {
         Evas_Object *search_field_count;
         Evas_Object *backward_button;
         Evas_Object *forward_button;
+        Evas_Object *search_case_check_box;
+        Evas_Object *search_word_start_check_box;
         Evas_Object *close_button;
     } search;
     struct {
@@ -417,6 +419,8 @@ search_box_show(Browser_Window *window)
     evas_object_show(window->search.search_field_count);
     evas_object_show(window->search.backward_button);
     evas_object_show(window->search.forward_button);
+    evas_object_show(window->search.search_case_check_box);
+    evas_object_show(window->search.search_word_start_check_box);
     evas_object_show(window->search.close_button);
 
     /* Grab focus from the view */
@@ -435,6 +439,8 @@ search_box_hide(Browser_Window *window)
     evas_object_hide(window->search.search_field_count);
     evas_object_hide(window->search.backward_button);
     evas_object_hide(window->search.forward_button);
+    evas_object_hide(window->search.search_case_check_box);
+    evas_object_hide(window->search.search_word_start_check_box);
     evas_object_hide(window->search.close_button);
 
     /* Give focus back to the view */
@@ -1069,7 +1075,7 @@ on_search_field_activated(void *user_data, Evas_Object *search_field, void *even
 
     const char *markup_text = elm_entry_entry_get(search_field);
     char *text = elm_entry_markup_to_utf8(markup_text);
-    ewk_view_text_find(window->ewk_view, text, DEFAULT_SEARCH_FLAGS, MAX_SEARCH_COUNT);
+    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
     free(text);
 
     /* Grab focus from the view */
@@ -1119,7 +1125,7 @@ on_search_backward_button_clicked(void *user_data, Evas_Object *search_backward_
     Browser_Window *window = (Browser_Window *)user_data;
 
     char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    ewk_view_text_find(window->ewk_view, text, DEFAULT_SEARCH_FLAGS | EWK_FIND_OPTIONS_BACKWARDS, MAX_SEARCH_COUNT);
+    ewk_view_text_find(window->ewk_view, text, search_flags | EWK_FIND_OPTIONS_BACKWARDS, MAX_SEARCH_COUNT);
     free(text);
 }
 
@@ -1129,7 +1135,33 @@ on_search_forward_button_clicked(void *user_data, Evas_Object *search_forward_bu
     Browser_Window *window = (Browser_Window *)user_data;
 
     char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
-    ewk_view_text_find(window->ewk_view, text, DEFAULT_SEARCH_FLAGS, MAX_SEARCH_COUNT);
+    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+    free(text);
+}
+
+static void
+on_search_case_option_changed(void *user_data, Evas_Object *search_case_check_box, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+    
+    /* Bit toggle the case sensitive flag */
+    search_flags = search_flags ^ EWK_FIND_OPTIONS_CASE_INSENSITIVE;
+    
+    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
+    free(text);
+}
+
+static void
+on_search_word_start_option_changed(void *user_data, Evas_Object *search_word_start_check_box, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    char *text = elm_entry_markup_to_utf8(elm_entry_entry_get(window->search.search_field));
+    
+    /* Bit toggle the word start flag */
+    search_flags = search_flags ^ EWK_FIND_OPTIONS_AT_WORD_STARTS;
+    
+    ewk_view_text_find(window->ewk_view, text, search_flags, MAX_SEARCH_COUNT);
     free(text);
 }
 
@@ -2114,6 +2146,18 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_text_set(window->search.search_field_count, "");
     elm_entry_text_style_user_push(window->search.search_field_count, "DEFAULT='font_size=14'");
     elm_box_pack_end(window->search.search_bar, window->search.search_field_count);
+
+    /* Create Search Case Sensitive Option check box */
+    window->search.search_case_check_box = elm_check_add(window->elm_window);
+    elm_object_text_set(window->search.search_case_check_box, "Case Sensitive");
+    evas_object_smart_callback_add(window->search.search_case_check_box, "changed", on_search_case_option_changed, window);
+    elm_box_pack_end(window->search.search_bar, window->search.search_case_check_box);
+
+    /* Create Search Word Start Option check box */
+    window->search.search_word_start_check_box = elm_check_add(window->elm_window);
+    elm_object_text_set(window->search.search_word_start_check_box, "Only Word Start");
+    evas_object_smart_callback_add(window->search.search_word_start_check_box, "changed", on_search_word_start_option_changed, window);
+    elm_box_pack_end(window->search.search_bar, window->search.search_word_start_check_box);
 
     /* Create Search close button */
     window->search.close_button = create_toolbar_button(window->elm_window, "close");

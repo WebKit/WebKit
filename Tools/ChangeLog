@@ -1,5 +1,22 @@
 2014-10-20  Tanay C  <tanay.c@samsung.com>
 
+        [EFL][WK2] Minibrowser : Add support for Case sensitive and word start search
+        https://bugs.webkit.org/show_bug.cgi?id=137023
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Added functionality to support case sensitive and word start search
+        (search_box_show): Modified.
+        (search_box_hide): Modified.
+        (on_search_field_activated): Modified.
+        (on_search_backward_button_clicked): Modified.
+        (on_search_forward_button_clicked): Modified.
+        (on_search_case_option_changed): Added.
+        (on_search_word_start_option_changed): Added.
+        (window_create): Modified.
+
+2014-10-20  Tanay C  <tanay.c@samsung.com>
+
         [GTK][Minibrowser] Escape key does not hide the search box
         https://bugs.webkit.org/show_bug.cgi?id=137734
 
