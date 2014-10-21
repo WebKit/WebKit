@@ -234,14 +234,14 @@ private:
 template<typename To, typename From>
 inline To jsCast(From* from)
 {
-    ASSERT(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
     return static_cast<To>(from);
 }
     
 template<typename To>
 inline To jsCast(JSValue from)
 {
-    ASSERT(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
     return static_cast<To>(from.asCell());
 }
 

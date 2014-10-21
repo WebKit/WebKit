@@ -1,3 +1,17 @@
+2014-09-30  Mark Lam  <mark.lam@apple.com>
+
+        Label some asserts as having security implications.
+        <https://webkit.org/b/137260>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::handleAssertionFailure):
+        * runtime/JSCell.h:
+        (JSC::jsCast):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::get):
+
 2014-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         DFG HasStructureProperty codegen should use one fewer registers
