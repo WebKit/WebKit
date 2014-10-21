@@ -195,7 +195,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     URL url = MemoryCache::removeFragmentIdentifierIfNeeded(request.resourceRequest().url());
 
 #if ENABLE(CACHE_PARTITIONING)
-    request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
+    request.mutableResourceRequest().setDomainForCachePartition(document()->topOrigin()->domainForCachePartition());
 #endif
 
     if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest(), sessionID())) {
@@ -439,7 +439,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     CachedResourceHandle<CachedResource> resource;
 #if ENABLE(CACHE_PARTITIONING)
     if (document())
-        request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
+        request.mutableResourceRequest().setDomainForCachePartition(document()->topOrigin()->domainForCachePartition());
 #endif
 
     resource = memoryCache()->resourceForRequest(request.resourceRequest(), sessionID());

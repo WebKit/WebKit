@@ -1,3 +1,20 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        ResourceRequest deserialization unnecessarily calls partitionName() on encoded cache partition
+        https://bugs.webkit.org/show_bug.cgi?id=137797
+
+        Reviewed by Darin Adler.
+
+        This patch adds a |needsValidation| argument to
+        ResourceRequest::setCachePartition() setter so that the caller can
+        indicate that the partition name is valid (because it was already
+        processed by partitionName() before). Use this new argument in
+        ArgumentCoder<ResourceRequest>::decode() to spent a bit less time
+        deserializing resource requests.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+
 2014-10-20  Beth Dakin  <bdakin@apple.com>
 
         Action menu items should have tags

@@ -1,3 +1,18 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        ResourceRequest deserialization unnecessarily calls partitionName() on encoded cache partition
+        https://bugs.webkit.org/show_bug.cgi?id=137797
+
+        Reviewed by Darin Adler.
+
+        Call ResourceRequest::setDomainForPartitionName() instead of
+        setPartitionName() as the argument is a domain, not a valid
+        partition name.
+
+        * Misc/WebCache.mm:
+        (+[WebCache addImageToCache:forURL:forFrame:]):
+        (+[WebCache removeImageFromCacheForURL:forFrame:]):
+
 2014-10-20  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build.

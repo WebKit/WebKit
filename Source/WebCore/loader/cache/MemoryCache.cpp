@@ -233,11 +233,11 @@ static CachedImageClient& dummyCachedImageClient()
     return client;
 }
 
-bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const String& cachePartition)
+bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const String& domainForCachePartition)
 {
     ASSERT(image);
     SessionID sessionID = SessionID::defaultSessionID();
-    removeImageFromCache(url, cachePartition); // Remove cache entry if it already exists.
+    removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
 
     RefPtr<BitmapImage> bitmapImage = BitmapImage::create(image, nullptr);
     if (!bitmapImage)
@@ -250,22 +250,22 @@ bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const St
     cachedImage->addClient(&dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
 #if ENABLE(CACHE_PARTITIONING)
-    cachedImage->resourceRequest().setCachePartition(cachePartition);
+    cachedImage->resourceRequest().setDomainForCachePartition(domainForCachePartition);
 #endif
     return add(cachedImage.release());
 }
 
-void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartition)
+void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCachePartition)
 {
     CachedResourceMap& resources = getSessionMap(SessionID::defaultSessionID());
 #if ENABLE(CACHE_PARTITIONING)
     CachedResource* resource;
     if (CachedResourceItem* item = resources.get(url))
-        resource = item->get(ResourceRequest::partitionName(cachePartition));
+        resource = item->get(ResourceRequest::partitionName(domainForCachePartition));
     else
         resource = nullptr;
 #else
-    UNUSED_PARAM(cachePartition);
+    UNUSED_PARAM(domainForCachePartition);
     CachedResource* resource = resources.get(url);
 #endif
     if (!resource)

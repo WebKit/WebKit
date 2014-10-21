@@ -176,7 +176,7 @@
     if (frame)
         topOrigin = core(frame)->document()->topOrigin();
 #endif
-    return WebCore::memoryCache()->addImageToCache(image, url, topOrigin ? topOrigin->cachePartition() : emptyString());
+    return WebCore::memoryCache()->addImageToCache(image, url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }
 
 + (void)removeImageFromCacheForURL:(NSURL *)url
@@ -193,7 +193,7 @@
     if (frame)
         topOrigin = core(frame)->document()->topOrigin();
 #endif
-    WebCore::memoryCache()->removeImageFromCache(url, topOrigin ? topOrigin->cachePartition() : emptyString());
+    WebCore::memoryCache()->removeImageFromCache(url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }
 
 + (CGImageRef)imageForURL:(NSURL *)url

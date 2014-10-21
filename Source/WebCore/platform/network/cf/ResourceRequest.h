@@ -99,7 +99,12 @@ namespace WebCore {
 #if ENABLE(CACHE_PARTITIONING)
         WEBCORE_EXPORT static String partitionName(const String& domain);
         const String& cachePartition() const { return m_cachePartition.isNull() ? emptyString() : m_cachePartition; }
-        void setCachePartition(const String& cachePartition) { m_cachePartition = partitionName(cachePartition); }
+        void setCachePartition(const String& cachePartition)
+        {
+            ASSERT(cachePartition == partitionName(cachePartition));
+            m_cachePartition = cachePartition;
+        }
+        void setDomainForCachePartition(const String& domain) { m_cachePartition = partitionName(domain); }
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)

@@ -1,3 +1,57 @@
+2014-10-20  Chris Dumez  <cdumez@apple.com>
+
+        ResourceRequest deserialization unnecessarily calls partitionName() on encoded cache partition
+        https://bugs.webkit.org/show_bug.cgi?id=137797
+
+        Reviewed by Darin Adler.
+
+        ResourceRequest deserialization was unnecessarily calling partitionName()
+        on the decoded cache partition. In the deserialization case, we already
+        know the cache partition is a valid partition name so we can bypass the
+        call to partitionName() (which is fairly expensive) for performance.
+
+        This patch adds a setDomainForCachePartion() method to ResourceRequest
+        that calls partitionName() on the domain argument, and moves all the
+        callers of setCachedPartition() to this new setter, except
+        ArgumentCoder<ResourceRequest>::decode().
+
+        This patch updates the setCachedPartition() to merely set the
+        m_cachePartition member, without calling partitionName() on the
+        argument. There is also a new assertion in place to make sure the
+        argument is a valid partition name.
+
+        No new tests, no behavior change.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResource):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::replayXHR):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+        (WebCore::MemoryCache::removeImageFromCache):
+        * loader/cache/MemoryCache.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::domainForCachePartition):
+        (WebCore::SecurityOrigin::cachePartition): Deleted.
+        Rename cachePartition() getter to domainForCachePartition() to make it
+        clear it returns a domain and not a partition name. As such, the caller
+        should then use ResourceRequest::setDomainForCachePartition(), not
+        setCachePartition().
+
+        * page/SecurityOrigin.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::setCachePartition):
+        (WebCore::ResourceRequest::setDomainForCachePartition):
+
 2014-10-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Tighten XMLHttpRequest setRequestHeader value check

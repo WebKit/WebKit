@@ -434,7 +434,7 @@ void SecurityOrigin::grantUniversalAccess()
 }
 
 #if ENABLE(CACHE_PARTITIONING)
-String SecurityOrigin::cachePartition() const
+String SecurityOrigin::domainForCachePartition() const
 {
     if (m_storageBlockingPolicy != BlockThirdPartyStorage)
         return String();

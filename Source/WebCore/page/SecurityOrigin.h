@@ -147,7 +147,7 @@ public:
     void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
 
 #if ENABLE(CACHE_PARTITIONING)
-    WEBCORE_EXPORT String cachePartition() const;
+    WEBCORE_EXPORT String domainForCachePartition() const;
 #endif
 
     bool canAccessDatabase(const SecurityOrigin* topOrigin = 0) const { return canAccessStorage(topOrigin); };
