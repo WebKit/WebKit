@@ -1,3 +1,27 @@
+2014-10-03 Bear Travis <betravis@adobe.com>
+
+        REGRESSION (r173531): Use after free in WebCore::RenderStyle::fontMetrics /
+        WebCore::CSSPrimitiveValue::computeLengthDouble
+        https://bugs.webkit.org/show_bug.cgi?id=136864
+
+        Reviewed by Andreas Kling.
+
+        FontLoader previously called updateDocumentStyleIfNeeded,
+        which would reset styles currently in use as part of
+        the tabIndex calculation. The FontLoader should instead
+        wait for pending stylesheets to load.
+
+        Tests: fast/css/fontloader-tab-index.html
+
+        * css/FontLoader.cpp:
+        (WebCore::FontLoader::notifyWhenFontsReady): Do not immediately
+        call loadingDone().
+        (WebCore::FontLoader::loadingDone): Wait for stylesheets to
+        finish loading rather than updating document styles.
+        * css/FontLoader.h:
+        (WebCore::FontLoader::loading): Include JS font loads when testing
+        for the loading state.
+
 2014-10-02  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequestProgressEventThrottle shouldn't throttle / defer progress events if there are no listeners

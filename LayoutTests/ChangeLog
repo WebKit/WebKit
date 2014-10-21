@@ -1,3 +1,18 @@
+2014-10-03 Bear Travis <betravis@adobe.com>
+
+        REGRESSION (r173531): Use after free in WebCore::RenderStyle::fontMetrics /
+        WebCore::CSSPrimitiveValue::computeLengthDouble
+        https://bugs.webkit.org/show_bug.cgi?id=136864
+
+        Reviewed by Andreas Kling.
+
+        Test that getting the tab index on a body element with
+        font-relative measurements to a local @font-face do not
+        cause a crash.
+
+        * fast/css/fontloader-tab-index-expected.html: Added.
+        * fast/css/fontloader-tab-index.html: Added.
+
 2014-10-02  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Default orientation for aria scrollbars should be vertical

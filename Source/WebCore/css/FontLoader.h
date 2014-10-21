@@ -68,7 +68,7 @@ public:
 
     void notifyWhenFontsReady(PassRefPtr<VoidCallback>);
 
-    bool loading() const { return m_numLoadingFromCSS > 0; }
+    bool loading() const { return m_numLoadingFromCSS > 0 || m_numLoadingFromJS > 0; }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual EventTargetInterface eventTargetInterface() const;
