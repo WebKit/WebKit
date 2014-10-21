@@ -1,3 +1,18 @@
+2014-10-01  Anders Carlsson  <andersca@apple.com>
+
+        Use variadic templates for jsMakeNontrivialString
+        https://bugs.webkit.org/show_bug.cgi?id=137325
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSString.h:
+        (JSC::jsNontrivialString):
+        Add an overload that takes an rvalue reference to a String so we can transfer ownership easily.
+
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        Make this a variadic function template, with a single-parameter version that can steal the string if it's OK to do so.
+
 2014-09-30  Mark Lam  <mark.lam@apple.com>
 
         Label some asserts as having security implications.

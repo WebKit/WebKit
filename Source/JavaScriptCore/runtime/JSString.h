@@ -52,6 +52,7 @@ JSString* jsSubstring(ExecState*, const String&, unsigned offset, unsigned lengt
 // These functions are faster than just calling jsString.
 JSString* jsNontrivialString(VM*, const String&);
 JSString* jsNontrivialString(ExecState*, const String&);
+JSString* jsNontrivialString(ExecState*, String&&);
 
 // Should be used for strings that are owned by an object that will
 // likely outlive the JSValue this makes, such as the parse tree or a
@@ -457,6 +458,12 @@ inline JSString* jsNontrivialString(VM* vm, const String& s)
     return JSString::create(*vm, s.impl());
 }
 
+inline JSString* jsNontrivialString(VM* vm, String&& s)
+{
+    ASSERT(s.length() > 1);
+    return JSString::create(*vm, s.releaseImpl());
+}
+
 ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
 {
     return Identifier(exec, toAtomicString(exec));
@@ -585,6 +592,7 @@ inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSi
 inline JSString* jsSubstring8(ExecState* exec, const String& s, unsigned offset, unsigned length) { return jsSubstring8(&exec->vm(), s, offset, length); }
 inline JSString* jsSubstring(ExecState* exec, const String& s, unsigned offset, unsigned length) { return jsSubstring(&exec->vm(), s, offset, length); }
 inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
+inline JSString* jsNontrivialString(ExecState* exec, String&& s) { return jsNontrivialString(&exec->vm(), WTF::move(s)); }
 inline JSString* jsOwnedString(ExecState* exec, const String& s) { return jsOwnedString(&exec->vm(), s); }
 
 JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
