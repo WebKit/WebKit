@@ -101,7 +101,7 @@ void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& 
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
-        if (!resultValue->asString(errorString))
+        if (!resultValue->asString(*errorString))
             *errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -172,8 +172,11 @@ PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapObjec
     if (hadException)
         return nullptr;
 
-    RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(rawResult);
+    RefPtr<InspectorObject> resultObject;
+    bool castSucceeded = r.toInspectorValue(scriptState())->asObject(resultObject);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
+
+    return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
 }
 
 PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const
@@ -192,8 +195,11 @@ PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable
     if (hadException)
         return nullptr;
 
-    RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(rawResult);
+    RefPtr<InspectorObject> resultObject;
+    bool castSucceeded = r.toInspectorValue(scriptState())->asObject(resultObject);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
+
+    return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
 }
 
 Deprecated::ScriptValue InjectedScript::findObjectById(const String& objectId) const

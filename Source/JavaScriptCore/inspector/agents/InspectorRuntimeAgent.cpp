@@ -213,7 +213,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
     for (size_t i = 0; i < locations->length(); i++) {
         RefPtr<Inspector::InspectorValue> value = locations->get(i);
         RefPtr<InspectorObject> location;
-        if (!value->asObject(&location)) {
+        if (!value->asObject(location)) {
             *errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
             return;
         }
@@ -221,9 +221,9 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
         int descriptor;
         String sourceIDAsString;
         int divot;
-        location->getInteger(ASCIILiteral("typeInformationDescriptor"), &descriptor);
-        location->getString(ASCIILiteral("sourceID"), &sourceIDAsString);
-        location->getInteger(ASCIILiteral("divot"), &divot);
+        location->getInteger(ASCIILiteral("typeInformationDescriptor"), descriptor);
+        location->getString(ASCIILiteral("sourceID"), sourceIDAsString);
+        location->getInteger(ASCIILiteral("divot"), divot);
 
         bool okay;
         TypeLocation* typeLocation = vm.typeProfiler()->findLocation(divot, sourceIDAsString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor));

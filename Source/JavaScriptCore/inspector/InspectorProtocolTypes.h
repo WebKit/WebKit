@@ -214,8 +214,8 @@ struct BindingTraits<Protocol::Array<T>> {
     static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
     {
         RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
+        bool castSucceeded = value->asArray(array);
+        ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
         assertValueHasExpectedType(array.get());
 #endif // !ASSERT_DISABLED
@@ -227,8 +227,8 @@ struct BindingTraits<Protocol::Array<T>> {
     static void assertValueHasExpectedType(InspectorValue* value)
     {
         RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
+        bool castSucceeded = value->asArray(array);
+        ASSERT_UNUSED(castSucceeded, castSucceeded);
         for (unsigned i = 0; i < array->length(); i++)
             BindingTraits<T>::assertValueHasExpectedType(array->get(i).get());
     }

@@ -65,6 +65,7 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 using Inspector::Protocol::Array;
@@ -326,36 +327,36 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     RefPtr<IDBKey> idbKey;
 
     String type;
-    if (!key->getString("type", &type))
+    if (!key->getString("type", type))
         return nullptr;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, number, (ASCIILiteral("number")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, string, (ASCIILiteral("string")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, date, (ASCIILiteral("date")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, array, (ASCIILiteral("array")));
+    NeverDestroyed<const String> numberType(ASCIILiteral("number"));
+    NeverDestroyed<const String> stringType(ASCIILiteral("string"));
+    NeverDestroyed<const String> dateType(ASCIILiteral("date"));
+    NeverDestroyed<const String> arrayType(ASCIILiteral("array"));
 
-    if (type == number) {
+    if (type == numberType) {
         double number;
-        if (!key->getDouble("number", &number))
+        if (!key->getDouble("number", number))
             return nullptr;
         idbKey = IDBKey::createNumber(number);
-    } else if (type == string) {
+    } else if (type == stringType) {
         String string;
-        if (!key->getString("string", &string))
+        if (!key->getString("string", string))
             return nullptr;
         idbKey = IDBKey::createString(string);
-    } else if (type == date) {
+    } else if (type == dateType) {
         double date;
-        if (!key->getDouble("date", &date))
+        if (!key->getDouble("date", date))
             return nullptr;
         idbKey = IDBKey::createDate(date);
-    } else if (type == array) {
+    } else if (type == arrayType) {
         IDBKey::KeyArray keyArray;
         RefPtr<InspectorArray> array = key->getArray("array");
         for (size_t i = 0; i < array->length(); ++i) {
             RefPtr<InspectorValue> value = array->get(i);
             RefPtr<InspectorObject> object;
-            if (!value->asObject(&object))
+            if (!value->asObject(object))
                 return nullptr;
             keyArray.append(idbKeyFromInspectorObject(object.get()));
         }
@@ -379,12 +380,12 @@ static PassRefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(InspectorObject* keyRange
         return nullptr;
 
     bool lowerOpen;
-    if (!keyRange->getBoolean("lowerOpen", &lowerOpen))
+    if (!keyRange->getBoolean("lowerOpen", lowerOpen))
         return nullptr;
     IDBKeyRange::LowerBoundType lowerBoundType = lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed;
 
     bool upperOpen;
-    if (!keyRange->getBoolean("upperOpen", &upperOpen))
+    if (!keyRange->getBoolean("upperOpen", upperOpen))
         return nullptr;
     IDBKeyRange::UpperBoundType upperBoundType = upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed;
 

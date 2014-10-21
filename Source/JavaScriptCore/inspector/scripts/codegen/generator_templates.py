@@ -253,14 +253,14 @@ ${constructorExample}
     ProtocolObjectRuntimeCast = (
 """PassRefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(PassRefPtr<Inspector::InspectorValue> value)
 {
-    RefPtr<Inspector::InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);
+    RefPtr<Inspector::InspectorObject> result;
+    bool castSucceeded = value->asObject(result);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
-    BindingTraits<${objectType}>::assertValueHasExpectedType(object.get());
+    BindingTraits<${objectType}>::assertValueHasExpectedType(result.get());
 #endif  // !ASSERT_DISABLED
     COMPILE_ASSERT(sizeof(${objectType}) == sizeof(Inspector::InspectorObjectBase), type_cast_problem);
-    return static_cast<${objectType}*>(static_cast<Inspector::InspectorObjectBase*>(object.get()));
+    return static_cast<${objectType}*>(static_cast<Inspector::InspectorObjectBase*>(result.get()));
 }
 """
 )

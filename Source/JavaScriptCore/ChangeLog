@@ -1,3 +1,92 @@
+2014-09-29  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: InspectorValues should use references for out parameters
+        https://bugs.webkit.org/show_bug.cgi?id=137190
+
+        Reviewed by Joseph Pecoraro.
+
+        Use references for out parameters in asType() and getType() methods.
+        Also convert to references in some miscellaneous code where we don't
+        expect or handle null values.
+
+        Remove variants of asObject() and asArray() that return a nullable RefPtr.
+        Now, client code is forced to use out parameters and check for cast failure.
+
+        Iron out control flow in some functions and fix some style issues.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::wrapObject):
+        (Inspector::InjectedScript::wrapTable):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptForObjectId): Simplify control flow.
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::InspectorBackendDispatcher::dispatch):
+        (Inspector::getPropertyValue):
+        (Inspector::AsMethodBridges::asInteger):
+        (Inspector::AsMethodBridges::asDouble):
+        (Inspector::AsMethodBridges::asString):
+        (Inspector::AsMethodBridges::asBoolean):
+        (Inspector::AsMethodBridges::asObject):
+        (Inspector::AsMethodBridges::asArray):
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::runtimeCast):
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::assertValueHasExpectedType):
+        * inspector/InspectorValues.cpp: Use more by-reference out parameters. Add more spacing.
+        (Inspector::InspectorValue::asBoolean):
+        (Inspector::InspectorValue::asDouble):
+        (Inspector::InspectorValue::asInteger):
+        (Inspector::InspectorValue::asString):
+        (Inspector::InspectorValue::asValue):
+        (Inspector::InspectorValue::asObject):
+        (Inspector::InspectorValue::asArray):
+        (Inspector::InspectorValue::parseJSON):
+        (Inspector::InspectorValue::toJSONString):
+        (Inspector::InspectorValue::writeJSON):
+        (Inspector::InspectorBasicValue::asBoolean):
+        (Inspector::InspectorBasicValue::asDouble):
+        (Inspector::InspectorBasicValue::asInteger):
+        (Inspector::InspectorBasicValue::writeJSON):
+        (Inspector::InspectorString::asString):
+        (Inspector::InspectorString::writeJSON):
+        (Inspector::InspectorObjectBase::asObject):
+        (Inspector::InspectorObjectBase::openAccessors):
+        (Inspector::InspectorObjectBase::getBoolean):
+        (Inspector::InspectorObjectBase::getString):
+        (Inspector::InspectorObjectBase::getObject):
+        (Inspector::InspectorObjectBase::getArray):
+        (Inspector::InspectorObjectBase::writeJSON):
+        (Inspector::InspectorArrayBase::asArray):
+        (Inspector::InspectorArrayBase::writeJSON):
+        * inspector/InspectorValues.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::parseLocation):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/scripts/codegen/generate_protocol_types_implementation.py:
+        (ProtocolTypesImplementationGenerator):
+        (ProtocolTypesImplementationGenerator._generate_assertion_for_enum):
+        * inspector/scripts/codegen/generator_templates.py:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * replay/EncodedValue.cpp:
+        (JSC::EncodedValue::asObject):
+        (JSC::EncodedValue::asArray):
+        (JSC::EncodedValue::convertTo<bool>):
+        (JSC::EncodedValue::convertTo<double>):
+        (JSC::EncodedValue::convertTo<float>):
+        (JSC::EncodedValue::convertTo<int32_t>):
+        (JSC::EncodedValue::convertTo<int64_t>):
+        (JSC::EncodedValue::convertTo<uint32_t>):
+        (JSC::EncodedValue::convertTo<uint64_t>):
+        (JSC::EncodedValue::convertTo<String>):
+
 2014-09-21  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: fix TypeSet hierarchy in TypeTokenView

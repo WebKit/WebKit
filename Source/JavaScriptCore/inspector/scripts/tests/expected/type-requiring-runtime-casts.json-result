@@ -620,10 +620,10 @@ String getTestEnumConstantValue(int code) {
 #if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
-    String s;
-    bool cast_res = value->asString(&s);
-    ASSERT(cast_res);
-    ASSERT(s == "Ducks" || s == "Hens" || s == "Crows" || s == "Flamingos");
+    String result;
+    bool castSucceeded = value->asString(result);
+    ASSERT(castSucceeded);
+    ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
 }
 #endif // !ASSERT_DISABLED
 
@@ -631,8 +631,8 @@ void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpe
 void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
     RefPtr<InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);
+    bool castSucceeded = value->asObject(object);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
     {
         InspectorObject::iterator stringPos = object->find(ASCIILiteral("string"));
         ASSERT(stringPos != object->end());
@@ -667,14 +667,14 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
 
 PassRefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(PassRefPtr<Inspector::InspectorValue> value)
 {
-    RefPtr<Inspector::InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);
+    RefPtr<Inspector::InspectorObject> result;
+    bool castSucceeded = value->asObject(result);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
-    BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(object.get());
+    BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
 #endif  // !ASSERT_DISABLED
     COMPILE_ASSERT(sizeof(Inspector::Protocol::Test::TypeNeedingCast) == sizeof(Inspector::InspectorObjectBase), type_cast_problem);
-    return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<Inspector::InspectorObjectBase*>(object.get()));
+    return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<Inspector::InspectorObjectBase*>(result.get()));
 }
 
 
@@ -682,8 +682,8 @@ PassRefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
     RefPtr<InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);
+    bool castSucceeded = value->asObject(object);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     int foundPropertiesCount = 0;
     {
@@ -702,8 +702,8 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
     RefPtr<InspectorObject> object;
-    bool castRes = value->asObject(&object);
-    ASSERT_UNUSED(castRes, castRes);
+    bool castSucceeded = value->asObject(object);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     int foundPropertiesCount = 0;
     {

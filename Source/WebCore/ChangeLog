@@ -1,3 +1,45 @@
+2014-09-29  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: InspectorValues should use references for out parameters
+        https://bugs.webkit.org/show_bug.cgi?id=137190
+
+        Reviewed by Joseph Pecoraro.
+
+        Clean up some call sites to explicitly check for cast success, and simplify
+        some exceptional control flows.
+
+        No new tests, no behavior changed.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspectImpl):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::computePseudoClassMask):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseConfigColor):
+        (WebCore::parseQuad):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject):
+        (WebCore::InspectorDOMAgent::innerHighlightQuad):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * inspector/InspectorIndexedDBAgent.cpp: Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        * inspector/InspectorWorkerAgent.cpp:
+
 2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds

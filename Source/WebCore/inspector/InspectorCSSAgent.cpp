@@ -89,7 +89,7 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
     for (size_t i = 0; i < pseudoClassArray->length(); ++i) {
         RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray->get(i);
         String pseudoClass;
-        bool success = pseudoClassValue->asString(&pseudoClass);
+        bool success = pseudoClassValue->asString(pseudoClass);
         if (!success)
             continue;
         if (pseudoClass == active)

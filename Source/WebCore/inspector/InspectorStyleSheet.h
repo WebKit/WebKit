@@ -65,11 +65,11 @@ public:
 
     explicit InspectorCSSId(RefPtr<Inspector::InspectorObject> value)
     {
-        if (!value->getString("styleSheetId", &m_styleSheetId))
+        if (!value->getString("styleSheetId", m_styleSheetId))
             return;
-        
+
         RefPtr<Inspector::InspectorValue> ordinalValue = value->get("ordinal");
-        if (!ordinalValue || !ordinalValue->asInteger(&m_ordinal))
+        if (!ordinalValue || !ordinalValue->asInteger(m_ordinal))
             m_styleSheetId = "";
     }
 

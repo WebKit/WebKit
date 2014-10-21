@@ -124,25 +124,25 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::Scri
     }
 
     if (result->type() == InspectorValue::Type::String) {
-        result->asString(errorString);
+        result->asString(*errorString);
         ASSERT(errorString->length());
         return;
     }
 
-    RefPtr<InspectorObject> resultPair = result->asObject();
-    if (!resultPair) {
+    RefPtr<InspectorObject> resultPair;
+    if (!result->asObject(resultPair)) {
         *errorString = ASCIILiteral("Internal error: result is not an Object");
         return;
     }
 
-    RefPtr<InspectorObject> resultObj = resultPair->getObject(ASCIILiteral("result"));
+    RefPtr<InspectorObject> resultObject = resultPair->getObject(ASCIILiteral("result"));
     bool wasThrownVal = false;
-    if (!resultObj || !resultPair->getBoolean(ASCIILiteral("wasThrown"), &wasThrownVal)) {
+    if (!resultObject || !resultPair->getBoolean(ASCIILiteral("wasThrown"), wasThrownVal)) {
         *errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
 
-    *objectResult = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObj);
+    *objectResult = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
     *wasThrown = wasThrownVal;
 }
 
