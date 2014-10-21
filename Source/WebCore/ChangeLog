@@ -1,3 +1,29 @@
+2014-10-02  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequestProgressEventThrottle shouldn't throttle / defer progress events if there are no listeners
+        https://bugs.webkit.org/show_bug.cgi?id=137346
+
+        Reviewed by Alexey Proskuryakov.
+
+        Previously XMLHttpRequestProgressEventThrottle would throttle / defer
+        progress events, which involves queueing events and starting timers,
+        even if there were no listeners for those events (which is fairly
+        common case).
+
+        This patch updates XMLHttpRequestProgressEventThrottle to make sure
+        there are actual progress event listeners *before* attempting to
+        throttle and do extra processing, to avoid doing unnecessary work.
+
+        This patch also makes XMLHttpRequestProgressEventThrottle::dispatchEvent()
+        private as this method is only called from other dispatch methods of
+        the class and never from the outside.
+
+        No new tests, no behavior change.
+
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent):
+
 2014-10-02  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Default orientation for aria scrollbars should be vertical

@@ -51,7 +51,6 @@ public:
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchReadyStateChangeEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
-    void dispatchEvent(PassRefPtr<Event>);
     void dispatchProgressEvent(const AtomicString&);
 
     void suspend();
@@ -63,6 +62,7 @@ private:
     virtual void fired();
     void dispatchDeferredEvents(Timer<XMLHttpRequestProgressEventThrottle>*);
     void flushProgressEvent();
+    void dispatchEvent(PassRefPtr<Event>);
 
     bool hasEventToDispatch() const;
 
