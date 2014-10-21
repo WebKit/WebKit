@@ -1,3 +1,17 @@
+2014-10-14  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (Safari 7.1/8.0): Border-radius and overflow hidden renders incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=137205
+
+        Reviewed by Simon Fraser.
+
+        Child layer should not reset radius clipping behaviour.
+
+        Test: fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-10-14  Dan Bernstein  <mitz@apple.com>
 
         URLs that start with http:/// and https:/// lose two slashes when parsed, causing assertion failure and inconsistent behavior

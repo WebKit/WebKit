@@ -5450,7 +5450,8 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         // This layer establishes a clip of some kind.
         if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
             foregroundRect.intersect(toRenderBox(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment, clipRectsContext.overlayScrollbarSizeRelevancy));
-            foregroundRect.setHasRadius(renderer().style().hasBorderRadius());
+            if (renderer().style().hasBorderRadius())
+                foregroundRect.setHasRadius(true);
         }
 
         if (renderer().hasClip()) {
