@@ -1,3 +1,17 @@
+2014-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Disable SSLv3
+        https://bugs.webkit.org/show_bug.cgi?id=137859
+
+        Reviewed by Carlos Garcia Campos.
+
+        Set G_TLS_GNUTLS_PRIORITY if unset.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+
 2014-10-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Change the default TLS errors policy to WEBKIT_TLS_ERRORS_POLICY_FAIL
