@@ -55,6 +55,9 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
 
 bool HTMLFrameElementBase::isURLAllowed() const
 {
+    if (document().page() && document().page()->subframeCount() >= Page::maxNumberOfFrames)
+        return false;
+
     if (m_URL.isEmpty())
         return true;
 
