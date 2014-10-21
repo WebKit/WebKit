@@ -1,3 +1,15 @@
+2014-10-02  Krzysztof Czech  <k.czech@samsung.com>
+
+        AX: Default orientation for aria scrollbars should be vertical
+        https://bugs.webkit.org/show_bug.cgi?id=137341
+
+        Reviewed by Chris Fleizach.
+
+        Update expectation and test for having new test case.
+
+        * accessibility/aria-scrollbar-role-expected.txt:
+        * accessibility/aria-scrollbar-role.html:
+
 2014-10-01  Chris Dumez  <cdumez@apple.com>
 
         Add basic caching for Document.cookie API

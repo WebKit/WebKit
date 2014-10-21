@@ -2652,6 +2652,9 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
         return AccessibilityOrientationHorizontal;
     if (equalIgnoringCase(ariaOrientation, "vertical"))
         return AccessibilityOrientationVertical;
+
+    if (isScrollbar())
+        return AccessibilityOrientationVertical;
     
     return AccessibilityObject::orientation();
 }

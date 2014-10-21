@@ -1,3 +1,17 @@
+2014-10-02  Krzysztof Czech  <k.czech@samsung.com>
+
+        AX: Default orientation for aria scrollbars should be vertical
+        https://bugs.webkit.org/show_bug.cgi?id=137341
+
+        Reviewed by Chris Fleizach.
+
+        Default orientation for aria scrollbars regarding w3c spec should be vertical
+
+        No new tests, covering by existing one.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::orientation):
+
 2014-10-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix minimal build warnings
