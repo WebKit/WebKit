@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "BlockExceptions.h"
 #import "ExceptionCodePlaceholder.h"
 #import "Logging.h"
 #import "MediaDescription.h"
@@ -62,6 +63,7 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser)
 SOFT_LINK_CLASS(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS(AVFoundation, AVSampleBufferDisplayLayer)
+SOFT_LINK_CLASS(AVFoundation, AVStreamSession)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeAudio, NSString *)
@@ -113,6 +115,14 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
+
+#pragma mark -
+#pragma mark AVStreamSession
+
+@interface AVStreamSession : NSObject
+- (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
+- (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
+@end
 
 #pragma mark -
 #pragma mark AVStreamDataParser
@@ -265,6 +275,27 @@ SOFT_LINK(CoreMedia, CMVideoFormatDescriptionGetPresentationDimensions, CGSize, 
     callOnMainThread([strongSelf, trackID, mediaType] {
         if (strongSelf->_parent)
             strongSelf->_parent->didReachEndOfTrackWithTrackID(trackID, mediaType);
+    });
+}
+
+- (void)streamParserWillProvideContentKeyRequestInitializationData:(AVStreamDataParser *)streamDataParser forTrackID:(CMPersistentTrackID)trackID
+{
+#if ASSERT_DISABLED
+    UNUSED_PARAM(streamDataParser);
+#endif
+    ASSERT(streamDataParser == _parser);
+
+    if (isMainThread()) {
+        _parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
+        return;
+    }
+
+    // We must call synchronously to the main thread, as the AVStreamSession must be associated
+    // with the streamDataParser before the delegate method returns.
+    RetainPtr<WebAVStreamDataParserListener> strongSelf = self;
+    dispatch_sync(dispatch_get_main_queue(), [strongSelf, trackID]() {
+        if (strongSelf->_parent)
+            strongSelf->_parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
     });
 }
 
@@ -658,6 +689,25 @@ void SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID(int trackID, cons
     notImplemented();
 }
 
+void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(int trackID)
+{
+    if (!m_mediaSource)
+        return;
+
+    ASSERT(m_parser);
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
+    m_protectedTrackID = trackID;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_mediaSource->player()->streamSession() addStreamDataParser:m_parser.get()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+#else
+    UNUSED_PARAM(trackID);
+#endif
+}
+
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* initData, int trackID)
 {
     if (!m_mediaSource)
@@ -733,6 +783,9 @@ void SourceBufferPrivateAVFObjC::abort()
 
 void SourceBufferPrivateAVFObjC::destroyParser()
 {
+    if (m_mediaSource->player()->hasStreamSession())
+        [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
+
     [m_delegate invalidate];
     m_delegate = nullptr;
     m_parser = nullptr;

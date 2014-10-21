@@ -236,7 +236,6 @@
         return constant##name; \
     }
 
-#if PLATFORM(IOS)
 #define SOFT_LINK_CONSTANT_MAY_FAIL(framework, name, type) \
     static bool init##name(); \
     static type (*get##name)() = 0; \
@@ -263,4 +262,3 @@
         get##name = name##Function; \
         return true; \
     }
-#endif
