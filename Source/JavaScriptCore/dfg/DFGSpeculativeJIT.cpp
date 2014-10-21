@@ -899,7 +899,7 @@ void SpeculativeJIT::compileIn(Node* node)
     JSValueOperand key(this, node->child1());
     JSValueRegs regs = key.jsValueRegs();
         
-    GPRResult result(this);
+    GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
         
     base.use();
@@ -4155,7 +4155,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
 
 void SpeculativeJIT::compileNewFunctionNoCheck(Node* node)
 {
-    GPRResult result(this);
+    GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     flushRegisters();
     callOperation(
@@ -4165,7 +4165,7 @@ void SpeculativeJIT::compileNewFunctionNoCheck(Node* node)
 
 void SpeculativeJIT::compileNewFunctionExpression(Node* node)
 {
-    GPRResult result(this);
+    GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     flushRegisters();
     callOperation(
@@ -4200,7 +4200,7 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
     GPRReg argumentGPR = argument.gpr();
     
     flushRegisters();
-    GPRResult result(this);
+    GPRFlushedCallResult result(this);
     callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
 
     branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, result.gpr(), taken);
@@ -4223,7 +4223,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
         
         flushRegisters();
 
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         callOperation(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, result.gpr(), baseGPR);
         
         storageResult(result.gpr(), node);
@@ -4266,7 +4266,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         
         flushRegisters();
 
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         callOperation(operationReallocateButterflyToGrowPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
 
         storageResult(result.gpr(), node);
@@ -4355,7 +4355,7 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
     }
         
     case CellUse: {
-        GPRResult result(this);
+        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         
         // We flush registers instead of silent spill/fill because in this mode we

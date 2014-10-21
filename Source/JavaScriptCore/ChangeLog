@@ -1,3 +1,45 @@
+2014-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't use GPRResult unless you're flushing registers and making a runtime function call
+        https://bugs.webkit.org/show_bug.cgi?id=137234
+
+        Rubber stamped by Andreas Kling.
+
+        Rename GPRResult to GPRFlushedCallResult, in an attempt to dissuade people from using it for results in the
+        general case.
+        
+        Replace GPRResult with GPRTemporary in those places where it was causing bugs: particularly in GetDirectPname it
+        would cause us to spill the register that has the base, and the code was assuming (rightly) that the base and the
+        result were in different registers. That's a valid assumption when using GPRTemporary but not with GPRResult.
+        Also this code wasn't getting any benefit from using GPRResult because it wasn't doing flushRegisters().
+        
+        I don't know how to test this. A test would require setting up a particularly awkward register allocation state.
+        
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionNoCheck):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::GPRFlushedCallResult::GPRFlushedCallResult):
+        (JSC::DFG::GPRFlushedCallResult2::GPRFlushedCallResult2):
+        (JSC::DFG::GPRResult::GPRResult): Deleted.
+        (JSC::DFG::GPRResult2::GPRResult2): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepMachineInt):
+
 2014-09-29  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: InspectorValues should use references for out parameters
