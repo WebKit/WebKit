@@ -50,6 +50,15 @@
         Made it so that JSHTMLDocument::write() and ::writeln() are always created for every prototype.
         This is similar to the change in r174847.
 
+        This change is alread covered by the tests:
+        LayoutTests/http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html
+        LayoutTests/http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html
+        LayoutTests/http/tests/security/aboutBlank/security-context-write.html
+        LayoutTests/http/tests/security/aboutBlank/security-context-writeln.html
+        LayoutTests/http/tests/xmlhttprequest/request-from-popup.html
+        LayoutTests/http/tests/navigation/new-window-redirect-history.html
+        LayoutTests/http/tests/misc/window-open-then-write.html
+
         * bindings/js/JSHTMLDocumentCustom.cpp:
         (WebCore::JSHTMLDocument::getOwnPropertySlot):
         * html/HTMLDocument.idl:
