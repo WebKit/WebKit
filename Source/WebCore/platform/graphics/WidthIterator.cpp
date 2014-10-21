@@ -78,6 +78,7 @@ GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, i
 #else
     UNUSED_PARAM(currentCharacter);
     UNUSED_PARAM(advanceLength);
+    UNUSED_PARAM(normalizedSpacesStringCache);
 #endif
 
     return m_font->glyphDataForCharacter(character, mirror);

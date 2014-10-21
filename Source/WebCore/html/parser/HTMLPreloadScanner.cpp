@@ -110,6 +110,8 @@ public:
             unsigned sourceSize = 0;
 #if ENABLE(PICTURE_SIZES)
             sourceSize = SourceSizeList::parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
+#else
+            UNUSED_PARAM(document);
 #endif
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);

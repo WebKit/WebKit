@@ -1,3 +1,23 @@
+2014-10-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix minimal build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=137066
+
+        Reviewed by Daniel Bates.
+
+        No new tests, no behavior change.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::glyphDataForCharacter):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::prepareGraphicsContextForTextPainting):
+
 2014-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Enable multiple stack references allocation by allocateUninitialized
