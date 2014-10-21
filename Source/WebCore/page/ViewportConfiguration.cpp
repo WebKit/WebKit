@@ -272,8 +272,8 @@ void ViewportConfiguration::updateConfiguration()
 
     double minimumViewportArgumentsDimension = 10;
     double maximumViewportArgumentsDimension = 10000;
-    applyViewportArgument(m_configuration.width, viewportArgumentsOverridesWidth, m_viewportArguments.width, minimumViewportArgumentsDimension, maximumViewportArgumentsDimension);
-    applyViewportArgument(m_configuration.height, viewportArgumentsOverridesHeight, m_viewportArguments.height, minimumViewportArgumentsDimension, maximumViewportArgumentsDimension);
+    applyViewportArgument(m_configuration.width, viewportArgumentsOverridesWidth, viewportArgumentsLength(m_viewportArguments.width), minimumViewportArgumentsDimension, maximumViewportArgumentsDimension);
+    applyViewportArgument(m_configuration.height, viewportArgumentsOverridesHeight, viewportArgumentsLength(m_viewportArguments.height), minimumViewportArgumentsDimension, maximumViewportArgumentsDimension);
 
     if (viewportArgumentsOverridesInitialScale || viewportArgumentsOverridesWidth || viewportArgumentsOverridesHeight) {
         m_configuration.initialScaleIsSet = viewportArgumentsOverridesInitialScale;
@@ -288,6 +288,15 @@ void ViewportConfiguration::updateConfiguration()
     if (!m_pageDidFinishDocumentLoad)
         m_usesMinimalUI = m_usesMinimalUI || m_viewportArguments.minimalUI;
 #endif
+}
+
+double ViewportConfiguration::viewportArgumentsLength(double length) const
+{
+    if (length == ViewportArguments::ValueDeviceWidth)
+        return activeMinimumLayoutSizeInScrollViewCoordinates().width();
+    if (length == ViewportArguments::ValueDeviceHeight)
+        return activeMinimumLayoutSizeInScrollViewCoordinates().height();
+    return length;
 }
 
 int ViewportConfiguration::layoutWidth() const

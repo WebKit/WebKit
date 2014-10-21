@@ -2955,15 +2955,6 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
     m_viewportArguments = ViewportArguments(origin);
     processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
 
-#if PLATFORM(IOS)
-    // FIXME: <rdar://problem/8955959> Investigate moving to ToT WebKit's extended Viewport Implementation
-    // Moving to ToT's implementation would mean calling findConfigurationForViewportData, which does
-    // bounds checking and determining concrete values for ValueAuto which we already do in UIKit.
-    // To maintain old behavior, we just need to update a few values, leaving Auto's for UIKit.
-    if (Page* page = this->page())
-        finalizeViewportArguments(m_viewportArguments, page->chrome().screenSize());
-#endif
-
     updateViewportArguments();
 }
 
