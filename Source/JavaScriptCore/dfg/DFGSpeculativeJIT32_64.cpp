@@ -4624,20 +4624,18 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand base(this, node->child1());
         SpeculateCellOperand property(this, node->child2());
         SpeculateCellOperand enumerator(this, node->child3());
-        GPRTemporary scratch(this);
         GPRTemporary resultPayload(this);
         GPRTemporary resultTag(this);
 
         GPRReg baseTagGPR = base.tagGPR();
         GPRReg basePayloadGPR = base.payloadGPR();
         GPRReg propertyGPR = property.gpr();
-        GPRReg scratchGPR = scratch.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg resultTagGPR = resultTag.gpr();
 
-        m_jit.load32(MacroAssembler::Address(basePayloadGPR, JSCell::structureIDOffset()), scratchGPR);
+        m_jit.load32(MacroAssembler::Address(basePayloadGPR, JSCell::structureIDOffset()), resultTagGPR);
         MacroAssembler::Jump wrongStructure = m_jit.branch32(MacroAssembler::NotEqual, 
-            scratchGPR, 
+            resultTagGPR,
             MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::cachedStructureIDOffset()));
 
         moveTrueTo(resultPayloadGPR);
