@@ -56,6 +56,16 @@ void DownloadManager::convertHandleToDownload(uint64_t downloadID, ResourceHandl
     m_downloads.add(downloadID, WTF::move(download));
 }
 
+void DownloadManager::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    // Download::resume() is responsible for setting the Download's resource request.
+    auto download = std::make_unique<Download>(*this, downloadID, ResourceRequest());
+
+    download->resume(resumeData, path, sandboxExtensionHandle);
+    ASSERT(!m_downloads.contains(downloadID));
+    m_downloads.add(downloadID, WTF::move(download));
+}
+
 void DownloadManager::cancelDownload(uint64_t downloadID)
 {
     Download* download = m_downloads.get(downloadID);

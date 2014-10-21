@@ -27,6 +27,7 @@
 #define Download_h
 
 #include "MessageSender.h"
+#include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Noncopyable.h>
 
@@ -63,7 +64,6 @@ namespace WebKit {
 
 class DownloadAuthenticationClient;
 class DownloadManager;
-class SandboxExtension;
 class WebPage;
 
 class Download : public IPC::MessageSender {
@@ -74,6 +74,7 @@ public:
 
     void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
+    void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancel();
 
     uint64_t downloadID() const { return m_downloadID; }

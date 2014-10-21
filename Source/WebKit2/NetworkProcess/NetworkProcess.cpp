@@ -236,6 +236,11 @@ void NetworkProcess::downloadRequest(uint64_t downloadID, const ResourceRequest&
     downloadManager().startDownload(downloadID, request);
 }
 
+void NetworkProcess::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    downloadManager().resumeDownload(downloadID, resumeData, path, sandboxExtensionHandle);
+}
+
 void NetworkProcess::cancelDownload(uint64_t downloadID)
 {
     downloadManager().cancelDownload(downloadID);

@@ -179,6 +179,7 @@ public:
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 
     DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
+    DownloadProxy* resumeDownload(const API::Data* resumeData, const String& path);
 
     void setInjectedBundleInitializationUserData(PassRefPtr<API::Object> userData) { m_injectedBundleInitializationUserData = userData; }
 

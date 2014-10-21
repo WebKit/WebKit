@@ -236,6 +236,11 @@ void Download::startWithHandle(ResourceHandle* resourceHandle, const ResourceRes
     static_cast<DownloadClient*>(m_downloadClient.get())->handleResponseLater(response);
 }
 
+void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
+{
+    notImplemented();
+}
+
 void Download::cancel()
 {
     if (!m_resourceHandle)

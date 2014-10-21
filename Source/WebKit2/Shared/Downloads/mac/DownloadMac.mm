@@ -88,6 +88,26 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
     [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
+void Download::resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    ASSERT(!m_nsURLDownload);
+    ASSERT(!m_delegate);
+
+    m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+    if (m_sandboxExtension)
+        m_sandboxExtension->consume();
+
+    m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
+
+    auto nsData = adoptNS([[NSData alloc] initWithBytes:resumeData.data() length:resumeData.size()]);
+    m_nsURLDownload = adoptNS([[NSURLDownload alloc] initWithResumeData:nsData.get() delegate:m_delegate.get() path:path]);
+
+    m_request = [m_nsURLDownload request];
+
+    // FIXME: Allow this to be changed by the client.
+    [m_nsURLDownload setDeletesFileUponFailure:NO];
+}
+
 void Download::cancel()
 {
     [m_nsURLDownload cancel];

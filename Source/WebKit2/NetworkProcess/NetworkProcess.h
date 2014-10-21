@@ -113,6 +113,7 @@ private:
     void ensurePrivateBrowsingSession(WebCore::SessionID);
     void destroyPrivateBrowsingSession(WebCore::SessionID);
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
+    void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);

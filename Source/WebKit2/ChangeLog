@@ -1,3 +1,76 @@
+2014-10-21  Jeff Miller  <jeffm@apple.com>
+
+        WKContext needs to provide an API to resume a download
+        https://bugs.webkit.org/show_bug.cgi?id=137507
+
+        Reviewed by Darin Adler.
+
+        This patch adds WKContextResumeDownload(), which is only supported on the Mac, and requires the
+        resume data from WKDownloadGetResumeData().
+
+        We have to create a sandbox extension for the partially downloaded file in the UI process so the
+        network or web process can resume writing to it.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::resumeDownload):
+        Added, calls through to DownloadManager::resumeDownload().
+
+        * NetworkProcess/NetworkProcess.h:
+        Added resumeDownload().
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        Added ResumeDownload message.
+
+        * Shared/Downloads/Download.h:
+        Added resume().
+
+        * Shared/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::resumeDownload):
+        Added. The URL being downloaded is part of the opaque resumeData, so we can't specify it when the
+        Download is constructed.
+
+        * Shared/Downloads/DownloadManager.h:
+        Added resumeDownload().
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::resume):
+        Added, not implemented on this platform.
+
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::resume):
+        Added. Consumes the sandbox extension, resumes the download, and sets m_request after the
+        NSURLDownload has been created. Note that we already have code to revoke the sandbox extension when
+        the download is finished, canceled, or fails.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::resume):
+        Added, not implemented on this platform.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextResumeDownload):
+        Added.
+
+        * UIProcess/API/C/WKContext.h:
+        Added WKContextResumeDownload().
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::resumeDownload):
+        Added. Creates a sandbox extension for the existing file and includes it in the message to the
+        network or web process.
+
+        * UIProcess/WebContext.h:
+        Added resumeDownload().
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::resumeDownload):
+        Added, calls through to DownloadManager::resumeDownload().
+
+        * WebProcess/WebProcess.h:
+        Added resumeDownload().
+
+        * WebProcess/WebProcess.messages.in:
+        Added ResumeDownload message.
+
 2014-10-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Change the default TLS errors policy to WEBKIT_TLS_ERRORS_POLICY_FAIL

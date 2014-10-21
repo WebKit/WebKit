@@ -127,6 +127,11 @@ void Download::start()
     notImplemented();
 }
 
+void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
+{
+    notImplemented();
+}
+
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
     // FIXME: For some reason the filename needs to be accessed or it may be incorrect after

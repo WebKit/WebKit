@@ -889,6 +889,25 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
     return downloadProxy;
 }
 
+DownloadProxy* WebContext::resumeDownload(const API::Data* resumeData, const String& path)
+{
+    DownloadProxy* downloadProxy = createDownloadProxy(ResourceRequest());
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    if (!path.isEmpty())
+        SandboxExtension::createHandle(path, SandboxExtension::ReadWrite, sandboxExtensionHandle);
+
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess() && networkProcess()) {
+        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
+        return downloadProxy;
+    }
+#endif
+
+    m_processes[0]->send(Messages::WebProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
+    return downloadProxy;
+}
+
 void WebContext::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
     if (m_processes.isEmpty()) {

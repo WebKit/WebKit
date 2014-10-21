@@ -1057,6 +1057,11 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
     downloadManager().startDownload(downloadID, requestWithOriginalURL);
 }
 
+void WebProcess::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    downloadManager().resumeDownload(downloadID, resumeData, path, sandboxExtensionHandle);
+}
+
 void WebProcess::cancelDownload(uint64_t downloadID)
 {
     downloadManager().cancelDownload(downloadID);

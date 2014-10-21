@@ -61,8 +61,9 @@ messages -> WebProcess LegacyReceiver {
     void StopMemorySampler();
 
     # Downloads. This should really be in a Download.messages.in, but it seemed unnecessary to create a new file just for
-    # two messages.
+    # three messages.
     DownloadRequest(uint64_t downloadID, uint64_t initiatingPageID, WebCore::ResourceRequest request)
+    ResumeDownload(uint64_t downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(uint64_t downloadID)
 
     SetTextCheckerState(WebKit::TextCheckerState textCheckerState)

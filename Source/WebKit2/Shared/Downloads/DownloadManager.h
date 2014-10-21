@@ -26,6 +26,7 @@
 #ifndef DownloadManager_h
 #define DownloadManager_h
 
+#include "SandboxExtension.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -38,6 +39,7 @@ class ResourceResponse;
 
 namespace IPC {
 class Connection;
+class DataReference;
 }
 
 namespace WebKit {
@@ -64,6 +66,8 @@ public:
 
     void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
     void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+
+    void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
 
     void cancelDownload(uint64_t downloadID);
 
