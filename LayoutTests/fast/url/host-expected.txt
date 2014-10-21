@@ -33,16 +33,16 @@ PASS canonicalize('http://go/@ogle.com/') is 'http://go/@ogle.com/'
 FAIL canonicalize('http://www.lookout.net::==80::==443::/') should be http://www.lookout.net::%3D%3D80::%3D%3D443:/. Was http://www.lookout.net::==80::==443::/.
 PASS canonicalize('http://www.lookout.net::80::443/') is 'http://www.lookout.net::80::443/'
 PASS canonicalize('http://\.//') is 'http://.//'
-FAIL canonicalize('http:////:@//') should be http:////. Was http://:@//.
+FAIL canonicalize('http:////:@//') should be http:////. Was http:////:@//.
 PASS canonicalize('http://\google.com/foo/') is 'http://google.com/foo/'
-FAIL canonicalize('http://\\google.com/foo/') should be http://google.com/foo/. Was http:/google.com/foo/.
-PASS canonicalize('http:////asdf@//') is 'http://asdf@//'
+PASS canonicalize('http://\\google.com/foo/') is 'http://google.com/foo/'
+FAIL canonicalize('http:////asdf@//') should be http://asdf@//. Was http:////asdf@//.
 PASS canonicalize('http:////:81/') is 'http://:81/'
 PASS canonicalize('http://:///') is 'http://:///'
 PASS canonicalize('http://c:/') is 'http://c/'
 PASS canonicalize('http://xxxx:/') is 'http://xxxx/'
 PASS canonicalize('http://.:./') is 'http://.:./'
-FAIL canonicalize('http://////@google.com//') should be http://google.com//. Was http:////@google.com//.
+PASS canonicalize('http://////@google.com//') is 'http://google.com//'
 PASS canonicalize('http://@google.com/') is 'http://google.com/'
 PASS successfullyParsed is true
 

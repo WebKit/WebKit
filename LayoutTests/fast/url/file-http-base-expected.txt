@@ -27,7 +27,7 @@ FAIL canonicalize('file:c:\\foo\\bar.html') should be file:///c:/foo/bar.html. W
 FAIL canonicalize('file:c|//foo\\bar.html') should be file:///c%7C//foo/bar.html. Was file://c|//foo/bar.html.
 FAIL canonicalize('//') should be file:///. Was http:/.
 FAIL canonicalize('///') should be file:///. Was http:/.
-FAIL canonicalize('///test') should be file:///test. Was http:/test.
+FAIL canonicalize('///test') should be file:///test. Was http://test/.
 PASS canonicalize('file://test') is 'file://test/'
 FAIL canonicalize('file://localhost') should be file://localhost/. Was file:///.
 FAIL canonicalize('file://localhost/') should be file://localhost/. Was file:///.

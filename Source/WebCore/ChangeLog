@@ -1,3 +1,17 @@
+2014-10-14  Dan Bernstein  <mitz@apple.com>
+
+        URLs that start with http:/// and https:/// lose two slashes when parsed, causing assertion failure and inconsistent behavior
+        https://bugs.webkit.org/show_bug.cgi?id=137718
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added cases to fast/loader/url-parse-1.html.
+
+        * platform/URL.cpp:
+        (WebCore::URL::parse): In hierarchical schemes other than file:, ignore any additional
+        slashes after the ://, as prescribed by the authority-ignore-slashes state in the current
+        URL spec.
+
 2014-10-16  Chris Dumez  <cdumez@apple.com>
 
         Leverage the new RenderElement::m_isCSSAnimating flag in more places
