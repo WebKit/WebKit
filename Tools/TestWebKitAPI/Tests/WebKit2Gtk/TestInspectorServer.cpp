@@ -233,7 +233,7 @@ static void openRemoteDebuggingSession(InspectorServerTest* test, gconstpointer)
     g_assert(javascriptResult);
     g_assert(!error.get());
 
-    String resolvedURL = String("http://127.0.0.1:2999/") + String::fromUTF8(WebViewTest::javascriptResultToCString(javascriptResult));
+    String resolvedURL = String("http://127.0.0.1:2999") + String::fromUTF8(WebViewTest::javascriptResultToCString(javascriptResult));
     test->loadURI(resolvedURL.utf8().data());
     test->waitUntilLoadFinished();
 
