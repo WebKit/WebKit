@@ -102,21 +102,30 @@ static inline bool skipValue(const String& str, unsigned& pos)
     return pos != start;
 }
 
-bool isValidHTTPHeaderValue(const String& name)
+// See RFC 7230, Section 3.2.3.
+bool isValidHTTPHeaderValue(const String& value)
 {
-    // FIXME: This should really match name against
-    // field-value in section 4.2 of RFC 2616.
-
-    return !name.contains('\r') && !name.contains('\n');
+    UChar c = value[0];
+    if (c == ' ' || c == '\t')
+        return false;
+    c = value[value.length() - 1];
+    if (c == ' ' || c == '\t')
+        return false;
+    for (unsigned i = 0; i < value.length(); ++i) {
+        c = value[i];
+        if (c == 0x7F || c > 0xFF || (c < 0x20 && c != '\t'))
+            return false;
+    }
+    return true;
 }
 
-// See RFC 2616, Section 2.2.
-bool isValidHTTPToken(const String& characters)
+// See RFC 7230, Section 3.2.6.
+bool isValidHTTPToken(const String& value)
 {
-    if (characters.isEmpty())
+    if (value.isEmpty())
         return false;
-    for (unsigned i = 0; i < characters.length(); ++i) {
-        UChar c = characters[i];
+    for (unsigned i = 0; i < value.length(); ++i) {
+        UChar c = value[i];
         if (c <= 0x20 || c >= 0x7F
             || c == '(' || c == ')' || c == '<' || c == '>' || c == '@'
             || c == ',' || c == ';' || c == ':' || c == '\\' || c == '"'
