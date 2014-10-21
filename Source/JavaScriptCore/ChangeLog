@@ -1,3 +1,13 @@
+2014-10-21  Milan Crha  <mcrha@redhat.com>
+
+        Move JSC::MacroAssemblerX86Common::s_sse2CheckState definition to MacroAssemblerX86Common.cpp.
+        <https://webkit.org/b/137807>
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+        * jit/JIT.cpp:
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed add back copyright line that was accidentally removed.

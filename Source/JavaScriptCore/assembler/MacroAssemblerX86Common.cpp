@@ -78,6 +78,10 @@ void MacroAssemblerX86Common::ProbeContext::dump(const char* indentation)
 
 #endif // USE(MASM_PROBE)
 
+#if CPU(X86) && !OS(MAC_OS_X)
+MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
