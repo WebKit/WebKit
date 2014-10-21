@@ -158,6 +158,9 @@ public:
     bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
+    bool isCSSAnimating() const { return m_isCSSAnimating; }
+    void setIsCSSAnimating(bool b) { m_isCSSAnimating = b; }
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,
@@ -224,13 +227,14 @@ private:
     virtual void newImageAnimationFrameAvailable(CachedImage&) final override;
 
     unsigned m_baseTypeFlags : 6;
-    bool m_ancestorLineBoxDirty : 1;
-    bool m_hasInitializedStyle : 1;
+    unsigned m_ancestorLineBoxDirty : 1;
+    unsigned m_hasInitializedStyle : 1;
 
-    bool m_renderInlineAlwaysCreatesLineBoxes : 1;
-    bool m_renderBoxNeedsLazyRepaint : 1;
-    bool m_hasPausedImageAnimations : 1;
-    bool m_hasCounterNodeMap : 1;
+    unsigned m_renderInlineAlwaysCreatesLineBoxes : 1;
+    unsigned m_renderBoxNeedsLazyRepaint : 1;
+    unsigned m_hasPausedImageAnimations : 1;
+    unsigned m_hasCounterNodeMap : 1;
+    unsigned m_isCSSAnimating : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
