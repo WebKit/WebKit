@@ -1,3 +1,32 @@
+2014-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert part of r174543 that broke grid layout tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::specifiedValueForGridTrackBreadth):
+
+2014-10-09  Dean Jackson  <dino@apple.com>
+
+        Computed style for clip is wrong with respect to auto
+        https://bugs.webkit.org/show_bug.cgi?id=137567
+
+        Reviewed by Simon Fraser.
+
+        Make sure that the computed style of clip returns the
+        correct value when the input is "auto", or in this
+        case "rect(auto, auto, auto, auto)". Before this
+        patch it returned "rect(0px, 0px, 0px, 0px)" which
+        was completely wrong.
+
+        Test: fast/css/computed-clip-with-auto-rect.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::autoOrZoomAdjustedValue): Helper function to make the correct keyword or length.
+        (WebCore::specifiedValueForGridTrackBreadth): It can use the helper too.
+        (WebCore::ComputedStyleExtractor::propertyValue): If the
+        top/right/bottom/left is "auto", add that identifier
+        to the output rectangle.
+
 2014-10-09  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Decrement the font loading count before notifying callbacks

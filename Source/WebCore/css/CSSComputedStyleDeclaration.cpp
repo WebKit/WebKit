@@ -721,6 +721,14 @@ static PassRef<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, c
     return zoomAdjustedPixelValue(valueForLength(length, 0), style);
 }
 
+static PassRef<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const RenderStyle* style)
+{
+    if (length.isAuto())
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+
+    return zoomAdjustedPixelValue(valueForLength(length, 0), style);
+}
+
 static PassRef<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style)
 {
     auto list = CSSValueList::createSpaceSeparated();
@@ -2744,10 +2752,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (!style->hasClip())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             RefPtr<Rect> rect = Rect::create();
-            rect->setTop(zoomAdjustedPixelValue(style->clip().top().value(), style.get()));
-            rect->setRight(zoomAdjustedPixelValue(style->clip().right().value(), style.get()));
-            rect->setBottom(zoomAdjustedPixelValue(style->clip().bottom().value(), style.get()));
-            rect->setLeft(zoomAdjustedPixelValue(style->clip().left().value(), style.get()));
+            rect->setTop(autoOrZoomAdjustedValue(style->clip().top(), style.get()));
+            rect->setRight(autoOrZoomAdjustedValue(style->clip().right(), style.get()));
+            rect->setBottom(autoOrZoomAdjustedValue(style->clip().bottom(), style.get()));
+            rect->setLeft(autoOrZoomAdjustedValue(style->clip().left(), style.get()));
             return cssValuePool().createValue(rect.release());
         }
         case CSSPropertySpeak:

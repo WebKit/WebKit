@@ -1,3 +1,16 @@
+2014-10-09  Dean Jackson  <dino@apple.com>
+
+        Computed style for clip is wrong with respect to auto
+        https://bugs.webkit.org/show_bug.cgi?id=137567
+
+        Reviewed by Simon Fraser.
+
+        Test that an input of clip: rect(auto, auto, auto, auto)
+        is the same on the way out.
+
+        * fast/css/computed-clip-with-auto-rect-expected.txt: Added.
+        * fast/css/computed-clip-with-auto-rect.html: Added.
+
 2014-10-09  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Decrement the font loading count before notifying callbacks
