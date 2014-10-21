@@ -1,3 +1,28 @@
+2014-10-08  Darin Adler  <darin@apple.com>
+
+        ASSERTION FAILED: underlyingStringIsValid()
+        https://bugs.webkit.org/show_bug.cgi?id=137502
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables): Take a StringView instead of a String.
+        (WebCore::writeTextRun): Ditto.
+        (WebCore::writeSimpleLine): Ditto.
+
+        * rendering/RenderTreeAsText.h: Removed unneeded include, tweaked formatting,
+        changed quoteAndEscapeNonPrintables to take a StringView.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow): Tighten code using a modern for loop.
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow): Update to work with a
+        StringView result for SimpleLineLayout::RunResolver::Run::text.
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text): Changed return type to
+        StringView to fix the lifetime bug and also to improve performance by getting
+        rid of the need to allocate and destroy a StringImpl object.
+
 2014-10-07  Martin Hock  <mhock@apple.com>
 
         Defer resolution of viewport size.

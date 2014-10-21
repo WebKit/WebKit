@@ -25,7 +25,6 @@
 
 #ifndef RenderTreeAsText_h
 #define RenderTreeAsText_h
-#include "TextStream.h"
 
 #include <wtf/Forward.h>
 
@@ -60,14 +59,13 @@ class RenderTreeAsText {
 // it to use visitedDependentColor instead. (This just involves rebaselining many results though, so for now it's
 // not being done).
 public:
-static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior);
+    static void writeRenderObject(TextStream&, const RenderObject&, RenderAsTextBehavior);
 };
 
 // Helper function shared with SVGRenderTreeAsText
-String quoteAndEscapeNonPrintables(const String&);
+String quoteAndEscapeNonPrintables(StringView);
 
 WEBCORE_EXPORT String counterValueForElement(Element*);
-
 WEBCORE_EXPORT String markerTextForListItem(Element*);
 
 } // namespace WebCore
