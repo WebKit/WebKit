@@ -1,3 +1,15 @@
+2014-10-20  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash in ATI display driver in accelerated compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=137879
+
+        Reviewed by Darin Adler.
+
+        Speculative fix; don't enable antialiasing when drawing textures.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for Accessibility objects
