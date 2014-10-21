@@ -1,3 +1,16 @@
+2014-10-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r174676): It broke the !ENABLE(VIDEO) build
+        https://bugs.webkit.org/show_bug.cgi?id=137916
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix the !ENABLE(VIDEO) build by adding an #if ENABLE(VIDEO) where
+        needed.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
 2014-10-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Google Search (mobile) video thumbnails are too large.
