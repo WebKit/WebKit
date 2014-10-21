@@ -1,3 +1,15 @@
+2014-10-02  JinYoung Hur  <hurims@gmail.com>
+
+        Minor bug in UIClient::exceededDatabaseQuota()
+        https://bugs.webkit.org/show_bug.cgi?id=137213
+
+        Reviewed by Anders Carlsson.
+
+        Make sure not to call the completion handler twice if exceededDatabaseQuota is null.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+
 2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds
