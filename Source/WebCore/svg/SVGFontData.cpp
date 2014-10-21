@@ -98,7 +98,7 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
 
     if (!glyphPageZero) {
         fontData->setSpaceGlyph(0);
-        fontData->setSpaceWidth(0);
+        fontData->setSpaceWidths(0);
         fontData->setAvgCharWidth(0);
         fontData->setMaxCharWidth(ascent);
         return;
@@ -107,7 +107,7 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     // Calculate space width.
     Glyph spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
     fontData->setSpaceGlyph(spaceGlyph);
-    fontData->setSpaceWidth(fontData->widthForGlyph(spaceGlyph));
+    fontData->setSpaceWidths(fontData->widthForGlyph(spaceGlyph));
 
     // Estimate average character width.
     Glyph numeralZeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;

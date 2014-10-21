@@ -3,10 +3,12 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <metadata></metadata>
 <defs>
-<font id="Litherum" horiz-adv-x="1024">
+<font id="Litherum" horiz-adv-x="14">
 <font-face units-per-em="14" ascent="14" descent="-7"/>
-<glyph unicode="|" horiz-adv-x="14" d="M5 -7v21h4v-21z"/>
-<glyph unicode="&#x20001;" horiz-adv-x="14" d="M5 -7v21h4v-21z"/>
+<glyph unicode="|" d="M5 -7v21h4v-21z"/>
+<glyph unicode="&#x20001;" d="M5 -7v21h4v-21z"/>
+<glyph unicode="a" d="M0 -7v21h14v-21z"/>
+<glyph unicode=" "/>
 </font>
 </defs>
 </svg>

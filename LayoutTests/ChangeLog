@@ -1,3 +1,15 @@
+2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text drawn with an SVG font has no spaces when word-rounding hacks are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=137463
+
+        Reviewed by Darin Adler.
+
+        Make sure that spaces are present.
+
+        * svg/text/svg-font-word-rounding-hacks-spaces.html:
+        * svg/text/svg-font-word-rounding-hacks-spaces-expected.html:
+
 2014-10-06  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (Simple Line Layout): Inline block baselines computed incorrectly

@@ -1,3 +1,27 @@
+2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text drawn with an SVG font has no spaces when word-rounding hacks are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=137463
+
+        Reviewed by Darin Adler.
+
+        When rounding hacks are enabled, we use the "adjusted space width" instead of the
+        regular space width. However, the SVG-font-specific implementation of the
+        SimpleFontData constructor doesn't initialize this value, so it was getting set
+        to an undefined value (which happened to be close to 0 in my tests).
+
+        Test: svg/text/svg-font-word-rounding-hacks-spaces.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        (WebCore::CSSFontFaceSource::ensureFontData):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::getSVGFontById):
+        * platform/graphics/SimpleFontData.h:
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFontData):
+
 2014-10-08  Darin Adler  <darin@apple.com>
 
         ASSERTION FAILED: underlyingStringIsValid()

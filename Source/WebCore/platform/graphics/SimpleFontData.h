@@ -159,7 +159,11 @@ public:
 
     float spaceWidth() const { return m_spaceWidth; }
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
-    void setSpaceWidth(float spaceWidth) { m_spaceWidth = spaceWidth; }
+    void setSpaceWidths(float spaceWidth)
+    {
+        m_spaceWidth = spaceWidth;
+        m_adjustedSpaceWidth = spaceWidth;
+    }
 
 #if USE(CG) || USE(CAIRO)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }

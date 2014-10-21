@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("resources/Litherum.svg") format(svg)
+}
+</style>
+<script>
+if (window.internals)
+    window.internals.allowRoundingHacks();
+</script>
+</head>
+<body>
+This test makes sure that text drawn with an SVG font with word-wrapping hacks has spaces.
+The test is successful if the space between the two boxes below is the same as the width of each of the boxes.
+<div style="font: 14px Litherum;">a a</div>
+</body>
+</html>
