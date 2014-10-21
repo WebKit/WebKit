@@ -1,5 +1,14 @@
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Unskip inspector server unit tests.
+
+        They should pass now.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
+2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
         https://bugs.webkit.org/show_bug.cgi?id=132044
 
