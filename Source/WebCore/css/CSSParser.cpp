@@ -3163,11 +3163,10 @@ bool CSSParser::parseJustifySelf(CSSPropertyID propId, bool important)
     else {
         overflowAlignmentKeyword = cssValuePool().createIdentifierValue(value->id);
         value = m_valueList->next();
-        if (value) {
-            if (!isItemPositionKeyword(value->id))
-                return false;
+        if (value && isItemPositionKeyword(value->id))
             position = cssValuePool().createIdentifierValue(value->id);
-        }
+        else
+            return false;
     }
 
     if (m_valueList->next())

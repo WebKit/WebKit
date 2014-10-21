@@ -47,6 +47,7 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is '
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is 'auto'
 
 Test the value 'initial'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-justify-self') is 'center'

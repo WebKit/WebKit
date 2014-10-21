@@ -1,3 +1,21 @@
+2014-10-21  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        'true' isn't a valid value for justify-self
+        https://bugs.webkit.org/show_bug.cgi?id=137913
+
+        Reviewed by Andreas Kling.
+
+        Merged from Blink (patch by dstockwell):
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=174638>
+
+        CSS Box Alignment Module Level 3:
+        http://dev.w3.org/csswg/css-align/#justify-self-property
+
+        Add a bad case where "justify-self: true"
+
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+
 2014-10-21  Michael Saboff  <msaboff@apple.com>
 
         Change native call frames to use the scope from their Callee instead of their caller's scope
