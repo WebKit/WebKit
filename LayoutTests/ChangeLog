@@ -1,3 +1,14 @@
+2014-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r169024): Undetermined text is not displayed in the search field of Adobe Help Website
+        https://bugs.webkit.org/show_bug.cgi?id=137679
+        rdar://problem/18450335
+
+        Reviewed by Enrica Casucci.
+
+        * platform/mac/editing/input/selected-composed-text-painting-expected.html: Added.
+        * platform/mac/editing/input/selected-composed-text-painting.html: Added.
+
 2014-10-14  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (Safari 7.1/8.0): Border-radius and overflow hidden renders incorrectly.

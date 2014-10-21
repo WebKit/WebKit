@@ -1,3 +1,17 @@
+2014-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r169024): Undetermined text is not displayed in the search field of Adobe Help Website
+        https://bugs.webkit.org/show_bug.cgi?id=137679
+        rdar://problem/18450335
+
+        Reviewed by Enrica Casucci.
+
+        Test: platform/mac/editing/input/selected-composed-text-painting.html
+
+        * rendering/InlineTextBox.cpp: (WebCore::InlineTextBox::paint): We do not paint
+        selection beckground for unconfirmed text with underlines, so we should use a regular
+        style for text painting, as well.
+
 2014-10-14  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r159208): Crash when clicking scrubber after navigating away/back to video
