@@ -86,6 +86,33 @@ private:
         m_insertionSet.execute(block);
     }
     
+    inline unsigned indexOfNode(Node* node, unsigned indexToSearchFrom)
+    {
+        unsigned index = indexToSearchFrom;
+        while (index) {
+            if (m_block->at(index) == node)
+                break;
+            index--;
+        }
+        ASSERT(m_block->at(index) == node);
+        return index;
+    }
+
+    inline unsigned indexOfFirstNodeOfExitOrigin(CodeOrigin& originForExit, unsigned indexToSearchFrom)
+    {
+        unsigned index = indexToSearchFrom;
+        ASSERT(m_block->at(index)->origin.forExit == originForExit);
+        while (index) {
+            index--;
+            if (m_block->at(index)->origin.forExit != originForExit) {
+                index++;
+                break;
+            }
+        }
+        ASSERT(m_block->at(index)->origin.forExit == originForExit);
+        return index;
+    }
+    
     void fixupNode(Node* node)
     {
         NodeType op = node->op();
@@ -644,7 +671,7 @@ private:
             case Array::Arguments:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
-                insertStoreBarrier(m_indexInBlock, child1);
+                insertStoreBarrier(m_indexInBlock, child1, child3);
                 break;
             default:
                 fixEdge<KnownCellUse>(child1);
@@ -682,7 +709,7 @@ private:
                 break;
             case Array::Contiguous:
             case Array::ArrayStorage:
-                insertStoreBarrier(m_indexInBlock, node->child1());
+                insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
                 break;
             default:
                 break;
@@ -854,7 +881,7 @@ private:
 
         case PutClosureVar: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child3());
             break;
         }
 
@@ -899,7 +926,7 @@ private:
         case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
             break;
         }
 
@@ -942,13 +969,13 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
             break;
         }
             
         case MultiPutByOffset: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
             break;
         }
             
@@ -1635,10 +1662,57 @@ private:
         edge.setUseKind(useKind);
     }
     
-    void insertStoreBarrier(unsigned indexInBlock, Edge child1)
+    void insertStoreBarrier(unsigned indexInBlock, Edge base, Edge value = Edge())
     {
-        Node* barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->origin, child1);
-        m_insertionSet.insert(indexInBlock, barrierNode);
+        if (!!value) {
+            if (value->shouldSpeculateInt32()) {
+                insertCheck<Int32Use>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateBoolean()) {
+                insertCheck<BooleanUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateOther()) {
+                insertCheck<OtherUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateNumber()) {
+                insertCheck<NumberUse>(indexInBlock, value.node());
+                return;
+            }
+            
+            if (value->shouldSpeculateNotCell()) {
+                insertCheck<NotCellUse>(indexInBlock, value.node());
+                return;
+            }
+        }
+
+        m_insertionSet.insertNode(
+            indexInBlock, SpecNone, StoreBarrier, m_currentNode->origin, base);
+    }
+    
+    template<UseKind useKind>
+    void insertCheck(unsigned indexInBlock, Node* node)
+    {
+        observeUseKindOnNode<useKind>(node);
+        CodeOrigin& checkedNodeOrigin = node->origin.forExit;
+        CodeOrigin& currentNodeOrigin = m_currentNode->origin.forExit;
+        if (currentNodeOrigin == checkedNodeOrigin) {
+            // The checked node is within the same bytecode. Hence, the earliest
+            // position we can insert the check is right after the checked node.
+            indexInBlock = indexOfNode(node, indexInBlock) + 1;
+        } else {
+            // The checked node is from a preceding bytecode. Hence, the earliest
+            // position we can insert the check is at the start of the current
+            // bytecode.
+            indexInBlock = indexOfFirstNodeOfExitOrigin(currentNodeOrigin, indexInBlock);
+        }
+        m_insertionSet.insertOutOfOrderNode(
+            indexInBlock, SpecNone, Check, m_currentNode->origin, Edge(node, useKind));
     }
 
     void fixIntConvertingEdge(Edge& edge)

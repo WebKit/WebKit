@@ -1,3 +1,108 @@
+2014-10-20  Mark Lam  <mark.lam@apple.com>
+
+        [Follow up] Web Process crash when starting the web inspector after r174025.
+        <https://webkit.org/b/137340>
+
+        Reviewed by Geoffrey Garen.
+
+        Applied Geoff's feedback to clean up some code for better clarity after
+        r174856.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::insertCheck):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertOutOfOrder):
+
+2014-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Web Process crash when starting the web inspector after r174025.
+        <https://webkit.org/b/137340>
+
+        Reviewed by Filip Pizlo.
+
+        After r174025, we can generate a bad graph in the DFG fixup phase like so:
+
+            102:<!0:-> StoreBarrier(Check:KnownCell:@19, ..., bc#44)
+            60:<!0:->  PutStructure(Check:KnownCell:@19, ..., bc#44)
+            103:<!0:-> Check(Check:NotCell:@54, ..., bc#44)
+                    // ^-- PutByOffset's StoreBarrier has been elided and replaced
+                    //     with a speculation check which can OSR exit.
+            61:<!0:->  PutByOffset(Check:KnownCell:@19, ..., bc#44)
+
+        As a result, the structure change will get executed even if we end up OSR
+        exiting before the PutByOffset.  In the baseline JIT code, the structure now
+        erroneously tells the put operation that there is a value in that property
+        slot when it is actually uninitialized (hence, the crash).
+
+        The fix is to insert the Check at the earliest point possible:
+
+        1. If the checked node is in the same bytecode as the PutByOffset, then
+           the earliest point where we can insert the Check is right after the
+           checked node.
+
+        2. If the checked node is from a preceding bytecode (before the PutByOffset),
+           then the earliest point where we can insert the Check is at the start
+           of the current bytecode.
+
+        Also reverted the workaround from r174749: https://webkit.org/b/137758.
+
+        Benchmark results appear to be a wash on aggregate.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::indexOfNode):
+        (JSC::DFG::FixupPhase::indexOfFirstNodeOfExitOrigin):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertCheck):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertOutOfOrder):
+        (JSC::DFG::InsertionSet::insertOutOfOrderNode):
+
+2014-10-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r174025): remote inspector crashes frequently when executing inspector frontend's JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=137758
+
+        Rubber stamped by Filip Pizlo.
+
+        Reverted r174025 for just PutByOffset Nodes.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2014-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r174025): Invalid cast in JSC::asString
+        https://bugs.webkit.org/show_bug.cgi?id=137224
+
+        Reviewed by Geoffrey Garen.
+        
+        Store barrier elision in fixup depends on checking the type of the value being stored. It's very important that
+        when we speak of "the value being stored" we are really referring to the right value.
+        
+        The bug here was that the PutClosureVar case was assuming that child2 is the value being stored. It's actually
+        child3. So we were incorrectly removing all barriers from PutClosureVar.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2014-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG shouldn't insert store barriers when it has it on good authority that we're not storing a cell
+        https://bugs.webkit.org/show_bug.cgi?id=137161
+
+        Reviewed by Mark Hahnenberg.
+        
+        This looks like a 1% Octane speed-up.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotCellSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        (JSC::DFG::FixupPhase::insertCheck):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateNotCell):
+
 2014-09-26  Peter Varga  <pvarga@webkit.org>
 
         Fix typo in YARR at BOL check

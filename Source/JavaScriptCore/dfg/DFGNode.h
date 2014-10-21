@@ -1611,6 +1611,11 @@ struct Node {
         return isCellSpeculation(prediction());
     }
     
+    bool shouldSpeculateNotCell()
+    {
+        return isNotCellSpeculation(prediction());
+    }
+    
     static bool shouldSpeculateBoolean(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateBoolean() && op2->shouldSpeculateBoolean();

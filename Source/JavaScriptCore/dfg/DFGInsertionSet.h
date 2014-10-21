@@ -114,6 +114,32 @@ public:
         return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
     }
 
+    Node* insertOutOfOrder(const Insertion& insertion)
+    {
+        size_t targetIndex = insertion.index();
+        size_t entry = m_insertions.size();
+        while (entry) {
+            entry--;
+            if (m_insertions[entry].index() <= targetIndex) {
+                entry++;
+                break;
+            }
+        }
+        m_insertions.insert(entry, insertion);
+        return insertion.element();
+    }
+    
+    Node* insertOutOfOrder(size_t index, Node* element)
+    {
+        return insertOutOfOrder(Insertion(index, element));
+    }
+
+    template<typename... Params>
+    Node* insertOutOfOrderNode(size_t index, SpeculatedType type, Params... params)
+    {
+        return insertOutOfOrder(index, m_graph.addNode(type, params...));
+    }
+
     void execute(BasicBlock* block)
     {
         executeInsertions(*block, m_insertions);

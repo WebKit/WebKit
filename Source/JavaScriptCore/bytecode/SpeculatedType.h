@@ -98,6 +98,11 @@ inline bool isCellSpeculation(SpeculatedType value)
     return !!(value & SpecCell) && !(value & ~SpecCell);
 }
 
+inline bool isNotCellSpeculation(SpeculatedType value)
+{
+    return !(value & SpecCell) && value;
+}
+
 inline bool isObjectSpeculation(SpeculatedType value)
 {
     return !!(value & SpecObject) && !(value & ~SpecObject);
