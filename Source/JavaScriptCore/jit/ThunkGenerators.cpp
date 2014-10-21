@@ -801,6 +801,7 @@ double jsRound(double d)
         HIDE_SYMBOL(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "b " GLOBAL_REFERENCE(function) "\n" \
+        ".previous" \
     ); \
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \

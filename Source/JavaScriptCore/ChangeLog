@@ -1,3 +1,26 @@
+2014-10-09  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Ensure that inline assembly Thunk functions don't conflict with the section designations of the compiler
+        https://bugs.webkit.org/show_bug.cgi?id=137434
+
+        Reviewed by Michael Saboff.
+
+        The ARM64 version of the defineUnaryDoubleOpWrapper macro in
+        ThunkGenerators.cpp contains inline assembly with .text assembler
+        directive followed by a static variable declaration. This macro gets
+        expanded several times afterwards, however, only during the compilation
+        of the first expansion does gcc insert a .data assembler directive
+        before the assembled version of the static variable. Thus, only the
+        first variable gets allocated in the .data section, all the others
+        remain in .text. If JavaScriptCore is built as a shared library then
+        this causes a segmentation fault during dynamic linking.
+
+        This patch puts a .previous directive at the end of the inline assembly
+        to ensure that the assumptions of the compiler about the sections are
+        not broken and the following variable goes to the right place.
+
+        * jit/ThunkGenerators.cpp:
+
 2014-10-06  Oliver Hunt  <oliver@apple.com>
 
         Fix cloop build
