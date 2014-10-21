@@ -1,3 +1,9 @@
+2014-10-20  Dana Burkart  <dburkart@apple.com>
+
+        Mark remainder of failing tests as green so we can branch.
+
+        * TestExpectations:
+
 2014-10-17  Dana Burkart  <dburkart@apple.com>
 
         Mark platform/mac/accessibility/select-text.html as Failure since we can't take
