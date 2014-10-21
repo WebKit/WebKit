@@ -1,0 +1,5 @@
+insertedText
+Reentrancy, cancellation and explicit abort. Check that we don't crash and report the expected abort event.
+DOMContentLoaded
+PASS
+

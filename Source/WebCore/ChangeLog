@@ -1,3 +1,22 @@
+2014-10-14  Youenn Fablet  <youennf@gmail.com>
+
+        [XHR] Abort method execution when m_loader->cancel() in internalAbort() caused reentry
+        https://bugs.webkit.org/show_bug.cgi?id=126975
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merging https://chromium.googlesource.com/chromium/blink/+/0d75daf2053631518606ae15daaece701a25b2c4
+        Ensuring new test from https://codereview.chromium.org/76133002/ is passing.
+
+        Test: http/tests/xmlhttprequest/reentrant-cancel-abort.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): exit early if internalAbort asks so
+        (WebCore::XMLHttpRequest::abort): exit early if internalAbort asks so
+        (WebCore::XMLHttpRequest::internalAbort): ask calling function to exit early if a new loader is created during the cancellation of the loader (potential reentrant case through window.onload callback)   
+        (WebCore::XMLHttpRequest::didTimeout): exit early if internalAbort asks so
+        * xml/XMLHttpRequest.h:
+
 2014-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Revert part of r174543 that broke grid layout tests.

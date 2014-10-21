@@ -1,3 +1,19 @@
+2014-10-14  Youenn Fablet  <youennf@gmail.com>
+
+        [XHR] Abort method execution when m_loader->cancel() in internalAbort() caused reentry
+        https://bugs.webkit.org/show_bug.cgi?id=126975
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding reentrant-cancel-abort.html (from https://codereview.chromium.org/76133002/) 
+        that crashes without the patch
+        Updated reentrant-cancel.html test to expect the exception 
+        that is now hit in initSend function (since a XHR open() call is aborted)
+
+        * http/tests/xmlhttprequest/reentrant-cancel-abort-expected.txt: Added.
+        * http/tests/xmlhttprequest/reentrant-cancel-abort.html: Added.
+        * http/tests/xmlhttprequest/reentrant-cancel.html:
+
 2014-10-09  Dean Jackson  <dino@apple.com>
 
         Computed style for clip is wrong with respect to auto
