@@ -1,3 +1,19 @@
+2014-10-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Run DumpRenderTree using native controls, not SafariTheme.dll.
+        https://bugs.webkit.org/show_bug.cgi?id=137932
+
+        Reviewed by Simon Fraser.
+
+        This is the first step in moving over to native Windows rendering for our layout tests.
+        Once this change lands, approximately 300 tests will start failing on Windows. I will
+        rebaseline these changes against our test hardware and update this bug with the
+        commits related to that work.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Call 'setShouldPaintNativeControls(TRUE)' so that
+        we use native Windows drawing style.
+
 2014-10-21  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Fix FTL Native Inlining for EFL
