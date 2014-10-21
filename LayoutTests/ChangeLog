@@ -1,3 +1,33 @@
+2014-10-21  Michael Saboff  <msaboff@apple.com>
+
+        Change native call frames to use the scope from their Callee instead of their caller's scope
+        https://bugs.webkit.org/show_bug.cgi?id=137907
+
+        Updated tests to reflect that the results of changing where a native call frame
+        and therefore the lexicalGlobalObject came from.  Verified that these tests changes
+        are consistent with the HTML standard.  These changes are also closer to the behavior
+        of other browsers.
+
+        Reviewed by Mark Lam.
+
+        * fast/frames/sandboxed-iframe-navigation-parent-expected.txt:
+        * fast/frames/sandboxed-iframe-navigation-parent.html:
+        Changed the test and results to show that a sandboxed iframe can navigate its
+        ancesters when it is sandbox with both "allow-scripts" and "allow-same-origin".
+
+        * http/tests/security/calling-versus-current.html:
+        Updated the test to really have a different domain.  We do a simple string comparison
+        to check for that we are part of the same domain.  The test expected that 0.0.1 was
+        from the same domain as 127.0.0.1.  Changed the test to try 0.0.2 and expect a
+        security exception.
+
+        * http/tests/security/frameNavigation/context-for-location-assign-expected.txt:
+        Updated test results.
+
+        * traversal/node-iterator-prototype-expected.txt:
+        * traversal/node-iterator-prototype.html:
+        Fixed as a result of this change.
+
 2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] CSS-generated text content not exposed to assistive technologies

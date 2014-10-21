@@ -1918,11 +1918,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
             const temp = t0
         end
         loadp Callee[cfr], t0
-        andp MarkedBlockMask, t0
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t0], t0
-        storep cfr, VM::topCallFrame[t0]
-        loadp CallerFrame[cfr], t0
-        loadq ScopeChain[t0], t1
+        andp MarkedBlockMask, t0, t1
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+        storep cfr, VM::topCallFrame[t1]
+        // Callee still in t0
+        loadp JSCallee::m_scope[t0], t1
         storeq t1, ScopeChain[cfr]
         move cfr, arg1
         loadp Callee[cfr], arg2
@@ -1940,11 +1940,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif ARM64 or C_LOOP
         loadp Callee[cfr], t0
-        andp MarkedBlockMask, t0
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t0], t0
-        storep cfr, VM::topCallFrame[t0]
-        loadp CallerFrame[cfr], t2
-        loadp ScopeChain[t2], t1
+        andp MarkedBlockMask, t0, t1
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+        storep cfr, VM::topCallFrame[t1]
+        // Callee still in t0
+        loadp JSCallee::m_scope[t0], t1
         storep t1, ScopeChain[cfr]
         preserveReturnAddressAfterCall(t3)
         storep t3, ReturnPC[cfr]

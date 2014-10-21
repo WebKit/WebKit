@@ -2084,11 +2084,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
 
     functionPrologue()
     storep 0, CodeBlock[cfr]
-    loadp CallerFrame[cfr], t0
-    loadi ScopeChain + PayloadOffset[t0], t1
+    loadi Callee + PayloadOffset[cfr], t1
+    loadi JSCallee::m_scope[t1], t0
     storei CellTag, ScopeChain + TagOffset[cfr]
-    storei t1, ScopeChain + PayloadOffset[cfr]
-    loadi Callee + PayloadOffset[t0], t1
+    storei t0, ScopeChain + PayloadOffset[cfr]
+    // Callee is still in t1 for code below
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         andp MarkedBlockMask, t1
