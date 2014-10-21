@@ -2,6 +2,15 @@
 
         Unreviewed iOS build fix after r174921.
 
+        Export new symbol after function rename.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+
+2014-10-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r174921.
+
         Remove symbol from export files that no longer exists.
 
         * WebCore.exp.in:
