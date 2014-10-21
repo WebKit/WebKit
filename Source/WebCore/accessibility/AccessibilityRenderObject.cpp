@@ -2834,12 +2834,11 @@ void AccessibilityRenderObject::addTextFieldChildren()
     
     HTMLInputElement& input = downcast<HTMLInputElement>(*node);
     HTMLElement* spinButtonElement = input.innerSpinButtonElement();
-    if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
+    if (!is<SpinButtonElement>(spinButtonElement))
         return;
 
     auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->getOrCreate(SpinButtonRole));
-    // FIXME: We should use is<>() / downcast<>() for SpinButtonElement.
-    axSpinButton.setSpinButtonElement(static_cast<SpinButtonElement*>(spinButtonElement));
+    axSpinButton.setSpinButtonElement(downcast<SpinButtonElement>(spinButtonElement));
     axSpinButton.setParent(this);
     m_children.append(&axSpinButton);
 }

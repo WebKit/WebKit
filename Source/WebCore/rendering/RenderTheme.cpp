@@ -837,9 +837,9 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const
     if (!is<Element>(node))
         return false;
     Element& element = downcast<Element>(*node);
-    if (!element.active() || !element.isSpinButtonElement())
+    if (!element.active() || !is<SpinButtonElement>(element))
         return false;
-    return static_cast<SpinButtonElement&>(element).upDownState() == SpinButtonElement::Up;
+    return downcast<SpinButtonElement>(element).upDownState() == SpinButtonElement::Up;
 }
 
 bool RenderTheme::isReadOnlyControl(const RenderObject& renderer) const
@@ -855,19 +855,19 @@ bool RenderTheme::isHovered(const RenderObject& renderer) const
     Node* node = renderer.node();
     if (!is<Element>(node))
         return false;
-    if (!downcast<Element>(*node).isSpinButtonElement())
-        return downcast<Element>(*node).hovered();
-    SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
-    return element->hovered() && element->upDownState() != SpinButtonElement::Indeterminate;
+    Element& element = downcast<Element>(*node);
+    if (!is<SpinButtonElement>(element))
+        return element.hovered();
+    SpinButtonElement& spinButton = downcast<SpinButtonElement>(element);
+    return spinButton.hovered() && spinButton.upDownState() != SpinButtonElement::Indeterminate;
 }
 
 bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
 {
     Node* node = renderer.node();
-    if (!is<Element>(node) || !downcast<Element>(*node).isSpinButtonElement())
+    if (!is<SpinButtonElement>(node))
         return false;
-    SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
-    return element->upDownState() == SpinButtonElement::Up;
+    return downcast<SpinButtonElement>(*node).upDownState() == SpinButtonElement::Up;
 }
 
 bool RenderTheme::isDefault(const RenderObject& o) const

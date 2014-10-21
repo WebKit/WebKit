@@ -90,6 +90,11 @@ private:
     Timer<SpinButtonElement> m_repeatingTimer;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SpinButtonElement)
+    static bool isType(const WebCore::Element& element) { return element.isSpinButtonElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // SpinButtonElement_h
