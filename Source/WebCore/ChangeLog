@@ -1,3 +1,15 @@
+2014-10-05  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Fix build when DRAG_SUPPORT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=137361
+
+        Reviewed by Carlos Garcia Campos.
+
+        Flag out unbuildable code without DRAG_SUPPORT.
+
+        * platform/gtk/GtkDragAndDropHelper.cpp:
+        * platform/gtk/GtkDragAndDropHelper.h:
+
 2014-10-03  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView snapshot of Daring Fireball has the wrong color in the obscured inset

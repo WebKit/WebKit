@@ -187,6 +187,7 @@ static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& da
     return true;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void ArgumentCoder<DragData>::encode(ArgumentEncoder& encoder, const DragData& dragData)
 {
     encoder << dragData.clientPosition();
@@ -233,6 +234,7 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder& decoder, DragData& dragDat
 
     return true;
 }
+#endif // ENABLE(DRAG_SUPPORT)
 
 static void encodeGKeyFile(ArgumentEncoder& encoder, GKeyFile* keyFile)
 {
