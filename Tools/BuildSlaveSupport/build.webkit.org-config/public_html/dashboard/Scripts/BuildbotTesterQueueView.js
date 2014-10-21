@@ -73,7 +73,8 @@ BuildbotTesterQueueView.prototype = {
                 var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
 
                 if (iteration.successful) {
-                    var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "all tests passed");
+                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "all tests passed", undefined, url);
                     limit = 0;
                 } else if (!iteration.productive) {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
