@@ -84,6 +84,13 @@ using namespace WebKit;
  * You can use webkit_web_context_register_uri_scheme() to register
  * custom URI schemes, and manage several other settings.
  *
+ * TLS certificate validation failure is now treated as a transport
+ * error by default. To handle TLS failures differently, you can
+ * connect to #WebKitWebView::load-failed-with-tls-errors.
+ * Alternatively, you can use webkit_web_context_set_tls_errors_policy()
+ * to set the policy %WEBKIT_TLS_ERRORS_POLICY_IGNORE; however, this is
+ * not appropriate for Internet applications.
+ *
  */
 
 enum {
@@ -264,7 +271,9 @@ static gpointer createDefaultWebContext(gpointer)
 
     priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
-    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
+
+    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
+    priv->context->setIgnoreTLSErrors(false);
 
     attachInjectedBundleClientToContext(webContext.get());
     attachDownloadClientToContext(webContext.get());
