@@ -1,3 +1,12 @@
+2014-10-09  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Decrement the font loading count before notifying callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=137401
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/TestExpectations: Unskip the test this bug was causing to fail.
+
 2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text drawn with an SVG font has no spaces when word-rounding hacks are enabled

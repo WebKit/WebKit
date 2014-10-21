@@ -1,3 +1,20 @@
+2014-10-09  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Decrement the font loading count before notifying callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=137401
+
+        Reviewed by Alexey Proskuryakov.
+
+        In the callbacks, it should appear that font load has completed. This is
+        accessed through loading(), which relies on the current number of
+        fonts loading via JS and CSS.
+
+        Unskipping the failing test http/tests/webfont/fontloader-loading-attribute.html
+        test which tests this.
+
+        * css/FontLoader.cpp:
+        (WebCore::LoadFontCallback::notifyLoaded):
+
 2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text drawn with an SVG font has no spaces when word-rounding hacks are enabled
