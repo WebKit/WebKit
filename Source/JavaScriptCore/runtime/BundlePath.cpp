@@ -27,6 +27,8 @@
 #include "config.h"
 #include "BundlePath.h"
 
+#if ENABLE(FTL_NATIVE_CALL_INLINING)
+
 #include <execinfo.h>
 #include <string>
 
@@ -46,3 +48,5 @@ const CString& bundlePath()
 }
 
 } // namespace JSC
+
+#endif // FTL_NATIVE_CALL_INLINING
