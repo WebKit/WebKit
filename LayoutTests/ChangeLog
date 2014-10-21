@@ -1,3 +1,13 @@
+2014-10-06  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (Simple Line Layout): Inline block baselines computed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=137461
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline-block/simple-line-layout-expected.html: Added.
+        * fast/inline-block/simple-line-layout.html: Added.
+
 2014-10-03 Bear Travis <betravis@adobe.com>
 
         REGRESSION (r173531): Use after free in WebCore::RenderStyle::fontMetrics /

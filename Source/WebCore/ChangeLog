@@ -1,3 +1,18 @@
+2014-10-06  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (Simple Line Layout): Inline block baselines computed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=137461
+
+        Reviewed by Simon Fraser.
+
+        Added fast/inline-block/simple-line-layout.html
+
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::computeFlowFirstLineBaseline):
+        (WebCore::SimpleLineLayout::computeFlowLastLineBaseline):
+        Fix the baseline computation functions in simple line layout to
+        use lineCount rather than runCount.
+
 2014-10-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Performance: Certain Web site causes Safari to hang completely while entering form data

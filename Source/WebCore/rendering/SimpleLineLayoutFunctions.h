@@ -78,14 +78,14 @@ inline LayoutUnit computeFlowHeight(const RenderBlockFlow& flow, const Layout& l
 
 inline LayoutUnit computeFlowFirstLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT_UNUSED(layout, layout.runCount());
+    ASSERT_UNUSED(layout, layout.lineCount());
     return flow.borderAndPaddingBefore() + baselineFromFlow(flow);
 }
 
 inline LayoutUnit computeFlowLastLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT(layout.runCount());
-    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.runCount() - 1) + baselineFromFlow(flow);
+    ASSERT(layout.lineCount());
+    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.lineCount() - 1) + baselineFromFlow(flow);
 }
 
 inline unsigned findTextCaretMinimumOffset(const RenderText&, const Layout& layout)
