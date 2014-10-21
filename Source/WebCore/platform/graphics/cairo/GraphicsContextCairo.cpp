@@ -742,8 +742,8 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
 
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
-    static double dashPattern[] = {5.0, 5.0};
-    static double dotPattern[] = {1.0, 1.0};
+    static const double dashPattern[] = { 5.0, 5.0 };
+    static const double dotPattern[] = { 1.0, 1.0 };
 
     if (paintingDisabled())
         return;
