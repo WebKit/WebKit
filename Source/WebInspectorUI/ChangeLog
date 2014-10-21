@@ -1,3 +1,16 @@
+2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
+        https://bugs.webkit.org/show_bug.cgi?id=132044
+
+        Reviewed by Brian Burg.
+
+        Make sure Protocol/InspectorFrontendHostStub.js is loaded before
+        Base/Platform.js, because Platform uses the InspectorFrontendHost
+        object.
+
+        * UserInterface/Main.html:
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorBackendCommands should include when to activate particular domains
