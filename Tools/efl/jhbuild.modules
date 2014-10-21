@@ -48,7 +48,9 @@
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="downloads.sourceforge.net"
       href="http://downloads.sourceforge.net/project/"/>
-  <repository type="git" name="llvm.org"
+  <repository type="svn" name="llvm.org"
+      href="http://llvm.org/svn/llvm-project/"/>
+  <repository type="git" name="llvm-git"
       href="https://github.com/pille5"/>
 
   <autotools id="cairo" autogen-sh="configure"
@@ -135,7 +137,16 @@
   <autotools id="llvm"
              autogen-sh="configure"
              autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
-    <branch repo="llvm.org" module="llvm.git" revision="FTL_fixes_for_EFL" checkoutdir="llvm" version="r206311"/>
+    <branch repo="llvm-git" module="llvm.git" revision="FTL_fixes_for_EFL" checkoutdir="llvm" version="r206311"/>
+  </autotools>
+
+  <autotools id="clang"
+             skip-autogen="true">
+    <dependencies>
+      <dep package="llvm"/>
+    </dependencies>
+    <branch repo="llvm.org" module="cfe/trunk" version="r206311" revision="206311" checkoutdir="llvm/tools/clang">
+    </branch>
   </autotools>
 
   <autotools id="fontconfig" 

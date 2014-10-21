@@ -1,3 +1,28 @@
+2014-10-21  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Fix FTL Native Inlining for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=137774
+
+        Reviewed by Michael Saboff.
+
+        Added required functionality for Native Inlining to EFL, and fixed a bug/typo in the original code,
+        which caused incorrect memory allocation.
+
+        * CMakeLists.txt:
+        * create-llvm-ir-from-source-file.py: Added.
+        * create-symbol-table-index.py: Added.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+        * runtime/BundlePath.cpp: Added.
+        (JSC::bundlePath):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/MathObject.cpp:
+
 2014-10-21  Milan Crha  <mcrha@redhat.com>
 
         Move JSC::MacroAssemblerX86Common::s_sse2CheckState definition to MacroAssemblerX86Common.cpp.

@@ -306,6 +306,10 @@ endif ()
 if (ENABLE_FTL_JIT)
     find_package(LLVM REQUIRED)
     set(HAVE_LLVM ON)
+    if (ENABLE_FTL_NATIVE_CALL_INLINING)
+        find_package(Clang REQUIRED)
+        add_definitions(-DENABLE_FTL_NATIVE_CALL_INLINING=1)
+    endif ()
 endif ()
 
 # [E]WebKit2 tests need a hint to find out where processes such as WebProcess are located at.

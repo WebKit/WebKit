@@ -1,3 +1,17 @@
+2014-10-21  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Fix FTL Native Inlining for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=137774
+
+        Reviewed by Michael Saboff.
+
+        Updated CMake for FTL Native Inlining.
+
+        * CMakeLists.txt:
+        * Source/cmake/FindClang.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generate all Inspector domains together in JavaScriptCore

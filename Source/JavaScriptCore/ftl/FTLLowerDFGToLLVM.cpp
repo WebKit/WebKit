@@ -155,7 +155,7 @@ public:
                 switch (node->op()) {
                 case NativeCall:
                 case NativeConstruct: {
-                    int numArgs = m_node->numChildren();
+                    int numArgs = node->numChildren();
                     if (numArgs > maxNumberOfArguments)
                         maxNumberOfArguments = numArgs;
                     break;
@@ -4468,9 +4468,13 @@ private:
         
         ASSERT(isX86() || isARM64());
 
+#if PLATFORM(EFL)
+        const CString actualPath = toCString(bundlePath().data(), "/runtime/", path.data());
+#else
         const CString actualPath = toCString(bundlePath().data(), 
             isX86() ? "/Resources/Runtime/x86_64/" : "/Resources/Runtime/arm64/",
             path.data());
+#endif
 
         char* outMsg;
         
@@ -4492,7 +4496,7 @@ private:
         }
 
         disposeMemoryBuffer(memBuf);
-        
+
         if (LValue function = getNamedFunction(m_ftlState.module, symbol.data())) {
             if (!isInlinableSize(function)) {
                 m_ftlState.symbolTable.remove(symbol);
@@ -6626,6 +6630,7 @@ private:
         }
         
         DFG_CRASH(m_graph, m_node, "Invalid flush format");
+        return ExitValue::dead();
     }
     
     ExitValue exitValueForNode(
@@ -6698,6 +6703,7 @@ private:
             return exitArgument(arguments, ValueFormatDouble, value.value());
 
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
+        return ExitValue::dead();
     }
     
     ExitValue exitArgument(ExitArgumentList& arguments, ValueFormat format, LValue value)

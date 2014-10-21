@@ -115,7 +115,7 @@ bool JSDataViewPrototype::getOwnPropertySlot(
 }
 
 template<typename Adaptor>
-EncodedJSValue getData(ExecState* exec)
+EncodedJSValue ATTR_USED getData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
@@ -160,7 +160,7 @@ EncodedJSValue getData(ExecState* exec)
 }
 
 template<typename Adaptor>
-EncodedJSValue setData(ExecState* exec)
+EncodedJSValue ATTR_USED setData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
