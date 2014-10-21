@@ -1,3 +1,23 @@
+2014-10-20  YongGeol Jung  <yg48.jung@samsung.com>
+
+        [Coordinated Graphics] '-webkit-mask-image: -webkit-gradient' doesn't work for AC layer.
+        https://bugs.webkit.org/show_bug.cgi?id=125326
+
+        Reviewed by Gyuyoung Kim.
+
+        Mask layer hasn't requested to synchronize with AC layer in CoordinatedGraphics so far.
+        That's why the mask layer isn't shown under CoordinatedGraphics.
+        Thus this patch lets the mask layer synchronize with the AC layer whenever AC layer is updated.
+
+        Below layout test case is related to this issue when --pixel test is enabled.
+        Unfortunately EFL WebKitTestRunner doesn't support AC mode yet.
+        When EFL test framework supports AC mode, the test will be passed.
+
+        Test: compositing/masks/mask-of-clipped-layer.html
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers):
+
 2014-10-17  Jeffrey Pfau  <jpfau@apple.com>
 
         Ensure attached frame count doesn't exceed the maximum allowed frames
