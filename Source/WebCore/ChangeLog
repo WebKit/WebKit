@@ -1,3 +1,16 @@
+2014-10-21  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Optimization; avoid string reallocation.
+        https://bugs.webkit.org/show_bug.cgi?id=137920
+
+        Reviewed by Brent Fulgham.
+
+        Profiling reveals that the cookiesForDOM function is spending time on removing a character from a string.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::domainMatch):
+        (WebCore::addMatchingCurlCookie):
+
 2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] CSS-generated text content not exposed to assistive technologies

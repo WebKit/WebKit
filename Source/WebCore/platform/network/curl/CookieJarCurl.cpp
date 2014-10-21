@@ -43,6 +43,29 @@ static void readCurlCookieToken(const char*& cookie, String& token)
         cookie++;
 }
 
+static bool domainMatch(const String& cookieDomain, const String& host)
+{
+    size_t index = host.find(cookieDomain);
+
+    bool tailMatch = (index != WTF::notFound && index + cookieDomain.length() == host.length());
+
+    // Check if host equals cookie domain.
+    if (tailMatch && !index)
+        return true;
+
+    // Check if host is a subdomain of the domain in the cookie.
+    // Curl uses a '.' in front of domains to indicate it's valid on subdomains.
+    if (tailMatch && index > 0 && host[index] == '.')
+        return true;
+
+    // Check the special case where host equals the cookie domain, except for a leading '.' in the cookie domain.
+    // E.g. cookie domain is .apple.com and host is apple.com. 
+    if (cookieDomain[0] == '.' && cookieDomain.find(host) == 1)
+        return true;
+
+    return false;
+}
+
 static void addMatchingCurlCookie(const char* cookie, const String& domain, const String& path, StringBuilder& cookies, bool httponly)
 {
     // Check if the cookie matches domain and path, and is not expired.
@@ -80,18 +103,7 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
             return;
     }
 
-
-    if (cookieDomain[0] == '.') {
-        // Check if domain is a subdomain of the domain in the cookie.
-        // Curl uses a '.' in front of domains to indicate its valid on subdomains.
-        cookieDomain.remove(0);
-        int lenDiff = domain.length() - cookieDomain.length();
-        int index = domain.find(cookieDomain);
-        if (index == lenDiff)
-            subDomain = true;
-    }
-
-    if (!subDomain && cookieDomain != domain)
+    if (!domainMatch(cookieDomain, domain))
         return;
 
     String strBoolean;
