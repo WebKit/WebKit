@@ -2472,6 +2472,9 @@ bool HTMLMediaElement::seeking() const
 
 void HTMLMediaElement::refreshCachedTime() const
 {
+    if (!m_player)
+        return;
+
     m_cachedTime = m_player->currentTime();
     if (!m_cachedTime) {
         // Do not use m_cachedTime until the media engine returns a non-zero value because we can't 
