@@ -105,7 +105,7 @@
 
                 state._linkQuoteCharacter = quote === "'" || quote === "\"" ? quote : null;
 
-                // Rewind the steam to the start of this token.
+                // Rewind the stream to the start of this token.
                 stream.pos = startPosition;
 
                 // Eat the open quote of the string so the string style
@@ -199,10 +199,12 @@
                 if (stream.current() === "url") {
                     // If the current text is "url" then we should expect the next string token to be a link.
                     state._expectLink = true;
-                } else if (state._expectLink) {
-                    // We expected a string and got it. This is a link. Parse it the way we want it.
-                    delete state._expectLink;
+                } else if (hexColorRegex.test(stream.current()))
+                    style = style + " hex-color";
+            } else if (state._expectLink) {
+                delete state._expectLink;
 
+                if (style === "string") {
                     // This is a link, so setup the state to process it next.
                     state._urlTokenize = tokenizeCSSURLString;
                     state._urlBaseStyle = style;
@@ -212,18 +214,14 @@
                     state._urlQuoteCharacter = quote === "'" || quote === "\"" ? quote : ")";
                     state._unquotedURLString = state._urlQuoteCharacter === ")";
 
-                    // Rewind the steam to the start of this token.
+                    // Rewind the stream to the start of this token.
                     stream.pos = startPosition;
 
                     // Eat the open quote of the string so the string style
                     // will be used for the quote character.
                     if (!state._unquotedURLString)
                         stream.eat(state._urlQuoteCharacter);
-                } else if (hexColorRegex.test(stream.current()))
-                    style = style + " hex-color";
-            } else if (state._expectLink) {
-                // We expected a string and didn't get one. Cleanup.
-                delete state._expectLink;
+                }
             }
         }
 
