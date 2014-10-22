@@ -1,3 +1,35 @@
+2014-10-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS Rule features are ignored for nested CSS Selector lists
+        https://bugs.webkit.org/show_bug.cgi?id=137908
+
+        Reviewed by Andreas Kling.
+
+        When Rule feature sets were collected, any selector list nested inside an other
+        selector list was ignored when collecting properties of the CSS Selector.
+
+        As a result, style was not invalidated properly when any property listed in
+        the nested selectors.
+
+        This patch fixes the issue by make RuleFeatureSet::collectFeaturesFromSelector()
+        recursive, evaluating every chain of every selector lists.
+
+        Tests: fast/css/class-style-invalidation-optimization.html
+               fast/css/direct-adjacent-style-sharing-1.html
+               fast/css/direct-adjacent-style-sharing-2.html
+               fast/css/direct-adjacent-style-sharing-3.html
+               fast/css/id-style-invalidation-optimization.html
+               fast/selectors/class-style-update-with-not.html
+               fast/selectors/class-style-update-with-nth-child-of.html
+               fast/selectors/class-style-update.html
+
+        * css/RuleFeature.cpp:
+        (WebCore::recursivelyCollectFeaturesFromSelector):
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector):
+        * css/RuleFeature.h:
+        * css/RuleSet.cpp:
+        (WebCore::collectFeaturesFromRuleData):
+
 2014-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS build after r175013.

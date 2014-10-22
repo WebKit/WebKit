@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <style type="text/css">
+            div {
+                background-color: red;
+                border: 1px solid black;
+                width: 100px;
+                height: 100px;
+            }
+
+            div + div {
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <p>If the test pass, there should be one red block followed by 3 green blocks.</p>
+        <div style="background-color: red; border: 1px solid black; width: 100px; height: 100px;"></div>
+        <div style="background-color: green; border: 1px solid black; width: 100px; height: 100px;"></div>
+        <div style="background-color: green; border: 1px solid black; width: 100px; height: 100px;"></div>
+        <div style="background-color: green; border: 1px solid black; width: 100px; height: 100px;"></div>
+    </body>
+</html>

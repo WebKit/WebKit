@@ -1,3 +1,30 @@
+2014-10-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS Rule features are ignored for nested CSS Selector lists
+        https://bugs.webkit.org/show_bug.cgi?id=137908
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/class-style-update-with-not-expected.txt: Added.
+        * fast/selectors/class-style-update-with-not.html: Added.
+        Parts of this test fail due to a bug with specificity. This will be addressed
+        separately.
+
+        * fast/css/class-style-invalidation-optimization-expected.txt: Added.
+        * fast/css/class-style-invalidation-optimization.html: Added.
+        * fast/css/direct-adjacent-style-sharing-1-expected.html: Added.
+        * fast/css/direct-adjacent-style-sharing-1.html: Added.
+        * fast/css/direct-adjacent-style-sharing-2-expected.html: Added.
+        * fast/css/direct-adjacent-style-sharing-2.html: Added.
+        * fast/css/direct-adjacent-style-sharing-3-expected.html: Added.
+        * fast/css/direct-adjacent-style-sharing-3.html: Added.
+        * fast/css/id-style-invalidation-optimization-expected.txt: Added.
+        * fast/css/id-style-invalidation-optimization.html: Added.
+        * fast/selectors/class-style-update-expected.txt: Added.
+        * fast/selectors/class-style-update-with-nth-child-of-expected.txt: Added.
+        * fast/selectors/class-style-update-with-nth-child-of.html: Added.
+        * fast/selectors/class-style-update.html: Added.
+
 2014-10-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test updates after switching to Windows theme for tests.

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2012, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -30,34 +30,57 @@
 #include "RuleFeature.h"
 
 #include "CSSSelector.h"
+#include "CSSSelectorList.h"
 
 namespace WebCore {
 
-void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
+static void recursivelyCollectFeaturesFromSelector(RuleFeatureSet& features, const CSSSelector& firstSelector, bool& hasSiblingSelector)
 {
-    if (selector->match() == CSSSelector::Id)
-        idsInRules.add(selector->value().impl());
-    else if (selector->match() == CSSSelector::Class)
-        classesInRules.add(selector->value().impl());
-    else if (selector->isAttributeSelector()) {
-        attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
-        attributeLocalNamesInRules.add(selector->attribute().localName().impl());
-    } else if (selector->match() == CSSSelector::PseudoElement) {
-        switch (selector->pseudoElementType()) {
-        case CSSSelector::PseudoElementFirstLine:
-            usesFirstLineRules = true;
-            break;
-        case CSSSelector::PseudoElementFirstLetter:
-            usesFirstLetterRules = true;
-            break;
-        case CSSSelector::PseudoElementBefore:
-        case CSSSelector::PseudoElementAfter:
-            usesBeforeAfterRules = true;
-            break;
-        default:
-            break;
+    const CSSSelector* selector = &firstSelector;
+    do {
+        if (selector->match() == CSSSelector::Id)
+            features.idsInRules.add(selector->value().impl());
+        else if (selector->match() == CSSSelector::Class)
+            features.classesInRules.add(selector->value().impl());
+        else if (selector->isAttributeSelector()) {
+            features.attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
+            features.attributeLocalNamesInRules.add(selector->attribute().localName().impl());
+        } else if (selector->match() == CSSSelector::PseudoElement) {
+            switch (selector->pseudoElementType()) {
+            case CSSSelector::PseudoElementFirstLine:
+                features.usesFirstLineRules = true;
+                break;
+            case CSSSelector::PseudoElementFirstLetter:
+                features.usesFirstLetterRules = true;
+                break;
+            case CSSSelector::PseudoElementBefore:
+            case CSSSelector::PseudoElementAfter:
+                features.usesBeforeAfterRules = true;
+                break;
+            default:
+                break;
+            }
         }
-    }
+
+        if (!hasSiblingSelector && selector->isSiblingSelector())
+            hasSiblingSelector = true;
+
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                if (!hasSiblingSelector && selector->isSiblingSelector())
+                    hasSiblingSelector = true;
+                recursivelyCollectFeaturesFromSelector(features, *subSelector, hasSiblingSelector);
+            }
+        }
+
+        selector = selector->tagHistory();
+    } while (selector);
+}
+
+void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector& firstSelector, bool& hasSiblingSelector)
+{
+    hasSiblingSelector = false;
+    recursivelyCollectFeaturesFromSelector(*this, firstSelector, hasSiblingSelector);
 }
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
