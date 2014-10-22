@@ -513,6 +513,12 @@ void NetscapePlugin::callSetWindowInvisible()
 
 bool NetscapePlugin::shouldLoadSrcURL()
 {
+#if PLUGIN_ARCHITECTURE(X11)
+    // Flash crashes when NPP_GetValue is called for NPPVpluginCancelSrcStream in windowed mode.
+    if (m_isWindowed && m_pluginModule->pluginQuirks().contains(PluginQuirks::DoNotCancelSrcStreamInWindowedMode))
+        return true;
+#endif
+
     // Check if we should cancel the load
     NPBool cancelSrcStream = false;
 

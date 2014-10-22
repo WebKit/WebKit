@@ -179,6 +179,7 @@ void NetscapePluginModule::determineQuirks()
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
         if (mimeTypes[i].type == "application/x-shockwave-flash") {
             m_pluginQuirks.add(PluginQuirks::IgnoreRightClickInWindowlessMode);
+            m_pluginQuirks.add(PluginQuirks::DoNotCancelSrcStreamInWindowedMode);
             break;
         }
     }
