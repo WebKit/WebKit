@@ -302,6 +302,7 @@ public:
 
 #if ENABLE(VIDEO)
     void simulateAudioInterruption(Node*);
+    bool mediaElementHasCharacteristic(Node*, const String&, ExceptionCode&);
 #endif
 
     bool isSelectPopupVisible(Node*);

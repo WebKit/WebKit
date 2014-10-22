@@ -258,6 +258,7 @@ enum PageOverlayType {
     void forceReload(boolean endToEnd);
 
     [Conditional=VIDEO] void simulateAudioInterruption(Node node);
+    [Conditional=VIDEO, RaisesException] boolean mediaElementHasCharacteristic(Node node, DOMString characteristic);
 
     [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
 

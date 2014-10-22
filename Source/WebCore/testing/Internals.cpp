@@ -2084,6 +2084,24 @@ void Internals::simulateAudioInterruption(Node* node)
     UNUSED_PARAM(node);
 #endif
 }
+
+bool Internals::mediaElementHasCharacteristic(Node* node, const String& characteristic, ExceptionCode& ec)
+{
+    if (!is<HTMLMediaElement>(*node))
+        return false;
+
+    HTMLMediaElement* element = downcast<HTMLMediaElement>(node);
+
+    if (equalIgnoringCase(characteristic, "Audible"))
+        return element->hasAudio();
+    if (equalIgnoringCase(characteristic, "Visual"))
+        return element->hasVideo();
+    if (equalIgnoringCase(characteristic, "Legible"))
+        return element->hasClosedCaptions();
+
+    ec = SYNTAX_ERR;
+    return false;
+}
 #endif
 
 bool Internals::isSelectPopupVisible(Node* node)

@@ -1707,6 +1707,16 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
             }
         }
 
+#if ENABLE(VIDEO_TRACK)
+        updateAudioTracks();
+        updateVideoTracks();
+
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+        hasAudio |= (m_audibleGroup && m_audibleGroup->selectedOption());
+        hasVideo |= (m_visualGroup && m_visualGroup->selectedOption());
+#endif
+#endif
+
         // Always says we have video if the AVPlayerLayer is ready for diaplay to work around
         // an AVFoundation bug which causes it to sometimes claim a track is disabled even
         // when it is not.
@@ -1716,11 +1726,6 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 #if ENABLE(DATACUE_VALUE)
         if (hasMetaData)
             processMetadataTrack();
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-        updateAudioTracks();
-        updateVideoTracks();
 #endif
     }
 
