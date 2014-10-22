@@ -1,3 +1,52 @@
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Avoid repeated is<MutableStyleProperties>() checks in StyleProperties
+        https://bugs.webkit.org/show_bug.cgi?id=137978
+
+        Reviewed by Andreas Kling.
+
+        Reduce the amount of is<MutableStyleProperties>() checks in
+        StyleProperties by:
+        - Removing the checks in each method of StyleProperties::PropertyReference,
+          and replace them by a single check in StyleProperties::propertyAt().
+        - Providing faster propertyCount() / propertyAt() / isEmpty() methods on
+          MutableStyleProperties / ImmutableStyleProperties as a lot of callers use
+          tight typing.
+        - Using tighter typing at call sites whenever possible.
+
+        Ideally, we could be able to use iterators instead of propertyCount() /
+        propertyAt() but this is not trivial to do efficiently as the
+        representation in memory is fundamentally different for MutableStyleProperties
+        / ImmutableStyleProperties. We may be able to do better longer term, but
+        this is already more efficient short term at least.
+
+        No new tests, no behavior change.
+
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::MutableStyleProperties):
+        (WebCore::StyleProperties::PropertyReference::cssText):
+        * css/StyleProperties.h:
+        (WebCore::StyleProperties::PropertyReference::PropertyReference):
+        (WebCore::StyleProperties::PropertyReference::id):
+        (WebCore::StyleProperties::PropertyReference::shorthandID):
+        (WebCore::StyleProperties::PropertyReference::isImportant):
+        (WebCore::StyleProperties::PropertyReference::isInherited):
+        (WebCore::StyleProperties::PropertyReference::isImplicit):
+        (WebCore::StyleProperties::PropertyReference::value):
+        (WebCore::StyleProperties::PropertyReference::toCSSProperty):
+        (WebCore::StyleProperties::isEmpty):
+        (WebCore::ImmutableStyleProperties::isEmpty):
+        (WebCore::MutableStyleProperties::isEmpty):
+        (WebCore::ImmutableStyleProperties::propertyAt):
+        (WebCore::MutableStyleProperties::propertyAt):
+        (WebCore::StyleProperties::propertyAt):
+        (WebCore::StyleProperties::propertyCount):
+        (WebCore::StyleProperties::PropertyReference::propertyMetadata): Deleted.
+        (WebCore::StyleProperties::PropertyReference::propertyValue): Deleted.
+        * editing/EditingStyle.cpp:
+        (WebCore::removePropertiesInStyle):
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle):
+
 2014-10-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac][MediaStream] clean up bit rot

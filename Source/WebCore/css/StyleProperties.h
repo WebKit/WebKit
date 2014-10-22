@@ -55,40 +55,36 @@ public:
 
     class PropertyReference {
     public:
-        PropertyReference(const StyleProperties& propertySet, unsigned index)
-            : m_propertySet(propertySet)
-            , m_index(index)
-        {
-        }
+        PropertyReference(const StylePropertyMetadata& metadata, const CSSValue* value)
+            : m_metadata(metadata)
+            , m_value(value)
+        { }
 
-        CSSPropertyID id() const { return static_cast<CSSPropertyID>(propertyMetadata().m_propertyID); }
-        CSSPropertyID shorthandID() const { return propertyMetadata().shorthandID(); }
+        CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_metadata.m_propertyID); }
+        CSSPropertyID shorthandID() const { return m_metadata.shorthandID(); }
 
-        bool isImportant() const { return propertyMetadata().m_important; }
-        bool isInherited() const { return propertyMetadata().m_inherited; }
-        bool isImplicit() const { return propertyMetadata().m_implicit; }
+        bool isImportant() const { return m_metadata.m_important; }
+        bool isInherited() const { return m_metadata.m_inherited; }
+        bool isImplicit() const { return m_metadata.m_implicit; }
 
         String cssName() const;
         String cssText() const;
 
-        const CSSValue* value() const { return propertyValue(); }
+        const CSSValue* value() const { return m_value; }
         // FIXME: We should try to remove this mutable overload.
-        CSSValue* value() { return const_cast<CSSValue*>(propertyValue()); }
+        CSSValue* value() { return const_cast<CSSValue*>(m_value); }
 
         // FIXME: Remove this.
-        CSSProperty toCSSProperty() const { return CSSProperty(id(), const_cast<CSSValue*>(propertyValue()), isImportant(), propertyMetadata().m_isSetFromShorthand, propertyMetadata().m_indexInShorthandsVector, isImplicit()); }
-        const StylePropertyMetadata& propertyMetadata() const;
+        CSSProperty toCSSProperty() const { return CSSProperty(id(), const_cast<CSSValue*>(m_value), isImportant(), m_metadata.m_isSetFromShorthand, m_metadata.m_indexInShorthandsVector, isImplicit()); }
 
     private:
-        const CSSValue* propertyValue() const;
-
-        const StyleProperties& m_propertySet;
-        unsigned m_index;
+        const StylePropertyMetadata& m_metadata;
+        const CSSValue* m_value;
     };
 
     unsigned propertyCount() const;
-    bool isEmpty() const;
-    PropertyReference propertyAt(unsigned index) const { return PropertyReference(*this, index); }
+    bool isEmpty() const { return !propertyCount(); }
+    PropertyReference propertyAt(unsigned) const;
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     String getPropertyValue(CSSPropertyID) const;
@@ -161,6 +157,8 @@ public:
     static PassRef<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
+    bool isEmpty() const { return !propertyCount(); }
+    PropertyReference propertyAt(unsigned index) const;
 
     const CSSValue** valueArray() const;
     const StylePropertyMetadata* metadataArray() const;
@@ -190,6 +188,8 @@ public:
     WEBCORE_EXPORT ~MutableStyleProperties();
 
     unsigned propertyCount() const { return m_propertyVector.size(); }
+    bool isEmpty() const { return !propertyCount(); }
+    PropertyReference propertyAt(unsigned index) const;
 
     PropertySetCSSStyleDeclaration* cssStyleDeclaration();
 
@@ -236,30 +236,29 @@ private:
     friend class StyleProperties;
 };
 
-inline const StylePropertyMetadata& StyleProperties::PropertyReference::propertyMetadata() const
+inline ImmutableStyleProperties::PropertyReference ImmutableStyleProperties::propertyAt(unsigned index) const
 {
-    if (is<MutableStyleProperties>(m_propertySet))
-        return downcast<MutableStyleProperties>(m_propertySet).m_propertyVector.at(m_index).metadata();
-    return downcast<ImmutableStyleProperties>(m_propertySet).metadataArray()[m_index];
+    return PropertyReference(metadataArray()[index], valueArray()[index]);
 }
 
-inline const CSSValue* StyleProperties::PropertyReference::propertyValue() const
+inline MutableStyleProperties::PropertyReference MutableStyleProperties::propertyAt(unsigned index) const
 {
-    if (is<MutableStyleProperties>(m_propertySet))
-        return downcast<MutableStyleProperties>(m_propertySet).m_propertyVector.at(m_index).value();
-    return downcast<ImmutableStyleProperties>(m_propertySet).valueArray()[m_index];
+    const CSSProperty& property = m_propertyVector[index];
+    return PropertyReference(property.metadata(), property.value());
+}
+
+inline StyleProperties::PropertyReference StyleProperties::propertyAt(unsigned index) const
+{
+    if (is<MutableStyleProperties>(*this))
+        return downcast<MutableStyleProperties>(*this).propertyAt(index);
+    return downcast<ImmutableStyleProperties>(*this).propertyAt(index);
 }
 
 inline unsigned StyleProperties::propertyCount() const
 {
     if (is<MutableStyleProperties>(*this))
-        return downcast<MutableStyleProperties>(*this).m_propertyVector.size();
-    return m_arraySize;
-}
-
-inline bool StyleProperties::isEmpty() const
-{
-    return !propertyCount();
+        return downcast<MutableStyleProperties>(*this).propertyCount();
+    return downcast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
 inline void StyleProperties::deref()

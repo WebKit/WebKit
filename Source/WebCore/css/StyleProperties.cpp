@@ -109,9 +109,11 @@ MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     if (is<MutableStyleProperties>(other))
         m_propertyVector = downcast<MutableStyleProperties>(other).m_propertyVector;
     else {
-        m_propertyVector.reserveInitialCapacity(other.propertyCount());
-        for (unsigned i = 0; i < other.propertyCount(); ++i)
-            m_propertyVector.uncheckedAppend(other.propertyAt(i).toCSSProperty());
+        const auto& immutableOther = downcast<ImmutableStyleProperties>(other);
+        unsigned propertyCount = immutableOther.propertyCount();
+        m_propertyVector.reserveInitialCapacity(propertyCount);
+        for (unsigned i = 0; i < propertyCount; ++i)
+            m_propertyVector.uncheckedAppend(immutableOther.propertyAt(i).toCSSProperty());
     }
 }
 
@@ -1257,7 +1259,7 @@ String StyleProperties::PropertyReference::cssText() const
     StringBuilder result;
     result.append(cssName());
     result.appendLiteral(": ");
-    result.append(propertyValue()->cssText());
+    result.append(m_value->cssText());
     if (isImportant())
         result.appendLiteral(" !important");
     result.append(';');
