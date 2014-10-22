@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class RelList;
+
 // Link relation bitmask values.
 // FIXME: Uncomment as the various link relations are implemented.
 enum {
@@ -97,10 +99,11 @@ public:
     virtual bool willRespondToMouseClickEvents() override;
 
     bool hasRel(uint32_t relation) const;
-    void setRel(const String&);
     
     LinkHash visitedLinkHash() const;
     void invalidateCachedVisitedLinkHash() { m_cachedVisitedLinkHash = 0; }
+
+    DOMTokenList& relList();
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
@@ -140,6 +143,8 @@ private:
     bool m_wasShiftKeyDownOnMouseDown : 1;
     uint32_t m_linkRelations : 30;
     mutable LinkHash m_cachedVisitedLinkHash;
+
+    std::unique_ptr<RelList> m_relList;
 };
 
 inline LinkHash HTMLAnchorElement::visitedLinkHash() const

@@ -27,6 +27,7 @@ PASS a["protocol"] is file:
 PASS a["search"] is 
 PASS a["origin"] is file://
 PASS a["text"] is nerget
+PASS a["relList"] is 
 PASS a["title"] is 
 PASS a["lang"] is 
 PASS a["translate"] is true
@@ -49,7 +50,7 @@ PASS a["attributes"] is [object NamedNodeMap]
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 774
+PASS a["offsetTop"] is 789
 PASS a["offsetWidth"] is 39
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0

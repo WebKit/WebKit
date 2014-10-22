@@ -1,3 +1,21 @@
+2014-10-22  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Add relList to the anchor, area and link elements
+        https://bugs.webkit.org/show_bug.cgi?id=137860
+
+        Reviewed by Darin Adler and Chris Dumez.
+
+        Tests relList aspects for anchor, area and list elements. 
+        Update dom static property for-in iteration test result to include relList.
+
+        * fast/dom/rel-list-expected.txt: Added.
+        * fast/dom/rel-list-gc-expected.txt: Added.
+        * fast/dom/rel-list-gc.html: Added.
+        * fast/dom/rel-list.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Updated results.
+        * perf/rel-list-remove-expected.txt: Added.
+        * perf/rel-list-remove.html: Added.
+
 2014-10-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More rebaselines.

@@ -16059,6 +16059,7 @@
     <ClCompile Include="..\html\RadioInputType.cpp" />
     <ClCompile Include="..\html\RadioNodeList.cpp" />
     <ClCompile Include="..\html\RangeInputType.cpp" />
+    <ClCompile Include="..\html\RelList.cpp" />
     <ClCompile Include="..\html\ResetInputType.cpp" />
     <ClCompile Include="..\html\SearchInputType.cpp" />
     <ClCompile Include="..\html\StepRange.cpp" />
@@ -20836,6 +20837,7 @@
     <ClInclude Include="..\html\RadioInputType.h" />
     <ClInclude Include="..\html\RadioNodeList.h" />
     <ClInclude Include="..\html\RangeInputType.h" />
+    <ClInclude Include="..\html\RelList.h" />
     <ClInclude Include="..\html\ResetInputType.h" />
     <ClInclude Include="..\html\SearchInputType.h" />
     <ClInclude Include="..\html\StepRange.h" />

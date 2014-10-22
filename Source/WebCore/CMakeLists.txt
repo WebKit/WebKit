@@ -1647,6 +1647,7 @@ set(WebCore_SOURCES
     html/RadioInputType.cpp
     html/RadioNodeList.cpp
     html/RangeInputType.cpp
+    html/RelList.cpp
     html/ResetInputType.cpp
     html/SearchInputType.cpp
     html/StepRange.cpp

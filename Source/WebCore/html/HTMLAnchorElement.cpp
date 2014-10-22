@@ -41,6 +41,7 @@
 #include "MouseEvent.h"
 #include "PingLoader.h"
 #include "PlatformMouseEvent.h"
+#include "RelList.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
 #include "SVGImage.h"
@@ -261,8 +262,12 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         invalidateCachedVisitedLinkHash();
     } else if (name == nameAttr || name == titleAttr) {
         // Do nothing.
-    } else if (name == relAttr)
-        setRel(value);
+    } else if (name == relAttr) {
+        if (SpaceSplitString::spaceSplitStringContainsValue(value, "noreferrer", true))
+            m_linkRelations |= RelationNoReferrer;
+        if (m_relList)
+            m_relList->updateRelAttribute(value);
+    }
     else
         HTMLElement::parseAttribute(name, value);
 }
@@ -310,10 +315,11 @@ bool HTMLAnchorElement::hasRel(uint32_t relation) const
     return m_linkRelations & relation;
 }
 
-void HTMLAnchorElement::setRel(const String& value)
+DOMTokenList& HTMLAnchorElement::relList()
 {
-    if (SpaceSplitString::spaceSplitStringContainsValue(value, "noreferrer", true))
-        m_linkRelations |= RelationNoReferrer;
+    if (!m_relList) 
+        m_relList = std::make_unique<RelList>(*this);
+    return *m_relList;
 }
 
 const AtomicString& HTMLAnchorElement::name() const

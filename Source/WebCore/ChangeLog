@@ -1,3 +1,52 @@
+2014-10-22  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Add relList to the anchor, area and link elements
+        https://bugs.webkit.org/show_bug.cgi?id=137860
+
+        Reviewed by Darin Adler and Chris Dumez.
+
+        Add relList to reflect the rel content attribute for anchor[1],
+        area[2] and link[3] elements.
+
+        [1] https://html.spec.whatwg.org/multipage/semantics.html#dom-a-rellist 
+        [2] https://html.spec.whatwg.org/multipage/embedded-content.html#dom-area-rellist
+        [3] https://html.spec.whatwg.org/multipage/semantics.html#dom-link-rellist
+
+        Tests: fast/dom/rel-list-gc.html
+               fast/dom/rel-list.html
+               perf/rel-list-remove.html
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitString::set):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        (WebCore::HTMLAnchorElement::relList):
+        (WebCore::HTMLAnchorElement::setRel): Deleted.
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        (WebCore::HTMLLinkElement::relList):
+        * html/HTMLLinkElement.h:
+        * html/HTMLLinkElement.idl:
+        * html/RelList.cpp: Added.
+        (WebCore::RelList::RelList):
+        (WebCore::RelList::ref):
+        (WebCore::RelList::deref):
+        (WebCore::RelList::length):
+        (WebCore::RelList::item):
+        (WebCore::RelList::element):
+        (WebCore::RelList::updateRelAttribute):
+        (WebCore::RelList::containsInternal):
+        (WebCore::RelList::value):
+        (WebCore::RelList::setValue):
+        * html/RelList.h: Added.
+
 2014-10-21  Andy Estes  <aestes@apple.com>
 
         One more iOS build fix after r175013.

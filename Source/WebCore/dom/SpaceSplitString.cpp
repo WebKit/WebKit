@@ -94,6 +94,10 @@ static SpaceSplitStringTable& spaceSplitStringTable()
 
 void SpaceSplitString::set(const AtomicString& inputString, bool shouldFoldCase)
 {
+    if (inputString.isNull()) {
+        clear();
+        return;
+    }
     m_data = SpaceSplitStringData::create(shouldFoldCase ? inputString.convertToASCIILowercase() : inputString);
 }
 

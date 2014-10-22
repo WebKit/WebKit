@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class HTMLLinkElement;
+class RelList;
 class URL;
 
 template<typename T> class EventSender;
@@ -71,6 +72,8 @@ public:
     void dispatchPendingEvent(LinkEventSender*);
     static void dispatchPendingLoadEvents();
 
+    DOMTokenList& relList();
+
 private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
@@ -100,7 +103,6 @@ private:
     virtual void defaultEventHandler(Event*) override;
     void handleClick(Event&);
 
-private:
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
@@ -138,6 +140,8 @@ private:
     bool m_loadedSheet;
 
     PendingSheetType m_pendingSheetType;
+
+    std::unique_ptr<RelList> m_relList;
 };
 
 } //namespace

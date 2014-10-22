@@ -66,5 +66,7 @@ interface HTMLAnchorElement : HTMLElement {
     // Objective-C extension:
     readonly attribute URL absoluteLinkURL;
 #endif
+
+    readonly attribute DOMTokenList relList;
 };
 

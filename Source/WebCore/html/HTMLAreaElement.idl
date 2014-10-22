@@ -24,6 +24,7 @@ interface HTMLAreaElement : HTMLElement {
     [Reflect, URL] attribute DOMString href;
     [Reflect] attribute boolean noHref;
     [Reflect] attribute DOMString ping;
+    [Reflect] attribute DOMString rel;
     [Reflect] attribute DOMString shape;
     [Reflect] attribute DOMString target;
 
@@ -43,5 +44,7 @@ interface HTMLAreaElement : HTMLElement {
     // Objective-C extension:
     readonly attribute URL absoluteLinkURL;
 #endif
+
+    readonly attribute DOMTokenList relList;
 };
 

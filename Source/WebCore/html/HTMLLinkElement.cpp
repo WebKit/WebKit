@@ -46,6 +46,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RelList.h"
 #include "RenderStyle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -139,6 +140,8 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
 {
     if (name == relAttr) {
         m_relAttribute = LinkRelAttribute(value);
+        if (m_relList)
+            m_relList->updateRelAttribute(value);
         process();
     } else if (name == hrefAttr) {
         bool wasLink = isLink();
@@ -379,6 +382,13 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
         linkLoaded();
     else
         linkLoadingErrored();
+}
+
+DOMTokenList& HTMLLinkElement::relList()
+{
+    if (!m_relList) 
+        m_relList = std::make_unique<RelList>(*this);
+    return *m_relList;
 }
 
 void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred)
