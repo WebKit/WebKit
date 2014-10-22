@@ -1,5 +1,31 @@
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173848
+
+    2014-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+            WebSocket crash when a connection is closed from server side
+            https://bugs.webkit.org/show_bug.cgi?id=137009
+            rdar://problem/18333977
+            rdar://problem/12708225
+
+            Reviewed by Brady Eidson.
+
+            I don't think that this can be tested with our test server.
+
+            * Modules/websockets/WebSocketChannel.cpp:
+            (WebCore::WebSocketChannel::WebSocketChannel): Added logging.
+            (WebCore::WebSocketChannel::~WebSocketChannel): Ditto.
+            (WebCore::WebSocketChannel::close): Protect self, because startClosingHandshake
+            can release the last reference.
+            (WebCore::WebSocketChannel::fail): Added an assertion that the channel is always
+            closed after this function.
+            (WebCore::WebSocketChannel::startClosingHandshake): Protect self, and don't change
+            the stack from closed back to closing if after failing to send closing handshake.
+            (WebCore::WebSocketChannel::processOutgoingFrameQueue): Protect self.
+
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
         Merge r173246
 
     2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
