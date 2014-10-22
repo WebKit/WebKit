@@ -1961,6 +1961,21 @@ on_tooltip_text_unset(void *user_data, Evas_Object *obj, void *event_info)
 }
 
 static void
+on_navigation_policy_decision(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Ewk_Navigation_Policy_Decision *decision = (Ewk_Navigation_Policy_Decision *)event_info;
+
+    if (ewk_navigation_policy_mouse_button_get(decision) == EWK_EVENT_MOUSE_BUTTON_MIDDLE) {
+        Browser_Window *window = window_create(NULL, 0, 0);
+        ewk_view_url_set(window->ewk_view, ewk_url_request_url_get(ewk_navigation_policy_request_get(decision)));
+        windows = eina_list_append(windows, window);
+        info("Mouse middle button pressed, open link in new window");
+
+        ewk_navigation_policy_decision_reject(decision); 
+    }
+}
+
+static void
 on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -2260,6 +2275,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_smart_callback_add(window->ewk_view, "text,found", on_search_text_found, window);
     evas_object_smart_callback_add(window->ewk_view, "tooltip,text,set", on_tooltip_text_set, window);
     evas_object_smart_callback_add(window->ewk_view, "tooltip,text,unset", on_tooltip_text_unset, window);
+    evas_object_smart_callback_add(window->ewk_view, "policy,decision,navigation", on_navigation_policy_decision, window);
 
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_KEY_DOWN, on_key_down, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, window);

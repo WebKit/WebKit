@@ -1,3 +1,14 @@
+2014-10-22  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Minibrowser : Add support for mouse middle button to open links in new window
+        https://bugs.webkit.org/show_bug.cgi?id=136736
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_navigation_policy_decision): Check whether it's a link clicked with the middle mouse button and load the request in a new window.
+        (window_create):
+
 2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GtkInputMethodFilter from Platform to WebKit2
