@@ -1,3 +1,26 @@
+2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Several labels are white instead of black
+        https://bugs.webkit.org/show_bug.cgi?id=137803
+
+        Reviewed by Martin Robinson.
+
+        Recent GTK+ versions require to explicitly set the state before
+        getting a color.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::styleColor): Helper function to get a color from a
+        GtkStylecontext that explicitly sets the state before getting the color.
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor): Use styleColor().
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor): Ditto.
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor): Ditto.
+        (WebCore::RenderThemeGtk::systemColor): Ditto.
+
 2014-10-09  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] Netscape plugin API symbol used outside feature guards

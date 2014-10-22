@@ -932,73 +932,69 @@ GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const cha
     return adoptGRef(icon);
 }
 
+enum StyleColorType { StyleColorBackground, StyleColorForeground };
+
+static Color styleColor(GType widgetType, GtkStateFlags state, StyleColorType colorType)
+{
+    GtkStyleContext* context = getStyleContext(widgetType);
+    // Recent GTK+ versions (> 3.14) require to explicitly set the state before getting the color.
+    gtk_style_context_set_state(context, state);
+
+    GdkRGBA gdkRGBAColor;
+    if (colorType == StyleColorBackground)
+        gtk_style_context_get_background_color(context, state, &gdkRGBAColor);
+    else
+        gtk_style_context_get_color(context, state, &gdkRGBAColor);
+    return gdkRGBAColor;
+}
+
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_ENTRY, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
 
 Color RenderThemeGtk::platformInactiveSelectionBackgroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_ENTRY, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }
 
 Color RenderThemeGtk::platformActiveSelectionForegroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_ENTRY, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorForeground);
 }
 
 Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_ENTRY, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }
 
 Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_TREE_VIEW, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_TREE_VIEW, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }
 
 Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_TREE_VIEW, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorForeground);
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
 {
-    GdkRGBA gdkRGBAColor;
-    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
-    return gdkRGBAColor;
+    return styleColor(GTK_TYPE_TREE_VIEW, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }
 
 Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
 {
-    GdkRGBA gdkRGBAColor;
-
     switch (cssValueId) {
     case CSSValueButtontext:
-        gtk_style_context_get_color(getStyleContext(GTK_TYPE_BUTTON), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
-        return gdkRGBAColor;
+        return styleColor(GTK_TYPE_BUTTON, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     case CSSValueCaptiontext:
-        gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(0), &gdkRGBAColor);
-        return gdkRGBAColor;
+        return styleColor(GTK_TYPE_ENTRY, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     default:
         return RenderTheme::systemColor(cssValueId);
     }
