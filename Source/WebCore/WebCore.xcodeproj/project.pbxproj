@@ -2482,6 +2482,8 @@
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
 		836FBCEA178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */; };
 		836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */; };
+		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
+		8386A97019F61E4F00E1EC4A /* StyleBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */; };
 		83C1D425178D5AB400141E68 /* SVGPathSegArcAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D413178D5AB400141E68 /* SVGPathSegArcAbs.h */; };
 		83C1D426178D5AB400141E68 /* SVGPathSegArcRel.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D414178D5AB400141E68 /* SVGPathSegArcRel.h */; };
 		83C1D427178D5AB400141E68 /* SVGPathSegCurvetoCubicAbs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C1D415178D5AB400141E68 /* SVGPathSegCurvetoCubicAbs.h */; };
@@ -9640,6 +9642,8 @@
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
 		836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTypeAnimator.cpp; sourceTree = "<group>"; };
 		836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedProperty.cpp; sourceTree = "<group>"; };
+		8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
+		8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBuilder.cpp; path = StyleBuilder.cpp; sourceTree = "<group>"; };
 		83C1D413178D5AB400141E68 /* SVGPathSegArcAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegArcAbs.h; sourceTree = "<group>"; };
 		83C1D414178D5AB400141E68 /* SVGPathSegArcRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegArcRel.h; sourceTree = "<group>"; };
 		83C1D415178D5AB400141E68 /* SVGPathSegCurvetoCubicAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegCurvetoCubicAbs.h; sourceTree = "<group>"; };
@@ -16251,6 +16255,7 @@
 				B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */,
 				656581E809D1508D000E61D7 /* SVGNames.cpp */,
 				656581E909D1508D000E61D7 /* SVGNames.h */,
+				8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */,
 				CDAB6D2F17C9259500C60B34 /* UserAgentScripts.h */,
 				CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */,
 				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
@@ -22206,6 +22211,7 @@
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
+				8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -23363,6 +23369,7 @@
 				A172182619DE183F00464D17 /* _UIHighlightViewSPI.h in Headers */,
 				CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */,
 				FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */,
+				8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */,
 				FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */,
 				FD31601012B0267600C1A359 /* AudioListener.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
@@ -27396,6 +27403,7 @@
 				CD2F4A2718D8A3490063746D /* AudioHardwareListenerMac.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,
 				1AF4CEE918BC350100BC2D34 /* DefaultVisitedLinkStore.cpp in Sources */,
+				8386A97019F61E4F00E1EC4A /* StyleBuilder.cpp in Sources */,
 				FD31602B12B0267600C1A359 /* DelayDSPKernel.cpp in Sources */,
 				FD31602D12B0267600C1A359 /* DelayNode.cpp in Sources */,
 				FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */,

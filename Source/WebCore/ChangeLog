@@ -1,3 +1,76 @@
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for generating the StyleBuilder from CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=137910
+
+        Reviewed by Andreas Kling.
+
+        Add initial support for generating the StyleBuilder from
+        CSSPropertyNames.in. This is a first step towards getting rid of the
+        legacy DeprecatedStyleBuilder class and having everything defined in one
+        place (CSSPropertyNames.in).
+
+        This patch updates makeprop.pl script to generate a StyleBuilder.cpp
+        file that generate a the StyleBuilder::applyProperty() method
+        implementation using a huge switch statement for all the CSS
+        properties. With this patch, we are now generating the new StyleBuilder
+        code for all the "simple" CSS properties (i.e. those that were using
+        ApplyPropertyDefault<> in DeprecatedStyleBuilder.cpp). I am using a
+        "NewStyleBuilder" option in CSSPropertyNames.in for properties that
+        we generate to help with improving incrementally the generator. Once
+        we are able to generate all properties, this transition option will
+        do away and become the default.
+
+        By default, the generator will make an educated guess for the type
+        name, the getter, the setter and the initial function of each property.
+        For example, for the border-collapse property, it will use:
+        - TypeName: EBorderCollapse (i.e. 'E' + PropertyId)
+        - Getter: borderCollapse() (i.e. PropertyId with first letter lowercased)
+        - Setter: setBorderCollapse() (i.e. 'set' + PropertyId)
+        - Initial: initialBorderCollapse() (i.e. 'initial' + PropertyId)
+
+        This works for most properties. For properties that need
+        special-casing, developers can use the following options in
+        CSSPropertyNames.in:
+        - TypeName: Overrides the type name
+        - Getter: Overrides the getter name
+        - Setter: Overrides the setter name
+        - Initial: Overrides the initial function name
+        - NameForMethods: Overrides the Getter / Setter / Initial function
+          names. For e.g. "NameForMethods=OverflowWrap" will use
+          "overflowWrap() / setOverflowWrap() / initialOverflowWrap()".
+
+        The patch is inspired by the following Blink revision by
+        <timloh@chromium.org>:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=150424
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyVerticalAlign::createHandler):
+        (WebCore::ApplyPropertyDisplay::applyInitialValue):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleBuilder.h: Added.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::applyProperty):
+        * css/makeprop.pl:
+        * rendering/style/RenderStyle.h:
+        Move the initialXXX() methods that were in NonInheritedFlags to
+        RenderStyle class, with the other initialXXX() methods to facilitate
+        code generation.
+
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GStreamer debug build after r175050.

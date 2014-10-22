@@ -265,17 +265,6 @@ public:
         bool isLink() const { return getBoolean(isLinkOffset); }
         void setIsLink(bool value) { updateBoolean(value, isLinkOffset); }
 
-        static EOverflow initialOverflowX() { return OVISIBLE; }
-        static EOverflow initialOverflowY() { return OVISIBLE; }
-        static EClear initialClear() { return CNONE; }
-        static EDisplay initialDisplay() { return INLINE; }
-        static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
-        static EPosition initialPosition() { return StaticPosition; }
-        static EVerticalAlign initialVerticalAlign() { return BASELINE; }
-        static EFloat initialFloating() { return NoFloat; }
-        static EPageBreak initialPageBreak() { return PBAUTO; }
-        static ETableLayout initialTableLayout() { return TAUTO; }
-
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
         static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
         static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
@@ -1784,6 +1773,16 @@ public:
     bool hasExplicitlyInheritedProperties() const { return noninherited_flags.hasExplicitlyInheritedProperties(); }
     
     // Initial values for all the properties
+    static EOverflow initialOverflowX() { return OVISIBLE; }
+    static EOverflow initialOverflowY() { return OVISIBLE; }
+    static EClear initialClear() { return CNONE; }
+    static EDisplay initialDisplay() { return INLINE; }
+    static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
+    static EPosition initialPosition() { return StaticPosition; }
+    static EVerticalAlign initialVerticalAlign() { return BASELINE; }
+    static EFloat initialFloating() { return NoFloat; }
+    static EPageBreak initialPageBreak() { return PBAUTO; }
+    static ETableLayout initialTableLayout() { return TAUTO; }
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static OutlineIsAuto initialOutlineStyleIsAuto() { return AUTO_OFF; }

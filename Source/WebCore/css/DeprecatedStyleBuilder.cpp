@@ -1975,7 +1975,7 @@ public:
 
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<EVerticalAlign, &RenderStyle::verticalAlign, EVerticalAlign, &RenderStyle::setVerticalAlign, EVerticalAlign, &RenderStyle::NonInheritedFlags::initialVerticalAlign>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<EVerticalAlign, &RenderStyle::verticalAlign, EVerticalAlign, &RenderStyle::setVerticalAlign, EVerticalAlign, &RenderStyle::initialVerticalAlign>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };
@@ -2099,7 +2099,7 @@ public:
 
     static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
     {
-        styleResolver->style()->setDisplay(RenderStyle::NonInheritedFlags::initialDisplay());
+        styleResolver->style()->setDisplay(RenderStyle::initialDisplay());
     }
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
@@ -2358,29 +2358,21 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyBorderBottomColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::setVisitedLinkBorderBottomColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyBorderBottomLeftRadius, ApplyPropertyBorderRadius<&RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius, &RenderStyle::initialBorderRadius>::createHandler());
     setPropertyHandler(CSSPropertyBorderBottomRightRadius, ApplyPropertyBorderRadius<&RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius, &RenderStyle::initialBorderRadius>::createHandler());
-    setPropertyHandler(CSSPropertyBorderBottomStyle, ApplyPropertyDefault<EBorderStyle, &RenderStyle::borderBottomStyle, EBorderStyle, &RenderStyle::setBorderBottomStyle, EBorderStyle, &RenderStyle::initialBorderStyle>::createHandler());
     setPropertyHandler(CSSPropertyBorderBottomWidth, ApplyPropertyComputeLength<float, &RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth, NormalDisabled, ThicknessEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyBorderCollapse, ApplyPropertyDefault<EBorderCollapse, &RenderStyle::borderCollapse, EBorderCollapse, &RenderStyle::setBorderCollapse, EBorderCollapse, &RenderStyle::initialBorderCollapse>::createHandler());
     setPropertyHandler(CSSPropertyBorderImageOutset, ApplyPropertyBorderImageModifier<BorderImage, Outset>::createHandler());
     setPropertyHandler(CSSPropertyBorderImageRepeat, ApplyPropertyBorderImageModifier<BorderImage, Repeat>::createHandler());
     setPropertyHandler(CSSPropertyBorderImageSlice, ApplyPropertyBorderImageModifier<BorderImage, Slice>::createHandler());
     setPropertyHandler(CSSPropertyBorderImageSource, ApplyPropertyBorderImageSource<CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource, &RenderStyle::initialBorderImageSource>::createHandler());
     setPropertyHandler(CSSPropertyBorderImageWidth, ApplyPropertyBorderImageModifier<BorderImage, Width>::createHandler());
     setPropertyHandler(CSSPropertyBorderLeftColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::setVisitedLinkBorderLeftColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyBorderLeftStyle, ApplyPropertyDefault<EBorderStyle, &RenderStyle::borderLeftStyle, EBorderStyle, &RenderStyle::setBorderLeftStyle, EBorderStyle, &RenderStyle::initialBorderStyle>::createHandler());
     setPropertyHandler(CSSPropertyBorderLeftWidth, ApplyPropertyComputeLength<float, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth, NormalDisabled, ThicknessEnabled>::createHandler());
     setPropertyHandler(CSSPropertyBorderRightColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::setVisitedLinkBorderRightColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyBorderRightStyle, ApplyPropertyDefault<EBorderStyle, &RenderStyle::borderRightStyle, EBorderStyle, &RenderStyle::setBorderRightStyle, EBorderStyle, &RenderStyle::initialBorderStyle>::createHandler());
     setPropertyHandler(CSSPropertyBorderRightWidth, ApplyPropertyComputeLength<float, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth, NormalDisabled, ThicknessEnabled>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::setVisitedLinkBorderTopColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopLeftRadius, ApplyPropertyBorderRadius<&RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius, &RenderStyle::initialBorderRadius>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopRightRadius, ApplyPropertyBorderRadius<&RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius, &RenderStyle::initialBorderRadius>::createHandler());
-    setPropertyHandler(CSSPropertyBorderTopStyle, ApplyPropertyDefault<EBorderStyle, &RenderStyle::borderTopStyle, EBorderStyle, &RenderStyle::setBorderTopStyle, EBorderStyle, &RenderStyle::initialBorderStyle>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopWidth, ApplyPropertyComputeLength<float, &RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth, NormalDisabled, ThicknessEnabled>::createHandler());
     setPropertyHandler(CSSPropertyBottom, ApplyPropertyLength<&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyBoxSizing, ApplyPropertyDefault<EBoxSizing, &RenderStyle::boxSizing, EBoxSizing, &RenderStyle::setBoxSizing, EBoxSizing, &RenderStyle::initialBoxSizing>::createHandler());
-    setPropertyHandler(CSSPropertyCaptionSide, ApplyPropertyDefault<ECaptionSide, &RenderStyle::captionSide, ECaptionSide, &RenderStyle::setCaptionSide, ECaptionSide, &RenderStyle::initialCaptionSide>::createHandler());
-    setPropertyHandler(CSSPropertyClear, ApplyPropertyDefault<EClear, &RenderStyle::clear, EClear, &RenderStyle::setClear, EClear, &RenderStyle::NonInheritedFlags::initialClear>::createHandler());
     setPropertyHandler(CSSPropertyClip, ApplyPropertyClip::createHandler());
     setPropertyHandler(CSSPropertyColor, ApplyPropertyColor<InheritFromParent, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::setVisitedLinkColor, &RenderStyle::invalidColor, RenderStyle::initialColor>::createHandler());
     setPropertyHandler(CSSPropertyCounterIncrement, ApplyPropertyCounter<Increment>::createHandler());
@@ -2388,18 +2380,12 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyCursor, ApplyPropertyCursor::createHandler());
     setPropertyHandler(CSSPropertyDirection, ApplyPropertyDirection<&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection>::createHandler());
     setPropertyHandler(CSSPropertyDisplay, ApplyPropertyDisplay::createHandler());
-    setPropertyHandler(CSSPropertyEmptyCells, ApplyPropertyDefault<EEmptyCell, &RenderStyle::emptyCells, EEmptyCell, &RenderStyle::setEmptyCells, EEmptyCell, &RenderStyle::initialEmptyCells>::createHandler());
-    setPropertyHandler(CSSPropertyFloat, ApplyPropertyDefault<EFloat, &RenderStyle::floating, EFloat, &RenderStyle::setFloating, EFloat, &RenderStyle::NonInheritedFlags::initialFloating>::createHandler());
     setPropertyHandler(CSSPropertyFontFamily, ApplyPropertyFontFamily::createHandler());
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());
     setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
     setPropertyHandler(CSSPropertyHeight, ApplyPropertyLength<&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicDisabled, NoneDisabled, UndefinedDisabled>::createHandler());
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    setPropertyHandler(CSSPropertyImageOrientation, ApplyPropertyDefault<ImageOrientationEnum, &RenderStyle::imageOrientation, ImageOrientationEnum, &RenderStyle::setImageOrientation, ImageOrientationEnum, &RenderStyle::initialImageOrientation>::createHandler());
-#endif
-    setPropertyHandler(CSSPropertyImageRendering, ApplyPropertyDefault<EImageRendering, &RenderStyle::imageRendering, EImageRendering, &RenderStyle::setImageRendering, EImageRendering, &RenderStyle::initialImageRendering>::createHandler());
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     setPropertyHandler(CSSPropertyImageResolution, ApplyPropertyImageResolution::createHandler());
 #endif
@@ -2412,8 +2398,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyLineHeight, ApplyPropertyLineHeight::createHandler());
 #endif
     setPropertyHandler(CSSPropertyListStyleImage, ApplyPropertyStyleImage<&RenderStyle::listStyleImage, &RenderStyle::setListStyleImage, &RenderStyle::initialListStyleImage, CSSPropertyListStyleImage>::createHandler());
-    setPropertyHandler(CSSPropertyListStylePosition, ApplyPropertyDefault<EListStylePosition, &RenderStyle::listStylePosition, EListStylePosition, &RenderStyle::setListStylePosition, EListStylePosition, &RenderStyle::initialListStylePosition>::createHandler());
-    setPropertyHandler(CSSPropertyListStyleType, ApplyPropertyDefault<EListStyleType, &RenderStyle::listStyleType, EListStyleType, &RenderStyle::setListStyleType, EListStyleType, &RenderStyle::initialListStyleType>::createHandler());
     setPropertyHandler(CSSPropertyMarginBottom, ApplyPropertyLength<&RenderStyle::marginBottom, &RenderStyle::setMarginBottom, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyMarginLeft, ApplyPropertyLength<&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyMarginRight, ApplyPropertyLength<&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
@@ -2422,50 +2406,28 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyMaxWidth, ApplyPropertyLength<&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled, NoneEnabled, UndefinedEnabled>::createHandler());
     setPropertyHandler(CSSPropertyMinHeight, ApplyPropertyLength<&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicDisabled>::createHandler());
     setPropertyHandler(CSSPropertyMinWidth, ApplyPropertyLength<&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyObjectFit, ApplyPropertyDefault<ObjectFit, &RenderStyle::objectFit, ObjectFit, &RenderStyle::setObjectFit, ObjectFit, &RenderStyle::initialObjectFit>::createHandler());
-    setPropertyHandler(CSSPropertyOpacity, ApplyPropertyDefault<float, &RenderStyle::opacity, float, &RenderStyle::setOpacity, float, &RenderStyle::initialOpacity>::createHandler());
     setPropertyHandler(CSSPropertyOrphans, ApplyPropertyAuto<short, &RenderStyle::orphans, &RenderStyle::setOrphans, &RenderStyle::hasAutoOrphans, &RenderStyle::setHasAutoOrphans>::createHandler());
     setPropertyHandler(CSSPropertyOutlineColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyOutlineOffset, ApplyPropertyComputeLength<int, &RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset, &RenderStyle::initialOutlineOffset>::createHandler());
     setPropertyHandler(CSSPropertyOutlineStyle, ApplyPropertyOutlineStyle::createHandler());
     setPropertyHandler(CSSPropertyOutlineWidth, ApplyPropertyComputeLength<unsigned short, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialOutlineWidth, NormalDisabled, ThicknessEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyOverflowWrap, ApplyPropertyDefault<EOverflowWrap, &RenderStyle::overflowWrap, EOverflowWrap, &RenderStyle::setOverflowWrap, EOverflowWrap, &RenderStyle::initialOverflowWrap>::createHandler());
-    setPropertyHandler(CSSPropertyOverflowX, ApplyPropertyDefault<EOverflow, &RenderStyle::overflowX, EOverflow, &RenderStyle::setOverflowX, EOverflow, &RenderStyle::NonInheritedFlags::initialOverflowX>::createHandler());
-    setPropertyHandler(CSSPropertyOverflowY, ApplyPropertyDefault<EOverflow, &RenderStyle::overflowY, EOverflow, &RenderStyle::setOverflowY, EOverflow, &RenderStyle::NonInheritedFlags::initialOverflowY>::createHandler());
     setPropertyHandler(CSSPropertyPaddingBottom, ApplyPropertyLength<&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding>::createHandler());
     setPropertyHandler(CSSPropertyPaddingLeft, ApplyPropertyLength<&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding>::createHandler());
     setPropertyHandler(CSSPropertyPaddingRight, ApplyPropertyLength<&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding>::createHandler());
     setPropertyHandler(CSSPropertyPaddingTop, ApplyPropertyLength<&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding>::createHandler());
-    setPropertyHandler(CSSPropertyPageBreakAfter, ApplyPropertyDefault<EPageBreak, &RenderStyle::pageBreakAfter, EPageBreak, &RenderStyle::setPageBreakAfter, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyPageBreakBefore, ApplyPropertyDefault<EPageBreak, &RenderStyle::pageBreakBefore, EPageBreak, &RenderStyle::setPageBreakBefore, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyPageBreakInside, ApplyPropertyDefault<EPageBreak, &RenderStyle::pageBreakInside, EPageBreak, &RenderStyle::setPageBreakInside, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyPointerEvents, ApplyPropertyDefault<EPointerEvents, &RenderStyle::pointerEvents, EPointerEvents, &RenderStyle::setPointerEvents, EPointerEvents, &RenderStyle::initialPointerEvents>::createHandler());
-    setPropertyHandler(CSSPropertyPosition, ApplyPropertyDefault<EPosition, &RenderStyle::position, EPosition, &RenderStyle::setPosition, EPosition, &RenderStyle::NonInheritedFlags::initialPosition>::createHandler());
     setPropertyHandler(CSSPropertyResize, ApplyPropertyResize::createHandler());
     setPropertyHandler(CSSPropertyRight, ApplyPropertyLength<&RenderStyle::right, &RenderStyle::setRight, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertySize, ApplyPropertyPageSize::createHandler());
-    setPropertyHandler(CSSPropertySpeak, ApplyPropertyDefault<ESpeak, &RenderStyle::speak, ESpeak, &RenderStyle::setSpeak, ESpeak, &RenderStyle::initialSpeak>::createHandler());
-    setPropertyHandler(CSSPropertyTableLayout, ApplyPropertyDefault<ETableLayout, &RenderStyle::tableLayout, ETableLayout, &RenderStyle::setTableLayout, ETableLayout, &RenderStyle::NonInheritedFlags::initialTableLayout>::createHandler());
-    setPropertyHandler(CSSPropertyTabSize, ApplyPropertyDefault<unsigned, &RenderStyle::tabSize, unsigned, &RenderStyle::setTabSize, unsigned, &RenderStyle::initialTabSize>::createHandler());
     setPropertyHandler(CSSPropertyTextAlign, ApplyPropertyTextAlign::createHandler());
     setPropertyHandler(CSSPropertyTextDecoration, ApplyPropertyTextDecoration::createHandler());
-#if ENABLE(CSS3_TEXT)
-    setPropertyHandler(CSSPropertyWebkitTextAlignLast, ApplyPropertyDefault<TextAlignLast, &RenderStyle::textAlignLast, TextAlignLast, &RenderStyle::setTextAlignLast, TextAlignLast, &RenderStyle::initialTextAlignLast>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextJustify, ApplyPropertyDefault<TextJustify, &RenderStyle::textJustify, TextJustify, &RenderStyle::setTextJustify, TextJustify, &RenderStyle::initialTextJustify>::createHandler());
-#endif // CSS3_TEXT
     setPropertyHandler(CSSPropertyWebkitTextDecorationLine, ApplyPropertyTextDecoration::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextDecorationStyle, ApplyPropertyDefault<TextDecorationStyle, &RenderStyle::textDecorationStyle, TextDecorationStyle, &RenderStyle::setTextDecorationStyle, TextDecorationStyle, &RenderStyle::initialTextDecorationStyle>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationSkip, ApplyPropertyTextDecorationSkip::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextUnderlinePosition, ApplyPropertyTextUnderlinePosition::createHandler());
     setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyTextIndent::createHandler());
-    setPropertyHandler(CSSPropertyTextOverflow, ApplyPropertyDefault<TextOverflow, &RenderStyle::textOverflow, TextOverflow, &RenderStyle::setTextOverflow, TextOverflow, &RenderStyle::initialTextOverflow>::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());
-    setPropertyHandler(CSSPropertyTextTransform, ApplyPropertyDefault<ETextTransform, &RenderStyle::textTransform, ETextTransform, &RenderStyle::setTextTransform, ETextTransform, &RenderStyle::initialTextTransform>::createHandler());
     setPropertyHandler(CSSPropertyTop, ApplyPropertyLength<&RenderStyle::top, &RenderStyle::setTop, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyUnicodeBidi, ApplyPropertyDefault<EUnicodeBidi, &RenderStyle::unicodeBidi, EUnicodeBidi, &RenderStyle::setUnicodeBidi, EUnicodeBidi, &RenderStyle::NonInheritedFlags::initialUnicodeBidi>::createHandler());
     setPropertyHandler(CSSPropertyVerticalAlign, ApplyPropertyVerticalAlign::createHandler());
-    setPropertyHandler(CSSPropertyVisibility, ApplyPropertyDefault<EVisibility, &RenderStyle::visibility, EVisibility, &RenderStyle::setVisibility, EVisibility, &RenderStyle::initialVisibility>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationDirection, ApplyPropertyAnimation<Animation::AnimationDirection, &Animation::direction, &Animation::setDirection, &Animation::isDirectionSet, &Animation::clearDirection, &Animation::initialAnimationDirection, &CSSToStyleMap::mapAnimationDirection, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationDuration, ApplyPropertyAnimation<double, &Animation::duration, &Animation::setDuration, &Animation::isDurationSet, &Animation::clearDuration, &Animation::initialAnimationDuration, &CSSToStyleMap::mapAnimationDuration, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
@@ -2474,59 +2436,20 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitAnimationName, ApplyPropertyAnimation<const String&, &Animation::name, &Animation::setName, &Animation::isNameSet, &Animation::clearName, &Animation::initialAnimationName, &CSSToStyleMap::mapAnimationName, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationPlayState, ApplyPropertyAnimation<EAnimPlayState, &Animation::playState, &Animation::setPlayState, &Animation::isPlayStateSet, &Animation::clearPlayState, &Animation::initialAnimationPlayState, &CSSToStyleMap::mapAnimationPlayState, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationTimingFunction, ApplyPropertyAnimation<const PassRefPtr<TimingFunction>, &Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSToStyleMap::mapAnimationTimingFunction, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitAppearance, ApplyPropertyDefault<ControlPart, &RenderStyle::appearance, ControlPart, &RenderStyle::setAppearance, ControlPart, &RenderStyle::initialAppearance>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAspectRatio, ApplyPropertyAspectRatio::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBackfaceVisibility, ApplyPropertyDefault<EBackfaceVisibility, &RenderStyle::backfaceVisibility, EBackfaceVisibility, &RenderStyle::setBackfaceVisibility, EBackfaceVisibility, &RenderStyle::initialBackfaceVisibility>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyHandler(CSSPropertyWebkitBackgroundComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSToStyleMap::mapFillComposite>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
     setPropertyHandler(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
-#if ENABLE(CSS_COMPOSITING)
-    setPropertyHandler(CSSPropertyMixBlendMode, ApplyPropertyDefault<BlendMode, &RenderStyle::blendMode, BlendMode, &RenderStyle::setBlendMode, BlendMode, &RenderStyle::initialBlendMode>::createHandler());
-    setPropertyHandler(CSSPropertyIsolation, ApplyPropertyDefault<Isolation, &RenderStyle::isolation, Isolation, &RenderStyle::setIsolation, Isolation, &RenderStyle::initialIsolation>::createHandler());
-#endif
-    setPropertyHandler(CSSPropertyWebkitBorderFit, ApplyPropertyDefault<EBorderFit, &RenderStyle::borderFit, EBorderFit, &RenderStyle::setBorderFit, EBorderFit, &RenderStyle::initialBorderFit>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderHorizontalSpacing, ApplyPropertyComputeLength<short, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing, &RenderStyle::initialHorizontalBorderSpacing>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderImage, ApplyPropertyBorderImage<BorderImage, CSSPropertyWebkitBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderVerticalSpacing, ApplyPropertyComputeLength<short, &RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing, &RenderStyle::initialVerticalBorderSpacing>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxAlign, ApplyPropertyDefault<EBoxAlignment, &RenderStyle::boxAlign, EBoxAlignment, &RenderStyle::setBoxAlign, EBoxAlignment, &RenderStyle::initialBoxAlign>::createHandler());
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-    setPropertyHandler(CSSPropertyWebkitBoxDecorationBreak, ApplyPropertyDefault<EBoxDecorationBreak, &RenderStyle::boxDecorationBreak, EBoxDecorationBreak, &RenderStyle::setBoxDecorationBreak, EBoxDecorationBreak, &RenderStyle::initialBoxDecorationBreak>::createHandler());
-#endif
-    setPropertyHandler(CSSPropertyWebkitBoxDirection, ApplyPropertyDefault<EBoxDirection, &RenderStyle::boxDirection, EBoxDirection, &RenderStyle::setBoxDirection, EBoxDirection, &RenderStyle::initialBoxDirection>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxFlex, ApplyPropertyDefault<float, &RenderStyle::boxFlex, float, &RenderStyle::setBoxFlex, float, &RenderStyle::initialBoxFlex>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxFlexGroup, ApplyPropertyDefault<unsigned, &RenderStyle::boxFlexGroup, unsigned, &RenderStyle::setBoxFlexGroup, unsigned, &RenderStyle::initialBoxFlexGroup>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxLines, ApplyPropertyDefault<EBoxLines, &RenderStyle::boxLines, EBoxLines, &RenderStyle::setBoxLines, EBoxLines, &RenderStyle::initialBoxLines>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxOrdinalGroup, ApplyPropertyDefault<unsigned, &RenderStyle::boxOrdinalGroup, unsigned, &RenderStyle::setBoxOrdinalGroup, unsigned, &RenderStyle::initialBoxOrdinalGroup>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxOrient, ApplyPropertyDefault<EBoxOrient, &RenderStyle::boxOrient, EBoxOrient, &RenderStyle::setBoxOrient, EBoxOrient, &RenderStyle::initialBoxOrient>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBoxPack, ApplyPropertyDefault<EBoxPack, &RenderStyle::boxPack, EBoxPack, &RenderStyle::setBoxPack, EBoxPack, &RenderStyle::initialBoxPack>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColorCorrection, ApplyPropertyDefault<ColorSpace, &RenderStyle::colorSpace, ColorSpace, &RenderStyle::setColorSpace, ColorSpace, &RenderStyle::initialColorSpace>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnAxis, ApplyPropertyDefault<ColumnAxis, &RenderStyle::columnAxis, ColumnAxis, &RenderStyle::setColumnAxis, ColumnAxis, &RenderStyle::initialColumnAxis>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnBreakAfter, ApplyPropertyDefault<EPageBreak, &RenderStyle::columnBreakAfter, EPageBreak, &RenderStyle::setColumnBreakAfter, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnBreakBefore, ApplyPropertyDefault<EPageBreak, &RenderStyle::columnBreakBefore, EPageBreak, &RenderStyle::setColumnBreakBefore, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnBreakInside, ApplyPropertyDefault<EPageBreak, &RenderStyle::columnBreakInside, EPageBreak, &RenderStyle::setColumnBreakInside, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColumnCount, ApplyPropertyAuto<unsigned short, &RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnFill, ApplyPropertyDefault<ColumnFill, &RenderStyle::columnFill, ColumnFill, &RenderStyle::setColumnFill, ColumnFill, &RenderStyle::initialColumnFill>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColumnGap, ApplyPropertyAuto<float, &RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap, ComputeLength, CSSValueNormal>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnProgression, ApplyPropertyDefault<ColumnProgression, &RenderStyle::columnProgression, ColumnProgression, &RenderStyle::setColumnProgression, ColumnProgression, &RenderStyle::initialColumnProgression>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColumnRuleColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColumnRuleWidth, ApplyPropertyComputeLength<unsigned short, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialColumnRuleWidth, NormalDisabled, ThicknessEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnSpan, ApplyPropertyDefault<ColumnSpan, &RenderStyle::columnSpan, ColumnSpan, &RenderStyle::setColumnSpan, ColumnSpan, &RenderStyle::initialColumnSpan>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitColumnRuleStyle, ApplyPropertyDefault<EBorderStyle, &RenderStyle::columnRuleStyle, EBorderStyle, &RenderStyle::setColumnRuleStyle, EBorderStyle, &RenderStyle::initialBorderStyle>::createHandler());
     setPropertyHandler(CSSPropertyWebkitColumnWidth, ApplyPropertyAuto<float, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth, ComputeLength>::createHandler());
-#if ENABLE(CURSOR_VISIBILITY)
-    setPropertyHandler(CSSPropertyWebkitCursorVisibility, ApplyPropertyDefault<CursorVisibility, &RenderStyle::cursorVisibility, CursorVisibility, &RenderStyle::setCursorVisibility, CursorVisibility, &RenderStyle::initialCursorVisibility>::createHandler());
-#endif
-    setPropertyHandler(CSSPropertyAlignContent, ApplyPropertyDefault<EAlignContent, &RenderStyle::alignContent, EAlignContent, &RenderStyle::setAlignContent, EAlignContent, &RenderStyle::initialAlignContent>::createHandler());
-    setPropertyHandler(CSSPropertyAlignItems, ApplyPropertyDefault<EAlignItems, &RenderStyle::alignItems, EAlignItems, &RenderStyle::setAlignItems, EAlignItems, &RenderStyle::initialAlignItems>::createHandler());
-    setPropertyHandler(CSSPropertyAlignSelf, ApplyPropertyDefault<EAlignItems, &RenderStyle::alignSelf, EAlignItems, &RenderStyle::setAlignSelf, EAlignItems, &RenderStyle::initialAlignSelf>::createHandler());
     setPropertyHandler(CSSPropertyFlexBasis, ApplyPropertyLength<&RenderStyle::flexBasis, &RenderStyle::setFlexBasis, &RenderStyle::initialFlexBasis, AutoEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyFlexDirection, ApplyPropertyDefault<EFlexDirection, &RenderStyle::flexDirection, EFlexDirection, &RenderStyle::setFlexDirection, EFlexDirection, &RenderStyle::initialFlexDirection>::createHandler());
-    setPropertyHandler(CSSPropertyFlexGrow, ApplyPropertyDefault<float, &RenderStyle::flexGrow, float, &RenderStyle::setFlexGrow, float, &RenderStyle::initialFlexGrow>::createHandler());
-    setPropertyHandler(CSSPropertyFlexShrink, ApplyPropertyDefault<float, &RenderStyle::flexShrink, float, &RenderStyle::setFlexShrink, float, &RenderStyle::initialFlexShrink>::createHandler());
-    setPropertyHandler(CSSPropertyFlexWrap, ApplyPropertyDefault<EFlexWrap, &RenderStyle::flexWrap, EFlexWrap, &RenderStyle::setFlexWrap, EFlexWrap, &RenderStyle::initialFlexWrap>::createHandler());
-    setPropertyHandler(CSSPropertyJustifyContent, ApplyPropertyDefault<EJustifyContent, &RenderStyle::justifyContent, EJustifyContent, &RenderStyle::setJustifyContent, EJustifyContent, &RenderStyle::initialJustifyContent>::createHandler());
-    setPropertyHandler(CSSPropertyOrder, ApplyPropertyDefault<int, &RenderStyle::order, int, &RenderStyle::setOrder, int, &RenderStyle::initialOrder>::createHandler());
 #if ENABLE(CSS_REGIONS)
     setPropertyHandler(CSSPropertyWebkitFlowFrom, ApplyPropertyString<MapNoneToNull, &RenderStyle::regionThread, &RenderStyle::setRegionThread, &RenderStyle::initialRegionThread>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlowInto, ApplyPropertyString<MapNoneToNull, &RenderStyle::flowThread, &RenderStyle::setFlowThread, &RenderStyle::initialFlowThread>::createHandler());
@@ -2538,21 +2461,10 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitHyphenateLimitAfter, ApplyPropertyNumber<short, &RenderStyle::hyphenationLimitAfter, &RenderStyle::setHyphenationLimitAfter, &RenderStyle::initialHyphenationLimitAfter>::createHandler());
     setPropertyHandler(CSSPropertyWebkitHyphenateLimitBefore, ApplyPropertyNumber<short, &RenderStyle::hyphenationLimitBefore, &RenderStyle::setHyphenationLimitBefore, &RenderStyle::initialHyphenationLimitBefore>::createHandler());
     setPropertyHandler(CSSPropertyWebkitHyphenateLimitLines, ApplyPropertyNumber<short, &RenderStyle::hyphenationLimitLines, &RenderStyle::setHyphenationLimitLines, &RenderStyle::initialHyphenationLimitLines, CSSValueNoLimit>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitHyphens, ApplyPropertyDefault<Hyphens, &RenderStyle::hyphens, Hyphens, &RenderStyle::setHyphens, Hyphens, &RenderStyle::initialHyphens>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitLineAlign, ApplyPropertyDefault<LineAlign, &RenderStyle::lineAlign, LineAlign, &RenderStyle::setLineAlign, LineAlign, &RenderStyle::initialLineAlign>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitLineBreak, ApplyPropertyDefault<LineBreak, &RenderStyle::lineBreak, LineBreak, &RenderStyle::setLineBreak, LineBreak, &RenderStyle::initialLineBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitLineClamp, ApplyPropertyDefault<const LineClampValue&, &RenderStyle::lineClamp, LineClampValue, &RenderStyle::setLineClamp, LineClampValue, &RenderStyle::initialLineClamp>::createHandler());
     setPropertyHandler(CSSPropertyWebkitLineGrid, ApplyPropertyString<MapNoneToNull, &RenderStyle::lineGrid, &RenderStyle::setLineGrid, &RenderStyle::initialLineGrid>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitLineSnap, ApplyPropertyDefault<LineSnap, &RenderStyle::lineSnap, LineSnap, &RenderStyle::setLineSnap, LineSnap, &RenderStyle::initialLineSnap>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarginAfterCollapse, ApplyPropertyDefault<EMarginCollapse, &RenderStyle::marginAfterCollapse, EMarginCollapse, &RenderStyle::setMarginAfterCollapse, EMarginCollapse, &RenderStyle::initialMarginAfterCollapse>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarginBeforeCollapse, ApplyPropertyDefault<EMarginCollapse, &RenderStyle::marginBeforeCollapse, EMarginCollapse, &RenderStyle::setMarginBeforeCollapse, EMarginCollapse, &RenderStyle::initialMarginBeforeCollapse>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarginBottomCollapse, CSSPropertyWebkitMarginAfterCollapse);
-    setPropertyHandler(CSSPropertyWebkitMarginTopCollapse, CSSPropertyWebkitMarginBeforeCollapse);
-    setPropertyHandler(CSSPropertyWebkitMarqueeDirection, ApplyPropertyDefault<EMarqueeDirection, &RenderStyle::marqueeDirection, EMarqueeDirection, &RenderStyle::setMarqueeDirection, EMarqueeDirection, &RenderStyle::initialMarqueeDirection>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeIncrement, ApplyPropertyMarqueeIncrement::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeRepetition, ApplyPropertyMarqueeRepetition::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeSpeed, ApplyPropertyMarqueeSpeed::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarqueeStyle, ApplyPropertyDefault<EMarqueeBehavior, &RenderStyle::marqueeBehavior, EMarqueeBehavior, &RenderStyle::setMarqueeBehavior, EMarqueeBehavior, &RenderStyle::initialMarqueeBehavior>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<BorderMask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<BorderMask, Outset>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageRepeat, ApplyPropertyBorderImageModifier<BorderMask, Repeat>::createHandler());
@@ -2569,52 +2481,30 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitMaskRepeatY, ApplyPropertyFillLayer<EFillRepeat, CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSToStyleMap::mapFillRepeatY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSize, ApplyPropertyFillLayer<FillSize, CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSToStyleMap::mapFillSize>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSourceType, ApplyPropertyFillLayer<EMaskSourceType, CSSPropertyWebkitMaskSourceType, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isMaskSourceTypeSet, &FillLayer::maskSourceType, &FillLayer::setMaskSourceType, &FillLayer::clearMaskSourceType, &FillLayer::initialMaskSourceType, &CSSToStyleMap::mapFillMaskSourceType>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitNbspMode, ApplyPropertyDefault<ENBSPMode, &RenderStyle::nbspMode, ENBSPMode, &RenderStyle::setNBSPMode, ENBSPMode, &RenderStyle::initialNBSPMode>::createHandler());
     setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitPerspectiveOriginX, CSSPropertyWebkitPerspectiveOriginY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginX, ApplyPropertyLength<&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX>::createHandler());
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginY, ApplyPropertyLength<&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitPrintColorAdjust, ApplyPropertyDefault<PrintColorAdjust, &RenderStyle::printColorAdjust, PrintColorAdjust, &RenderStyle::setPrintColorAdjust, PrintColorAdjust, &RenderStyle::initialPrintColorAdjust>::createHandler());
-#if ENABLE(CSS_REGIONS)
-    setPropertyHandler(CSSPropertyWebkitRegionBreakAfter, ApplyPropertyDefault<EPageBreak, &RenderStyle::regionBreakAfter, EPageBreak, &RenderStyle::setRegionBreakAfter, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitRegionBreakBefore, ApplyPropertyDefault<EPageBreak, &RenderStyle::regionBreakBefore, EPageBreak, &RenderStyle::setRegionBreakBefore, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitRegionBreakInside, ApplyPropertyDefault<EPageBreak, &RenderStyle::regionBreakInside, EPageBreak, &RenderStyle::setRegionBreakInside, EPageBreak, &RenderStyle::NonInheritedFlags::initialPageBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitRegionFragment, ApplyPropertyDefault<RegionFragment, &RenderStyle::regionFragment, RegionFragment, &RenderStyle::setRegionFragment, RegionFragment, &RenderStyle::initialRegionFragment>::createHandler());
-#endif
-    setPropertyHandler(CSSPropertyWebkitRtlOrdering, ApplyPropertyDefault<Order, &RenderStyle::rtlOrdering, Order, &RenderStyle::setRTLOrdering, Order, &RenderStyle::initialRTLOrdering>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitRubyPosition, ApplyPropertyDefault<RubyPosition, &RenderStyle::rubyPosition, RubyPosition, &RenderStyle::setRubyPosition, RubyPosition, &RenderStyle::initialRubyPosition>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextCombine, ApplyPropertyDefault<TextCombine, &RenderStyle::textCombine, TextCombine, &RenderStyle::setTextCombine, TextCombine, &RenderStyle::initialTextCombine>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, ApplyPropertyTextEmphasisPosition::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisStyle, ApplyPropertyTextEmphasisStyle::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextFillColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextSecurity, ApplyPropertyDefault<ETextSecurity, &RenderStyle::textSecurity, ETextSecurity, &RenderStyle::setTextSecurity, ETextSecurity, &RenderStyle::initialTextSecurity>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextStrokeColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransformOriginX, ApplyPropertyLength<&RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, &RenderStyle::initialTransformOriginX>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransformOriginY, ApplyPropertyLength<&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransformOriginZ, ApplyPropertyComputeLength<float, &RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ, &RenderStyle::initialTransformOriginZ>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTransformStyle, ApplyPropertyDefault<ETransformStyle3D, &RenderStyle::transformStyle3D, ETransformStyle3D, &RenderStyle::setTransformStyle3D, ETransformStyle3D, &RenderStyle::initialTransformStyle3D>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionDuration, ApplyPropertyAnimation<double, &Animation::duration, &Animation::setDuration, &Animation::isDurationSet, &Animation::clearDuration, &Animation::initialAnimationDuration, &CSSToStyleMap::mapAnimationDuration, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionProperty, ApplyPropertyAnimation<CSSPropertyID, &Animation::property, &Animation::setProperty, &Animation::isPropertySet, &Animation::clearProperty, &Animation::initialAnimationProperty, &CSSToStyleMap::mapAnimationProperty, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionTimingFunction, ApplyPropertyAnimation<const PassRefPtr<TimingFunction>, &Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSToStyleMap::mapAnimationTimingFunction, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitUserDrag, ApplyPropertyDefault<EUserDrag, &RenderStyle::userDrag, EUserDrag, &RenderStyle::setUserDrag, EUserDrag, &RenderStyle::initialUserDrag>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitUserModify, ApplyPropertyDefault<EUserModify, &RenderStyle::userModify, EUserModify, &RenderStyle::setUserModify, EUserModify, &RenderStyle::initialUserModify>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitUserSelect, ApplyPropertyDefault<EUserSelect, &RenderStyle::userSelect, EUserSelect, &RenderStyle::setUserSelect, EUserSelect, &RenderStyle::initialUserSelect>::createHandler());
     setPropertyHandler(CSSPropertyWebkitClipPath, ApplyPropertyClipPath<&RenderStyle::clipPath, &RenderStyle::setClipPath, &RenderStyle::initialClipPath>::createHandler());
 #if ENABLE(CSS_SHAPES)
     setPropertyHandler(CSSPropertyWebkitShapeMargin, ApplyPropertyLength<&RenderStyle::shapeMargin, &RenderStyle::setShapeMargin, &RenderStyle::initialShapeMargin>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapeImageThreshold, ApplyPropertyNumber<float, &RenderStyle::shapeImageThreshold, &RenderStyle::setShapeImageThreshold, &RenderStyle::initialShapeImageThreshold>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyShape<&RenderStyle::shapeOutside, &RenderStyle::setShapeOutside, &RenderStyle::initialShapeOutside>::createHandler());
 #endif
-    setPropertyHandler(CSSPropertyWhiteSpace, ApplyPropertyDefault<EWhiteSpace, &RenderStyle::whiteSpace, EWhiteSpace, &RenderStyle::setWhiteSpace, EWhiteSpace, &RenderStyle::initialWhiteSpace>::createHandler());
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyAuto<short, &RenderStyle::widows, &RenderStyle::setWidows, &RenderStyle::hasAutoWidows, &RenderStyle::setHasAutoWidows>::createHandler());
     setPropertyHandler(CSSPropertyWidth, ApplyPropertyLength<&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
-    setPropertyHandler(CSSPropertyWordBreak, ApplyPropertyDefault<EWordBreak, &RenderStyle::wordBreak, EWordBreak, &RenderStyle::setWordBreak, EWordBreak, &RenderStyle::initialWordBreak>::createHandler());
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyWordSpacing::createHandler());
-
-    // UAs must treat 'word-wrap' as an alternate name for the 'overflow-wrap' property. So using the same handlers.
-    setPropertyHandler(CSSPropertyWordWrap, ApplyPropertyDefault<EOverflowWrap, &RenderStyle::overflowWrap, EOverflowWrap, &RenderStyle::setOverflowWrap, EOverflowWrap, &RenderStyle::initialOverflowWrap>::createHandler());
-
     setPropertyHandler(CSSPropertyCx, ApplyPropertyLength<&RenderStyle::cx, &RenderStyle::setCx, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyCy, ApplyPropertyLength<&RenderStyle::cy, &RenderStyle::setCy, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyR, ApplyPropertyLength<&RenderStyle::r, &RenderStyle::setR, &RenderStyle::initialZeroLength>::createHandler());

@@ -8,7 +8,7 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
  * Copyright (C) 2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -113,6 +113,7 @@
 #include "Settings.h"
 #include "ShadowData.h"
 #include "ShadowRoot.h"
+#include "StyleBuilder.h"
 #include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
@@ -1358,7 +1359,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     if (e && e->isSVGElement()) {
         // Only the root <svg> element in an SVG document fragment tree honors css position
         if (!(e->hasTagName(SVGNames::svgTag) && e->parentNode() && !e->parentNode()->isSVGElement()))
-            style.setPosition(RenderStyle::NonInheritedFlags::initialPosition());
+            style.setPosition(RenderStyle::initialPosition());
 
         // RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
         // not be scaled again.
@@ -2126,6 +2127,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             handler.applyValue(id, this, value);
         return;
     }
+
+    // Use the new StyleBuilder.
+    if (StyleBuilder::applyProperty(id, *this, value, isInitial, isInherit))
+        return;
 
     CSSPrimitiveValue* primitiveValue = is<CSSPrimitiveValue>(*value) ? downcast<CSSPrimitiveValue>(value) : nullptr;
 
@@ -2946,7 +2951,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyTransitionProperty:
     case CSSPropertyTransitionTimingFunction:
         return;
-    // These properties are implemented in the DeprecatedStyleBuilder lookup table.
+    // These properties are implemented in the DeprecatedStyleBuilder lookup table or in the new StyleBuilder.
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
     case CSSPropertyBackgroundColor:
