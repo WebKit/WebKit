@@ -1,5 +1,37 @@
 2014-10-22  Jake Nielsen  <jacob_nielsen@apple.com>
 
+        commitqueuetask should include more tests to ensure that the behavior
+        of PatchAnalysisTask._test_patch() is well defined
+        https://bugs.webkit.org/show_bug.cgi?id=137977
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        Adds the MockSimpleTestPlanCommitQueue class, which makes it easier
+        and more readable to define tests that are meant to test the behaviour
+        of PatchAnalysisTask._test_patch(), and adds several unit tests.
+        (FailingTestCommitQueue.test_results):
+        (PatchAnalysisResult):
+        (MockSimpleTestPlanCommitQueue):
+        (MockSimpleTestPlanCommitQueue.__init__):
+        (MockSimpleTestPlanCommitQueue.run_command):
+        (MockSimpleTestPlanCommitQueue._mock_test_result):
+        (MockSimpleTestPlanCommitQueue.test_results):
+        (CommitQueueTaskTest._run_and_expect_patch_analysis_result):
+        (test_flaky_test_failure):
+        (test_failed_archive):
+        (test_two_flaky_tests):
+        (test_one_flaky_test):
+        (test_very_flaky_patch):
+        (test_very_flaky_patch_with_some_tree_redness):
+        (test_different_test_failures):
+        (test_different_test_failures_with_some_tree_redness):
+        (test_mildly_flaky_patch):
+        (test_mildly_flaky_patch_with_some_tree_redness):
+        (test_tree_more_red_than_patch):
+
+2014-10-22  Jake Nielsen  <jacob_nielsen@apple.com>
+
         PatchAnalysisTask._test_patch() needs refactoring
         https://bugs.webkit.org/show_bug.cgi?id=137904
 

@@ -107,8 +107,40 @@ class FailingTestCommitQueue(MockCommitQueue):
         assert(self._test_run_counter >= 0)
         failures_for_run = self._test_failure_plan[self._test_run_counter]
         assert(isinstance(failures_for_run, list))
-        results = LayoutTestResults(test_results=map(self._mock_test_result, failures_for_run), did_exceed_test_failure_limit=(len(self._test_failure_plan[self._test_run_counter]) >= 10))
+        results = LayoutTestResults(test_results=map(self._mock_test_result, failures_for_run), did_exceed_test_failure_limit=(len(failures_for_run) >= 10))
         return results
+
+
+class PatchAnalysisResult(object):
+    FAIL = "Fail"
+    DEFER = "Defer"
+    PASS = "Pass"
+
+
+class MockSimpleTestPlanCommitQueue(MockCommitQueue):
+    def __init__(self, first_test_failures, second_test_failures, clean_test_failures):
+        MockCommitQueue.__init__(self, [])
+        self._patch_test_results = [first_test_failures, second_test_failures]
+        self._clean_test_results = [clean_test_failures]
+        self._current_test_results = []
+
+    def run_command(self, command):
+        MockCommitQueue.run_command(self, command)
+        if command[0] == "build-and-test":
+            if "--no-clean" in command:
+                self._current_test_results = self._patch_test_results.pop(0)
+            else:
+                self._current_test_results = self._clean_test_results.pop(0)
+
+            if self._current_test_results:
+                raise ScriptError("MOCK test failure")
+
+    def _mock_test_result(self, testname):
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
+    def test_results(self):
+        assert(isinstance(self._current_test_results, list))
+        return LayoutTestResults(test_results=map(self._mock_test_result, self._current_test_results), did_exceed_test_failure_limit=(len(self._current_test_results) >= 10))
 
 
 # We use GoldenScriptError to make sure that the code under test throws the
@@ -118,6 +150,22 @@ class GoldenScriptError(ScriptError):
 
 
 class CommitQueueTaskTest(unittest.TestCase):
+    def _run_and_expect_patch_analysis_result(self, commit_queue, expected_analysis_result):
+        tool = MockTool(log_executive=True)
+        patch = tool.bugs.fetch_attachment(10000)
+        task = CommitQueueTask(commit_queue, patch)
+
+        try:
+            result = task.run()
+            if result:
+                analysis_result = PatchAnalysisResult.PASS
+            else:
+                analysis_result = PatchAnalysisResult.DEFER
+        except ScriptError:
+            analysis_result = PatchAnalysisResult.FAIL
+
+        self.assertEqual(analysis_result, expected_analysis_result)
+
     def _run_through_task(self, commit_queue, expected_logs, expected_exception=None, expect_retry=False):
         self.maxDiff = None
         tool = MockTool(log_executive=True)
@@ -277,7 +325,6 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
         ])
         # CommitQueueTask will only report flaky tests if we successfully parsed
         # results.json and returned a LayoutTestResults object, so we fake one.
-        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         expected_logs = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='10000'
 run_webkit_patch: ['update']
@@ -308,7 +355,6 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             ScriptError("MOCK tests failure"),
         ])
-        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         # It's possible delegate to fail to archive layout tests, don't try to report
         # flaky tests when that happens.
         commit_queue.archive_last_test_results = lambda patch: None
@@ -590,6 +636,83 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
 """
         # FIXME: This should really be expect_retry=True for a better user experiance.
         self._run_through_task(commit_queue, expected_logs, GoldenScriptError)
+
+    def test_two_flaky_tests(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1"],
+            second_test_failures=["Fail2"],
+            clean_test_failures=["Fail1", "Fail2"])
+
+        # FIXME: This should pass, but as of right now, it defers.
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_one_flaky_test(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1"],
+            second_test_failures=[],
+            clean_test_failures=[])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.PASS)
+
+    def test_very_flaky_patch(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            second_test_failures=["Fail6", "Fail7", "Fail8", "Fail9", "Fail10"],
+            clean_test_failures=[])
+
+        # FIXME: This should actually fail, but right now it defers
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_very_flaky_patch_with_some_tree_redness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail6", "Fail7", "Fail8", "Fail9", "Fail10"],
+            second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
+
+        # FIXME: This should actually fail, but right now it defers
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_different_test_failures(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5", "Fail6"],
+            second_test_failures=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            clean_test_failures=[])
+
+        # FIXME: This should actually fail, but right now it defers
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_different_test_failures_with_some_tree_redness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5", "Fail6"],
+            second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
+
+        # FIXME: This should actually fail, but right now it defers
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_mildly_flaky_patch(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1"],
+            second_test_failures=["Fail2"],
+            clean_test_failures=[])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_mildly_flaky_patch_with_some_tree_redness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1"],
+            second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail2"],
+            clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+
+    def test_tree_more_red_than_patch(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1", "Fail2", "Fail3"],
+            second_test_failures=["Fail1", "Fail2", "Fail3"],
+            clean_test_failures=["Fail1", "Fail2", "Fail3", "Fail4"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.PASS)
 
     def _expect_validate(self, patch, is_valid):
         class MockDelegate(object):
