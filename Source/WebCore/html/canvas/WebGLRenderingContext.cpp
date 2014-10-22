@@ -437,6 +437,9 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasE
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;
 
+    if (page)
+        attributes.devicePixelRatio = page->deviceScaleFactor();
+
     if (isPendingPolicyResolution) {
         LOG(WebGL, "Create a WebGL context that looks real, but will require a policy resolution if used.");
         std::unique_ptr<WebGLRenderingContext> renderingContext(new WebGLRenderingContext(canvas, attributes));

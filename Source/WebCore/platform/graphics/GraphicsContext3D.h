@@ -443,6 +443,7 @@ public:
             , preferDiscreteGPU(false)
             , multithreaded(false)
             , forceSoftwareRenderer(false)
+            , devicePixelRatio(1)
         {
         }
 
@@ -457,6 +458,7 @@ public:
         bool preferDiscreteGPU;
         bool multithreaded;
         bool forceSoftwareRenderer;
+        float devicePixelRatio;
     };
 
     enum RenderStyle {

@@ -48,6 +48,10 @@ using namespace WebCore;
 {
     _context = context;
     self = [super init];
+    _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
+#if !PLATFORM(IOS)
+    self.contentsScale = _devicePixelRatio;
+#endif
     return self;
 }
 
@@ -81,7 +85,9 @@ using namespace WebCore;
     CGLSetCurrentContext(glContext);
 
     CGRect frame = [self frame];
-        
+    frame.size.width *= _devicePixelRatio;
+    frame.size.height *= _devicePixelRatio;
+
     // draw the FBO into the layer
     glViewport(0, 0, frame.size.width, frame.size.height);
     glMatrixMode(GL_PROJECTION);
@@ -134,8 +140,8 @@ static void freeData(void *, const void *data, size_t /* size */)
 
     CGRect layerBounds = CGRectIntegral([self bounds]);
     
-    size_t width = layerBounds.size.width;
-    size_t height = layerBounds.size.height;
+    size_t width = layerBounds.size.width * _devicePixelRatio;
+    size_t height = layerBounds.size.height * _devicePixelRatio;
 
     size_t rowBytes = (width * 4 + 15) & ~15;
     size_t dataSize = rowBytes * height;
