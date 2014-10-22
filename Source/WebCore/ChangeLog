@@ -1,3 +1,14 @@
+2014-10-22  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [GTK]: Fix unused parameter build warnings in WebCore/platform module
+        https://bugs.webkit.org/show_bug.cgi?id=137921
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+
 2014-10-22  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Add relList to the anchor, area and link elements
