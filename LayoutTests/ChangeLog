@@ -1,3 +1,19 @@
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173246
+
+    2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Text caret changes to color of text in Mail and Notes
+            https://bugs.webkit.org/show_bug.cgi?id=135904
+
+            Reviewed by Simon Fraser.
+
+            Make sure the caret is the correct color.
+
+            * editing/caret/color-span-inside-editable-expected.html: Added.
+            * editing/caret/color-span-inside-editable.html: Added.
+
 2014-10-20  Dana Burkart  <dburkart@apple.com>
 
         Mark remainder of failing tests as green so we can branch.
