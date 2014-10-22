@@ -1951,7 +1951,6 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move cfr, t0
         loadp Callee[cfr], t1
         loadp JSFunction::m_executable[t1], t1
-        move t2, cfr # Restore cfr to avoid loading from stack
         if C_LOOP
             cloopCallNative executableOffsetToFunction[t1]
         else

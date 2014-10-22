@@ -1,3 +1,18 @@
+2014-10-22  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r174996): Broke C_LOOP
+        https://bugs.webkit.org/show_bug.cgi?id=137971
+
+        Reviewed by Mark Lam.
+
+        Removed incorrect move to cfr (CallFrameRegister) before we make the call to a native function.
+        After r174996, the source register for the move contained garbage causing the crash.  The move
+        to cfr before making the call to the native function is wrong and should have been removed
+        some time ago.  This brings the ARM64 / C_LOOP code path inline with the other CPU paths.
+        Tested on ARM64 as well as a C_LOOP build.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2014-10-21  Mark Lam  <mark.lam@apple.com>
 
         Remove erroneous canUseJIT() in the intrinsics version of JITThunks::hostFunctionStub().
