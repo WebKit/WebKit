@@ -106,7 +106,6 @@ void InputMethodFilter::setCursorRect(const IntRect& cursorRect)
     m_lastCareLocation = cursorRect.location();
     IntRect translatedRect = cursorRect;
 
-    ASSERT(m_widget);
     GtkAllocation allocation;
     gtk_widget_get_allocation(m_page->viewWidget(), &allocation);
     translatedRect.move(allocation.x, allocation.y);

@@ -1,5 +1,14 @@
 2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ debug build after r175046.
+
+        Remove invalid ASSERT.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::setCursorRect):
+
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Move GtkInputMethodFilter from Platform to WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=137884
 
