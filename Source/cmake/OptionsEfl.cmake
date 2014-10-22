@@ -226,9 +226,6 @@ add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
 set(WTF_USE_3D_GRAPHICS 1)
 add_definitions(-DWTF_USE_3D_GRAPHICS=1)
 
-set(ENABLE_3D_RENDERING 1)
-add_definitions(-DENABLE_3D_RENDERING=1)
-
 add_definitions(-DWTF_USE_GRAPHICS_SURFACE=1)
 
 option(ENABLE_GLES2 "Enable GLES Support")

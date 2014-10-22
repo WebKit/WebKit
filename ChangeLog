@@ -1,3 +1,14 @@
+2014-10-21  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Remove unnecessary ENABLE_3D_RENDERING definition from OptionsEfl.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=137946
+
+        Reviewed by Gyuyoung Kim.
+
+        ENABLE_3D_RENDERING is already enabled as WEBKIT_OPTION_DEFAULT_PORT_VALUE since r135813.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-10-21  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Fix FTL Native Inlining for EFL
