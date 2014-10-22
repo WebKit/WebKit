@@ -1,3 +1,22 @@
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173246
+
+    2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Text caret changes to color of text in Mail and Notes
+            https://bugs.webkit.org/show_bug.cgi?id=135904
+
+            Reviewed by Simon Fraser.
+
+            Consult with the background color of spans inside editable divs to determine what color
+            the caret should be.
+
+            Test: editing/caret/color-span-inside-editable.html
+
+            * editing/FrameSelection.cpp:
+            (WebCore::CaretBase::paintCaret):
+
 2014-09-23  Lucas Forschler  <lforschler@apple.com>
 
     Rollout trunk r173848 | (r173897 on branch)

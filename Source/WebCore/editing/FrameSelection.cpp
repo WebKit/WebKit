@@ -1509,10 +1509,23 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
     Color caretColor = Color::black;
     ColorSpace colorSpace = ColorSpaceDeviceRGB;
     Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
+    Element* rootEditableElement = node->rootEditableElement();
 
     if (element && element->renderer()) {
-        caretColor = element->renderer()->style().visitedDependentColor(CSSPropertyColor);
-        colorSpace = element->renderer()->style().colorSpace();
+        bool setToRootEditableElement = false;
+        if (rootEditableElement && rootEditableElement->renderer()) {
+            const auto& rootEditableStyle = rootEditableElement->renderer()->style();
+            const auto& elementStyle = element->renderer()->style();
+            if (rootEditableStyle.visitedDependentColor(CSSPropertyBackgroundColor) == elementStyle.visitedDependentColor(CSSPropertyBackgroundColor)) {
+                caretColor = rootEditableElement->renderer()->style().visitedDependentColor(CSSPropertyColor);
+                colorSpace = rootEditableElement->renderer()->style().colorSpace();
+                setToRootEditableElement = true;
+            }
+        }
+        if (!setToRootEditableElement) {
+            caretColor = element->renderer()->style().visitedDependentColor(CSSPropertyColor);
+            colorSpace = element->renderer()->style().colorSpace();
+        }
     }
 
     context->fillRect(caret, caretColor, colorSpace);
