@@ -1,3 +1,29 @@
+2014-10-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More rebaselines.
+
+        * platform/win/css1/box_properties/acid_test-expected.txt:
+        * platform/win/editing/selection/3690719-expected.txt:
+        * platform/win/editing/selection/move-left-right-expected.txt:
+        * platform/win/fast/css/continuationCrash-expected.txt:
+        * platform/win/fast/css/fieldset-display-row-expected.txt:
+        * platform/win/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/win/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/win/fast/forms/file/file-input-direction-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/win/fast/forms/file/input-file-re-render-expected.txt:
+        * platform/win/fast/forms/formmove-expected.txt:
+        * platform/win/fast/forms/formmove2-expected.txt:
+        * platform/win/fast/forms/formmove3-expected.txt:
+        * platform/win/fast/forms/input-appearance-height-expected.txt:
+        * platform/win/fast/forms/input-button-sizes-expected.txt:
+        * platform/win/fast/forms/input-step-as-double-expected.txt: Removed.
+        * platform/win/fast/forms/input-text-drag-down-expected.txt:
+        * platform/win/fast/forms/input-value-expected.txt:
+        * platform/win/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/win/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/win/fast/forms/text-control-intrinsic-widths-expected.txt:
+
 2014-10-21  Benjamin Poulain  <bpoulain@apple.com>
 
         CSS Rule features are ignored for nested CSS Selector lists

@@ -289,24 +289,24 @@ Test 40, RTL:
   Moving right:  "bcDEF"[5, 4, 3, 2], "\n        ABCa"[13], "bcDEF"[1], "\n        ABCa"[12, 11, 10, 9]
 Test 41, LTR:
   Moving right: "abc"[0, 1, 2, 3], "def"[0, 1, 2, 3]
-WARNING: Moved in the wrong direction in step 4: from (64, 1603) to (37, 1621).
+WARNING: Moved in the wrong direction in step 4: from (64, 1607) to (37, 1625).
   Moving left:  "def"[3, 2, 1, 0], "abc"[3, 2, 1, 0]
-WARNING: Moved in the wrong direction in step 4: from (37, 1621) to (64, 1603).
+WARNING: Moved in the wrong direction in step 4: from (37, 1625) to (64, 1607).
 Test 41, RTL:
   Moving left: "abc"[0, 2, 1, 3], "def"[0, 2, 1, 3]
-WARNING: Moved in the wrong direction in step 4: from (741, 1603) to (767, 1621).
+WARNING: Moved in the wrong direction in step 4: from (741, 1607) to (767, 1625).
   Moving right:  "def"[3, 1, 2, 0], "abc"[3, 1, 2, 0]
-WARNING: Moved in the wrong direction in step 4: from (767, 1621) to (741, 1603).
+WARNING: Moved in the wrong direction in step 4: from (767, 1625) to (741, 1607).
 Test 42, LTR:
   Moving right: "ABC"[0, 2, 1, 3], "DEF"[0, 2, 1, 3]
-WARNING: Moved in the wrong direction in step 4: from (63, 1653) to (37, 1671).
+WARNING: Moved in the wrong direction in step 4: from (63, 1657) to (37, 1675).
   Moving left:  "DEF"[3, 1, 2, 0], "ABC"[3, 1, 2, 0]
-WARNING: Moved in the wrong direction in step 4: from (37, 1671) to (63, 1653).
+WARNING: Moved in the wrong direction in step 4: from (37, 1675) to (63, 1657).
 Test 42, RTL:
   Moving left: "ABC"[0, 1, 2, 3], "DEF"[0, 1, 2, 3]
-WARNING: Moved in the wrong direction in step 4: from (742, 1653) to (767, 1671).
+WARNING: Moved in the wrong direction in step 4: from (742, 1657) to (767, 1675).
   Moving right:  "DEF"[3, 2, 1, 0], "ABC"[3, 2, 1, 0]
-WARNING: Moved in the wrong direction in step 4: from (767, 1671) to (742, 1653).
+WARNING: Moved in the wrong direction in step 4: from (767, 1675) to (742, 1657).
 Test 43, LTR:
   Moving right: "abcXXX123QQQdef"[0, 13, 14, 11, 10, 6, 7, 8, 9, 5, 4, 1, 2, 15]
   Moving left:  "abcXXX123QQQdef"[15, 2, 1, 4, 5, 9, 8, 7, 6, 10, 11, 14, 13, 0]
