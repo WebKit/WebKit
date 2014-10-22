@@ -697,6 +697,10 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
     [m_webView _didSameDocumentNavigationForMainFrame:navigationType];
 }
 
+void PageClientImpl::didPerformActionMenuHitTest(const ActionMenuHitTestResult&)
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

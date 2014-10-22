@@ -34,6 +34,7 @@
 #endif
 
 #import "APIHistoryClient.h"
+#import "ActionMenuHitTestResult.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -75,6 +76,9 @@
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import "_WKThumbnailViewInternal.h"
+#import <AppKit/NSSharingService.h>
+#import <ImageIO/ImageIO.h>
+#import <ImageKit/ImageKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -91,6 +95,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Region.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -148,6 +153,14 @@ CGSConnectionID CGSMainConnectionID(void);
 CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
 };
 
+// FIXME: This needs to be in an SPI header.
+@interface NSSharingServicePicker (WKNSSharingServicePickerDetails)
+- (NSMenu *)menu;
+@end
+
+SOFT_LINK_FRAMEWORK(ImageKit)
+SOFT_LINK_CLASS(ImageKit, IKSlideshow)
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -167,6 +180,13 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<KeypressCommand>* commands;
 };
 #endif
+
+// FIXME: This and all action menu related code should move to its own file.
+enum class ActionMenuState {
+    None = 0,
+    Pending,
+    Ready
+};
 
 @interface WKViewData : NSObject {
 @public
@@ -263,6 +283,10 @@ struct WKViewInterpretKeyEventsParameters {
 #if WK_API_ENABLED
     _WKThumbnailView *_thumbnailView;
 #endif
+
+    ActionMenuState _actionMenuState;
+    ActionMenuHitTestResult _actionMenuHitTestResult;
+    RetainPtr<NSSharingServicePicker> _actionMenuSharingServicePicker;
 }
 
 @end
@@ -3682,49 +3706,232 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [bubble showPreviewItem:[NSURL URLWithString:hitTestResult->absoluteLinkURL()] itemFrame:itemFrame];
 }
 
+- (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag
+{
+    SEL selector = nil;
+    NSString *title = nil;
+    NSImage *image = nil;
+
+    switch (tag) {
+    case kWKContextActionItemTagOpenLinkInDefaultBrowser:
+        selector = @selector(_openURLFromActionMenu:);
+        title = @"Open";
+        image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
+        break;
+
+    case kWKContextActionItemTagPreviewLink:
+        selector = @selector(_quickLookURLFromActionMenu:);
+        title = @"Preview";
+        image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
+        break;
+
+    case kWKContextActionItemTagAddLinkToSafariReadingList:
+        selector = @selector(_addToReadingListFromActionMenu:);
+        title = @"Add to Safari Reading List";
+        image = [NSImage imageNamed:NSImageNameBookmarksTemplate];
+        break;
+
+    case kWKContextActionItemTagCopyImage:
+        selector = @selector(_copyImage:);
+        title = @"Copy";
+        image = webKitBundleImageNamed(@"CopyImageTemplate");
+        break;
+
+    case kWKContextActionItemTagAddImageToPhotos:
+        selector = @selector(_addImageToPhotos:);
+        title = @"Add to Photos";
+        image = webKitBundleImageNamed(@"AddImageToPhotosTemplate");
+        break;
+
+    case kWKContextActionItemTagSaveImageToDownloads:
+        selector = @selector(_saveImageToDownloads:);
+        title = @"Save to Downloads";
+        image = webKitBundleImageNamed(@"SaveImageToDownloadsTemplate");
+        break;
+
+    case kWKContextActionItemTagShareImage:
+        title = @"Share";
+        image = webKitBundleImageNamed(@"ShareImageTemplate");
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    RetainPtr<NSMenuItem> item = adoptNS([[NSMenuItem alloc] initWithTitle:title action:selector keyEquivalent:@""]);
+    [item setImage:image];
+    [item setTarget:self];
+    [item setTag:tag];
+    return item;
+}
+
+static NSImage *webKitBundleImageNamed(NSString *name)
+{
+    return [[NSBundle bundleForClass:[WKView class]] imageForResource:name];
+}
+
 - (NSArray *)_defaultMenuItemsForLink
 {
-    NSMutableArray *menuItems = [NSMutableArray array];
+    WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult();
+    if (!hitTestResult)
+        return @[ ];
+
+    if (!WebCore::protocolIsInHTTPFamily(hitTestResult->absoluteLinkURL()))
+        return @[ ];
+
+    RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
+    RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPreviewLink];
+    RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddLinkToSafariReadingList];
+
+    // FIXME: The separator item is required to work around <rdar://18684207>.
+    return @[openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get()];
+}
+
+- (void)_copyImage:(id)sender
+{
+    WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult();
+    if (!hitTestResult)
+        return;
+
+    RefPtr<ShareableBitmap> bitmap = _data->_actionMenuHitTestResult.image;
+    if (!bitmap)
+        return;
+
+    RetainPtr<CGImageRef> image = bitmap->makeCGImage();
+    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
+    [[NSPasteboard generalPasteboard] clearContents];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ nsImage.get() ]];
+}
+
+- (void)_saveImageToDownloads:(id)sender
+{
+    WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult();
+    if (!hitTestResult)
+        return;
+
+    _data->_page->process().context().download(_data->_page.get(), URL(URL(), hitTestResult->absoluteImageURL()));
+}
+
+static NSString *temporaryPhotosDirectoryPath()
+{
+    static NSString *temporaryPhotosDirectoryPath;
+
+    if (!temporaryPhotosDirectoryPath) {
+        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPhotos-XXXXXX"];
+        CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
+
+        if (mkdtemp(templateRepresentation.mutableData()))
+            temporaryPhotosDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
+    }
+
+    return temporaryPhotosDirectoryPath;
+}
+
+static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
+{
+    NSString *photoDirectoryPath = temporaryPhotosDirectoryPath();
+    if (!photoDirectoryPath) {
+        WTFLogAlways("Cannot create temporary photo download directory.");
+        return nil;
+    }
+
+    NSString *path = [photoDirectoryPath stringByAppendingPathComponent:suggestedFilename];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:path]) {
+        NSString *pathTemplatePrefix = [photoDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:suggestedFilename];
+        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
+
+        int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        if (fd < 0) {
+            WTFLogAlways("Cannot create photo file in the temporary directory (%@).", suggestedFilename);
+            return nil;
+        }
+
+        close(fd);
+        path = [fileManager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
+    }
+
+    return path;
+}
+
+- (void)_addImageToPhotos:(id)sender
+{
+    // FIXME: We shouldn't even add the button if this is the case, for now.
+    if (![getIKSlideshowClass() canExportToApplication:(@"com.apple.Photos")])
+        return;
 
     WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult();
     if (!hitTestResult)
-        return menuItems;
+        return;
 
-    if (!WebCore::protocolIsInHTTPFamily(hitTestResult->absoluteLinkURL()))
-        return menuItems;
+    RefPtr<ShareableBitmap> bitmap = _data->_actionMenuHitTestResult.image;
+    if (!bitmap)
+        return;
+    RetainPtr<CGImageRef> image = bitmap->makeCGImage();
 
-    RetainPtr<NSMenuItem> openLinkItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Open" action:@selector(_openURLFromActionMenu:) keyEquivalent:@""]);
-    [openLinkItem setImage:[[NSBundle bundleForClass:[WKView class]] imageForResource:@"OpenInNewWindowTemplate"]];
-    [openLinkItem setTarget:self];
-    [openLinkItem setTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
-    [menuItems addObject:openLinkItem.get()];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString * const suggestedFilename = @"image.jpg";
 
-    RetainPtr<NSMenuItem> previewLinkItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Preview" action:@selector(_quickLookURLFromActionMenu:) keyEquivalent:@""]);
-    [previewLinkItem setImage:[NSImage imageNamed:NSImageNameQuickLookTemplate]];
-    [previewLinkItem setTarget:self];
-    [previewLinkItem setTag:kWKContextActionItemTagPreviewLink];
-    [menuItems addObject:previewLinkItem.get()];
+        NSString *filePath = pathToPhotoOnDisk(suggestedFilename);
+        if (!filePath)
+            return;
 
-    RetainPtr<NSMenuItem> readingListItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Add to Safari Reading List" action:@selector(_addToReadingListFromActionMenu:) keyEquivalent:@""]);
-    [readingListItem setImage:[NSImage imageNamed:NSImageNameBookmarksTemplate]];
-    [readingListItem setTarget:self];
-    [readingListItem setTag:kWKContextActionItemTagAddLinkToSafariReadingList];
-    [menuItems addObject:readingListItem.get()];
+        NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+        auto dest = adoptCF(CGImageDestinationCreateWithURL((CFURLRef)fileURL, kUTTypeJPEG, 1, nullptr));
+        CGImageDestinationAddImage(dest.get(), image.get(), nullptr);
+        CGImageDestinationFinalize(dest.get());
 
-    // FIXME: Required to work around <rdar://18684207>.
-    [menuItems addObject:[NSMenuItem separatorItem]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // This API provides no way to report failure, but if 18420778 is fixed so that it does, we should handle this.
+            [getIKSlideshowClass() exportSlideshowItem:filePath toApplication:(@"com.apple.Photos")];
+        });
+    });
+}
 
-    return menuItems;
+- (NSArray *)_defaultMenuItemsForImage
+{
+    WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult();
+    if (!hitTestResult)
+        return @[ ];
+
+    RetainPtr<NSMenuItem> copyImageItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyImage];
+    RetainPtr<NSMenuItem> addToPhotosItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddImageToPhotos];
+    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveImageToDownloads];
+    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareImage];
+
+    if (RefPtr<ShareableBitmap> bitmap = _data->_actionMenuHitTestResult.image) {
+        RetainPtr<CGImageRef> image = bitmap->makeCGImage();
+        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
+        _data->_actionMenuSharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+        [shareItem setSubmenu:[_data->_actionMenuSharingServicePicker menu]];
+     }
+
+    return @[copyImageItem.get(), addToPhotosItem.get(), saveToDownloadsItem.get(), shareItem.get()];
 }
 
 - (NSArray *)_defaultMenuItems
 {
     if (WebHitTestResult* hitTestResult = _data->_page->activeActionMenuHitTestResult()) {
+        if (!hitTestResult->absoluteImageURL().isEmpty())
+            return [self _defaultMenuItemsForImage];
         if (!hitTestResult->absoluteLinkURL().isEmpty())
             return [self _defaultMenuItemsForLink];
     }
 
-    return @[];
+    return @[ ];
+}
+
+- (void)_updateActionMenu
+{
+    [[self actionMenu] removeAllItems];
+
+    NSArray *menuItems = [self _actionMenuItemsForHitTestResult:toAPI(_data->_page->activeActionMenuHitTestResult()) defaultActionMenuItems:[self _defaultMenuItems]];
+
+    for (NSMenuItem *item in menuItems)
+        [[self actionMenu] addItem:item];
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -3732,12 +3939,46 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if (menu != self.actionMenu)
         return;
 
-    [[self actionMenu] removeAllItems];
+    [self _updateActionMenu];
 
-    NSArray *menuItems = [self _actionMenuItemsForHitTestResult:toAPI(_data->_page->activeActionMenuHitTestResult()) defaultActionMenuItems:[self _defaultMenuItems]];
+    _data->_page->performActionMenuHitTestAtLocation([self convertPoint:[event locationInWindow] fromView:nil]);
 
-    for (NSMenuItem *item in menuItems)
-        [[self actionMenu] addItem:item];
+    _data->_actionMenuState = ActionMenuState::Pending;
+}
+
+- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult
+{
+    // FIXME: This needs to use the WebKit2 callback mechanism to avoid out-of-order replies.
+    _data->_actionMenuState = ActionMenuState::Ready;
+    _data->_actionMenuHitTestResult = hitTestResult;
+}
+
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != self.actionMenu)
+        return;
+
+    ASSERT(_data->_actionMenuState != ActionMenuState::None);
+
+    // FIXME: We need to be able to cancel this if the menu goes away.
+    // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
+    if (_data->_actionMenuState == ActionMenuState::Pending) {
+        if (auto* connection = _data->_page->process().connection())
+            connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_data->_page->pageID(), std::chrono::milliseconds(500));
+    }
+
+    if (_data->_actionMenuState == ActionMenuState::Ready)
+        [self _updateActionMenu];
+}
+
+- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != self.actionMenu)
+        return;
+
+    _data->_actionMenuState = ActionMenuState::None;
+    _data->_actionMenuHitTestResult = ActionMenuHitTestResult();
+    _data->_actionMenuSharingServicePicker = nil;
 }
 
 @end

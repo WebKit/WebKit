@@ -23,28 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKActionMenuItemTypes_h
-#define WKActionMenuItemTypes_h
+#include "config.h"
+#include "ActionMenuHitTestResult.h"
 
-#include <stdint.h>
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-enum {
-    kWKContextActionItemTagNoAction = 0,
-    kWKContextActionItemTagOpenLinkInDefaultBrowser,
-    kWKContextActionItemTagPreviewLink,
-    kWKContextActionItemTagAddLinkToSafariReadingList,
-    kWKContextActionItemTagCopyImage,
-    kWKContextActionItemTagAddImageToPhotos,
-    kWKContextActionItemTagSaveImageToDownloads,
-    kWKContextActionItemTagShareImage
-};
+void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
+{
+    ShareableBitmap::Handle handle;
 
-#ifdef __cplusplus
+    // FIXME: We should consider sharing the raw original resource data so that metadata and whatnot are preserved.
+    if (image)
+        image->createHandle(handle, SharedMemory::ReadOnly);
+
+    encoder << handle;
 }
-#endif
 
-#endif /* WKActionMenuItemTypes_h */
+bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
+{
+    ShareableBitmap::Handle handle;
+    if (!decoder.decode(handle))
+        return false;
+
+    if (!handle.isNull())
+        actionMenuHitTestResult.image = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
+
+    return true;
+}
+    
+} // namespace WebKit
