@@ -267,6 +267,12 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     if (!_backgroundWindow)
         _backgroundWindow = createBackgroundFullscreenWindow(NSZeroRect);
 
+    // The -orderBack: call below can cause the full screen window's contents to draw on top of
+    // all other visible windows on the screen, despite NSDisableScreenUpdates having been set, and
+    // despite being explicitly ordered behind all other windows. Set the initial scaled frame here
+    // before ordering the window on-screen to avoid this flash. <rdar://problem/18325063>
+    WKWindowSetScaledFrame(self.window, initialFrame, finalFrame);
+
     [self.window orderBack: self]; // Make sure the full screen window is part of the correct Space.
     [[self window] enterFullScreenMode:self];
 }
@@ -383,11 +389,11 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [self _replaceView:_webViewPlaceholder.get() with:_webView];
     makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
 
+    [[self window] orderOut:self];
+
     NSRect windowBounds = [[self window] frame];
     windowBounds.origin = NSZeroPoint;
     WKWindowSetClipRect([self window], windowBounds);
-
-    [[self window] orderOut:self];
     [[self window] setFrame:NSZeroRect display:YES];
 
     [_scaleAnimation stopAnimation];

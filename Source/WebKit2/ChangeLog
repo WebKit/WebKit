@@ -1,5 +1,25 @@
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173888
+
+    2014-09-23  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION (r171197): Clip's content is drawn behind Safari window when entering Full Screen youtube html5 first time
+            https://bugs.webkit.org/show_bug.cgi?id=137029
+
+            Reviewed by Brent Fulgham.
+
+            In r171197, we ordered the full screen window on- and off-screen so that the fullscreen animation went to the
+            correct screen, which introduced a subtle glitch at the beginning and end of an animation. For entering, ensure
+            that the window is scaled to its starting size before ordering on-screen. For exiting, order the window off-
+            screen before resetting its clipping rect.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+            (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
         Merge r172968
 
     2014-08-26  Simon Fraser  <simon.fraser@apple.com>
