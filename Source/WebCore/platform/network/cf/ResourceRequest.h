@@ -117,10 +117,6 @@ namespace WebCore {
 
         static bool resourcePrioritiesEnabled();
 
-#if PLATFORM(COCOA)
-        static bool useQuickLookResourceCachingQuirks();
-#endif
-
 #if PLATFORM(IOS)
         // FIXME: deprecatedIsMainResourceRequest() does not return the correct value if the ResourceRequest has been
         // deserialized from an IPC message. As a result this function can only be relied on when networking is not in a

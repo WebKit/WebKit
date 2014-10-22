@@ -1,3 +1,71 @@
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][WK2] Fix applicationIsSafari() detection
+        https://bugs.webkit.org/show_bug.cgi?id=137893
+
+        Reviewed by Alexey Proskuryakov.
+
+        I noticed when profiling Safari on Mac that we were exercising a code
+        path we shouldn't because it is meant for other applications that
+        Safari.
+
+        The detection relies on the applicationIsSafari() function in
+        RuntimeApplicationChecks.cpp. This was in some cases returning false on
+        my machine even though I was running Safari so I investigated a bit and
+        noticed that the check relies on the main bundle identifier string and
+        is doing:
+        isSafari = mainBundleIsEqualTo("com.apple.Safari")
+            || mainBundleIsEqualTo("com.apple.WebProcess");
+
+        This WebProcess detection is very unreliable because:
+        - It matches other apps than Safari's WebProcesses
+        - The bundle name for the WebProcess is sometimes
+        "com.apple.WebKit.WebContent" or
+        "com.apple.WebKit.WebContent.Development".
+
+        The solution used in this patch is to move the applicationIsSafari()
+        check to the UIProcess so that the check actually succeeds reliably.
+        The call site for applicationIsSafari() was in
+        ResourceRequest::useQuickLookResourceCachingQuirks(). This match
+        removes that logic from ResourceRequest and move it to
+        FrameLoaderClient as only the FrameLoader is interested in this
+        information. The logic to determine if we should use QuickLook
+        resource caching quirks is moved to a new QuickLook class under
+        platform/ as the code needs to be shared between WebKit and WebKit2.
+        On WebKit2, we make use that code on the UIProcess side and pass
+        the flag as a parameter when constructing the WebProcess. The flag
+        is then stored on the WebProcess and queried by WebFrameLoaderClient.
+
+        Previously, we would spend ~1% of the WebProcess cpu time (when loading
+        apple.com) trying to detect if we should use QuickLook resource caching
+        quirks even though that check was supposed to be disabled and return
+        early when running Safari.
+
+        No new tests, not easily testable.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+        * loader/FrameLoaderClient.h:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::applicationIsSafari):
+        Remove "com.apple.WebProcess" bundle name matching as this causes false
+        positives (matches other applications than Safari's WebProcesses) and
+        it is no longer needed now that applicationIsSafari() is always called
+        from the UIProcess.
+
+        * platform/mac/QuickLookMac.h: Added.
+        * platform/mac/QuickLookMac.mm: Copied from Source/WebCore/platform/network/mac/ResourceRequestMac.mm.
+        (WebCore::QuickLookMac::computeNeedsQuickLookResourceCachingQuirks):
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/ios/ResourceRequestIOS.mm:
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks): Deleted.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::initQuickLookResourceCachingQuirks): Deleted.
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks): Deleted.
+
 2014-10-22  Shivakumar JM  <shiva.jm@samsung.com>
 
         XMLHttpRequest should support attribute responseURL as per latest XHR spec.

@@ -146,6 +146,8 @@
 #import "WebKitVersionChecks.h"
 #import "WebMailDelegate.h"
 #import "WebUIKitDelegate.h"
+#else
+#import <WebCore/QuickLookMac.h>
 #endif
 
 #if USE(QUICK_LOOK)
@@ -2244,6 +2246,14 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
         }
     };
     handle.setClient(adoptRef(new QuickLookDocumentWriter(handle)));
+}
+#endif
+
+#if PLATFORM(MAC)
+bool WebFrameLoaderClient::needsQuickLookResourceCachingQuirks() const
+{
+    static const bool shouldUseQuickLookResourceCachingQuirks = QuickLookMac::computeNeedsQuickLookResourceCachingQuirks();
+    return shouldUseQuickLookResourceCachingQuirks;
 }
 #endif
 

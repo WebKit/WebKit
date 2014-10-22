@@ -191,6 +191,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
+#if PLATFORM(MAC)
+    m_needsQuickLookResourceCachingQuirks = parameters.needsQuickLookResourceCachingQuirks;
+#endif
 
 #if USE(APPKIT)
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES }];

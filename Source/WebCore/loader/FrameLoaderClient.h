@@ -285,6 +285,10 @@ namespace WebCore {
 
         virtual void registerForIconNotification(bool listen = true) = 0;
 
+#if PLATFORM(MAC)
+        virtual bool needsQuickLookResourceCachingQuirks() const = 0;
+#endif
+
 #if PLATFORM(COCOA)
         // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
         virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;

@@ -155,6 +155,9 @@ WebProcess::WebProcess()
     , m_compositingRenderServerPort(MACH_PORT_NULL)
     , m_clearResourceCachesDispatchGroup(0)
 #endif
+#if PLATFORM(MAC)
+    , m_needsQuickLookResourceCachingQuirks(false)
+#endif
     , m_fullKeyboardAccessEnabled(false)
     , m_textCheckerState()
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))

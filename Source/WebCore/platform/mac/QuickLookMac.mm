@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2014 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,46 +20,32 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
-#import "ResourceRequest.h"
+#import "QuickLookMac.h"
 
-#if PLATFORM(MAC)
-
-#import <Foundation/Foundation.h>
-
-@interface NSURLRequest (WebNSURLRequestDetails)
-- (CFURLRequestRef)_CFURLRequest;
-- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
-@end
+#import "RuntimeApplicationChecks.h"
 
 namespace WebCore {
 
-#if USE(CFNETWORK)
-
-ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
-    : ResourceRequestBase()
-    , m_cfRequest([nsRequest _CFURLRequest])
-    , m_nsRequest(nsRequest)
+bool QuickLookMac::computeNeedsQuickLookResourceCachingQuirks()
 {
-}
+    if (applicationIsSafari())
+        return false;
 
-void ResourceRequest::updateNSURLRequest()
-{
-    if (m_cfRequest)
-        m_nsRequest = adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
-}
+    NSArray *frameworks = [NSBundle allFrameworks];
 
-void ResourceRequest::applyWebArchiveHackForMail()
-{
-    // Hack because Mail checks for this property to detect data / archive loads
-    _CFURLRequestSetProtocolProperty(cfURLRequest(DoNotUpdateHTTPBody), CFSTR("WebDataRequest"), CFSTR(""));
-}
+    if (!frameworks)
+        return false;
 
-#endif
+    for (NSBundle *bundle in frameworks) {
+        const char* bundleID = [[bundle bundleIdentifier] UTF8String];
+        if (bundleID && !strcasecmp(bundleID, "com.apple.QuickLookUIFramework"))
+            return true;
+    }
+    return false;
+}
 
 } // namespace WebCore
-
-#endif

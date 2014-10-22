@@ -239,6 +239,10 @@ private:
     virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;
 #endif
 
+#if PLATFORM(MAC)
+    virtual bool needsQuickLookResourceCachingQuirks() const override;
+#endif
+
     virtual void contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter>) override;
 
     RetainPtr<WebFrame> m_webFrame;

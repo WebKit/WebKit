@@ -57,8 +57,7 @@ static bool mainBundleIsEqualTo(const String& bundleIdentifierString)
 
 bool applicationIsSafari()
 {
-    // FIXME: For the WebProcess case, ensure that this is Safari's WebProcess.
-    static bool isSafari = mainBundleIsEqualTo("com.apple.Safari") || mainBundleIsEqualTo("com.apple.WebProcess");
+    static bool isSafari = mainBundleIsEqualTo("com.apple.Safari");
     return isSafari;
 }
 

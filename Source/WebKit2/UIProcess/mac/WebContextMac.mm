@@ -54,6 +54,7 @@
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #else
 #import <QuartzCore/CARemoteLayerServer.h>
+#import <WebCore/QuickLookMac.h>
 #endif
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
@@ -175,8 +176,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(MAC)
     parameters.accessibilityEnhancedUserInterfaceEnabled = [[NSApp accessibilityAttributeValue:@"AXEnhancedUserInterface"] boolValue];
+    static const bool shouldUseQuickLookResourceCachingQuirks = QuickLookMac::computeNeedsQuickLookResourceCachingQuirks();
+    parameters.needsQuickLookResourceCachingQuirks = shouldUseQuickLookResourceCachingQuirks;
 #else
     parameters.accessibilityEnhancedUserInterfaceEnabled = false;
+    parameters.needsQuickLookResourceCachingQuirks = false;
 #endif
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];

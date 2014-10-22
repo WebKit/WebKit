@@ -1,3 +1,18 @@
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][WK2] Fix applicationIsSafari() detection
+        https://bugs.webkit.org/show_bug.cgi?id=137893
+
+        Reviewed by Alexey Proskuryakov.
+
+        Provide an implementation for FrameLoaderClient's new
+        needsQuickLookResourceCachingQuirks() that returns
+        a static flag initialized using
+        QuickLookMac::computeNeedsQuickLookResourceCachingQuirks().
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-10-20  Chris Dumez  <cdumez@apple.com>
 
         ResourceRequest deserialization unnecessarily calls partitionName() on encoded cache partition

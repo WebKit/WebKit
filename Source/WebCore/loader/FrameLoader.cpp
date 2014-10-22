@@ -2152,8 +2152,8 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
         return CachePolicyRevalidate;
 
     const ResourceRequest& request(documentLoader()->request());
-#if PLATFORM(COCOA)
-    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post") && ResourceRequest::useQuickLookResourceCachingQuirks())
+#if PLATFORM(MAC)
+    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post") && m_client.needsQuickLookResourceCachingQuirks())
         return CachePolicyRevalidate;
 #endif
 

@@ -1582,6 +1582,8 @@
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4643783119F720EF001E38B3 /* QuickLookMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 4643782F19F720EF001E38B3 /* QuickLookMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4643783219F720EF001E38B3 /* QuickLookMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4643783019F720EF001E38B3 /* QuickLookMac.mm */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46BD16E30B279473001F0839 /* noneCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46BD16E20B279473001F0839 /* noneCursor.png */; };
 		46D4F2490AF97E810035385A /* cellCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2460AF97E810035385A /* cellCursor.png */; };
@@ -8642,6 +8644,8 @@
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
+		4643782F19F720EF001E38B3 /* QuickLookMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMac.h; sourceTree = "<group>"; };
+		4643783019F720EF001E38B3 /* QuickLookMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookMac.mm; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
 		46BD16E20B279473001F0839 /* noneCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noneCursor.png; sourceTree = "<group>"; };
 		46D4F2460AF97E810035385A /* cellCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cellCursor.png; sourceTree = "<group>"; };
@@ -16428,6 +16432,8 @@
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
 				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
+				4643782F19F720EF001E38B3 /* QuickLookMac.h */,
+				4643783019F720EF001E38B3 /* QuickLookMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
@@ -26496,6 +26502,7 @@
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
 				8678D0BB1878E891003ABDE6 /* ViewState.h in Headers */,
+				4643783119F720EF001E38B3 /* QuickLookMac.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				07AB996918DA3C010018771E /* RTCConfiguration.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
@@ -29736,6 +29743,7 @@
 				E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */,
 				E4B65A5E132FADB60070E7BE /* LegacyTileLayer.mm in Sources */,
 				E4E39AFD1330EFC6003AB274 /* LegacyTileLayerPool.mm in Sources */,
+				4643783219F720EF001E38B3 /* QuickLookMac.mm in Sources */,
 				498770F21242C535002226BA /* TilingData.cpp in Sources */,
 				F55B3DDB1251F12D003EF269 /* TimeInputType.cpp in Sources */,
 				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,

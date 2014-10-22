@@ -106,6 +106,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << presenterApplicationPid;
     encoder << accessibilityEnhancedUserInterfaceEnabled;
+    encoder << needsQuickLookResourceCachingQuirks;
     encoder << nsURLCacheMemoryCapacity;
     encoder << nsURLCacheDiskCapacity;
     encoder << acceleratedCompositingPort;
@@ -229,6 +230,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.presenterApplicationPid))
         return false;
     if (!decoder.decode(parameters.accessibilityEnhancedUserInterfaceEnabled))
+        return false;
+    if (!decoder.decode(parameters.needsQuickLookResourceCachingQuirks))
         return false;
     if (!decoder.decode(parameters.nsURLCacheMemoryCapacity))
         return false;
