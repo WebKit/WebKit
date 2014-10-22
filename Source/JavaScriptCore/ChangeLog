@@ -1,3 +1,21 @@
+2014-10-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix generator importing of protocol type "any", treat as value
+        https://bugs.webkit.org/show_bug.cgi?id=137931
+
+        Reviewed by Timothy Hatcher.
+
+        Treat incoming "any" objects as InspectorValues, which can be any type.
+        Add the necessary boilerplate to import.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::AsMethodBridges::asValue):
+        (Inspector::InspectorBackendDispatcher::getValue):
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/scripts/codegen/generator.py:
+        (Generator.keyed_get_method_for_type):
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+
 2014-10-22  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r174996): Broke C_LOOP

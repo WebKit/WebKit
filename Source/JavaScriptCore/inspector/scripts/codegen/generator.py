@@ -235,6 +235,8 @@ class Generator:
                 return 'getInteger'
             elif _type.raw_name() is 'number':
                 return 'getDouble'
+            elif _type.raw_name() is 'any':
+                return 'getValue'
             else:
                 return 'get' + ucfirst(_type.raw_name())
         if isinstance(_type, AliasedType):

@@ -204,7 +204,7 @@ void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callI
     bool values_valueFound = false;
     RefPtr<Inspector::InspectorObject> in_values = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("values"), &values_valueFound, protocolErrorsPtr);
     bool payload_valueFound = false;
-    RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getAny(paramsContainerPtr, ASCIILiteral("payload"), &payload_valueFound, protocolErrorsPtr);
+    RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getValue(paramsContainerPtr, ASCIILiteral("payload"), &payload_valueFound, protocolErrorsPtr);
     bool databaseId_valueFound = false;
     int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), &databaseId_valueFound, protocolErrorsPtr);
     bool sqlError_valueFound = false;
@@ -265,7 +265,7 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
     String in_notes = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("notes"), nullptr, protocolErrorsPtr);
     double in_timestamp = InspectorBackendDispatcher::getDouble(paramsContainerPtr, ASCIILiteral("timestamp"), nullptr, protocolErrorsPtr);
     RefPtr<Inspector::InspectorObject> in_values = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("values"), nullptr, protocolErrorsPtr);
-    RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getAny(paramsContainerPtr, ASCIILiteral("payload"), nullptr, protocolErrorsPtr);
+    RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getValue(paramsContainerPtr, ASCIILiteral("payload"), nullptr, protocolErrorsPtr);
     int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     RefPtr<Inspector::InspectorObject> in_sqlError = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("sqlError"), nullptr, protocolErrorsPtr);
     String in_screenColor = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("screenColor"), nullptr, protocolErrorsPtr);

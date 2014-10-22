@@ -227,6 +227,7 @@ struct AsMethodBridges {
     static bool asBoolean(InspectorValue& value, bool& output) { return value.asBoolean(output); }
     static bool asObject(InspectorValue& value, RefPtr<InspectorObject>& output) { return value.asObject(output); }
     static bool asArray(InspectorValue& value, RefPtr<InspectorArray>& output) { return value.asArray(output); }
+    static bool asValue(InspectorValue& value, RefPtr<InspectorValue>& output) { return value.asValue(output); }
 };
 
 int InspectorBackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
@@ -257,6 +258,11 @@ PassRefPtr<InspectorObject> InspectorBackendDispatcher::getObject(InspectorObjec
 PassRefPtr<InspectorArray> InspectorBackendDispatcher::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     return getPropertyValue<PassRefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asArray, "Array");
+}
+
+PassRefPtr<InspectorValue> InspectorBackendDispatcher::getValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+{
+    return getPropertyValue<PassRefPtr<InspectorValue>, RefPtr<InspectorValue>, InspectorValue*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asValue, "Value");
 }
 
 } // namespace Inspector

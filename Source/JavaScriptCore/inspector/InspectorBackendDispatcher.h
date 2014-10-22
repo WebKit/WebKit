@@ -90,6 +90,7 @@ public:
     static double getDouble(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static String getString(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static bool getBoolean(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
 
