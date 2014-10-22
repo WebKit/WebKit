@@ -1,4 +1,22 @@
 =================
+WebKitGTK+  2.4.7
+=================
+
+What's new in WebKitGTK+ 2.4.7?
+
+  - SSLv3 is now disabled in WebKit2 to protect us against POODLE vulnerability.
+  - Fix the remote web inspector.
+  - Fix rendering of buttons, selections and lists with recent GTK+
+    versions.
+  - Fix the build with drag and drop support disabled.
+  - Fix the build with video support disabled.
+  - Fix a crash in the plugin process with some windowed flash plugins.
+  - TLS errors now take precedence over the HTTP authentication dialog.
+  - Do not shrink on-disk cache to its default size on startup.
+  - Don't include full path names in WebKitEnumTypes.h to ensure the
+    generated headers are always identical.
+
+=================
 WebKitGTK+  2.4.6
 =================
 

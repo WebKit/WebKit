@@ -1,3 +1,9 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.7 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2014-10-22  Michael Weber  <xmw@gentoo.org>
 
         [GTK][Stable] webkitgtk-2.4.6: fails to build with --disable-video
