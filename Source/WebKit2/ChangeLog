@@ -1,3 +1,9 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.2 release.
+
+        * gtk/NEWS: Add release notes for 2.6.2.
+
 2014-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Disable SSLv3

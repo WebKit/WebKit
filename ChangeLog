@@ -1,3 +1,9 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(CMake): [GTK] WebKitSettings:enable-smooth-scrolling does nothing

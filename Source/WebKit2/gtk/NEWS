@@ -1,4 +1,21 @@
 =================
+WebKitGTK+  2.6.2
+=================
+
+What's new in WebKitGTK+ 2.6.2?
+
+  - SSLv3 is now disabled to protect us against POODLE vulnerability.
+  - TLS errors are no longer ignored by default.
+  - Fix the remote web inspector.
+  - Fix rendering of buttons, selections and lists with recent GTK+
+    versions.
+  - Improve performance of timers scheduled after a delay in
+    microseconds.
+  - Fix WebKitSettings:enable-smooth-scrolling to actually enable
+    smooth scrolling.
+  - Fix the build with drag and drop support disabled.
+
+=================
 WebKitGTK+  2.6.1
 =================
 
