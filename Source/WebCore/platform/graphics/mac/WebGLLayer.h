@@ -40,6 +40,7 @@ namespace WebCore {
 #endif
 {
     WebCore::GraphicsContext3D* _context;
+    float _devicePixelRatio;
 }
 
 @property (nonatomic) WebCore::GraphicsContext3D* context;

@@ -1,5 +1,42 @@
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174414
+
+    2014-10-08  Dean Jackson  <dino@apple.com>
+
+            Safari 8 on OSX 10.10 does not run WebGL in Retina HiDPI mode.
+            https://bugs.webkit.org/show_bug.cgi?id=134854
+            <rdar://problem/18465263>
+
+            Reviewed by Tim Horton.
+
+            The NSOpenGLLayer has to have its contentScale property
+            set accordingly when on a retina display. Do this by
+            adding another value to the GraphicsContext3D creation
+            attribute dictionary, representing the device pixel ratio.
+            Then, when we come to draw into the layer, make sure
+            we set our GL viewport to the correct value.
+
+            This is currently untestable because:
+            - we can't just read from the GL buffer as it is always correct
+            - WebGL isn't working in reftests
+            - a layer dump doesn't show the change since it was done in a CALayer subclass.
+
+            * html/canvas/WebGLRenderingContext.cpp:
+            (WebCore::WebGLRenderingContext::create): Pass the devicePixelRatio into the attribute dictionary.
+            * platform/graphics/GraphicsContext3D.h:
+            (WebCore::GraphicsContext3D::Attributes::Attributes): Add a devicePixelRatio attribute.
+            * platform/graphics/mac/WebGLLayer.h: New property to save us looking up the attributes
+            each frame.
+            * platform/graphics/mac/WebGLLayer.mm:
+            (-[WebGLLayer initWithGraphicsContext3D:]): Store the devicePixelRatio, and set our
+            contents scale appropriately.
+            (-[WebGLLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Draw into
+            a correctly sized backbuffer.
+            (-[WebGLLayer copyImageSnapshotWithColorSpace:]): Generate an image of the correct size.
+
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
         Merge r173848
 
     2014-09-22  Alexey Proskuryakov  <ap@apple.com>
