@@ -144,6 +144,24 @@ static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
 }
 
+static gboolean webViewAuthenticationCallback(WebKitWebView*, WebKitAuthenticationRequest* request)
+{
+    g_assert_not_reached();
+    return TRUE;
+}
+
+
+static void testTLSErrorsHTTPAuth(SSLTest* test, gconstpointer)
+{
+    webkit_web_context_set_tls_errors_policy(webkit_web_view_get_context(test->m_webView), WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    g_signal_connect(test->m_webView, "authenticate", G_CALLBACK(webViewAuthenticationCallback), NULL);
+    test->loadURI(kHttpsServer->getURIForPath("/auth").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadFailed);
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+}
+
 class TLSErrorsTest: public SSLTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(TLSErrorsTest);
@@ -246,6 +264,9 @@ static void httpsServerCallback(SoupServer* server, SoupMessage* message, const 
     } else if (g_str_equal(path, "/redirect")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", kHttpServer->getURIForPath("/test-image").data());
+    } else if (g_str_equal(path, "/auth")) {
+        soup_message_set_status(message, SOUP_STATUS_UNAUTHORIZED);
+        soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic realm=\"HTTPS auth\"");
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }
@@ -294,6 +315,7 @@ void beforeAll()
     // done in the tls-permission-request test.
     SSLTest::add("WebKitWebView", "tls-errors-policy", testTLSErrorsPolicy);
     SSLTest::add("WebKitWebView", "tls-errors-redirect-to-http", testTLSErrorsRedirect);
+    SSLTest::add("WebKitWebView", "tls-http-auth", testTLSErrorsHTTPAuth);
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
 }
 

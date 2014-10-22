@@ -1,3 +1,19 @@
+2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] TLS errors should take precedence over HTTP authentication
+        https://bugs.webkit.org/show_bug.cgi?id=137300
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a test case to check that authenticate signal is not emitted
+        in case of TLS errors, and the load fails instead.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (webViewAuthenticationCallback):
+        (testTLSErrorsHTTPAuth):
+        (httpsServerCallback):
+        (beforeAll):
+
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
