@@ -1,3 +1,15 @@
+2014-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Quick Look preview bubble has unnecessary controls
+        https://bugs.webkit.org/show_bug.cgi?id=137940
+        <rdar://problem/18731860>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _quickLookURLFromActionMenu:]):
+        Temporarily use more SPI to allow us to hide the preview bubble's controls.
+
 2014-10-21  Jeff Miller  <jeffm@apple.com>
 
         Remove const from WKURLRequestRef parameter to WKContextDownloadURLRequest()
