@@ -1,5 +1,23 @@
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174708
+
+    2014-10-14  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r165356): Issues with Japanese text input
+            https://bugs.webkit.org/show_bug.cgi?id=137719
+            rdar://problem/18431952
+            rdar://problem/18483741
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::didChangeSelection):
+            In sync code path, ensure consistent message delivery order by adding
+            a DispatchMessageEvenWhenWaitingForSyncReply flag. This way, delayed
+            EditorStateChanged messages won't confuse UI process.
+
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
         Merge r173888
 
     2014-09-23  Jer Noble  <jer.noble@apple.com>
