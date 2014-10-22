@@ -1,3 +1,10 @@
+2014-10-21  Andy Estes  <aestes@apple.com>
+
+        One more iOS build fix after r175013.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::createFontPlatformData):
+
 2014-10-21  Benjamin Poulain  <bpoulain@apple.com>
 
         CSS Rule features are ignored for nested CSS Selector lists

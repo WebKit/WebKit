@@ -657,7 +657,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
     if (isAppleColorEmoji)
         result->m_isEmoji = true;
-    return adoptPtr(result);
+    return result;
 }
 
 } // namespace WebCore
