@@ -1,3 +1,59 @@
+2014-10-22  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        PatchAnalysisTask._test_patch() needs refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=137904
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        Fixes several small bugs, and makes minor changes to accomodate the
+        changes in PatchAnalysisTask.
+        (MockCommitQueue.refetch_patch):
+        (MockCommitQueue.test_results):
+        (test_flaky_test_failure):
+        (test_failed_archive):
+        (test_very_red_tree_retry):
+        (_expect_validate.MockDelegate.refetch_patch):
+        (MockCommitQueue.expected_failures): Deleted.
+        (_expect_validate.MockDelegate.expected_failures): Deleted.
+        * Scripts/webkitpy/tool/bot/expectedfailures.py: Removed.
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Removes the unexpected_failures member, adds the _clean_tree_results
+        member, adds a helper function for _test_patch, and refactors
+        _test_patch to be more readable.
+        (PatchAnalysisTask.__init__):
+        (PatchAnalysisTask._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try):
+        (PatchAnalysisTask._test_patch):
+        (PatchAnalysisTask.results_from_test_run_without_patch):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Removes AbstractEarlyWarningSystem's dependancy on ExpectedFailures. 
+        (AbstractEarlyWarningSystem.begin_work_queue):
+        (AbstractEarlyWarningSystem._failing_tests_message):
+        (AbstractEarlyWarningSystem.command_failed):
+        (AbstractEarlyWarningSystem.expected_failures): Deleted.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        Makes changes to accomodate the changes made to PatchAnalysisTask.
+        (AbstractEarlyWarningSystemTest.test_failing_tests_message):
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        Removes Perfalizer's dependancy on ExpectedFailures. 
+        (PerfalizerTask.refetch_patch):
+        (PerfalizerTask.expected_failures): Deleted.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Removes CommitQueue's dependancy on ExpectedFailures, and adds an
+        initializer to allow for mock injection.
+        (CommitQueue.__init__):
+        (CommitQueue.begin_work_queue):
+        (CommitQueue.process_work_item):
+        (CommitQueue._failing_tests_message):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        Removes dependancy on ExpectedFailures, and instead uses mock
+        injection.
+        (MockCommitQueueTask):
+        (MockCommitQueueTask.results_from_patch_test_run):
+        (MockCommitQueueTask.results_from_test_run_without_patch):
+        (mock_run_webkit_patch):
+
 2014-10-22  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2] Minibrowser : Add support for mouse middle button to open links in new window

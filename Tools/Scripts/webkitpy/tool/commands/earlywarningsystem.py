@@ -35,7 +35,6 @@ from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
-from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
 from webkitpy.tool.bot.queueengine import QueueEngine
@@ -55,12 +54,15 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
     def begin_work_queue(self):
         AbstractReviewQueue.begin_work_queue(self)
-        self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
-        unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
+        clean_results = task.results_from_test_run_without_patch(patch)
+
+        unexpected_failures = None
+        if results and clean_results:
+            unexpected_failures = list(set(results.failing_tests()) - set(clean_results.failing_tests()))
         if not unexpected_failures:
             return None
         if results and results.did_exceed_test_failure_limit():
@@ -117,9 +119,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     def command_failed(self, message, script_error, patch):
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
-
-    def expected_failures(self):
-        return self._expected_failures
 
     def test_results(self):
         return self._layout_test_results_reader.results()

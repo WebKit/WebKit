@@ -38,7 +38,6 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.commitqueuetask import *
-from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.mocktool import MockTool
 
 _log = logging.getLogger(__name__)
@@ -69,11 +68,8 @@ class MockCommitQueue(CommitQueueTaskDelegate):
     def refetch_patch(self, patch):
         return patch
 
-    def expected_failures(self):
-        return ExpectedFailures()
-
     def test_results(self):
-        return LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
+        return LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
 
     def report_flaky_tests(self, patch, flaky_results, results_archive):
         flaky_tests = [result.test_name for result in flaky_results]
@@ -281,7 +277,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
         ])
         # CommitQueueTask will only report flaky tests if we successfully parsed
         # results.json and returned a LayoutTestResults object, so we fake one.
-        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
+        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         expected_logs = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='10000'
 run_webkit_patch: ['update']
@@ -312,7 +308,7 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             ScriptError("MOCK tests failure"),
         ])
-        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=True)
+        commit_queue.test_results = lambda: LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
         # It's possible delegate to fail to archive layout tests, don't try to report
         # flaky tests when that happens.
         commit_queue.archive_last_test_results = lambda patch: None
@@ -409,6 +405,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
 archive_last_test_results: patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='10000'
+archive_last_test_results: patch='10000'
 """
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(10000)
@@ -497,10 +494,8 @@ command_passed: success_message='Landed patch' patch='10000'
             None,
             None,
             ScriptError("MOCK test failure"),
-            ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
         ], [
-            lots_of_failing_tests,
             lots_of_failing_tests,
             lots_of_failing_tests,
         ])
@@ -520,9 +515,6 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='10000'
-archive_last_test_results: patch='10000'
-run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
-command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='10000'
 archive_last_test_results: patch='10000'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='10000'
@@ -603,9 +595,6 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
         class MockDelegate(object):
             def refetch_patch(self, patch):
                 return patch
-
-            def expected_failures(self):
-                return ExpectedFailures()
 
         task = CommitQueueTask(MockDelegate(), patch)
         self.assertEqual(task.validate(), is_valid)

@@ -27,7 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
@@ -44,9 +47,11 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         ews.bind_to_tool(MockTool())
         ews._options = MockOptions(port=None, confirm=False)
         OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_logs=self._default_begin_work_queue_logs(ews.name))
-        ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
-        task.results_from_patch_test_run = lambda a: None
+        task.results_from_patch_test_run = lambda a: LayoutTestResults([test_results.TestResult("foo.html", failures=[test_failures.FailureTextMismatch()]),
+                                                                          test_results.TestResult("bar.html", failures=[test_failures.FailureTextMismatch()])],
+                                                                          did_exceed_test_failure_limit=False)
+        task.results_from_test_run_without_patch = lambda a: LayoutTestResults([], did_exceed_test_failure_limit=False)
         patch = ews._tool.bugs.fetch_attachment(10000)
         self.assertMultiLineEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
 

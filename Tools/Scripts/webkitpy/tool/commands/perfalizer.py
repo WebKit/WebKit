@@ -28,7 +28,6 @@
 
 import logging
 
-from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.irc_command import IRCCommand
 from webkitpy.tool.bot.irc_command import Help
 from webkitpy.tool.bot.irc_command import Hi
@@ -150,9 +149,6 @@ class PerfalizerTask(PatchAnalysisTask):
 
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
-
-    def expected_failures(self):
-        return ExpectedFailures()
 
     def build_style(self):
         return "release"

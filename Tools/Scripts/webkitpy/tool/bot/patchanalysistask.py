@@ -82,7 +82,7 @@ class PatchAnalysisTask(object):
         self._script_error = None
         self._results_archive_from_patch_test_run = None
         self._results_from_patch_test_run = None
-        self._expected_failures = delegate.expected_failures()
+        self._clean_tree_results = None
 
     def _run_command(self, command, success_message, failure_message):
         try:
@@ -183,6 +183,19 @@ class PatchAnalysisTask(object):
         second_failing_tests = [] if not second else second.failing_tests()
         return first_failing_tests != second_failing_tests
 
+    def _continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(self, results, results_archive, script_error):
+        self._build_and_test_without_patch()
+        self._clean_tree_results = self._delegate.test_results()
+
+        # If we've made it here, then many (500) tests are failing with the patch applied, but
+        # if the clean tree is also failing many tests, even if it's not quite as many (495),
+        # then we can't be certain that the discrepancy isn't due to flakiness, and hence we must
+        # defer judgement.
+        if (len(results.failing_tests()) - len(self._clean_tree_results.failing_tests())) <= 5:
+            return False
+
+        return self.report_failure(results_archive, results, script_error)
+
     def _test_patch(self):
         if self._test():
             return True
@@ -194,8 +207,8 @@ class PatchAnalysisTask(object):
         first_script_error = self._script_error
         first_failure_status_id = self.failure_status_id
 
-        if self._expected_failures.failures_were_expected(first_results):
-            return True
+        if first_results.did_exceed_test_failure_limit():
+            return self._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(first_results, first_results_archive, first_script_error)
 
         if self._test():
             # Only report flaky tests if we were successful at parsing results.json and archiving results.
@@ -204,10 +217,14 @@ class PatchAnalysisTask(object):
             return True
 
         second_results = self._delegate.test_results()
+        second_results_archive = self._delegate.archive_last_test_results(self._patch)
+        second_script_error = self._script_error
+        second_failure_status_id = self.failure_status_id
 
-        if (not first_results.did_exceed_test_failure_limit() and
-            not second_results.did_exceed_test_failure_limit() and
-            self._results_failed_different_tests(first_results, second_results)):
+        if second_results.did_exceed_test_failure_limit():
+            return self._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(second_results, second_results_archive, second_script_error)
+
+        if self._results_failed_different_tests(first_results, second_results):
             # We could report flaky tests here, but we would need to be careful
             # to use similar checks to ExpectedFailures._can_trust_results
             # to make sure we don't report constant failures as flakes when
@@ -215,30 +232,23 @@ class PatchAnalysisTask(object):
             # See https://bugs.webkit.org/show_bug.cgi?id=51272
             return False
 
-        # Archive (and remove) second results so test_results() after
-        # build_and_test_without_patch won't use second results instead of the clean-tree results.
-        second_results_archive = self._delegate.archive_last_test_results(self._patch)
-
         if self._build_and_test_without_patch():
             # The error from the previous ._test() run is real, report it.
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
-        clean_tree_results = self._delegate.test_results()
-        self._expected_failures.update(clean_tree_results)
+        self._clean_tree_results = self._delegate.test_results()
 
-        # Re-check if the original results are now to be expected to avoid a full re-try.
-        if self._expected_failures.failures_were_expected(first_results):
-            return True
+        if self._clean_tree_results.did_exceed_test_failure_limit():
+            return False
 
-        # Now that we have updated information about failing tests with a clean checkout, we can
-        # tell if our original failures were unexpected and fail the patch if necessary.
-        if self._expected_failures.unexpected_failures_observed(first_results):
+        if set(first_results.failing_tests()) - set(self._clean_tree_results.failing_tests()):
             self.failure_status_id = first_failure_status_id
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
-        # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results
-        # failure limit), just keep retrying the patch. until someone fixes the tree.
-        return False
+        # At this point, we know that the first and second runs had the exact same failures,
+        # and that those failures are all present on the clean tree, so we can say with certainty
+        # that the patch is good.
+        return True
 
     def results_archive_from_patch_test_run(self, patch):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
@@ -247,6 +257,10 @@ class PatchAnalysisTask(object):
     def results_from_patch_test_run(self, patch):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
         return self._results_from_patch_test_run
+
+    def results_from_test_run_without_patch(self, patch):
+        assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
+        return self._clean_tree_results
 
     def report_failure(self, results_archive=None, results=None, script_error=None):
         if not self.validate():

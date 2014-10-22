@@ -31,6 +31,7 @@ import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models import test_results
@@ -295,7 +296,6 @@ MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
 MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nNew failing tests:
 mock_test_name.html
-another_test_name.html
 Full output: http://dummy_url'
 MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
@@ -303,14 +303,21 @@ MOCK: release_work_item: commit-queue 10000
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
-        queue = CommitQueue()
+
+        class MockCommitQueueTask(CommitQueueTask):
+            def results_from_patch_test_run(self, patch):
+                return LayoutTestResults([test_results.TestResult("mock_test_name.html", failures=[test_failures.FailureTextMismatch()])], did_exceed_test_failure_limit=False)
+
+            def results_from_test_run_without_patch(self, patch):
+                return LayoutTestResults([], did_exceed_test_failure_limit=False)
+
+        queue = CommitQueue(MockCommitQueueTask)
 
         def mock_run_webkit_patch(command):
             if command[0] == 'clean' or command[0] == 'update':
                 # We want cleaning to succeed so we can error out on a step
                 # that causes the commit-queue to reject the patch.
                 return
-            queue._expected_failures.unexpected_failures_observed = lambda results: ["mock_test_name.html", "another_test_name.html"]
             raise ScriptError('MOCK script error')
 
         queue.run_webkit_patch = mock_run_webkit_patch

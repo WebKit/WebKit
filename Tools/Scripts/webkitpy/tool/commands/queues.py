@@ -46,7 +46,6 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
-from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
@@ -299,6 +298,10 @@ class PatchProcessingQueue(AbstractPatchQueue):
 
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
+    def __init__(self, commit_queue_task_class=CommitQueueTask):
+        self._commit_queue_task_class = commit_queue_task_class
+        PatchProcessingQueue.__init__(self)
+
     name = "commit-queue"
     port_name = "mac-mountainlion"
 
@@ -307,7 +310,6 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
     def begin_work_queue(self):
         PatchProcessingQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool)
-        self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 
     def next_work_item(self):
@@ -315,7 +317,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
 
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
-        task = CommitQueueTask(self, patch)
+        task = self._commit_queue_task_class(self, patch)
         try:
             if task.run():
                 self._did_pass(patch)
@@ -336,7 +338,12 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
-        unexpected_failures = self._expected_failures.unexpected_failures_observed(results)
+        clean_results = task.results_from_test_run_without_patch(patch)
+
+        unexpected_failures = None
+        if results and clean_results:
+            unexpected_failures = list(set(results.failing_tests()) - set(clean_results.failing_tests()))
+        # FIXME: Can this ever happen?
         if not unexpected_failures:
             return None
         if results and results.did_exceed_test_failure_limit():
