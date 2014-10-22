@@ -30,6 +30,7 @@
 #include "WebKitWebViewBase.h"
 
 #include "DrawingAreaProxyImpl.h"
+#include "InputMethodFilter.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
@@ -46,7 +47,6 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebUserContentControllerProxy.h"
-#include "WebViewBaseInputMethodFilter.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkClickCounter.h>
@@ -107,7 +107,7 @@ struct _WebKitWebViewBasePrivate {
     unsigned inspectorViewSize;
     GUniquePtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
-    WebViewBaseInputMethodFilter inputMethodFilter;
+    InputMethodFilter inputMethodFilter;
     TouchEventsMap touchEvents;
 
     GtkWindow* toplevelOnScreenWindow;
@@ -299,9 +299,19 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
+    gtk_im_context_set_client_window(webView->priv->inputMethodFilter.context(), window);
+
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
     if (widgetIsOnscreenToplevelWindow(toplevel))
         webkitWebViewBaseSetToplevelOnScreenWindow(webView, GTK_WINDOW(toplevel));
+}
+
+static void webkitWebViewBaseUnrealize(GtkWidget* widget)
+{
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
+    gtk_im_context_set_client_window(webView->priv->inputMethodFilter.context(), nullptr);
+
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unrealize(widget);
 }
 
 static bool webkitWebViewChildIsInternalWidget(WebKitWebViewBase* webViewBase, GtkWidget* widget)
@@ -965,6 +975,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 {
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
     widgetClass->realize = webkitWebViewBaseRealize;
+    widgetClass->unrealize = webkitWebViewBaseUnrealize;
     widgetClass->draw = webkitWebViewBaseDraw;
     widgetClass->size_allocate = webkitWebViewBaseSizeAllocate;
     widgetClass->map = webkitWebViewBaseMap;
@@ -1050,6 +1061,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(webPageConfiguration));
     priv->pageProxy->initializeWebPage();
 
+    priv->inputMethodFilter.setPage(priv->pageProxy.get());
+
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     if (priv->redirectedWindow)
         priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
@@ -1062,10 +1075,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 #endif
 
     webkitWebViewBaseUpdatePreferences(webkitWebViewBase);
-
-    // This must happen here instead of the instance initializer, because the input method
-    // filter must have access to the page.
-    priv->inputMethodFilter.setWebView(webkitWebViewBase);
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)

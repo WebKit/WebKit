@@ -1,3 +1,26 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GtkInputMethodFilter from Platform to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=137884
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move InputMethodFilter test from WebCore tests to WebKit2 tests
+        and adapt it to use the new InputMethodFilter WebKit class. Instead
+        of having virtual methods just for testing, it has a testing mode
+        that logs the events.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKit2/gtk/InputMethodFilter.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/gtk/InputMethodFilter.cpp.
+        (TestWebKitAPI::TestInputMethodFilter::TestInputMethodFilter):
+        (TestWebKitAPI::TestInputMethodFilter::~TestInputMethodFilter):
+        (TestWebKitAPI::TestInputMethodFilter::sendKeyEventToFilter):
+        (TestWebKitAPI::TestInputMethodFilter::sendPressAndReleaseKeyEventPairToFilter):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::temporaryGetPreeditStringOverride):
+        (TestWebKitAPI::temporaryResetOverride):
+        (TestWebKitAPI::verifyCanceledComposition):
+
 2014-10-21  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Cannot click on green tester bubbles

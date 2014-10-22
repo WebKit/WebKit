@@ -44,9 +44,9 @@ struct KeypressCommand;
 #endif
 
 #if PLATFORM(GTK)
+#include "InputMethodFilter.h"
 #include <WebCore/CompositionResults.h>
 #include <WebCore/GUniquePtrGtk.h>
-#include <WebCore/GtkInputMethodFilter.h>
 typedef union _GdkEvent GdkEvent;
 #endif
 
@@ -63,7 +63,7 @@ public:
     NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, WebCore::GtkInputMethodFilter::EventFakedForComposition);
+    NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition);
 #elif PLATFORM(EFL)
     NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);

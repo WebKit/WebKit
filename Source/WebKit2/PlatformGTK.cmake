@@ -228,8 +228,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWindowProperties.cpp
     UIProcess/API/gtk/WebKitWindowProperties.h
     UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h
-    UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp
-    UIProcess/API/gtk/WebViewBaseInputMethodFilter.h
     UIProcess/API/gtk/webkit2.h
 
     UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
@@ -254,6 +252,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/DragAndDropHandler.cpp
     UIProcess/gtk/ExperimentalFeatures.cpp
     UIProcess/gtk/GestureController.cpp
+    UIProcess/gtk/InputMethodFilter.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
     UIProcess/gtk/WebContextGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp

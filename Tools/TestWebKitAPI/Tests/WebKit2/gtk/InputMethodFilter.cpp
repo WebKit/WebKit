@@ -26,43 +26,45 @@
 #include "config.h"
 
 #include "WTFStringUtilities.h"
-#include <WebCore/GtkInputMethodFilter.h>
+#include <WebKit/InputMethodFilter.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
+using namespace WebKit;
 
 namespace TestWebKitAPI {
 
-class TestInputMethodFilter : public GtkInputMethodFilter {
+class TestInputMethodFilter : public InputMethodFilter {
 public:
     TestInputMethodFilter()
         : m_testWindow(gtk_window_new(GTK_WINDOW_POPUP))
     {
-        gtk_widget_show(m_testWindow.get());
-        setWidget(m_testWindow.get());
+        setTestingMode(true);
+
+        gtk_widget_show(m_testWindow);
+        gtk_im_context_set_client_window(context(), gtk_widget_get_window(m_testWindow));
 
         // Focus in is necessary to activate the default input method in the multicontext.
         notifyFocusedIn();
     }
 
-    Vector<String>& events() { return m_events; }
+    ~TestInputMethodFilter()
+    {
+        gtk_widget_destroy(m_testWindow);
+    }
 
     void sendKeyEventToFilter(unsigned gdkKeyValue, GdkEventType type, unsigned modifiers = 0)
     {
         GdkEvent* event = gdk_event_new(type);
         event->key.keyval = gdkKeyValue;
         event->key.state = modifiers;
-        event->key.window = gtk_widget_get_window(m_testWindow.get());
+        event->key.window = gtk_widget_get_window(m_testWindow);
         event->key.time = GDK_CURRENT_TIME;
         g_object_ref(event->key.window);
-
-#ifndef GTK_API_VERSION_2
         gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
-#endif
 
         GUniqueOutPtr<GdkKeymapKey> keys;
         gint nKeys;
@@ -79,64 +81,11 @@ public:
         sendKeyEventToFilter(gdkKeyValue, GDK_KEY_RELEASE, modifiers);
     }
 
-protected:
-    virtual bool sendSimpleKeyEvent(GdkEventKey* event, WTF::String eventString, EventFakedForComposition faked)
-    {
-        const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
-        const char* fakedString = faked == EventFaked ? " (faked)" : "";
-        if (!eventString.isNull())
-            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x text='%s'%s", eventType, event->keyval, eventString.utf8().data(), fakedString));
-        else
-            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x%s", eventType, event->keyval, fakedString));
-
-        return true;
-    }
-
-    virtual bool sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition faked)
-    {
-        const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
-        const char* fakedString = faked == EventFaked ? " (faked)" : "";
-        m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%u%s", eventType, event->keyval, fakedString));
-
-        if (resultsToSend & Composition && !m_confirmedComposition.isNull())
-            confirmCompositionText(m_confirmedComposition);
-        if (resultsToSend & Preedit && !m_preedit.isNull())
-            setPreedit(m_preedit, m_cursorOffset);
-
-        return true;
-    }
-
-    virtual bool canEdit()
-    {
-        return true;
-    }
-
-    virtual void confirmCompositionText(String text)
-    {
-        m_events.append(String::format("confirmComposition '%s'", text.utf8().data()));
-    }
-
-    virtual void confirmCurrentComposition()
-    {
-        m_events.append(String("confirmCurrentcomposition"));
-    }
-
-    virtual void cancelCurrentComposition()
-    {
-        m_events.append(String("cancelCurrentComposition"));
-    }
-
-    virtual void setPreedit(String preedit, int cursorOffset)
-    {
-        m_events.append(String::format("setPreedit text='%s' cursorOffset=%i", preedit.utf8().data(), cursorOffset));
-    }
-
 private:
-    GRefPtr<GtkWidget> m_testWindow;
-    Vector<String> m_events;
+    GtkWidget* m_testWindow;
 };
 
-TEST(GTK, GtkInputMethodFilterSimple)
+TEST(WebKit2, InputMethodFilterSimple)
 {
     TestInputMethodFilter inputMethodFilter;
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_g);
@@ -154,7 +103,7 @@ TEST(GTK, GtkInputMethodFilterSimple)
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6b"), events[5]);
 }
 
-TEST(GTK, GtkInputMethodFilterUnicodeSequence)
+TEST(WebKit2, InputMethodFilterUnicodeSequence)
 {
     TestInputMethodFilter inputMethodFilter;
 
@@ -201,7 +150,7 @@ TEST(GTK, GtkInputMethodFilterUnicodeSequence)
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffe3"), events[20]);
 }
 
-TEST(GTK, GtkInputMethodFilterComposeKey)
+TEST(WebKit2, InputMethodFilterComposeKey)
 {
     TestInputMethodFilter inputMethodFilter;
 
@@ -225,7 +174,7 @@ static void temporaryGetPreeditStringOverride(GtkIMContext*, char** string, Pang
     *cursorPosition = 3;
 }
 
-TEST(GTK, GtkInputMethodFilterContextEventsWithoutKeyEvents)
+TEST(WebKit2, InputMethodFilterContextEventsWithoutKeyEvents)
 {
     TestInputMethodFilter inputMethodFilter;
 
@@ -267,7 +216,7 @@ static void verifyCanceledComposition(const Vector<String>& events)
     ASSERT(gSawContextReset);
 }
 
-TEST(GTK, GtkInputMethodFilterContextFocusOutDuringOngoingComposition)
+TEST(WebKit2, InputMethodFilterContextFocusOutDuringOngoingComposition)
 {
     TestInputMethodFilter inputMethodFilter;
 
@@ -287,7 +236,7 @@ TEST(GTK, GtkInputMethodFilterContextFocusOutDuringOngoingComposition)
     contextClass->reset = previousCallback;
 }
 
-TEST(GTK, GtkInputMethodFilterContextMouseClickDuringOngoingComposition)
+TEST(WebKit2, InputMethodFilterContextMouseClickDuringOngoingComposition)
 {
     TestInputMethodFilter inputMethodFilter;
 

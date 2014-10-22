@@ -98,6 +98,7 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKStringJSString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKURL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/gtk/InputMethodFilter.cpp
 )
 
 target_link_libraries(TestWebKit2 ${test_webkit2_api_LIBRARIES})
@@ -106,12 +107,6 @@ set_tests_properties(TestWebKit2 PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebKit2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2)
 
 set(TestWebCoreGtk_SOURCES
-    ${WEBCORE_DIR}/platform/graphics/IntPoint.cpp
-    ${WEBCORE_DIR}/platform/graphics/IntRect.cpp
-    ${WEBCORE_DIR}/platform/graphics/IntSize.cpp
-    ${WEBCORE_DIR}/platform/graphics/cairo/IntRectCairo.cpp
-    ${WEBCORE_DIR}/platform/gtk/GtkInputMethodFilter.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gtk/InputMethodFilter.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/gtk/UserAgentQuirks.cpp
 )
 

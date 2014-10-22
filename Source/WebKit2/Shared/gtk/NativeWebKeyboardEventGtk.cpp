@@ -35,11 +35,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, GtkInputMethodFilter::EventFakedForComposition faked)
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults))
     , m_nativeEvent(gdk_event_copy(event))
     , m_compositionResults(compositionResults)
-    , m_fakeEventForComposition(faked == GtkInputMethodFilter::EventFaked)
+    , m_fakeEventForComposition(faked == InputMethodFilter::EventFaked)
 {
 }
 

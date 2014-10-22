@@ -1,3 +1,16 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GtkInputMethodFilter from Platform to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=137884
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove GtkInputMethodFilter.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/GtkInputMethodFilter.cpp: Removed.
+        * platform/gtk/GtkInputMethodFilter.h: Removed.
+
 2014-10-22  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Match spec for font-weight: bolder|lighter

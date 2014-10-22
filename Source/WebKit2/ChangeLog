@@ -1,3 +1,62 @@
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GtkInputMethodFilter from Platform to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=137884
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Merge WebViewBaseInputMethodFilter and GtkInputMethodFilter into a
+        single class InputMethodFilter. The code is mostly the same, but
+        instead of having a setWebView method only to get the WebPageProxy,
+        it has a setPage method that passes the WebPageProxy. The GtkIMContext
+        client window is set by the WebView when it's realized/unrealized.
+
+        * PlatformGTK.cmake:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseUnrealize):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseCreateWebPage):
+        (webkitWebViewBaseEnterFullScreen): Deleted.
+        * UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp: Removed.
+        * UIProcess/API/gtk/WebViewBaseInputMethodFilter.h: Removed.
+        * UIProcess/gtk/InputMethodFilter.cpp: Added.
+        (WebKit::InputMethodFilter::handleCommitCallback):
+        (WebKit::InputMethodFilter::handlePreeditStartCallback):
+        (WebKit::InputMethodFilter::handlePreeditChangedCallback):
+        (WebKit::InputMethodFilter::handlePreeditEndCallback):
+        (WebKit::InputMethodFilter::InputMethodFilter):
+        (WebKit::InputMethodFilter::~InputMethodFilter):
+        (WebKit::InputMethodFilter::setEnabled):
+        (WebKit::InputMethodFilter::setCursorRect):
+        (WebKit::InputMethodFilter::handleKeyboardEvent):
+        (WebKit::InputMethodFilter::handleKeyboardEventWithCompositionResults):
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        (WebKit::InputMethodFilter::confirmComposition):
+        (WebKit::InputMethodFilter::updatePreedit):
+        (WebKit::InputMethodFilter::notifyFocusedIn):
+        (WebKit::InputMethodFilter::notifyFocusedOut):
+        (WebKit::InputMethodFilter::notifyMouseButtonPress):
+        (WebKit::InputMethodFilter::confirmCurrentComposition):
+        (WebKit::InputMethodFilter::cancelContextComposition):
+        (WebKit::InputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents):
+        (WebKit::InputMethodFilter::handleCommit):
+        (WebKit::InputMethodFilter::handlePreeditStart):
+        (WebKit::InputMethodFilter::handlePreeditChanged):
+        (WebKit::InputMethodFilter::handlePreeditEnd):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventForTesting):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting):
+        (WebKit::InputMethodFilter::logConfirmCompositionForTesting):
+        (WebKit::InputMethodFilter::logSetPreeditForTesting):
+        * UIProcess/gtk/InputMethodFilter.h: Added.
+        (WebKit::InputMethodFilter::context):
+        (WebKit::InputMethodFilter::setPage):
+        (WebKit::InputMethodFilter::setTestingMode):
+        (WebKit::InputMethodFilter::events):
+
 2014-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Quick Look preview bubble has unnecessary controls
