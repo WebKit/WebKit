@@ -1,0 +1,73 @@
+<html>
+<head></head>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description('Test XMLHttpRequest responseURL.');
+
+window.jsTestIsAsync = true;
+
+function runTest(url, type) {
+    return new Promise(function(resolve, reject) {
+        var req = new XMLHttpRequest();
+        window.responseURL = req.responseURL;
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        shouldBeEqualToString('responseURL', '');
+
+        req.open('GET', url);
+        req.responseType = type;
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        window.responseURL = req.responseURL;
+        shouldBeEqualToString('responseURL', '');
+
+        req.onreadystatechange = function() {
+            debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+            if (req.readyState == req.DONE)
+                resolve(req);
+        }	
+
+        req.send();
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        window.responseURL = req.responseURL;
+        shouldBeEqualToString('responseURL', '');
+    });
+}
+
+runTest('resources/reply.txt', 'text').then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/reply.txt');
+
+    return runTest('resources/redirect_methods.php?url=reply.xml', 'document');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/reply.xml');
+
+    return runTest('resources/redirect_methods.php?url=not-found.txt', 'text');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt');
+
+    return runTest('resources/cross-site-progress-events.cgi', 'text');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi');
+
+    return runTest('resources/network-simulator.php?command=connect/', 'text');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/');
+
+    return runTest("resources/supported-xml-content-types.cgi?type=foo#bar/baz+xml", 'xml');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/supported-xml-content-types.cgi?type=foo');
+
+    req.open('GET', 'http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt');
+}).catch(function(reason) {
+    testFailed(String(reason));
+}).then(finishJSTest, finishJSTest);
+
+</script>
+</body>
+</html>

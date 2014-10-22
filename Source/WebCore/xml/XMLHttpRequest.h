@@ -132,6 +132,8 @@ public:
     String responseType();
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
 
+    String responseURL() const;
+
     // response attribute has custom getter.
     JSC::ArrayBuffer* responseArrayBuffer();
     JSC::ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }

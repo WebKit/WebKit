@@ -1,0 +1,63 @@
+<html>
+<head></head>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description('Test XMLHttpRequest responseURL.');
+
+window.jsTestIsAsync = true;
+
+function runTest(url, type) {
+    return new Promise(function(resolve, reject) {
+        var req = new XMLHttpRequest();
+        window.responseURL = req.responseURL;
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        shouldBeEqualToString('responseURL', '');
+
+        req.open('GET', url);
+        req.responseType = type;
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        window.responseURL = req.responseURL;
+        shouldBeEqualToString('responseURL', '');
+
+        req.onreadystatechange = function() {
+            debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+            if (req.readyState == req.DONE)
+                resolve(req);
+        }	
+
+        req.send();
+        debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+        window.responseURL = req.responseURL;
+        shouldBeEqualToString('responseURL', '');
+    });
+}
+
+runTest('resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi', 'text').then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi');
+
+    return runTest('resources/redirect.php?url=http://localhost:7/', 'document');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:7/');
+
+    return runTest('resources/redirect.php?url=http://localhost:22/', 'text');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/');
+
+    return runTest('resources/redirect-cors.php', 'text');
+}).then(function(req) {
+    window.responseURL = req.responseURL;
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect-cors.php');
+
+    req.open('GET', 'http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt');
+}).catch(function(reason) {
+    testFailed(String(reason));
+}).then(finishJSTest, finishJSTest);
+
+</script>
+</body>
+</html>
