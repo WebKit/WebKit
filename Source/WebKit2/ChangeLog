@@ -1,3 +1,19 @@
+2014-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove TextCheckerEnchant::create() factory function
+        https://bugs.webkit.org/show_bug.cgi?id=137944
+
+        Reviewed by Darin Adler.
+
+        TextCheckerEnchant::create() can be replaced by std::make_unique<> and std::unique_ptr<>.
+
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::WebKitTextChecker):
+        * UIProcess/API/gtk/WebKitTextChecker.h:
+        * UIProcess/efl/TextCheckerClientEfl.cpp:
+        (TextCheckerClientEfl::TextCheckerClientEfl):
+        * UIProcess/efl/TextCheckerClientEfl.h:
+
 2014-10-22  Antti Koivisto  <antti@apple.com>
 
         Revert fix for REGRESSION (r173356): Safari can't install a profile, gets 'Download Failed error

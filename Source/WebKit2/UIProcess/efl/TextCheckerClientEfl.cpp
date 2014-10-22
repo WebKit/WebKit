@@ -52,7 +52,7 @@ static inline TextCheckerClientEfl* toTextCheckerClientEfl(const void* clientInf
 TextCheckerClientEfl::TextCheckerClientEfl()
     : m_languagesUpdateTimer(this, &TextCheckerClientEfl::languagesUpdateTimerFired)
     , m_spellCheckingSettingChangeTimer(this, &TextCheckerClientEfl::spellCheckingSettingChangeTimerFired)
-    , m_textCheckerEnchant(TextCheckerEnchant::create())
+    , m_textCheckerEnchant(std::make_unique<TextCheckerEnchant>())
 {
     memset(&m_clientCallbacks, 0, sizeof(ClientCallbacks));
 

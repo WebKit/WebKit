@@ -82,7 +82,7 @@ WebKitTextChecker::~WebKitTextChecker()
 }
 
 WebKitTextChecker::WebKitTextChecker()
-    : m_textChecker(WebCore::TextCheckerEnchant::create())
+    : m_textChecker(std::make_unique<WebCore::TextCheckerEnchant>())
     , m_spellCheckingEnabled(false)
 {
     WKTextCheckerClientV0 wkTextCheckerClient = {

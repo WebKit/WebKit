@@ -24,7 +24,6 @@
 
 #include <WebCore/TextCheckerEnchant.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -54,7 +53,7 @@ public:
 private:
     WebKitTextChecker();
 
-    OwnPtr<WebCore::TextCheckerEnchant> m_textChecker;
+    std::unique_ptr<WebCore::TextCheckerEnchant> m_textChecker;
     GRefPtr<GPtrArray> m_spellCheckingLanguages;
     bool m_spellCheckingEnabled;
 };
