@@ -1,3 +1,19 @@
+2014-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Translations are not initialized in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=136249
+
+        Reviewed by Philippe Normand.
+
+        This is breaking things like webkitContextMenuActionGetForContextMenuItem()
+        for non English locales in the cases where we use the action title to guess the
+        action, because the action title we get from the web process is translated while
+        the one in the UI process is in English.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext): Initialize gettext right before
+        creating the default web context.
+
 2014-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The remote web inspector shows the HTML content as plain text
