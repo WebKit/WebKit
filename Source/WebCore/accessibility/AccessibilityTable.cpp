@@ -51,7 +51,7 @@ using namespace HTMLNames;
 AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
     , m_headerContainer(nullptr)
-    , m_isAccessibilityTable(true)
+    , m_isExposableThroughAccessibility(true)
 {
 }
 
@@ -62,7 +62,7 @@ AccessibilityTable::~AccessibilityTable()
 void AccessibilityTable::init()
 {
     AccessibilityRenderObject::init();
-    m_isAccessibilityTable = isTableExposableThroughAccessibility();
+    m_isExposableThroughAccessibility = computeIsTableExposableThroughAccessibility();
 }
 
 PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
@@ -82,12 +82,12 @@ bool AccessibilityTable::hasARIARole() const
     return false;
 }
 
-bool AccessibilityTable::isAccessibilityTable() const
+bool AccessibilityTable::isExposableThroughAccessibility() const
 {
     if (!m_renderer)
         return false;
     
-    return m_isAccessibilityTable;
+    return m_isExposableThroughAccessibility;
 }
 
 HTMLTableElement* AccessibilityTable::tableElement() const
@@ -309,7 +309,7 @@ bool AccessibilityTable::isDataTable() const
     return false;
 }
     
-bool AccessibilityTable::isTableExposableThroughAccessibility() const
+bool AccessibilityTable::computeIsTableExposableThroughAccessibility() const
 {
     // The following is a heuristic used to determine if a
     // <table> should be exposed as an AXTable. The goal
@@ -347,7 +347,7 @@ void AccessibilityTable::clearChildren()
 
 void AccessibilityTable::addChildren()
 {
-    if (!isAccessibilityTable()) {
+    if (!isExposableThroughAccessibility()) {
         AccessibilityRenderObject::addChildren();
         return;
     }
@@ -525,7 +525,7 @@ int AccessibilityTable::tableLevel() const
 {
     int level = 0;
     for (AccessibilityObject* obj = static_cast<AccessibilityObject*>(const_cast<AccessibilityTable*>(this)); obj; obj = obj->parentObject()) {
-        if (obj->isAccessibilityTable())
+        if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposableThroughAccessibility())
             ++level;
     }
     
@@ -568,7 +568,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
 
 AccessibilityRole AccessibilityTable::roleValue() const
 {
-    if (!isAccessibilityTable())
+    if (!isExposableThroughAccessibility())
         return AccessibilityRenderObject::roleValue();
 
     return TableRole;
@@ -582,7 +582,7 @@ bool AccessibilityTable::computeAccessibilityIsIgnored() const
     if (decision == IgnoreObject)
         return true;
     
-    if (!isAccessibilityTable())
+    if (!isExposableThroughAccessibility())
         return AccessibilityRenderObject::computeAccessibilityIsIgnored();
         
     return false;
@@ -597,7 +597,7 @@ void AccessibilityTable::titleElementText(Vector<AccessibilityText>& textOrder) 
 
 String AccessibilityTable::title() const
 {
-    if (!isAccessibilityTable())
+    if (!isExposableThroughAccessibility())
         return AccessibilityRenderObject::title();
     
     String title;

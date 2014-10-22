@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
+#include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
@@ -1623,7 +1624,13 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, Acces
         return false;
 
     // Skip big container elements like lists, tables, etc.
-    if (obj->isList() || obj->isAccessibilityTable() || obj->isTree() || obj->isCanvas())
+    if (is<AccessibilityList>(*obj))
+        return false;
+
+    if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposableThroughAccessibility())
+        return false;
+
+    if (obj->isTree() || obj->isCanvas())
         return false;
 
     return true;

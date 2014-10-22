@@ -1,5 +1,85 @@
 2014-10-22  Chris Dumez  <cdumez@apple.com>
 
+        Avoid confusion between AccessibilityObject::isTable() / isAccessibilityTable()
+        https://bugs.webkit.org/show_bug.cgi?id=137899
+
+        Reviewed by Darin Adler.
+
+        Avoid confusion between AccessibilityObject::isTable() and
+        isAccessibilityTable(). isTable() is equivalent to
+        is<AccessibilityTable>(), while isAccessibilityTable() is an
+        AccessibilityTable that is exposed as an AccessibilityTable to the
+        platform.
+
+        This patch is renaming isAccessibilityTable() to
+        isExposableThroughAccessibility(), makes it non-virtual and defines it
+        on AccessibilityTable only, for clarity.
+
+        This patch also renames isTableExposableThroughAccessibility() to
+        computeIisTableExposableThroughAccessibility() as it is called only
+        once to initialize the m_isExposableThroughAccessibility data member.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable):
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedRows):
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow):
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::shouldUseAccessiblityObjectInnerText):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        (WebCore::appendChildrenToArray):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAccessibilityTable): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaSelectedRows):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore::AccessibilityTable::init):
+        (WebCore::AccessibilityTable::isExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::computeIsTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::tableLevel):
+        (WebCore::AccessibilityTable::roleValue):
+        (WebCore::AccessibilityTable::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityTable::title):
+        (WebCore::AccessibilityTable::isAccessibilityTable): Deleted.
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility): Deleted.
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::isTableCell):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::isTableRow):
+        (WebCore::AccessibilityTableRow::parentTable):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetNChildren):
+        (webkitAccessibleRefChild):
+        (webkitAccessibleGetAttributes):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
         Avoid repeated is<MutableStyleProperties>() checks in StyleProperties
         https://bugs.webkit.org/show_bug.cgi?id=137978
 

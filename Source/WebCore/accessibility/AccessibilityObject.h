@@ -475,7 +475,6 @@ public:
     virtual bool isControl() const { return false; }
     virtual bool isList() const { return false; }
     virtual bool isTable() const { return false; }
-    virtual bool isAccessibilityTable() const { return false; }
     virtual bool isDataTable() const { return false; }
     virtual bool isTableRow() const { return false; }
     virtual bool isTableColumn() const { return false; }

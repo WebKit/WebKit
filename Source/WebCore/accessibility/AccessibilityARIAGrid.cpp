@@ -100,7 +100,7 @@ void AccessibilityARIAGrid::addChildren()
 {
     ASSERT(!m_haveChildren); 
     
-    if (!isAccessibilityTable()) {
+    if (!isExposableThroughAccessibility()) {
         AccessibilityRenderObject::addChildren();
         return;
     }

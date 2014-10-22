@@ -75,11 +75,13 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     RenderObject* renderer = m_parent->renderer();
     if (!renderer)
         return nullptr;
-    
-    if (!m_parent->isAccessibilityTable())
+    if (!is<AccessibilityTable>(*m_parent))
+        return nullptr;
+
+    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
+    if (!parentTable.isExposableThroughAccessibility())
         return nullptr;
     
-    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
     if (parentTable.isAriaTable()) {
         for (const auto& cell : children()) {
             if (cell->ariaRoleAttribute() == ColumnHeaderRole)
@@ -170,10 +172,13 @@ void AccessibilityTableColumn::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!m_parent || !m_parent->isAccessibilityTable())
+    if (!is<AccessibilityTable>(m_parent))
+        return;
+
+    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
+    if (!parentTable.isExposableThroughAccessibility())
         return;
     
-    AccessibilityTable& parentTable = downcast<AccessibilityTable>(*m_parent);
     int numRows = parentTable.rowCount();
     
     for (int i = 0; i < numRows; ++i) {

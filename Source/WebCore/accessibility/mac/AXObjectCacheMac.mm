@@ -29,6 +29,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #import "AccessibilityObject.h"
+#import "AccessibilityTable.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "WebCoreSystemInterface.h"
@@ -96,7 +97,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             macNotification = @"AXInvalidStatusChanged";
             break;
         case AXSelectedChildrenChanged:
-            if (obj->isAccessibilityTable())
+            if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposableThroughAccessibility())
                 macNotification = NSAccessibilitySelectedRowsChangedNotification;
             else
                 macNotification = NSAccessibilitySelectedChildrenChangedNotification;

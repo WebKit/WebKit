@@ -3144,8 +3144,11 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
         AccessibilityChildrenVector allRows;
         ariaTreeRows(allRows);
         rowsIteration(allRows);
-    } else if (isAccessibilityTable() && downcast<AccessibilityTable>(*this).supportsSelectedRows())
-        rowsIteration(downcast<AccessibilityTable>(*this).rows());
+    } else if (is<AccessibilityTable>(*this)) {
+        auto& thisTable = downcast<AccessibilityTable>(*this);
+        if (thisTable.isExposableThroughAccessibility() && thisTable.supportsSelectedRows())
+            rowsIteration(thisTable.rows());
+    }
 }
     
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)

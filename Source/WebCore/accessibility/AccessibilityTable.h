@@ -60,7 +60,7 @@ public:
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();
     unsigned rowCount();
-    virtual int tableLevel() const override;
+    virtual int tableLevel() const override final;
     
     virtual String title() const override;
     
@@ -75,15 +75,15 @@ public:
     // an object that contains, as children, all the objects that act as headers
     AccessibilityObject* headerContainer();
 
-    // isAccessibilityTable is whether it is exposed as an AccessibilityTable to the platform.
-    virtual bool isAccessibilityTable() const override final;
+    // isExposableThroughAccessibility() is whether it is exposed as an AccessibilityTable to the platform.
+    bool isExposableThroughAccessibility() const;
 
 protected:
     AccessibilityChildrenVector m_rows;
     AccessibilityChildrenVector m_columns;
 
     RefPtr<AccessibilityObject> m_headerContainer;
-    bool m_isAccessibilityTable;
+    bool m_isExposableThroughAccessibility;
 
     bool hasARIARole() const;
 
@@ -92,11 +92,10 @@ protected:
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
     virtual bool isDataTable() const override;
-
-    virtual bool isTableExposableThroughAccessibility() const;
     virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
+    virtual bool computeIsTableExposableThroughAccessibility() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const override;
     HTMLTableElement* tableElement() const;
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);

@@ -231,11 +231,11 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
         
     case TableSameLevelSearchKey:
         return criteria->startObject
-            && axObject->isAccessibilityTable()
-            && axObject->tableLevel() == criteria->startObject->tableLevel();
+            && is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility()
+            && downcast<AccessibilityTable>(*axObject).tableLevel() == criteria->startObject->tableLevel();
         
     case TableSearchKey:
-        return axObject->isAccessibilityTable();
+        return is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility();
         
     case TextFieldSearchKey:
         return axObject->isTextControl();
@@ -502,7 +502,7 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
 {
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    const auto& searchChildren = object->isAccessibilityTable() ? downcast<AccessibilityTable>(*object).rows() : object->children();
+    const auto& searchChildren = is<AccessibilityTable>(*object) && downcast<AccessibilityTable>(*object).isExposableThroughAccessibility() ? downcast<AccessibilityTable>(*object).rows() : object->children();
 
     size_t childrenSize = searchChildren.size();
 

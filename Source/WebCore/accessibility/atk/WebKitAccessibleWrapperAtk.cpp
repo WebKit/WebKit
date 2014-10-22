@@ -37,6 +37,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBoxOption.h"
+#include "AccessibilityTable.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -355,7 +356,7 @@ static gint webkitAccessibleGetNChildren(AtkObject* object)
 
     // Tables should be treated in a different way because rows should
     // be bypassed when exposing the accessible hierarchy.
-    if (coreObject->isAccessibilityTable())
+    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility())
         return getNChildrenForTable(coreObject);
 
     return coreObject->children().size();
@@ -398,7 +399,7 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
 
     // Tables are special cases because rows should be bypassed, but
     // still taking their cells into account.
-    if (coreObject->isAccessibilityTable())
+    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility())
         coreChild = getChildForTable(coreObject, index);
     else {
         const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
@@ -520,7 +521,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 
     // Set the 'layout-guess' attribute to help Assistive
     // Technologies know when an exposed table is not data table.
-    if (coreObject->isAccessibilityTable() && !coreObject->isDataTable())
+    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility() && !coreObject->isDataTable())
         attributeSet = addToAtkAttributeSet(attributeSet, "layout-guess", "true");
 
     String placeholder = coreObject->placeholderValue();

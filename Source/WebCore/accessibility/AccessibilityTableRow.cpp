@@ -73,10 +73,7 @@ AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()
 bool AccessibilityTableRow::isTableRow() const
 {
     AccessibilityObject* table = parentTable();
-    if (!table || !table->isAccessibilityTable())
-        return false;
-    
-    return true;
+    return is<AccessibilityTable>(table)  && downcast<AccessibilityTable>(*table).isExposableThroughAccessibility();
 }
     
 AccessibilityObject* AccessibilityTableRow::observableObject() const
@@ -106,8 +103,12 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         // If this is a table object, but not an accessibility table, we should stop because we don't want to
         // choose another ancestor table as this row's table.
-        if (is<AccessibilityTable>(*parent))
-            return downcast<AccessibilityTable>(*parent).isAccessibilityTable() ? downcast<AccessibilityTable>(parent) : nullptr;
+        if (is<AccessibilityTable>(*parent)) {
+            auto& parentTable = downcast<AccessibilityTable>(*parent);
+            if (parentTable.isExposableThroughAccessibility())
+                return &parentTable;
+            break;
+        }
     }
     
     return nullptr;

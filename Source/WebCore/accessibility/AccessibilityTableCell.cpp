@@ -100,7 +100,7 @@ bool AccessibilityTableCell::isTableCell() const
     // This used to check if the unignoredParent was a row, but that exploded performance if
     // this was in nested tables. This check should be just as good.
     AccessibilityObject* parentTable = this->parentTable();
-    return parentTable && parentTable->isAccessibilityTable();
+    return is<AccessibilityTable>(parentTable) && downcast<AccessibilityTable>(*parentTable).isExposableThroughAccessibility();
 }
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()

@@ -53,7 +53,7 @@ private:
     // ARIA treegrids and grids support selected rows.
     virtual bool supportsSelectedRows() override { return true; }
     virtual bool isMultiSelectable() const override { return true; }
-    virtual bool isTableExposableThroughAccessibility() const override { return true; }
+    virtual bool computeIsTableExposableThroughAccessibility() const override { return true; }
     
     void addRowDescendant(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
     bool addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);

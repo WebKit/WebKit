@@ -63,7 +63,7 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
     // The contiguous disclosed rows will be the rows in the table that 
     // have an aria-level of plus 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isAccessibilityTable())
+    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
         return;
     
     // Search for rows that match the correct level. 
@@ -90,7 +90,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isAccessibilityTable())
+    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
         return nullptr;
     
     // If the level is 1 or less, than nothing discloses this row.
@@ -120,8 +120,11 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         // The parent table for an ARIA grid row should be an ARIA table.
-        if (parent->isAccessibilityTable() && downcast<AccessibilityTable>(*parent).isAriaTable())
-            return downcast<AccessibilityTable>(parent);
+        if (is<AccessibilityTable>(*parent)) {
+            AccessibilityTable& tableParent = downcast<AccessibilityTable>(*parent);
+            if (tableParent.isExposableThroughAccessibility() && tableParent.isAriaTable())
+                return &tableParent;
+        }
     }
     
     return nullptr;
