@@ -164,7 +164,7 @@ int fontWeightToFontconfigWeight(FontWeight weight)
     }
 }
 
-PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
@@ -215,11 +215,11 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
     // supports three encodings in FcFreeTypeCharIndex: Unicode, Symbol and AppleRoman.
     // If this font doesn't have one of these three encodings, don't select it.
-    OwnPtr<FontPlatformData> platformData = adoptPtr(new FontPlatformData(resultPattern.get(), fontDescription));
+    auto platformData = std::make_unique<FontPlatformData>(resultPattern.get(), fontDescription);
     if (!platformData->hasCompatibleCharmap())
         return nullptr;
 
-    return platformData.release();
+    return platformData;
 }
 
 }

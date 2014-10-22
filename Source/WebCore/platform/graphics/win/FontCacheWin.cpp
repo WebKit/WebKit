@@ -545,7 +545,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     copyToVector(procData.m_traitsMasks, traitsMasks);
 }
 
-PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     bool isLucidaGrande = false;
     static AtomicString lucidaStr("Lucida Grande");
@@ -574,7 +574,7 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
 
-    FontPlatformData* result = new FontPlatformData(WTF::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    auto result = std::make_unique<FontPlatformData>(WTF::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();
@@ -586,11 +586,10 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
         // The creation of the CGFontRef failed for some reason.  We already asserted in debug builds, but to make
         // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next
         // font.
-        delete result;
         return nullptr;
-    }        
+    }
 
-    return adoptPtr(result);
+    return result;
 }
 
 }

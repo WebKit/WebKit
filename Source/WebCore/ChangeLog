@@ -1,3 +1,26 @@
+2014-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr | std::make_unique in FontCacheFoo
+        https://bugs.webkit.org/show_bug.cgi?id=137905
+
+        Reviewed by Darin Adler.
+
+        Clean up PassOwnPtr|OwnPtr using std::unique_ptr|std::make_unique.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2014-10-21  Ada Chan  <adachan@apple.com>
 
         Calling WebCore::Page::setMediaVolume(0) does not mute videos as expected.

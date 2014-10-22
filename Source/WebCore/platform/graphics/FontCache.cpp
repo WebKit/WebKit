@@ -141,7 +141,7 @@ struct FontPlatformDataCacheKeyHash {
 
 struct FontPlatformDataCacheKeyTraits : WTF::SimpleClassHashTraits<FontPlatformDataCacheKey> { };
 
-typedef HashMap<FontPlatformDataCacheKey, OwnPtr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
+typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
 
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
@@ -257,7 +257,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
                 it = gFontPlatformDataCache->find(key);
                 ASSERT(it != gFontPlatformDataCache->end());
                 if (fontPlatformDataForAlternateName)
-                    it->value = adoptPtr(new FontPlatformData(*fontPlatformDataForAlternateName));
+                    it->value = std::make_unique<FontPlatformData>(*fontPlatformDataForAlternateName);
             }
         }
     }

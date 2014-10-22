@@ -185,7 +185,7 @@ private:
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
     PassRefPtr<SimpleFontData> getSystemFontFallbackForCharacters(const FontDescription&, const SimpleFontData*, const UChar* characters, int length);
 #endif
-    PassOwnPtr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
+    std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
 #if PLATFORM(COCOA)
     PassRefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
 #endif
