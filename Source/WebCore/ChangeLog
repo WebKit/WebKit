@@ -1,3 +1,15 @@
+2014-10-09  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] Netscape plugin API symbol used outside feature guards
+        https://bugs.webkit.org/show_bug.cgi?id=137385
+
+        Reviewed by Philippe Normand.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::unload): Add guards for Netscape Plugin
+        API around symbol, so that it compiles OK when the API is not
+        available.
+
 2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

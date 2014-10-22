@@ -127,7 +127,9 @@ void PluginPackage::unload()
     if (--m_loadCount > 0)
         return;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_NPP_Shutdown();
+#endif
 
     unloadWithoutShutdown();
 }
