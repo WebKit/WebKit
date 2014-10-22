@@ -45,10 +45,6 @@
 #include "VideoTrack.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "MediaStream.h"
-#endif
-
 #ifndef NDEBUG
 #include <wtf/StringPrintStream.h>
 #endif
@@ -90,6 +86,10 @@ class VideoTrackPrivate;
 typedef PODIntervalTree<MediaTime, TextTrackCue*> CueIntervalTree;
 typedef CueIntervalTree::IntervalType CueInterval;
 typedef Vector<CueInterval> CueList;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+class MediaStream;
 #endif
 
 class HTMLMediaElement

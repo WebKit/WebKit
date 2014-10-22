@@ -49,6 +49,7 @@ class MediaStream final : public RefCounted<MediaStream>, public URLRegistrable,
 public:
     class Observer {
     public:
+        virtual ~Observer() { }
         virtual void didAddOrRemoveTrack() = 0;
     };
 

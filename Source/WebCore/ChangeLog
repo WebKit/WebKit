@@ -1,3 +1,30 @@
+2014-10-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac][MediaStream] clean up bit rot
+        https://bugs.webkit.org/show_bug.cgi?id=137976
+
+        Reviewed by Jer Noble.
+
+        No new tests, this just gets the Mac port compiling again.
+
+        * Modules/mediastream/MediaStream.h: Add a virtual destructor to Observer since it has 
+            a virtual method.
+
+        * WebCore.exp.in: Export RTCPeerConnectionHandler::create and RTCPeerConnectionHandlerMock::create(WebCore::RTCPeerConnectionHandlerClient*),
+            they are both use by Internals for testing.
+
+        * WebCore.xcodeproj/project.pbxproj: Add RTC and MediaStream files.
+
+        * html/HTMLMediaElement.h: Forward declare MediaStream instead of including MediaStream.h.
+
+        * platform/mediastream/RTCPeerConnectionHandler.h: EXPORT the create method.
+
+        * platform/mock/MediaConstraintsMock.cpp:
+        (WebCore::isSupported): Make static.
+        (WebCore::isValid): Ditto.
+
+        * platform/mock/RTCPeerConnectionHandlerMock.h: EXPORT the create method.
+
 2014-10-22  Chris Dumez  <cdumez@apple.com>
 
         [Mac][WK2] Fix applicationIsSafari() detection

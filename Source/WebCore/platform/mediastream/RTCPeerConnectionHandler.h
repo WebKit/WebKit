@@ -73,7 +73,7 @@ typedef std::unique_ptr<RTCPeerConnectionHandler> (*CreatePeerConnectionHandler)
 
 class RTCPeerConnectionHandler {
 public:
-    static CreatePeerConnectionHandler create;
+    WEBCORE_EXPORT static CreatePeerConnectionHandler create;
     virtual ~RTCPeerConnectionHandler() { }
 
     static const AtomicString& incompatibleConstraintsErrorName();

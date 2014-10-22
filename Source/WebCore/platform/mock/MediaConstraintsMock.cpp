@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-bool isSupported(const String& constraint)
+static bool isSupported(const String& constraint)
 {
     return notFound != constraint.find("_and_supported_");
 }
 
-bool isValid(const String& constraint)
+static bool isValid(const String& constraint)
 {
     return isSupported(constraint) || notFound != constraint.find("valid_");
 }

@@ -156,6 +156,23 @@
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07367DDF172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */; };
 		07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */; };
+		073794DD19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */; };
+		073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */; };
+		073794E119EE2D1B00E5A045 /* MediaConstraintsMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */; };
+		073794E219EE2D1B00E5A045 /* MediaConstraintsMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */; };
+		073794E519EE2FF200E5A045 /* JSRTCConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */; };
+		073794E619EE2FF200E5A045 /* JSRTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */; };
+		073794E819EE335C00E5A045 /* JSNavigatorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794E719EE335C00E5A045 /* JSNavigatorCustom.cpp */; };
+		073794EB19EE341E00E5A045 /* JSRTCIceServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */; };
+		073794EC19EE341E00E5A045 /* JSRTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794EA19EE341E00E5A045 /* JSRTCIceServer.h */; };
+		073794F119EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794EF19EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp */; };
+		073794F219EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F019EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.h */; };
+		073794F919F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F319F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp */; };
+		073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */; };
+		073794FB19F5864E00E5A045 /* RTCDTMFSenderHandlerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F519F5864E00E5A045 /* RTCDTMFSenderHandlerMock.cpp */; };
+		073794FC19F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F619F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h */; };
+		073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */; };
+		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
 		073AB4B317F8BACA006E0D6F /* AllVideoCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */; };
 		073AB4B717F92ECF006E0D6F /* JSCapabilityRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073AB4B517F92ECF006E0D6F /* JSCapabilityRange.cpp */; };
 		073AB4B817F92ECF006E0D6F /* JSCapabilityRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 073AB4B617F92ECF006E0D6F /* JSCapabilityRange.h */; };
@@ -7138,6 +7155,25 @@
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InbandTextTrackPrivateLegacyAVFObjC.h; path = objc/InbandTextTrackPrivateLegacyAVFObjC.h; sourceTree = "<group>"; };
 		07367DDE172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InbandTextTrackPrivateLegacyAVFObjC.mm; path = objc/InbandTextTrackPrivateLegacyAVFObjC.mm; sourceTree = "<group>"; };
+		073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCOfferAnswerOptions.cpp; sourceTree = "<group>"; };
+		073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCOfferAnswerOptions.h; sourceTree = "<group>"; };
+		073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsMock.cpp; sourceTree = "<group>"; };
+		073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsMock.h; sourceTree = "<group>"; };
+		073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCConfiguration.cpp; sourceTree = "<group>"; };
+		073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCConfiguration.h; sourceTree = "<group>"; };
+		073794E719EE335C00E5A045 /* JSNavigatorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorCustom.cpp; sourceTree = "<group>"; };
+		073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCIceServer.cpp; sourceTree = "<group>"; };
+		073794EA19EE341E00E5A045 /* JSRTCIceServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCIceServer.h; sourceTree = "<group>"; };
+		073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMURLMediaStream.cpp; sourceTree = "<group>"; };
+		073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMURLMediaStream.idl; sourceTree = "<group>"; };
+		073794EF19EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionHandlerMock.cpp; sourceTree = "<group>"; };
+		073794F019EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionHandlerMock.h; sourceTree = "<group>"; };
+		073794F319F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCDataChannelHandlerMock.cpp; sourceTree = "<group>"; };
+		073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerMock.h; sourceTree = "<group>"; };
+		073794F519F5864E00E5A045 /* RTCDTMFSenderHandlerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCDTMFSenderHandlerMock.cpp; sourceTree = "<group>"; };
+		073794F619F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandlerMock.h; sourceTree = "<group>"; };
+		073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNotifiersMock.cpp; sourceTree = "<group>"; };
+		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
 		073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllVideoCapabilities.h; sourceTree = "<group>"; };
 		073AB4B517F92ECF006E0D6F /* JSCapabilityRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCapabilityRange.cpp; sourceTree = "<group>"; };
 		073AB4B617F92ECF006E0D6F /* JSCapabilityRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCapabilityRange.h; sourceTree = "<group>"; };
@@ -14327,6 +14363,8 @@
 		07221B4617CEC32700848E51 /* mediastream */ = {
 			isa = PBXGroup;
 			children = (
+				073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */,
+				073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */,
 				0705850517FA4689005F2BCB /* AllAudioCapabilities.h */,
 				0705850617FA4689005F2BCB /* AllAudioCapabilities.idl */,
 				073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */,
@@ -14407,6 +14445,8 @@
 				07221B7617CEC32700848E51 /* RTCIceCandidateEvent.idl */,
 				07AB996718DA3C010018771E /* RTCIceServer.h */,
 				07AB996818DA3C010018771E /* RTCIceServer.idl */,
+				073794DB19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp */,
+				073794DC19EE2C5200E5A045 /* RTCOfferAnswerOptions.h */,
 				07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */,
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
@@ -14539,6 +14579,10 @@
 		07CFD99317D01405001C4FFC /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
+				073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */,
+				073794EA19EE341E00E5A045 /* JSRTCIceServer.h */,
+				073794E319EE2FF200E5A045 /* JSRTCConfiguration.cpp */,
+				073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */,
 				07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */,
 				07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */,
 				07C59B6F17F79C7C000FBCBB /* JSMediaSourceStates.cpp */,
@@ -16108,10 +16152,20 @@
 				CDF2B005182053DF00F2B424 /* mediasource */,
 				59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */,
 				59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */,
+				073794DF19EE2D1B00E5A045 /* MediaConstraintsMock.cpp */,
+				073794E019EE2D1B00E5A045 /* MediaConstraintsMock.h */,
 				07C59B6117F4CF87000FBCBB /* MockMediaStreamCenter.cpp */,
 				07C59B6217F4CF87000FBCBB /* MockMediaStreamCenter.h */,
 				AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */,
 				AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */,
+				073794F319F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp */,
+				073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */,
+				073794F519F5864E00E5A045 /* RTCDTMFSenderHandlerMock.cpp */,
+				073794F619F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h */,
+				073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */,
+				073794F819F5864E00E5A045 /* RTCNotifiersMock.h */,
+				073794EF19EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp */,
+				073794F019EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.h */,
 				0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */,
 				0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */,
 			);
@@ -20947,6 +21001,7 @@
 				41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
+				073794E719EE335C00E5A045 /* JSNavigatorCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
 				BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */,
@@ -23404,6 +23459,7 @@
 				FD31608B12B026F700C1A359 /* AudioUtilities.h in Headers */,
 				7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */,
 				7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */,
+				073794E619EE2FF200E5A045 /* JSRTCConfiguration.h in Headers */,
 				934F713A0D5A6F1000018D69 /* AuthenticationChallengeBase.h in Headers */,
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
@@ -24059,6 +24115,7 @@
 				85C7F5D00AAFB8D9004014DD /* DOMOverflowEvent.h in Headers */,
 				85989DCF0ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h in Headers */,
 				E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */,
+				073794E219EE2D1B00E5A045 /* MediaConstraintsMock.h in Headers */,
 				1ACE53E80A8D18E70022947D /* DOMParser.h in Headers */,
 				7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */,
 				FB91392416AE4C17001FE682 /* DOMPath.h in Headers */,
@@ -24387,6 +24444,7 @@
 				FD3160A112B026F700C1A359 /* HRTFPanner.h in Headers */,
 				BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */,
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
+				07BC67F419F8201D00E0E3D9 /* URLRegistry.h in Headers */,
 				A871D45D0A127CBC00B12A68 /* HTMLAppletElement.h in Headers */,
 				A8EA7D2E0A19385500A8EF5F /* HTMLAreaElement.h in Headers */,
 				E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */,
@@ -24438,6 +24496,7 @@
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
 				A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */,
+				073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */,
 				97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */,
 				93309DE6099E64920056E581 /* HTMLInterchange.h in Headers */,
 				A81369E4097374F600D74463 /* HTMLKeygenElement.h in Headers */,
@@ -24859,6 +24918,7 @@
 				A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */,
 				BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */,
 				BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */,
+				073794EC19EE341E00E5A045 /* JSRTCIceServer.h in Headers */,
 				BC06ED9E0BFD660600856E9D /* JSHTMLTableColElement.h in Headers */,
 				BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */,
 				BC06EDA00BFD660600856E9D /* JSHTMLTableRowElement.h in Headers */,
@@ -25695,6 +25755,7 @@
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
 				1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */,
 				1479FAF0109AE37500DED655 /* RenderRubyBase.h in Headers */,
+				073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */,
 				1479FAF2109AE37500DED655 /* RenderRubyRun.h in Headers */,
 				1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */,
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
@@ -25924,6 +25985,7 @@
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
+				073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */,
 				2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -25982,6 +26044,7 @@
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
+				073794F219EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.h in Headers */,
 				B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */,
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
@@ -26407,6 +26470,7 @@
 				97AABD1714FA09D5007457AE /* ThreadableWebSocketChannel.h in Headers */,
 				97AABD1914FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
+				073794FC19F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h in Headers */,
 				0F6383DE18615B29003E5DB5 /* ThreadedScrollingTree.h in Headers */,
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
@@ -27377,6 +27441,7 @@
 				E49BDA0B131FD3E5003C56F0 /* CSSValuePool.cpp in Sources */,
 				E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */,
 				265541521489B233000DFC5D /* CursorIOS.cpp in Sources */,
+				073794F919F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
@@ -27882,6 +27947,7 @@
 				977B386B122883E900B81FF8 /* HTMLEntitySearch.cpp in Sources */,
 				A8BC04921214F69600B5F122 /* HTMLEntityTable.cpp in Sources */,
 				A81369D5097374F600D74463 /* HTMLFieldSetElement.cpp in Sources */,
+				073794E519EE2FF200E5A045 /* JSRTCConfiguration.cpp in Sources */,
 				A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */,
 				977B386E122883E900B81FF8 /* HTMLFormattingElementList.cpp in Sources */,
 				A81369CF097374F600D74463 /* HTMLFormControlElement.cpp in Sources */,
@@ -28754,6 +28820,7 @@
 				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
 				49C7B9A41042D2D30009D447 /* JSWebGLTexture.cpp in Sources */,
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
+				073794FB19F5864E00E5A045 /* RTCDTMFSenderHandlerMock.cpp in Sources */,
 				77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				310603741432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp in Sources */,
@@ -29116,6 +29183,7 @@
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
 				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
+				073794E119EE2D1B00E5A045 /* MediaConstraintsMock.cpp in Sources */,
 				BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */,
 				9392F1440AD185FE00691BD4 /* RenderCounter.cpp in Sources */,
 				BCEA486D097D93020094C9E4 /* RenderDeprecatedFlexibleBox.cpp in Sources */,
@@ -29156,6 +29224,7 @@
 				439046DB12DA25E800AF80A2 /* RenderMathMLFraction.cpp in Sources */,
 				439046DD12DA25E800AF80A2 /* RenderMathMLMath.cpp in Sources */,
 				3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */,
+				073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */,
 				439046DF12DA25E800AF80A2 /* RenderMathMLOperator.cpp in Sources */,
 				439046DF12DA25E800BF80A3 /* RenderMathMLRadicalOperator.cpp in Sources */,
 				439046E112DA25E800AF80A2 /* RenderMathMLRoot.cpp in Sources */,
@@ -29506,6 +29575,7 @@
 				43F6FD9613BCD0B100224052 /* SVGAnimatedInteger.cpp in Sources */,
 				1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
 				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
+				073794EB19EE341E00E5A045 /* JSRTCIceServer.cpp in Sources */,
 				431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */,
 				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,
 				4331AC7813B6870000A9E5AE /* SVGAnimatedNumberList.cpp in Sources */,
@@ -29541,6 +29611,7 @@
 				B28C6A270D00C44800334AA4 /* SVGDocumentExtensions.cpp in Sources */,
 				B22279B60D00BF220071B782 /* SVGElement.cpp in Sources */,
 				A833C8520A2CF52800D57664 /* SVGElementFactory.cpp in Sources */,
+				073794E819EE335C00E5A045 /* JSNavigatorCustom.cpp in Sources */,
 				B22279B90D00BF220071B782 /* SVGElementInstance.cpp in Sources */,
 				B22279BC0D00BF220071B782 /* SVGElementInstanceList.cpp in Sources */,
 				B22279BF0D00BF220071B782 /* SVGEllipseElement.cpp in Sources */,
@@ -29888,6 +29959,7 @@
 				3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,
+				073794F119EE37BB00E5A045 /* RTCPeerConnectionHandlerMock.cpp in Sources */,
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
@@ -29973,6 +30045,7 @@
 				1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */,
 				1AB7FC6E0A8B92EC00D9D37B /* XPathExpressionNode.cpp in Sources */,
 				1AB7FC700A8B92EC00D9D37B /* XPathFunctions.cpp in Sources */,
+				073794DD19EE2C5200E5A045 /* RTCOfferAnswerOptions.cpp in Sources */,
 				1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */,
 				E1EC299F0BB04C6B00EA187B /* XPathNodeSet.cpp in Sources */,
 				1AB7FC750A8B92EC00D9D37B /* XPathNSResolver.cpp in Sources */,
