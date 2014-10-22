@@ -70,8 +70,10 @@ AnimationControllerPrivate::~AnimationControllerPrivate()
 CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderElement* renderer)
 {
     auto result = m_compositeAnimations.add(renderer, nullptr);
-    if (result.isNewEntry)
+    if (result.isNewEntry) {
         result.iterator->value = CompositeAnimation::create(this);
+        renderer->setIsCSSAnimating(true);
+    }
     return *result.iterator->value;
 }
 
@@ -82,6 +84,7 @@ bool AnimationControllerPrivate::clear(RenderElement* renderer)
     RefPtr<CompositeAnimation> animation = m_compositeAnimations.take(renderer);
     if (!animation)
         return false;
+    renderer->setIsCSSAnimating(false);
     animation->clearRenderer();
     return animation->isSuspended();
 }
@@ -238,14 +241,18 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
 
 bool AnimationControllerPrivate::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    const CompositeAnimation* animation = m_compositeAnimations.get(renderer);
-    return animation && animation->isAnimatingProperty(property, false, runningState);
+    ASSERT(renderer->isCSSAnimating());
+    ASSERT(m_compositeAnimations.contains(renderer));
+    const CompositeAnimation& animation = *m_compositeAnimations.get(renderer);
+    return animation.isAnimatingProperty(property, false, runningState);
 }
 
 bool AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    const CompositeAnimation* animation = m_compositeAnimations.get(renderer);
-    return animation && animation->isAnimatingProperty(property, true, runningState);
+    ASSERT(renderer->isCSSAnimating());
+    ASSERT(m_compositeAnimations.contains(renderer));
+    const CompositeAnimation& animation = *m_compositeAnimations.get(renderer);
+    return animation.isAnimatingProperty(property, true, runningState);
 }
 
 void AnimationControllerPrivate::suspendAnimations()
@@ -557,12 +564,12 @@ bool AnimationController::pauseTransitionAtTime(RenderElement* renderer, const S
 
 bool AnimationController::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    return m_data->isRunningAnimationOnRenderer(renderer, property, runningState);
+    return renderer->isCSSAnimating() && m_data->isRunningAnimationOnRenderer(renderer, property, runningState);
 }
 
 bool AnimationController::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, runningState);
+    return renderer->isCSSAnimating() && m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, runningState);
 }
 
 bool AnimationController::isSuspended() const

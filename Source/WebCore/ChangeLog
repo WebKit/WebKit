@@ -1,5 +1,43 @@
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174703
+
+    2014-10-14  Chris Dumez  <cdumez@apple.com>
+
+            Introduce an isCSSAnimated flag on RenderElement for performance
+            https://bugs.webkit.org/show_bug.cgi?id=137583
+
+            Reviewed by Simon Fraser.
+
+            I noticed when profiling the ebay.com page load that isRunningAnimationOnRenderer()
+            and isRunningAcceleratedAnimationOnRenderer() were called frequently, causing
+            ~4.7 millions m_compositeAnimations HashMap lookups.
+
+            This patch introduces an isCSSAnimated flag on RenderElement to return early if
+            there is no animation on the renderer, thus avoiding HashMap lookups. This reduces
+            the number of HashMap lookups from ~4.7 millions to ~68k. On my machine, I see
+            the following performance improvements:
+            - isRunning*AnimationOnRenderer() / computeCompositingRequirements()
+              - before: ~45ms  / ~90ms
+              - after:  ~4ms / ~30ms
+
+            No new tests, no behavior change.
+
+            * page/animation/AnimationController.cpp:
+            (WebCore::AnimationControllerPrivate::ensureCompositeAnimation):
+            (WebCore::AnimationControllerPrivate::clear):
+            (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+            (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+            (WebCore::AnimationController::isRunningAnimationOnRenderer):
+            (WebCore::AnimationController::isRunningAcceleratedAnimationOnRenderer):
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::RenderElement):
+            * rendering/RenderElement.h:
+            (WebCore::RenderElement::isCSSAnimating):
+            (WebCore::RenderElement::setIsCSSAnimating):
+
+2014-10-21  Dana Burkart  <dburkart@apple.com>
+
         Merge r174414
 
     2014-10-08  Dean Jackson  <dino@apple.com>
