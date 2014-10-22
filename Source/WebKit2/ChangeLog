@@ -1,3 +1,12 @@
+2014-10-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Improve documentation of webkit_web_view_get_tls_info()
+        https://bugs.webkit.org/show_bug.cgi?id=137852
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2014-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Translations are not initialized in the UI process
