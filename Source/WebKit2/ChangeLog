@@ -1,3 +1,17 @@
+2014-10-22  Antti Koivisto  <antti@apple.com>
+
+        Revert fix for REGRESSION (r173356): Safari can't install a profile, gets 'Download Failed error
+        (https://bugs.webkit.org/show_bug.cgi?id=137493)
+
+        Turns out the root cause was a bug in MIME type sniffing, https://bugs.webkit.org/show_bug.cgi?id=137855
+
+        Remove the workaround.
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::startWithHandle):
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::startWithHandle):
+
 2014-10-22  Beth Dakin  <bdakin@apple.com>
 
         Remove action menu web preference
