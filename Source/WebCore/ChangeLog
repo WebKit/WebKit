@@ -1,5 +1,13 @@
 2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GStreamer debug build after r175050.
+
+        Explicitly include wtf/MainThread.h.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] Do not use CachedResourceLoader, SecurityOrigin, ResourceBuffer and other WebCore types
         https://bugs.webkit.org/show_bug.cgi?id=137064
 

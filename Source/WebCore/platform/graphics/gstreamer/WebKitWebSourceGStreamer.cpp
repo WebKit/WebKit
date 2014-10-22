@@ -37,6 +37,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
+#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GMutexLocker.h>
 #include <wtf/gobject/GRefPtr.h>
