@@ -3537,7 +3537,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:NSApp];
 
-    if (_data->_page->preferences().actionMenuSupportEnabled() && [self respondsToSelector:@selector(setActionMenu:)]) {
+    if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
         [self setActionMenu:actionMenu.get()];
     }
