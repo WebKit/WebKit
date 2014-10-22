@@ -1,3 +1,27 @@
+2014-10-22  Zalan Bujtas  <zalan@apple.com>
+
+        Speed up line parsing for simple line layout (part I)
+        https://bugs.webkit.org/show_bug.cgi?id=137275
+
+        Reviewed by Antti Koivisto.
+
+        Extend simple line layout performance test with a few more cases.
+        Now we've got:
+        <div center
+        <div right
+        <div justify
+        <div white-space: pre (new)
+        <div overflow-wrap: break-word (new)
+        <pre
+        <pre white-space: pre-wrap
+        <pre white-space: pre-line (new)
+        <pre white-space: nowrap (new)
+        <pre white-space: pre-wrap overflow-wrap: break-word
+        <div + embedded <span etc.
+        <div + br
+
+        * Layout/line-layout-simple.html:
+
 2014-10-15  Andrei Bucur  <abucur@adobe.com>
 
         [Multicol] Start adding performance tests for the multi-column implementation
