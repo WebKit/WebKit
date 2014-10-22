@@ -928,9 +928,11 @@ public:
             ASSERT_NOT_REACHED();
             break;
         case CSSValueBolder:
+            fontDescription.setWeight(styleResolver->parentStyle()->fontDescription().weight());
             fontDescription.setWeight(fontDescription.bolderWeight());
             break;
         case CSSValueLighter:
+            fontDescription.setWeight(styleResolver->parentStyle()->fontDescription().weight());
             fontDescription.setWeight(fontDescription.lighterWeight());
             break;
         default:

@@ -1,0 +1,42 @@
+Test that font-weight: bolder and font-weight: lighter are not cumulative when multiple selectors apply.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(outer).fontWeight is "100"
+PASS getComputedStyle(bolder).fontWeight is "normal"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "200"
+PASS getComputedStyle(bolder).fontWeight is "normal"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "300"
+PASS getComputedStyle(bolder).fontWeight is "normal"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "normal"
+PASS getComputedStyle(bolder).fontWeight is "bold"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "normal"
+PASS getComputedStyle(bolder).fontWeight is "bold"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "500"
+PASS getComputedStyle(bolder).fontWeight is "bold"
+PASS getComputedStyle(lighter).fontWeight is "100"
+PASS getComputedStyle(outer).fontWeight is "600"
+PASS getComputedStyle(bolder).fontWeight is "900"
+PASS getComputedStyle(lighter).fontWeight is "normal"
+PASS getComputedStyle(outer).fontWeight is "bold"
+PASS getComputedStyle(bolder).fontWeight is "900"
+PASS getComputedStyle(lighter).fontWeight is "normal"
+PASS getComputedStyle(outer).fontWeight is "bold"
+PASS getComputedStyle(bolder).fontWeight is "900"
+PASS getComputedStyle(lighter).fontWeight is "normal"
+PASS getComputedStyle(outer).fontWeight is "800"
+PASS getComputedStyle(bolder).fontWeight is "900"
+PASS getComputedStyle(lighter).fontWeight is "bold"
+PASS getComputedStyle(outer).fontWeight is "900"
+PASS getComputedStyle(bolder).fontWeight is "900"
+PASS getComputedStyle(lighter).fontWeight is "bold"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
