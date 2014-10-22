@@ -69,4 +69,42 @@ function require_existence_of($array, $list_of_arguments, $prefix = '') {
     }
 }
 
+function ensure_privileged_api_data() {
+    global $HTTP_RAW_POST_DATA;
+
+    if ($_SERVER['REQUEST_METHOD'] != 'POST')
+        exit_with_error('InvalidRequestMethod');
+
+    if (!isset($HTTP_RAW_POST_DATA))
+        exit_with_error('InvalidRequestContent');
+
+    $data = json_decode($HTTP_RAW_POST_DATA, true);
+
+    if ($data === NULL)
+        exit_with_error('InvalidRequestContent');
+
+    return $data;
+}
+
+function ensure_privileged_api_data_and_token() {
+    $data = ensure_privileged_api_data();
+    if (!verify_token(array_get($data, 'token')))
+        exit_with_error('InvalidToken');
+    return $data;
+}
+
+function compute_token() {
+    if (!array_key_exists('CSRFSalt', $_COOKIE) || !array_key_exists('CSRFExpiration', $_COOKIE))
+        return NULL;
+    $user = array_get($_SERVER, 'REMOTE_USER');
+    $salt = $_COOKIE['CSRFSalt'];
+    $expiration = $_COOKIE['CSRFExpiration'];
+    return hash('sha256', "$salt|$user|$expiration");
+}
+
+function verify_token($token) {
+    $expected_token = compute_token();
+    return $expected_token && $token == $expected_token && $_COOKIE['CSRFExpiration'] > time();
+}
+
 ?>

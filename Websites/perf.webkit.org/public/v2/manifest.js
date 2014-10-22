@@ -42,7 +42,9 @@ App.Builder = App.NameLabelModel.extend({
 });
 
 App.BugTracker = App.NameLabelModel.extend({
-    buildUrl: DS.attr('string'),
+    bugUrl: DS.attr('string'),
+    newBugUrl: DS.attr('string'),
+    repositories: DS.hasMany('repository'),
 });
 
 App.Platform = App.NameLabelModel.extend({
@@ -93,6 +95,7 @@ App.MetricSerializer = App.PlatformSerializer = DS.RESTSerializer.extend({
             }),
             metrics: this._normalizeIdMap(payload['metrics']),
             repositories: this._normalizeIdMap(payload['repositories']),
+            bugTrackers: this._normalizeIdMap(payload['bugTrackers']),
         };
 
         for (var testId in payload['tests']) {
@@ -144,11 +147,12 @@ App.MetricAdapter = DS.RESTAdapter.extend({
 App.Manifest = Ember.Controller.extend({
     platforms: null,
     topLevelTests: null,
+    repositories: [],
+    repositoriesWithReportedCommits: [],
+    bugTrackers: [],
     _platformById: {},
     _metricById: {},
     _builderById: {},
-    repositories: null,
-    repositoriesWithReportedCommits: null,
     _repositoryById: {},
     _fetchPromise: null,
     fetch: function ()
@@ -196,8 +200,10 @@ App.Manifest = Ember.Controller.extend({
         repositories.forEach(function (repository) {
             self._repositoryById[repository.get('id')] = repository;
         });
-        this.set('repositories', repositories);
+        this.set('repositories', repositories.sortBy('id'));
         this.set('repositoriesWithReportedCommits',
             repositories.filter(function (repository) { return repository.get('hasReportedCommits'); }));
+
+        this.set('bugTrackers', store.all('bugTracker').sortBy('name'));
     }
 }).create();

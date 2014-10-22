@@ -11,7 +11,9 @@ if ($db) {
         } else
             notice('Could not add the bug tracker.');
     } else if ($action == 'update') {
-        if (update_field('bug_trackers', 'tracker', 'name') || update_field('bug_trackers', 'tracker', 'new_bug_url'))
+        if (update_field('bug_trackers', 'tracker', 'name')
+            || update_field('bug_trackers', 'tracker', 'bug_url')
+            || update_field('bug_trackers', 'tracker', 'new_bug_url'))
             regenerate_manifest();
         else
             notice('Invalid parameters.');
@@ -63,6 +65,7 @@ END;
 
     $page = new AdministrativePage($db, 'bug_trackers', 'tracker', array(
         'name' => array('editing_mode' => 'string'),
+        'bug_url' => array('editing_mode' => 'url', 'label' => 'Bug URL ($number)'),
         'new_bug_url' => array('editing_mode' => 'text', 'label' => 'New Bug URL ($title, $description)'),
         'Associated repositories' => array('custom' => function ($row) { return associated_repositories($row); }),
     ));

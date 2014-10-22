@@ -1,5 +1,55 @@
 // We don't use DS.Model for these object types because we can't afford to process millions of them.
 
+var PrivilegedAPI = {
+    _token: null,
+    _expiration: null,
+    _maxNetworkLatency: 3 * 60 * 1000 /* 3 minutes */,
+};
+
+PrivilegedAPI.sendRequest = function (url, parameters)
+{
+    return this._generateTokenInServerIfNeeded().then(function (token) {
+        return PrivilegedAPI._post(url, $.extend({token: token}, parameters));
+    });
+}
+
+PrivilegedAPI._generateTokenInServerIfNeeded = function ()
+{
+    var self = this;
+    return new Ember.RSVP.Promise(function (resolve, reject) {
+        if (self._token && self._expiration > Date.now() + self._maxNetworkLatency)
+            resolve(self._token);
+
+        PrivilegedAPI._post('generate-csrf-token')
+            .then(function (result, reject) {
+                self._token = result['token'];
+                self._expiration = new Date(result['expiration']);
+                resolve(self._token);
+            }).catch(reject);
+    });
+}
+
+PrivilegedAPI._post = function (url, parameters)
+{
+    return new Ember.RSVP.Promise(function (resolve, reject) {
+        $.ajax({
+            url: '../privileged-api/' + url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: parameters ? JSON.stringify(parameters) : '{}',
+            dataType: 'json',
+        }).done(function (data) {
+            if (data.status != 'OK')
+                reject(data.status);
+            else
+                resolve(data);
+        }).fail(function (xhr, status, error) {
+            console.log(xhr);
+            reject(xhr.status + (error ? ', ' + error : ''));
+        });
+    });
+}
+
 var CommitLogs = {
     _cachedCommitsByRepository: {}
 };
@@ -218,6 +268,34 @@ Measurement.prototype.formattedBuildTime = function ()
 Measurement._formatDate = function (date)
 {
     return date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+}
+
+Measurement.prototype.bugs = function ()
+{
+    return this._raw['bugs'];
+}
+
+Measurement.prototype.hasBugs = function ()
+{
+    var bugs = this.bugs();
+    return bugs && Object.keys(bugs).length;
+}
+
+Measurement.prototype.associateBug = function (trackerId, bugNumber)
+{
+    var bugs = this._raw['bugs'];
+    trackerId = parseInt(trackerId);
+    bugNumber = bugNumber ? parseInt(bugNumber) : null;
+    return PrivilegedAPI.sendRequest('associate-bug', {
+        run: this.id(),
+        tracker: trackerId,
+        bugNumber: bugNumber,
+    }).then(function () {
+        if (bugNumber)
+            bugs[trackerId] = bugNumber;
+        else
+            delete bugs[trackerId];
+    });
 }
 
 function RunsData(rawData)

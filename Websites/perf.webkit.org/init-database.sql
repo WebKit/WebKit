@@ -29,6 +29,7 @@ CREATE TABLE repositories (
 CREATE TABLE bug_trackers (
     tracker_id serial PRIMARY KEY,
     tracker_name varchar(64) NOT NULL,
+    tracker_bug_url varchar(1024),
     tracker_new_bug_url varchar(1024));
 
 CREATE TABLE tracker_repositories (
@@ -128,3 +129,12 @@ CREATE TABLE reports (
     report_content text,
     report_failure varchar(64),
     report_failure_details text);
+
+CREATE TABLE bugs (
+    bug_id serial PRIMARY KEY,
+    bug_run integer REFERENCES test_runs NOT NULL,
+    bug_tracker integer REFERENCES bug_trackers NOT NULL,
+    bug_number integer NOT NULL,
+    CONSTRAINT bug_tracker_and_run_must_be_unique UNIQUE(bug_tracker, bug_run));
+CREATE INDEX bugs_tracker_number_index ON bugs(bug_tracker, bug_number);
+CREATE INDEX bugs_run_index ON bugs(bug_run);

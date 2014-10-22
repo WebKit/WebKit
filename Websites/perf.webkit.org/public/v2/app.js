@@ -664,6 +664,7 @@ App.PaneController = Ember.ObjectController.extend({
     sharedTime: Ember.computed.alias('parentController.sharedTime'),
     sharedSelection: Ember.computed.alias('parentController.sharedSelection'),
     selection: null,
+    bugsChangeCount: 0, // Dirty hack. Used to call InteractiveChartComponent's _updateDotsWithBugs.
     actions: {
         toggleDetails: function()
         {
@@ -673,14 +674,33 @@ App.PaneController = Ember.ObjectController.extend({
         {
             this.parentController.removePane(this.get('model'));
         },
-        toggleSearch: function ()
+        toggleBugsPane: function ()
+        {
+            if (!App.Manifest.bugTrackers || !this.get('singlySelectedPoint'))
+                return;
+            if (this.toggleProperty('showingBugsPane'))
+                this.set('showingSearchPane', false);
+        },
+        associateBug: function (bugTracker, bugNumber)
+        {
+            var point = this.get('singlySelectedPoint');
+            if (!point)
+                return;
+            var self = this;
+            point.measurement.associateBug(bugTracker.get('id'), bugNumber).then(function () {
+                self._updateBugs();
+                self.set('bugsChangeCount', self.get('bugsChangeCount') + 1);
+            });
+        },
+        toggleSearchPane: function ()
         {
             if (!App.Manifest.repositoriesWithReportedCommits)
                 return;
             var model = this.get('model');
             if (!model.get('commitSearchRepository'))
                 model.set('commitSearchRepository', App.Manifest.repositoriesWithReportedCommits[0]);
-            this.toggleProperty('showingSearchPane');
+            if (this.toggleProperty('showingSearchPane'))
+                this.set('showingBugsPane', false);
         },
         searchCommit: function () {
             var model = this.get('model');
@@ -697,19 +717,24 @@ App.PaneController = Ember.ObjectController.extend({
             this.set('intrinsicDomain', intrinsicDomain);
             this.get('parentController').updateSharedDomain();
         },
-        rangeChanged: function (extent, startPoint, endPoint)
+        rangeChanged: function (extent, points)
         {
-            if (!startPoint || !endPoint) {
+            if (!points) {
                 this._hasRange = false;
                 this.set('details', null);
                 this.set('timeRange', null);
                 return;
             }
             this._hasRange = true;
-            this._showDetails(startPoint.measurement, endPoint.measurement, false);
+            this._showDetails(points);
             this.set('timeRange', extent);
         },
     },
+    _detailsChanged: function ()
+    {
+        this.set('showingBugsPane', false);
+        this.set('singlySelectedPoint', !this._hasRange && this._selectedPoints ? this._selectedPoints[0] : null);
+    }.observes('details'),
     _overviewSelectionChanged: function ()
     {
         var overviewSelection = this.get('overviewSelection');
@@ -745,29 +770,25 @@ App.PaneController = Ember.ObjectController.extend({
         if (!point || !point.measurement)
             this.set('details', null);
         else
-            this._showDetails(point.series.previousPoint(point).measurement, point.measurement, true);
+            this._showDetails([point]);
     }.observes('currentItem'),
-    _showDetails: function (oldMeasurement, currentMeasurement, isShowingEndPoint)
+    _showDetails: function (points)
     {
-        var revisions = [];
-
+        var isShowingEndPoint = !this._hasRange;
+        var currentMeasurement = points[0].measurement;
+        var oldMeasurement = points[points.length - 1].measurement;
         var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
-        var repositoryNames = [];
-        for (var repositoryName in formattedRevisions)
-            repositoryNames.push(repositoryName);
-        var revisions = [];
-        repositoryNames.sort().forEach(function (repositoryName) {
-            var revision = formattedRevisions[repositoryName];
-            var repository = App.Manifest.repository(repositoryName);
-            revision['url'] = false;
-            if (repository) {
-                revision['url'] = revision.previousRevision
-                    ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision)
-                    : repository.urlForRevision(revision.currentRevision);
-            }
+        var revisions = App.Manifest.get('repositories')
+            .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
+            .map(function (repository) {
+            var repositoryName = repository.get('id');
+            var revision = Ember.Object.create(formattedRevisions[repositoryName]);
+            revision['url'] = revision.previousRevision
+                ? repository.urlForRevisionRange(revision.previousRevision, revision.currentRevision)
+                : repository.urlForRevision(revision.currentRevision);
             revision['name'] = repositoryName;
             revision['repository'] = repository;
-            revisions.push(Ember.Object.create(revision));            
+            return revision; 
         });
 
         var buildNumber = null;
@@ -778,14 +799,48 @@ App.PaneController = Ember.ObjectController.extend({
             if (builder)
                 buildURL = builder.urlFromBuildNumber(buildNumber);
         }
-        this.set('details', {
+
+        this._selectedPoints = points;
+        this.set('details', Ember.Object.create({
             currentValue: currentMeasurement.mean().toFixed(2),
             oldValue: oldMeasurement && !isShowingEndPoint ? oldMeasurement.mean().toFixed(2) : null,
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),
             revisions: revisions,
+        }));
+        this._updateBugs();
+    },
+    _updateBugs: function ()
+    {
+        if (!this._selectedPoints)
+            return;
+
+        var bugTrackers = App.Manifest.get('bugTrackers');
+        var trackerToBugNumbers = {};
+        bugTrackers.forEach(function (tracker) { trackerToBugNumbers[tracker.get('id')] = new Array(); });
+        this._selectedPoints.map(function (point) {
+            var bugs = point.measurement.bugs();
+            bugTrackers.forEach(function (tracker) {
+                var bugNumber = bugs[tracker.get('id')];
+                if (bugNumber)
+                    trackerToBugNumbers[tracker.get('id')].push(bugNumber);
+            });
         });
+
+        this.set('details.bugTrackers', App.Manifest.get('bugTrackers').map(function (tracker) {
+            var bugNumbers = trackerToBugNumbers[tracker.get('id')];
+            return Ember.ObjectProxy.create({
+                content: tracker,
+                bugs: bugNumbers.map(function (bugNumber) {
+                    return {
+                        bugNumber: bugNumber,
+                        bugUrl: bugNumber && tracker.get('bugUrl') ? tracker.get('bugUrl').replace(/\$number/g, bugNumber) : null
+                    };
+                }),
+                editedBugNumber: this._hasRange ? null : bugNumbers[0],
+            }); // FIXME: Create urls for new bugs.
+        }));
     }
 });
 
@@ -1063,6 +1118,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("cx", function(measurement) { return xScale(measurement.time); })
                 .attr("cy", function(measurement) { return yScale(measurement.value); });
         });
+        this._updateDotsWithBugs();
         this._updateHighlightPositions();
 
         if (this._brush) {
@@ -1091,6 +1147,13 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .style("z-index", "100")
             .text(this._yAxisUnit);
     },
+    _updateDotsWithBugs: function () {
+        if (!this.get('interactive'))
+            return;
+        this._dots.forEach(function (dot) {
+            dot.classed('hasBugs', function (point) { return !!point.measurement.hasBugs(); });
+        })
+    }.observes('bugsChangeCount'), // Never used for anything but to call this method :(
     _updateHighlightPositions: function () {
         var xScale = this._x;
         var yScale = this._y;
@@ -1424,22 +1487,12 @@ App.InteractiveChartComponent = Ember.Component.extend({
         if (this._brushExtent === newSelection)
             return;
 
+        var points = null;
         if (newSelection) {
-            var startPoint;
-            var endPoint;
-            for (var i = 0; i < this._currentTimeSeriesData.length; i++) {
-                var point = this._currentTimeSeriesData[i];
-                if (!startPoint) {
-                    if (point.time >= newSelection[0]) {
-                        if (point.time > newSelection[1])
-                            break;
-                        startPoint = point;
-                    }
-                } else if (point.time > newSelection[1])
-                    break;
-                if (point.time >= newSelection[0] && point.time <= newSelection[1])
-                    endPoint = point;
-            }
+            points = this._currentTimeSeriesData
+                .filter(function (point) { return point.time >= newSelection[0] && point.time <= newSelection[1]; });
+            if (!points.length)
+                points = null;
         }
 
         this._brushExtent = newSelection;
@@ -1447,7 +1500,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._updateSelectionToolbar();
 
         this.set('sharedSelection', newSelection);
-        this.sendAction('selectionChanged', newSelection, startPoint, endPoint);
+        this.sendAction('selectionChanged', newSelection, points);
     },
     _updateSelectionToolbar: function ()
     {

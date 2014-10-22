@@ -139,7 +139,10 @@ class ManifestGenerator {
         $bug_trackers_table = $this->db->fetch_table('bug_trackers');
         if ($bug_trackers_table) {
             foreach ($bug_trackers_table as $row) {
-                $bug_trackers[$row['tracker_name']] = array('newBugUrl' => $row['tracker_new_bug_url'],
+                $bug_trackers[$row['tracker_id']] = array(
+                    'name' => $row['tracker_name'],
+                    'bugUrl' => $row['tracker_bug_url'],
+                    'newBugUrl' => $row['tracker_new_bug_url'],
                     'repositories' => $tracker_id_to_repositories[$row['tracker_id']]);
             }
         }

@@ -50,6 +50,13 @@
     top: 0.55rem;
 }
 
+.chart-pane a.bugs-button {
+    display: inline-block;
+    position: absolute;
+    right: 1.85rem;
+    top: 0.55rem;
+}
+
 .chart-pane a.search-button {
     display: inline-block;
     position: absolute;
@@ -57,9 +64,8 @@
     top: 0.55rem;
 }
 
-.search-pane {
+.search-pane, .bugs-pane {
     position: absolute;
-    right: 0rem;
     top: 1.7rem;
     border: 1px solid #bbb;
     padding: 0;
@@ -68,6 +74,24 @@
     background: white;
 }
 
+.bugs-pane {
+    right: 1.3rem;
+}
+
+.bugs-pane table {
+    margin: 0.2rem;
+    font-size: 0.8rem;
+}
+
+.bugs-pane th {
+    font-weight: normal;
+}
+
+.search-pane {
+    right: 0rem;
+}
+
+.bugs-pane.hidden,
 .search-pane.hidden {
     display: none;
 }
@@ -186,10 +210,14 @@
 }
 
 .chart-pane .details-table th {
-    width: 4rem;
+    width: 7rem;
     text-align: right;
     font-weight: normal;
     padding: 0;
+}
+
+.chart-pane .details-table .bugs th {
+    font-weight: bold;
 }
 
 .chart-pane .details-table th:after {
@@ -228,6 +256,10 @@
 .chart .dot {
     fill: #666;
     stroke: none;
+}
+
+.chart .hasBugs {
+    fill: #33f;
 }
 
 .chart path.area {
