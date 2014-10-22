@@ -900,6 +900,9 @@
     <ClCompile Include="..\loader\LoaderStrategy.cpp">
       <Filter>loader</Filter>
     </ClCompile>
+    <ClCompile Include="..\loader\MediaResourceLoader.cpp">
+      <Filter>loader</Filter>
+    </ClCompile>
     <ClCompile Include="..\loader\MixedContentChecker.cpp">
       <Filter>loader</Filter>
     </ClCompile>
@@ -7914,6 +7917,9 @@
     <ClInclude Include="..\loader\LoaderStrategy.h">
       <Filter>loader</Filter>
     </ClInclude>
+    <ClInclude Include="..\loader\MediaResourceLoader.h">
+      <Filter>loader</Filter>
+    </ClInclude>
     <ClInclude Include="..\loader\MixedContentChecker.h">
       <Filter>loader</Filter>
     </ClInclude>
@@ -8524,6 +8530,9 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\PlatformLayer.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\PlatformMediaResourceLoader.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\PlatformTimeRanges.h">

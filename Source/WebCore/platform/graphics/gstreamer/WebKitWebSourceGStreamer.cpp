@@ -22,22 +22,17 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "CachedRawResource.h"
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
-#include "CachedResourceLoader.h"
-#include "CachedResourceRequest.h"
-#include "CrossOriginAccessControl.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
 #include "HTTPHeaderNames.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "PlatformMediaResourceLoader.h"
+#include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
@@ -51,48 +46,34 @@
 
 using namespace WebCore;
 
-enum CORSAccessCheckResult {
-    CORSNoCheck,
-    CORSSuccess,
-    CORSFailure
-};
-
 class StreamingClient {
     public:
         StreamingClient(WebKitWebSrc*);
         virtual ~StreamingClient();
 
-        virtual bool loadFailed() const = 0;
-        virtual void setDefersLoading(bool) = 0;
-
     protected:
         char* createReadBuffer(size_t requestedSize, size_t& actualSize);
-        void handleResponseReceived(const ResourceResponse&, CORSAccessCheckResult);
+        void handleResponseReceived(const ResourceResponse&);
         void handleDataReceived(const char*, int);
         void handleNotifyFinished();
 
         GstElement* m_src;
 };
 
-class CachedResourceStreamingClient : public CachedRawResourceClient, public StreamingClient {
-    WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient); WTF_MAKE_FAST_ALLOCATED;
+class CachedResourceStreamingClient final : public PlatformMediaResourceLoaderClient, public StreamingClient {
+    WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
     public:
-        CachedResourceStreamingClient(WebKitWebSrc*, CachedResourceLoader*, const ResourceRequest&, MediaPlayerClient::CORSMode);
+        CachedResourceStreamingClient(WebKitWebSrc*);
         virtual ~CachedResourceStreamingClient();
 
-        // StreamingClient virtual methods.
-        virtual bool loadFailed() const;
-        virtual void setDefersLoading(bool);
-
     private:
-        // CachedResourceClient virtual methods.
-        virtual char* getOrCreateReadBuffer(CachedResource*, size_t requestedSize, size_t& actualSize);
-        virtual void responseReceived(CachedResource*, const ResourceResponse&);
-        virtual void dataReceived(CachedResource*, const char*, int);
-        virtual void notifyFinished(CachedResource*);
-
-        CachedResourceHandle<CachedRawResource> m_resource;
-        RefPtr<SecurityOrigin> m_origin;
+        // PlatformMediaResourceLoaderClient virtual methods.
+        virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+        virtual void responseReceived(const ResourceResponse&) override;
+        virtual void dataReceived(const char*, int) override;
+        virtual void accessControlCheckFailed(const ResourceError&) override;
+        virtual void loadFailed(const ResourceError&) override;
+        virtual void loadFinished(SharedBuffer*) override;
 };
 
 class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {
@@ -102,8 +83,8 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         virtual ~ResourceHandleStreamingClient();
 
         // StreamingClient virtual methods.
-        virtual bool loadFailed() const;
-        virtual void setDefersLoading(bool);
+        bool loadFailed() const;
+        void setDefersLoading(bool);
 
     private:
         // ResourceHandleClient virtual methods.
@@ -128,9 +109,10 @@ struct _WebKitWebSrcPrivate {
 
     WebCore::MediaPlayer* player;
 
-    StreamingClient* client;
+    RefPtr<PlatformMediaResourceLoader> loader;
+    ResourceHandleStreamingClient* client;
 
-    CORSAccessCheckResult corsAccessCheck;
+    bool didPassAccessControlCheck;
 
     guint64 offset;
     guint64 size;
@@ -402,6 +384,8 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
         priv->client = 0;
     }
 
+    priv->loader = nullptr;
+
     if (priv->buffer) {
         unmapGstBuffer(priv->buffer.get());
         priv->buffer.clear();
@@ -449,7 +433,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
-    priv->corsAccessCheck = CORSNoCheck;
+    priv->didPassAccessControlCheck = false;
 
     if (!priv->uri) {
         GST_ERROR_OBJECT(src, "No URI provided");
@@ -459,6 +443,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
     }
 
     ASSERT(!priv->client);
+    ASSERT(!priv->loader);
 
     URL url = URL(URL(), priv->uri);
 
@@ -493,20 +478,29 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
     // We always request Icecast/Shoutcast metadata, just in case ...
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
+    bool loadFailed = true;
     if (priv->player) {
-        if (CachedResourceLoader* loader = priv->player->cachedResourceLoader())
-            priv->client = new CachedResourceStreamingClient(src, loader, request, priv->player->client().mediaPlayerCORSMode());
+        priv->loader = priv->player->createResourceLoader(std::make_unique<CachedResourceStreamingClient>(src));
+        if (priv->loader) {
+            PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
+            if (request.url().protocolIs("blob"))
+                loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
+            loadFailed = !priv->loader->start(request, loadOptions);
+        }
     }
 
-    if (!priv->client)
+    if (!priv->loader) {
         priv->client = new ResourceHandleStreamingClient(src, request);
+        loadFailed = priv->client->loadFailed();
+    }
 
-    if (!priv->client || priv->client->loadFailed()) {
+    if (loadFailed) {
         GST_ERROR_OBJECT(src, "Failed to setup streaming client");
         if (priv->client) {
             delete priv->client;
-            priv->client = 0;
+            priv->client = nullptr;
         }
+        priv->loader = nullptr;
         locker.unlock();
         webKitWebSrcStop(src);
         return;
@@ -680,6 +674,8 @@ static void webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
 
     if (priv->client)
         priv->client->setDefersLoading(false);
+    if (priv->loader)
+        priv->loader->setDefersLoading(false);
 }
 
 static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
@@ -710,6 +706,8 @@ static void webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
 
     if (priv->client)
         priv->client->setDefersLoading(true);
+    if (priv->loader)
+        priv->loader->setDefersLoading(true);
 }
 
 static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
@@ -767,7 +765,7 @@ void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player)
 
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
 {
-    return src->priv->corsAccessCheck == CORSSuccess;
+    return src->priv->didPassAccessControlCheck;
 }
 
 StreamingClient::StreamingClient(WebKitWebSrc* src)
@@ -799,27 +797,21 @@ char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize
     return getGstBufferDataPointer(buffer);
 }
 
-void StreamingClient::handleResponseReceived(const ResourceResponse& response, CORSAccessCheckResult corsAccessCheck)
+void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
 
-    if (response.httpStatusCode() >= 400 || corsAccessCheck == CORSFailure) {
-        // Received error code or CORS check failed
-        if (corsAccessCheck == CORSFailure)
-            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Cross-origin stream load denied by Cross-Origin Resource Sharing policy."), (nullptr));
-        else
-            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
+    if (response.httpStatusCode() >= 400) {
+        GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
         gst_app_src_end_of_stream(priv->appsrc);
         webKitWebSrcStop(src);
         return;
     }
 
     GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-
-    priv->corsAccessCheck = corsAccessCheck;
 
     if (priv->seekSource.isActive()) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
@@ -992,78 +984,54 @@ void StreamingClient::handleNotifyFinished()
     }
 }
 
-CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, CachedResourceLoader* resourceLoader, const ResourceRequest& request, MediaPlayerClient::CORSMode corsMode)
+CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src)
     : StreamingClient(src)
 {
-    DataBufferingPolicy bufferingPolicy = request.url().protocolIs("blob") ? BufferData : DoNotBufferData;
-    RequestOriginPolicy corsPolicy = corsMode != MediaPlayerClient::Unspecified ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
-    StoredCredentials allowCredentials = corsMode == MediaPlayerClient::Anonymous ? DoNotAllowStoredCredentials : AllowStoredCredentials;
-    ResourceLoaderOptions options(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo);
-
-    CachedResourceRequest cacheRequest(request, options);
-
-    if (corsMode != MediaPlayerClient::Unspecified) {
-        m_origin = resourceLoader->document() ? resourceLoader->document()->securityOrigin() : nullptr;
-        updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_origin.get(), allowCredentials);
-    }
-
-    // TODO: Decide whether to use preflight mode for cross-origin requests (see http://wkbug.com/131484).
-    m_resource = resourceLoader->requestRawResource(cacheRequest);
-    if (m_resource)
-        m_resource->addClient(this);
 }
 
 CachedResourceStreamingClient::~CachedResourceStreamingClient()
 {
-    if (m_resource) {
-        m_resource->removeClient(this);
-        m_resource = 0;
-    }
 }
 
-bool CachedResourceStreamingClient::loadFailed() const
-{
-    return !m_resource;
-}
-
-void CachedResourceStreamingClient::setDefersLoading(bool defers)
-{
-    if (m_resource)
-        m_resource->setDefersLoading(defers);
-}
-
-char* CachedResourceStreamingClient::getOrCreateReadBuffer(CachedResource*, size_t requestedSize, size_t& actualSize)
+char* CachedResourceStreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize)
 {
     return createReadBuffer(requestedSize, actualSize);
 }
 
-void CachedResourceStreamingClient::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void CachedResourceStreamingClient::responseReceived(const ResourceResponse& response)
 {
-    CORSAccessCheckResult corsAccessCheck = CORSNoCheck;
-    if (m_origin)
-        corsAccessCheck = (m_origin->canRequest(response.url()) || resource->passesAccessControlCheck(m_origin.get())) ? CORSSuccess : CORSFailure;
-    handleResponseReceived(response, corsAccessCheck);
+    WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC(m_src)->priv;
+    priv->didPassAccessControlCheck = priv->loader->didPassAccessControlCheck();
+    handleResponseReceived(response);
 }
 
-void CachedResourceStreamingClient::dataReceived(CachedResource*, const char* data, int length)
+void CachedResourceStreamingClient::dataReceived(const char* data, int length)
 {
     handleDataReceived(data, length);
 }
 
-void CachedResourceStreamingClient::notifyFinished(CachedResource* resource)
+void CachedResourceStreamingClient::accessControlCheckFailed(const ResourceError& error)
 {
-    if (resource->loadFailedOrCanceled()) {
-        WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    GST_ELEMENT_ERROR(src, RESOURCE, READ, ("%s", error.localizedDescription().utf8().data()), (nullptr));
+    gst_app_src_end_of_stream(src->priv->appsrc);
+    webKitWebSrcStop(src);
+}
 
-        if (!resource->wasCanceled()) {
-            const ResourceError& error = resource->resourceError();
-            GST_ERROR_OBJECT(src, "Have failure: %s", error.localizedDescription().utf8().data());
-            GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (0));
-        }
-        gst_app_src_end_of_stream(src->priv->appsrc);
-        return;
+void CachedResourceStreamingClient::loadFailed(const ResourceError& error)
+{
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+
+    if (!error.isCancellation()) {
+        GST_ERROR_OBJECT(src, "Have failure: %s", error.localizedDescription().utf8().data());
+        GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (nullptr));
     }
 
+    gst_app_src_end_of_stream(src->priv->appsrc);
+}
+
+void CachedResourceStreamingClient::loadFinished(SharedBuffer*)
+{
     handleNotifyFinished();
 }
 
@@ -1104,7 +1072,7 @@ void ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, ResourceReq
 
 void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-    handleResponseReceived(response, CORSNoCheck);
+    handleResponseReceived(response);
 }
 
 void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)

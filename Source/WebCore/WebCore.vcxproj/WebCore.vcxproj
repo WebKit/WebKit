@@ -7241,6 +7241,7 @@
     <ClCompile Include="..\loader\ImageLoader.cpp" />
     <ClCompile Include="..\loader\LinkLoader.cpp" />
     <ClCompile Include="..\loader\LoaderStrategy.cpp" />
+    <ClCompile Include="..\loader\MediaResourceLoader.cpp" />
     <ClCompile Include="..\loader\MixedContentChecker.cpp" />
     <ClCompile Include="..\loader\NavigationAction.cpp" />
     <ClCompile Include="..\loader\NavigationScheduler.cpp" />
@@ -19241,6 +19242,7 @@
     <ClInclude Include="..\loader\LinkLoader.h" />
     <ClInclude Include="..\loader\LinkLoaderClient.h" />
     <ClInclude Include="..\loader\LoaderStrategy.h" />
+    <ClInclude Include="..\loader\MediaResourceLoader.h" />
     <ClInclude Include="..\loader\MixedContentChecker.h" />
     <ClInclude Include="..\loader\NavigationAction.h" />
     <ClInclude Include="..\loader\NavigationScheduler.h" />
@@ -19585,6 +19587,7 @@
     <ClInclude Include="..\platform\graphics\PathTraversalState.h" />
     <ClInclude Include="..\platform\graphics\Pattern.h" />
     <ClInclude Include="..\platform\graphics\PlatformLayer.h" />
+    <ClInclude Include="..\platform\graphics\PlatformMediaResourceLoader.h" />
     <ClInclude Include="..\platform\graphics\PlatformTimeRanges.h" />
     <ClInclude Include="..\platform\graphics\Region.h" />
     <ClInclude Include="..\platform\graphics\RoundedRect.h" />

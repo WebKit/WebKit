@@ -38,6 +38,7 @@
 #include "MediaSession.h"
 #include "NativeImagePtr.h"
 #include "PlatformLayer.h"
+#include "PlatformMediaResourceLoader.h"
 #include "Timer.h"
 #include "VideoTrackPrivate.h"
 #include <runtime/Uint8Array.h>
@@ -143,8 +144,6 @@ struct GraphicsDeviceAdapter;
 
 class MediaPlayerClient {
 public:
-    enum CORSMode { Unspecified, Anonymous, UseCredentials };
-
     virtual ~MediaPlayerClient() { }
 
     // the network state has changed
@@ -224,7 +223,6 @@ public:
 
     virtual String mediaPlayerReferrer() const { return String(); }
     virtual String mediaPlayerUserAgent() const { return String(); }
-    virtual CORSMode mediaPlayerCORSMode() const { return Unspecified; }
     virtual void mediaPlayerEnterFullscreen() { }
     virtual void mediaPlayerExitFullscreen() { }
     virtual bool mediaPlayerIsFullscreen() const { return false; }
@@ -238,6 +236,7 @@ public:
     virtual bool mediaPlayerIsPaused() const { return true; }
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
+    virtual PassRefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient>) { return nullptr; }
     virtual bool doesHaveAttribute(const AtomicString&, AtomicString* = 0) const { return false; }
 
 #if ENABLE(VIDEO_TRACK)
@@ -525,6 +524,7 @@ public:
     String engineDescription() const;
 
     CachedResourceLoader* cachedResourceLoader();
+    PassRefPtr<PlatformMediaResourceLoader> createResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient>);
 
 #if ENABLE(VIDEO_TRACK)
     void addAudioTrack(PassRefPtr<AudioTrackPrivate>);

@@ -1,5 +1,86 @@
 2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] Do not use CachedResourceLoader, SecurityOrigin, ResourceBuffer and other WebCore types
+        https://bugs.webkit.org/show_bug.cgi?id=137064
+
+        Reviewed by Philippe Normand.
+
+        Move the media resource loader to a new class in WebCore/loader
+        that inherits from a PlatformMediaResourceLoader class defined in
+        the platform layer. The platform specific behaviour is implemented
+        using a client also defined in the platform layer, implemented by
+        every media backend, and used by the WebCore MediaResourceLoader.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCreateResourceLoader):
+        Create a MediaResourceLoader.
+        (WebCore::HTMLMediaElement::mediaPlayerCORSMode): Deleted. This is
+        no longer used.
+        * html/HTMLMediaElement.h:
+        * loader/MediaResourceLoader.cpp: Added.
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        (WebCore::MediaResourceLoader::~MediaResourceLoader):
+        (WebCore::MediaResourceLoader::start): Start a new load for the
+        given request and load options.
+        (WebCore::MediaResourceLoader::stop): Stop the load if needed.
+        (WebCore::MediaResourceLoader::setDefersLoading):
+        (WebCore::MediaResourceLoader::responseReceived): Handle CORS
+        access check and notify the client about the response.
+        (WebCore::MediaResourceLoader::dataReceived): Notify the client.
+        (WebCore::MediaResourceLoader::notifyFinished): Ditto.
+        (WebCore::MediaResourceLoader::getOrCreateReadBuffer): Ask the
+        client to create the read buffer.
+        * loader/MediaResourceLoader.h: Added.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createResourceLoader): Call
+        mediaPlayerCreateResourceLoader() if there's a client.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCreateResourceLoader):
+        (WebCore::MediaPlayerClient::mediaPlayerCORSMode): Deleted.
+        * platform/graphics/PlatformMediaResourceLoader.h: Added.
+        (WebCore::PlatformMediaResourceLoaderClient::responseReceived):
+        (WebCore::PlatformMediaResourceLoaderClient::dataReceived):
+        (WebCore::PlatformMediaResourceLoaderClient::bufferReceived):
+        (WebCore::PlatformMediaResourceLoaderClient::accessControlCheckFailed):
+        (WebCore::PlatformMediaResourceLoaderClient::loadFailed):
+        (WebCore::PlatformMediaResourceLoaderClient::loadFinished):
+        (WebCore::PlatformMediaResourceLoaderClient::getOrCreateReadBuffer):
+        (WebCore::PlatformMediaResourceLoader::~PlatformMediaResourceLoader):
+        (WebCore::PlatformMediaResourceLoader::stop):
+        (WebCore::PlatformMediaResourceLoader::setDefersLoading):
+        (WebCore::PlatformMediaResourceLoader::didPassAccessControlCheck):
+        (WebCore::PlatformMediaResourceLoader::PlatformMediaResourceLoader):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStop): Also delete the PlatformMediaResourceLoader.
+        (webKitWebSrcStart): Create a new resource loader using
+        MediaPlayer::createResourceLoader() with a new
+        CachedResourceStreamingClient as client.
+        (webKitWebSrcNeedDataMainCb): Call setDefersLoading() for the
+        resource loader if there's one.
+        (webKitWebSrcEnoughDataMainCb): Ditto.
+        (webKitSrcPassedCORSAccessCheck): Return didPassAccessControlCheck.
+        (StreamingClient::handleResponseReceived): Remove the CORS check
+        result parameter since that's now handled by MediaResourceLoader.
+        (CachedResourceStreamingClient::CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::~CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::getOrCreateReadBuffer):
+        (CachedResourceStreamingClient::responseReceived): Update didPassAccessControlCheck.
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed): Log the
+        error and stop the load.
+        (CachedResourceStreamingClient::loadFailed): Log the error if it
+        was not a cancellation.
+        (CachedResourceStreamingClient::loadFinished):
+        (ResourceHandleStreamingClient::didReceiveResponse):
+        (CachedResourceStreamingClient::setDefersLoading): Deleted.
+        (CachedResourceStreamingClient::notifyFinished): Deleted.
+
+2014-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Move GtkInputMethodFilter from Platform to WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=137884
 

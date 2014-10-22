@@ -1153,6 +1153,11 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
     return m_client.mediaPlayerCachedResourceLoader();
 }
 
+PassRefPtr<PlatformMediaResourceLoader> MediaPlayer::createResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
+{
+    return m_client.mediaPlayerCreateResourceLoader(WTF::move(client));
+}
+
 #if ENABLE(VIDEO_TRACK)
 void MediaPlayer::addAudioTrack(PassRefPtr<AudioTrackPrivate> track)
 {
