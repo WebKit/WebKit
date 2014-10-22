@@ -1,3 +1,19 @@
+2014-10-21  Ada Chan  <adachan@apple.com>
+
+        Calling WebCore::Page::setMediaVolume(0) does not mute videos as expected.
+        https://bugs.webkit.org/show_bug.cgi?id=137305
+
+        Reviewed by Darin Adler.
+
+        This was broken in http://trac.webkit.org/changeset/154970. To fix this (but not break
+        GStreamer), remove the "if (m_volumeInitialized)" check before updating the MediaPlayer's
+        volume to the value multiplied with the Page's mediaVolume. This should not affect GStreamer's
+        behavior because MediaPlayerPrivateGStreamerBase::setStreamVolumeElement does nothing unless
+        m_volumeInitialized is true.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateVolume):
+
 2014-10-21  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Update to match new AVStreamSession API and requirements.

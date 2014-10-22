@@ -4477,8 +4477,7 @@ void HTMLMediaElement::updateVolume()
         }
 
         m_player->setMuted(shouldMute);
-        if (m_volumeInitialized)
-            m_player->setVolume(m_volume * volumeMultiplier);
+        m_player->setVolume(m_volume * volumeMultiplier);
     }
 
     if (hasMediaControls())
