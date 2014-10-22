@@ -1,3 +1,12 @@
+2014-10-22  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Unreviewed EFL gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=137950
+
+        Some tests that are passed in latest build.
+
+        * platform/efl/TestExpectations: Remove passing tests from TestExceptation file.
+
 2014-10-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Mark a number of tests as failing due to white selected text color.
