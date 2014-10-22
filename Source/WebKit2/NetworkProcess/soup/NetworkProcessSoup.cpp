@@ -85,7 +85,12 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
     SoupNetworkSession::defaultSession().setCache(soupCache.get());
+    // Set an initial huge max_size for the SoupCache so the call to soup_cache_load() won't evict any cached
+    // resource. The final size of the cache will be set by NetworkProcess::platformSetCacheModel().
+    unsigned initialMaxSize = soup_cache_get_max_size(soupCache.get());
+    soup_cache_set_max_size(soupCache.get(), G_MAXUINT);
     soup_cache_load(soupCache.get());
+    soup_cache_set_max_size(soupCache.get(), initialMaxSize);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
