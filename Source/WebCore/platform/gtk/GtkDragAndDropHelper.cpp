@@ -19,6 +19,8 @@
 #include "config.h"
 #include "GtkDragAndDropHelper.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include "ClipboardUtilitiesGtk.h"
 #include "DragData.h"
 #include "GtkUtilities.h"
@@ -180,3 +182,5 @@ void GtkDragAndDropHelper::startedDrag(GdkDragContext* context, DataObjectGtk* d
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DRAG_SUPPORT)

@@ -269,10 +269,12 @@ void PageClientImpl::updateTextInputState()
     webkitWebViewBaseUpdateTextInputState(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
     webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), dragData, dragImage);
 }
+#endif
 
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 {

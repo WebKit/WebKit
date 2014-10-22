@@ -94,7 +94,9 @@ struct _WebKitWebViewBasePrivate {
     GtkClickCounter clickCounter;
     CString tooltipText;
     IntRect tooltipArea;
+#if ENABLE(DRAG_SUPPORT)
     GtkDragAndDropHelper dragAndDropHelper;
+#endif
     DragIcon dragIcon;
 #if !GTK_CHECK_VERSION(3, 13, 4)
     IntSize resizerSize;
@@ -416,7 +418,9 @@ static void webkitWebViewBaseConstructed(GObject* object)
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
     priv->pageClient = PageClientImpl::create(viewWidget);
+#if ENABLE(DRAG_SUPPORT)
     priv->dragAndDropHelper.setWidget(viewWidget);
+#endif
 
 #if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());

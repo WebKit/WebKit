@@ -95,7 +95,9 @@ private:
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) override;
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) override;
     virtual void updateTextInputState() override;
+#if ENABLE(DRAG_SUPPORT)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) override;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
