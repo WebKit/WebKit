@@ -654,7 +654,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool syntheticBold = (traits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold) && !isAppleColorEmoji;
     bool syntheticOblique = (traits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic) && !isAppleColorEmoji;
 
-    auto* result = std::make_unique<FontPlatformData>(ctFont.get(), size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
+    auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
     if (isAppleColorEmoji)
         result->m_isEmoji = true;
     return adoptPtr(result);

@@ -1,3 +1,10 @@
+2014-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the iOS build after r175013.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::createFontPlatformData):
+
 2014-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr | std::make_unique in FontCacheFoo
