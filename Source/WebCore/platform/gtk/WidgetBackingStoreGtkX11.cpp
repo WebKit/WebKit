@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<WidgetBackingStore> WidgetBackingStoreGtkX11::create(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
-{
-    return adoptPtr(new WidgetBackingStoreGtkX11(widget, size, deviceScaleFactor));
-}
-
 WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
     : WidgetBackingStore(size, deviceScaleFactor)
 {

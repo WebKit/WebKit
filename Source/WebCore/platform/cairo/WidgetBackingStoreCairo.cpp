@@ -38,11 +38,6 @@ static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget w
 #endif
 }
 
-PassOwnPtr<WidgetBackingStore> WidgetBackingStoreCairo::create(PlatformWidget widget, const IntSize& size, float deviceScaleFactor)
-{
-    return adoptPtr(new WidgetBackingStoreCairo(widget, size, deviceScaleFactor));
-}
-
 // We keep two copies of the surface here, which will double the memory usage, but increase
 // scrolling performance since we do not have to keep reallocating a memory region during
 // quick scrolling requests.

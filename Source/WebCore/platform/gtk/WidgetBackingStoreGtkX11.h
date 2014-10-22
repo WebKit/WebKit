@@ -29,7 +29,6 @@ namespace WebCore {
 class WidgetBackingStoreGtkX11 : public WidgetBackingStore {
 
 public:
-    static PassOwnPtr<WidgetBackingStore> create(GtkWidget*, const IntSize&, float deviceScaleFactor);
     WidgetBackingStoreGtkX11(GtkWidget*, const IntSize&, float deviceScaleFactor);
     ~WidgetBackingStoreGtkX11();
     cairo_surface_t* cairoSurface();

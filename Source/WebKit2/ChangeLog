@@ -1,5 +1,20 @@
 2014-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Remove WidgetBackingStoreCairo::create() factory function
+        https://bugs.webkit.org/show_bug.cgi?id=137943
+
+        Reviewed by Darin Adler.
+
+        WidgetBackingStoreCairo::create() can be replaced by std::make_unique<>.
+        Thus this patch removes it, then use std::make_unique<>|std::unique_ptr<>.
+
+        * UIProcess/BackingStore.h:
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::createBackingStoreForGTK):
+        (WebKit::BackingStore::incorporateUpdate):
+
+2014-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Remove TextCheckerEnchant::create() factory function
         https://bugs.webkit.org/show_bug.cgi?id=137944
 

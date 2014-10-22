@@ -32,7 +32,6 @@
 #if USE(CAIRO)
 #include <RefPtrCairo.h>
 #include <WebCore/WidgetBackingStore.h>
-#include <wtf/OwnPtr.h>
 #endif
 
 namespace WebKit {
@@ -67,7 +66,7 @@ private:
     WebPageProxy& m_webPageProxy;
 
 #if USE(CAIRO)
-    OwnPtr<WebCore::WidgetBackingStore> m_backingStore;
+    std::unique_ptr<WebCore::WidgetBackingStore> m_backingStore;
 #endif
 };
 
