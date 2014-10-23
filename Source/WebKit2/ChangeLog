@@ -1,5 +1,20 @@
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175127. <rdar://problem/18717767>
+
+    2014-10-23  Tim Horton  <timothy_horton@apple.com>
+    
+            Assertion failures in ImageKit soft linking
+            https://bugs.webkit.org/show_bug.cgi?id=138009
+    
+            Reviewed by Anders Carlsson.
+    
+            * UIProcess/API/mac/WKView.mm:
+            Soft-link ImageKit correctly.
+            ImageKit is inside the Quartz umbrella framework.
+    
+2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
         Correcting the merge for r175075. <rdar://problem/18717767>
 
         Rubber-stamped by Tim Horton.
