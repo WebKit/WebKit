@@ -310,7 +310,9 @@ public:
     virtual void didFinishLoadForMainFrame() = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
+#if PLATFORM(MAC)
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&) = 0;
+#endif
 };
 
 } // namespace WebKit

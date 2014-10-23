@@ -1,3 +1,21 @@
+2014-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        EFL and GTK ports have broken since r175075
+        https://bugs.webkit.org/show_bug.cgi?id=137995
+
+        Unreviewed, EFL and GTK ports build fix.
+
+        Need to use PLATFORM(MAC) guard for ActionMenuHitTest functions.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::removeNavigationGestureSnapshot):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Add action menu support for images

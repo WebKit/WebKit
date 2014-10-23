@@ -921,10 +921,10 @@ public:
 
 #if PLATFORM(MAC)
     void removeNavigationGestureSnapshot();
-#endif
 
     WebHitTestResult* activeActionMenuHitTestResult() const { return m_activeActionMenuHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
@@ -1303,7 +1303,9 @@ private:
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
 
+#if PLATFORM(MAC)
     void didPerformActionMenuHitTest(const ActionMenuHitTestResult&);
+#endif
 
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;

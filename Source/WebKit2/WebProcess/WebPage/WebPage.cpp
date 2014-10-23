@@ -28,7 +28,6 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "ActionMenuHitTestResult.h"
 #include "Arguments.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
@@ -199,6 +198,10 @@
 #include <CoreText/CTFontDescriptorPriv.h>
 #include <CoreText/CTFontPriv.h>
 #include <WebCore/Icon.h>
+#endif
+
+#if PLATFORM(MAC)
+#include "ActionMenuHitTestResult.h"
 #endif
 
 #ifndef NDEBUG
@@ -4796,6 +4799,7 @@ void WebPage::willChangeCurrentHistoryItemForMainFrame()
     send(Messages::WebPageProxy::WillChangeCurrentHistoryItemForMainFrame());
 }
 
+#if PLATFORM(MAC)
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
 {
     layoutIfNeeded();
@@ -4822,5 +4826,6 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
 }
+#endif
 
 } // namespace WebKit

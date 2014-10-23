@@ -1044,7 +1044,9 @@ private:
 
     void reportUsedFeatures();
 
+#if PLATFORM(MAC)
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+#endif
 
     uint64_t m_pageID;
 

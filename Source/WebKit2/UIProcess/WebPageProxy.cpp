@@ -5250,7 +5250,6 @@ void WebPageProxy::removeNavigationGestureSnapshot()
 {
     m_pageClient.removeNavigationGestureSnapshot();
 }
-#endif
 
 void WebPageProxy::performActionMenuHitTestAtLocation(FloatPoint point)
 {
@@ -5261,5 +5260,6 @@ void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& re
 {
     m_pageClient.didPerformActionMenuHitTest(result);
 }
+#endif
 
 } // namespace WebKit
