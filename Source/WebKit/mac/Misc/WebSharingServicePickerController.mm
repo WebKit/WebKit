@@ -29,35 +29,14 @@
 
 #import "WebContextMenuClient.h"
 #import "WebViewInternal.h"
-#import <AppKit/NSSharingService.h>
 #import <WebCore/BitmapImage.h>
+#import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameSelection.h>
-#import <WebCore/ContextMenuController.h>
 #import <WebCore/Page.h>
-
-@interface NSSharingServicePicker (Private)
-@property NSSharingServicePickerStyle style;
-- (NSMenu *)menu;
-@end
-
-@interface NSSharingService (Private)
-@property (readonly) NSSharingServiceType type;
-@end
-
-#if __has_include(<AppKit/NSItemProvider.h>)
-#import <AppKit/NSItemProvider.h>
-#else
-// FIXME: We should properly disable code that interacts with NSItemProvider/NSSharingServicePicker in 32-bit.
-@interface NSItemProvider : NSObject
-@property (copy, readonly) NSArray *registeredTypeIdentifiers;
-- (instancetype)initWithItem:(id <NSSecureCoding>)item typeIdentifier:(NSString *)typeIdentifier;
-- (void)loadItemForTypeIdentifier:(NSString *)typeIdentifier options:(NSDictionary *)options completionHandler:(void (^)(id <NSSecureCoding> item, NSError *error))completionHandler;
-@end
-#endif
 
 static NSString *serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 

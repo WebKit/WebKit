@@ -30,7 +30,6 @@
 
 #import "WebContextMenuClient.h"
 
-#import <WebCore/BitmapImage.h>
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
 #import "WebFrame.h"
@@ -44,6 +43,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <WebCore/BitmapImage.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
@@ -52,6 +52,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBox.h>
 #import <WebCore/RenderObject.h>

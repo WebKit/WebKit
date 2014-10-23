@@ -30,55 +30,10 @@
 
 #import "WebContext.h"
 #import "WebProcessMessages.h"
-#import <AppKit/NSSharingService.h>
+#import <WebCore/NSExtensionSPI.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
+#import <WebCore/NSSharingServiceSPI.h>
 #import <wtf/NeverDestroyed.h>
-
-#if __has_include(<AppKit/NSSharingService_Private.h>)
-#import <AppKit/NSSharingService_Private.h>
-#else
-typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
-    NSSharingServicePickerStyleMenu = 0,
-    NSSharingServicePickerStyleRollover = 1,
-    NSSharingServicePickerStyleTextSelection = 2,
-    NSSharingServicePickerStyleDataDetector = 3
-} NS_ENUM_AVAILABLE_MAC(10_10);
-
-typedef NS_ENUM(NSInteger, NSSharingServiceType) {
-    NSSharingServiceTypeShare = 0,
-    NSSharingServiceTypeViewer = 1,
-    NSSharingServiceTypeEditor = 2
-} NS_ENUM_AVAILABLE_MAC(10_10);
-
-typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
-    NSSharingServiceMaskShare = (1 << NSSharingServiceTypeShare),
-    NSSharingServiceMaskViewer = (1 << NSSharingServiceTypeViewer),
-    NSSharingServiceMaskEditor = (1 << NSSharingServiceTypeEditor),
-
-    NSSharingServiceMaskAllTypes = 0xFFFF
-} NS_ENUM_AVAILABLE_MAC(10_10);
-#endif
-
-@interface NSSharingServicePicker (WKDetails)
-@property NSSharingServicePickerStyle style;
-- (NSMenu *)menu;
-@end
-
-@interface NSSharingService (WKDetails)
-+ (NSArray *)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering;
-@end
-
-#ifdef __LP64__
-#if __has_include(<Foundation/NSExtension.h>)
-#import <Foundation/NSExtension.h>
-#else
-@interface NSExtension
-@end
-#endif
-
-@interface NSExtension (WKDetails)
-+ (id)beginMatchingExtensionsWithAttributes:(NSDictionary *)attributes completion:(void (^)(NSArray *matchingExtensions, NSError *error))handler;
-@end
-#endif // __LP64__
 
 namespace WebKit {
 

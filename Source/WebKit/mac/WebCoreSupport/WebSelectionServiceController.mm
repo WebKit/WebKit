@@ -30,26 +30,11 @@
 #import "WebViewInternal.h"
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/Range.h>
 #import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
-
-#if __has_include(<AppKit/NSSharingService_Private.h>)
-#import <AppKit/NSSharingService_Private.h>
-#else
-typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
-    NSSharingServiceMaskShare = (1 << NSSharingServiceTypeShare),
-    NSSharingServiceMaskViewer = (1 << NSSharingServiceTypeViewer),
-    NSSharingServiceMaskEditor = (1 << NSSharingServiceTypeEditor),
-    
-    NSSharingServiceMaskAllTypes = 0xFFFF
-} NS_ENUM_AVAILABLE_MAC(10_10);
-#endif
-
-@interface NSSharingService (WKDetails)
-+ (NSArray *)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering;
-@end
 
 WebSelectionServiceController::WebSelectionServiceController(WebView *webView) 
     : m_webView(webView)

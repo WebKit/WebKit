@@ -76,7 +76,6 @@
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import "_WKThumbnailViewInternal.h"
-#import <AppKit/NSSharingService.h>
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
 #import <QuartzCore/QuartzCore.h>
@@ -90,6 +89,7 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
@@ -152,11 +152,6 @@ typedef uint32_t CGSWindowID;
 CGSConnectionID CGSMainConnectionID(void);
 CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
 };
-
-// FIXME: This needs to be in an SPI header.
-@interface NSSharingServicePicker (WKNSSharingServicePickerDetails)
-- (NSMenu *)menu;
-@end
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
