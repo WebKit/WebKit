@@ -1,3 +1,32 @@
+2014-10-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up virtual method declarations in GraphicsLayerTextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=137957
+
+        Reviewed by Martin Robinson.
+
+        Added override notation to the GraphicsLayerTextureMapper methods that are
+        overriding the base methods from the GraphicsLayer class and don't have it yet.
+        Also reordered these methods to follow the order of declaration in the
+        GraphicsLayer class.
+
+        Removed ::setName() and ::willBeDestroyed() methods since they just called
+        the base class' methods.
+
+        Also removed the ::solidColor() and ::changeMask() methods. The first one was
+        only called in one place which can reference the m_solidColor member directly,
+        and the second one wasn't used at all.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::setName): Deleted.
+        (WebCore::GraphicsLayerTextureMapper::willBeDestroyed): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::GraphicsLayerTextureMapper::solidColor): Deleted.
+        (WebCore::GraphicsLayerTextureMapper::usesContentsLayer): Deleted.
+        (WebCore::GraphicsLayerTextureMapper::platformLayer): Deleted.
+        (WebCore::GraphicsLayerTextureMapper::changeMask): Deleted.
+
 2014-10-23  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Do the early return when role is different than UnknownRole

@@ -67,22 +67,12 @@ void GraphicsLayerTextureMapper::notifyChange(ChangeMask changeMask)
         client().notifyFlushRequired(this);
 }
 
-void GraphicsLayerTextureMapper::setName(const String& name)
-{
-    GraphicsLayer::setName(name);
-}
-
 GraphicsLayerTextureMapper::~GraphicsLayerTextureMapper()
 {
     if (m_contentsLayer)
         m_contentsLayer->setClient(0);
 
     willBeDestroyed();
-}
-
-void GraphicsLayerTextureMapper::willBeDestroyed()
-{
-    GraphicsLayer::willBeDestroyed();
 }
 
 void GraphicsLayerTextureMapper::setNeedsDisplay()
@@ -489,7 +479,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer->setOpacity(opacity());
 
     if (m_changeMask & BackgroundColorChange)
-        m_layer->setSolidColor(solidColor());
+        m_layer->setSolidColor(m_solidColor);
 
     if (m_changeMask & FilterChange)
         m_layer->setFilters(filters());

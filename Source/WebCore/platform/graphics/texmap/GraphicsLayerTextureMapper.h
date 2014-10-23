@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class GraphicsLayerTextureMapper : public GraphicsLayer, public TextureMapperPlatformLayer::Client {
+class GraphicsLayerTextureMapper final : public GraphicsLayer, TextureMapperPlatformLayer::Client {
 public:
     explicit GraphicsLayerTextureMapper(GraphicsLayerClient&);
     virtual ~GraphicsLayerTextureMapper();
@@ -40,58 +40,57 @@ public:
     void setScrollClient(TextureMapperLayer::ScrollingClient* client) { m_layer->setScrollClient(client); }
     void setID(uint32_t id) { m_layer->setID(id); }
 
-    // reimps from GraphicsLayer.h
-    virtual void setNeedsDisplay();
-    virtual void setContentsNeedsDisplay();
-    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
-    virtual bool setChildren(const Vector<GraphicsLayer*>&);
-    virtual void addChild(GraphicsLayer*);
-    virtual void addChildAtIndex(GraphicsLayer*, int index);
-    virtual void addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling);
-    virtual void addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling);
-    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
-    virtual void setMaskLayer(GraphicsLayer* layer);
-    virtual void setPosition(const FloatPoint& p);
-    virtual void setAnchorPoint(const FloatPoint3D& p);
-    virtual void setSize(const FloatSize& size);
-    virtual void setTransform(const TransformationMatrix& t);
-    virtual void setChildrenTransform(const TransformationMatrix& t);
-    virtual void setPreserves3D(bool b);
-    virtual void setMasksToBounds(bool b);
-    virtual void setDrawsContent(bool b);
-    virtual void setContentsVisible(bool);
-    virtual void setContentsOpaque(bool b);
-    virtual void setBackfaceVisibility(bool b);
-    virtual void setOpacity(float opacity);
-    virtual void setContentsRect(const FloatRect&);
-    virtual void setReplicatedByLayer(GraphicsLayer*);
-    virtual void setContentsToImage(Image*);
-    virtual void setContentsToSolidColor(const Color&);
-    Color solidColor() const { return m_solidColor; }
-    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose);
+    // GraphicsLayer
+    virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
+    virtual void addChild(GraphicsLayer*) override;
+    virtual void addChildAtIndex(GraphicsLayer*, int index) override;
+    virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
+    virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
+    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
+
+    virtual void setMaskLayer(GraphicsLayer*) override;
+    virtual void setReplicatedByLayer(GraphicsLayer*) override;
+    virtual void setPosition(const FloatPoint&) override;
+    virtual void setAnchorPoint(const FloatPoint3D&) override;
+    virtual void setSize(const FloatSize&) override;
+    virtual void setTransform(const TransformationMatrix&) override;
+    virtual void setChildrenTransform(const TransformationMatrix&) override;
+    virtual void setPreserves3D(bool) override;
+    virtual void setMasksToBounds(bool) override;
+    virtual void setDrawsContent(bool) override;
+    virtual void setContentsVisible(bool) override;
+    virtual void setContentsOpaque(bool) override;
+    virtual void setBackfaceVisibility(bool) override;
+    virtual void setOpacity(float) override;
+    virtual bool setFilters(const FilterOperations&) override;
+
+    virtual void setNeedsDisplay() override;
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    virtual void setContentsNeedsDisplay() override;
+    virtual void setContentsRect(const FloatRect&) override;
+
+    virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
+    virtual void pauseAnimation(const String&, double) override;
+    virtual void removeAnimation(const String&) override;
+
+    virtual void setContentsToImage(Image*) override;
+    virtual void setContentsToSolidColor(const Color&) override;
+    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+    virtual bool usesContentsLayer() const override { return m_contentsLayer; }
+    virtual PlatformLayer* platformLayer() const override { return m_contentsLayer; }
+
     virtual void setShowDebugBorder(bool) override;
     virtual void setDebugBorder(const Color&, float width) override;
     virtual void setShowRepaintCounter(bool) override;
-    virtual void flushCompositingState(const FloatRect&);
-    virtual void flushCompositingStateForThisLayerOnly();
-    virtual void setName(const String& name);
-    virtual bool usesContentsLayer() const { return m_contentsLayer; }
-    virtual PlatformLayer* platformLayer() const { return m_contentsLayer; }
 
-    inline int changeMask() const { return m_changeMask; }
-
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double);
-    virtual void pauseAnimation(const String&, double);
-    virtual void removeAnimation(const String&);
-    void setAnimations(const GraphicsLayerAnimations&);
+    virtual void flushCompositingState(const FloatRect&) override;
+    virtual void flushCompositingStateForThisLayerOnly() override;
 
     TextureMapperLayer* layer() const { return m_layer.get(); }
 
     void didCommitScrollOffset(const IntSize&);
     void setIsScrollable(bool);
     bool isScrollable() const { return m_isScrollable; }
-
-    virtual bool setFilters(const FilterOperations&);
 
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
@@ -100,19 +99,20 @@ public:
     float debugBorderWidth() const { return m_debugBorderWidth; }
     void setRepaintCount(int);
 
+    void setAnimations(const GraphicsLayerAnimations&);
     bool startedAnimation() const { return m_startedAnimation; }
 
 private:
-    virtual void willBeDestroyed();
+
+    // TextureMapperPlatformLayer::Client
+    virtual void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
+    virtual void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     void commitLayerChanges();
     void updateDebugBorderAndRepaintCount();
     void updateBackingStoreIfNeeded();
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
-
-    virtual void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
-    virtual void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.
