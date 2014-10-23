@@ -175,6 +175,9 @@ public:
     virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) = 0;
 #endif
 
+    int timerNestingLevel() const { return m_timerNestingLevel; }
+    void setTimerNestingLevel(int timerNestingLevel) { m_timerNestingLevel = timerNestingLevel; }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -223,6 +226,7 @@ private:
 #endif
 
     bool m_activeDOMObjectAdditionForbidden;
+    int m_timerNestingLevel;
 
 #if !ASSERT_DISABLED
     bool m_inScriptExecutionContextDestructor;
