@@ -514,6 +514,18 @@ void PluginView::viewStateDidChange(ViewState::Flags changed)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 }
 
+WebCore::AudioHardwareActivityType PluginView::audioHardwareActivity() const
+{
+    if (!m_isInitialized || !m_plugin)
+        return AudioHardwareActivityType::IsInactive;
+    
+#if PLATFORM(COCOA)
+    return m_plugin->audioHardwareActivity();
+#else
+    return AudioHardwareActivityType::Unknown;
+#endif
+}
+    
 #if PLATFORM(COCOA)
 void PluginView::setDeviceScaleFactor(float scaleFactor)
 {
@@ -541,11 +553,6 @@ bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier,
 
     m_plugin->sendComplexTextInput(textInput);
     return true;
-}
-    
-WebCore::AudioHardwareActivityType PluginView::audioHardwareActivity() const
-{
-    return m_plugin->audioHardwareActivity();
 }
     
 NSObject *PluginView::accessibilityObject() const

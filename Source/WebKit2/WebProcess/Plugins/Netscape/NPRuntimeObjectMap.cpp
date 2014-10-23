@@ -39,7 +39,6 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/Strong.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <WebCore/AudioHardwareListener.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>

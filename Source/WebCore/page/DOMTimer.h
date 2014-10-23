@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    class HTMLPlugInElement;
     class ScheduledAction;
 
     class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
@@ -48,6 +49,8 @@ namespace WebCore {
         // setting for the context has changed).
         void updateTimerIntervalIfNecessary();
 
+        static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
+
     private:
         DOMTimer(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
         double intervalClampedToMinimum() const;
@@ -57,10 +60,17 @@ namespace WebCore {
         virtual void didStop() override;
         virtual double alignedFireTime(double) const override;
 
+        enum TimerThrottleState {
+            Undetermined,
+            ShouldThrottle,
+            ShouldNotThrottle
+        };
+
         int m_timeoutId;
         int m_nestingLevel;
         std::unique_ptr<ScheduledAction> m_action;
         int m_originalInterval;
+        TimerThrottleState m_throttleState;
         double m_currentTimerInterval;
         bool m_shouldForwardUserGesture;
     };

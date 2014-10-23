@@ -1,5 +1,25 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173694.
+
+    2014-09-17  Gavin Barraclough  <barraclough@apple.com>
+
+            DOM timer throttling for hidden plugins
+            https://bugs.webkit.org/show_bug.cgi?id=136197
+
+            Reviewed by Geoff Garen & Andreas Kling.
+
+            For non-visible web pages we slow timers (since they can't be driving animations, etc).
+            We should do the same for plugins.
+
+            * PluginProcess/WebProcessConnection.cpp:
+            * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+                - remove now redundant includes.
+            * WebProcess/Plugins/PluginView.h:
+                - audioHardwareActivity is now virtual, override.
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172653.
 
     2014-08-15  Gavin Barraclough  <barraclough@apple.com>
