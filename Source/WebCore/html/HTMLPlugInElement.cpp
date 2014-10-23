@@ -158,17 +158,17 @@ bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
     return beforeLoadAllowedLoad;
 }
 
-Widget* HTMLPlugInElement::pluginWidget() const
+Widget* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
 {
     if (m_inBeforeLoadEventHandler) {
         // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.
         // That would recursively call beforeload for the same element.
-        return 0;
+        return nullptr;
     }
 
-    RenderWidget* renderWidget = renderWidgetForJSBindings();
+    RenderWidget* renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : this->renderWidget();
     if (!renderWidget)
-        return 0;
+        return nullptr;
 
     return renderWidget->widget();
 }
@@ -256,7 +256,7 @@ bool HTMLPlugInElement::isPluginElement() const
 bool HTMLPlugInElement::isUserObservable() const
 {
     // No widget - can't be anything to see or hear here.
-    Widget* widget = pluginWidget();
+    Widget* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (!widget || !widget->isPluginViewBase())
         return false;
 
