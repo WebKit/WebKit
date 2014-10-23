@@ -694,6 +694,10 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
 {
 }
 
+void PageClientImpl::didPerformActionMenuHitTest(const ActionMenuHitTestResult&)
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

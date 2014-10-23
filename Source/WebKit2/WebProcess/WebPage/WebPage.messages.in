@@ -382,4 +382,5 @@ messages -> WebPage LegacyReceiver {
     GetBytecodeProfile(uint64_t callbackID)
     
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
+    PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
 }

@@ -167,6 +167,7 @@ class WebPageGroup;
 class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebWheelEvent;
+struct ActionMenuHitTestResult;
 struct AttributedString;
 struct ColorSpaceData;
 struct DictionaryPopupInfo;
@@ -912,6 +913,7 @@ public:
     void removeNavigationGestureSnapshot();
 
     WebHitTestResult* activeActionMenuHitTestResult() const { return m_activeActionMenuHitTestResult.get(); }
+    void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
@@ -1288,6 +1290,8 @@ private:
     void dispatchViewStateChange();
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
+
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&);
 
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;

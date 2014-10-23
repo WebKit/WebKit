@@ -179,6 +179,8 @@ private:
     virtual void didFinishLoadForMainFrame() override;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
+    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&) override;
+
     WKContentView *m_contentView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
