@@ -6367,11 +6367,9 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/llint/LowLevelAssembler.asm",
 			);
 			name = "Generate Derived Sources";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/LLIntOffsets/LLIntDesiredOffsets.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
