@@ -88,6 +88,8 @@ public:
 
     virtual bool isPlugInImageElement() const { return false; }
 
+    bool isUserObservable() const;
+    
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&);
 

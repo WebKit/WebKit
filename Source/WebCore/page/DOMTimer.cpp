@@ -27,7 +27,9 @@
 #include "config.h"
 #include "DOMTimer.h"
 
+#include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
+#include "PluginViewBase.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "UserGestureIndicator.h"
@@ -46,8 +48,41 @@
 namespace WebCore {
 
 static const int maxIntervalForUserGestureForwarding = 1000; // One second matches Gecko.
+static const int minIntervalForNonUserObservablePluginScriptTimers = 1000; // Empirically determined to maximize battery life.
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
+
+struct DOMTimerFireState {
+    DOMTimerFireState(ScriptExecutionContext* context)
+        : scriptDidInteractWithNonUserObservablePlugin(false)
+        , scriptDidInteractWithUserObservablePlugin(false)
+        , shouldSetCurrent(context->isDocument())
+    {
+        // For worker threads, don't update the current DOMTimerFireState.
+        // Setting this from workers would not be thread-safe, and its not relevant to current uses.
+        if (shouldSetCurrent) {
+            previous = current;
+            current = this;
+        }
+    }
+
+    ~DOMTimerFireState()
+    {
+        if (shouldSetCurrent)
+            current = previous;
+    }
+
+    static DOMTimerFireState* current;
+
+    bool scriptDidInteractWithNonUserObservablePlugin;
+    bool scriptDidInteractWithUserObservablePlugin;
+
+private:
+    bool shouldSetCurrent;
+    DOMTimerFireState* previous;
+};
+
+DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
 static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 {
@@ -61,6 +96,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAct
     , m_nestingLevel(context->timerNestingLevel())
     , m_action(WTF::move(action))
     , m_originalInterval(interval)
+    , m_throttleState(Undetermined)
     , m_currentTimerInterval(intervalClampedToMinimum())
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
@@ -112,6 +148,17 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
     context->removeTimeout(timeoutId);
 }
 
+void DOMTimer::scriptDidInteractWithPlugin(HTMLPlugInElement& pluginElement)
+{
+    if (!DOMTimerFireState::current)
+        return;
+
+    if (pluginElement.isUserObservable())
+        DOMTimerFireState::current->scriptDidInteractWithUserObservablePlugin = true;
+    else
+        DOMTimerFireState::current->scriptDidInteractWithNonUserObservablePlugin = true;
+}
+
 void DOMTimer::fired()
 {
     // Retain this - if the timer is cancelled while this function is on the stack (implicitly and always
@@ -121,6 +168,9 @@ void DOMTimer::fired()
 
     ScriptExecutionContext* context = scriptExecutionContext();
     ASSERT(context);
+
+    DOMTimerFireState fireState(context);
+
 #if PLATFORM(IOS)
     Document* document = nullptr;
     if (context->isDocument()) {
@@ -148,6 +198,14 @@ void DOMTimer::fired()
         m_action->execute(context);
 
         InspectorInstrumentation::didFireTimer(cookie);
+
+        if (fireState.scriptDidInteractWithUserObservablePlugin && m_throttleState != ShouldNotThrottle) {
+            m_throttleState = ShouldNotThrottle;
+            updateTimerIntervalIfNecessary();
+        } else if (fireState.scriptDidInteractWithNonUserObservablePlugin && m_throttleState == Undetermined) {
+            m_throttleState = ShouldThrottle;
+            updateTimerIntervalIfNecessary();
+        }
 
         return;
     }
@@ -199,8 +257,6 @@ void DOMTimer::didStop()
 void DOMTimer::updateTimerIntervalIfNecessary()
 {
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
-    if (m_nestingLevel < maxTimerNestingLevel)
-        return;
 
     double previousInterval = m_currentTimerInterval;
     m_currentTimerInterval = intervalClampedToMinimum();
@@ -220,12 +276,17 @@ double DOMTimer::intervalClampedToMinimum() const
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    double minimumTimerInterval = scriptExecutionContext()->minimumTimerInterval();
-    double intervalMilliseconds = std::max(oneMillisecond, m_originalInterval * oneMillisecond);
+    double intervalInSeconds = std::max(oneMillisecond, m_originalInterval * oneMillisecond);
 
-    if (intervalMilliseconds < minimumTimerInterval && m_nestingLevel == maxTimerNestingLevel)
-        intervalMilliseconds = minimumTimerInterval;
-    return intervalMilliseconds;
+    // Only apply throttling to repeating timers.
+    if (m_nestingLevel < maxTimerNestingLevel)
+        return intervalInSeconds;
+
+    // Apply two throttles - the global (per Page) minimum, and also a per-timer throttle.
+    intervalInSeconds = std::max(intervalInSeconds, scriptExecutionContext()->minimumTimerInterval());
+    if (m_throttleState == ShouldThrottle)
+        intervalInSeconds = std::max(intervalInSeconds, minIntervalForNonUserObservablePluginScriptTimers * oneMillisecond);
+    return intervalInSeconds;
 }
 
 double DOMTimer::alignedFireTime(double fireTime) const

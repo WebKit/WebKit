@@ -25,6 +25,7 @@
 #ifndef PluginWidget_h
 #define PluginWidget_h
 
+#include "AudioHardwareListener.h"
 #include "PlatformLayer.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
@@ -73,6 +74,8 @@ public:
 
     virtual bool isPluginViewBase() const { return true; }
     virtual bool shouldNotAddLayer() const { return false; }
+
+    virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }
 
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
