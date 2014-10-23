@@ -177,8 +177,8 @@ private:
     bool m_isPrivateBrowsingEnabled;
     bool m_isAcceleratedCompositingEnabled;
     bool m_isInitializing;
-    bool m_isVisibile;
-    bool m_isWindowVisibile;
+    bool m_isVisible;
+    bool m_isWindowVisible;
 
     RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> m_initializationReply;
 
