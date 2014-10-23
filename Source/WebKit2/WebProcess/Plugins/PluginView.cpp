@@ -505,16 +505,6 @@ void PluginView::webPageDestroyed()
 
 void PluginView::viewStateDidChange(ViewState::Flags changed)
 {
-#if PLATFORM(COCOA)
-    platformViewStateDidChange(changed);
-#else
-    UNUSED_PARAM(changed);
-#endif
-}
-
-#if PLATFORM(COCOA)
-void PluginView::platformViewStateDidChange(ViewState::Flags changed)
-{
     if (!m_plugin || !m_isInitialized)
         return;
 
@@ -524,6 +514,7 @@ void PluginView::platformViewStateDidChange(ViewState::Flags changed)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 }
 
+#if PLATFORM(COCOA)
 void PluginView::setDeviceScaleFactor(float scaleFactor)
 {
     if (!m_isInitialized || !m_plugin)

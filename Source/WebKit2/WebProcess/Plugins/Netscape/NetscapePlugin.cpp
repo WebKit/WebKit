@@ -1071,6 +1071,18 @@ bool NetscapePlugin::convertFromRootView(const IntPoint& pointInRootViewCoordina
     return true;
 }
 
+#if !PLATFORM(COCOA)
+    
+void NetscapePlugin::windowFocusChanged(bool)
+{
+}
+
+void NetscapePlugin::windowVisibilityChanged(bool)
+{
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

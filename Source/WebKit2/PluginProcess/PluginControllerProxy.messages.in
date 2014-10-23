@@ -98,18 +98,18 @@ messages -> PluginControllerProxy LegacyReceiver {
     # Get a reference to the plug-in's scriptable NPObject.
     GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID)
 
+    # Sent when the containing NSWindow's focus changes
+    WindowFocusChanged(bool hasFocus)
+
+    # Sent when the containing NSWindow's visibility changes
+    WindowVisibilityChanged(bool isVisible)
+
 #if PLATFORM(COCOA)
     # Send the complex text input to the plug-in.
     SendComplexTextInput(String textInput)
 
-    # Sent when the containing NSWindow's focus changes
-    WindowFocusChanged(bool hasFocus)
-
     # Sent when the containing NSWindow or NSView frame changes
     WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates)
-
-    # Sent when the containing NSWindow's visibility changes
-    WindowVisibilityChanged(bool isVisible)
 
     # Sent when the containing window's layer hosting mode changes
     SetLayerHostingMode(uint32_t layerHostingMode)

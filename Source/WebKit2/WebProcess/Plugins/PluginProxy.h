@@ -113,10 +113,12 @@ private:
     virtual bool handlesPageScaleFactor();
     
     virtual NPObject* pluginScriptableNPObject();
-#if PLATFORM(COCOA)
+
     virtual void windowFocusChanged(bool);
-    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+
+#if PLATFORM(COCOA)
+    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
     virtual void setLayerHostingMode(LayerHostingMode) override;

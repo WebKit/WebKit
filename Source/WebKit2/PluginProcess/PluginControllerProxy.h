@@ -149,10 +149,11 @@ private:
     void didUpdate();
     void getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID);
 
-#if PLATFORM(COCOA)
     void windowFocusChanged(bool);
-    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void windowVisibilityChanged(bool);
+
+#if PLATFORM(COCOA)
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void sendComplexTextInput(const String& textInput);
     void setLayerHostingMode(uint32_t);
 
