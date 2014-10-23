@@ -50,6 +50,7 @@ except ImportError:
     from models import *
     from generator import *
 
+    from generate_alternate_backend_dispatcher_header import *
     from generate_backend_commands import *
     from generate_backend_dispatcher_header import *
     from generate_backend_dispatcher_implementation import *
@@ -118,6 +119,7 @@ def generate_from_specification(primary_specification_filepath=None,
     protocol.resolve_types()
 
     generators = []
+    generators.append(AlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
     generators.append(BackendCommandsGenerator(protocol, primary_specification_filepath))
     generators.append(BackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
     generators.append(BackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))

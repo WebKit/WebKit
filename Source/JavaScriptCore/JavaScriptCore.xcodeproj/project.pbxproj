@@ -1185,6 +1185,13 @@
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };
 		A5D0A1BB1862301B00C7B496 /* InspectorEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D2E664195E173800A518E7 /* JSContextRefInternal.h */; };
+		A5EA70E719F5B1010098F5EC /* AugmentableInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70E419F5B1010098F5EC /* AugmentableInspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA70E819F5B1010098F5EC /* AugmentableInspectorControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70E519F5B1010098F5EC /* AugmentableInspectorControllerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA70E919F5B1010098F5EC /* AlternateDispatchableAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70E619F5B1010098F5EC /* AlternateDispatchableAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA70EB19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py in Resources */ = {isa = PBXBuildFile; fileRef = A5EA70EA19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py */; };
+		A5EA70EC19F5B3EA0098F5EC /* generate_alternate_backend_dispatcher_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70EA19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA70EE19F5B5C40098F5EC /* JSContextRefInspectorSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70ED19F5B5C40098F5EC /* JSContextRefInspectorSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EA710E19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */; };
 		A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0066189AFE9C00633231 /* ScriptArguments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */; };
@@ -2854,6 +2861,12 @@
 		A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
 		A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorEnvironment.h; sourceTree = "<group>"; };
 		A5D2E664195E173800A518E7 /* JSContextRefInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSContextRefInternal.h; sourceTree = "<group>"; };
+		A5EA70E419F5B1010098F5EC /* AugmentableInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AugmentableInspectorController.h; sourceTree = "<group>"; };
+		A5EA70E519F5B1010098F5EC /* AugmentableInspectorControllerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AugmentableInspectorControllerClient.h; sourceTree = "<group>"; };
+		A5EA70E619F5B1010098F5EC /* AlternateDispatchableAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternateDispatchableAgent.h; sourceTree = "<group>"; };
+		A5EA70EA19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_alternate_backend_dispatcher_header.py; sourceTree = "<group>"; };
+		A5EA70ED19F5B5C40098F5EC /* JSContextRefInspectorSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefInspectorSupport.h; sourceTree = "<group>"; };
+		A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAlternateBackendDispatchers.h; sourceTree = "<group>"; };
 		A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
 		A5FD0066189AFE9C00633231 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
 		A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -3904,6 +3917,7 @@
 				86E3C609167BAB87006D760A /* JSContextInternal.h */,
 				14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */,
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
+				A5EA70ED19F5B5C40098F5EC /* JSContextRefInspectorSupport.h */,
 				A5D2E664195E173800A518E7 /* JSContextRefInternal.h */,
 				148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */,
 				A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */,
@@ -4011,6 +4025,7 @@
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
+				A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */,
 				A53243961856A475002ED692 /* InspectorBackendCommands.js */,
 				A532438118568317002ED692 /* InspectorBackendDispatchers.cpp */,
 				A532438218568317002ED692 /* InspectorBackendDispatchers.h */,
@@ -5143,6 +5158,7 @@
 			isa = PBXGroup;
 			children = (
 				A513E5CC185FB992007E95AD /* agents */,
+				A5EA70E319F5B0E20098F5EC /* augmentable */,
 				A532438D185696CA002ED692 /* protocol */,
 				A5BA15E01823409D00A82E69 /* remote */,
 				A532438E185696CE002ED692 /* scripts */,
@@ -5223,6 +5239,16 @@
 			path = remote;
 			sourceTree = "<group>";
 		};
+		A5EA70E319F5B0E20098F5EC /* augmentable */ = {
+			isa = PBXGroup;
+			children = (
+				A5EA70E419F5B1010098F5EC /* AugmentableInspectorController.h */,
+				A5EA70E519F5B1010098F5EC /* AugmentableInspectorControllerClient.h */,
+				A5EA70E619F5B1010098F5EC /* AlternateDispatchableAgent.h */,
+			);
+			path = augmentable;
+			sourceTree = "<group>";
+		};
 		A7D8019F1880D66E0026C39B /* builtins */ = {
 			isa = PBXGroup;
 			children = (
@@ -5240,6 +5266,7 @@
 			isa = PBXGroup;
 			children = (
 				C4703CC2192844CC0013FBEA /* __init__.py */,
+				A5EA70EA19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py */,
 				C4703CC3192844CC0013FBEA /* generate_backend_commands.py */,
 				C4703CC4192844CC0013FBEA /* generate_backend_dispatcher_header.py */,
 				C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */,
@@ -5298,7 +5325,9 @@
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				A5EA710E19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h in Headers */,
 				C49FE4AB19AAC86100F40CE9 /* generate_protocol_types_header.py in Headers */,
+				A5EA70EC19F5B3EA0098F5EC /* generate_alternate_backend_dispatcher_header.py in Headers */,
 				6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */,
 				C49FE4AC19AAC86100F40CE9 /* generate_protocol_types_implementation.py in Headers */,
 				658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */,
@@ -5427,6 +5456,7 @@
 				0FC712DF17CD877C008CC93C /* DeferredCompilationCallback.h in Headers */,
 				2A2825D018341F2D0087FBA9 /* DelayedReleaseScope.h in Headers */,
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
+				A5EA70E819F5B1010098F5EC /* AugmentableInspectorControllerClient.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
@@ -5530,6 +5560,7 @@
 				0F4CED5F18CEA7AB00802FE0 /* PolymorphicGetByIdList.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
+				A5EA70EE19F5B5C40098F5EC /* JSContextRefInspectorSupport.h in Headers */,
 				A78A977B179738B8009DF744 /* DFGPlan.h in Headers */,
 				0FBE0F7516C1DB0B0082C5E8 /* DFGPredictionInjectionPhase.h in Headers */,
 				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
@@ -5731,6 +5762,7 @@
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
+				A5EA70E919F5B1010098F5EC /* AlternateDispatchableAgent.h in Headers */,
 				86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
 				0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */,
@@ -5979,6 +6011,7 @@
 				0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */,
 				0F98206116BFE38300240D02 /* PreciseJumpTargets.h in Headers */,
 				868916B0155F286300CB2B9A /* PrivateName.h in Headers */,
+				A5EA70E719F5B1010098F5EC /* AugmentableInspectorController.h in Headers */,
 				BC18C4500E16F5CD00B34460 /* Profile.h in Headers */,
 				95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
@@ -6353,6 +6386,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C49FE4A919AAC83E00F40CE9 /* generate_protocol_types_header.py in Resources */,
+				A5EA70EB19F5B3D50098F5EC /* generate_alternate_backend_dispatcher_header.py in Resources */,
 				A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */,
 				C49FE4AA19AAC83E00F40CE9 /* generate_protocol_types_implementation.py in Resources */,
 			);

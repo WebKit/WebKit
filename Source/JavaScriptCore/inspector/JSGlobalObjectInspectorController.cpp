@@ -61,6 +61,9 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_inspectorFrontendChannel(nullptr)
     , m_includeNativeCallStackWithExceptions(true)
     , m_isAutomaticInspection(false)
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    , m_augmentingClient(nullptr)
+#endif
 {
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
@@ -101,6 +104,11 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
     m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    if (m_augmentingClient)
+        m_augmentingClient->inspectorConnected();
+#endif
 }
 
 void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
@@ -115,6 +123,11 @@ void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectRe
     m_inspectorFrontendChannel = nullptr;
 
     m_isAutomaticInspection = false;
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    if (m_augmentingClient)
+        m_augmentingClient->inspectorDisconnected();
+#endif
 }
 
 void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String& message)

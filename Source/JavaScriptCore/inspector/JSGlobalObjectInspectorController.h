@@ -34,6 +34,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+#include "AugmentableInspectorController.h"
+#endif
+
 namespace JSC {
 class ConsoleClient;
 class ExecState;
@@ -52,7 +56,12 @@ class InspectorFrontendChannel;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
 
-class JSGlobalObjectInspectorController final : public InspectorEnvironment {
+class JSGlobalObjectInspectorController final
+    : public InspectorEnvironment
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    , public AugmentableInspectorController
+#endif
+{
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -71,6 +80,7 @@ public:
     void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
 
     JSC::ConsoleClient* consoleClient() const;
+    InspectorAgentRegistry& inspectorAgentRegistry() { return m_agents; }
 
     virtual bool developerExtrasEnabled() const override { return true; }
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
@@ -79,6 +89,14 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
     virtual void frontendInitialized() override;
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    virtual AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const override { return m_augmentingClient; } 
+    virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) override { m_augmentingClient = client; }
+
+    virtual InspectorFrontendChannel* frontendChannel() const override { return m_inspectorFrontendChannel; }
+    virtual InspectorAgentRegistry& agentRegistry() override { return m_agents; }
+#endif
 
 private:
     void appendAPIBacktrace(ScriptCallStack* callStack);
@@ -93,6 +111,10 @@ private:
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     bool m_includeNativeCallStackWithExceptions;
     bool m_isAutomaticInspection;
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    AugmentableInspectorControllerClient* m_augmentingClient;
+#endif
 };
 
 } // namespace Inspector

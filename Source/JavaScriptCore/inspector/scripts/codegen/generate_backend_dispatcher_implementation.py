@@ -52,9 +52,15 @@ class BackendDispatcherImplementationGenerator(Generator):
             '<inspector/InspectorValues.h>',
             '<wtf/text/CString.h>']
 
+        secondary_includes = ['#include %s' % header for header in secondary_headers]
+        secondary_includes.append('')
+        secondary_includes.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
+        secondary_includes.append('#include "InspectorAlternateBackendDispatchers.h"')
+        secondary_includes.append('#endif')
+
         header_args = {
             'primaryInclude': '"InspectorBackendDispatchers.h"',
-            'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
+            'secondaryIncludes': '\n'.join(secondary_includes),
         }
 
         sections = []
@@ -162,6 +168,7 @@ class BackendDispatcherImplementationGenerator(Generator):
         in_parameter_declarations = []
         out_parameter_declarations = []
         out_parameter_assignments = []
+        alternate_dispatcher_method_parameters = ['callId']
         method_parameters = ['error']
 
         for parameter in command.call_parameters:
@@ -180,8 +187,11 @@ class BackendDispatcherImplementationGenerator(Generator):
             in_parameter_declarations.append('    %(parameterType)s in_%(parameterName)s = InspectorBackendDispatcher::%(keyedGetMethod)s(paramsContainerPtr, ASCIILiteral("%(parameterName)s"), %(successOutParam)s, protocolErrorsPtr);' % param_args)
 
             if parameter.is_optional:
-                method_parameters.append('%(parameterName)s_valueFound ? &in_%(parameterName)s : nullptr' % param_args)
+                optional_in_parameter_string = '%(parameterName)s_valueFound ? &in_%(parameterName)s : nullptr' % param_args
+                alternate_dispatcher_method_parameters.append(optional_in_parameter_string)
+                method_parameters.append(optional_in_parameter_string)
             else:
+                alternate_dispatcher_method_parameters.append('in_' + parameter.parameter_name)
                 method_parameters.append('in_' + parameter.parameter_name)
 
         if command.is_async:
@@ -226,8 +236,9 @@ class BackendDispatcherImplementationGenerator(Generator):
             'domainName': domain.domain_name,
             'callbackName': '%sCallback' % ucfirst(command.command_name),
             'commandName': command.command_name,
-            'inParameterDeclarations': "\n".join(in_parameter_declarations),
-            'invocationParameters': ", ".join(method_parameters)
+            'inParameterDeclarations': '\n'.join(in_parameter_declarations),
+            'invocationParameters': ', '.join(method_parameters),
+            'alternateInvocationParameters': ', '.join(alternate_dispatcher_method_parameters),
         }
 
         lines = []
@@ -239,6 +250,14 @@ class BackendDispatcherImplementationGenerator(Generator):
 
         if len(command.call_parameters) > 0:
             lines.append(Template(Templates.BackendDispatcherImplementationPrepareCommandArguments).substitute(None, **command_args))
+
+        lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
+        lines.append('    if (m_alternateDispatcher) {')
+        lines.append('        m_alternateDispatcher->%(commandName)s(%(alternateInvocationParameters)s);' % command_args)
+        lines.append('        return;')
+        lines.append('    }')
+        lines.append('#endif')
+        lines.append('')
 
         lines.append('    ErrorString error;')
         lines.append('    RefPtr<InspectorObject> result = InspectorObject::create();')

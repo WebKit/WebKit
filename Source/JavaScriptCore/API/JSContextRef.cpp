@@ -45,6 +45,10 @@
 #include "JSGlobalObjectInspectorController.h"
 #endif
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+#include "JSContextRefInspectorSupport.h"
+#endif
+
 #if OS(DARWIN)
 #include <mach-o/dyld.h>
 
@@ -409,5 +413,20 @@ void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef runL
     UNUSED_PARAM(ctx);
     UNUSED_PARAM(runLoop);
 #endif
+}
+#endif // USE(CF)
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+Inspector::AugmentableInspectorController* JSGlobalContextGetAugmentableInspectorController(JSGlobalContextRef ctx)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder lock(exec);
+
+    return &exec->vmEntryGlobalObject()->inspectorController();
 }
 #endif

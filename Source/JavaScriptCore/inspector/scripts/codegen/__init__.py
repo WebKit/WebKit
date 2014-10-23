@@ -3,6 +3,7 @@
 from models import *
 from generator import *
 
+from generate_alternate_backend_dispatcher_header import *
 from generate_backend_commands import *
 from generate_backend_dispatcher_header import *
 from generate_backend_dispatcher_implementation import *

@@ -82,6 +82,10 @@
 #define ENABLE_ICONDATABASE 0
 #endif
 
+#if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
+#define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
+#endif
+
 #if !defined(ENABLE_LETTERPRESS)
 #define ENABLE_LETTERPRESS 1
 #endif
@@ -191,6 +195,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #if !defined(ENABLE_REMOTE_INSPECTOR)
 #define ENABLE_REMOTE_INSPECTOR 1
+#endif
+
+#if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
+#define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
 #endif
 #endif
 
@@ -495,6 +503,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_INSPECTOR 1
 #endif
 
+#if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
+#define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 0
+#endif
+
 #if !defined(ENABLE_JAVASCRIPT_I18N_API)
 #define ENABLE_JAVASCRIPT_I18N_API 0
 #endif
@@ -761,6 +773,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if ENABLE(REMOTE_INSPECTOR) && !ENABLE(INSPECTOR)
 #error "ENABLE(REMOTE_INSPECTOR) requires ENABLE(INSPECTOR)"
+#endif
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS) && !ENABLE(REMOTE_INSPECTOR)
+#error "ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS) requires ENABLE(REMOTE_INSPECTOR)"
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) && !ENABLE(TOUCH_EVENTS)

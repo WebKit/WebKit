@@ -95,6 +95,39 @@ namespace Inspector {""")
 #endif // ENABLE(INSPECTOR)
 """)
 
+    AlternateDispatchersHeaderPrelude = (
+    """#ifndef ${headerGuardString}
+#define ${headerGuardString}
+
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+
+${includes}
+
+namespace Inspector {
+
+class AlternateInspectorBackendDispatcher {
+public:
+    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
+    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+private:
+    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+};
+""")
+
+    AlternateDispatchersHeaderPostlude = (
+    """} // namespace Inspector
+
+#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+
+#endif // !defined(${headerGuardString})""")
+
+    AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration = (
+    """class AlternateInspector${domainName}BackendDispatcher : public AlternateInspectorBackendDispatcher {
+public:
+    virtual ~AlternateInspector${domainName}BackendDispatcher() { }
+${commandDeclarations}
+};""")
+
     BackendDispatcherHeaderDomainHandlerDeclaration = (
     """${classAndExportMacro} Inspector${domainName}BackendDispatcherHandler {
 public:
@@ -112,6 +145,12 @@ ${commandDeclarations}
 private:
     Inspector${domainName}BackendDispatcher(Inspector::InspectorBackendDispatcher*, Inspector${domainName}BackendDispatcherHandler*);
     Inspector${domainName}BackendDispatcherHandler* m_agent;
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+public:
+    void setAlternateDispatcher(AlternateInspector${domainName}BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
+private:
+    AlternateInspector${domainName}BackendDispatcher* m_alternateDispatcher;
+#endif
 };""")
 
     BackendDispatcherHeaderAsyncCommandDeclaration = (
@@ -170,6 +209,9 @@ ${dispatchCases}
 Inspector${domainName}BackendDispatcher::Inspector${domainName}BackendDispatcher(InspectorBackendDispatcher* backendDispatcher, Inspector${domainName}BackendDispatcherHandler* agent)
     : InspectorSupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    , m_alternateDispatcher(nullptr)
+#endif
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("${domainName}"), this);
 }""")
