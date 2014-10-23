@@ -280,7 +280,7 @@ static const float DisabledOptionAlpha = 0.3;
     OptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
 
     if ([self allowsMultipleSelection]) {
-        [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], isChecked);
+        [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], true);
         item.isSelected = isChecked;
     } else {
         // Single selection.
@@ -290,7 +290,7 @@ static const float DisabledOptionAlpha = 0.3;
         // This private delegate often gets called for multiple rows in the picker,
         // so we only activate and set as selected the checked item in single selection.
         if (isChecked) {
-            [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], isChecked);
+            [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex]);
             item.isSelected = YES;
         }
     }
