@@ -1,3 +1,33 @@
+2014-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring to simplify some code in DatePrototype.cpp.
+        <https://webkit.org/b/137997>
+
+        Reviewed by Filip Pizlo.
+
+        A bunch of functions in DatePrototype.cpp have the pattern of loading a
+        constant into a local variable only to pass it to a callee function
+        immediately after.  There is no other use for that variable.  This adds
+        additional verbosity with no added benefit.
+
+        This patch refactors those functions to just pass the constant arg directly.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+
 2014-10-22  Byungseon Shin  <sun.shin@lge.com>
 
         String(new Date(Mar 30 2014 01:00:00)) is wrong in CET

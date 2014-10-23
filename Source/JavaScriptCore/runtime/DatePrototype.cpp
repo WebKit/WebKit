@@ -940,86 +940,72 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMilliSeconds(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromTimeArgs(exec, 1, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 1, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMilliseconds(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromTimeArgs(exec, 1, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 1, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetSeconds(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromTimeArgs(exec, 2, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 2, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCSeconds(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromTimeArgs(exec, 2, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 2, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMinutes(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromTimeArgs(exec, 3, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 3, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMinutes(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromTimeArgs(exec, 3, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 3, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetHours(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromTimeArgs(exec, 4, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 4, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCHours(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromTimeArgs(exec, 4, inputTimeType);
+    return setNewValueFromTimeArgs(exec, 4, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetDate(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromDateArgs(exec, 1, inputTimeType);
+    return setNewValueFromDateArgs(exec, 1, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCDate(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromDateArgs(exec, 1, inputTimeType);
+    return setNewValueFromDateArgs(exec, 1, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMonth(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromDateArgs(exec, 2, inputTimeType);
+    return setNewValueFromDateArgs(exec, 2, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMonth(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromDateArgs(exec, 2, inputTimeType);
+    return setNewValueFromDateArgs(exec, 2, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetFullYear(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::LocalTime;
-    return setNewValueFromDateArgs(exec, 3, inputTimeType);
+    return setNewValueFromDateArgs(exec, 3, WTF::LocalTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCFullYear(ExecState* exec)
 {
-    const WTF::TimeType inputTimeType = WTF::UTCTime;
-    return setNewValueFromDateArgs(exec, 3, inputTimeType);
+    return setNewValueFromDateArgs(exec, 3, WTF::UTCTime);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
