@@ -1,5 +1,13 @@
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Correcting the merge for r175075. <rdar://problem/18717767>
+
+        Rubber-stamped by Tim Horton.
+
+        * UIProcess/WebPageProxy.messages.in:
+
+2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175127. <rdar://problem/18717767>
 
     2014-10-23  Tim Horton  <timothy_horton@apple.com>

@@ -410,7 +410,5 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilter contentFilter, uint64_t frameID)
 #endif
 
-    IsPlayingAudioDidChange(bool newIsPlayingAudio)
-
     DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result)
 }
