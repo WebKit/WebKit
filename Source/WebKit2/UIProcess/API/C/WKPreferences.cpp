@@ -1246,16 +1246,6 @@ bool WKPreferencesGetTelephoneNumberParsingEnabled(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->telephoneNumberParsingEnabled();
 }
 
-void WKPreferencesSetActionMenuSupportEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setActionMenuSupportEnabled(enabled);
-}
-
-bool WKPreferencesGetActionMenuSupportEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->actionMenuSupportEnabled();
-}
-
 void WKPreferencesSetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setEnableInheritURIQueryComponent(enabled);
