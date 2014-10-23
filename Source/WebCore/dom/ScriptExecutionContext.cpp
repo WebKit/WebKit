@@ -418,7 +418,7 @@ void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerIn
 {
     if (minimumTimerInterval() != oldMinimumTimerInterval) {
         for (auto& timer : m_timeouts.values())
-            timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
+            timer->updateTimerIntervalIfNecessary();
     }
 }
 

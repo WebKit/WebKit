@@ -1,5 +1,49 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173208.
+
+    2014-08-29  Gavin Barraclough  <barraclough@apple.com>
+
+            Simplify DOMTimer::adjustMinimumTimerInterval -> updateTimerIntervalIfNecessary
+            https://bugs.webkit.org/show_bug.cgi?id=136402
+
+            Reviewed by Andreas Kling.
+
+            When the minimum DOM timer interval changes, the Page updates all DOMTimers accordingly.
+            Updating the fire/repeat interval on TimerBase requires a delta, but in
+            DOMTimer::adjustMinimumTimerInterval we have the new requested interval. In the case of
+            timers we can get the current interval to calculate the delta by calling repeatInterval(),
+            but in the case of one-shot timers neither TimerBase nor DOMTimer have store the interval
+            that was actually set for the timer (DOMTimer knows the original, unadjusted timer, but
+            not the actual interval). The way this currently works is that when the minimum interval
+            changes, Page calls adjustMinimumTimerInterval providing the previous minimum. If the
+            timer is one-shot, then adjustMinimumTimerInterval will use this to compute the delta
+            based on what the interval would have been.
+
+            We can simplify & unify with the code to throttle interval timers when the nesting
+            threshold is hit, by instead tracking the current timer interval as a member on DOMTimer &
+            using this to compute the delta in all cases.
+
+            * dom/ScriptExecutionContext.cpp:
+            (WebCore::ScriptExecutionContext::adjustMinimumTimerInterval):
+                - adjustMinimumTimerInterval -> updateTimerIntervalIfNecessary
+            * page/DOMTimer.cpp:
+            (WebCore::DOMTimer::DOMTimer):
+                initialize m_currentTimerInterval
+            (WebCore::DOMTimer::fired):
+                - when the nesting level changes (potentially triggering throttling) just call updateTimerIntervalIfNecessary
+            (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+                - compute delta based on m_currentTimerInterval
+            (WebCore::DOMTimer::intervalClampedToMinimum):
+                - this now always takes m_originalInterval and scriptExecutionContext()->minimumTimerInterval()
+                  as its inputs, so remove arguments.
+            (WebCore::DOMTimer::adjustMinimumTimerInterval): Deleted.
+                - adjustMinimumTimerInterval -> updateTimerIntervalIfNecessary
+            * page/DOMTimer.h:
+                - adjustMinimumTimerInterval -> updateTimerIntervalIfNecessary, added m_currentTimerInterval
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173133.
 
     2014-08-29  Gavin Barraclough  <barraclough@apple.com>
