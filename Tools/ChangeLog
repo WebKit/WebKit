@@ -1,3 +1,41 @@
+2014-10-22  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        commitqueuetask_unittest.py should be made more concise.
+        https://bugs.webkit.org/show_bug.cgi?id=137985
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        Refactors tests to use MockSimpleTestPlanCommitQueue where possible.
+        (MockCommitQueue.__init__):
+        (MockCommitQueue.report_flaky_tests):
+        (MockCommitQueue):
+        (MockCommitQueue.get_reported_flaky_tests):
+        (MockSimpleTestPlanCommitQueue.__init__):
+        (MockSimpleTestPlanCommitQueue.run_command):
+        (MockSimpleTestPlanCommitQueue.did_run_clean_tests):
+        (CommitQueueTaskTest._run_and_expect_patch_analysis_result):
+        (test_land_failure):
+        (test_failed_archive):
+        (test_double_flaky_test_failure):
+        (test_test_failure):
+        (test_red_test_failure):
+        (test_very_red_tree_retry):
+        (test_red_tree_patch_rejection):
+        (test_one_flaky_test):
+        (test_tree_more_red_than_patch):
+        (MockCommitQueue.test_results): Deleted.
+        (test_simple_flaky_test_failure): Deleted.
+        (_expect_validate): Deleted.
+        (_expect_validate.MockDelegate): Deleted.
+        (_expect_validate.MockDelegate.refetch_patch): Deleted.
+        (_expect_validate.MockDelegate.expected_failures): Deleted.
+        (_mock_patch): Deleted.
+        (test_validate): Deleted.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Fixes a bug that slipped through the cracks prior to this change.
+        (PatchAnalysisTask._test_patch):
+
 2014-10-22  Alexey Proskuryakov  <ap@apple.com>
 
         Flakiness dashboard should support OS X Yosemite

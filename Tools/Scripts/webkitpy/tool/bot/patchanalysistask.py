@@ -234,6 +234,7 @@ class PatchAnalysisTask(object):
 
         if self._build_and_test_without_patch():
             # The error from the previous ._test() run is real, report it.
+            self.failure_status_id = first_failure_status_id
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
         self._clean_tree_results = self._delegate.test_results()
