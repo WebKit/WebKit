@@ -437,7 +437,7 @@ void PluginControllerProxy::visibilityDidChange(bool isVisible)
     ASSERT(m_plugin);
     m_plugin->visibilityDidChange(isVisible);
 
-    updateVisiblityActivity();
+    updateVisibilityActivity();
 }
 
 void PluginControllerProxy::windowFocusChanged(bool hasFocus)
@@ -453,10 +453,10 @@ void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
     ASSERT(m_plugin);
     m_plugin->windowVisibilityChanged(isVisible);
 
-    updateVisiblityActivity();
+    updateVisibilityActivity();
 }
 
-void PluginControllerProxy::updateVisiblityActivity()
+void PluginControllerProxy::updateVisibilityActivity()
 {
     if (m_isVisible && m_isWindowVisible)
         m_visiblityActivity.start();
