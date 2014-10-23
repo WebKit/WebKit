@@ -1,5 +1,24 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174846.
+
+    2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS] Speculative fix for a crash under RenderLayerCompositor::updateScrollCoordinatedLayer()
+            https://bugs.webkit.org/show_bug.cgi?id=137837
+            rdar://problem/18545452
+
+            Reviewed by Tim Horton.
+
+            Crash logs suggest that an iframe's RenderView's RenderLayer's backing can be null
+            in a call to updateScrollCoordinatedLayer(), so add an assertion (to help find a reproducible case)
+            and a null check.
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::attachScrollingNode):
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174787.
 
     2014-10-16  Alexey Proskuryakov  <ap@apple.com>

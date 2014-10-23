@@ -3655,6 +3655,10 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
 {
     ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
     RenderLayerBacking* backing = layer.backing();
+    // Crash logs suggest that backing can be null here, but we don't know how: rdar://problem/18545452.
+    ASSERT(backing);
+    if (!backing)
+        return 0;
 
     ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(nodeType);
     if (!nodeID)
