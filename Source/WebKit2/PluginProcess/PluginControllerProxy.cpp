@@ -61,6 +61,8 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_isPrivateBrowsingEnabled(creationParameters.isPrivateBrowsingEnabled)
     , m_isAcceleratedCompositingEnabled(creationParameters.isAcceleratedCompositingEnabled)
     , m_isInitializing(false)
+    , m_isVisibile(false)
+    , m_isWindowVisibile(false)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
     , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)
@@ -430,8 +432,12 @@ void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const I
 
 void PluginControllerProxy::visibilityDidChange(bool isVisible)
 {
+    m_isVisibile = isVisible;
+    
     ASSERT(m_plugin);
     m_plugin->visibilityDidChange(isVisible);
+
+    updateVisiblityActivity();
 }
 
 void PluginControllerProxy::windowFocusChanged(bool hasFocus)
@@ -442,10 +448,17 @@ void PluginControllerProxy::windowFocusChanged(bool hasFocus)
 
 void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
 {
+    m_isWindowVisibile = isVisible;
+
     ASSERT(m_plugin);
     m_plugin->windowVisibilityChanged(isVisible);
 
-    if (isVisible)
+    updateVisiblityActivity();
+}
+
+void PluginControllerProxy::updateVisiblityActivity()
+{
+    if (m_isVisibile && m_isWindowVisibile)
         m_visiblityActivity.start();
     else
         m_visiblityActivity.stop();
