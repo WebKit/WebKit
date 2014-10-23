@@ -3078,6 +3078,8 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
     if (!decoder.decode(messageDecoder))
         return;
 
+    m_activeActionMenuHitTestResult = WebHitTestResult::create(hitTestResultData);
+
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
     m_uiClient->mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
