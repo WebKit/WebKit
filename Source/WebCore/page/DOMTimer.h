@@ -28,8 +28,8 @@
 #define DOMTimer_h
 
 #include "SuspendableTimer.h"
-#include <WTF/RefCounted.h>
 #include <memory>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

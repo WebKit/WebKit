@@ -1,5 +1,15 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172964.
+
+    2014-08-26  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the build after r172963
+
+            * page/DOMTimer.h:
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172963.
 
     2014-08-25  Gavin Barraclough  <barraclough@apple.com>
