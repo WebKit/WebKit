@@ -119,8 +119,14 @@
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 @end
 
+@class QLPreviewBubble;
 @interface NSObject (WKQLPreviewBubbleDetails)
-+ (void)presentBubbleForItem:(id)item parentWindow:(NSWindow *)aWindow itemFrame:(NSRect)itemFrame maximumSize:(NSSize)maximumSize preferredEdge:(NSRectEdge)preferredEdge;
+@property (copy) NSArray * controls;
+@property NSSize maximumSize;
+@property NSRectEdge preferredEdge;
+@property (retain) IBOutlet NSWindow* parentWindow;
+- (void)showPreviewItem:(id)previewItem itemFrame:(NSRect)frame;
+- (void)setAutomaticallyCloseWithMask:(NSEventMask)autocloseMask filterMask:(NSEventMask)filterMask block:(void (^)(void))block;
 @end
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -3663,8 +3669,17 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     NSRect itemFrame = [self convertRect:hitTestResult->elementBoundingBox() toView:nil];
     NSSize maximumPreviewSize = NSMakeSize(self.bounds.size.width * 0.75, self.bounds.size.height * 0.75);
 
-    NSURL *url = [NSURL URLWithString:hitTestResult->absoluteLinkURL()];
-    [NSClassFromString(@"QLPreviewBubble") presentBubbleForItem:url parentWindow:self.window itemFrame:itemFrame maximumSize:maximumPreviewSize preferredEdge:NSMaxYEdge];
+    RetainPtr<QLPreviewBubble> bubble = adoptNS([[NSClassFromString(@"QLPreviewBubble") alloc] init]);
+    [bubble setParentWindow:self.window];
+    [bubble setMaximumSize:maximumPreviewSize];
+    [bubble setPreferredEdge:NSMaxYEdge];
+    [bubble setControls:@[ ]];
+    NSEventMask filterMask = NSAnyEventMask & ~(NSAppKitDefinedMask | NSSystemDefinedMask | NSApplicationDefinedMask | NSMouseEnteredMask | NSMouseExitedMask);
+    NSEventMask autocloseMask = NSLeftMouseDownMask | NSRightMouseDownMask | NSKeyDownMask;
+    [bubble setAutomaticallyCloseWithMask:autocloseMask filterMask:filterMask block:[bubble] {
+        [bubble close];
+    }];
+    [bubble showPreviewItem:[NSURL URLWithString:hitTestResult->absoluteLinkURL()] itemFrame:itemFrame];
 }
 
 - (NSArray *)_defaultMenuItemsForLink
