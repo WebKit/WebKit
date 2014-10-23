@@ -53,6 +53,10 @@ body.mac-platform.legacy .details-section .details-section {
     border-top: 1px solid rgb(179, 179, 179);
 }
 
+body.mac-platform.legacy .details-section .details-section:first-child {
+    border-top: none;
+}
+
 .details-section > .header {
     position: -webkit-sticky;
     top: -1px;

@@ -1,3 +1,15 @@
+2014-10-23  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Double border appearing in node sidebar in expanded items in OS X Mavericks.
+        https://bugs.webkit.org/show_bug.cgi?id=138011
+
+        Reviewed by Timothy Hatcher.
+
+        Selector added for OS X Mavericks and earlier versions using .mac-platform.legacy.
+
+        * UserInterface/Views/DetailsSection.css:
+        (body.mac-platform.legacy .details-section .details-section:first-child):
+
 2014-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test TestWebKitAPI/WebKit2Gtk/TestInspectorServer fails
