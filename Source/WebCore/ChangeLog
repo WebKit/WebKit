@@ -1,3 +1,18 @@
+2014-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't assume that style.overflowX() == style.overflowY()
+        https://bugs.webkit.org/show_bug.cgi?id=138028
+
+        Reviewed by Zalan Bujtas.
+
+        WebKit doesn't support independent overflow scroll/hidden on different axes,
+        but the RenderStyle does report the correct values. So check both overflowX()
+        and overflowY() in a couple of places where we need to.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::styleHasTouchScrolling):
+        (WebCore::styleChangeRequiresLayerRebuild):
+
 2014-10-23  Chris Dumez  <cdumez@apple.com>
 
         Get rid of unnecessary vtables in WebKit

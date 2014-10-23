@@ -870,7 +870,7 @@ static bool isScrollableOverflow(EOverflow overflow)
 
 static bool styleHasTouchScrolling(const RenderStyle& style)
 {
-    return isScrollableOverflow(style.overflowX()) && style.useTouchOverflowScrolling();
+    return style.useTouchOverflowScrolling() && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY()));
 }
 #endif
 
@@ -882,7 +882,7 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
         return true;
 
     // When overflow changes, composited layers may need to update their ancestorClipping layers.
-    if (!layer.isComposited() && (oldStyle.overflowX() != newStyle.overflowX()) && layer.stackingContainer()->hasCompositingDescendant())
+    if (!layer.isComposited() && (oldStyle.overflowX() != newStyle.overflowX() || oldStyle.overflowY() != newStyle.overflowY()) && layer.stackingContainer()->hasCompositingDescendant())
         return true;
     
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
