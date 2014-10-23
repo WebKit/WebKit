@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        html {
+            -webkit-overflow-scrolling: touch;
+        }
+        .container {
+            position: relative;
+            z-index: 0;
+            border: 20px solid black;
+            height: 400px;
+            width: 280px;
+            overflow: scroll;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+            width: 100%;
+            height: 500px;
+            background-color: silver;
+        }
+        
+        .container.no-scroll {
+            overflow: hidden;
+            border: 20px solid red;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function startTest()
+        {
+            document.body.offsetWidth;
+            window.setTimeout(function() {
+                var scroller = document.getElementById('scroller');
+                scroller.classList.toggle('no-scroll');
+
+                if (window.internals)
+                    document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
+
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+                
+            }, 0);
+        }
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    
+    <div id="scroller" class="container">
+        <div class="composited">
+        </div>
+    </div>
+<pre id="layer-tree">Layer tree goes here</pre>
+
+</body>
+</html>

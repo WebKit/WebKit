@@ -1,3 +1,17 @@
+2014-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Toggling overflow:scroll to hidden on element with -webkit-overflow-scrolling:touch can cause children to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=137999
+        rdar://problem/18425550
+
+        Reviewed by Zalan Bujtas.
+        
+        Test that toggles overflow on a touch scrolling div, and dumps layers.
+
+        * compositing/scrolling/touch-scroll-to-clip-expected.txt: Added.
+        * compositing/scrolling/touch-scroll-to-clip.html: Added.
+        * platform/ios-simulator/compositing/scrolling/touch-scroll-to-clip-expected.txt: Added.
+
 2014-10-22  Byungseon Shin  <sun.shin@lge.com>
 
         String(new Date(Mar 30 2014 01:00:00)) is wrong in CET
