@@ -219,7 +219,7 @@ public:
     virtual bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
 #ifndef NDEBUG
-    virtual void verifyNotPainting();
+    virtual void verifyNotPainting() override;
 #endif
 
     WEBCORE_EXPORT LayoutRect contentsBox() const;

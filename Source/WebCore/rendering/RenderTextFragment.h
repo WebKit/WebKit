@@ -39,8 +39,6 @@ public:
 
     virtual ~RenderTextFragment();
 
-    virtual bool isTextFragment() const override { return true; }
-
     virtual bool canBeSelectionLeaf() const override;
 
     unsigned start() const { return m_start; }
@@ -59,6 +57,7 @@ public:
     void setAltText(const String& altText) { m_altText = altText; }
     
 private:
+    virtual bool isTextFragment() const override { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void willBeDestroyed() override;
 

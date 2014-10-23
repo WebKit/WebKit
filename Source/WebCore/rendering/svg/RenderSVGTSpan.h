@@ -37,7 +37,7 @@ public:
 
 private:
     void graphicsElement() const = delete;
-    virtual const char* renderName() const { return "RenderSVGTSpan"; }
+    virtual const char* renderName() const override { return "RenderSVGTSpan"; }
 };
 }
 

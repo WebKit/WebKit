@@ -37,7 +37,7 @@ public:
 
 private:
     virtual bool isSVGPath() const override { return true; }
-    virtual const char* renderName() const { return "RenderSVGPath"; }
+    virtual const char* renderName() const override { return "RenderSVGPath"; }
 
     virtual void updateShapeFromElement() override;
     FloatRect calculateUpdatedStrokeBoundingBox() const;

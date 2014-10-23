@@ -48,8 +48,6 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    virtual bool isRenderRegion() const override final { return true; }
-
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     void setFlowThreadPortionRect(const LayoutRect& rect) { m_flowThreadPortionRect = rect; }
@@ -150,7 +148,8 @@ protected:
     void computeOverflowFromFlowThread();
 
 private:
-    virtual const char* renderName() const { return "RenderRegion"; }
+    virtual bool isRenderRegion() const override final { return true; }
+    virtual const char* renderName() const override { return "RenderRegion"; }
 
     virtual void insertedIntoTree() override;
     virtual void willBeRemovedFromTree() override;

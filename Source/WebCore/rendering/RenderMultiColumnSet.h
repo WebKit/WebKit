@@ -47,8 +47,6 @@ class RenderMultiColumnSet final : public RenderRegionSet {
 public:
     RenderMultiColumnSet(RenderFlowThread&, PassRef<RenderStyle>);
 
-    virtual bool isRenderMultiColumnSet() const override { return true; }
-
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return static_cast<RenderMultiColumnFlowThread*>(flowThread()); }
 
@@ -131,9 +129,10 @@ public:
     unsigned columnCount() const;
 
 protected:
-    void addOverflowFromChildren() override;
+    virtual void addOverflowFromChildren() override;
     
 private:
+    virtual bool isRenderMultiColumnSet() const override { return true; }
     virtual void layout() override;
 
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
@@ -155,7 +154,7 @@ private:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
-    virtual const char* renderName() const;
+    virtual const char* renderName() const override;
 
     LayoutUnit calculateMaxColumnHeight() const;
     LayoutUnit columnGap() const;

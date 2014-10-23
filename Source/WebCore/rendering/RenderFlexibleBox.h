@@ -44,7 +44,6 @@ public:
 
     virtual const char* renderName() const override;
 
-    virtual bool isFlexibleBox() const override final { return true; }
     virtual bool avoidsFloats() const override final { return true; }
     virtual bool canCollapseAnonymousBlockChild() const override final { return false; }
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
@@ -57,8 +56,8 @@ public:
 
     bool isHorizontalFlow() const;
 
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
+    virtual bool isTopLayoutOverflowAllowed() const override;
+    virtual bool isLeftLayoutOverflowAllowed() const override;
 
 protected:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
@@ -86,6 +85,7 @@ private:
     // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
+    virtual bool isFlexibleBox() const override final { return true; }
     bool hasOrthogonalFlow(RenderBox& child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;

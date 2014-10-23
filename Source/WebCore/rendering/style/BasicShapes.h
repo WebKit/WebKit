@@ -145,7 +145,7 @@ private:
 
 };
 
-class BasicShapeCircle : public BasicShape {
+class BasicShapeCircle final : public BasicShape {
 public:
     static PassRefPtr<BasicShapeCircle> create() { return adoptRef(new BasicShapeCircle); }
 
@@ -170,7 +170,7 @@ private:
     BasicShapeRadius m_radius;
 };
 
-class BasicShapeEllipse : public BasicShape {
+class BasicShapeEllipse final : public BasicShape {
 public:
     static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
 
@@ -198,7 +198,7 @@ private:
     BasicShapeRadius m_radiusY;
 };
 
-class BasicShapePolygon : public BasicShape {
+class BasicShapePolygon final : public BasicShape {
 public:
     static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
 
@@ -224,7 +224,7 @@ private:
     Vector<Length> m_values;
 };
 
-class BasicShapeInset : public BasicShape {
+class BasicShapeInset final : public BasicShape {
 public:
     static PassRefPtr<BasicShapeInset> create() { return adoptRef(new BasicShapeInset); }
 

@@ -43,12 +43,12 @@ public:
     void updateCounter();
 
 protected:
-    virtual void willBeDestroyed();
+    virtual void willBeDestroyed() override;
 
 private:
-    virtual const char* renderName() const;
-    virtual bool isCounter() const;
-    virtual String originalText() const;
+    virtual const char* renderName() const override;
+    virtual bool isCounter() const override;
+    virtual String originalText() const override;
     
     virtual void computePreferredLogicalWidths(float leadWidth) override;
 

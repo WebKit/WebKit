@@ -41,8 +41,6 @@ public:
     RenderMultiColumnFlowThread(Document&, PassRef<RenderStyle>);
     ~RenderMultiColumnFlowThread();
 
-    virtual bool isRenderMultiColumnFlowThread() const override { return true; }
-
     virtual void removeFlowChildInfo(RenderObject*) override;
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
@@ -55,7 +53,7 @@ public:
 
     RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(RenderBox* spanner) const { return m_spannerMap.get(spanner); }
 
-    virtual void layout() override final;
+    virtual void layout() override;
 
     // Find the set inside which the specified renderer would be rendered.
     RenderMultiColumnSet* findSetRendering(RenderObject*) const;
@@ -115,6 +113,7 @@ public:
     virtual bool shouldCheckColumnBreaks() const override;
 
 private:
+    virtual bool isRenderMultiColumnFlowThread() const override { return true; }
     virtual const char* renderName() const override;
     virtual void addRegionToThread(RenderRegion*) override;
     virtual void willBeRemovedFromTree() override;

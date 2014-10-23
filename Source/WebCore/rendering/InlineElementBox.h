@@ -44,9 +44,9 @@ public:
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
 
-    virtual void deleteLine() override;
-    virtual void extractLine() override;
-    virtual void attachLine() override;
+    virtual void deleteLine() override final;
+    virtual void extractLine() override final;
+    virtual void attachLine() override final;
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override;

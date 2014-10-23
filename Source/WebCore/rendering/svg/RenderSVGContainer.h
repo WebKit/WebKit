@@ -42,7 +42,6 @@ public:
 protected:
     RenderSVGContainer(SVGElement&, PassRef<RenderStyle>);
 
-    virtual bool isSVGContainer() const override final { return true; }
     virtual const char* renderName() const override { return "RenderSVGContainer"; }
 
     virtual bool canHaveChildren() const override final { return true; }
@@ -73,6 +72,8 @@ protected:
     void updateCachedBoundaries();
 
 private:
+    virtual bool isSVGContainer() const override final { return true; }
+
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;

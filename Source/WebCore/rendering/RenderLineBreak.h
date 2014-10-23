@@ -59,7 +59,7 @@ private:
     void node() const = delete;
 
     virtual bool canHaveChildren() const override { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override final { }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override { }
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
     virtual int caretMinOffset() const override;

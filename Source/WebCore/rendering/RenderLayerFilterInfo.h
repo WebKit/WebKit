@@ -48,7 +48,7 @@ public:
     static void remove(RenderLayer&);
 
     explicit FilterInfo(RenderLayer&);
-    ~FilterInfo();
+    virtual ~FilterInfo();
 
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }

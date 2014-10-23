@@ -39,11 +39,11 @@ public:
     
     virtual ~RenderScrollbarPart();
 
-    virtual const char* renderName() const { return "RenderScrollbarPart"; }
+    virtual const char* renderName() const override { return "RenderScrollbarPart"; }
     
-    virtual bool requiresLayer() const { return false; }
+    virtual bool requiresLayer() const override { return false; }
 
-    virtual void layout();
+    virtual void layout() override;
     
     void paintIntoRect(GraphicsContext*, const LayoutPoint&, const LayoutRect&);
 
@@ -53,15 +53,15 @@ public:
     virtual LayoutUnit marginLeft() const override { ASSERT(isIntegerValue(m_marginBox.left())); return m_marginBox.left(); }
     virtual LayoutUnit marginRight() const override { ASSERT(isIntegerValue(m_marginBox.right())); return m_marginBox.right(); }
 
-    virtual bool isRenderScrollbarPart() const { return true; }
     RenderBox* rendererOwningScrollbar() const;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
 private:
-    virtual void computePreferredLogicalWidths();
+    virtual bool isRenderScrollbarPart() const override { return true; }
+    virtual void computePreferredLogicalWidths() override;
 
     void layoutHorizontalPart();
     void layoutVerticalPart();

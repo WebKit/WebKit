@@ -32,16 +32,16 @@
 
 namespace WebCore {
     
-class RenderMathMLUnderOver : public RenderMathMLBlock {
+class RenderMathMLUnderOver final : public RenderMathMLBlock {
 public:
     RenderMathMLUnderOver(Element&, PassRef<RenderStyle>);
     
-    virtual RenderMathMLOperator* unembellishedOperator();
+    virtual RenderMathMLOperator* unembellishedOperator() override;
 
     virtual int firstLineBaseline() const override;
     
 protected:
-    virtual void layout();
+    virtual void layout() override;
 
 private:
     virtual bool isRenderMathMLUnderOver() const override { return true; }

@@ -52,8 +52,8 @@ public:
     virtual bool operator==(const ClipPathOperation&) const = 0;
     bool operator!=(const ClipPathOperation& o) const { return !(*this == o); }
 
-    virtual OperationType type() const { return m_type; }
-    virtual bool isSameType(const ClipPathOperation& o) const { return o.type() == m_type; }
+    OperationType type() const { return m_type; }
+    bool isSameType(const ClipPathOperation& o) const { return o.type() == m_type; }
 
 protected:
     explicit ClipPathOperation(OperationType type)
@@ -64,7 +64,7 @@ protected:
     OperationType m_type;
 };
 
-class ReferenceClipPathOperation : public ClipPathOperation {
+class ReferenceClipPathOperation final : public ClipPathOperation {
 public:
     static PassRefPtr<ReferenceClipPathOperation> create(const String& url, const String& fragment)
     {
@@ -94,7 +94,7 @@ private:
     String m_fragment;
 };
 
-class ShapeClipPathOperation : public ClipPathOperation {
+class ShapeClipPathOperation final : public ClipPathOperation {
 public:
     static PassRefPtr<ShapeClipPathOperation> create(PassRef<BasicShape> shape)
     {
@@ -133,7 +133,7 @@ private:
     CSSBoxType m_referenceBox;
 };
 
-class BoxClipPathOperation : public ClipPathOperation {
+class BoxClipPathOperation final : public ClipPathOperation {
 public:
     static PassRefPtr<BoxClipPathOperation> create(CSSBoxType referenceBox)
     {

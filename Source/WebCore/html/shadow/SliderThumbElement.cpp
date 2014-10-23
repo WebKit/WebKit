@@ -109,7 +109,7 @@ bool RenderSliderThumb::isSliderThumb() const
 
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
-class RenderSliderContainer : public RenderFlexibleBox {
+class RenderSliderContainer final : public RenderFlexibleBox {
 public:
     RenderSliderContainer(SliderContainerElement& element, PassRef<RenderStyle> style)
         : RenderFlexibleBox(element, WTF::move(style))

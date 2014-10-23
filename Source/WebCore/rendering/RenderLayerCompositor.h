@@ -92,11 +92,11 @@ typedef unsigned CompositingReasons;
 // 
 // There is one RenderLayerCompositor per RenderView.
 
-class RenderLayerCompositor : public GraphicsLayerClient, public GraphicsLayerUpdaterClient {
+class RenderLayerCompositor final : public GraphicsLayerClient, public GraphicsLayerUpdaterClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RenderLayerCompositor(RenderView&);
-    ~RenderLayerCompositor();
+    virtual ~RenderLayerCompositor();
 
     // Return true if this RenderView is in "compositing mode" (i.e. has one or more
     // composited RenderLayers)

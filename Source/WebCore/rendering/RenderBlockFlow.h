@@ -280,7 +280,7 @@ public:
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlowThread : nullptr; }
     void setMultiColumnFlowThread(RenderMultiColumnFlowThread*);
     
-    bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
+    virtual bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox&) const;
 
     virtual void deleteLines() override;
@@ -376,8 +376,8 @@ public:
     LayoutUnit logicalHeightForChildForFragmentation(const RenderBox& child) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
-    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    RenderObject* removeChild(RenderObject&) override;
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
+    virtual RenderObject* removeChild(RenderObject&) override;
 
     void createMultiColumnFlowThread();
     void destroyMultiColumnFlowThread();
@@ -450,8 +450,8 @@ protected:
     LayoutUnit computedColumnWidth() const;
     unsigned computedColumnCount() const;
     
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
+    virtual bool isTopLayoutOverflowAllowed() const override;
+    virtual bool isLeftLayoutOverflowAllowed() const override;
 
     void moveFloatsTo(RenderBlockFlow* toBlock);
     

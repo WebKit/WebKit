@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class OffsetPolygonEdge : public VertexPair {
+class OffsetPolygonEdge final : public VertexPair {
 public:
     OffsetPolygonEdge(const FloatPolygonEdge& edge, const FloatSize& offset)
         : m_vertex1(edge.vertex1() + offset)

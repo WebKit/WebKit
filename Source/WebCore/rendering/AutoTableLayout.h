@@ -31,7 +31,7 @@ namespace WebCore {
 class RenderTable;
 class RenderTableCell;
 
-class AutoTableLayout : public TableLayout {
+class AutoTableLayout final : public TableLayout {
 public:
     explicit AutoTableLayout(RenderTable*);
     virtual ~AutoTableLayout();

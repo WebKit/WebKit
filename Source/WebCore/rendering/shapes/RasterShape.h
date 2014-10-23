@@ -76,7 +76,7 @@ private:
     int m_offset;
 };
 
-class RasterShape : public Shape {
+class RasterShape final : public Shape {
     WTF_MAKE_NONCOPYABLE(RasterShape);
 public:
     RasterShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)

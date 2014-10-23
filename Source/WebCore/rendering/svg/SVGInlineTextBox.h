@@ -37,28 +37,28 @@ public:
 
     RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(InlineTextBox::renderer()); }
 
-    virtual float virtualLogicalHeight() const { return m_logicalHeight; }
+    virtual float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    virtual int selectionTop() { return top(); }
-    virtual int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
-    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(int offset) const;
+    int selectionTop() { return top(); }
+    int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
+    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const override;
+    virtual float positionForOffset(int offset) const override;
 
     void paintSelectionBackground(PaintInfo&);
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     virtual LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 
-    virtual FloatRect calculateBoundaries() const;
+    virtual FloatRect calculateBoundaries() const override;
 
     void clearTextFragments() { m_textFragments.clear(); }
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
 
-    virtual void dirtyOwnLineBoxes() override final;
-    virtual void dirtyLineBoxes() override final;
+    virtual void dirtyOwnLineBoxes() override;
+    virtual void dirtyLineBoxes() override;
 
     bool startsNewTextChunk() const { return m_startsNewTextChunk; }
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }

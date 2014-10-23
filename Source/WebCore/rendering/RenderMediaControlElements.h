@@ -41,7 +41,7 @@ public:
     RenderMediaVolumeSliderContainer(Element&, PassRef<RenderStyle>);
 
 private:
-    virtual void layout();
+    virtual void layout() override;
 };
 
 // ----------------------------
@@ -51,7 +51,7 @@ public:
     RenderMediaControlTimelineContainer(Element&, PassRef<RenderStyle>);
 
 private:
-    virtual void layout();
+    virtual void layout() override;
 };
 
 // ----------------------------
@@ -63,7 +63,7 @@ public:
     RenderTextTrackContainerElement(Element&, PassRef<RenderStyle>);
 
 private:
-    virtual void layout();
+    virtual void layout() override;
 };
 
 #endif // ENABLE(VIDEO_TRACK)

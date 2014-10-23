@@ -55,7 +55,7 @@ public:
 
     int minimumThumbLength();
 
-    virtual bool isOverlayScrollbar() const { return false; }
+    virtual bool isOverlayScrollbar() const override { return false; }
 
     float opacity();
 

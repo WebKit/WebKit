@@ -73,7 +73,7 @@ private:
 };
 
 // These are specific wrappers for the index and base, that ask the parent to restructure the renderers after child removal.
-class RenderMathMLRootWrapper : public RenderMathMLRow {
+class RenderMathMLRootWrapper final : public RenderMathMLRow {
 
 friend class RenderMathMLRoot;
 
@@ -83,9 +83,9 @@ public:
 
 private:
     RenderObject* removeChildWithoutRestructuring(RenderObject&);
-    RenderObject* removeChild(RenderObject&) override;
+    virtual RenderObject* removeChild(RenderObject&) override;
     static RenderPtr<RenderMathMLRootWrapper> createAnonymousWrapper(RenderMathMLRoot* renderObject);
-    virtual bool isRenderMathMLRootWrapper() const override final { return true; }
+    virtual bool isRenderMathMLRootWrapper() const override { return true; }
     virtual const char* renderName() const override { return "RenderMathMLRootWrapper"; }
 };
 

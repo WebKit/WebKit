@@ -45,11 +45,11 @@ public:
     // Calculates marker boundaries, mapped to the target element's coordinate space
     FloatRect markerBoundaries(const AffineTransform& markerTransformation) const;
 
-    virtual void applyViewportClip(PaintInfo&);
-    virtual void layout();
-    virtual void calcViewport();
+    virtual void applyViewportClip(PaintInfo&) override;
+    virtual void layout() override;
+    virtual void calcViewport() override;
 
-    virtual const AffineTransform& localToParentTransform() const;
+    virtual const AffineTransform& localToParentTransform() const override;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) override { return false; }
@@ -59,7 +59,7 @@ public:
     float angle() const;
     SVGMarkerUnitsType markerUnits() const { return markerElement().markerUnits(); }
 
-    virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
+    virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;
 
 private:

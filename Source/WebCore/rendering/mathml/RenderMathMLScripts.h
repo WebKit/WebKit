@@ -35,7 +35,7 @@ namespace WebCore {
     
 class RenderMathMLScripts;
 
-class RenderMathMLScriptsWrapper : public RenderMathMLBlock {
+class RenderMathMLScriptsWrapper final : public RenderMathMLBlock {
 
 friend class RenderMathMLScripts;
 
@@ -66,7 +66,7 @@ private:
 };
 
 // Render a base with scripts.
-class RenderMathMLScripts : public RenderMathMLBlock {
+class RenderMathMLScripts final : public RenderMathMLBlock {
 
 friend class RenderMathMLScriptsWrapper;
 
@@ -75,17 +75,17 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
     virtual RenderObject* removeChild(RenderObject&) override;
     
-    virtual RenderMathMLOperator* unembellishedOperator();
+    virtual RenderMathMLOperator* unembellishedOperator() override;
     virtual int firstLineBaseline() const override;
 
 protected:
-    virtual void layout();
+    virtual void layout() override;
     
 private:
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
     RenderObject* removeChildInternal(bool normalRemoval, RenderObject& child);
 
-    virtual bool isRenderMathMLScripts() const override final { return true; }
+    virtual bool isRenderMathMLScripts() const override { return true; }
     virtual const char* renderName() const override { return "RenderMathMLScripts"; }
 
     void fixAnonymousStyleForSubSupPair(RenderObject* subSupPair, bool isPostScript);

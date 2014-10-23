@@ -54,7 +54,7 @@ public:
     bool applyClippingToContext(RenderElement&, const FloatRect&, const FloatRect&, GraphicsContext*);
     virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    virtual RenderSVGResourceType resourceType() const { return ClipperResourceType; }
+    virtual RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
     
     bool hitTestClipContent(const FloatRect&, const FloatPoint&);
 

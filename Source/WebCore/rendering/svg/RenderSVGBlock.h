@@ -43,7 +43,7 @@ private:
 
     virtual void updateFromStyle() override final;
 
-    virtual bool isRenderSVGBlock() const override final { return true; };
+    virtual bool isRenderSVGBlock() const override final { return true; }
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
 

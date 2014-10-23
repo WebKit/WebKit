@@ -79,7 +79,7 @@ public:
     virtual int firstLineBaseline() const override;
     
 private:
-    virtual bool isRenderMathMLTable() const override final { return true; }
+    virtual bool isRenderMathMLTable() const override { return true; }
     virtual const char* renderName() const override { return "RenderMathMLTable"; }
 };
 

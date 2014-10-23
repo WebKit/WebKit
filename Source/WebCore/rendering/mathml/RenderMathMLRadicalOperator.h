@@ -36,7 +36,7 @@ namespace WebCore {
 class RenderMathMLRadicalOperator final : public RenderMathMLOperator {
 public:
     RenderMathMLRadicalOperator(Document&, PassRef<RenderStyle>);
-    virtual void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
+    virtual void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline) override;
     virtual void computePreferredLogicalWidths() override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     virtual void paint(PaintInfo&, const LayoutPoint& paintOffset) override;
@@ -44,7 +44,7 @@ public:
 private:
     virtual bool isRenderMathMLRadicalOperator() const override { return true; }
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLRadicalOperator (anonymous)" : "RenderMathMLRadicalOperator"; }
-    void setOperatorProperties() override;
+    virtual void setOperatorProperties() override;
 };
 
 } // namespace WebCore

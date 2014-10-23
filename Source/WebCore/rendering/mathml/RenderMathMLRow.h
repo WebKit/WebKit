@@ -43,7 +43,7 @@ public:
     void updateOperatorProperties();
 
 protected:
-    virtual void layout();
+    virtual void layout() override;
 
 private:
     virtual bool isRenderMathMLRow() const override final { return true; }

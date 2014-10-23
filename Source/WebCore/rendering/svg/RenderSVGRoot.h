@@ -90,7 +90,7 @@ private:
     virtual FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
     virtual FloatRect strokeBoundingBox() const override { return m_strokeBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinates() const override { return m_repaintBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return m_repaintBoundingBoxExcludingShadow; }
+    FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return m_repaintBoundingBoxExcludingShadow; }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

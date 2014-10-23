@@ -72,12 +72,12 @@ public:
     // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
 
-    void updateStyle() override final;
+    virtual void updateStyle() override final;
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
     void updateTokenContent(const String& operatorString);
-    void updateTokenContent() override final;
+    virtual void updateTokenContent() override final;
     void updateOperatorProperties();
     void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     LayoutUnit trailingSpaceError();
@@ -157,7 +157,7 @@ private:
     virtual int firstLineBaseline() const override;
     virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
     void rebuildTokenContent(const String& operatorString);
-    void updateFromElement() override;
+    virtual void updateFromElement() override;
 
     bool shouldAllowStretching() const;
 

@@ -50,37 +50,37 @@ public:
 
     bool requiresImmediateCompositing() const;
 
-    virtual bool shouldDisplayVideo() const;
+    bool shouldDisplayVideo() const;
 
 private:
     void mediaElement() const = delete;
 
-    virtual void updateFromElement();
+    virtual void updateFromElement() override;
 
-    virtual void intrinsicSizeChanged();
+    virtual void intrinsicSizeChanged() override;
     LayoutSize calculateIntrinsicSize();
     void updateIntrinsicSize();
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect*);
+    virtual void imageChanged(WrappedImagePtr, const IntRect*) override;
 
-    virtual const char* renderName() const { return "RenderVideo"; }
+    virtual const char* renderName() const override { return "RenderVideo"; }
 
-    virtual bool requiresLayer() const { return true; }
-    virtual bool isVideo() const { return true; }
+    virtual bool requiresLayer() const override { return true; }
+    virtual bool isVideo() const override { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual void layout();
+    virtual void layout() override;
 
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
-    virtual LayoutUnit computeReplacedLogicalHeight() const;
+    virtual LayoutUnit computeReplacedLogicalHeight() const override;
     virtual LayoutUnit minimumReplacedHeight() const override;
 
 #if ENABLE(FULLSCREEN_API)
-    virtual LayoutUnit offsetLeft() const;
-    virtual LayoutUnit offsetTop() const;
-    virtual LayoutUnit offsetWidth() const;
-    virtual LayoutUnit offsetHeight() const;
+    virtual LayoutUnit offsetLeft() const override;
+    virtual LayoutUnit offsetTop() const override;
+    virtual LayoutUnit offsetWidth() const override;
+    virtual LayoutUnit offsetHeight() const override;
 #endif
 
     void updatePlayer();

@@ -42,9 +42,9 @@ public:
     SVGImageElement& imageElement() const;
 
     bool updateImageViewport();
-    virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
+    virtual void setNeedsBoundariesUpdate() override { m_needsBoundariesUpdate = true; }
     virtual bool needsBoundariesUpdate() override { return m_needsBoundariesUpdate; }
-    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
+    virtual void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
     RenderImageResource& imageResource() { return *m_imageResource; }
     const RenderImageResource& imageResource() const { return *m_imageResource; }
@@ -55,29 +55,29 @@ public:
 private:
     void element() const = delete;
 
-    virtual const char* renderName() const { return "RenderSVGImage"; }
+    virtual const char* renderName() const override { return "RenderSVGImage"; }
     virtual bool isSVGImage() const override { return true; }
     virtual bool canHaveChildren() const override { return false; }
 
-    virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
+    virtual const AffineTransform& localToParentTransform() const override { return m_localTransform; }
 
-    virtual FloatRect objectBoundingBox() const { return m_objectBoundingBox; }
-    virtual FloatRect strokeBoundingBox() const { return m_objectBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
+    virtual FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const override { return m_objectBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinates() const override { return m_repaintBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const override { return m_repaintBoundingBoxExcludingShadow; }
 
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
-    virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void layout() override;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
     void invalidateBufferedForeground();
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
-    virtual AffineTransform localTransform() const { return m_localTransform; }
+    virtual AffineTransform localTransform() const override { return m_localTransform; }
     void calculateImageViewport();
 
     bool m_needsBoundariesUpdate : 1;

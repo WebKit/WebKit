@@ -47,12 +47,12 @@ struct ThemeData {
     unsigned m_classicState;
 };
 
-class RenderThemeWin : public RenderTheme {
+class RenderThemeWin final: public RenderTheme {
 public:
     static PassRefPtr<RenderTheme> create();
 
-    virtual String extraDefaultStyleSheet();
-    virtual String extraQuirksStyleSheet();
+    virtual String extraDefaultStyleSheet() override;
+    virtual String extraQuirksStyleSheet() override;
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle&) const override;

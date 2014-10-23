@@ -40,7 +40,7 @@ class RenderBox;
 
 RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 
-class BoxShape : public Shape {
+class BoxShape final : public Shape {
 public:
     BoxShape(const FloatRoundedRect& bounds)
         : m_bounds(bounds)

@@ -41,16 +41,16 @@ public:
 
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
-    virtual bool isRenderMathMLToken() const override final { return true; }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return true; };
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild) override;
     virtual void updateTokenContent();
-    void updateFromElement() override;
+    virtual void updateFromElement() override;
 
 protected:
     void createWrapperIfNeeded();
 
 private:
+    virtual bool isRenderMathMLToken() const override final { return true; }
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateStyle();

@@ -35,7 +35,7 @@ namespace WebCore {
 class RenderStyle;
 class GraphicsContext;
     
-class RenderThemeIOS : public RenderTheme {
+class RenderThemeIOS final : public RenderTheme {
 public:
     static PassRefPtr<RenderTheme> create();
 

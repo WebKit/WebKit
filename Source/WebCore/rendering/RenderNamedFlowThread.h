@@ -83,7 +83,7 @@ public:
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range>>&, const RenderNamedFlowFragment*) const;
 
-    virtual void applyBreakAfterContent(LayoutUnit) override final;
+    virtual void applyBreakAfterContent(LayoutUnit) override;
 
     virtual bool collectsGraphicsLayersUnderRegions() const override;
 
@@ -93,7 +93,7 @@ public:
 
     void clearRenderObjectCustomStyle(const RenderObject*);
 
-    virtual void removeFlowChildInfo(RenderObject*) override final;
+    virtual void removeFlowChildInfo(RenderObject*) override;
 
     LayoutUnit flowContentBottom() const { return m_flowContentBottom; }
     void dispatchNamedFlowEvents();
@@ -111,7 +111,7 @@ private:
     virtual bool isRenderNamedFlowThread() const override { return true; }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     virtual void computeOverflow(LayoutUnit, bool = false) override;
-    virtual void layout() override final;
+    virtual void layout() override;
 
     void dispatchRegionOversetChangeEventIfNeeded();
 

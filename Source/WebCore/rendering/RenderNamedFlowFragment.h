@@ -54,12 +54,11 @@ public:
 
     static PassRef<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
-    virtual bool isRenderNamedFlowFragment() const override final { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void getRanges(Vector<RefPtr<Range>>&) const;
 
-    virtual LayoutUnit pageLogicalHeight() const;
+    virtual LayoutUnit pageLogicalHeight() const override;
     LayoutUnit maxPageLogicalHeight() const;
     
     LayoutRect flowThreadPortionRectForClipping(bool isFirstRegionInRange, bool isLastRegionInRange) const;
@@ -121,6 +120,7 @@ public:
     void invalidateRegionIfNeeded();
 
 private:
+    virtual bool isRenderNamedFlowFragment() const override { return true; }
     virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
     PassRefPtr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle) const;

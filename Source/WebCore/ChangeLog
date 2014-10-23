@@ -1,3 +1,119 @@
+2014-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in rendering/
+        https://bugs.webkit.org/show_bug.cgi?id=137984
+
+        Reviewed by Darin Adler.
+
+        Clean up virtual functions in rendering/ by:
+        - Making virtual functions final when possible
+        - Making classes final when possible
+        - Using 'override' when appropriate
+        - Explicitly marking functions / destructors as virtual when they are
+          inherently virtual
+        - Dropping virtual destructors when the class does not have subclasses
+          and mark the class as final, to get rid of unnecessary vtables
+        - Making isXXX() virtual functions private on XXX classes to avoid
+          unnecessary type checks
+        - De-virtualizing some functions that do not need to be virtual
+        - Dropping final for virtual functions in classes already marked as
+          final
+
+        No new tests, no behavior change.
+
+        * html/shadow/SliderThumbElement.cpp:
+        * rendering/AutoTableLayout.h:
+        * rendering/ClipPathOperation.h:
+        (WebCore::ClipPathOperation::type):
+        (WebCore::ClipPathOperation::isSameType):
+        * rendering/EllipsisBox.h:
+        * rendering/FixedTableLayout.h:
+        * rendering/InlineElementBox.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderCombineText.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.h:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderMarquee.h:
+        * rendering/RenderMediaControlElements.h:
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderQuote.h:
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::renderName): Deleted.
+        * rendering/RenderReplica.h:
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderScrollbarTheme.h:
+        (WebCore::RenderScrollbarTheme::~RenderScrollbarTheme): Deleted.
+        (WebCore::RenderScrollbarTheme::scrollbarThickness): Deleted.
+        (WebCore::RenderScrollbarTheme::buttonsPlacement): Deleted.
+        (WebCore::RenderScrollbarTheme::supportsControlTints): Deleted.
+        (WebCore::RenderScrollbarTheme::shouldCenterOnThumb): Deleted.
+        (WebCore::RenderScrollbarTheme::initialAutoscrollTimerDelay): Deleted.
+        (WebCore::RenderScrollbarTheme::autoscrollTimerDelay): Deleted.
+        (WebCore::RenderScrollbarTheme::registerScrollbar): Deleted.
+        (WebCore::RenderScrollbarTheme::unregisterScrollbar): Deleted.
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextFragment.h:
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeWin.h:
+        * rendering/RenderVideo.h:
+        * rendering/TextAutosizer.h:
+        * rendering/TrailingFloatsRootInlineBox.h:
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLMenclose.h:
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRadicalOperator.h:
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLToken.h:
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.h:
+        * rendering/style/BasicShapes.h:
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::computeIntrinsicDimensions): Deleted.
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGTSpan.h:
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.h:
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.h:
+
 2014-10-22  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r175000): Crash in SourceBufferPrivateAVFObjC::destroyParser()

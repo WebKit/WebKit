@@ -789,7 +789,7 @@ public:
     bool preserves3D() const { return renderer().style().transformStyle3D() == TransformStyle3DPreserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
 
-    virtual void filterNeedsRepaint();
+    void filterNeedsRepaint();
     bool hasFilter() const { return renderer().hasFilter(); }
 
 #if ENABLE(CSS_COMPOSITING)

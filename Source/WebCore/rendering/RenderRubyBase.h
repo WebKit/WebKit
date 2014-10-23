@@ -42,14 +42,13 @@ public:
     RenderRubyBase(Document&, PassRef<RenderStyle>);
     virtual ~RenderRubyBase();
     
-    virtual const char* renderName() const { return "RenderRubyBase (anonymous)"; }
-
-    virtual bool isRubyBase() const { return true; }
+    virtual const char* renderName() const override { return "RenderRubyBase (anonymous)"; }
 
 private:
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
-    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
+    virtual bool isRubyBase() const override { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
+    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
     void mergeChildrenWithBase(RenderRubyBase* toBlock);
 
     void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
