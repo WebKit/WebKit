@@ -80,6 +80,7 @@ ScriptExecutionContext::ScriptExecutionContext()
     , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
     , m_activeDOMObjectsAreStopped(false)
     , m_activeDOMObjectAdditionForbidden(false)
+    , m_timerNestingLevel(0)
 #if !ASSERT_DISABLED
     , m_inScriptExecutionContextDestructor(false)
     , m_activeDOMObjectRemovalForbidden(false)
