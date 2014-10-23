@@ -1,5 +1,16 @@
 2014-10-23  Krzysztof Czech  <k.czech@samsung.com>
 
+        [EFL] Fix build problem after r175098
+        https://bugs.webkit.org/show_bug.cgi?id=138002
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ECORE_X dependency to avoid linking problems while building unit tests.
+
+        * PlatformEfl.cmake:
+
+2014-10-23  Krzysztof Czech  <k.czech@samsung.com>
+
         [EFL] Set proper default value for WebPageAccessibilityObject
         https://bugs.webkit.org/show_bug.cgi?id=137951
 

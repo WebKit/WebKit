@@ -464,6 +464,12 @@ set(EWK2UnitTests_LIBRARIES
     gtest
 )
 
+if (ENABLE_ECORE_X)
+    list(APPEND EWK2UnitTests_LIBRARIES
+        ${ECORE_X_LIBRARIES}
+    )
+endif ()
+
 set(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
 set(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
 set(TEST_EXTENSIONS_DIR ${WEBKIT2_EFL_TEST_DIR}/extensions)
