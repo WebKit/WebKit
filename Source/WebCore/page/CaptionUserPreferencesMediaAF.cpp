@@ -141,6 +141,7 @@ static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCent
 CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    , m_updateStyleSheetTimer(this, &CaptionUserPreferencesMediaAF::updateTimerFired)
     , m_listeningForPreferenceChanges(false)
 #endif
 {
@@ -223,6 +224,11 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
+void CaptionUserPreferencesMediaAF::updateTimerFired(Timer<CaptionUserPreferencesMediaAF>&)
+{
+    updateCaptionStyleSheetOveride();
+}
+
 void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 {
     if (!MediaAccessibilityLibrary())
@@ -236,7 +242,11 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
         CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
     }
 
-    updateCaptionStyleSheetOveride();
+    // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
+    // video element, so do it after a brief pause.
+    if (m_updateStyleSheetTimer.isActive())
+        m_updateStyleSheetTimer.stop();
+    m_updateStyleSheetTimer.startOneShot(0);
 }
 
 void CaptionUserPreferencesMediaAF::captionPreferencesChanged()

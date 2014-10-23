@@ -68,6 +68,8 @@ public:
 
 private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    void updateTimerFired(Timer<CaptionUserPreferencesMediaAF>&);
+
     String captionsWindowCSS() const;
     String captionsBackgroundCSS() const;
     String captionsTextColorCSS() const;
@@ -78,6 +80,7 @@ private:
     String captionsTextEdgeCSS() const;
     String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&, bool) const;
     String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
+    Timer<CaptionUserPreferencesMediaAF> m_updateStyleSheetTimer;
 
     bool m_listeningForPreferenceChanges;
 #endif
