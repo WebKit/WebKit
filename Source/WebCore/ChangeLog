@@ -1,3 +1,12 @@
+2014-10-23  Milan Crha  <mcrha@redhat.com>
+
+        RenderThemeGtk::mediaControlsScript() is not defined when VIDEO is disabled.
+        <https://webkit.org/b/137970>.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * rendering/RenderThemeGtk.cpp:
+
 2014-10-22  Milan Crha  <mcrha@redhat.com>
 
         Do not include GraphicsContext3D.h when 3D_GRAPHICS is not used.
