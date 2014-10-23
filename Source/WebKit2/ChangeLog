@@ -1,5 +1,9 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge patch for r174799. <rdar://problem/18742380>
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175081.
 
     2014-10-22  Benjamin Poulain  <bpoulain@apple.com>
