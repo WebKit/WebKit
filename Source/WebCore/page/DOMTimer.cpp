@@ -61,6 +61,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAct
     , m_nestingLevel(context->timerNestingLevel())
     , m_action(WTF::move(action))
     , m_originalInterval(interval)
+    , m_currentTimerInterval(intervalClampedToMinimum())
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
     RefPtr<DOMTimer> reference = adoptRef(this);
@@ -70,11 +71,10 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAct
         m_timeoutId = context->circularSequentialID();
     } while (!context->addTimeout(m_timeoutId, reference));
 
-    double intervalMilliseconds = intervalClampedToMinimum(interval, context->minimumTimerInterval());
     if (singleShot)
-        startOneShot(intervalMilliseconds);
+        startOneShot(m_currentTimerInterval);
     else
-        startRepeating(intervalMilliseconds);
+        startRepeating(m_currentTimerInterval);
 }
 
 int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int timeout, bool singleShot)
@@ -142,12 +142,7 @@ void DOMTimer::fired()
     if (isActive()) {
         if (m_nestingLevel < maxTimerNestingLevel) {
             m_nestingLevel++;
-
-            double minimumInterval = context->minimumTimerInterval();
-            if (repeatInterval() && repeatInterval() < minimumInterval) {
-                if (m_nestingLevel == maxTimerNestingLevel)
-                    augmentRepeatInterval(minimumInterval - repeatInterval());
-            }
+            updateTimerIntervalIfNecessary();
         }
 
         m_action->execute(context);
@@ -201,31 +196,34 @@ void DOMTimer::didStop()
     m_action = nullptr;
 }
 
-void DOMTimer::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
+void DOMTimer::updateTimerIntervalIfNecessary()
 {
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
     if (m_nestingLevel < maxTimerNestingLevel)
         return;
 
-    double newMinimumInterval = scriptExecutionContext()->minimumTimerInterval();
-    double newClampedInterval = intervalClampedToMinimum(m_originalInterval, newMinimumInterval);
+    double previousInterval = m_currentTimerInterval;
+    m_currentTimerInterval = intervalClampedToMinimum();
+
+    if (previousInterval == m_currentTimerInterval)
+        return;
 
     if (repeatInterval()) {
-        augmentRepeatInterval(newClampedInterval - repeatInterval());
-        return;
-    }
-
-    double previousClampedInterval = intervalClampedToMinimum(m_originalInterval, oldMinimumTimerInterval);
-    augmentFireInterval(newClampedInterval - previousClampedInterval);
+        ASSERT(repeatInterval() == previousInterval);
+        augmentRepeatInterval(m_currentTimerInterval - previousInterval);
+    } else
+        augmentFireInterval(m_currentTimerInterval - previousInterval);
 }
 
-double DOMTimer::intervalClampedToMinimum(int timeout, double minimumTimerInterval) const
+double DOMTimer::intervalClampedToMinimum() const
 {
+    ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    double intervalMilliseconds = std::max(oneMillisecond, timeout * oneMillisecond);
+    double minimumTimerInterval = scriptExecutionContext()->minimumTimerInterval();
+    double intervalMilliseconds = std::max(oneMillisecond, m_originalInterval * oneMillisecond);
 
-    if (intervalMilliseconds < minimumTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
+    if (intervalMilliseconds < minimumTimerInterval && m_nestingLevel == maxTimerNestingLevel)
         intervalMilliseconds = minimumTimerInterval;
     return intervalMilliseconds;
 }

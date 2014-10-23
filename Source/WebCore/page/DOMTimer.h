@@ -44,14 +44,13 @@ namespace WebCore {
         static int install(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int timeout, bool singleShot);
         static void removeById(ScriptExecutionContext*, int timeoutId);
 
-        // Adjust to a change in the ScriptExecutionContext's minimum timer interval.
-        // This allows the minimum allowable interval time to be changed in response
-        // to events like moving a tab to the background.
-        void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
+        // Notify that the interval may need updating (e.g. because the minimum interval
+        // setting for the context has changed).
+        void updateTimerIntervalIfNecessary();
 
     private:
         DOMTimer(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
-        double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
+        double intervalClampedToMinimum() const;
 
         // SuspendableTimer
         virtual void fired() override;
@@ -62,6 +61,7 @@ namespace WebCore {
         int m_nestingLevel;
         std::unique_ptr<ScheduledAction> m_action;
         int m_originalInterval;
+        double m_currentTimerInterval;
         bool m_shouldForwardUserGesture;
     };
 
