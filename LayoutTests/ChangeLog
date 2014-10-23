@@ -1,3 +1,73 @@
+2014-10-23  Roger Fong  <roger_fong@apple.com>
+
+        [Win] Rebaseline a bunch of forms tests that no longer match after removing SafariTheme.
+        https://bugs.webkit.org/show_bug.cgi?id=138022.
+
+        * platform/win/fast/forms/HTMLOptionElement_label06-expected.txt: Added.
+        * platform/win/fast/forms/basic-inputs-expected.txt:
+        * platform/win/fast/forms/basic-textareas-expected.txt: Added.
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt: Added.
+        * platform/win/fast/forms/blankbuttons-expected.txt:
+        * platform/win/fast/forms/button-generated-content-expected.txt:
+        * platform/win/fast/forms/button-inner-block-reuse-expected.txt: Added.
+        * platform/win/fast/forms/control-clip-expected.txt: Added.
+        * platform/win/fast/forms/fieldset-align-expected.txt: Added.
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt: Added.
+        * platform/win/fast/forms/fieldset-with-float-expected.txt: Added.
+        * platform/win/fast/forms/float-before-fieldset-expected.txt: Added.
+        * platform/win/fast/forms/focus-selection-textarea-expected.txt: Added.
+        * platform/win/fast/forms/indeterminate-expected.txt: Added.
+        * platform/win/fast/forms/input-appearance-readonly-expected.txt: Added.
+        * platform/win/fast/forms/input-appearance-visibility-expected.txt: Added.
+        * platform/win/fast/forms/input-first-letter-expected.txt: Added.
+        * platform/win/fast/forms/input-readonly-dimmed-expected.txt: Added.
+        * platform/win/fast/forms/input-spaces-expected.txt: Added.
+        * platform/win/fast/forms/input-text-click-outside-expected.txt: Added.
+        * platform/win/fast/forms/input-type-text-min-width-expected.txt: Added.
+        * platform/win/fast/forms/input-width-expected.txt: Added.
+        * platform/win/fast/forms/listbox-onchange-expected.txt: Added.
+        * platform/win/fast/forms/menulist-clip-expected.txt:
+        * platform/win/fast/forms/menulist-option-wrap-expected.txt: Added.
+        * platform/win/fast/forms/menulist-separator-painting-expected.txt: Added.
+        * platform/win/fast/forms/menulist-width-change-expected.txt:
+        * platform/win/fast/forms/negativeLineHeight-expected.txt: Added.
+        * platform/win/fast/forms/onselect-textarea-expected.txt: Added.
+        * platform/win/fast/forms/option-script-expected.txt:
+        * platform/win/fast/forms/option-text-clip-expected.txt:
+        * platform/win/fast/forms/placeholder-pseudo-style-expected.txt: Added.
+        * platform/win/fast/forms/range/input-appearance-range-expected.txt: Added.
+        * platform/win/fast/forms/range/range-thumb-height-percentage-expected.txt: Added.
+        * platform/win/fast/forms/range/slider-padding-expected.txt: Added.
+        * platform/win/fast/forms/range/slider-thumb-shared-style-expected.txt: Added.
+        * platform/win/fast/forms/range/slider-thumb-stylability-expected.txt: Added.
+        * platform/win/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Added.
+        * platform/win/fast/forms/search-cancel-button-style-sharing-expected.txt: Added.
+        * platform/win/fast/forms/search-display-none-cancel-button-expected.txt: Added.
+        * platform/win/fast/forms/search-rtl-expected.txt: Added.
+        * platform/win/fast/forms/search-styled-expected.txt:
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt: Added.
+        * platform/win/fast/forms/select-background-none-expected.txt: Added.
+        * platform/win/fast/forms/select-empty-option-height-expected.txt: Added.
+        * platform/win/fast/forms/select-size-expected.txt: Added.
+        * platform/win/fast/forms/select-style-expected.txt: Added.
+        * platform/win/fast/forms/select-visual-hebrew-expected.txt: Added.
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/win/fast/forms/selectlist-minsize-expected.txt: Added.
+        * platform/win/fast/forms/stuff-on-my-optgroup-expected.txt: Added.
+        * platform/win/fast/forms/textAreaLineHeight-expected.txt: Added.
+        * platform/win/fast/forms/textarea-align-expected.txt: Added.
+        * platform/win/fast/forms/textarea-metrics-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/win/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/win/fast/forms/textarea-scroll-height-expected.txt: Added.
+        * platform/win/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/win/fast/forms/textarea-scrolled-type-expected.txt: Added.
+        * platform/win/fast/forms/textarea-setinnerhtml-expected.txt: Added.
+        * platform/win/fast/forms/textarea-width-expected.txt:
+        * platform/win/fast/forms/textfield-overflow-by-value-update-expected.txt: Added.
+        * platform/win/fast/forms/textfield-overflow-expected.txt: Added.
+
 2014-10-23  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Safari cannot play 'audio/amr' content.

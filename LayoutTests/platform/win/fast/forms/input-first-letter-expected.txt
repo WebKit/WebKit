@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 585x18
+        text run at (0,0) width 585: "This test passes if it doesn't crash and if the Submit button does not honor the first-letter style."
+      RenderBR {BR} at (585,14) size 0x0
+      RenderButton {INPUT} at (2,20) size 57x21 [border: (2px outset #F0F0F0)]
+        RenderBlock (anonymous) at (8,3) size 41x15
+          RenderText at (0,0) size 41x15
+            text run at (0,0) width 41: "Submit"
+      RenderText {#text} at (0,0) size 0x0
