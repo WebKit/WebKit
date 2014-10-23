@@ -1,5 +1,35 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175081.
+
+    2014-10-22  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS WK2] Protect WKWebView dynamic viewport change against empty sizes
+            https://bugs.webkit.org/show_bug.cgi?id=137988
+            rdar://problem/17785162
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            The algorithm behind dynamic size update finds the best content area to put in the viewport
+            after a viewport change. If an initial size or a target size is empty, it is impossible to
+            compute a reasonable area to keep in the view. We end up handling NaN scales
+            and/or sizes and CoreAnimation raises an exception when applying that value.
+
+            This patch add early exits when that occurs and fallback to the common code.
+
+            On Input, things are easy. If any of the initial values is empty, we just execute the updateBlock
+            without attempting any of the dynamic behaviors.
+
+            For the target values, things are trickier. We do not know what the values are going to be before we execute
+            the block. But once we executed the block, we have already skipped all the setters that call the web process.
+
+            To handle that, every value is set manually on WebPageProxy. This is a bit unfortunate because the setters
+            get yet another entry point.
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174788.
 
     2014-10-16  Tim Horton  <timothy_horton@apple.com>

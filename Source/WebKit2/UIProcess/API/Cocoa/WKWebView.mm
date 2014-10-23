@@ -2152,20 +2152,21 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
-    if (_customContentView || !_hasCommittedLoadForMainFrame) {
+    CGRect oldBounds = self.bounds;
+    WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
+
+    if (_customContentView || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
         updateBlock();
         return;
     }
 
     _dynamicViewportUpdateMode = DynamicViewportUpdateMode::ResizingWithAnimation;
 
-    CGRect oldBounds = self.bounds;
     WebCore::FloatSize oldMinimumLayoutSize = activeMinimumLayoutSize(self, oldBounds);
     WebCore::FloatSize oldMinimumLayoutSizeForMinimalUI = activeMinimumLayoutSizeForMinimalUI(self, oldMinimumLayoutSize);
     WebCore::FloatSize oldMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, oldBounds);
     int32_t oldOrientation = activeOrientation(self);
     UIEdgeInsets oldObscuredInsets = _obscuredInsets;
-    WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
     updateBlock();
 
@@ -2175,6 +2176,24 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     WebCore::FloatSize newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
     int32_t newOrientation = activeOrientation(self);
     UIEdgeInsets newObscuredInsets = _obscuredInsets;
+    CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
+
+    ASSERT_WITH_MESSAGE(!(_overridesMinimumLayoutSize && newMinimumLayoutSize.isEmpty()), "Clients controlling the layout size should maintain a valid layout size to minimize layouts.");
+    ASSERT_WITH_MESSAGE(!(_overridesMinimumLayoutSizeForMinimalUI && newMinimumLayoutSizeForMinimalUI.isEmpty()), "Clients controlling the layout size should maintain a valid layout size for minimal UI to minimize layouts.");
+    if (CGRectIsEmpty(newBounds) || newMinimumLayoutSize.isEmpty() || newMinimumLayoutSizeForMinimalUI.isEmpty() || CGRectIsEmpty(futureUnobscuredRectInSelfCoordinates)) {
+        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
+        [self _frameOrBoundsChanged];
+        if (_overridesMinimumLayoutSize)
+            _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(newMinimumLayoutSize));
+        if (_overridesMinimumLayoutSizeForMinimalUI)
+            _page->setViewportConfigurationMinimumLayoutSizeForMinimalUI(WebCore::FloatSize(newMinimumLayoutSizeForMinimalUI));
+        if (_overridesMaximumUnobscuredSize)
+            _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
+        if (_overridesInterfaceOrientation)
+            _page->setDeviceOrientation(newOrientation);
+        [self _updateVisibleContentRects];
+        return;
+    }
 
     if (CGRectEqualToRect(oldBounds, newBounds)
         && oldMinimumLayoutSize == newMinimumLayoutSize
@@ -2209,7 +2228,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     // Compute a new position to keep the content centered.
     CGPoint originalContentCenter = oldUnobscuredContentRect.center();
     CGPoint originalContentCenterInSelfCoordinates = [self convertPoint:originalContentCenter fromView:_contentView.get()];
-    CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGPoint futureUnobscuredRectCenterInSelfCoordinates = CGPointMake(futureUnobscuredRectInSelfCoordinates.origin.x + futureUnobscuredRectInSelfCoordinates.size.width / 2, futureUnobscuredRectInSelfCoordinates.origin.y + futureUnobscuredRectInSelfCoordinates.size.height / 2);
 
     CGPoint originalContentOffset = [_scrollView contentOffset];
