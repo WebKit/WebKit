@@ -44,8 +44,6 @@
 
 namespace WebCore {
 
-RenderSVGResourceType RenderSVGResourceFilter::s_resourceType = FilterResourceType;
-
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, PassRef<RenderStyle> style)
     : RenderSVGResourceContainer(element, WTF::move(style))
 {

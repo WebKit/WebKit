@@ -51,8 +51,8 @@ public:
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
     virtual FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
+    static const RenderSVGResourceType s_resourceType = PatternResourceType;
     virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
-    static RenderSVGResourceType s_resourceType;
 
 private:
     void element() const = delete;

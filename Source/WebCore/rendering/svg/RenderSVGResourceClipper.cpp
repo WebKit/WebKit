@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-RenderSVGResourceType RenderSVGResourceClipper::s_resourceType = ClipperResourceType;
-
 RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, PassRef<RenderStyle> style)
     : RenderSVGResourceContainer(element, WTF::move(style))
 {

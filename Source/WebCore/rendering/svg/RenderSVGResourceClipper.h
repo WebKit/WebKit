@@ -54,13 +54,13 @@ public:
     bool applyClippingToContext(RenderElement&, const FloatRect&, const FloatRect&, GraphicsContext*);
     virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    virtual RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
+    static const RenderSVGResourceType s_resourceType = ClipperResourceType;
+    virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
     
     bool hitTestClipContent(const FloatRect&, const FloatPoint&);
 
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return clipPathElement().clipPathUnits(); }
 
-    static RenderSVGResourceType s_resourceType;
 private:
     void element() const = delete;
 

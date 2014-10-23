@@ -36,8 +36,8 @@ public:
 
     SVGRadialGradientElement& radialGradientElement() const { return downcast<SVGRadialGradientElement>(RenderSVGResourceGradient::gradientElement()); }
 
+    static const RenderSVGResourceType s_resourceType = RadialGradientResourceType;
     virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
-    static RenderSVGResourceType s_resourceType;
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const override { return m_attributes.gradientUnits(); }
     virtual void calculateGradientTransform(AffineTransform& transform) override { transform = m_attributes.gradientTransform(); }

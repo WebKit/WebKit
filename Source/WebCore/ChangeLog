@@ -1,5 +1,33 @@
 2014-10-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        Const-ify static s_resourceType members in RenderSVGResource* classes
+        https://bugs.webkit.org/show_bug.cgi?id=137911
+
+        Reviewed by Andreas Kling.
+
+        Make s_resourceType static members in RenderSVGResource* classes const.
+        Also update the resourceType() methods, where necessary, so that they
+        return the s_resourceType constant.
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+
+2014-10-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Clean up virtual method declarations in GraphicsLayerTextureMapper
         https://bugs.webkit.org/show_bug.cgi?id=137957
 

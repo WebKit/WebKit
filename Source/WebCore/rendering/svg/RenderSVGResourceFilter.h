@@ -82,8 +82,8 @@ public:
 
     void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
 
+    static const RenderSVGResourceType s_resourceType = FilterResourceType;
     virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
-    static RenderSVGResourceType s_resourceType;
 
     FloatRect drawingRegion(RenderObject*) const;
 private:

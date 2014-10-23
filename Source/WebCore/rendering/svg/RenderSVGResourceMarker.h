@@ -59,8 +59,8 @@ public:
     float angle() const;
     SVGMarkerUnitsType markerUnits() const { return markerElement().markerUnits(); }
 
+    static const RenderSVGResourceType s_resourceType = MarkerResourceType;
     virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
-    static RenderSVGResourceType s_resourceType;
 
 private:
     void element() const = delete;
