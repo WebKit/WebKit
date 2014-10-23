@@ -1,5 +1,101 @@
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175075. <rdar://problem/18717767>
+
+    2014-10-22  Tim Horton  <timothy_horton@apple.com>
+    
+            Add action menu support for images
+            https://bugs.webkit.org/show_bug.cgi?id=137987
+            <rdar://problem/18717767>
+    
+            Reviewed by Anders Carlsson, Sam Weinig, and Beth Dakin.
+    
+            * Resources/AddImageToPhotos.pdf: Added.
+            * Resources/CopyImage.pdf: Added.
+            * Resources/SaveImageToDownloads.pdf: Added.
+            * Resources/ShareImage.pdf: Added.
+            Add some temporary artwork.
+    
+            * Scripts/webkit/messages.py:
+            (struct_or_class):
+            ActionMenuHitTestResult is a struct.
+    
+            * Shared/API/c/WKActionMenuItemTypes.h:
+            Add new items for image menus.
+    
+            * Shared/mac/ActionMenuHitTestResult.cpp:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            For now, pass the hit image data across to the UI process as a ShareableBitmap.
+    
+            * Shared/mac/ActionMenuHitTestResult.h:
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _createActionMenuItemForTag:]):
+            Refactor action menu item creation into a single function, so that
+            callers can share code and be much simpler.
+    
+            (webKitBundleImageNamed):
+            Add a helper to acquire an image from the WebKit2 bundle.
+    
+            (-[WKView _copyImage:]):
+            (-[WKView _saveImageToDownloads:]):
+            (temporaryPhotosDirectoryPath):
+            (pathToPhotoOnDisk):
+            (-[WKView _addImageToPhotos:]):
+            Add rudimentary implementations of image actions.
+    
+            (-[WKView _defaultMenuItemsForImage]):
+            Support the image menu, plus a submenu acquired from NSSharingServicePicker
+            for the Share menu.
+    
+            (-[WKView _defaultMenuItems]):
+            Call _defaultMenuItemsForImage if needed.
+    
+            (-[WKView _updateActionMenu]):
+            Refactor _updateActionMenu out of prepareForMenu:withEvent:.
+    
+            (-[WKView prepareForMenu:withEvent:]):
+            Ask the Web process to re-hit-test under the location that the menu
+            will appear. Mark the menu as pending.
+    
+            (-[WKView _didPerformActionMenuHitTest:]):
+            When we get the hit test reply, record the result for future use.
+    
+            (-[WKView willOpenMenu:withEvent:]):
+            If we got a hit test reply, rebuild the menu immediately. If not, wait
+            up to 500ms for the reply to come in. This eventually needs to be
+            cancellable if the menu is rejected in the interim.
+    
+            (-[WKView didCloseMenu:withEvent:]):
+            Clear all state when the menu closes.
+    
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::performActionMenuHitTestAtLocation):
+            (WebKit::WebPageProxy::didPerformActionMenuHitTest):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didPerformActionMenuHitTest):
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            Plumb didPerformActionMenuHitTest back from WebPageProxy to WKView.
+    
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Hit test at the given location, recording the image data if there is any,
+            and return the result to the UI process.
+    
+            * WebKit2.xcodeproj/project.pbxproj:
+            Add the PDFs.
+    
+2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175016. <rdar://problem/18731860>
 
     2014-10-21  Tim Horton  <timothy_horton@apple.com>

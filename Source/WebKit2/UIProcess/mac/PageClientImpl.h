@@ -186,6 +186,8 @@ private:
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     virtual void removeNavigationGestureSnapshot() override;
 
+    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&) override;
+
     WKView *m_wkView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

@@ -23,28 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKActionMenuItemTypes_h
-#define WKActionMenuItemTypes_h
+#ifndef ActionMenuHitTestResult_h
+#define ActionMenuHitTestResult_h
 
-#include <stdint.h>
+#include "ShareableBitmap.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
-enum {
-    kWKContextActionItemTagNoAction = 0,
-    kWKContextActionItemTagOpenLinkInDefaultBrowser,
-    kWKContextActionItemTagPreviewLink,
-    kWKContextActionItemTagAddLinkToSafariReadingList,
-    kWKContextActionItemTagCopyImage,
-    kWKContextActionItemTagAddImageToPhotos,
-    kWKContextActionItemTagSaveImageToDownloads,
-    kWKContextActionItemTagShareImage
+namespace WebKit {
+
+struct ActionMenuHitTestResult {
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, ActionMenuHitTestResult&);
+
+    RefPtr<ShareableBitmap> image;
 };
 
-#ifdef __cplusplus
-}
-#endif
+} // namespace WebKit
 
-#endif /* WKActionMenuItemTypes_h */
+#endif // ActionMenuHitTestResult_h

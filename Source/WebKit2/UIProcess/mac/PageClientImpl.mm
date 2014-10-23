@@ -750,6 +750,11 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
     return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
 }
 
+void PageClientImpl::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result)
+{
+    [m_wkView _didPerformActionMenuHitTest:result];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -579,6 +579,8 @@
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
+		2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */; };
+		2D353B1319F8305D000EEACD /* ActionMenuHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */; };
 		2D3EF4421917646300034184 /* WebMemoryPressureHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.mm */; };
 		2D3EF4431917646300034184 /* WebMemoryPressureHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */; };
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
@@ -1097,6 +1099,10 @@
 		935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */; };
 		935EEBA3127761D3003322B8 /* InjectedBundleBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB911277615D003322B8 /* InjectedBundleBackForwardListItem.cpp */; };
 		935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB921277615D003322B8 /* InjectedBundleBackForwardListItem.h */; };
+		9369104219F711810021D470 /* CopyImageTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9369104119F711810021D470 /* CopyImageTemplate.pdf */; };
+		9369104419F711910021D470 /* AddImageToPhotosTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9369104319F711910021D470 /* AddImageToPhotosTemplate.pdf */; };
+		9369104619F7119E0021D470 /* SaveImageToDownloadsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9369104519F7119E0021D470 /* SaveImageToDownloadsTemplate.pdf */; };
+		9369104819F711A70021D470 /* ShareImageTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9369104719F711A70021D470 /* ShareImageTemplate.pdf */; };
 		9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
 		939AE7661316E99C00AE06A6 /* WebCoreArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */; };
@@ -2583,6 +2589,8 @@
 		2D2ADF0C16363DEC00197E47 /* PDFLayerControllerDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerDetails.h; path = PDF/PDFLayerControllerDetails.h; sourceTree = "<group>"; };
 		2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginChoiceAnnotation.h; path = PDF/PDFPluginChoiceAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
+		2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActionMenuHitTestResult.cpp; sourceTree = "<group>"; };
+		2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionMenuHitTestResult.h; sourceTree = "<group>"; };
 		2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebMemoryPressureHandlerIOS.mm; path = ios/WebMemoryPressureHandlerIOS.mm; sourceTree = "<group>"; };
 		2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMemoryPressureHandlerIOS.h; path = ios/WebMemoryPressureHandlerIOS.h; sourceTree = "<group>"; };
 		2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordField.h; path = PDF/PDFPluginPasswordField.h; sourceTree = "<group>"; };
@@ -3157,6 +3165,10 @@
 		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
 		935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
 		935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardListItem.h; sourceTree = "<group>"; };
+		9369104119F711810021D470 /* CopyImageTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = CopyImageTemplate.pdf; path = Resources/CopyImageTemplate.pdf; sourceTree = "<group>"; };
+		9369104319F711910021D470 /* AddImageToPhotosTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = AddImageToPhotosTemplate.pdf; path = Resources/AddImageToPhotosTemplate.pdf; sourceTree = "<group>"; };
+		9369104519F7119E0021D470 /* SaveImageToDownloadsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = SaveImageToDownloadsTemplate.pdf; path = Resources/SaveImageToDownloadsTemplate.pdf; sourceTree = "<group>"; };
+		9369104719F711A70021D470 /* ShareImageTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = ShareImageTemplate.pdf; path = Resources/ShareImageTemplate.pdf; sourceTree = "<group>"; };
 		9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
 		9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
 		939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreArgumentCoders.cpp; sourceTree = "<group>"; };
@@ -4004,6 +4016,8 @@
 				A78CCDD5193AC9E3005ECC25 /* SandboxProfiles */,
 				7CB16FE11724B9B5007A0A95 /* PlugInSandboxProfiles */,
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
+				9369104319F711910021D470 /* AddImageToPhotosTemplate.pdf */,
+				9369104119F711810021D470 /* CopyImageTemplate.pdf */,
 				1CBC945D16515ED200D68AAE /* DockBottom.pdf */,
 				1CB75C931701E880009F809F /* DockRight.pdf */,
 				1C8AE75F1992F62F00ABF6EC /* DockBottomLegacy.pdf */,
@@ -4011,6 +4025,8 @@
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 				9348427C19F19BD00009D5AE /* OpenInNewWindowTemplate.pdf */,
+				9369104519F7119E0021D470 /* SaveImageToDownloadsTemplate.pdf */,
+				9369104719F711A70021D470 /* ShareImageTemplate.pdf */,
 				E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */,
 				E133FD891423DD7F00FC7BFB /* WebKit.icns */,
 			);
@@ -6109,6 +6125,8 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */,
+				2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */,
 				E179FD9B134D38060015B883 /* ArgumentCodersMac.h */,
 				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
@@ -7365,6 +7383,7 @@
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				1AB8A1F218400B6200E9AE69 /* WKPageUIClient.h in Headers */,
+				2D353B1319F8305D000EEACD /* ActionMenuHitTestResult.h in Headers */,
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
@@ -8308,11 +8327,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9369104619F7119E0021D470 /* SaveImageToDownloadsTemplate.pdf in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
+				9369104419F711910021D470 /* AddImageToPhotosTemplate.pdf in Resources */,
 				1CBC945E16515ED200D68AAE /* DockBottom.pdf in Resources */,
 				E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */,
 				9348427D19F19BD10009D5AE /* OpenInNewWindowTemplate.pdf in Resources */,
+				9369104219F711810021D470 /* CopyImageTemplate.pdf in Resources */,
+				9369104819F711A70021D470 /* ShareImageTemplate.pdf in Resources */,
 				1CB75C941701E880009F809F /* DockRight.pdf in Resources */,
 				1C8AE7611992F63A00ABF6EC /* DockBottomLegacy.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
@@ -9284,6 +9307,7 @@
 				1AE00D5C182DADE100087DD7 /* KeyedEncoder.cpp in Sources */,
 				1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */,
 				BC5744EF12638FB3006F0F12 /* WebPopupItem.cpp in Sources */,
+				2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.cpp in Sources */,
 				0F931C1D18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm in Sources */,
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
 				1AAF08A1192681D100B6390C /* WebUserContentControllerProxy.cpp in Sources */,
