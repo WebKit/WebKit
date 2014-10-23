@@ -1,5 +1,21 @@
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174913. <rdar://problem/18712808>
+
+    2014-10-20  Beth Dakin  <bdakin@apple.com>
+    
+            Action menu items should have tags
+            https://bugs.webkit.org/show_bug.cgi?id=137898
+    
+            Reviewed by Anders Carlsson.
+    
+            * Shared/API/c/WKActionMenuItemTypes.h: Added.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _defaultMenuItemsForLink]):
+            * WebKit2.xcodeproj/project.pbxproj:
+    
+2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175061. <rdar://problem/18694470>
 
     2014-10-22  Beth Dakin  <bdakin@apple.com>
