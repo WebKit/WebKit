@@ -607,7 +607,9 @@ void WebVideoFullscreenInterfaceAVKit::setDuration(double duration)
         playerController.minTime = 0;
         playerController.status = AVPlayerControllerStatusReadyToPlay;
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -621,7 +623,9 @@ void WebVideoFullscreenInterfaceAVKit::setCurrentTime(double currentTime, double
             anchorTimeStamp:anchorTimeStamp rate:0];
         playerController().timing = timing;
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -632,7 +636,9 @@ void WebVideoFullscreenInterfaceAVKit::setRate(bool isPlaying, float playbackRat
     dispatch_async(dispatch_get_main_queue(), ^{
         playerController().rate = isPlaying ? playbackRate : 0.;
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -644,7 +650,9 @@ void WebVideoFullscreenInterfaceAVKit::setVideoDimensions(bool hasVideo, float w
         playerController().hasEnabledVideo = hasVideo;
         playerController().contentDimensions = CGSizeMake(width, height);
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -666,7 +674,9 @@ void WebVideoFullscreenInterfaceAVKit::setSeekableRanges(const TimeRanges& timeR
     dispatch_async(dispatch_get_main_queue(), ^{
         playerController().seekableTimeRanges = seekableRanges;
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -696,7 +706,9 @@ void WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions(const Vecto
         if (selectedIndex < webOptions.count)
             playerController().currentAudioMediaSelectionOption = webOptions[(size_t)selectedIndex];
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -710,7 +722,9 @@ void WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions(const Vec
         if (selectedIndex < webOptions.count)
             playerController().currentLegibleMediaSelectionOption = webOptions[(size_t)selectedIndex];
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -730,7 +744,9 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
         playerController().externalPlaybackActive = enabled;
         [m_videoLayerContainer.get() setHidden:enabled];
         
-        protect = nullptr;
+        WebThreadRun(^{
+            protect = nullptr;
+        });
     });
 }
 
@@ -787,10 +803,12 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         [CATransaction commit];
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (m_fullscreenChangeObserver)
-                m_fullscreenChangeObserver->didSetupFullscreen();
-            
-            protect = nullptr;
+            WebThreadRun(^{
+                if (m_fullscreenChangeObserver)
+                    m_fullscreenChangeObserver->didSetupFullscreen();
+
+                protect = nullptr;
+            });
         });
     });
 }
@@ -804,9 +822,13 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
         [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*)
         {
             [m_playerViewController setShowsPlaybackControls:YES];
-            if (m_fullscreenChangeObserver)
-                m_fullscreenChangeObserver->didEnterFullscreen();
-            protect = nullptr;
+
+            WebThreadRun(^{
+                if (m_fullscreenChangeObserver)
+                    m_fullscreenChangeObserver->didEnterFullscreen();
+
+                protect = nullptr;
+            });
         }];
     });
 }
@@ -830,9 +852,12 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
         [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*) {
             [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
             [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
-            if (m_fullscreenChangeObserver)
-                m_fullscreenChangeObserver->didExitFullscreen();
-            protect = nullptr;
+
+            WebThreadRun(^{
+                if (m_fullscreenChangeObserver)
+                    m_fullscreenChangeObserver->didExitFullscreen();
+                protect = nullptr;
+            });
         }];
     });
 }
@@ -872,9 +897,11 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
         m_window = nil;
         m_parentView = nil;
         
-        if (m_fullscreenChangeObserver)
-            m_fullscreenChangeObserver->didCleanupFullscreen();
-        protect = nullptr;
+        WebThreadRun(^{
+            if (m_fullscreenChangeObserver)
+                m_fullscreenChangeObserver->didCleanupFullscreen();
+            protect = nullptr;
+        });
     });
 }
 
@@ -908,7 +935,9 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     dispatch_async(dispatch_get_main_queue(), ^{
         [m_window setHidden:YES];
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:^(BOOL, NSError*) {
-            protect = nullptr;
+            WebThreadRun(^{
+                protect = nullptr;
+            });
         }];
     });
 

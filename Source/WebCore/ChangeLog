@@ -1,5 +1,35 @@
 2014-10-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173974.
+
+    2014-09-25  Jeremy Jones  <jeremyj@apple.com>
+
+            Race in ref pointer for WebVideoFullscreenInterfaceAVKit.
+            https://bugs.webkit.org/show_bug.cgi?id=137123
+
+            Reviewed by Eric Carlson.
+
+            Add WebThreadRun to prevent race with RefPtr of WebVideoFullscreenInterfaceAVKit.
+
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (-[WebVideoFullscreenController didSetupFullscreen]): add WebThreadRun
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setDuration): ditto
+            (WebVideoFullscreenInterfaceAVKit::setCurrentTime): ditto
+            (WebVideoFullscreenInterfaceAVKit::setRate): ditto
+            (WebVideoFullscreenInterfaceAVKit::setVideoDimensions): ditto
+            (WebVideoFullscreenInterfaceAVKit::setSeekableRanges): ditto
+            (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions): ditto
+            (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions): ditto
+            (WebVideoFullscreenInterfaceAVKit::setExternalPlayback): ditto
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen): ditto
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreen): ditto
+            (WebVideoFullscreenInterfaceAVKit::exitFullscreen): ditto
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen): ditto
+            (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): ditto
+
+2014-10-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173848.
 
     2014-09-22  Alexey Proskuryakov  <ap@apple.com>
