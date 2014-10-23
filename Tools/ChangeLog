@@ -1,3 +1,14 @@
+2014-10-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Flakiness dashboard should support OS X Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=137986
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/app.yaml:
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2014-10-22  Jake Nielsen  <jacob_nielsen@apple.com>
 
         commitqueuetask should include more tests to ensure that the behavior
