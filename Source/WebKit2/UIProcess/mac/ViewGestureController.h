@@ -38,8 +38,9 @@ OBJC_CLASS CALayer;
 OBJC_CLASS UIView;
 OBJC_CLASS WKSwipeTransitionController;
 OBJC_CLASS WKWebView;
-OBJC_CLASS _UIViewControllerTransitionContext;
 OBJC_CLASS _UINavigationInteractiveTransitionBase;
+OBJC_CLASS _UIViewControllerOneToOneTransitionContext;
+OBJC_CLASS _UIViewControllerTransitionContext;
 #else
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
@@ -187,6 +188,7 @@ private:
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
+    RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize;
     bool m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit;
     WeakObjCPtr<WKWebView> m_alternateBackForwardListSourceView;

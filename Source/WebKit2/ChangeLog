@@ -1,5 +1,56 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174788.
+
+    2014-10-16  Tim Horton  <timothy_horton@apple.com>
+
+            Various crashes in ViewGestureControllerIOS when closing a tab while a swipe gesture is in progress
+            https://bugs.webkit.org/show_bug.cgi?id=137770
+            <rdar://problem/17916459>
+
+            Reviewed by Dan Bernstein.
+
+            When tearing down a WKWebView in the middle of a swipe gesture, a variety of
+            UI process crashes were observed. First, two uses of potentially deleted objects
+            (the WebBackForwardListItem and ViewGestureController), which were fixed by
+            extending the object's lifetime and checking for its liveness, respectively.
+            Second, a potential null-deref of DrawingArea if the timing of endSwipeGesture
+            vs. page teardown was such that DrawingArea was null but everything else was in line.
+            Lastly, another case of messaging a potentially deleted object (specifically,
+            the _UIViewControllerTransitionContext's animator) in a callback from CA, which
+            was fixed by nulling out the animator (and a few other properties) when tearing
+            down the ViewGestureController.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (-[WKSwipeTransitionController invalidate]):
+            Clear the soon-to-be-invalid ViewGestureController pointer.
+
+            (WebKit::ViewGestureController::~ViewGestureController):
+            Call [WKSwipeTransitionController invalidate] upon destruction.
+            Clear our transition context's interactor and animator, and inform it that
+            the transition is not in flight. This avoids a crash when calling back
+            to the already-destroyed animator later.
+
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            Keep a reference to the target WebBackForwardListItem; this avoids
+            it being deleted between here and the transition completion block firing.
+
+            Look up the ViewGestureController by pageID, just like we do in endSwipeGesture,
+            to avoid situations where the callback fires after the WKWebView/ViewGestureController
+            have gone away.
+
+            Hold on to our _UIViewControllerOneToOneTransitionContext, so that we can do the
+            aforementioned clearing upon deallocation.
+
+            (WebKit::ViewGestureController::endSwipeGesture):
+            Null check the DrawingArea. If it is null, instead of doing our normal delayed logic
+            for swipe snapshot teardown, just put things back together immediately.
+
+            (WebKit::ViewGestureController::removeSwipeSnapshot):
+            Clear m_swipeTransitionContext.
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174512.
 
     2014-10-09  Andy Estes  <aestes@apple.com>

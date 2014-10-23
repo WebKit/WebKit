@@ -51,6 +51,7 @@ using namespace WebCore;
 
 @interface WKSwipeTransitionController : NSObject <_UINavigationInteractiveTransitionBaseDelegate>
 - (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView;
+- (void)invalidate;
 @end
 
 @interface _UIViewControllerTransitionContext (WKDetails)
@@ -88,6 +89,11 @@ static HashMap<uint64_t, WebKit::ViewGestureController*>& viewGestureControllers
         [_forwardTransitionController setShouldReverseTranslation:YES];
     }
     return self;
+}
+
+- (void)invalidate
+{
+    _gestureController = nullptr;
 }
 
 - (WebKit::ViewGestureController::SwipeDirection)directionForTransition:(_UINavigationInteractiveTransitionBase *)transition
@@ -145,6 +151,10 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
 
 ViewGestureController::~ViewGestureController()
 {
+    [m_swipeTransitionContext _setTransitionIsInFlight:NO];
+    [m_swipeTransitionContext _setInteractor:nil];
+    [m_swipeTransitionContext _setAnimator:nil];
+    [m_swipeInteractiveTransitionDelegate invalidate];
     viewGestureControllersForAllPages().remove(m_webPageProxy.pageID());
 }
 
@@ -177,7 +187,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (m_webPageProxyForBackForwardListForCurrentSwipe != &m_webPageProxy)
         backForwardList.currentItem()->setSnapshot(m_webPageProxy.backForwardList().currentItem()->snapshot());
 
-    WebBackForwardListItem* targetItem = direction == SwipeDirection::Left ? backForwardList.backItem() : backForwardList.forwardItem();
+    RefPtr<WebBackForwardListItem> targetItem = direction == SwipeDirection::Left ? backForwardList.backItem() : backForwardList.forwardItem();
 
     CGRect liveSwipeViewFrame = [m_liveSwipeView frame];
 
@@ -215,26 +225,31 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     UINavigationControllerOperation transitionOperation = direction == SwipeDirection::Left ? UINavigationControllerOperationPop : UINavigationControllerOperationPush;
     RetainPtr<_UINavigationParallaxTransition> animationController = adoptNS([[_UINavigationParallaxTransition alloc] initWithCurrentOperation:transitionOperation]);
 
-    RetainPtr<_UIViewControllerOneToOneTransitionContext> transitionContext = adoptNS([[_UIViewControllerOneToOneTransitionContext alloc] init]);
-    [transitionContext _setFromViewController:targettedViewController.get()];
-    [transitionContext _setToViewController:snapshotViewController.get()];
-    [transitionContext _setContainerView:m_transitionContainerView.get()];
-    [transitionContext _setFromStartFrame:liveSwipeViewFrame];
-    [transitionContext _setToEndFrame:liveSwipeViewFrame];
-    [transitionContext _setToStartFrame:CGRectZero];
-    [transitionContext _setFromEndFrame:CGRectZero];
-    [transitionContext _setAnimator:animationController.get()];
-    [transitionContext _setInteractor:transition];
-    [transitionContext _setTransitionIsInFlight:YES];
-    [transitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
+    m_swipeTransitionContext = adoptNS([[_UIViewControllerOneToOneTransitionContext alloc] init]);
+    [m_swipeTransitionContext _setFromViewController:targettedViewController.get()];
+    [m_swipeTransitionContext _setToViewController:snapshotViewController.get()];
+    [m_swipeTransitionContext _setContainerView:m_transitionContainerView.get()];
+    [m_swipeTransitionContext _setFromStartFrame:liveSwipeViewFrame];
+    [m_swipeTransitionContext _setToEndFrame:liveSwipeViewFrame];
+    [m_swipeTransitionContext _setToStartFrame:CGRectZero];
+    [m_swipeTransitionContext _setFromEndFrame:CGRectZero];
+    [m_swipeTransitionContext _setAnimator:animationController.get()];
+    [m_swipeTransitionContext _setInteractor:transition];
+    [m_swipeTransitionContext _setTransitionIsInFlight:YES];
+    [m_swipeTransitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
         if (finish)
             m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureWillEnd(transitionCompleted, *targetItem);
     }];
-    [transitionContext _setCompletionHandler:^(_UIViewControllerTransitionContext *context, BOOL didComplete) { endSwipeGesture(targetItem, context, !didComplete); }];
-    [transitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
+    uint64_t pageID = m_webPageProxy.pageID();
+    [m_swipeTransitionContext _setCompletionHandler:^(_UIViewControllerTransitionContext *context, BOOL didComplete) {
+        auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
+        if (gestureControllerIter != viewGestureControllersForAllPages().end())
+            gestureControllerIter->value->endSwipeGesture(targetItem.get(), context, !didComplete);
+    }];
+    [m_swipeTransitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
 
     [transition setAnimationController:animationController.get()];
-    [transition startInteractiveTransition:transitionContext.get()];
+    [transition startInteractiveTransition:m_swipeTransitionContext.get()];
 
     m_activeGestureType = ViewGestureType::Swipe;
 }
@@ -275,12 +290,17 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
     m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
 
-    uint64_t pageID = m_webPageProxy.pageID();
-    m_webPageProxy.drawingArea()->dispatchAfterEnsuringDrawing([pageID] (CallbackBase::Error error) {
-        auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
-        if (gestureControllerIter != viewGestureControllersForAllPages().end())
-            gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
-    });
+    if (auto drawingArea = m_webPageProxy.drawingArea()) {
+        uint64_t pageID = m_webPageProxy.pageID();
+        drawingArea->dispatchAfterEnsuringDrawing([pageID] (CallbackBase::Error error) {
+            auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
+            if (gestureControllerIter != viewGestureControllersForAllPages().end())
+                gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
+        });
+    } else {
+        removeSwipeSnapshot();
+        return;
+    }
 
     m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
 }
@@ -338,6 +358,8 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureSnapshotWasRemoved();
     m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
+
+    m_swipeTransitionContext = nullptr;
 }
 
 } // namespace WebKit
