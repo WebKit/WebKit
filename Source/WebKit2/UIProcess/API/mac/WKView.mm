@@ -158,7 +158,7 @@ CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *
 - (NSMenu *)menu;
 @end
 
-SOFT_LINK_FRAMEWORK(ImageKit)
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
 using namespace WebKit;
