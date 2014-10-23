@@ -191,6 +191,7 @@ def struct_or_class(namespace, type):
         'WebCore::ViewportArguments',
         'WebCore::ViewportAttributes',
         'WebCore::WindowFeatures',
+        'WebKit::ActionMenuHitTestResult',
         'WebKit::AssistedNodeInformation',
         'WebKit::AttributedString',
         'WebKit::BackForwardListItemState',
