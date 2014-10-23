@@ -65,10 +65,12 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAct
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
+    RefPtr<DOMTimer> reference = adoptRef(this);
+
     // Keep asking for the next id until we're given one that we don't already have.
     do {
         m_timeoutId = context->circularSequentialID();
-    } while (!context->addTimeout(m_timeoutId, this));
+    } while (!context->addTimeout(m_timeoutId, reference));
 
     double intervalMilliseconds = intervalClampedToMinimum(interval, context->minimumTimerInterval());
     if (singleShot)
@@ -77,17 +79,11 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAct
         startRepeating(intervalMilliseconds);
 }
 
-DOMTimer::~DOMTimer()
-{
-    if (scriptExecutionContext())
-        scriptExecutionContext()->removeTimeout(m_timeoutId);
-}
-
 int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int timeout, bool singleShot)
 {
-    // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
-    // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
-    // or if it is a one-time timer and it has fired (DOMTimer::fired).
+    // DOMTimer constructor passes ownership of the initial ref on the object to the constructor.
+    // This reference will be released automatically when a one-shot timer fires, when the context
+    // is destroyed, or if explicitly cancelled by removeById. 
     DOMTimer* timer = new DOMTimer(context, WTF::move(action), timeout, singleShot);
 #if PLATFORM(IOS)
     if (context->isDocument()) {
@@ -115,12 +111,16 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
         return;
 
     InspectorInstrumentation::didRemoveTimer(context, timeoutId);
-
-    delete context->findTimeout(timeoutId);
+    context->removeTimeout(timeoutId);
 }
 
 void DOMTimer::fired()
 {
+    // Retain this - if the timer is cancelled while this function is on the stack (implicitly and always
+    // for one-shot timers, or if removeById is called on itself from within an interval timer fire) then
+    // wait unit the end of this function to delete DOMTimer.
+    RefPtr<DOMTimer> reference = this;
+
     ScriptExecutionContext* context = scriptExecutionContext();
     ASSERT(context);
 #if PLATFORM(IOS)
@@ -148,7 +148,6 @@ void DOMTimer::fired()
                 augmentRepeatInterval(minimumInterval - repeatInterval());
         }
 
-        // No access to member variables after this point, it can delete the timer.
         m_action->execute(context);
 
         InspectorInstrumentation::didFireTimer(cookie);
@@ -156,11 +155,7 @@ void DOMTimer::fired()
         return;
     }
 
-    // Delete timer before executing the action for one-shot timers.
-    std::unique_ptr<ScheduledAction> action = WTF::move(m_action);
-
-    // No access to member variables after this point.
-    delete this;
+    context->removeTimeout(m_timeoutId);
 
 #if PLATFORM(IOS)
     bool shouldReportLackOfChanges;
@@ -179,7 +174,7 @@ void DOMTimer::fired()
     }
 #endif
 
-    action->execute(context);
+    m_action->execute(context);
 
 #if PLATFORM(IOS)
     if (shouldBeginObservingChanges) {
@@ -194,12 +189,6 @@ void DOMTimer::fired()
     InspectorInstrumentation::didFireTimer(cookie);
 
     timerNestingLevel = 0;
-}
-
-void DOMTimer::contextDestroyed()
-{
-    SuspendableTimer::contextDestroyed();
-    delete this;
 }
 
 void DOMTimer::didStop()
