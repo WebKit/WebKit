@@ -1,3 +1,14 @@
+2014-10-22  Milan Crha  <mcrha@redhat.com>
+
+        Prefix isnan() with std::.
+        <https://webkit.org/b/137966>.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * profiler/ProfileNode.h:
+        (JSC::ProfileNode::Call::setStartTime):
+        (JSC::ProfileNode::Call::setElapsedTime):
+
 2014-10-22  Mark Lam  <mark.lam@apple.com>
 
         Refactoring to simplify some code in DatePrototype.cpp.

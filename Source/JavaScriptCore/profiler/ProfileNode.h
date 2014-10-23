@@ -65,14 +65,14 @@ namespace JSC {
             double startTime() const { return m_startTime; }
             void setStartTime(double time)
             {
-                ASSERT_ARG(time, time >= 0.0 || isnan(time));
+                ASSERT_ARG(time, time >= 0.0 || std::isnan(time));
                 m_startTime = time;
             }
 
             double elapsedTime() const { return m_elapsedTime; }
             void setElapsedTime(double time)
             {
-                ASSERT_ARG(time, time >= 0.0 || isnan(time));
+                ASSERT_ARG(time, time >= 0.0 || std::isnan(time));
                 m_elapsedTime = time;
             }
 
