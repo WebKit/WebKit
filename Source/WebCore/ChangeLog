@@ -1,3 +1,15 @@
+2014-10-22  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r175000): Crash in SourceBufferPrivateAVFObjC::destroyParser()
+        https://bugs.webkit.org/show_bug.cgi?id=137990
+
+        Reviewed by Alexey Proskuryakov.
+
+        NULL-check m_mediaSource before using.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::destroyParser):
+
 2014-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG loaded through html <img> can't request to load any external resources.
