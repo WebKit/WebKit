@@ -48,7 +48,7 @@ namespace WebCore {
 // similar variants. For reference counted types, increments and
 // decrements the reference count of the target object.
 
-class WebGLGetInfo {
+class WebGLGetInfo final {
 public:
     enum Type {
         kTypeBool,
@@ -92,7 +92,7 @@ public:
     explicit WebGLGetInfo(PassRefPtr<Uint32Array> value);
     explicit WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value);
 
-    virtual ~WebGLGetInfo();
+    ~WebGLGetInfo();
 
     Type getType() const;
 

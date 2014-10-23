@@ -36,7 +36,7 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class WebKitCSSMatrix : public ScriptWrappable, public RefCounted<WebKitCSSMatrix> {
+class WebKitCSSMatrix final : public ScriptWrappable, public RefCounted<WebKitCSSMatrix> {
 public:
     static PassRefPtr<WebKitCSSMatrix> create(const TransformationMatrix& m)
     {
@@ -47,7 +47,7 @@ public:
         return adoptRef(new WebKitCSSMatrix(s, ec));
     }
 
-    virtual ~WebKitCSSMatrix();
+    ~WebKitCSSMatrix();
 
     double a() const { return m_matrix.a(); }
     double b() const { return m_matrix.b(); }

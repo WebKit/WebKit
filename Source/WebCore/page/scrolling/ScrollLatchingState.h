@@ -34,10 +34,10 @@ class ContainerNode;
 class Element;
 class Frame;
 
-class ScrollLatchingState {
+class ScrollLatchingState final {
 public:
     ScrollLatchingState();
-    virtual ~ScrollLatchingState();
+    ~ScrollLatchingState();
 
     void clear();
 

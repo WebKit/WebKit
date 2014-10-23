@@ -25,6 +25,7 @@
  */
 
 [
-    Conditional=WEBGL
+    Conditional=WEBGL,
+    ImplementationLacksVTable,
 ] interface WebGLUniformLocation {
 };

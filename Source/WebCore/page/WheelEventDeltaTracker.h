@@ -42,10 +42,10 @@ enum class DominantScrollGestureDirection {
     Horizontal
 };
 
-class WheelEventDeltaTracker {
+class WheelEventDeltaTracker final {
 public:
     WEBCORE_EXPORT WheelEventDeltaTracker();
-    virtual ~WheelEventDeltaTracker();
+    ~WheelEventDeltaTracker();
 
     WEBCORE_EXPORT void beginTrackingDeltas();
     WEBCORE_EXPORT void endTrackingDeltas();

@@ -133,10 +133,10 @@ struct InspectorStyleProperty {
     String rawText;
 };
 
-class InspectorStyle : public RefCounted<InspectorStyle> {
+class InspectorStyle final : public RefCounted<InspectorStyle> {
 public:
     static PassRefPtr<InspectorStyle> create(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
-    virtual ~InspectorStyle();
+    ~InspectorStyle();
 
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     PassRefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle() const;

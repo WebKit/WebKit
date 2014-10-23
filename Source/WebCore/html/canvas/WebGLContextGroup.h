@@ -40,10 +40,10 @@ class WebGLRenderingContext;
 
 typedef int ExceptionCode;
 
-class WebGLContextGroup : public RefCounted<WebGLContextGroup> {
+class WebGLContextGroup final : public RefCounted<WebGLContextGroup> {
 public:
     static PassRefPtr<WebGLContextGroup> create();
-    virtual ~WebGLContextGroup();
+    ~WebGLContextGroup();
 
     void addContext(WebGLRenderingContext*);
     void removeContext(WebGLRenderingContext*);

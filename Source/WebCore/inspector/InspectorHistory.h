@@ -44,7 +44,7 @@ class Node;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorHistory {
+class InspectorHistory final {
     WTF_MAKE_NONCOPYABLE(InspectorHistory); WTF_MAKE_FAST_ALLOCATED;
 public:
     class Action {
@@ -68,7 +68,7 @@ public:
     };
 
     InspectorHistory();
-    virtual ~InspectorHistory();
+    ~InspectorHistory();
 
     bool perform(std::unique_ptr<Action>, ExceptionCode&);
     void markUndoableState();
