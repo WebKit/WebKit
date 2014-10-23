@@ -38,6 +38,8 @@ class StyleBuilderConverter {
 public:
     static Length convertLength(StyleResolver&, CSSValue&);
     static Length convertLengthOrAuto(StyleResolver&, CSSValue&);
+    static Length convertLengthSizing(StyleResolver&, CSSValue&);
+    static Length convertLengthMaxSizing(StyleResolver&, CSSValue&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -68,6 +70,39 @@ inline Length StyleBuilderConverter::convertLengthOrAuto(StyleResolver& styleRes
     if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
         return Length(Auto);
     return convertLength(styleResolver, value);
+}
+
+inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.getValueID()) {
+    case CSSValueInvalid:
+        return convertLength(styleResolver, value);
+    case CSSValueIntrinsic:
+        return Length(Intrinsic);
+    case CSSValueMinIntrinsic:
+        return Length(MinIntrinsic);
+    case CSSValueWebkitMinContent:
+        return Length(MinContent);
+    case CSSValueWebkitMaxContent:
+        return Length(MaxContent);
+    case CSSValueWebkitFillAvailable:
+        return Length(FillAvailable);
+    case CSSValueWebkitFitContent:
+        return Length(FitContent);
+    case CSSValueAuto:
+        return Length(Auto);
+    default:
+        ASSERT_NOT_REACHED();
+        return Length();
+    }
+}
+
+inline Length StyleBuilderConverter::convertLengthMaxSizing(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+        return Length(Undefined);
+    return convertLengthSizing(styleResolver, value);
 }
 
 } // namespace WebCore

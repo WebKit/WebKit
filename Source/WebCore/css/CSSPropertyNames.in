@@ -113,7 +113,7 @@ cursor [Inherited]
 empty-cells [Inherited, NewStyleBuilder, TypeName=EEmptyCell]
 float [NewStyleBuilder, TypeName=EFloat, NameForMethods=Floating]
 font-stretch
-height
+height [NewStyleBuilder, Initial=initialSize, Converter=LengthSizing]
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
 image-orientation [Inherited, NewStyleBuilder, TypeName=ImageOrientationEnum]
 #endif
@@ -132,10 +132,10 @@ margin-bottom [NewStyleBuilder, Initial=initialMargin, Converter=LengthOrAuto]
 margin-left [NewStyleBuilder, Initial=initialMargin, Converter=LengthOrAuto]
 margin-right [NewStyleBuilder, Initial=initialMargin, Converter=LengthOrAuto]
 margin-top [NewStyleBuilder, Initial=initialMargin, Converter=LengthOrAuto]
-max-height
-max-width
-min-height
-min-width
+max-height [NewStyleBuilder, Initial=initialMaxSize, Converter=LengthMaxSizing]
+max-width [NewStyleBuilder, Initial=initialMaxSize, Converter=LengthMaxSizing]
+min-height [NewStyleBuilder, Initial=initialMinSize, Converter=LengthSizing]
+min-width [NewStyleBuilder, Initial=initialMinSize, Converter=LengthSizing]
 object-fit [NewStyleBuilder, TypeName=ObjectFit]
 opacity [NewStyleBuilder, TypeName=float]
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
@@ -206,7 +206,7 @@ vertical-align
 visibility [Inherited, NewStyleBuilder]
 white-space [Inherited, NewStyleBuilder]
 widows [Inherited]
-width
+width [NewStyleBuilder, Initial=initialSize, Converter=LengthSizing]
 word-break [Inherited, NewStyleBuilder]
 -epub-word-break = word-break
 word-spacing [Inherited]
