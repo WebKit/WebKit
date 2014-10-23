@@ -93,8 +93,6 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
         ASSERT(pluginControllerUniquePtr.get() == pluginController);
     }
 
-    pluginDidBecomeHidden(pluginInstanceID);
-
     // Invalidate all objects related to this plug-in.
     if (plugin)
         m_npRemoteObjectMap->pluginDestroyed(plugin);
@@ -323,28 +321,6 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
     }
 
     m_connection->sendSync(Messages::PluginProxy::DidCreatePlugin(wantsWheelEvents, remoteLayerClientID), Messages::PluginProxy::DidCreatePlugin::Reply(), creationParameters.pluginInstanceID);
-}
-    
-void WebProcessConnection::pluginDidBecomeVisible(unsigned pluginInstanceID)
-{
-    bool oldState = m_visiblePluginInstanceIDs.isEmpty();
-    
-    m_visiblePluginInstanceIDs.add(pluginInstanceID);
-
-    ASSERT(m_visiblePluginInstanceIDs.size() <= m_pluginControllers.size());
-    
-    if (oldState != m_visiblePluginInstanceIDs.isEmpty())
-        PluginProcess::shared().pluginsForWebProcessDidBecomeVisible();
-}
-
-void WebProcessConnection::pluginDidBecomeHidden(unsigned pluginInstanceID)
-{
-    bool oldState = m_visiblePluginInstanceIDs.isEmpty();
-    
-    m_visiblePluginInstanceIDs.remove(pluginInstanceID);
-    
-    if (oldState != m_visiblePluginInstanceIDs.isEmpty())
-        PluginProcess::shared().pluginsForWebProcessDidBecomeHidden();
 }
     
 void WebProcessConnection::audioHardwareDidBecomeActive()

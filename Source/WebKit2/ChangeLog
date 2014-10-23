@@ -1,3 +1,36 @@
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r172629.
+
+    2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+            Simplify visibility activity accounting for plugins
+            https://bugs.webkit.org/show_bug.cgi?id=135981
+
+            Reviewed by Dan Bernstein.
+
+            Just take one per connection, rather than implementing a counting mechanism.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::PluginControllerProxy):
+            * PluginProcess/PluginControllerProxy.h:
+                - added m_visiblityActivity.
+            * PluginProcess/PluginProcess.cpp:
+            (WebKit::PluginProcess::PluginProcess):
+            (WebKit::PluginProcess::pluginsForWebProcessDidBecomeVisible): Deleted.
+            (WebKit::PluginProcess::pluginsForWebProcessDidBecomeHidden): Deleted.
+            * PluginProcess/PluginProcess.h:
+                - removed pluginsForWebProcessDidBecomeVisible/Hidden.
+            * PluginProcess/WebProcessConnection.cpp:
+            (WebKit::WebProcessConnection::removePluginControllerProxy):
+            (WebKit::WebProcessConnection::pluginDidBecomeVisible): Deleted.
+            (WebKit::WebProcessConnection::pluginDidBecomeHidden): Deleted.
+            * PluginProcess/WebProcessConnection.h:
+                - removed pluginDidBecomeVisible/Hidden.
+            * PluginProcess/mac/PluginControllerProxyMac.mm:
+            (WebKit::PluginControllerProxy::windowVisibilityChanged):
+                - windowVisibilityChanged uses m_visiblityActivity, rather than calling to PluginControllerProxy.
+
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
         Merge r174708
