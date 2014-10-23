@@ -117,7 +117,7 @@ static void setUpDownloadClient(CFURLDownloadClient& client, Download& download)
     client.didFail = [](CFURLDownloadRef downloadRef, CFErrorRef error, const void* clientInfo) {
         dispatchOnMainThread(^{
             auto resumeData = adoptCF(CFURLDownloadCopyResumeData(downloadRef));
-            toDownload(clientInfo)->didFail(error, IPC::DataReference(CFDataGetBytePtr(resumeData.get()), CFDataGetLength(resumeData.get())));
+            toDownload(clientInfo)->didFail(error, IPC::DataReference(resumeData ? CFDataGetBytePtr(resumeData.get()) : nullptr, resumeData ? CFDataGetLength(resumeData.get()) : 0));
         });
     };
 }
