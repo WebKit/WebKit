@@ -319,6 +319,10 @@ WK_EXPORT void WKPreferencesSetTelephoneNumberParsingEnabled(WKPreferencesRef pr
 WK_EXPORT bool WKPreferencesGetTelephoneNumberParsingEnabled(WKPreferencesRef preferencesRef);
 
 // Default to false.
+WK_EXPORT void WKPreferencesSetActionMenuSupportEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetActionMenuSupportEnabled(WKPreferencesRef);
+
+// Default to false.
 WK_EXPORT void WKPreferencesSetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef);
 

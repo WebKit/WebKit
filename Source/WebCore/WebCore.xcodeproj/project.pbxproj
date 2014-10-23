@@ -3241,6 +3241,7 @@
 		9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 9343CB8012F25E510033C5EE /* TextCodecUTF8.h */; };
 		93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */; };
 		93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */; };
+		9348428219F1A9190009D5AE /* NSViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9348428119F1A9190009D5AE /* NSViewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC1090EDB223900A658F2 /* ScriptSourceCode.h */; };
 		934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */; };
@@ -10383,6 +10384,7 @@
 		9343CB8012F25E510033C5EE /* TextCodecUTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF8.h; sourceTree = "<group>"; };
 		93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowsCollection.h; sourceTree = "<group>"; };
 		93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableRowsCollection.cpp; sourceTree = "<group>"; };
+		9348428119F1A9190009D5AE /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
 		934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextCG.h; sourceTree = "<group>"; };
 		934CC1090EDB223900A658F2 /* ScriptSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceCode.h; sourceTree = "<group>"; };
 		934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSStringExtras.mm; sourceTree = "<group>"; };
@@ -16219,6 +16221,36 @@
 			path = plugins;
 			sourceTree = "<group>";
 		};
+		65086DA619AC1719009AF46B /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				65086DA719AC1719009AF46B /* CFLocaleSPI.h */,
+				CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */,
+				CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */,
+			);
+			path = cf;
+			sourceTree = "<group>";
+		};
+		653EF83619A043AE0052202C /* spi */ = {
+			isa = PBXGroup;
+			children = (
+				65086DA619AC1719009AF46B /* cf */,
+				653EF83719A043AE0052202C /* cocoa */,
+				A172182419DE182B00464D17 /* ios */,
+				9348428019F1A9190009D5AE /* mac */,
+			);
+			path = spi;
+			sourceTree = "<group>";
+		};
+		653EF83719A043AE0052202C /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
+				1CF7E26E19D881EF00DD8F98 /* CGFontUnicodeSupportSPI.h */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -17558,6 +17590,14 @@
 				9332AB8C1653A97900D827EC /* NEONHelpers.h */,
 			);
 			path = filters;
+			sourceTree = "<group>";
+		};
+		9348428019F1A9190009D5AE /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				9348428119F1A9190009D5AE /* NSViewSPI.h */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		93A1EAA20A5634D8006960A0 /* mac */ = {
@@ -21303,6 +21343,7 @@
 				656B84D70AEA1CE900A095B4 /* network */,
 				516030090CC4245400C8AC25 /* posix */,
 				1A2E6E560CC551E0004A2062 /* sql */,
+				653EF83619A043AE0052202C /* spi */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
@@ -25956,6 +25997,7 @@
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
 				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
+				9348428219F1A9190009D5AE /* NSViewSPI.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
 				CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */,
 				CD641EB41818F5ED00EE4C41 /* SourceBufferPrivate.h in Headers */,
