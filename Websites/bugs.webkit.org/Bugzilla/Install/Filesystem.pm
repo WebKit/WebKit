@@ -167,6 +167,7 @@ sub FILESYSTEM {
         'mod_perl.pl'   => { perms => WS_SERVE },
         'robots.txt'    => { perms => WS_SERVE },
         '.htaccess'     => { perms => WS_SERVE },
+        '*.js'          => { perms => WS_SERVE }, # WEBKIT_CHANGES
 
         'contrib/README'       => { perms => OWNER_WRITE },
         'contrib/*/README'     => { perms => OWNER_WRITE },
