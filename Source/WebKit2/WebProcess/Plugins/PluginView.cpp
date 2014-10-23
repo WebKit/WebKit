@@ -647,7 +647,8 @@ void PluginView::didInitializePlugin()
             m_pluginElement->dispatchPendingMouseClick();
     }
 
-    m_plugin->windowVisibilityChanged(m_webPage->isVisible());
+    m_plugin->visibilityDidChange(isVisible());
+    m_plugin->windowVisibilityChanged(m_webPage->isVisibleOrOccluded());
     m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 #endif
 

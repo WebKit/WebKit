@@ -1,5 +1,21 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172634.
+
+    2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+            Fix plugin visibility initialization
+            https://bugs.webkit.org/show_bug.cgi?id=135985
+
+            Reviewed by Geoffrey Garen.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::didInitializePlugin):
+                - We're not currently initializing the plugin visibility state,
+                  and we're passing the wrong value for window visibility.
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172629.
 
     2014-08-15  Gavin Barraclough  <barraclough@apple.com>
