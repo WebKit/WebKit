@@ -61,11 +61,8 @@ AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()
     if (!isTableRow())
         return AccessibilityRenderObject::determineAccessibilityRole();
 
-    m_ariaRole = determineAriaRoleAttribute();
-
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole != UnknownRole)
-        return ariaRole;
+    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)
+        return m_ariaRole;
 
     return RowRole;
 }
