@@ -1,5 +1,44 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173132.
+
+    2014-08-29  Gavin Barraclough  <barraclough@apple.com>
+
+            DOMTimer::m_nestingLevel is prone to overflow
+            https://bugs.webkit.org/show_bug.cgi?id=136399
+
+            Reviewed by Alexey Proskuryakov.
+
+            Since this would happen after the 2 billionth timer fire this is unlikely,
+            and consequences aren't severe (breaks throttling).
+
+            This change has the following consequences.
+
+                - m_nestingLevel saturates to its max value.
+                - unnested timers are indicated by a nesting level of 0.
+                - repeat timers update m_nestingLevel on every fire,
+                  not just those that should have been throttled.
+
+            The last point is subtle, but ultimately should be inconsequential. Timers
+            whose requested timeout is less that the minimum interval will saturate quickly
+            anyway; timers with an original interval greater than the minimum previously
+            wouldn't have incremented m_nestingLevel, but doing so now doesn't hurt since
+            they won't be throttled when they hit the threshold. This simplifies things
+            conceptually a little & reduces the test performed on each timer fire.
+
+            * page/DOMTimer.cpp:
+            (WebCore::shouldForwardUserGesture):
+                - unnested timers are indicated by a nesting level of 0
+            (WebCore::DOMTimer::DOMTimer):
+                - don't increment nesting level on construction
+            (WebCore::DOMTimer::fired):
+                - saturating increments
+            (WebCore::DOMTimer::adjustMinimumTimerInterval):
+            (WebCore::DOMTimer::intervalClampedToMinimum):
+                - added ASSERTs
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172964.
 
     2014-08-26  Tim Horton  <timothy_horton@apple.com>
