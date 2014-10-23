@@ -45,6 +45,7 @@ my %nameIsInherited;
 # variable should go away.
 my %propertiesUsingNewStyleBuilder;
 my %newStyleBuilderOptions = (
+  Converter => 1, # Defined in Source/WebCore/css/StyleBuilderConverter.h
   Getter => 1,
   Initial => 1,
   NameForMethods => 1,
@@ -361,6 +362,7 @@ print STYLEBUILDER << "EOF";
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "RenderStyle.h"
+#include "StyleBuilderConverter.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -384,14 +386,20 @@ foreach my $name (@names) {
   print STYLEBUILDER "    }\n";
   print STYLEBUILDER "    static void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
   print STYLEBUILDER "    {\n";
-  print STYLEBUILDER "        " . $setValue . "(static_cast<" . $propertiesUsingNewStyleBuilder{$name}{"TypeName"} . ">(static_cast<CSSPrimitiveValue&>(value)));\n";
+  my $convertedValue;
+  if (exists($propertiesUsingNewStyleBuilder{$name}{"Converter"})) {
+    $convertedValue = "StyleBuilderConverter::convert" . $propertiesUsingNewStyleBuilder{$name}{"Converter"} . "(styleResolver, value)";
+  } else {
+    $convertedValue = "static_cast<" . $propertiesUsingNewStyleBuilder{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
+  }
+  print STYLEBUILDER "        " . $setValue . "(" . $convertedValue . ");\n";
   print STYLEBUILDER "    }\n";
 }
 
 print STYLEBUILDER << "EOF";
 };
 
-bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue* value, bool isInitial, bool isInherit)
+bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
 {
     switch (property) {
 EOF
@@ -406,7 +414,7 @@ foreach my $name (@names) {
   print STYLEBUILDER "        else if (isInherit)\n";
   print STYLEBUILDER "            StyleBuilderFunctions::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
   print STYLEBUILDER "        else\n";
-  print STYLEBUILDER "            StyleBuilderFunctions::applyValue" . $nameToId{$name} . "(styleResolver, *value);\n";
+  print STYLEBUILDER "            StyleBuilderFunctions::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
   print STYLEBUILDER "        return true;\n";
 }
 

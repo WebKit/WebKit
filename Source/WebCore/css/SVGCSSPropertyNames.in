@@ -33,12 +33,12 @@ mask-type
 shape-rendering [Inherited]
 stroke [Inherited]
 stroke-dasharray [Inherited]
-stroke-dashoffset [Inherited]
+stroke-dashoffset [Inherited, NewStyleBuilder, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
 stroke-linecap [Inherited]
 stroke-linejoin [Inherited]
 stroke-miterlimit [Inherited]
 stroke-opacity [Inherited]
-stroke-width [Inherited]
+stroke-width [Inherited, NewStyleBuilder, Initial=initialOneLength, Converter=Length]
 // text-rendering
 alignment-baseline
 baseline-shift
@@ -52,11 +52,11 @@ writing-mode [Inherited]
 
 -webkit-svg-shadow
 
-cx
-cy
-r
-rx
-ry
-x
-y
+cx [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+cy [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+r [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+rx [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+ry [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+x [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+y [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
 

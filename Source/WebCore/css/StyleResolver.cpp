@@ -2129,7 +2129,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     // Use the new StyleBuilder.
-    if (StyleBuilder::applyProperty(id, *this, value, isInitial, isInherit))
+    if (StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit))
         return;
 
     CSSPrimitiveValue* primitiveValue = is<CSSPrimitiveValue>(*value) ? downcast<CSSPrimitiveValue>(value) : nullptr;

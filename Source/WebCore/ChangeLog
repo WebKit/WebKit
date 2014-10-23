@@ -1,3 +1,41 @@
+2014-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Move Length-type CSS properties from DeprecatedStyleBuilder to the new Style Builder
+        https://bugs.webkit.org/show_bug.cgi?id=138000
+
+        Reviewed by Andreas Kling.
+
+        Move most Length-type CSS properties from DeprecatedStyleBuilder to the
+        new Style Builder so that they are now generated. This patch adds
+        support for a "Converter" option in CSSPropertyNames.in that can be
+        used to specify a type converter function in
+        css/StyleBuilderConverter.h. This patch adds support for Length and
+        LengthOrAuto converters so that most Length-type properties can now be
+        generated.
+
+        Another converter (likely called "LengthSizing") will be needed to
+        generate the remaining Length-type properties. This will be taken care
+        of in a follow-up patch.
+
+        This patch is inspired by the following Blink revision by
+        <timloh@chromium.org>:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=150500
+
+        No new tests, no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/SVGCSSPropertyNames.in:
+        * css/StyleBuilder.h:
+        * css/StyleBuilderConverter.h: Added.
+        (WebCore::StyleBuilderConverter::convertLength):
+        (WebCore::StyleBuilderConverter::convertLengthOrAuto):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/makeprop.pl:
+
 2014-10-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Const-ify static s_resourceType members in RenderSVGResource* classes
