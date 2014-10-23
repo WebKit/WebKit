@@ -45,7 +45,7 @@ struct ErrorEventInit : public EventInit {
     unsigned colno;
 };
 
-class ErrorEvent : public Event {
+class ErrorEvent final : public Event {
 public:
     static PassRefPtr<ErrorEvent> create()
     {

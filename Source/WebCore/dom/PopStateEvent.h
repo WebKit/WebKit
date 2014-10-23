@@ -41,7 +41,7 @@ struct PopStateEventInit : public EventInit {
 class History;
 class SerializedScriptValue;
 
-class PopStateEvent : public Event {
+class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
     static PassRefPtr<PopStateEvent> create();

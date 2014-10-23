@@ -38,7 +38,7 @@ struct CustomEventInit : public EventInit {
     Deprecated::ScriptValue detail;
 };
 
-class CustomEvent : public Event {
+class CustomEvent final : public Event {
 public:
     virtual ~CustomEvent();
 
@@ -54,7 +54,7 @@ public:
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& detail);
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
     const Deprecated::ScriptValue& detail() const { return m_detail; }
     PassRefPtr<SerializedScriptValue> serializedScriptValue() { return m_serializedScriptValue; }

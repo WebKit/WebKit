@@ -30,7 +30,7 @@ namespace WebCore {
 
     class DataTransfer;
 
-    class ClipboardEvent : public Event {
+    class ClipboardEvent final : public Event {
     public:
         virtual ~ClipboardEvent();
 

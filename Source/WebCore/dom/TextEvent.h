@@ -37,7 +37,7 @@ namespace WebCore {
 
     enum class MailBlockquoteHandling;
 
-    class TextEvent : public UIEvent {
+    class TextEvent final : public UIEvent {
     public:
 
         static PassRefPtr<TextEvent> create();

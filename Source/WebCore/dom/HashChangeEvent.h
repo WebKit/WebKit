@@ -35,7 +35,7 @@ struct HashChangeEventInit : public EventInit {
     String newURL;
 };
 
-class HashChangeEvent : public Event {
+class HashChangeEvent final : public Event {
 public:
     static PassRefPtr<HashChangeEvent> create()
     {

@@ -45,7 +45,7 @@ struct KeyboardEventInit : public UIEventInit {
     bool metaKey;
 };
 
-class KeyboardEvent : public UIEventWithKeyState {
+class KeyboardEvent final : public UIEventWithKeyState {
 public:
     enum KeyLocationCode {
         DOM_KEY_LOCATION_STANDARD   = 0x00,

@@ -36,7 +36,7 @@ struct PageTransitionEventInit : public EventInit {
     bool persisted;
 };
 
-class PageTransitionEvent : public Event {
+class PageTransitionEvent final : public Event {
 public:
     static PassRefPtr<PageTransitionEvent> create()
     {

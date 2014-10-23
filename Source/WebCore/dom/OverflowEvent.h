@@ -38,7 +38,7 @@ struct OverflowEventInit : public EventInit {
     bool verticalOverflow;
 };
 
-class OverflowEvent : public Event {
+class OverflowEvent final : public Event {
 public:
     enum orientType {
         HORIZONTAL = 0,

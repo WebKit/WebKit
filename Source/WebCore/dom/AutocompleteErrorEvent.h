@@ -36,7 +36,7 @@ struct AutocompleteErrorEventInit : public EventInit {
     String reason;
 };
 
-class AutocompleteErrorEvent : public Event {
+class AutocompleteErrorEvent final : public Event {
 public:
     static PassRefPtr<AutocompleteErrorEvent> create()
     {

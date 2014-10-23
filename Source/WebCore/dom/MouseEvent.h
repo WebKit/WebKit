@@ -125,7 +125,7 @@ private:
     RefPtr<DataTransfer> m_dataTransfer;
 };
 
-class SimulatedMouseEvent : public MouseEvent {
+class SimulatedMouseEvent final : public MouseEvent {
 public:
     static PassRefPtr<SimulatedMouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, PassRefPtr<Event> underlyingEvent, Element* target);
     virtual ~SimulatedMouseEvent();

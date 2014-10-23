@@ -35,12 +35,12 @@ namespace WebCore {
 struct BeforeLoadEventInit : public EventInit {
     BeforeLoadEventInit()
     {
-    };
+    }
 
     String url;
 };
 
-class BeforeLoadEvent : public Event {
+class BeforeLoadEvent final : public Event {
 public:
     static PassRefPtr<BeforeLoadEvent> create()
     {

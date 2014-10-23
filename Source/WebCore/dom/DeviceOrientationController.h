@@ -37,11 +37,11 @@ class DeviceOrientationClient;
 class DeviceOrientationData;
 class Page;
 
-class DeviceOrientationController : public DeviceController {
+class DeviceOrientationController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
 public:
     explicit DeviceOrientationController(DeviceOrientationClient*);
-    ~DeviceOrientationController() { };
+    virtual ~DeviceOrientationController() { }
 
     void didChangeDeviceOrientation(DeviceOrientationData*);
     DeviceOrientationClient* deviceOrientationClient();

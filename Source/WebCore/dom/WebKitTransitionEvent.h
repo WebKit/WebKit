@@ -38,7 +38,7 @@ struct WebKitTransitionEventInit : public EventInit {
     String pseudoElement;
 };
 
-class WebKitTransitionEvent : public Event {
+class WebKitTransitionEvent final : public Event {
 public:
     static PassRefPtr<WebKitTransitionEvent> create()
     {

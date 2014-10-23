@@ -307,7 +307,7 @@ public:
     using ContainerNode::ref;
     using ContainerNode::deref;
 
-    virtual bool canContainRangeEndPoint() const override { return true; }
+    virtual bool canContainRangeEndPoint() const override final { return true; }
 
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
@@ -483,7 +483,7 @@ public:
     String documentURI() const { return m_documentURI; }
     void setDocumentURI(const String&);
 
-    virtual URL baseURI() const override;
+    virtual URL baseURI() const override final;
 
 #if ENABLE(WEB_REPLAY)
     JSC::InputCursor& inputCursor() const { return *m_inputCursor; }
@@ -624,9 +624,9 @@ public:
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
-    virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override;
-    virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override;
-    virtual void stopActiveDOMObjects() override;
+    virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
+    virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
+    virtual void stopActiveDOMObjects() override final;
 
     RenderView* renderView() const { return m_renderView.get(); }
 
@@ -678,9 +678,9 @@ public:
     WEBCORE_EXPORT virtual URL completeURL(const String&) const override final;
     URL completeURL(const String&, const URL& baseURLOverride) const;
 
-    virtual String userAgent(const URL&) const override;
+    virtual String userAgent(const URL&) const override final;
 
-    virtual void disableEval(const String& errorMessage) override;
+    virtual void disableEval(const String& errorMessage) override final;
 
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
@@ -1015,11 +1015,11 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    virtual void postTask(Task) override; // Executes the task on context's thread asynchronously.
+    virtual void postTask(Task) override final; // Executes the task on context's thread asynchronously.
 
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
-    virtual void scriptedAnimationControllerSetThrottled(bool);
+    void scriptedAnimationControllerSetThrottled(bool);
     
     void windowScreenDidChange(PlatformDisplayID);
 
@@ -1091,7 +1091,7 @@ public:
     void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
 #endif
 
-    virtual void removeAllEventListeners() override;
+    virtual void removeAllEventListeners() override final;
 
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
@@ -1105,8 +1105,8 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-    virtual bool isContextThread() const override;
-    virtual bool isJSExecutionForbidden() const override { return false; }
+    virtual bool isContextThread() const override final;
+    virtual bool isJSExecutionForbidden() const override final { return false; }
 
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
@@ -1117,7 +1117,7 @@ public:
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
-    virtual DocumentEventQueue& eventQueue() const override { return m_eventQueue; }
+    virtual DocumentEventQueue& eventQueue() const override final { return m_eventQueue; }
 
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener*);
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1191,8 +1191,8 @@ public:
 
     void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target = nullptr);
 
-    virtual EventTarget* errorEventTarget() override;
-    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) override;
+    virtual EventTarget* errorEventTarget() override final;
+    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) override final;
 
     void initDNSPrefetch();
 
@@ -1267,9 +1267,9 @@ public:
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
 
-    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
+    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override final;
 
-    virtual SecurityOrigin* topOrigin() const override;
+    virtual SecurityOrigin* topOrigin() const override final;
 
 #if ENABLE(FONT_LOAD_EVENTS)
     PassRefPtr<FontLoader> fonts();
@@ -1280,8 +1280,8 @@ public:
     void setVisualUpdatesAllowedByClient(bool);
 
 #if ENABLE(SUBTLE_CRYPTO)
-    virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override;
-    virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
+    virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override final;
+    virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override final;
 #endif
 
     void setHasStyleWithViewportUnits() { m_hasStyleWithViewportUnits = true; }
@@ -1318,24 +1318,24 @@ private:
     typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
     void processArguments(const String& features, void* data, ArgumentsCallback);
 
-    virtual bool isDocument() const override { return true; }
+    virtual bool isDocument() const override final { return true; }
 
-    virtual void childrenChanged(const ChildChange&) override;
+    virtual void childrenChanged(const ChildChange&) override final;
 
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual bool childTypeAllowed(NodeType) const override;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual String nodeName() const override final;
+    virtual NodeType nodeType() const override final;
+    virtual bool childTypeAllowed(NodeType) const override final;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override final;
     void cloneDataFromDocument(const Document&);
 
-    virtual void refScriptExecutionContext() override { ref(); }
-    virtual void derefScriptExecutionContext() override { deref(); }
+    virtual void refScriptExecutionContext() override final { ref(); }
+    virtual void derefScriptExecutionContext() override final { deref(); }
 
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override final;
 
-    virtual double minimumTimerInterval() const override;
+    virtual double minimumTimerInterval() const override final;
 
-    virtual double timerAlignmentInterval() const override;
+    virtual double timerAlignmentInterval() const override final;
 
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired(Timer<Document>&);
@@ -1380,7 +1380,7 @@ private:
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
     void invalidateDOMCookieCache();
     void domCookieCacheExpiryTimerFired(Timer<Document>&);
-    void didLoadResourceSynchronously(const ResourceRequest&) override final;
+    virtual void didLoadResourceSynchronously(const ResourceRequest&) override final;
 
     unsigned m_referencingNodeCount;
 

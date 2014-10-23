@@ -92,8 +92,8 @@ public:
     bool collectionCanTraverseBackward() const { return true; }
     void willValidateIndexCache() const;
 
-    virtual void invalidateCache(Document&) const;
-    virtual size_t memoryCost() const override;
+    virtual void invalidateCache(Document&) const override final;
+    virtual size_t memoryCost() const override final;
 
 protected:
     CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);

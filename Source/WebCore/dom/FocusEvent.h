@@ -39,7 +39,7 @@ struct FocusEventInit : public UIEventInit {
     RefPtr<EventTarget> relatedTarget;
 };
 
-class FocusEvent : public UIEvent {
+class FocusEvent final : public UIEvent {
 public:
     static PassRefPtr<FocusEvent> create()
     {
@@ -56,16 +56,17 @@ public:
         return adoptRef(new FocusEvent(type, initializer));
     }
 
-    virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
+    virtual EventTarget* relatedTarget() const override { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
     virtual EventInterface eventInterface() const override;
-    virtual bool isFocusEvent() const override;
 
 private:
     FocusEvent();
     FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int, PassRefPtr<EventTarget>);
     FocusEvent(const AtomicString& type, const FocusEventInit&);
+
+    virtual bool isFocusEvent() const override;
 
     RefPtr<EventTarget> m_relatedTarget;
 };

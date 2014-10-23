@@ -74,7 +74,6 @@ namespace WebCore {
 
         virtual EventTargetInterface eventTargetInterface() const override { return MessagePortEventTargetInterfaceType; }
         virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
-        virtual bool isMessagePort() const override { return true; }
 
         void dispatchMessages();
 
@@ -106,6 +105,7 @@ namespace WebCore {
 
         virtual void refEventTarget() override { ref(); }
         virtual void derefEventTarget() override { deref(); }
+        virtual bool isMessagePort() const override { return true; }
 
         std::unique_ptr<MessagePortChannel> m_entangledChannel;
 

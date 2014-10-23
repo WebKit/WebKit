@@ -44,7 +44,7 @@ struct WheelEventInit : public MouseEventInit {
     int wheelDeltaY; // Deprecated.
 };
 
-class WheelEvent : public MouseEvent {
+class WheelEvent final : public MouseEvent {
 public:
     enum { TickMultiplier = 120 };
 

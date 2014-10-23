@@ -61,7 +61,6 @@ public:
     int detail() const { return m_detail; }
 
     virtual EventInterface eventInterface() const override;
-    virtual bool isUIEvent() const override;
 
     virtual int keyCode() const;
     virtual int charCode() const;
@@ -81,6 +80,8 @@ protected:
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:
+    virtual bool isUIEvent() const override final;
+
     RefPtr<AbstractView> m_view;
     int m_detail;
 };

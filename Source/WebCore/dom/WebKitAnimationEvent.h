@@ -37,7 +37,7 @@ struct WebKitAnimationEventInit : public EventInit {
     double elapsedTime;
 };
 
-class WebKitAnimationEvent : public Event {
+class WebKitAnimationEvent final : public Event {
 public:
     static PassRefPtr<WebKitAnimationEvent> create()
     {

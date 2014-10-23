@@ -46,7 +46,7 @@ struct SecurityPolicyViolationEventInit : public EventInit {
     int lineNumber;
 };
 
-class SecurityPolicyViolationEvent : public Event {
+class SecurityPolicyViolationEvent final : public Event {
 public:
     static PassRefPtr<SecurityPolicyViolationEvent> create()
     {

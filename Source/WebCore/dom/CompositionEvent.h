@@ -37,7 +37,7 @@ struct CompositionEventInit : UIEventInit {
     String data;
 };
 
-class CompositionEvent : public UIEvent {
+class CompositionEvent final : public UIEvent {
 public:
     static PassRefPtr<CompositionEvent> create()
     {

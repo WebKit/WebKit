@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class TouchEvent : public MouseRelatedEvent {
+class TouchEvent final : public MouseRelatedEvent {
 public:
     virtual ~TouchEvent();
 

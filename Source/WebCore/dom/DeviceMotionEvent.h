@@ -32,9 +32,9 @@ namespace WebCore {
 
 class DeviceMotionData;
 
-class DeviceMotionEvent : public Event {
+class DeviceMotionEvent final : public Event {
 public:
-    ~DeviceMotionEvent();
+    virtual ~DeviceMotionEvent();
     static PassRefPtr<DeviceMotionEvent> create()
     {
         return adoptRef(new DeviceMotionEvent);

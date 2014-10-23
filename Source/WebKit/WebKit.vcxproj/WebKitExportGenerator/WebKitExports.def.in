@@ -136,7 +136,6 @@ EXPORTS
         symbolWithPointer(?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z, ?instrumentationForPage@WebCore@@YAPEAVInstrumentingAgents@1@PEAVPage@1@@Z)
         ?isMainThread@WTF@@YA_NXZ
         symbolWithPointer(?lock@Mutex@WTF@@QAEXXZ, ?lock@Mutex@WTF@@QEAAXXZ)
-        symbolWithPointer(?scriptedAnimationControllerSetThrottled@Document@WebCore@@UAEX_N@Z, ?scriptedAnimationControllerSetThrottled@Document@WebCore@@UEAAX_N@Z)
         symbolWithPointer(?signal@ThreadCondition@WTF@@QAEXXZ, ?signal@ThreadCondition@WTF@@QEAAXXZ)
         symbolWithPointer(?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z, ?timedWait@ThreadCondition@WTF@@QEAA_NAEAVMutex@2@N@Z)
         symbolWithPointer(?tlsKeyCount@WTF@@YAAAJXZ, ?tlsKeyCount@WTF@@YAAEAJXZ)

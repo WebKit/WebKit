@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-    class MutationEvent : public Event {
+    class MutationEvent final : public Event {
     public:
         virtual ~MutationEvent();
 

@@ -1,3 +1,71 @@
+2014-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in dom/
+        https://bugs.webkit.org/show_bug.cgi?id=138019
+
+        Reviewed by Benjamin Poulain.
+
+        Clean up virtual functions in dom/ by:
+        - Making virtual functions final when possible
+        - Making classes final when possible
+        - Using 'override' when appropriate
+        - Explicitly marking functions / destructors as virtual when they are
+          inherently virtual
+        - Making isXXX() virtual functions private on XXX classes to avoid
+          unnecessary type checks
+        - Dropping final for virtual functions in classes already marked as
+          final
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * dom/AutocompleteErrorEvent.h:
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEventInit::BeforeLoadEventInit):
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.h:
+        * dom/CustomEvent.h:
+        * dom/DeviceMotionController.h:
+        (WebCore::DeviceMotionController::~DeviceMotionController): Deleted.
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceOrientationController.h:
+        (WebCore::DeviceOrientationController::~DeviceOrientationController): Deleted.
+        * dom/DeviceOrientationEvent.h:
+        * dom/Document.h:
+        * dom/DocumentFragment.h:
+        * dom/ErrorEvent.h:
+        * dom/FocusEvent.h:
+        * dom/HashChangeEvent.h:
+        * dom/KeyboardEvent.h:
+        * dom/LiveNodeList.h:
+        * dom/MessageEvent.h:
+        * dom/MessagePort.h:
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.h:
+        * dom/MutationEvent.h:
+        * dom/NamedFlowCollection.h:
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.h:
+        * dom/PendingScript.h:
+        * dom/PopStateEvent.h:
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::finish): Deleted.
+        (WebCore::RawDataDocumentParser::flush): Deleted.
+        (WebCore::RawDataDocumentParser::insert): Deleted.
+        (WebCore::RawDataDocumentParser::append): Deleted.
+        * dom/ScriptableDocumentParser.h:
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/TextEvent.h:
+        * dom/TouchEvent.h:
+        * dom/TransitionEvent.h:
+        * dom/UIEvent.h:
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitTransitionEvent.h:
+        * dom/WheelEvent.h:
+        * page/DeviceController.h:
+        (WebCore::DeviceController::~DeviceController):
+
 2014-10-23  Tim Horton  <timothy_horton@apple.com>
 
         Add some SPI headers for NSExtension and NSSharingService{Picker}

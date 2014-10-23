@@ -42,7 +42,7 @@ class Element;
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a dummy client open for its
 // lifetime in order to guarantee that the data buffer will not be purged.
-class PendingScript : public CachedResourceClient {
+class PendingScript final : public CachedResourceClient {
 public:
     PendingScript()
         : m_watchingForLoad(false)
@@ -66,7 +66,7 @@ public:
         setCachedScript(other.cachedScript());
     }
 
-    ~PendingScript();
+    virtual ~PendingScript();
 
     PendingScript& operator=(const PendingScript& other)
     {

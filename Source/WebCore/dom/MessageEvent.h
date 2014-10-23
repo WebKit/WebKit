@@ -51,7 +51,7 @@ struct MessageEventInit : public EventInit {
     MessagePortArray ports;
 };
 
-class MessageEvent : public Event {
+class MessageEvent final : public Event {
 public:
     static PassRefPtr<MessageEvent> create()
     {

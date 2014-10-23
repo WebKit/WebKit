@@ -39,7 +39,7 @@ struct TransitionEventInit : public EventInit {
     String pseudoElement;
 };
 
-class TransitionEvent : public Event {
+class TransitionEvent final : public Event {
 public:
     static PassRefPtr<TransitionEvent> create()
     {

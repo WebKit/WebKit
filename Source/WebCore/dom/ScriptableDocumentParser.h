@@ -55,7 +55,7 @@ protected:
     explicit ScriptableDocumentParser(Document&, ParserContentPolicy = AllowScriptingContent);
 
 private:
-    virtual ScriptableDocumentParser* asScriptableDocumentParser() override { return this; }
+    virtual ScriptableDocumentParser* asScriptableDocumentParser() override final { return this; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script-created-parser
     bool m_wasCreatedByScript;

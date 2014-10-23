@@ -32,9 +32,9 @@ namespace WebCore {
 
 class DeviceOrientationData;
 
-class DeviceOrientationEvent : public Event {
+class DeviceOrientationEvent final : public Event {
 public:
-    ~DeviceOrientationEvent();
+    virtual ~DeviceOrientationEvent();
     static PassRefPtr<DeviceOrientationEvent> create()
     {
         return adoptRef(new DeviceOrientationEvent);
