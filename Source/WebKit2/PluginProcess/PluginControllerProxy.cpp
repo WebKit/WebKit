@@ -434,6 +434,23 @@ void PluginControllerProxy::visibilityDidChange(bool isVisible)
     m_plugin->visibilityDidChange(isVisible);
 }
 
+void PluginControllerProxy::windowFocusChanged(bool hasFocus)
+{
+    ASSERT(m_plugin);
+    m_plugin->windowFocusChanged(hasFocus);
+}
+
+void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
+{
+    ASSERT(m_plugin);
+    m_plugin->windowVisibilityChanged(isVisible);
+
+    if (isVisible)
+        m_visiblityActivity.start();
+    else
+        m_visiblityActivity.stop();
+}
+
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)
 {
     m_plugin->didEvaluateJavaScript(requestID, result);

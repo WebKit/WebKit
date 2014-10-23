@@ -75,7 +75,6 @@ public:
     void setLayerHostingMode(LayerHostingMode);
 
 #if PLATFORM(COCOA)
-    void platformViewStateDidChange(WebCore::ViewState::Flags changed);
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);

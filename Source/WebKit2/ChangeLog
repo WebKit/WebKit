@@ -1,5 +1,40 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172637.
+
+    2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+            de-PLATFORM(COCOA) a couple of methods in plugin code
+            https://bugs.webkit.org/show_bug.cgi?id=135987
+
+            Reviewed by Sam Weinig.
+
+            Pass through the visibility & focus on all platforms, to simplify & avoid
+            any weird inconsistencies between platforms.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::windowFocusChanged):
+            (WebKit::PluginControllerProxy::windowVisibilityChanged):
+            * PluginProcess/PluginControllerProxy.h:
+            * PluginProcess/PluginControllerProxy.messages.in:
+            * PluginProcess/mac/PluginControllerProxyMac.mm:
+            (WebKit::PluginControllerProxy::windowFocusChanged): Deleted.
+            (WebKit::PluginControllerProxy::windowVisibilityChanged): Deleted.
+            * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+            (WebKit::NetscapePlugin::windowFocusChanged):
+            (WebKit::NetscapePlugin::windowVisibilityChanged):
+            * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+            * WebProcess/Plugins/Plugin.h:
+            * WebProcess/Plugins/PluginProxy.cpp:
+            (WebKit::PluginProxy::windowAndViewFramesChanged):
+            * WebProcess/Plugins/PluginProxy.h:
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::viewStateDidChange):
+            (WebKit::PluginView::platformViewStateDidChange): Deleted.
+            * WebProcess/Plugins/PluginView.h:
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172634.
 
     2014-08-15  Gavin Barraclough  <barraclough@apple.com>
