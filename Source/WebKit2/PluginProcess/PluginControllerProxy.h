@@ -151,7 +151,7 @@ private:
 
     void windowFocusChanged(bool);
     void windowVisibilityChanged(bool);
-    void updateVisiblityActivity();
+    void updateVisibilityActivity();
 
 #if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
