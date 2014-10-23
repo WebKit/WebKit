@@ -1,5 +1,28 @@
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174827.
+
+    2014-10-17  Alexey Proskuryakov  <ap@apple.com>
+
+            [iOS] Crash when load is canceled while waiting for the user to type HTTP authentication credentials
+            https://bugs.webkit.org/show_bug.cgi?id=137826
+            rdar://problem/17329599
+
+            Reviewed by Brady Eidson.
+
+            No new tests, as we don't have a way to simulate details of user interaction with
+            an auth dialog.
+
+            * platform/network/cf/ResourceHandleCFNet.cpp:
+            (WebCore::ResourceHandle::receivedCredential):
+            (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+            (WebCore::ResourceHandle::receivedRequestToPerformDefaultHandling):
+            (WebCore::ResourceHandle::receivedChallengeRejection):
+            Added null checks before passing m_connection for CFNetwork functions, making this
+            match what Mac code does when sending a message to a nil receiver.
+
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174846.
 
     2014-10-17  Simon Fraser  <simon.fraser@apple.com>
