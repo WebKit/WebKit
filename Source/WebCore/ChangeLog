@@ -1,3 +1,37 @@
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r174787.
+
+    2014-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+            Crashes in ResourceHandleCFURLConnectionDelegateWithOperationQueue due to unimplemented retain/release
+            https://bugs.webkit.org/show_bug.cgi?id=137779
+            rdar://problem/18679320
+
+            Reviewed by Brady Eidson.
+
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+            (WebCore::ResourceHandleCFURLConnectionDelegate::retain):
+            (WebCore::ResourceHandleCFURLConnectionDelegate::release):
+            (WebCore::ResourceHandleCFURLConnectionDelegate::makeConnectionClient):
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+            Implemented retain/release. They are necessary, as ResourceHandle goes away when
+            it's canceled, and there is noone else to keep the client object alive but
+            CFURLConnection itself.
+
+            * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChallenge):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+            (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArray):
+            Added a FIXME about potential improvements that I spotted while invsestigating this.
+
 2014-10-22  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173974.
