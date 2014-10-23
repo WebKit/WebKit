@@ -72,6 +72,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_contentsScaleFactor(creationParameters.contentsScaleFactor)
     , m_windowNPObject(0)
     , m_pluginElementNPObject(0)
+    , m_visiblityActivity("Plugin is visible.")
 {
 }
 

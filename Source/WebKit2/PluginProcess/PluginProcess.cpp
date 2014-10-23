@@ -61,7 +61,6 @@ PluginProcess::PluginProcess()
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
     , m_connectionActivity("PluginProcess connection activity.")
-    , m_visiblePluginsActivity("Visible plugins from PluginProcess activity.")
 {
     NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);
     m_audioHardwareListener = AudioHardwareListener::create(*this);
@@ -246,16 +245,6 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
 }
 #endif
 
-void PluginProcess::pluginsForWebProcessDidBecomeVisible()
-{
-    m_visiblePluginsActivity.increment();
-}
-
-void PluginProcess::pluginsForWebProcessDidBecomeHidden()
-{
-    m_visiblePluginsActivity.decrement();
-}
-    
 void PluginProcess::audioHardwareDidBecomeActive()
 {
     for (auto& connection : m_webProcessConnections)

@@ -35,6 +35,7 @@
 #include "ShareableBitmap.h"
 #include "WebProcessConnectionMessages.h"
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/UserActivity.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 
@@ -220,6 +221,9 @@ private:
 
     // The plug-in element NPObject.
     NPObject* m_pluginElementNPObject;
+
+    // Hold an activity when the plugin is visible to prevent throttling.
+    UserActivity m_visiblityActivity;
 };
 
 } // namespace WebKit

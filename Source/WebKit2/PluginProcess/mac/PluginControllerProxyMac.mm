@@ -108,9 +108,9 @@ void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
 {
     m_plugin->windowVisibilityChanged(isVisible);
     if (isVisible)
-        m_connection->pluginDidBecomeVisible(m_pluginInstanceID);
+        m_visiblityActivity.start();
     else
-        m_connection->pluginDidBecomeHidden(m_pluginInstanceID);
+        m_visiblityActivity.stop();
 }
 
 void PluginControllerProxy::sendComplexTextInput(const String& textInput)
