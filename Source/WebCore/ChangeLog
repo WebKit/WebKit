@@ -1,3 +1,25 @@
+2014-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Implement :matches
+        https://bugs.webkit.org/show_bug.cgi?id=137947
+
+        Reviewed by Benjamin Poulain.
+
+        Initial patch for supporting :matches in CSS JIT.
+        In this patch, we implement :matches
+        by leveraging the generalized nested backtracking implementation.
+
+        Tests: fast/selectors/matches-backtracking.html
+               fast/selectors/matches-complex.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::hasAnyCombinators):
+        (WebCore::SelectorCompiler::computeBacktrackingMemoryRequirements):
+        (WebCore::SelectorCompiler::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesMatchesPseudoClass):
+
 2014-10-23  Milan Crha  <mcrha@redhat.com>
 
         RenderThemeGtk::mediaControlsScript() is not defined when VIDEO is disabled.
