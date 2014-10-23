@@ -241,7 +241,7 @@ inline JSScope* Register::scope() const
 
 inline JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
-    return scope()->globalObject();
+    return callee()->globalObject();
 }
 
 inline JSObject* ExecState::globalThisValue() const
