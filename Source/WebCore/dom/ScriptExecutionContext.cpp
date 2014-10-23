@@ -416,7 +416,7 @@ PublicURLManager& ScriptExecutionContext::publicURLManager()
 void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 {
     if (minimumTimerInterval() != oldMinimumTimerInterval) {
-        for (auto* timer : m_timeouts.values())
+        for (auto& timer : m_timeouts.values())
             timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
     }
 }
@@ -433,7 +433,7 @@ double ScriptExecutionContext::minimumTimerInterval() const
 
 void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 {
-    for (auto* timer : m_timeouts.values())
+    for (auto& timer : m_timeouts.values())
         timer->didChangeAlignmentInterval();
 }
 

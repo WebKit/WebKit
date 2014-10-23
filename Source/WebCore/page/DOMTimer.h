@@ -28,15 +28,17 @@
 #define DOMTimer_h
 
 #include "SuspendableTimer.h"
+#include <WTF/RefCounted.h>
 #include <memory>
 
 namespace WebCore {
 
     class ScheduledAction;
 
-    class DOMTimer final : public SuspendableTimer {
+    class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
+        WTF_MAKE_NONCOPYABLE(DOMTimer);
+        WTF_MAKE_FAST_ALLOCATED;
     public:
-        virtual ~DOMTimer();
         // Creates a new timer owned by specified ScriptExecutionContext, starts it
         // and returns its Id.
         static int install(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int timeout, bool singleShot);
@@ -49,17 +51,11 @@ namespace WebCore {
 
     private:
         DOMTimer(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
-        virtual void fired() override;
-
-        // ActiveDOMObject
-        virtual void contextDestroyed() override;
-
-        // SuspendableTimer
-        virtual void didStop() override;
-
         double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
 
-        // Retuns timer fire time rounded to the next multiple of timer alignment interval.
+        // SuspendableTimer
+        virtual void fired() override;
+        virtual void didStop() override;
         virtual double alignedFireTime(double) const override;
 
         int m_timeoutId;

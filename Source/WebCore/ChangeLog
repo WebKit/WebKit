@@ -1,3 +1,55 @@
+2014-10-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r172963.
+
+    2014-08-25  Gavin Barraclough  <barraclough@apple.com>
+
+            DOMTimer may be deleted during timer fire
+            https://bugs.webkit.org/show_bug.cgi?id=136198
+
+            Reviewed by Geoff Garen.
+
+            Consequentially ScheduledActions may also be deleted mid execution.
+            This is fairly surprising & fragile, let's make this simpler.
+
+            Currently DOMTimer instances are effectively owned by the ScriptExecutionContext.
+            There is a 1-1 mapping between timers and contexts, all timers are help in a map
+            on the context and if the context goes away all timers are deleted. Rather than
+            being implemented in a straightforward fashion (a smart pointer type for the map
+            value) this is currently implemented by having the timer objects listen for the
+            context going away using contextDestroyed, and deleting themselves if so.
+
+            Switch to using a smart pointer for values of m_timeouts in ScriptExecutionContext.
+            By using a RefCounted object we can also extend the lifetime of the DOMTimer instance
+            from within the DOMTimer::fired method, so the object is not destroyed while the
+            member function is still on the stack.
+
+            * WebCore.xcodeproj/project.pbxproj:
+                - project -> private since DOMTimer could no longer be a forward declare in ScriptExecutionContext.h.
+            * dom/ScriptExecutionContext.cpp:
+            (WebCore::ScriptExecutionContext::adjustMinimumTimerInterval):
+            (WebCore::ScriptExecutionContext::didChangeTimerAlignmentInterval):
+                - auto* -> auto& since value type in map is no longer a raw pointer.
+            * dom/ScriptExecutionContext.h:
+            (WebCore::ScriptExecutionContext::addTimeout):
+                - DOMTimer* -> PassRefPtr<DOMTimer>
+            * page/DOMTimer.cpp:
+            (WebCore::DOMTimer::DOMTimer):
+                - adopt the initial ref, and pass to addTimeout.
+            (WebCore::DOMTimer::install):
+                - updated comment.
+            (WebCore::DOMTimer::removeById):
+                - instead of explicitly deleting the timer and assuming this will implicitly remove it from the context map,
+                  we explicitly remove it from the context map and assume this will implicitly deleting the timer!
+            (WebCore::DOMTimer::fired):
+                - Add a RefPtr to keep the DOMTimer object alive until the fired method completes; to cancel a one-shot timer
+                  just remove it from the context's map, rather than explicitly deleting it.
+            (WebCore::DOMTimer::~DOMTimer): Deleted.
+            (WebCore::DOMTimer::contextDestroyed): Deleted.
+                - no need! object lifetime management now handled by smart pointers.
+            * page/DOMTimer.h:
+                - added parent class RefCounted<DOMTimer>.
+
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
         Merge r174703

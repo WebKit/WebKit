@@ -29,6 +29,8 @@
 #define ScriptExecutionContext_h
 
 #include "ActiveDOMObject.h"
+#include "DOMTimer.h"
+#include "ScheduledAction.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include <runtime/ConsoleTypes.h>
@@ -47,7 +49,6 @@ namespace WebCore {
 
 class CachedScript;
 class DatabaseContext;
-class DOMTimer;
 class EventQueue;
 class EventTarget;
 class MessagePort;
@@ -150,7 +151,7 @@ public:
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
 
-    bool addTimeout(int timeoutId, DOMTimer* timer) { return m_timeouts.add(timeoutId, timer).isNewEntry; }
+    bool addTimeout(int timeoutId, PassRefPtr<DOMTimer> timer) { return m_timeouts.add(timeoutId, timer).isNewEntry; }
     void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
@@ -205,7 +206,7 @@ private:
     HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
     int m_circularSequentialID;
-    HashMap<int, DOMTimer*> m_timeouts;
+    HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
     bool m_inDispatchErrorEvent;
     class PendingException;
