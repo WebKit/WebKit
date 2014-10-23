@@ -46,6 +46,10 @@
 #include "WebInspectorProxy.h"
 #endif
 
+#if HAVE(ACCESSIBILITY)
+#include "WebAccessibility.h"
+#endif
+
 using namespace WebKit;
 
 static inline EwkView* toEwkViewChecked(const Evas_Object* evasObject)
@@ -783,4 +787,48 @@ Eina_Bool ewk_view_contents_size_get(const Evas_Object* ewkView, Evas_Coord* wid
         *height = contentsSize.height;
 
     return true;
+}
+
+Eina_Bool ewk_view_accessibility_action_activate_get(const Evas_Object* ewkView)
+{
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+    return impl->webAccessibility()->activateAction();
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_accessibility_action_next_get(const Evas_Object* ewkView)
+{
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+    return impl->webAccessibility()->nextAction();
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_accessibility_action_prev_get(const Evas_Object* ewkView)
+{
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+    return impl->webAccessibility()->prevAction();
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_accessibility_action_read_by_point_get(const Evas_Object* ewkView)
+{
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+    return impl->webAccessibility()->readAction();
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
 }

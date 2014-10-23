@@ -59,6 +59,10 @@ class WebPageProxy;
 #if ENABLE(VIBRATION)
 class VibrationClientEfl;
 #endif
+
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+class WebAccessibility;
+#endif
 }
 
 namespace WebCore {
@@ -201,6 +205,10 @@ public:
 
     static const char smartClassName[];
 
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    WebKit::WebAccessibility* webAccessibility() { return m_webAccessibility.get(); }
+#endif
+
 private:
     EwkView(WKViewRef, Evas_Object*);
     ~EwkView();
@@ -299,6 +307,10 @@ private:
     std::unique_ptr<WebKit::InputMethodContextEfl> m_inputMethodContext;
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<EwkColorPicker> m_colorPicker;
+#endif
+
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    std::unique_ptr<WebKit::WebAccessibility> m_webAccessibility;
 #endif
 
     WebKit::PageViewportControllerClientEfl m_pageViewportControllerClient;

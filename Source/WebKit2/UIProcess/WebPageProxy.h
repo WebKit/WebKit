@@ -926,6 +926,12 @@ public:
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
 #endif
 
+#if PLATFORM(EFL) && HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    bool accessibilityObjectReadByPoint(const WebCore::IntPoint&);
+    bool accessibilityObjectReadPrevious();
+    bool accessibilityObjectReadNext();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

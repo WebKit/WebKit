@@ -1018,6 +1018,42 @@ EAPI void ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, in
  */
 EAPI Eina_Bool ewk_view_contents_size_get(const Evas_Object *o, Evas_Coord *width, Evas_Coord *height);
 
+/**
+ * Get status of the activate action. Activate action describes the click.
+ *
+ * @param o view of the object
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_accessibility_action_activate_get(const Evas_Object *o);
+
+/**
+ * Get status of the next action. Action next moves and focuses next object.
+ *
+ * @param o view of the object
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_accessibility_action_next_get(const Evas_Object *o);
+
+/**
+ * Get status of the previous action. Previous action moves and focuses previous element.
+ *
+ * @param o view of the object
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_accessibility_action_prev_get(const Evas_Object *o);
+
+/**
+ * Get status of the read action. Read action focuses object with specific coordinates.
+ *
+ * @param o view of the object
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_accessibility_action_read_by_point_get(const Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif

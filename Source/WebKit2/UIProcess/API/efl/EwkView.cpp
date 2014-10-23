@@ -82,6 +82,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+#include "WebAccessibility.h"
+#endif
+
 using namespace EwkViewCallbacks;
 using namespace WebCore;
 using namespace WebKit;
@@ -297,6 +301,9 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 #endif
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
+#if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
+    , m_webAccessibility(std::make_unique<WebAccessibility>(this))
+#endif
     , m_pageViewportControllerClient(this)
     , m_pageViewportController(page(), &m_pageViewportControllerClient)
     , m_isAccelerated(true)
