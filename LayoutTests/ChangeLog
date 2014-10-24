@@ -1,5 +1,21 @@
 2014-10-24  Alexey Proskuryakov  <ap@apple.com>
 
+        Update media test results for Yosemite.
+
+        media/controls-styling.html appears to actually fail, filed bug 138064 about that.
+        media/video-zoom-controls.html results are not great; Dean reportedly has a fix for that.
+
+        * platform/mac-mavericks/media/controls-styling-expected.png: Copied from LayoutTests/platform/mac/media/controls-styling-expected.png.
+        * platform/mac-mavericks/media/controls-styling-expected.txt: Copied from LayoutTests/platform/mac/media/controls-styling-expected.txt.
+        * platform/mac-mavericks/media/video-zoom-controls-expected.png: Copied from LayoutTests/platform/mac/media/video-zoom-controls-expected.png.
+        * platform/mac-mavericks/media/video-zoom-controls-expected.txt: Copied from LayoutTests/platform/mac/media/video-zoom-controls-expected.txt.
+        * platform/mac/media/controls-styling-expected.png:
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.png:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
         Remove MountainLion results that I incorrectly copied. These are the same as Mavericks.
 
         * platform/mac-mountainlion/fast/writing-mode: Removed.

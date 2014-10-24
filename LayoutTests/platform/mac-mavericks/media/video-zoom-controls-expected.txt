@@ -22,14 +22,14 @@ layer at (131,239) size 85x17
   RenderFlexibleBox {DIV} at (73,11) size 86x17
 layer at (131,239) size 68x17 backgroundClip at (131,239) size 67x17 clip at (131,239) size 67x17
   RenderFlexibleBox {DIV} at (0,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (15,0) size 38x17
-      RenderText {#text} at (0,0) size 37x17
-        text run at (0,0) width 37: "00:00"
+    RenderBlock (anonymous) at (13,0) size 41x17
+      RenderText {#text} at (0,0) size 40x17
+        text run at (0,0) width 40: "00:00"
 layer at (204,239) size 67x17
   RenderFlexibleBox {DIV} at (73,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (12,0) size 43x17
-      RenderText {#text} at (0,0) size 43x17
-        text run at (0,0) width 43: "-00:06"
+    RenderBlock (anonymous) at (9,0) size 49x17
+      RenderText {#text} at (0,0) size 48x17
+        text run at (0,0) width 48: "-00:06"
 layer at (201,243) size 9x9
   RenderBlock {DIV} at (0,0) size 9x9 [bgcolor=#FFFFFF]
 layer at (216,231) size 33x33
@@ -61,14 +61,14 @@ layer at (131,464) size 85x17
   RenderFlexibleBox {DIV} at (73,11) size 86x17
 layer at (131,464) size 68x17 backgroundClip at (131,464) size 67x17 clip at (131,464) size 67x17
   RenderFlexibleBox {DIV} at (0,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (15,0) size 38x17
-      RenderText {#text} at (0,0) size 37x17
-        text run at (0,0) width 37: "00:00"
+    RenderBlock (anonymous) at (13,0) size 41x17
+      RenderText {#text} at (0,0) size 40x17
+        text run at (0,0) width 40: "00:00"
 layer at (204,464) size 67x17
   RenderFlexibleBox {DIV} at (73,0) size 68x17 [color=#FFFFFF]
-    RenderBlock (anonymous) at (12,0) size 43x17
-      RenderText {#text} at (0,0) size 43x17
-        text run at (0,0) width 43: "-00:06"
+    RenderBlock (anonymous) at (9,0) size 49x17
+      RenderText {#text} at (0,0) size 48x17
+        text run at (0,0) width 48: "-00:06"
 layer at (201,468) size 9x9
   RenderBlock {DIV} at (0,0) size 9x9 [bgcolor=#FFFFFF]
 layer at (216,456) size 33x33
