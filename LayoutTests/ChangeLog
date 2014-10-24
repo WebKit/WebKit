@@ -1,3 +1,19 @@
+2014-10-24  Roger Fong  <roger_fong@apple.com>
+
+        [Win] More unreviewed gardening/rebaselining of Windows tests.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/repaint/select-option-background-color-expected.txt:
+        * platform/win/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+        * platform/win/fast/repaint/slider-thumb-float-expected.txt: Added.
+        * platform/win/fast/replaced/table-percent-height-expected.txt: Added.
+        * platform/win/fast/replaced/three-selects-break-expected.txt: Added.
+        * platform/win/fast/table/remove-td-display-none-expected.txt:
+        * platform/win/fast/transforms: Added.
+        * platform/win/fast/transforms/transformed-focused-text-input-expected.txt: Added.
+        * platform/win/platform/win/accessibility: Added.
+        * platform/win/platform/win/accessibility/option-element-position-and-size-expected.txt: Added.
+
 2014-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Update some results that were incorrect for Yosemite.
