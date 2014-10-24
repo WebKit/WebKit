@@ -4125,7 +4125,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 
-- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult defaultActionMenuItems:(NSArray *)defaultMenuItems
+- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems
 {
     return defaultMenuItems;
 }
