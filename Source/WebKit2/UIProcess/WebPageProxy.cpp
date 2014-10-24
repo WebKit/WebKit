@@ -131,6 +131,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "WebVideoFullscreenManagerProxy.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
 #endif
@@ -269,6 +270,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
 #if PLATFORM(IOS)
+    , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(true)
+    , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(0)
     , m_deviceOrientation(0)
     , m_dynamicViewportSizeUpdateWaitingForTarget(false)
     , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
@@ -2614,6 +2617,13 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+#if PLATFORM(IOS)
+    if (frame->isMainFrame()) {
+        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
+        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+    }
+#endif
 
     auto transaction = m_pageLoadState.transaction();
 
