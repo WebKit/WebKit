@@ -1,3 +1,9 @@
+2014-10-24  Timothy Horton  <timothy_horton@apple.com>
+
+        Add Conrad Shultz to the contributors list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-10-24  Dan Bernstein  <mitz@apple.com>
 
         build.webkit.org/dashboard immediately retries a request to buildbot when the response is 404
