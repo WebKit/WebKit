@@ -1,3 +1,21 @@
+2014-10-24  Mark Lam  <mark.lam@apple.com>
+
+        Simplified IndexingType's hasAnyArrayStorage().
+        <https://webkit.org/b/138051>
+
+        Reviewed by Michael Saboff.
+
+        IndexingType's hasAnyArrayStorage() currently does subtraction of ArrayStorageShape
+        with the purpose of making non-ArrayStorage types underflow (with that subtraction)
+        and have a result that exceeds SlowPutArrayStorageShape.  What it is doing is
+        basically checking for a shape value that is greater equal to ArrayStorageShape.
+        We can just simplify the code as such.
+
+        Also added a comment to describe the structure of the bits in IndexingType.
+
+        * runtime/IndexingType.h:
+        (JSC::hasAnyArrayStorage):
+
 2014-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide a way to have alternate inspector agents

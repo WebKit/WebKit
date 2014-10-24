@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,22 @@
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
+
+/*
+    Structure of the IndexingType
+    =============================
+    Conceptually, the IndexingType looks like this:
+
+    struct IndexingType {
+        uint8_t isArray:1;                    // bit 0
+        uint8_t shape:4;                      // bit 1 - 4
+        uint8_t mayHaveIndexedAccessors:1;    // bit 5
+    };
+
+    The shape values (e.g. Int32Shape, ContiguousShape, etc) are an enumeration of
+    various shapes (though not necessarily sequential in terms of their values).
+    Hence, shape values are not bitwise exclusive with respect to each other.
+*/
 
 typedef uint8_t IndexingType;
 
@@ -128,7 +144,7 @@ static inline bool hasArrayStorage(IndexingType indexingType)
 
 static inline bool hasAnyArrayStorage(IndexingType indexingType)
 {
-    return static_cast<uint8_t>((indexingType & IndexingShapeMask) - ArrayStorageShape) <= static_cast<uint8_t>(SlowPutArrayStorageShape - ArrayStorageShape);
+    return static_cast<uint8_t>(indexingType & IndexingShapeMask) >= ArrayStorageShape;
 }
 
 static inline bool shouldUseSlowPut(IndexingType indexingType)
