@@ -1,3 +1,22 @@
+2014-10-23  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Optimize URL::createCFURL() for the common case
+        https://bugs.webkit.org/show_bug.cgi?id=138030
+
+        Reviewed by Alexey Proskuryakov.
+
+        Optimize URL::createCFURL() for the common case by adding a fast path
+        for when the URL String is already 8-bit (common case).
+        When the string is 8-bit, we don't need to copy the bytes into a
+        temporary buffer and we can construct the CFURLRef directly from it.
+
+        This makes URL::createCFURL() ~34% faster on my machine.
+
+        No new tests, no behavior change.
+
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::createCFURL):
+
 2014-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Carets in GMail and iCloud compositions are the foreground text color

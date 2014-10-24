@@ -62,6 +62,11 @@ RetainPtr<CFURLRef> URL::createCFURL() const
         return reinterpret_cast<CFURLRef>(adoptNS([[NSURL alloc] initWithString:@""]).get());
     }
 
+    // Fast path if the input data is 8-bit to avoid copying into a temporary buffer.
+    if (LIKELY(m_string.is8Bit()))
+        return createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+
+    // Slower path.
     URLCharBuffer buffer;
     copyToBuffer(buffer);
     return createCFURLFromBuffer(buffer.data(), buffer.size());
