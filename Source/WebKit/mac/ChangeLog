@@ -1,5 +1,14 @@
 2014-10-24  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _openURLFromActionMenu:]):
+        (-[WebActionMenuController _addToReadingListFromActionMenu:]):
+        (-[WebActionMenuController _quickLookURLFromActionMenu:]):
+
+2014-10-24  Beth Dakin  <bdakin@apple.com>
+
         WebKit1 should support action menus
         https://bugs.webkit.org/show_bug.cgi?id=138032
 

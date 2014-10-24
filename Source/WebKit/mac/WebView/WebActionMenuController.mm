@@ -93,7 +93,7 @@ using namespace WebCore;
     if (!_webView)
         return;
 
-    NSURL *url = sender.representedObject;
+    NSURL *url = [sender representedObject];
     if (!url)
         return;
 
@@ -107,7 +107,7 @@ using namespace WebCore;
     if (!_webView)
         return;
 
-    NSURL *url = sender.representedObject;
+    NSURL *url = [sender representedObject];
     if (!url)
         return;
 
@@ -139,7 +139,7 @@ using namespace WebCore;
     if (!_webView)
         return;
 
-    NSDictionary *hitTestResult = sender.representedObject;
+    NSDictionary *hitTestResult = [sender representedObject];
     if (!hitTestResult)
         return;
 
