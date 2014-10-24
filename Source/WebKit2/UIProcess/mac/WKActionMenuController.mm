@@ -106,7 +106,7 @@ enum class ActionMenuState {
 
     [self _updateActionMenuItems];
 
-    _page->performActionMenuHitTestAtLocation([_wkView convertPoint:[event locationInWindow] fromView:nil]);
+    _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
 }
@@ -278,7 +278,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (void)_addImageToPhotos:(id)sender
 {
-    // FIXME: We shouldn't even add the button if this is the case, for now.
+    // FIXME: We shouldn't even add the menu item if this is the case, for now.
     if (![getIKSlideshowClass() canExportToApplication:@"com.apple.Photos"])
         return;
 
