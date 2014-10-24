@@ -1474,10 +1474,12 @@ void FrameSelection::paintCaret(GraphicsContext* context, const LayoutPoint& pai
         CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
+#if ENABLE(TEXT_CARET)
 static inline bool disappearsIntoBackground(Color foreground, Color background)
 {
     return background.blend(foreground) == background;
 }
+#endif
 
 void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
