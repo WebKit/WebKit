@@ -64,7 +64,7 @@ border-bottom-left-radius
 border-bottom-right-radius
 -webkit-border-bottom-right-radius = border-bottom-right-radius
 border-bottom-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
-border-bottom-width
+border-bottom-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-collapse [Inherited, NewStyleBuilder]
 border-color
 border-image
@@ -76,12 +76,12 @@ border-image-width
 border-left
 border-left-color
 border-left-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
-border-left-width
+border-left-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-radius
 border-right
 border-right-color
 border-right-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
-border-right-width
+border-right-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-spacing [Inherited]
 border-style
 border-top
@@ -91,7 +91,7 @@ border-top-left-radius
 border-top-right-radius
 -webkit-border-top-right-radius = border-top-right-radius
 border-top-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
-border-top-width
+border-top-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-width
 bottom [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
 box-shadow
@@ -122,7 +122,7 @@ image-rendering [Inherited, NewStyleBuilder]
 image-resolution [Inherited]
 #endif
 left [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
-letter-spacing [Inherited]
+letter-spacing [Inherited, NewStyleBuilder, Converter=Spacing]
 list-style [Inherited]
 list-style-image [Inherited]
 list-style-position [Inherited, NewStyleBuilder]
@@ -144,9 +144,9 @@ opacity [NewStyleBuilder, TypeName=float]
 orphans [Inherited]
 outline
 outline-color
-outline-offset
+outline-offset [NewStyleBuilder, Converter=ComputedLength<int>]
 outline-style
-outline-width
+outline-width [NewStyleBuilder, Converter=LineWidth<unsigned short>]
 overflow
 overflow-wrap [NewStyleBuilder]
 overflow-x [NewStyleBuilder, TypeName=EOverflow]
@@ -245,7 +245,7 @@ z-index
 -webkit-border-end-style
 -webkit-border-end-width
 -webkit-border-fit [NewStyleBuilder]
--webkit-border-horizontal-spacing [Inherited]
+-webkit-border-horizontal-spacing [Inherited, NewStyleBuilder, NameForMethods=HorizontalBorderSpacing, Converter=ComputedLength<short>]
 -webkit-border-image
 // -webkit-border-radius differs from border-radius only in the interpretation of
 // a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
@@ -255,7 +255,7 @@ z-index
 -webkit-border-start-color
 -webkit-border-start-style
 -webkit-border-start-width
--webkit-border-vertical-spacing [Inherited]
+-webkit-border-vertical-spacing [Inherited, NewStyleBuilder, NameForMethods=VerticalBorderSpacing, Converter=ComputedLength<short>]
 -webkit-box-align [NewStyleBuilder, TypeName=EBoxAlignment]
 -webkit-box-direction [Inherited, NewStyleBuilder]
 -webkit-box-flex [NewStyleBuilder, TypeName=float]
@@ -281,7 +281,7 @@ z-index
 -webkit-column-rule
 -webkit-column-rule-color
 -webkit-column-rule-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
--webkit-column-rule-width
+-webkit-column-rule-width [NewStyleBuilder, Converter=LineWidth<unsigned short>]
 -webkit-column-span [NewStyleBuilder, TypeName=ColumnSpan]
 -webkit-column-width
 -webkit-columns
@@ -440,7 +440,7 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-transform-origin
 -webkit-transform-origin-x [NewStyleBuilder, Converter=Length]
 -webkit-transform-origin-y [NewStyleBuilder, Converter=Length]
--webkit-transform-origin-z
+-webkit-transform-origin-z [NewStyleBuilder, Converter=ComputedLength<float>]
 -webkit-transform-style [NewStyleBuilder, TypeName=ETransformStyle3D, NameForMethods=TransformStyle3D]
 -webkit-transition
 -webkit-transition-delay

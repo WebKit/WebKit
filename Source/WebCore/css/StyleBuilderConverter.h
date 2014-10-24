@@ -40,6 +40,9 @@ public:
     static Length convertLengthOrAuto(StyleResolver&, CSSValue&);
     static Length convertLengthSizing(StyleResolver&, CSSValue&);
     static Length convertLengthMaxSizing(StyleResolver&, CSSValue&);
+    template <typename T> static T convertComputedLength(StyleResolver&, CSSValue&);
+    template <typename T> static T convertLineWidth(StyleResolver&, CSSValue&);
+    static float convertSpacing(StyleResolver&, CSSValue&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -103,6 +106,52 @@ inline Length StyleBuilderConverter::convertLengthMaxSizing(StyleResolver& style
     if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
         return Length(Undefined);
     return convertLengthSizing(styleResolver, value);
+}
+
+template <typename T>
+inline T StyleBuilderConverter::convertComputedLength(StyleResolver& styleResolver, CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).computeLength<T>(styleResolver.state().cssToLengthConversionData());
+}
+
+template <typename T>
+inline T StyleBuilderConverter::convertLineWidth(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.getValueID()) {
+    case CSSValueThin:
+        return 1;
+    case CSSValueMedium:
+        return 3;
+    case CSSValueThick:
+        return 5;
+    case CSSValueInvalid: {
+        // Any original result that was >= 1 should not be allowed to fall below 1.
+        // This keeps border lines from vanishing.
+        T result = convertComputedLength<T>(styleResolver, value);
+        if (styleResolver.state().style()->effectiveZoom() < 1.0f && result < 1.0) {
+            T originalLength = primitiveValue.computeLength<T>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0));
+            if (originalLength >= 1.0)
+                return 1;
+        }
+        return result;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+inline float StyleBuilderConverter::convertSpacing(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNormal)
+        return 0.f;
+
+    CSSToLengthConversionData conversionData = styleResolver.useSVGZoomRulesForLength() ?
+        styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : styleResolver.state().cssToLengthConversionData();
+    return primitiveValue.computeLength<float>(conversionData);
 }
 
 } // namespace WebCore

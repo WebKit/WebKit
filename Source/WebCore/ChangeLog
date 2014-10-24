@@ -1,5 +1,33 @@
 2014-10-24  Chris Dumez  <cdumez@apple.com>
 
+        Move ComputeLength CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138036
+
+        Reviewed by Andreas Kling.
+
+        Move ComputeLength CSS properties from DeprecatedStyleBuilder to the
+        new StyleBuilder so that they are now generated. 3 Converters are
+        provided for these properties: ComputedLength / LineWidth / Spacing.
+
+        This is inspired by the following Blink revision by
+        <timloh@chromium.org>:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=154012
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyComputeLength::setValue): Deleted.
+        (WebCore::ApplyPropertyComputeLength::applyValue): Deleted.
+        (WebCore::ApplyPropertyComputeLength::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertComputedLength):
+        (WebCore::StyleBuilderConverter::convertLineWidth):
+        (WebCore::StyleBuilderConverter::convertSpacing):
+
+2014-10-24  Chris Dumez  <cdumez@apple.com>
+
         Make ScriptWrappable's destructor protected instead of public
         https://bugs.webkit.org/show_bug.cgi?id=138037
 
