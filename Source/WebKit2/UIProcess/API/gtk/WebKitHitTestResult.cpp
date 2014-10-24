@@ -240,6 +240,9 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResult::Data& hit
     if (hitTestResult.isScrollbar)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
 
+    if (hitTestResult.isSelected)
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
+
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
         "context", context,
         "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8().data() : nullptr,
@@ -260,6 +263,7 @@ bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHit
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
     return webHitTestResult.isContentEditable == webkit_hit_test_result_context_is_editable(hitTestResult)
         && webHitTestResult.isScrollbar == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
+        && webHitTestResult.isSelected == webkit_hit_test_result_context_is_selection(hitTestResult)
         && stringIsEqualToCString(webHitTestResult.absoluteLinkURL, priv->linkURI)
         && stringIsEqualToCString(webHitTestResult.linkTitle, priv->linkTitle)
         && stringIsEqualToCString(webHitTestResult.linkLabel, priv->linkLabel)
@@ -348,6 +352,25 @@ gboolean webkit_hit_test_result_context_is_editable(WebKitHitTestResult* hitTest
     g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), FALSE);
 
     return hitTestResult->priv->context & WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
+}
+
+/**
+ * webkit_hit_test_result_context_is_selection:
+ * @hit_test_result: a #WebKitHitTestResult
+ *
+ * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION flag is present in
+ * #WebKitHitTestResult:context.
+ *
+ * Returns: %TRUE if there's a selected element at the coordinates of the @hit_test_result,
+ *    or %FALSE otherwise
+ *
+ * Since: 2.8
+ */
+gboolean webkit_hit_test_result_context_is_selection(WebKitHitTestResult* hitTestResult)
+{
+    g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), FALSE);
+
+    return hitTestResult->priv->context & WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
 }
 
 /**
