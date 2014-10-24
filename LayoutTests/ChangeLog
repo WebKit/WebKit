@@ -1,3 +1,25 @@
+2014-10-24  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] More rebaselining of Windows tests after removing SafariTheme.
+
+        * platform/win/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/win/editing/selection/select-across-readonly-input-2-expected.txt:
+        * platform/win/editing/selection/select-across-readonly-input-3-expected.txt:
+        * platform/win/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/win/fast/canvas/fallback-content-expected.txt: Added.
+        * platform/win/fast/css/button-height-expected.txt:
+        * platform/win/fast/dom/HTMLInputElement: Added.
+        * platform/win/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Added.
+        * platform/win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Added.
+        * platform/win/fast/dom/tabindex-clamp-expected.txt: Added.
+        * platform/win/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/win/fast/html/details-no-summary4-expected.txt: Added.
+        * platform/win/fast/html/details-open-javascript-expected.txt: Added.
+        * platform/win/fast/html/details-open2-expected.txt: Added.
+        * platform/win/fast/html/details-open4-expected.txt: Added.
+        * platform/win/fast/html/details-replace-summary-child-expected.txt:
+        * platform/win/fast/html/details-replace-text-expected.txt:
+
 2014-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Carets in GMail and iCloud compositions are the foreground text color
