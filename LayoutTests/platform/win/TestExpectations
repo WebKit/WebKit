@@ -2983,3 +2983,13 @@ fast/regions/overflow/overflow-in-variable-width-regions-inline.html
 fast/parser/bad-xml-slash.html [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
 fast/text/backslash-to-yen-sign-euc.html [ Failure ]
+
+# Borders render too dark sometimes.
+webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Failure ]
+webkit.org/b/138041 fast/text/whitespace/normal-after-nowrap-breaking.html [ Failure ]
+webkit.org/b/138041 fast/writing-mode/fieldsets.html [ Failure ]
+webkit.org/b/138041 fast/borders/fieldsetBorderRadius.html [ Failure ] 
+webkit.org/b/138041 fast/multicol/client-rects-spanners-complex.html [ Failure ]
+webkit.org/b/138041 fast/multicol/client-rects-spanners.html [ Failure ]
+webkit.org/b/138041 fast/multicol/client-rects.html [ Failure ]
+webkit.org/b/138041 fast/multicol/newmulticol/client-rects.html [ Failure ] 
