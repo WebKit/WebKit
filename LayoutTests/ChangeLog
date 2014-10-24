@@ -1,3 +1,14 @@
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove MountainLion results that I incorrectly copied. These are the same as Mavericks.
+
+        * platform/mac-mountainlion/fast/writing-mode: Removed.
+        * platform/mac-mountainlion/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Removed.
+        * platform/mac-mountainlion/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Removed.
+        * platform/mac-mountainlion/mathml: Removed.
+        * platform/mac-mountainlion/mathml/opentype: Removed.
+        * platform/mac-mountainlion/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Removed.
+
 2014-10-24  Roger Fong  <roger_fong@apple.com>
 
         [Win] More unreviewed gardening/rebaselining of Windows tests.
