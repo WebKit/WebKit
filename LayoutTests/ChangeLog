@@ -1,5 +1,13 @@
 2014-10-24  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] More unreviewed gardening after getting rid of SafariTheme.
+        https://bugs.webkit.org/show_bug.cgi?id=138025
+
+        * platform/win/TestExpectations: These tests fail seemingly due to text size difference,
+        which consequently cause the text containers to be too larger as well.
+
+2014-10-24  Roger Fong  <roger_fong@apple.com>
+
         [Windows] More rebaselining of Windows tests after removing SafariTheme.
 
         * platform/win/editing/selection/select-across-readonly-input-1-expected.txt:

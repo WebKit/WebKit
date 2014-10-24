@@ -2866,6 +2866,8 @@ media/track/w3c/interfaces/TextTrackCue/startTime.html [ Skip ]
 media/track/w3c/interfaces/TextTrackCue/track.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=138025
+# Larger text and as a result, larger elements containing said text (as compared to Mac port)
+# Many of these may also be wrong due to form element differences in theme (i.e rounded vs. square buttons)
 editing/input/caret-at-the-edge-of-input.html [ Failure ]
 editing/inserting/4960120-1.html [ Failure ]
 fast/css/resize-corner-tracking.html [ Failure ]
@@ -2903,6 +2905,18 @@ fast/replaced/width100percent-textarea.html [ Failure ]
 fast/replaced/width100percent-searchfield.html [ Failure ]
 fast/replaced/width100percent-menulist.html [ Failure ]
 fast/replaced/width100percent-checkbox.html [ Failure ]
+fast/css/css2-system-fonts.html [ Failure ]
+fast/css/line-height.html [ Failure ]
+fast/css/negative-text-indent-in-inline-block.html [ Failure ]
+fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+fast/dom/HTMLTableColElement/resize-table-using-col-width.html [ Failure ]
+fast/forms/search/search-size-with-decorations.html [ Failure ]
+fast/forms/HTMLOptionElement_label07.html [ Failure ]
+fast/forms/select/optgroup-rendering.html [ Timeout ]
+fast/overflow/scroll-nested-positioned-layer-in-overflow.html [ Failure ]
+fast/overflow/scrollRevealButton.html [ Failure ]
+fast/repaint/control-clip.html [ Failure ]
+svg/custom/inline-svg-in-xhtml.xml [ Failure ]
 
 # <select> elements are not rendering properly
 webkit.org/b/137962 editing/pasteboard/4641033.html [ Failure ]
