@@ -1,6 +1,13 @@
 2014-10-24  Roger Fong  <roger_fong@apple.com>
 
         [Windows] More unreviewed gardening after getting rid of SafariTheme.
+
+        * platform/win/TestExpectations: Skip a handful of tests that were failing
+        on the Windows bots after removing SafariTheme for miscellaneous reasons.
+
+2014-10-24  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] More unreviewed gardening after getting rid of SafariTheme.
         https://bugs.webkit.org/show_bug.cgi?id=138025
 
         * platform/win/TestExpectations: These tests fail seemingly due to text size difference,
