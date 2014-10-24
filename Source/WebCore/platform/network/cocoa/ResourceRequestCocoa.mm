@@ -84,20 +84,18 @@ void ResourceRequest::doUpdateResourceRequest()
             m_priority = priority;
     }
 
-    NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
-    NSEnumerator *e = [headers keyEnumerator];
-    NSString *name;
     m_httpHeaderFields.clear();
-    while ((name = [e nextObject]))
-        m_httpHeaderFields.set(String(name), [headers objectForKey:name]);
+    [[m_nsRequest allHTTPHeaderFields] enumerateKeysAndObjectsUsingBlock: ^(NSString *name, NSString *value, BOOL *) {
+        m_httpHeaderFields.set(name, value);
+    }];
 
     m_responseContentDispositionEncodingFallbackArray.clear();
     NSArray *encodingFallbacks = [m_nsRequest.get() contentDispositionEncodingFallbackArray];
-    NSUInteger count = [encodingFallbacks count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([(NSNumber *)[encodingFallbacks objectAtIndex:i] unsignedLongValue]);
+    m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
+    for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
+        CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
-            m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
+            m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
     }
 
 #if ENABLE(CACHE_PARTITIONING)
@@ -163,18 +161,14 @@ void ResourceRequest::doUpdatePlatformRequest()
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
-    NSArray *oldHeaderFieldNames = [[nsRequest allHTTPHeaderFields] allKeys];
-    for (unsigned i = [oldHeaderFieldNames count]; i != 0; --i)
-        [nsRequest setValue:nil forHTTPHeaderField:[oldHeaderFieldNames objectAtIndex:i - 1]];
+    for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
+        [nsRequest setValue:nil forHTTPHeaderField:oldHeaderName];
     for (const auto& header : httpHeaderFields())
         [nsRequest setValue:header.value forHTTPHeaderField:header.key];
 
     NSMutableArray *encodingFallbacks = [NSMutableArray array];
-    unsigned count = m_responseContentDispositionEncodingFallbackArray.size();
-    for (unsigned i = 0; i != count; ++i) {
-        RetainPtr<CFStringRef> encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
-        unsigned long nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName.get()));
-
+    for (const auto& encodingName : m_responseContentDispositionEncodingFallbackArray) {
+        CFStringEncoding nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName.createCFString().get()));
         if (nsEncoding != kCFStringEncodingInvalidId)
             [encodingFallbacks addObject:[NSNumber numberWithUnsignedLong:nsEncoding]];
     }

@@ -1,3 +1,38 @@
+2014-10-24  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Use modern loops in ResourceRequestCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=138052
+
+        Reviewed by Darin Adler.
+
+        Use modern loops in ResourceRequestCocoa.mm and leverage Objective-C's
+        fast enumeration.
+
+        No new tests, no behavior change.
+
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        - Use NSDictionary's block-based enumeration as we enumerate both keys
+          and values and this is faster than using fast enumeration of the keys
+          then calling [NSDictionary objectForKey:]
+        - Use Objective C's fast enumeration for
+          contentDispositionEncodingFallbackArray as this is faster and shorter
+          than index based access. Also use reserveCapacity() /
+          uncheckedAppend() for m_responseContentDispositionEncodingFallbackArray
+          as we know how many elements were are going to append in the common
+          case.
+
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        - Use fast enumeration for [nsRequest allHTTPHeaderFields] dictionary
+          keys instead of calling [NSDictionary allKeys] and then doing
+          index-based iteration, to avoid copying the keys to a new array.
+          Also do a forward enumeration instead of a reverse one. I don't see
+          why a backward enumeration would be necessary here. We are not
+          modifying the NSDictionary we are iterating over as
+          [nsRequest allHTTPHeaderFields] makes a copy.
+        - Use a modern C++ loop for
+          m_responseContentDispositionEncodingFallbackArray.
+
 2014-10-24  Zalan Bujtas  <zalan@apple.com>
 
         Replace INT_MIN/MAX / kFixedPointDenominator with intMin/MaxForLayoutUnit.
