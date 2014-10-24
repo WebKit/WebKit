@@ -200,6 +200,7 @@
 #import <wtf/StdLibExtras.h>
 
 #if !PLATFORM(IOS)
+#import "WebActionMenuController.h"
 #import "WebContextMenuClient.h"
 #import "WebFullScreenController.h"
 #import "WebNSEventExtras.h"
@@ -207,6 +208,7 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
+#import <WebCore/NSViewSPI.h>
 #import <WebCore/WebVideoFullscreenController.h>
 #else
 #import "MemoryMeasure.h"
@@ -1061,6 +1063,12 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self setMaintainsBackForwardList: YES];
 #if !PLATFORM(IOS)
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+
+    if ([self respondsToSelector:@selector(setActionMenu:)]) {
+        RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
+        self.actionMenu = actionMenu.get();
+        _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
+    }
 #endif
     return self;
 }
@@ -1702,6 +1710,7 @@ static bool fastDocumentTeardownEnabled()
     [self setUIDelegate:nil];
 
     [_private->inspector webViewClosed];
+    [_private->actionMenuController webViewClosed];
 #endif
 
 #if !PLATFORM(IOS)
@@ -8514,6 +8523,14 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 - (NSRect)_convertRectFromRootView:(NSRect)rect
 {
     return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
+}
+
+- (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != self.actionMenu)
+        return;
+
+    [_private->actionMenuController prepareForMenu:menu withEvent:event];
 }
 
 @end

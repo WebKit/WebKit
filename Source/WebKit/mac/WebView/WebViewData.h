@@ -49,6 +49,7 @@ class HistoryItem;
 class Page;
 }
 
+@class WebActionMenuController;
 @class WebInspector;
 @class WebNodeHighlight;
 @class WebPluginDatabase;
@@ -144,6 +145,8 @@ private:
 
     WebInspector *inspector;
     WebNodeHighlight *currentNodeHighlight;
+
+    WebActionMenuController *actionMenuController;
 
     BOOL allowsUndo;
         
