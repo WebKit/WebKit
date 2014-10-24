@@ -2993,3 +2993,9 @@ webkit.org/b/138041 fast/multicol/client-rects-spanners-complex.html [ Failure ]
 webkit.org/b/138041 fast/multicol/client-rects-spanners.html [ Failure ]
 webkit.org/b/138041 fast/multicol/client-rects.html [ Failure ]
 webkit.org/b/138041 fast/multicol/newmulticol/client-rects.html [ Failure ] 
+
+# Background renders too dark sometimes.
+webkit.org/b/138042 fast/repaint/search-field-cancel.html [ Failure ]
+webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
+webkit.org/b/138042 fast/repaint/button-spurious-layout-hint.html [ Failure ]
+webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html [ Failure ]
