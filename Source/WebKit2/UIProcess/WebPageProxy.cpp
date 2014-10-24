@@ -271,7 +271,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_userAgent(standardUserAgent())
 #if PLATFORM(IOS)
     , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(true)
-    , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(0)
+    , m_firstLayerTreeTransactionIdAfterDidCommitLoad(0)
     , m_deviceOrientation(0)
     , m_dynamicViewportSizeUpdateWaitingForTarget(false)
     , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
@@ -2621,7 +2621,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 #if PLATFORM(IOS)
     if (frame->isMainFrame()) {
         m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
-        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+        m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
     }
 #endif
 
