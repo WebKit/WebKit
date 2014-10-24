@@ -1,5 +1,21 @@
 2014-10-24  Chris Dumez  <cdumez@apple.com>
 
+        [Mac] Use NSString API in QuickLookMac::computeNeedsQuickLookResourceCachingQuirks()
+        https://bugs.webkit.org/show_bug.cgi?id=138039
+
+        Reviewed by Darin Adler.
+
+        Use NSString API in QuickLookMac::computeNeedsQuickLookResourceCachingQuirks()
+        for case-insensitive string comparison instead of converting to UTF-8 and then
+        using strcasecmp().
+
+        No new tests, no behavior change.
+
+        * platform/mac/QuickLookMac.mm:
+        (WebCore::QuickLookMac::computeNeedsQuickLookResourceCachingQuirks):
+
+2014-10-24  Chris Dumez  <cdumez@apple.com>
+
         Avoid unnecessary NSURLRequest copies in ResourceRequest::doUpdatePlatformRequest() / doUpdatePlatformHTTPBody()
         https://bugs.webkit.org/show_bug.cgi?id=138049
 

@@ -41,8 +41,8 @@ bool QuickLookMac::computeNeedsQuickLookResourceCachingQuirks()
         return false;
 
     for (NSBundle *bundle in frameworks) {
-        const char* bundleID = [[bundle bundleIdentifier] UTF8String];
-        if (bundleID && !strcasecmp(bundleID, "com.apple.QuickLookUIFramework"))
+        NSString *bundleID = [bundle bundleIdentifier];
+        if (bundleID && [bundleID caseInsensitiveCompare:@"com.apple.QuickLookUIFramework"] == NSOrderedSame)
             return true;
     }
     return false;
