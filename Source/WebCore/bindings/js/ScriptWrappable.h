@@ -48,6 +48,9 @@ public:
     void setWrapper(JSDOMWrapper*, JSC::WeakHandleOwner*, void*);
     void clearWrapper(JSDOMWrapper*);
 
+protected:
+    ~ScriptWrappable() { }
+
 private:
     JSC::Weak<JSDOMWrapper> m_wrapper;
 };

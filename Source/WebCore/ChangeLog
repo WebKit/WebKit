@@ -1,3 +1,18 @@
+2014-10-24  Chris Dumez  <cdumez@apple.com>
+
+        Make ScriptWrappable's destructor protected instead of public
+        https://bugs.webkit.org/show_bug.cgi?id=138037
+
+        Reviewed by Andreas Kling.
+
+        Make ScriptWrappable's destructor protected instead of public as it is
+        not virtual and this class is subclassed a lot.
+
+        No new tests, no behavior change.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::~ScriptWrappable):
+
 2014-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Cairo] Remove GTK dependency of WidgetBackingStoreGtkX11
