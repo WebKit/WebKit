@@ -1,3 +1,15 @@
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r174877): WebProcess sends an empty Cookies HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=138053
+
+        Reviewed by Chris Dumez.
+
+        Fixes existing tests.
+
+        * platform/network/mac/CookieJarMac.mm: (WebCore::cookiesForSession): Restore the 
+        behavior of returning a null string when there are no cookies.
+
 2014-10-24  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Use NSString API in QuickLookMac::computeNeedsQuickLookResourceCachingQuirks()

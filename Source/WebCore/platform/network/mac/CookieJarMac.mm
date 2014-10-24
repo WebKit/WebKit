@@ -76,6 +76,9 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSArray *cookies = wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
+    if (![cookies count])
+        return String(); // Return a null string, not an empty one that StringBuilder would create below.
+
     StringBuilder cookiesBuilder;
     for (NSHTTPCookie *cookie in cookies) {
         if (![[cookie name] length])
