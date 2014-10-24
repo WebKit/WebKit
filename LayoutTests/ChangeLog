@@ -1,5 +1,27 @@
 2014-10-24  Alexey Proskuryakov  <ap@apple.com>
 
+        Update some results that were incorrect for Yosemite.
+
+        * platform/mac-mavericks/fast/text/international/hindi-spacing-expected.png: Copied from LayoutTests/platform/mac/fast/text/international/hindi-spacing-expected.png.
+        * platform/mac-mavericks/fast/text/international/hindi-spacing-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/hindi-spacing-expected.txt.
+        * platform/mac-mavericks/fast/writing-mode: Added.
+        * platform/mac-mavericks/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png.
+        * platform/mac-mavericks/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt.
+        * platform/mac-mountainlion/fast/writing-mode: Added.
+        * platform/mac-mountainlion/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png.
+        * platform/mac-mountainlion/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt.
+        * platform/mac-mountainlion/mathml: Added.
+        * platform/mac-mountainlion/mathml/opentype: Added.
+        * platform/mac-mountainlion/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Copied from LayoutTests/platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt.
+        * platform/mac-wk2/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Removed.
+        * platform/mac/fast/text/international/hindi-spacing-expected.png:
+        * platform/mac/fast/text/international/hindi-spacing-expected.txt:
+        * platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
         fast/multicol/fixed-stack.html failing since introduction.
         https://bugs.webkit.org/show_bug.cgi?id=132421
 
