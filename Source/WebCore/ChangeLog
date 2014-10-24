@@ -1,5 +1,32 @@
 2014-10-24  Chris Dumez  <cdumez@apple.com>
 
+        Avoid unnecessary NSURLRequest copies in ResourceRequest::doUpdatePlatformRequest() / doUpdatePlatformHTTPBody()
+        https://bugs.webkit.org/show_bug.cgi?id=138049
+
+        Reviewed by Alexey Proskuryakov.
+
+        Avoid unnecessary NSURLRequest copies in ResourceRequest::doUpdatePlatformRequest()
+        / doUpdatePlatformHTTPBody(). It turns out that about half the time, the
+        m_nsRequest member is already mutable so it is unnecessary to call
+        [NSURLRequest mutableCopy], we can just cast it to an NSMutableURLRequest* and
+        avoid copying.
+
+        This patch also moves the code to a new ensureMutableNSURLRequest() method to
+        avoid duplicating the logic.
+
+        I see that we spend ~21% less time in these 2 functions when loading
+        http://flickr.com/explore/ (39.6ms -> 31.2ms).
+
+        No new tests, no behavior change.
+
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::ensureMutableNSURLRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+
+2014-10-24  Chris Dumez  <cdumez@apple.com>
+
         Move ComputeLength CSS properties to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=138036
 

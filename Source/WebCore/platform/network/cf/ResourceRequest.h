@@ -30,6 +30,7 @@
 #include "ResourceRequestBase.h"
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS NSMutableURLRequest;
 OBJC_CLASS NSURLRequest;
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
@@ -135,6 +136,10 @@ namespace WebCore {
         void doUpdateResourceRequest();
         void doUpdatePlatformHTTPBody();
         void doUpdateResourceHTTPBody();
+
+#if PLATFORM(COCOA)
+        NSMutableURLRequest *ensureMutableNSURLRequest();
+#endif
 
         PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData>) const;
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>);
