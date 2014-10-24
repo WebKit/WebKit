@@ -28,6 +28,7 @@
 
 #import "ActionMenuHitTestResult.h"
 #import "WKActionMenuItemTypes.h"
+#import <AppKit/NSSharingService.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
@@ -40,10 +41,9 @@ enum class ActionMenuState {
 };
 }
 
-@class NSSharingServicePicker;
 @class WKView;
 
-@interface WKActionMenuController : NSObject {
+@interface WKActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
 @private
     WebKit::WebPageProxy *_page;
     WKView *_wkView;
