@@ -34,12 +34,21 @@ namespace WebKit {
 class AsyncTask {
     WTF_MAKE_NONCOPYABLE(AsyncTask);
 public:
-    virtual ~AsyncTask() { }
+    AsyncTask(const std::function<void()> taskFunction)
+        : m_taskFunction(taskFunction)
+    {
+        ASSERT(taskFunction);
+    }
 
-    virtual void performTask() = 0;
+    void performTask()
+    {
+        m_taskFunction();
+    }
 
 protected:
-    explicit AsyncTask() { }
+    AsyncTask() { }
+
+    std::function<void()> m_taskFunction;
 };
 
 template <typename T, typename... Arguments>
@@ -51,18 +60,6 @@ public:
             (callee->*method)(arguments...);
         };
     }
-
-    virtual ~AsyncTaskImpl()
-    {
-    }
-
-private:
-    virtual void performTask() override
-    {
-        m_taskFunction();
-    }
-
-    std::function<void()> m_taskFunction;
 };
 
 template<typename T>
