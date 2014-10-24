@@ -15,6 +15,10 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 
+# Before Yosemite, the test did not actually test compositing vs. non-compositing on WebKit1, so it passed accidentally.
+webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+[ MountainLion Mavericks ] fast/multicol/fixed-stack.html [ Pass ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 

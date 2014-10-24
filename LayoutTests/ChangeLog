@@ -1,3 +1,13 @@
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/multicol/fixed-stack.html failing since introduction.
+        https://bugs.webkit.org/show_bug.cgi?id=132421
+
+        * platform/mac-wk1/TestExpectations: As of Yosemite, it's failing on mac-wk1 too.
+
+        * platform/gtk/TestExpectations: [ Pass ] is no longer needed, because we don't have
+        an entry in global TestExpectations now.
+
 2014-10-24  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Skip tests after removing SafariTheme that fail because background renders too dark.
