@@ -448,7 +448,7 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
         }
         unsigned numCharactersOfCurrentRun = iterator.currentCharacter() - startIndexOfCurrentRun;
         hb_script_t script = hb_icu_script_to_script(currentScript);
-        m_harfBuzzRuns.append(HarfBuzzRun::create(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction(), script));
+        m_harfBuzzRuns.append(std::make_unique<HarfBuzzRun>(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction(), script));
         currentFontData = nextFontData;
         startIndexOfCurrentRun = iterator.currentCharacter();
     } while (iterator.consume(character, clusterLength));

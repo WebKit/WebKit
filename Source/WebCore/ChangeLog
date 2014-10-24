@@ -1,3 +1,20 @@
+2014-10-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove HarfBuzzRun::create() factory function
+        https://bugs.webkit.org/show_bug.cgi?id=137945
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to use std::unique_ptr<>, this patch applies std::unique_ptr<> and std::make_unique<>.
+        Thus HarfBuzzRun::create() is needed no longer.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::collectHarfBuzzRuns):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::create): Deleted.
+
 2014-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed iOS build fix

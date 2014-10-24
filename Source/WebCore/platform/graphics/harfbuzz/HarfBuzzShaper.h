@@ -66,10 +66,7 @@ public:
 private:
     class HarfBuzzRun {
     public:
-        static PassOwnPtr<HarfBuzzRun> create(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction, hb_script_t script)
-        {
-            return adoptPtr(new HarfBuzzRun(fontData, startIndex, numCharacters, direction, script));
-        }
+        HarfBuzzRun(const SimpleFontData*, unsigned startIndex, unsigned numCharacters, TextDirection, hb_script_t);
 
         void applyShapeResult(hb_buffer_t*);
         void setGlyphAndPositions(unsigned index, uint16_t glyphId, float advance, float offsetX, float offsetY);
@@ -91,8 +88,6 @@ private:
         hb_script_t script() { return m_script; }
 
     private:
-        HarfBuzzRun(const SimpleFontData*, unsigned startIndex, unsigned numCharacters, TextDirection, hb_script_t);
-
         const SimpleFontData* m_fontData;
         unsigned m_startIndex;
         size_t m_numCharacters;
@@ -139,7 +134,7 @@ private:
     int m_letterSpacing; // Pixels to be added after each glyph.
 
     Vector<hb_feature_t, 4> m_features;
-    Vector<OwnPtr<HarfBuzzRun>, 16> m_harfBuzzRuns;
+    Vector<std::unique_ptr<HarfBuzzRun>, 16> m_harfBuzzRuns;
 
     FloatPoint m_startOffset;
 
