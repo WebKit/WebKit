@@ -26,19 +26,18 @@
 #ifndef WKActionMenuController_h
 #define WKActionMenuController_h
 
+#import "ActionMenuHitTestResult.h"
 #import "WKActionMenuItemTypes.h"
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 class WebPageProxy;
-class WKView;
 
 enum class ActionMenuState {
     None = 0,
     Pending,
     Ready
 };
-
-struct ActionMenuHitTestResult;
 }
 
 @class NSSharingServicePicker;

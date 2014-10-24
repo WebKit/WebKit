@@ -1,3 +1,10 @@
+2014-10-24  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * UIProcess/mac/WKActionMenuController.h:
+        * UIProcess/mac/WKActionMenuController.mm:
+
 2014-10-24  Tim Horton  <timothy_horton@apple.com>
 
         Blindly try to fix all the builds.

@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "ActionMenuHitTestResult.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WebContext.h"
