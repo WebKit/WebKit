@@ -1,5 +1,11 @@
 2014-10-24  Timothy Horton  <timothy_horton@apple.com>
 
+        Blindly try to fix all the builds.
+
+        * UIProcess/mac/WKActionMenuController.h:
+
+2014-10-24  Timothy Horton  <timothy_horton@apple.com>
+
         Blindly try to fix the 32-bit build.
 
         * UIProcess/mac/WKActionMenuController.h:
