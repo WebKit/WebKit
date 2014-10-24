@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, Igalia S.L.
+ * Copyright (C) 2013,2014 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -16,34 +16,31 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WidgetBackingStoreGtkX11_h
-#define WidgetBackingStoreGtkX11_h
+#ifndef BackingStoreBackendCairoX11_h
+#define BackingStoreBackendCairoX11_h
 
-#include "WidgetBackingStore.h"
-#include <wtf/RefPtr.h>
+#include "BackingStoreBackendCairo.h"
 
-#if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
+#if USE(CAIRO) && PLATFORM(X11)
 #include <X11/Xlib.h>
 
 namespace WebCore {
 
-class WidgetBackingStoreGtkX11 : public WidgetBackingStore {
-
+class BackingStoreBackendCairoX11 final : public BackingStoreBackendCairo {
 public:
-    WidgetBackingStoreGtkX11(GtkWidget*, const IntSize&, float deviceScaleFactor);
-    ~WidgetBackingStoreGtkX11();
-    cairo_surface_t* cairoSurface();
-    void scroll(const IntRect& scrollRect, const IntSize& scrollOffset);
+    BackingStoreBackendCairoX11(Display*, unsigned long rootWindowID, Visual*, int depth, const IntSize&, float deviceScaleFactor);
+    virtual ~BackingStoreBackendCairoX11();
+
+    void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) override;
 
 private:
     Display* m_display;
     Pixmap m_pixmap;
     GC m_gc;
-    RefPtr<cairo_surface_t> m_surface;
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
+#endif // USE(CAIRO) && PLATFORM(X11)
 
 #endif // GtkWidgetBackingStoreX11_h

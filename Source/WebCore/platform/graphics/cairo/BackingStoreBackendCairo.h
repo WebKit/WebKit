@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Igalia S.L.
+ * Copyright (C) 2011,2014 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -16,52 +16,43 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WidgetBackingStore_h
-#define WidgetBackingStore_h
+#ifndef BackingStoreBackendCairo_h
+#define BackingStoreBackendCairo_h
+
+#if USE(CAIRO)
 
 #include "IntRect.h"
-#include "IntSize.h"
+#include "RefPtrCairo.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#elif PLATFORM(EFL)
-#include <Evas.h>
-#endif
 
 typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebCore {
 
-#if PLATFORM(GTK)
-typedef GtkWidget* PlatformWidget;
-#elif PLATFORM(EFL)
-typedef Evas_Object* PlatformWidget;
-#endif
-
-class WidgetBackingStore {
-    WTF_MAKE_NONCOPYABLE(WidgetBackingStore);
+class BackingStoreBackendCairo {
+    WTF_MAKE_NONCOPYABLE(BackingStoreBackendCairo);
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    virtual cairo_surface_t* cairoSurface() = 0;
+    virtual ~BackingStoreBackendCairo() { }
+
+    cairo_surface_t* surface() const { return m_surface.get(); }
+    const IntSize& size() const { return m_size; }
+
     virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
-    const IntSize& size() { return m_size; }
-
-    WidgetBackingStore(const IntSize& size, float deviceScaleFactor)
-        : m_size(size)
-        , m_deviceScaleFactor(deviceScaleFactor)
-    { }
-
-    virtual ~WidgetBackingStore() { }
 
 protected:
+    BackingStoreBackendCairo(const IntSize& size)
+        : m_size(size)
+    {
+    }
+
+    RefPtr<cairo_surface_t> m_surface;
     IntSize m_size;
-    float m_deviceScaleFactor;
 };
+
+#endif // USE(CAIRO)
 
 } // namespace WebCore
 
-#endif // WidgetBackingStore_h
+#endif // BackingStoreBackendCairo_h

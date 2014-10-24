@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, Igalia S.L.
+ * Copyright (C) 2013,2014 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -16,27 +16,28 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WidgetBackingStoreCairo_h
-#define WidgetBackingStoreCairo_h
+#ifndef BackingStoreBackendCairoImpl_h
+#define BackingStoreBackendCairoImpl_h
 
-#include "WidgetBackingStore.h"
-#include <wtf/RefPtr.h>
+#include "BackingStoreBackendCairo.h"
+
+#if USE(CAIRO)
 
 namespace WebCore {
 
-class WidgetBackingStoreCairo : public WidgetBackingStore {
-
+class BackingStoreBackendCairoImpl final : public BackingStoreBackendCairo {
 public:
-    WidgetBackingStoreCairo(PlatformWidget, const IntSize&, float deviceScaleFactor);
-    ~WidgetBackingStoreCairo();
-    cairo_surface_t* cairoSurface();
-    void scroll(const IntRect&, const IntSize&);
+    BackingStoreBackendCairoImpl(cairo_surface_t*, const IntSize&);
+    virtual ~BackingStoreBackendCairoImpl();
+
+    void scroll(const IntRect&, const IntSize&) override;
 
 private:
-    RefPtr<cairo_surface_t> m_surface;
     RefPtr<cairo_surface_t> m_scrollSurface;
 };
 
 } // namespace WebCore
 
-#endif // WidgetBackingStoreCairo_h
+#endif // USE(CAIRO)
+
+#endif // BackingStoreBackendCairoImpl_h

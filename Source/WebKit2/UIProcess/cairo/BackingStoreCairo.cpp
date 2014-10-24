@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011,2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,62 +30,69 @@
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
+#include <WebCore/BackingStoreBackendCairoImpl.h>
+#include <WebCore/CairoUtilities.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/WidgetBackingStoreCairo.h>
+#include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 
 #if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
-#include <WebCore/WidgetBackingStoreGtkX11.h>
+#include <WebCore/BackingStoreBackendCairoX11.h>
 #include <gdk/gdkx.h>
-#endif
-
-#if PLATFORM(EFL)
-#include "EwkView.h"
 #endif
 
 using namespace WebCore;
 
 namespace WebKit {
 
-#if PLATFORM(GTK)
-static std::unique_ptr<WidgetBackingStore> createBackingStoreForGTK(GtkWidget* widget, const IntSize& size, float deviceScaleFactor)
+std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
 {
-#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
+#if PLATFORM(GTK) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_X11_DISPLAY(display))
-        return std::make_unique<WidgetBackingStoreGtkX11>(widget, size, deviceScaleFactor);
+    if (GDK_IS_X11_DISPLAY(display)) {
+        GdkVisual* visual = gtk_widget_get_visual(m_webPageProxy.viewWidget());
+        GdkScreen* screen = gdk_visual_get_screen(visual);
+        return std::make_unique<BackingStoreBackendCairoX11>(GDK_SCREEN_XDISPLAY(screen), GDK_WINDOW_XID(gdk_screen_get_root_window(screen)),
+            GDK_VISUAL_XVISUAL(visual), gdk_visual_get_depth(visual), m_size, m_deviceScaleFactor);
+    }
 #endif
-    return std::make_unique<WidgetBackingStoreCairo>(widget, size, deviceScaleFactor);
+
+    IntSize scaledSize = m_size;
+    scaledSize.scale(m_deviceScaleFactor);
+
+#if PLATFORM(GTK)
+    RefPtr<cairo_surface_t> surface = adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(m_webPageProxy.viewWidget()),
+        CAIRO_CONTENT_COLOR_ALPHA, scaledSize.width(), scaledSize.height()));
+#else
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, scaledSize.width(), scaledSize.height()));
+#endif
+
+    cairoSurfaceSetDeviceScale(surface.get(), m_deviceScaleFactor, m_deviceScaleFactor);
+    return std::make_unique<BackingStoreBackendCairoImpl>(surface.get(), m_size);
 }
-#endif
 
 void BackingStore::paint(cairo_t* context, const IntRect& rect)
 {
-    ASSERT(m_backingStore);
+    ASSERT(m_backend);
 
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_surface(context, m_backingStore->cairoSurface(), 0, 0);
+    cairo_set_source_surface(context, m_backend->surface(), 0, 0);
     cairo_rectangle(context, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(context);
 }
 
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
-    if (!m_backingStore)
-#if PLATFORM(EFL)
-        m_backingStore = std::make_unique<WidgetBackingStoreCairo>(EwkView::toEvasObject(toAPI(&m_webPageProxy)), size(), deviceScaleFactor());
-#else
-        m_backingStore = createBackingStoreForGTK(m_webPageProxy.viewWidget(), size(), deviceScaleFactor());
-#endif
+    if (!m_backend)
+        m_backend = createBackend();
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
-    RefPtr<cairo_t> context(adoptRef(cairo_create(m_backingStore->cairoSurface())));
+    RefPtr<cairo_t> context = adoptRef(cairo_create(m_backend->surface()));
     GraphicsContext graphicsContext(context.get());
-    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
-        IntRect updateRect = updateInfo.updateRects[i];
+    for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
         bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
@@ -97,8 +104,8 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (scrollOffset.isZero())
         return;
 
-    ASSERT(m_backingStore);
-    m_backingStore->scroll(scrollRect, scrollOffset);
+    ASSERT(m_backend);
+    m_backend->scroll(scrollRect, scrollOffset);
 }
 
 } // namespace WebKit

@@ -61,6 +61,7 @@ void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to,
 IntSize cairoSurfaceSize(cairo_surface_t*);
 void flipImageSurfaceVertically(cairo_surface_t*);
 void cairoSurfaceSetDeviceScale(cairo_surface_t*, double xScale, double yScale);
+void cairoSurfaceGetDeviceScale(cairo_surface_t*, double& xScale, double& yScale);
 
 } // namespace WebCore
 

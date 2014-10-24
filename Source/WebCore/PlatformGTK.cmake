@@ -67,6 +67,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/OpenGLShims.cpp
     platform/graphics/WOFFFileFormat.cpp
 
+    platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp
+    platform/graphics/cairo/BackingStoreBackendCairoX11.cpp
     platform/graphics/cairo/BitmapImageCairo.cpp
     platform/graphics/cairo/CairoUtilities.cpp
     platform/graphics/cairo/DrawingBufferCairo.cpp
@@ -197,8 +199,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
 
-    platform/cairo/WidgetBackingStoreCairo.cpp
-
     platform/graphics/GLContext.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
@@ -236,7 +236,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/ScrollbarThemeGtk.cpp
     platform/gtk/SharedTimerGtk.cpp
     platform/gtk/SoundGtk.cpp
-    platform/gtk/WidgetBackingStoreGtkX11.cpp
     platform/gtk/WidgetGtk.cpp
 
     rendering/RenderThemeGtk.cpp

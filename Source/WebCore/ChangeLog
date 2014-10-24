@@ -1,3 +1,45 @@
+2014-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Cairo] Remove GTK dependency of WidgetBackingStoreGtkX11
+        https://bugs.webkit.org/show_bug.cgi?id=138004
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Rename all WidgetBackingStore* classes as
+        BackingStoreBackendCairo* since all of them are actually
+        BackingStore backends based on cairo, and move them from
+        platform/cairo and platform/gtk to platform/graphics/cairo.
+        BackingStoreBackendCairo is the base class that contains common
+        members like the surface and size. BackingStoreBackendCairoImpl is
+        the implementation using only cairo, and BackingStoreBackendCairoX11
+        using xlib. BackingStoreBackendCairoX11 receives all the X11
+        information it needs as constructor parameters, instead of using a
+        GtkWidget and GTK+ X11 API. BackingStoreBackendCairoImpl receives
+        the surface already created as constructor parameter, so that it
+        doesn't have any platform specific code now.
+
+        * PlatformEfl.cmake: Update compilation files.
+        * PlatformGTK.cmake: Ditto.
+        * platform/cairo/WidgetBackingStoreCairo.cpp: Removed.
+        * platform/graphics/cairo/BackingStoreBackendCairo.h: Renamed from Source/WebCore/platform/cairo/WidgetBackingStore.h.
+        (WebCore::BackingStoreBackendCairo::~BackingStoreBackendCairo):
+        (WebCore::BackingStoreBackendCairo::surface):
+        (WebCore::BackingStoreBackendCairo::size):
+        (WebCore::BackingStoreBackendCairo::BackingStoreBackendCairo):
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp: Added.
+        (WebCore::BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl):
+        (WebCore::BackingStoreBackendCairoImpl::~BackingStoreBackendCairoImpl):
+        (WebCore::BackingStoreBackendCairoImpl::scroll):
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.h: Renamed from Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h.
+        * platform/graphics/cairo/BackingStoreBackendCairoX11.cpp: Renamed from Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp.
+        (WebCore::BackingStoreBackendCairoX11::BackingStoreBackendCairoX11):
+        (WebCore::BackingStoreBackendCairoX11::~BackingStoreBackendCairoX11):
+        (WebCore::BackingStoreBackendCairoX11::scroll):
+        * platform/graphics/cairo/BackingStoreBackendCairoX11.h: Renamed from Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.h.
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::cairoSurfaceGetDeviceScale):
+        * platform/graphics/cairo/CairoUtilities.h:
+
 2014-10-23  Zalan Bujtas  <zalan@apple.com>
 
         WebContent crash at WebCore::RenderTextControl::textFormControlElement const.

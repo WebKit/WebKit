@@ -30,8 +30,7 @@
 #include <wtf/Noncopyable.h>
 
 #if USE(CAIRO)
-#include <RefPtrCairo.h>
-#include <WebCore/WidgetBackingStore.h>
+#include <WebCore/BackingStoreBackendCairo.h>
 #endif
 
 namespace WebKit {
@@ -61,12 +60,15 @@ private:
     void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
+#if USE(CAIRO)
+    std::unique_ptr<WebCore::BackingStoreBackendCairo> createBackend();
+#endif
+
     WebCore::IntSize m_size;
     float m_deviceScaleFactor;
     WebPageProxy& m_webPageProxy;
-
 #if USE(CAIRO)
-    std::unique_ptr<WebCore::WidgetBackingStore> m_backingStore;
+    std::unique_ptr<WebCore::BackingStoreBackendCairo> m_backend;
 #endif
 };
 
