@@ -1,3 +1,10 @@
+2014-10-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the iOS build
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * WebView/WebView.mm:
+
 2014-10-24  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

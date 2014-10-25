@@ -1,3 +1,9 @@
+2014-10-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the iOS build
+
+        * Configurations/WebKit.xcconfig:
+
 2014-10-24  Beth Dakin  <bdakin@apple.com>
 
         _actionMenuItemsForHitTestResult should also take a type indicating what the menu 

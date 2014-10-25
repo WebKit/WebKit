@@ -8525,6 +8525,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
+#if !PLATFORM(IOS)
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != self.actionMenu)
@@ -8532,6 +8533,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
     [_private->actionMenuController prepareForMenu:menu withEvent:event];
 }
+#endif
 
 @end
 

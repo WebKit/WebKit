@@ -47,7 +47,7 @@ SECTORDER_FLAGS_Production_iphoneos = -Wl,-order_file,$(SDKROOT)/AppleInternal/O
 SECTORDER_FLAGS_Production_macosx = -Wl,-order_file,mac/WebKit2.order;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf WKActionMenuController.* com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
