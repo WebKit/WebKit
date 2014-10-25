@@ -26,6 +26,7 @@
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
+#include "LayoutUnit.h"
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
@@ -49,6 +50,11 @@ class LengthRepeat;
 
 struct Length;
 struct LengthSize;
+
+// Max/min values for CSS, needs to slightly smaller/larger than the true max/min values to allow for rounding without overflowing.
+// Subtract two (rather than one) to allow for values to be converted to float and back without exceeding the LayoutUnit::max.
+const int maxValueForCssLength = intMaxForLayoutUnit - 2;
+const int minValueForCssLength = intMinForLayoutUnit + 2;
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
 // 44.99998. We need to go ahead and round if we're really close to the next
