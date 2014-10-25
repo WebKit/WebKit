@@ -1,5 +1,17 @@
 2014-10-24  Alexey Proskuryakov  <ap@apple.com>
 
+        Update Yosemite results for fast/block/float/overhanging-tall-block.html for
+        font size differences.
+
+        The test fails pixel results, filed bug 138065 to track that.
+
+        * platform/mac-mavericks/fast/block/float: Added.
+        * platform/mac-mavericks/fast/block/float/overhanging-tall-block-expected.png: Copied from LayoutTests/platform/mac/fast/block/float/overhanging-tall-block-expected.png.
+        * platform/mac-mavericks/fast/block/float/overhanging-tall-block-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/overhanging-tall-block-expected.txt.
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
+2014-10-24  Alexey Proskuryakov  <ap@apple.com>
+
         Update media test results for Yosemite.
 
         media/controls-styling.html appears to actually fail, filed bug 138064 about that.
