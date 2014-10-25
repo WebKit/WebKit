@@ -1,3 +1,19 @@
+2014-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Update results for compositing/rtl/rtl-fixed-overflow-scrolled.html.
+
+        Prior to Yosemite results landing, this test was marked as failing on WK2, and its
+        results matched WK1. It got changed several times during the merge, so it ended
+        up being marked as failing on WK1, but with WK1 results landed.
+
+        Let's land WK2 results and keep testing on WK2. Also, Mavericks results were no different
+        from Yosemite.
+
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Removed.
+        * platform/mac-mavericks/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Removed.
+        * platform/mac/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Copied from LayoutTests/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png.
+        * platform/mac/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+
 2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Clamp wordSpacing percentage value.
