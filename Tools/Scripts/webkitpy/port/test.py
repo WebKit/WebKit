@@ -100,11 +100,11 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 106
+TOTAL_TESTS = 107
 TOTAL_SKIPS = 28
 TOTAL_RETRIES = 14
 
-UNEXPECTED_PASSES = 6
+UNEXPECTED_PASSES = 7
 UNEXPECTED_FAILURES = 17
 
 def unit_test_list():
@@ -167,6 +167,9 @@ layer at (0,0) size 800x34
               actual_text='text-image-checksum_fail-txt',
               actual_image='text-image-checksum_fail-pngtEXtchecksum\x00checksum_fail',
               actual_checksum='text-image-checksum_fail-checksum')
+    tests.add('failures/unexpected/text-image-missing.html',
+              actual_text='text-image-checksum_fail-txt',
+              expected_image=None)
     tests.add('failures/unexpected/checksum-with-matching-image.html',
               actual_checksum='text-image-checksum_fail-checksum')
     tests.add('failures/unexpected/skip_pass.html')

@@ -115,7 +115,7 @@ class BuildBotPrinter(object):
                     add_to_dict_of_lists(passes, 'Expected to timeout, but passed', test)
                 else:
                     add_to_dict_of_lists(passes, 'Expected to fail, but passed', test)
-            elif enabled_pixel_tests_in_retry and actual == ['TEXT', 'IMAGE+TEXT']:
+            elif enabled_pixel_tests_in_retry and (actual == ['TEXT', 'IMAGE+TEXT'] or actual == ['TEXT', 'MISSING']):
                 add_to_dict_of_lists(regressions, actual[0], test)
             elif len(actual) > 1:
                 # We group flaky tests by the first actual result we got.

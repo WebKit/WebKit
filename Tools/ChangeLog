@@ -1,3 +1,18 @@
+2014-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Test regressions are not detected when image result is missing
+        https://bugs.webkit.org/show_bug.cgi?id=138070
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        Count these as regressions, not as flaky tests.
+
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        Test it.
+
 2014-10-24  Timothy Horton  <timothy_horton@apple.com>
 
         Add Conrad Shultz to the contributors list.

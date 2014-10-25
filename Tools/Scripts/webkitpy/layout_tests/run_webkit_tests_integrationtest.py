@@ -671,6 +671,22 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertFalse(json["pixel_tests_enabled"])
         self.assertEqual(details.enabled_pixel_tests_in_retry, True)
 
+    def test_failed_text_with_missing_pixel_results_on_retry(self):
+        # Test what happens when pixel results are missing on retry.
+        host = MockHost()
+        details, err, _ = logging_run(['--no-show-results',
+            '--no-new-test-results', '--no-pixel-tests',
+            'failures/unexpected/text-image-missing.html'],
+            tests_included=True, host=host)
+        file_list = host.filesystem.written_files.keys()
+        self.assertEqual(details.exit_code, 1)
+        expected_token = '"unexpected":{"text-image-missing.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT MISSING","is_missing_image":true}}'
+        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
+        self.assertTrue(json_string.find(expected_token) != -1)
+        self.assertTrue(json_string.find('"num_regressions":1') != -1)
+        self.assertTrue(json_string.find('"num_flaky":0') != -1)
+        self.assertTrue(json_string.find('"num_missing":1') != -1)
+
     def test_retrying_uses_retries_directory(self):
         host = MockHost()
         details, err, _ = logging_run(['--debug-rwt-logging', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)

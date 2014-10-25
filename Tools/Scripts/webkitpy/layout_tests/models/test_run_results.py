@@ -192,7 +192,9 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
             elif retry_results:
                 retry_result_type = retry_results.unexpected_results_by_name[test_name].type
                 if result_type != retry_result_type:
-                    if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and retry_result_type == test_expectations.IMAGE_PLUS_TEXT:
+                    if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and (retry_result_type == test_expectations.IMAGE_PLUS_TEXT or retry_result_type == test_expectations.MISSING):
+                        if retry_result_type == test_expectations.MISSING:
+                            num_missing += 1
                         num_regressions += 1
                         test_dict['report'] = 'REGRESSION'
                     else:
