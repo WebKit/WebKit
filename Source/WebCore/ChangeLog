@@ -1,3 +1,9 @@
+2014-10-25  Dan Bernstein  <mitz@apple.com>
+
+        Fix builds using the public SDK.
+
+        * platform/spi/cocoa/NSExtensionSPI.h:
+
 2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Clamp wordSpacing percentage value.

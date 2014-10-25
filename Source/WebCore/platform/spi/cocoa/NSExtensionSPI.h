@@ -27,7 +27,7 @@
 
 #import <Foundation/NSExtension.h>
 
-#elif __OBJC2__
+#elif defined __OBJC2__
 
 @interface NSExtension
 @end
