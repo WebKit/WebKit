@@ -1,5 +1,13 @@
 2014-10-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Add Mavericks results for platform/mac/editing/spelling/delete-autocorrected-word-2.html, too.
+
+        Yosemite, Mavericks and Mountain Lion all have different results.
+
+        * platform/mac-mavericks/platform/mac/editing/spelling/delete-autocorrected-word-2-expected.txt: Added.
+
+2014-10-25  Alexey Proskuryakov  <ap@apple.com>
+
         Update Yosemite results for platform/mac/editing/spelling/delete-autocorrected-word-2.html.
 
         Looks like this got confused during Yosemite tests landing.
