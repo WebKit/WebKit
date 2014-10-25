@@ -1,3 +1,50 @@
+2014-10-10 Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Reviewed by Timothy Hatcher.
+
+        Don't update the timeline's current time when the debugger is paused.
+
+        Start and end times for timeline records are now in seconds elapsed since timeline
+        recording started, rather than milliseconds since the epoch. Also convert code that
+        tracks page/resource load timings to use elapsed times rather than timestamps.
+
+        Add a workaround to preserve compatibility with old backends. Convert legacy timestamps
+        in multiple agents to elapsed times.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveResponse):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveData):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFinishLoading):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFailLoading):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrame):
+        * UserInterface/Controllers/ProbeManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.computeElapsedTime): Forward to the active TimelineRecording.
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        (WebInspector.TimelineManager.prototype.pageDidLoad):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        * UserInterface/Models/Probe.js:
+        (WebInspector.ProbeSample):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.updateForRedirectResponse):
+        (WebInspector.Resource.prototype.updateForResponse):
+        (WebInspector.Resource.prototype.increaseSize):
+        (WebInspector.Resource.prototype.markAsFinished):
+        (WebInspector.Resource.prototype.markAsFailed):
+        (WebInspector.Resource.prototype.revertMarkAsFinished):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.computeElapsedTime):
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._debuggerPaused):
+        (WebInspector.TimelineContentView.prototype._debuggerResumed):
+
+
 2014-10-23  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Double border appearing in node sidebar in expanded items in OS X Mavericks.

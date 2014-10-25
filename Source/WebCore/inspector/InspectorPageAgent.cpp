@@ -57,6 +57,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
+#include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
@@ -72,7 +73,6 @@
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
@@ -357,6 +357,11 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason
 #if ENABLE(TOUCH_EVENTS)
     updateTouchEventEmulationInPage(false);
 #endif
+}
+
+double InspectorPageAgent::timestamp()
+{
+    return m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->elapsedTime();
 }
 
 void InspectorPageAgent::enable(ErrorString&)
@@ -709,12 +714,12 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 void InspectorPageAgent::domContentEventFired()
 {
     m_isFirstLayoutAfterOnLoad = true;
-    m_frontendDispatcher->domContentEventFired(currentTime());
+    m_frontendDispatcher->domContentEventFired(timestamp());
 }
 
 void InspectorPageAgent::loadEventFired()
 {
-    m_frontendDispatcher->loadEventFired(currentTime());
+    m_frontendDispatcher->loadEventFired(timestamp());
 }
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)

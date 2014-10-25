@@ -459,7 +459,7 @@ WebInspector.Resource.prototype = {
         return null;
     },
 
-    updateForRedirectResponse: function(url, requestHeaders, timestamp)
+    updateForRedirectResponse: function(url, requestHeaders, elapsedTime)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
@@ -469,7 +469,7 @@ WebInspector.Resource.prototype = {
 
         this._url = url;
         this._requestHeaders = requestHeaders || {};
-        this._lastRedirectReceivedTimestamp = timestamp || NaN;
+        this._lastRedirectReceivedTimestamp = elapsedTime || NaN;
 
         if (oldURL !== url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
@@ -482,7 +482,7 @@ WebInspector.Resource.prototype = {
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     },
 
-    updateForResponse: function(url, mimeType, type, responseHeaders, statusCode, statusText, timestamp)
+    updateForResponse: function(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime)
     {
         console.assert(!this._finished);
         console.assert(!this._failed);
@@ -501,7 +501,7 @@ WebInspector.Resource.prototype = {
         this._statusCode = statusCode;
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
-        this._responseReceivedTimestamp = timestamp || NaN;
+        this._responseReceivedTimestamp = elapsedTime || NaN;
 
         this._responseHeadersSize = String(this._statusCode).length + this._statusText.length + 12; // Extra length is for "HTTP/1.1 ", " ", and "\r\n".
         for (var name in this._responseHeaders)
@@ -563,7 +563,7 @@ WebInspector.Resource.prototype = {
         return false;
     },
 
-    increaseSize: function(dataLength, timestamp)
+    increaseSize: function(dataLength, elapsedTime)
     {
         console.assert(dataLength >= 0);
 
@@ -574,7 +574,7 @@ WebInspector.Resource.prototype = {
 
         this._size += dataLength;
 
-        this._lastDataReceivedTimestamp = timestamp || NaN;
+        this._lastDataReceivedTimestamp = elapsedTime || NaN;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.SizeDidChange, {previousSize: previousSize});
 
@@ -605,13 +605,13 @@ WebInspector.Resource.prototype = {
             this.dispatchEventToListeners(WebInspector.Resource.Event.TransferSizeDidChange);
     },
 
-    markAsFinished: function(timestamp)
+    markAsFinished: function(elapsedTime)
     {
         console.assert(!this._failed);
         console.assert(!this._canceled);
 
         this._finished = true;
-        this._finishedOrFailedTimestamp = timestamp || NaN;
+        this._finishedOrFailedTimestamp = elapsedTime || NaN;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFinish);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
@@ -620,13 +620,13 @@ WebInspector.Resource.prototype = {
             this.requestContentFromBackendIfNeeded();
     },
 
-    markAsFailed: function(canceled, timestamp)
+    markAsFailed: function(canceled, elapsedTime)
     {
         console.assert(!this._finished);
 
         this._failed = true;
         this._canceled = canceled;
-        this._finishedOrFailedTimestamp = timestamp || NaN;
+        this._finishedOrFailedTimestamp = elapsedTime || NaN;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFail);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
@@ -635,7 +635,7 @@ WebInspector.Resource.prototype = {
         this.servicePendingContentRequests(true);
     },
 
-    revertMarkAsFinished: function(timestamp)
+    revertMarkAsFinished: function()
     {
         console.assert(!this._failed);
         console.assert(!this._canceled);

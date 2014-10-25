@@ -60,11 +60,6 @@ using namespace Inspector;
 
 namespace WebCore {
 
-void TimelineTimeConverter::reset()
-{
-    m_startOffset = monotonicallyIncreasingTime() - currentTime();
-}
-
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
 }
@@ -117,7 +112,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     else
         m_maxCallStackDepth = 5;
 
-    m_timeConverter.reset();
+    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->start();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
 
@@ -135,6 +130,8 @@ void InspectorTimelineAgent::internalStop()
     if (!m_enabled)
         return;
 
+    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->stop();
+
     m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
 
     if (m_scriptDebugServer)
@@ -148,6 +145,11 @@ void InspectorTimelineAgent::internalStop()
         m_frontendDispatcher->recordingStopped();
 }
 
+double InspectorTimelineAgent::timestamp()
+{
+    return m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->elapsedTime();
+}
+
 void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scriptDebugServer)
 {
     ASSERT(!m_enabled);
@@ -156,9 +158,9 @@ void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scr
     m_scriptDebugServer = scriptDebugServer;
 }
 
-static inline void startProfiling(JSC::ExecState* exec, const String& title)
+static inline void startProfiling(JSC::ExecState* exec, const String& title, PassRefPtr<Stopwatch> stopwatch)
 {
-    JSC::LegacyProfiler::profiler()->startProfiling(exec, title);
+    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, stopwatch);
 }
 
 static inline PassRefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const String& title)
@@ -166,9 +168,9 @@ static inline PassRefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const
     return JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
 }
 
-static inline void startProfiling(Frame* frame, const String& title)
+static inline void startProfiling(Frame* frame, const String& title, PassRefPtr<Stopwatch> stopwatch)
 {
-    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title);
+    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title, stopwatch);
 }
 
 static inline PassRefPtr<JSC::Profile> stopProfiling(Frame* frame, const String& title)
@@ -192,7 +194,11 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     if (!m_enabled && m_pendingConsoleProfileRecords.isEmpty())
         internalStart();
 
-    startProfiling(exec, title);
+    // Use an independent stopwatch for console-initiated profiling, since the user will expect it
+    // to be relative to when their command was issued.
+    RefPtr<Stopwatch> profilerStopwatch = Stopwatch::create();
+    profilerStopwatch->start();
+    startProfiling(exec, title, profilerStopwatch.release());
 
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
@@ -231,7 +237,7 @@ void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scri
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 
     if (frame && !m_callStackDepth)
-        startProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
+        startProfiling(frame, ASCIILiteral("Timeline FunctionCall"), m_instrumentingAgents->inspectorEnvironment().executionStopwatch());
 
     ++m_callStackDepth;
 }
@@ -406,7 +412,7 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 
     if (frame && !m_callStackDepth) {
         ++m_callStackDepth;
-        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
+        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"), m_instrumentingAgents->inspectorEnvironment().executionStopwatch());
     }
 }
 
@@ -743,11 +749,6 @@ void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const
     quad->setP2(frameView.contentsToRootView(roundedIntPoint(absolute.p2())));
     quad->setP3(frameView.contentsToRootView(roundedIntPoint(absolute.p3())));
     quad->setP4(frameView.contentsToRootView(roundedIntPoint(absolute.p4())));
-}
-
-double InspectorTimelineAgent::timestamp()
-{
-    return m_timeConverter.fromMonotonicallyIncreasingTime(monotonicallyIncreasingTime());
 }
 
 Page* InspectorTimelineAgent::page()

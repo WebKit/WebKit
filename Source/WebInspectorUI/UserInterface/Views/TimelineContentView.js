@@ -98,6 +98,9 @@ WebInspector.TimelineContentView = function(recording)
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerPaused, this);
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerResumed, this);
+
     this.showOverviewTimelineView();
 };
 
@@ -405,6 +408,22 @@ WebInspector.TimelineContentView.prototype = {
     _capturingStopped: function(event)
     {
         this._stopUpdatingCurrentTime();
+    },
+
+    _debuggerPaused: function(event)
+    {
+        if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
+            return;
+
+        this._stopUpdatingCurrentTime();
+    },
+
+    _debuggerResumed: function(event)
+    {
+        if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
+            return;
+
+        this._startUpdatingCurrentTime();
     },
 
     _recordingTimesUpdated: function(event)

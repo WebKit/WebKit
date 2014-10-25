@@ -92,6 +92,7 @@ set(WTF_HEADERS
     StackStats.h
     StaticConstructors.h
     StdLibExtras.h
+    Stopwatch.h
     StringExtras.h
     StringHasher.h
     StringPrintStream.h

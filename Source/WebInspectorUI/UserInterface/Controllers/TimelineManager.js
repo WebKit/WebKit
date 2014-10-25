@@ -121,6 +121,14 @@ WebInspector.TimelineManager.prototype = {
         this._activeRecording = null;
     },
 
+    computeElapsedTime: function(timestamp)
+    {
+        if (!this._activeRecording)
+            return 0;
+
+        return this._activeRecording.computeElapsedTime(timestamp);
+    },
+
     // Protected
 
     capturingStarted: function()
@@ -163,10 +171,8 @@ WebInspector.TimelineManager.prototype = {
 
         function processRecord(recordPayload, parentRecordPayload)
         {
-            // Convert the timestamps to seconds to match the resource timestamps.
-            var startTime = recordPayload.startTime / 1000;
-            var endTime = recordPayload.endTime / 1000;
-
+            var startTime = this.activeRecording.computeElapsedTime(recordPayload.startTime);
+            var endTime = this.activeRecording.computeElapsedTime(recordPayload.endTime);
             var callFrames = this._callFramesFromPayload(recordPayload.stackTrace);
 
             var significantCallFrame = null;
@@ -393,7 +399,7 @@ WebInspector.TimelineManager.prototype = {
     pageDidLoad: function(timestamp)
     {
         if (isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
-            WebInspector.frameResourceManager.mainFrame.markLoadEvent(timestamp);
+            WebInspector.frameResourceManager.mainFrame.markLoadEvent(this.activeRecording.computeElapsedTime(timestamp));
     },
 
     // Private
@@ -417,6 +423,7 @@ WebInspector.TimelineManager.prototype = {
         if (oldRecording)
             oldRecording.unloaded();
 
+        this._legacyFirstRecordedTimestamp = NaN;
         this._activeRecording = newRecording;
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording: oldRecording});
     },

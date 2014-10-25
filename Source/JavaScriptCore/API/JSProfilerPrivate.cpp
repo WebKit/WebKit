@@ -34,7 +34,11 @@ using namespace JSC;
 
 void JSStartProfiling(JSContextRef ctx, JSStringRef title)
 {
-    LegacyProfiler::profiler()->startProfiling(toJS(ctx), title->string());
+    // Use an independent stopwatch for API-initiated profiling, since the user will expect it
+    // to be relative to when their command was issued.
+    RefPtr<Stopwatch> stopwatch = Stopwatch::create();
+    stopwatch->start();
+    LegacyProfiler::profiler()->startProfiling(toJS(ctx), title->string(), stopwatch.release());
 }
 
 void JSEndProfiling(JSContextRef ctx, JSStringRef title)

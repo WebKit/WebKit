@@ -40,6 +40,7 @@
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
 #include "ScriptValue.h"
+#include <wtf/Stopwatch.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -652,6 +653,8 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
 
     if (m_listener)
         m_listener->didPause();
+    
+    m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->stop();
 }
 
 void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifier)
@@ -669,7 +672,7 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, 
         .setProbeId(action.identifier)
         .setSampleId(sampleId)
         .setBatchId(hitCount)
-        .setTimestamp(monotonicallyIncreasingTime())
+        .setTimestamp(m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->elapsedTime())
         .setPayload(payload.release());
 
     m_frontendDispatcher->didSampleProbe(result.release());
@@ -679,6 +682,7 @@ void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
+    m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->start();
     clearBreakDetails();
 
     m_frontendDispatcher->resumed();
@@ -744,7 +748,6 @@ void InspectorDebuggerAgent::clearBreakDetails()
     m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Other;
     m_breakAuxData = nullptr;
 }
-
 
 } // namespace Inspector
 

@@ -130,6 +130,7 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override;
+    virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
 
 private:
     friend InstrumentingAgents* instrumentationForPage(Page*);
@@ -148,6 +149,7 @@ private:
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     Inspector::InspectorFrontendChannel* m_inspectorFrontendChannel;
+    RefPtr<WTF::Stopwatch> m_executionStopwatch;
     Page& m_page;
     InspectorClient* m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient;

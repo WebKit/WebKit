@@ -614,6 +614,9 @@
     <ClInclude Include="..\wtf\StdLibExtras.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\Stopwatch.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\StringExtras.h">
       <Filter>wtf</Filter>
     </ClInclude>

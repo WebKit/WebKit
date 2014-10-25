@@ -51,6 +51,7 @@
 #include "WorkerThread.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <inspector/InspectorFrontendDispatchers.h>
+#include <wtf/Stopwatch.h>
 
 using namespace Inspector;
 
@@ -80,6 +81,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_runtimeAgent(nullptr)
+    , m_executionStopwatch(Stopwatch::create())
 {
     auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_injectedScriptManager.get(), &workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
@@ -168,6 +170,11 @@ void WorkerInspectorController::didCallInjectedScriptFunction(JSC::ExecState* sc
     ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(scriptState);
     InspectorInstrumentationCookie cookie = m_injectedScriptInstrumentationCookies.takeLast();
     InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
+}
+
+PassRefPtr<Stopwatch> WorkerInspectorController::executionStopwatch()
+{
+    return m_executionStopwatch;
 }
 
 } // namespace WebCore

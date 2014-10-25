@@ -73,6 +73,7 @@
 #include <inspector/agents/InspectorAgent.h>
 #include <profiler/LegacyProfiler.h>
 #include <runtime/JSLock.h>
+#include <wtf/Stopwatch.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "PageDebuggable.h"
@@ -88,6 +89,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_overlay(std::make_unique<InspectorOverlay>(page, inspectorClient))
     , m_inspectorFrontendChannel(nullptr)
+    , m_executionStopwatch(Stopwatch::create())
     , m_page(page)
     , m_inspectorClient(inspectorClient)
     , m_inspectorFrontendClient(nullptr)
@@ -450,6 +452,11 @@ void InspectorController::frontendInitialized()
     if (m_isAutomaticInspection)
         m_page.inspectorDebuggable().unpauseForInitializedInspector();
 #endif
+}
+
+PassRefPtr<Stopwatch> InspectorController::executionStopwatch()
+{
+    return m_executionStopwatch;
 }
 
 } // namespace WebCore

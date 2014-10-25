@@ -47,6 +47,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
+namespace WTF {
+class Stopwatch;
+}
+
 namespace Inspector {
 
 class InjectedScript;
@@ -163,6 +167,7 @@ private:
     RefPtr<InspectorObject> m_breakAuxData;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
+    RefPtr<WTF::Stopwatch> m_stopwatch;
     int m_nextProbeSampleId;
 };
 

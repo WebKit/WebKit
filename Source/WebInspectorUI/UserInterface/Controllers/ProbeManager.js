@@ -75,7 +75,8 @@ WebInspector.ProbeManager.prototype = {
     {
         console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);
         var probe = this._probesByIdentifier.get(sample.probeId);
-        probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, sample.timestamp, sample.payload));
+        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(sample.timestamp);
+        probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, sample.payload));
     },
 
     // Private

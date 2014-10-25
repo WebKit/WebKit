@@ -28,6 +28,10 @@
 
 #include "CallData.h"
 
+namespace WTF {
+class Stopwatch;
+}
+
 namespace JSC {
 class SourceCode;
 }
@@ -47,6 +51,7 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) = 0;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) = 0;
     virtual void frontendInitialized() = 0;
+    virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() = 0;
 };
 
 } // namespace Inspector

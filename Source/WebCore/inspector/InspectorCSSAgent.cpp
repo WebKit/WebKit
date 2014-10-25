@@ -56,7 +56,6 @@
 #include "StyleSheetList.h"
 #include "WebKitNamedFlow.h"
 #include <inspector/InspectorProtocolObjects.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>

@@ -1,3 +1,67 @@
+2014-10-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Reviewed by Timothy Hatcher.
+
+        To avoid counting time elapsed while the debugger is paused, timeline records should
+        keep track of time elapsed since the start of timeline capturing, rather than wall clock
+        timestamps. We can easily compute elapsed time by sharing a Stopwatch instance through the
+        inspector environment. The stopwatch runs with timelines and is paused with the debugger,
+        so subsequent time measurements will not include time elapsed while the debugger is paused.
+
+        This refactoring is safe because start and end times are only used to graph records; the
+        timestamp's actual value is irrelevant and is not displayed in the user interface. Date
+        timestamps are still included with network-related records as part of their header data.
+
+        No new tests, because we cannot reliably test timing changes induced by debugger pauses.
+        It is possible for records to accrue time before the debugger pauses or after it resumes.
+
+        * inspector/InspectorCSSAgent.cpp: Remove unnecessary include.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::executionStopwatch): Add a shared stopwatch.
+        * inspector/InspectorController.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::timestamp): Redirect to the shared stopwatch.
+        (WebCore::InspectorPageAgent::domContentEventFired):
+        (WebCore::InspectorPageAgent::loadEventFired):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::timestamp): Redirect to the shared stopwatch.
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didCloseWebSocket):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketFrame):
+        (WebCore::InspectorResourceAgent::didSendWebSocketFrame):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketFrameError):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStart): Start and stop the stopwatch with timelines.
+        (WebCore::InspectorTimelineAgent::internalStop):
+        (WebCore::InspectorTimelineAgent::timestamp): Redirect to the shared stopwatch.
+        (WebCore::startProfiling):
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::TimelineTimeConverter::reset): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::TimelineTimeConverter::TimelineTimeConverter): Deleted.
+        (WebCore::TimelineTimeConverter::fromMonotonicallyIncreasingTime): Deleted.
+        (WebCore::InspectorTimelineAgent::timeConverter): Deleted.
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::executionStopwatch): Add a shared stopwatch.
+        * inspector/WorkerInspectorController.h:
+
 2014-10-25  Dan Bernstein  <mitz@apple.com>
 
         Fix builds using the public SDK.

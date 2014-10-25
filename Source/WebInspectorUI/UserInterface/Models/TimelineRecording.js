@@ -32,6 +32,9 @@ WebInspector.TimelineRecording = function(identifier, displayName)
     this._displayName = displayName;
     this._isWritable = true;
 
+    // For legacy backends, we compute the elapsed time of records relative to this timestamp.
+    this._legacyFirstRecordedTimestamp = NaN;
+
     for (var key of Object.keys(WebInspector.TimelineRecord.Type)) {
         var type = WebInspector.TimelineRecord.Type[key];
         var timeline = new WebInspector.Timeline(type);
@@ -48,6 +51,8 @@ WebInspector.TimelineRecording.Event = {
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
     TimesUpdated: "timeline-recording-times-updated"
 };
+
+WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 28800000; // Date.parse("Jan 1, 1970")
 
 WebInspector.TimelineRecording.prototype = {
     constructor: WebInspector.TimelineRecording,
@@ -173,6 +178,24 @@ WebInspector.TimelineRecording.prototype = {
 
         if (newTimeline)
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline: sourceCodeTimeline});
+    },
+
+    computeElapsedTime: function(timestamp)
+    {
+        if (!timestamp || isNaN(timestamp))
+            return NaN;
+
+        // COMPATIBILITY (iOS8): old backends send timestamps (milliseconds since the epoch), rather
+        // than seconds elapsed since timeline capturing started. We approximate the latter by
+        // subtracting the start timestamp, as old versions did not use monotonic times.
+        if (isNaN(this._legacyFirstRecordedTimestamp))
+            this._legacyFirstRecordedTimestamp = timestamp;
+
+        // If the record's start time sems unreasonably large, treat it as a legacy timestamp.
+        if (timestamp > WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion)
+            return (timestamp - this._legacyFirstRecordedTimestamp) / 1000.0;
+
+        return timestamp;
     },
 
     // Private

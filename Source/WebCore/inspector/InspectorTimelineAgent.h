@@ -40,6 +40,7 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptDebugListener.h>
+#include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -111,19 +112,6 @@ enum class TimelineRecordType {
     WebSocketSendHandshakeRequest,
     WebSocketReceiveHandshakeResponse,
     WebSocketDestroy
-};
-
-class TimelineTimeConverter {
-public:
-    TimelineTimeConverter()
-        : m_startOffset(0)
-    {
-    }
-    double fromMonotonicallyIncreasingTime(double time) const  { return (time - m_startOffset) * 1000.0; }
-    void reset();
-
-private:
-    double m_startOffset;
 };
 
 class InspectorTimelineAgent
@@ -218,7 +206,7 @@ public:
 #endif
 
 protected:
-    // ScriptDebugListener. This is only used to create records for probe samples.
+    // ScriptDebugListener
     virtual void didParseSource(JSC::SourceID, const Script&) override { }
     virtual void failedToParseSource(const String&, const String&, int, int, const String&) override { }
     virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&) override { }
@@ -247,6 +235,7 @@ private:
 
     void internalStart(const int* maxCallStackDepth = nullptr);
     void internalStop();
+    double timestamp();
 
     void sendEvent(PassRefPtr<Inspector::InspectorObject>);
     void appendRecord(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
@@ -264,17 +253,13 @@ private:
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
-    const TimelineTimeConverter& timeConverter() const { return m_timeConverter; }
-    double timestamp();
     Page* page();
 
     InspectorPageAgent* m_pageAgent;
     PageScriptDebugServer* m_scriptDebugServer;
-    TimelineTimeConverter m_timeConverter;
 
     std::unique_ptr<Inspector::InspectorTimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorTimelineBackendDispatcher> m_backendDispatcher;
-    double m_timestampOffset;
 
     Vector<TimelineRecordEntry> m_recordStack;
 
