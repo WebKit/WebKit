@@ -1146,7 +1146,7 @@ webkit.org/b/135094 fast/workers/worker-exception-during-navigation.html [ Timeo
 
 webkit.org/b/135095 fast/loader/child-frame-add-after-back-forward.html [ Timeout Pass ]
 
-webkit.org/b/135531 fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Timeout ]
+webkit.org/b/135531 fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Timeout Crash ]
 
 webkit.org/b/136069 fast/forms/mailto/formenctype-attribute-input-2.html [ Timeout Pass ]
 
@@ -2136,8 +2136,22 @@ webkit.org/b/136673 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_direction-row-reverse.html [ ImageOnlyFailure ]
 
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
+webkit.org/b/138069 accessibility/table-column-headers-with-captions.html [ Failure ]
 
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
+webkit.org/b/138074 media/video-volume-slider-drag.html [ Failure ]
+
+webkit.org/b/138072 http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html [ Failure ]
+webkit.org/b/138073 http/tests/media/hls/hls-audio-tracks.html [ Failure ]
+
+# Font is clipped incorrectly
+webkit.org/b/138077 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
+webkit.org/b/138077 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ ImageOnlyFailure ]
+
+# Smooth scrolling causes failure of scrolling tests
+webkit.org/b/138078 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/138078 fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
+webkit.org/b/138078 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]

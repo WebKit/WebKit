@@ -1,3 +1,9 @@
+2014-10-25  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Unreviewed GTK gardening after r174685.
+
+        * platform/gtk/TestExpectations: Report new failures and update expectations.
+
 2014-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         Land Yosemite results for six editing/selection/vertical* tests.
