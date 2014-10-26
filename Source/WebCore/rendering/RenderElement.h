@@ -217,6 +217,12 @@ private:
     virtual RenderObject* firstChildSlow() const override final { return firstChild(); }
     virtual RenderObject* lastChildSlow() const override final { return lastChild(); }
 
+    // Called when an object that was floating or positioned becomes a normal flow object
+    // again.  We have to make sure the render tree updates as needed to accommodate the new
+    // normal flow object.
+    void handleDynamicFloatPositionChange();
+    void removeAnonymousWrappersForInlinesIfNecessary();
+
     bool shouldRepaintForStyleDifference(StyleDifference) const;
     bool hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const;
 

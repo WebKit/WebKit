@@ -1,5 +1,37 @@
 2014-10-26  Andreas Kling  <akling@apple.com>
 
+        Move some RenderObject member functions to RenderElement.
+        <https://webkit.org/b/138085>
+
+        Reviewed by Chris Dumez.
+
+        Move these two functions to RenderElement:
+
+            - handleDynamicFloatPositionChange()
+            - removeAnonymousWrappersForInlinesIfNecessary()
+
+        Also make childBecameNonInline() take a RenderElement& since
+        that's all we ever pass to it.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::childBecameNonInline):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::childBecameNonInline):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::handleDynamicFloatPositionChange):
+        (WebCore::RenderElement::removeAnonymousWrappersForInlinesIfNecessary):
+        * rendering/RenderElement.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::handleDynamicFloatPositionChange): Deleted.
+        (WebCore::RenderObject::removeAnonymousWrappersForInlinesIfNecessary): Deleted.
+        * rendering/RenderObject.h:
+
+2014-10-26  Andreas Kling  <akling@apple.com>
+
         Move continuation teardown from subclasses to RenderBoxModelObject.
         <https://webkit.org/b/138081>
 

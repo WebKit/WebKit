@@ -245,12 +245,6 @@ public:
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;
-
-    // Called when an object that was floating or positioned becomes a normal flow object
-    // again.  We have to make sure the render tree updates as needed to accommodate the new
-    // normal flow object.
-    void handleDynamicFloatPositionChange();
-    void removeAnonymousWrappersForInlinesIfNecessary();
     
     // RenderObject tree manipulation
     //////////////////////////////////////////

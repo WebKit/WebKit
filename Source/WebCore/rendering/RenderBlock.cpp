@@ -3397,7 +3397,7 @@ const RenderStyle& RenderBlock::outlineStyleForRepaint() const
     return isAnonymousBlockContinuation() ? continuation()->style() : style();
 }
 
-void RenderBlock::childBecameNonInline(RenderObject*)
+void RenderBlock::childBecameNonInline(RenderElement&)
 {
     makeChildrenNonInline();
     if (isAnonymousBlock() && is<RenderBlock>(parent()))

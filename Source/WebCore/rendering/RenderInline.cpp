@@ -1297,15 +1297,15 @@ void RenderInline::updateDragState(bool dragOn)
         continuation->updateDragState(dragOn);
 }
 
-void RenderInline::childBecameNonInline(RenderObject* child)
+void RenderInline::childBecameNonInline(RenderElement& child)
 {
     // We have to split the parent flow.
     RenderBlock* newBox = containingBlock()->createAnonymousBlock();
     RenderBoxModelObject* oldContinuation = continuation();
     setContinuation(newBox);
-    RenderObject* beforeChild = child->nextSibling();
-    removeChildInternal(*child, NotifyChildren);
-    splitFlow(beforeChild, newBox, child, oldContinuation);
+    RenderObject* beforeChild = child.nextSibling();
+    removeChildInternal(child, NotifyChildren);
+    splitFlow(beforeChild, newBox, &child, oldContinuation);
 }
 
 void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)

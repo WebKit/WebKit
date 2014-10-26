@@ -457,7 +457,7 @@ private:
 
     virtual RenderElement* hoverAncestor() const override final;
     virtual void updateDragState(bool dragOn) override final;
-    virtual void childBecameNonInline(RenderObject* child) override final;
+    virtual void childBecameNonInline(RenderElement&) override final;
 
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) override final
     {

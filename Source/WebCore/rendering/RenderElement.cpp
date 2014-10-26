@@ -897,6 +897,51 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         view().frameView().updateExtendBackgroundIfNecessary();
 }
 
+void RenderElement::handleDynamicFloatPositionChange()
+{
+    // We have gone from not affecting the inline status of the parent flow to suddenly
+    // having an impact.  See if there is a mismatch between the parent flow's
+    // childrenInline() state and our state.
+    setInline(style().isDisplayInlineType());
+    if (isInline() != parent()->childrenInline()) {
+        if (!isInline())
+            downcast<RenderBoxModelObject>(*parent()).childBecameNonInline(*this);
+        else {
+            // An anonymous block must be made to wrap this inline.
+            RenderBlock* block = downcast<RenderBlock>(*parent()).createAnonymousBlock();
+            parent()->insertChildInternal(block, this, RenderElement::NotifyChildren);
+            parent()->removeChildInternal(*this, RenderElement::NotifyChildren);
+            block->insertChildInternal(this, nullptr, RenderElement::NotifyChildren);
+        }
+    }
+}
+
+void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
+{
+    RenderBlock& parentBlock = downcast<RenderBlock>(*parent());
+    if (!parentBlock.canCollapseAnonymousBlockChild())
+        return;
+
+    // We have changed to floated or out-of-flow positioning so maybe all our parent's
+    // children can be inline now. Bail if there are any block children left on the line,
+    // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
+    // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
+    // if we find a continuation.
+    RenderObject* current = parent()->firstChild();
+    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isAnonymousBlockContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
+        current = current->nextSibling();
+
+    if (current)
+        return;
+
+    RenderObject* next;
+    for (current = parent()->firstChild(); current; current = next) {
+        next = current->nextSibling();
+        if (current->isAnonymousBlock())
+            parentBlock.collapseAnonymousBoxChild(parentBlock, downcast<RenderBlock>(current));
+    }
+}
+
 #if !PLATFORM(IOS)
 static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
 {
