@@ -1752,25 +1752,20 @@ void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpLi
     // The contract is that existing registers are preserved. Two special cases are elementToMatch and elementAddressRegister
     // because they are used by the matcher itself.
     // To simplify things for now, we just always preserve them on the stack.
-    unsigned elementAddressRegisterIndex = std::numeric_limits<unsigned>::max();
-    unsigned elementToTestIndex = elementAddressRegisterIndex;
+    unsigned elementToTestIndex = std::numeric_limits<unsigned>::max();
     bool isElementToMatchOnStack = false;
     if (selectorList.clobberElementAddressRegister) {
         if (elementToMatch != elementAddressRegister) {
             registersToSave.append(elementAddressRegister);
             registersToSave.append(elementToMatch);
-            elementAddressRegisterIndex = 0;
             elementToTestIndex = 1;
             isElementToMatchOnStack = true;
         } else {
             registersToSave.append(elementAddressRegister);
-            elementAddressRegisterIndex = 0;
             elementToTestIndex = 0;
         }
-    } else if (elementToMatch != elementAddressRegister) {
+    } else if (elementToMatch != elementAddressRegister)
         registersToSave.append(elementAddressRegister);
-        elementAddressRegisterIndex = 0;
-    }
 
     // Next, we need to free as many registers as needed by the nested selector list.
     unsigned availableRegisterCount = m_registerAllocator.availableRegisterCount();

@@ -1,3 +1,14 @@
+2014-10-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove a useless variable from SelectorCodeGenerator::generateElementMatchesSelectorList()
+        https://bugs.webkit.org/show_bug.cgi?id=138076
+
+        Reviewed by Alexey Proskuryakov.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+        The variable elementAddressRegisterIndex was just needed for debugging, it is useless now.
+
 2014-10-18  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timelines should not count time elapsed while paused in the debugger
