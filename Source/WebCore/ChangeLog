@@ -1,3 +1,34 @@
+2014-10-26  Andreas Kling  <akling@apple.com>
+
+        Move continuation teardown from subclasses to RenderBoxModelObject.
+        <https://webkit.org/b/138081>
+
+        Reviewed by Antti Koivisto.
+
+        Let RenderBoxModelObject::willBeDestroyed() tear down any continuation
+        instead of having every subclass do this themselves.
+
+        Also added a RenderElement bit tracking whether the renderer has a
+        continuation. This avoids a hash lookup every time we destroy a
+        RenderBoxModelObject that didn't have a continuation.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::continuationMap):
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::continuation):
+        (WebCore::RenderBoxModelObject::setContinuation):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setHasContinuation):
+        (WebCore::RenderElement::hasContinuation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+
 2014-10-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove a useless variable from SelectorCodeGenerator::generateElementMatchesSelectorList()

@@ -247,15 +247,6 @@ void RenderBlock::willBeDestroyed()
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
 
-    // Destroy our continuation before anything other than anonymous children.
-    // The reason we don't destroy it before anonymous children is that they may
-    // have continuations of their own that are anonymous children of our continuation.
-    RenderBoxModelObject* continuation = this->continuation();
-    if (continuation) {
-        continuation->destroy();
-        setContinuation(0);
-    }
-    
     if (!documentBeingDestroyed()) {
         if (parent())
             parent()->dirtyLinesFromChangedChild(*this);

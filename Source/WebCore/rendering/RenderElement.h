@@ -198,6 +198,9 @@ protected:
     void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
 
+    void setHasContinuation(bool b) { m_hasContinuation = b; }
+    bool hasContinuation() const { return m_hasContinuation; }
+
     static bool hasControlStatesForRenderer(const RenderObject*);
     static ControlStates* controlStatesForRenderer(const RenderObject*);
     static void removeControlStatesForRenderer(const RenderObject*);
@@ -237,6 +240,7 @@ private:
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_isCSSAnimating : 1;
+    unsigned m_hasContinuation : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

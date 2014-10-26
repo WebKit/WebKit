@@ -55,6 +55,7 @@
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "TransformState.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -68,7 +69,11 @@ using namespace HTMLNames;
 // <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as
 // its continuation but the <b> will just have an inline as its continuation.
 typedef HashMap<const RenderBoxModelObject*, RenderBoxModelObject*> ContinuationMap;
-static ContinuationMap* continuationMap = 0;
+static ContinuationMap& continuationMap()
+{
+    static NeverDestroyed<ContinuationMap> map;
+    return map;
+}
 
 // This HashMap is similar to the continuation map, but connects first-letter
 // renderers to their remaining text fragments.
@@ -177,8 +182,10 @@ RenderBoxModelObject::~RenderBoxModelObject()
 
 void RenderBoxModelObject::willBeDestroyed()
 {
-    // A continuation of this RenderObject should be destroyed at subclasses.
-    ASSERT(!continuation());
+    if (hasContinuation()) {
+        continuation()->destroy();
+        setContinuation(nullptr);
+    }
 
     // If this is a first-letter object with a remaining text fragment then the
     // entry needs to be cleared from the map.
@@ -2529,21 +2536,18 @@ LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 
 RenderBoxModelObject* RenderBoxModelObject::continuation() const
 {
-    if (!continuationMap)
-        return 0;
-    return continuationMap->get(this);
+    if (!hasContinuation())
+        return nullptr;
+    return continuationMap().get(this);
 }
 
 void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
 {
-    if (continuation) {
-        if (!continuationMap)
-            continuationMap = new ContinuationMap;
-        continuationMap->set(this, continuation);
-    } else {
-        if (continuationMap)
-            continuationMap->remove(this);
-    }
+    if (continuation)
+        continuationMap().set(this, continuation);
+    else if (hasContinuation())
+        continuationMap().remove(this);
+    setHasContinuation(!!continuation);
 }
 
 RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
