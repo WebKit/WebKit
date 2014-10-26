@@ -1,5 +1,31 @@
 2014-10-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Land Yosemite results for six editing/selection/vertical* tests.
+
+        These failures used to be mostly hidden because of bug 138070, now they are visible.
+        The change is due to different fonts.
+
+        * platform/mac-mavericks/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt.
+        * platform/mac-mavericks/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt.
+        * platform/mac-mavericks/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt.
+        * platform/mac-mavericks/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt.
+        * platform/mac-mavericks/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt.
+        * platform/mac-mavericks/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt.
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Added.
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Added.
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+
+2014-10-25  Alexey Proskuryakov  <ap@apple.com>
+
         Add Mavericks results for platform/mac/editing/spelling/delete-autocorrected-word-2.html, too.
 
         Yosemite, Mavericks and Mountain Lion all have different results.
