@@ -269,7 +269,7 @@ function installDependenciesWithPacman {
 
     echo "You will also need to follow the instructions on the Arch Wiki to make"
     echo "'python' call python2 in the webkit folder"
-    echo "https://wiki.archlinux.org/index.php?python#Dealing_with_version_problem_in_build_scripts"
+    echo "https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts"
 }
 
 function installDependenciesWithYum {
