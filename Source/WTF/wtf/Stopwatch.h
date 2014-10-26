@@ -44,6 +44,7 @@ public:
 
     double elapsedTime();
 
+    bool isActive() const { return !isnan(m_lastStartTime); }
 private:
     Stopwatch()
         : m_elapsedTime(0.0)

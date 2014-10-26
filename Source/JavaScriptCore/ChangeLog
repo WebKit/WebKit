@@ -1,3 +1,14 @@
+2014-10-25  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timelines should not count time elapsed while paused in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=136351
+
+        Unreviewed, follow-up fix after r175203. The debugger agent should not assume
+        that the inspector environment's stopwatch has already been started.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::didPause): Check if the stopwatch isActive() before stopping.
+
 2014-10-18  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timelines should not count time elapsed while paused in the debugger

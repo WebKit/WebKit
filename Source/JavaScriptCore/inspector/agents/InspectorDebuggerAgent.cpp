@@ -653,8 +653,10 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
 
     if (m_listener)
         m_listener->didPause();
-    
-    m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->stop();
+
+    RefPtr<Stopwatch> stopwatch = m_injectedScriptManager->inspectorEnvironment().executionStopwatch();
+    if (stopwatch && stopwatch->isActive())
+        stopwatch->stop();
 }
 
 void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifier)
