@@ -1,3 +1,11 @@
+2014-10-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Cleanup after r175213: fastGetAttribute().isNull() should be fastHasAttribute()
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        Darin spotted this mistake.
+
 2014-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/cookies/third-party-cookie-relaxing.html is flaky on bots
