@@ -1,3 +1,13 @@
+2014-10-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Add [ Yosemite ] modifier to a couple of tests in section 7.
+
+        These two tests fail with PPT, so they are expected to pass on 10.8. Our current
+        approach is a have separate sections for Mavericks and Yosemite, even for PPT
+        specific failures that affect both.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-10-27  Stephanie Lewis  <slewis@apple.com>
 
         http/tests/cookies/third-party-cookie-relaxing.html is flaky on bots.
