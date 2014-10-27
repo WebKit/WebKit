@@ -59,9 +59,9 @@ background-size
 border
 border-bottom
 border-bottom-color
-border-bottom-left-radius
+border-bottom-left-radius [NewStyleBuilder, Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-left-radius = border-bottom-left-radius
-border-bottom-right-radius
+border-bottom-right-radius [NewStyleBuilder, Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-right-radius = border-bottom-right-radius
 border-bottom-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
 border-bottom-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]
@@ -86,9 +86,9 @@ border-spacing [Inherited]
 border-style
 border-top
 border-top-color
-border-top-left-radius
+border-top-left-radius [NewStyleBuilder, Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-left-radius = border-top-left-radius
-border-top-right-radius
+border-top-right-radius [NewStyleBuilder, Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-right-radius = border-top-right-radius
 border-top-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
 border-top-width [NewStyleBuilder, Initial=initialBorderWidth, Converter=LineWidth<float>]

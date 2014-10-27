@@ -30,6 +30,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
+#include "Pair.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -43,6 +44,10 @@ public:
     template <typename T> static T convertComputedLength(StyleResolver&, CSSValue&);
     template <typename T> static T convertLineWidth(StyleResolver&, CSSValue&);
     static float convertSpacing(StyleResolver&, CSSValue&);
+    static LengthSize convertRadius(StyleResolver&, CSSValue&);
+
+private:
+    static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -152,6 +157,35 @@ inline float StyleBuilderConverter::convertSpacing(StyleResolver& styleResolver,
         styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : styleResolver.state().cssToLengthConversionData();
     return primitiveValue.computeLength<float>(conversionData);
+}
+
+Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversionData& conversionData, CSSPrimitiveValue& value)
+{
+    if (value.isPercentage())
+        return Length(value.getDoubleValue(), Percent);
+    if (value.isCalculatedPercentageWithLength())
+        return Length(value.cssCalcValue()->createCalculationValue(conversionData));
+    return value.computeLength<Length>(conversionData);
+}
+
+LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    Pair* pair = primitiveValue.getPairValue();
+    ASSERT(pair);
+    ASSERT(pair->first());
+    ASSERT(pair->second());
+
+    CSSToLengthConversionData conversionData = styleResolver.state().cssToLengthConversionData();
+    Length radiusWidth = convertToRadiusLength(conversionData, *pair->first());
+    Length radiusHeight = convertToRadiusLength(conversionData, *pair->second());
+
+    ASSERT(!radiusWidth.isNegative());
+    ASSERT(!radiusHeight.isNegative());
+    if (radiusWidth.isZero() || radiusHeight.isZero())
+        return LengthSize(Length(0, Fixed), Length(0, Fixed));
+
+    return LengthSize(radiusWidth, radiusHeight);
 }
 
 } // namespace WebCore

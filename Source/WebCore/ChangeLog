@@ -1,3 +1,24 @@
+2014-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Move radius CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138087
+
+        Reviewed by Andreas Kling.
+
+        Move radius CSS properties from DeprecatedStyleBuilder to the new
+        StyleBuilder so that they are now generated from CSSPropertyNames.in.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyBorderRadius::setValue): Deleted.
+        (WebCore::ApplyPropertyBorderRadius::applyValue): Deleted.
+        (WebCore::ApplyPropertyBorderRadius::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertRadius):
+
 2014-10-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Shrink MathMLOperatorDictionary::dictionary table
