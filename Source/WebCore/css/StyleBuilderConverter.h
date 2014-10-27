@@ -172,9 +172,8 @@ LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CS
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     Pair* pair = primitiveValue.getPairValue();
-    ASSERT(pair);
-    ASSERT(pair->first());
-    ASSERT(pair->second());
+    if (!pair || !pair->first() || !pair->second())
+        return LengthSize(Length(0, Fixed), Length(0, Fixed));
 
     CSSToLengthConversionData conversionData = styleResolver.state().cssToLengthConversionData();
     Length radiusWidth = convertToRadiusLength(conversionData, *pair->first());

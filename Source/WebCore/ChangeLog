@@ -1,5 +1,19 @@
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
+        Reintroduce null check removed in r175222
+        https://bugs.webkit.org/show_bug.cgi?id=138087
+
+        Reviewed by Andreas Kling.
+
+        Reintroduce null check removed in r175222 as several layout tests are
+        crashing on the bots without them. At least the Pair pointer can be
+        null according to the assertion hits on the bots.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertRadius):
+
+2014-10-27  Chris Dumez  <cdumez@apple.com>
+
         Move radius CSS properties to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=138087
 
