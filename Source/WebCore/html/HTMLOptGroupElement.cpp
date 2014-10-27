@@ -80,7 +80,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
     recalcSelectOptions();
 
     if (name == disabledAttr)
-        didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
+        setNeedsStyleRecalc();
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

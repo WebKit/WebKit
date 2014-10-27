@@ -182,7 +182,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
         bool oldDisabled = m_disabled;
         m_disabled = !value.isNull();
         if (oldDisabled != m_disabled) {
-            didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
+            setNeedsStyleRecalc();
             if (renderer() && renderer()->style().hasAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
         }
@@ -235,7 +235,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
         return;
 
     m_isSelected = selected;
-    didAffectSelector(AffectedSelectorChecked);
+    setNeedsStyleRecalc();
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->invalidateSelectedItems();

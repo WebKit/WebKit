@@ -147,7 +147,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         bool wasLink = isLink();
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
-            didAffectSelector(AffectedSelectorLink | AffectedSelectorVisited);
+            setNeedsStyleRecalc();
         process();
     } else if (name == typeAttr) {
         m_type = value;

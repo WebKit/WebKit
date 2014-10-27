@@ -1,3 +1,35 @@
+2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Replace Element::didAffectSelector() by setNeedsStyleRecalc()
+        https://bugs.webkit.org/show_bug.cgi?id=138080
+
+        Reviewed by Andreas Kling.
+
+        Element::didAffectSelector() was probably an optimization at some point,
+        with the current code is does nothing more than setNeedsStyleRecalc().
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSTarget):
+        * dom/Element.cpp:
+        (WebCore::Element::didAffectSelector): Deleted.
+        * dom/Element.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::parseAttribute):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        (WebCore::HTMLOptionElement::setSelectedState):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+
 2014-10-26  Andreas Kling  <akling@apple.com>
 
         Move some RenderObject member functions to RenderElement.

@@ -153,7 +153,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
 void HTMLFormControlElement::disabledStateChanged()
 {
     setNeedsWillValidateCheck();
-    didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
+    setNeedsStyleRecalc();
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
 }

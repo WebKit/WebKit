@@ -1424,11 +1424,6 @@ ShadowRoot* Element::shadowRoot() const
     return hasRareData() ? elementRareData()->shadowRoot() : 0;
 }
 
-void Element::didAffectSelector(AffectedSelectorMask)
-{
-    setNeedsStyleRecalc();
-}
-
 static bool shouldUseNodeRenderingTraversalSlowPath(const Element& element)
 {
     if (element.isShadowRoot())
