@@ -44,8 +44,9 @@ public:
     void layoutHorizontalBox(bool relayoutChildren);
     void layoutVerticalBox(bool relayoutChildren);
 
+    bool isStretchingChildren() const { return m_stretchingChildren; }
+
     virtual bool avoidsFloats() const override { return true; }
-    virtual bool isStretchingChildren() const override { return m_stretchingChildren; }
     virtual bool canCollapseAnonymousBlockChild() const override { return false; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = 0);
@@ -68,5 +69,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDeprecatedFlexibleBox, isDeprecatedFlexibleBox())
 
 #endif // RenderDeprecatedFlexibleBox_h

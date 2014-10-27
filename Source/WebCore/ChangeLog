@@ -1,3 +1,18 @@
+2014-10-27  Andreas Kling  <akling@apple.com>
+
+        Devirtualize RenderDeprecatedFlexibleBox::isStretchingChildren().
+        <https://webkit.org/b/138096>
+
+        Reviewed by Chris Dumez.
+
+        This function is only ever called on a renderer after we've checked
+        that it's a RenderDeprecatedFlexibleBox, so make it non-virtual.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderObject.h:
+
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
         Reintroduce null check removed in r175222
