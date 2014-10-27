@@ -50,10 +50,10 @@ enum Flag {
 };
 struct Entry {
     UChar character;
-    Form form;
-    unsigned short lspace;
-    unsigned short rspace;
-    unsigned short flags;
+    unsigned form : 2;
+    unsigned lspace : 3;
+    unsigned rspace : 3;
+    unsigned flags : 8;
 };
 
 }
