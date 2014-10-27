@@ -1,3 +1,19 @@
+2014-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: commit logs are not shown sometimes on the new dashboard UI
+        https://bugs.webkit.org/show_bug.cgi?id=138099
+
+        Reviewed by Benjamin Poulain.
+
+        The bug was caused by _currentItemChanged not passing the previous point in the list of points and also
+        _showDetails inverting the order of the current and old measurements.
+
+        * public/v2/app.js:
+        (App.PaneController._currentItemChanged): Pass in the previous point to _showDetails when there is one.
+        (App.PaneController._showDetails): Since points are ordered chronologically, the last point is the
+        current (latest) measurement and the first point is the oldest measurement.
+        (App.CommitsViewerComponent.commitsChanged): Don't show a single measurement as a range for clarity.
+
 2014-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should provide a way to associate bugs with a test run

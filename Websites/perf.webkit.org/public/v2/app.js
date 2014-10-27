@@ -769,14 +769,16 @@ App.PaneController = Ember.ObjectController.extend({
         var point = this.get('currentItem');
         if (!point || !point.measurement)
             this.set('details', null);
-        else
-            this._showDetails([point]);
+        else {
+            var previousPoint = point.series.previousPoint(point);
+            this._showDetails(previousPoint ? [previousPoint, point] : [point]);
+        }
     }.observes('currentItem'),
     _showDetails: function (points)
     {
         var isShowingEndPoint = !this._hasRange;
-        var currentMeasurement = points[0].measurement;
-        var oldMeasurement = points[points.length - 1].measurement;
+        var currentMeasurement = points[points.length - 1].measurement;
+        var oldMeasurement = points[0].measurement;
         var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
         var revisions = App.Manifest.get('repositories')
             .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
@@ -1538,7 +1540,7 @@ App.CommitsViewerComponent = Ember.Component.extend({
         var revisionInfo = this.get('revisionInfo');
 
         var to = revisionInfo.get('currentRevision');
-        var from = revisionInfo.get('previousRevision') || to;
+        var from = revisionInfo.get('previousRevision');
         var repository = this.get('repository');
         if (!from || !repository || !repository.get('hasReportedCommits'))
             return;
