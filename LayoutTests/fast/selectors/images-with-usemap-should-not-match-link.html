@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <testcases style="display:none">
+        <map name="testmap">
+            <area shape="circle" coords="200,250,25" href="another.htm" />
+            <area shape="default" />
+        </map>
+
+        <img>
+        <img src="webkit.png">
+        <img src="webkit.png" usemap>
+        <img src="webkit.png" usemap="">
+        <img src="webkit.png" usemap="notthere">
+        <img src="webkit.png" usemap="#notthere">
+        <img src="webkit.png" usemap="testmap">
+        <img src="webkit.png" usemap="#testmap">
+    <testcases>
+</body>
+<script>
+description('WebKit had a bug where &lt;img&gt; tag would get a link status whenever usemap was defined.');
+
+var testCaseCount = document.querySelectorAll('testcases img').length;
+for (var i = 0; i < testCaseCount; ++i) {
+    shouldBeFalse('document.querySelectorAll("testcases img")[' + i + '].matches(":link")');
+    shouldBeFalse('document.querySelectorAll("testcases img")[' + i + '].matches(":-webkit-any-link")');
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

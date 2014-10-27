@@ -571,7 +571,7 @@ Element* AccessibilityRenderObject::anchorElement() const
     // search up the DOM tree for an anchor element
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     for (Node* node = currentRenderer->node(); node; node = node->parentNode()) {
-        if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
+        if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(node->renderer())->isLink()))
             return downcast<Element>(node);
     }
     
@@ -976,7 +976,7 @@ void AccessibilityRenderObject::linkedUIElements(AccessibilityChildrenVector& li
 {
     ariaFlowToElements(linkedUIElements);
 
-    if (isAnchor()) {
+    if (isLink()) {
         AccessibilityObject* linkedAXElement = internalLinkElement();
         if (linkedAXElement)
             linkedUIElements.append(linkedAXElement);
@@ -1496,7 +1496,7 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 
 URL AccessibilityRenderObject::url() const
 {
-    if (isAnchor() && is<HTMLAnchorElement>(*m_renderer->node())) {
+    if (isLink() && is<HTMLAnchorElement>(*m_renderer->node())) {
         if (HTMLAnchorElement* anchor = downcast<HTMLAnchorElement>(anchorElement()))
             return anchor->href();
     }
@@ -2452,11 +2452,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     Node* node = m_renderer->node();
     RenderBoxModelObject* cssBox = renderBoxModelObject();
 
-    if (node && node->isLink()) {
-        if (cssBox && cssBox->isImage())
-            return ImageMapRole;
+    if (node && node->isLink())
         return WebCoreLinkRole;
-    }
+    if (node && is<HTMLImageElement>(*node) && !downcast<HTMLImageElement>(*node).fastGetAttribute(usemapAttr).isNull())
+        return ImageMapRole;
     if ((cssBox && cssBox->isListItem()) || (node && node->hasTagName(liTag)))
         return ListItemRole;
     if (m_renderer->isListMarker())

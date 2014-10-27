@@ -151,8 +151,6 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setBestFitURLAndDPRFromImageCandidate(candidate);
         m_imageLoader.updateFromElementIgnoringPreviousError();
     } else if (name == usemapAttr) {
-        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
-
         if (inDocument() && !m_lowercasedUsemap.isNull())
             document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 

@@ -73,7 +73,6 @@ public:
 
     virtual bool canvasHasFallbackContent() const override;
 
-    virtual bool isAnchor() const override;
     virtual bool isControl() const override;
     virtual bool isFieldset() const override;
     virtual bool isGroup() const override;

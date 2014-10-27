@@ -454,11 +454,6 @@ bool AccessibilityNodeObject::isImageButton() const
     return isNativeImage() && isButton();
 }
 
-bool AccessibilityNodeObject::isAnchor() const
-{
-    return !isNativeImage() && isLink();
-}
-
 bool AccessibilityNodeObject::isNativeTextControl() const
 {
     Node* node = this->node();
@@ -957,7 +952,7 @@ Element* AccessibilityNodeObject::anchorElement() const
     // search up the DOM tree for an anchor element
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     for ( ; node; node = node->parentNode()) {
-        if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
+        if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(node->renderer())->isLink()))
             return downcast<Element>(node);
     }
 

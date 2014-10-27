@@ -1,0 +1,25 @@
+WebKit had a bug where <img> tag would get a link status whenever usemap was defined.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("testcases img")[0].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[0].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[1].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[1].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[2].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[2].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[3].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[3].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[4].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[4].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[5].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[5].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[6].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[6].matches(":-webkit-any-link") is false
+PASS document.querySelectorAll("testcases img")[7].matches(":link") is false
+PASS document.querySelectorAll("testcases img")[7].matches(":-webkit-any-link") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
