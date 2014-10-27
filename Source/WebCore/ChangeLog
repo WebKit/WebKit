@@ -1,3 +1,21 @@
+2014-10-27  Andreas Kling  <akling@apple.com>
+
+        Move canContainFixedPositionObjects() to RenderElement.
+        <https://webkit.org/b/138088>
+
+        Reviewed by Mihnea Ovidenie.
+
+        Only RenderElement can contain other renderers, so it's not really
+        natural to answer this question on RenderObject anyway.
+
+        Moving it to RenderElement lets it access more efficient getters
+        that don't have to handle the RenderText case.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::canContainFixedPositionObjects): Deleted.
+
 2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Images with usemap should not have a link state

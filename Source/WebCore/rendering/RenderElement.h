@@ -57,6 +57,8 @@ public:
 
     virtual bool isEmpty() const override { return !firstChild(); }
 
+    bool canContainFixedPositionObjects() const;
+
     // FIXME: Make these standalone and move to relevant files.
     bool isRenderLayerModelObject() const;
     bool isBoxModelObject() const;
@@ -331,6 +333,14 @@ inline Element* RenderElement::generatingElement() const
     if (parent() && isRenderNamedFlowFragment())
         return parent()->generatingElement();
     return downcast<Element>(RenderObject::generatingNode());
+}
+
+inline bool RenderElement::canContainFixedPositionObjects() const
+{
+    return isRenderView()
+        || (hasTransform() && isRenderBlock())
+        || isSVGForeignObject()
+        || isOutOfFlowRenderFlowThread();
 }
 
 inline bool RenderObject::isRenderLayerModelObject() const

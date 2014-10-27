@@ -648,13 +648,6 @@ public:
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;
 
-    bool canContainFixedPositionObjects() const
-    {
-        return isRenderView() || (hasTransform() && isRenderBlock())
-                || isSVGForeignObject()
-                || isOutOfFlowRenderFlowThread();
-    }
-
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If UseTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
     WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), MapCoordinatesFlags = 0) const;
