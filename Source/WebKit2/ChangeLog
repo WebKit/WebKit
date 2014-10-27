@@ -1,5 +1,36 @@
 2014-10-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175145.
+
+    2014-10-23  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS WK2] Make sure any dynamic viewport update schedules a layer tree commit
+            https://bugs.webkit.org/show_bug.cgi?id=138021
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::dynamicViewportSizeUpdate):
+            Sometimes, the clients can do a dynamic viewport update but only change the minimum
+            layout size (see rdar://problem/18755250).
+
+            When that happens, it is possible to do the full state update without ever scheduling
+            a layer tree commit. For example, if the new minimum layout height is only a few pixels
+            smaller than the old value and the layout of the page is equal or larger than the old value,
+            the layout is done without any side effect to the content (assuming a viewport configuration
+            based on width).
+
+            The contract with the client is that the next layer tree commit after a dynamic viewport update
+            carries all the valid parameters for the new viewport size. Since the new layout never scheduled
+            a layer tree commit, the UIProcess is just waiting for one, discarding all input.
+
+            This patch solves the issue by explicitely scheduling a layer flush after updating all the layout
+            and view parameters to their final values. In most cases, this makes no difference since a layer
+            tree commit was already scheduled. In the rare cases where nothing was scheduled, scheduling
+            the layer tree commit ensure we unlock the UIProcess.
+
+2014-10-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175143.
 
     2014-10-23  Ryosuke Niwa  <rniwa@webkit.org>
