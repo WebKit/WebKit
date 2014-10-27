@@ -88,7 +88,7 @@
 (allow ipc-posix-shm-read-data
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-regex #"^Private WebKit Session-"))
+    (ipc-posix-name-regex #"^WebKit Test-"))
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup

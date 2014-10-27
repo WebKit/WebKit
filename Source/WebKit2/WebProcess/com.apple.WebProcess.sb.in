@@ -148,7 +148,7 @@
 (allow ipc-posix-shm-read-data
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-regex #"^Private WebKit Session-"))
+    (ipc-posix-name-regex #"^WebKit Test-"))
 
 ;; ColorSync
 ;; FIXME: Remove names with underscores when possible (see <rdar://problem/13072721>).

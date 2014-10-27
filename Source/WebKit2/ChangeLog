@@ -1,3 +1,15 @@
+2014-10-27  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/cookies/third-party-cookie-relaxing.html is flaky on bots
+        https://bugs.webkit.org/show_bug.cgi?id=138098
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Update for the new name of testing session. Memory regions are now of the form
+        "WebKit Test-<pid>-0".
+
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
         Use separate HashMaps for common and uncommon headers in HTTPHeaderMap

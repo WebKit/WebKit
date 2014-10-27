@@ -53,12 +53,12 @@ static OwnPtr<NetworkStorageSession>& defaultNetworkStorageSession()
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
-    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
-    // FIXME: It looks like creating a new session with the same identifier may be just creating a reference to the same storage. See <rdar://problem/11571450> and <rdar://problem/12384380>.
+    // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
+    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getpid()));
 #if PLATFORM(COCOA)
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session")))));
+    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()))));
 #else
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultNetworkStorageSession()->platformSession()))));
+    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultNetworkStorageSession()->platformSession()))));
 #endif
 }
 
