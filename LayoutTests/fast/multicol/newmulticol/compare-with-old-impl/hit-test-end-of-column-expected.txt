@@ -1,2 +1,0 @@
-Lorem ipsum dolor sit amet consectetur elit.
-PASS

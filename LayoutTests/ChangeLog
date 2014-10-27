@@ -1,3 +1,65 @@
+2014-10-27  Piotr Grad  <p.grad@samsung.com>
+
+        Some test for multicol were redundant.
+        https://bugs.webkit.org/show_bug.cgi?id=133084
+
+        Reviewed by Andreas Kling.
+
+        * fast/multicol/newmulticol/compare-with-old-impl/anonymous-block-split-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/anonymous-block-split-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-before-after-content-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-before-after-content-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-block-children-inline-mismatch-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-block-children-inline-mismatch-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-flexbox-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/clone-flexbox.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/continuation-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/continuation-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/double-merge-anonymous-block-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/double-merge-anonymous-block-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/empty-anonymous-block-split-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/empty-anonymous-block-split-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/float-not-removed-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/float-not-removed-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-above-or-below-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-above-or-below.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-block-axis-flipped-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-block-axis-flipped.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-end-of-column-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-end-of-column.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-float-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-float.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-between-pages-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-between-pages-flipped-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-between-pages-flipped.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-between-pages.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-block-axis-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/hit-test-gap-block-axis.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/list-multi-column-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/list-multi-column-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/multicol-with-child-renderLayer-for-input-expected.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/multicol-with-child-renderLayer-for-input.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/positioned-child-not-removed-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/positioned-child-not-removed-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/positioned-objects-not-removed-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/positioned-objects-not-removed-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/recursive-split-flow-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/recursive-split-flow-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/removal-of-multicol-span-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/removal-of-multicol-span-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/remove-child-split-flow-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/remove-child-split-flow-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/split-flow-anonymous-wrapper-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/split-flow-anonymous-wrapper-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/split-inline-wrong-post-block-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/split-inline-wrong-post-block-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/table-multi-column-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/table-multi-column-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/textbox-not-removed-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/textbox-not-removed-crash.html: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/update-after-content-before-child-crash-expected.txt: Removed.
+        * fast/multicol/newmulticol/compare-with-old-impl/update-after-content-before-child-crash.html: Removed.
+
 2014-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         media/track/audio-track.html is flaky on Yosemite
