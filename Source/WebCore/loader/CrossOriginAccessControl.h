@@ -37,13 +37,14 @@ namespace WebCore {
 typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
 
 class HTTPHeaderMap;
+enum class HTTPHeaderName;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
-bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value);
+bool isOnAccessControlSimpleRequestHeaderWhitelist(HTTPHeaderName, const String& value);
 bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
 void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin*, StoredCredentials);

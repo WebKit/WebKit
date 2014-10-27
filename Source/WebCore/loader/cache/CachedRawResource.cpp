@@ -203,12 +203,8 @@ void CachedRawResource::setDataBufferingPolicy(DataBufferingPolicy dataBuffering
     m_options.setDataBufferingPolicy(dataBufferingPolicy);
 }
 
-static bool shouldIgnoreHeaderForCacheReuse(const String& headerName)
+static bool shouldIgnoreHeaderForCacheReuse(HTTPHeaderName name)
 {
-    HTTPHeaderName name;
-    if (!findHTTPHeaderName(headerName, name))
-        return false;
-
     switch (name) {
     // FIXME: This list of headers that don't affect cache policy almost certainly isn't complete.
     case HTTPHeaderName::Accept:
@@ -246,12 +242,22 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     const HTTPHeaderMap& oldHeaders = m_resourceRequest.httpHeaderFields();
 
     for (const auto& header : newHeaders) {
-        if (!shouldIgnoreHeaderForCacheReuse(header.key) && header.value != oldHeaders.get(header.key))
+        if (header.keyAsHTTPHeaderName) {
+            if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
+                && header.value != oldHeaders.commonHeaders().get(header.keyAsHTTPHeaderName.value()))
+                return false;
+        } else if (header.value != oldHeaders.uncommonHeaders().get(header.key))
             return false;
     }
 
+    // For this second loop, we don't actually need to compare values, checking that the
+    // key is contained in newHeaders is sufficient due to the previous loop.
     for (const auto& header : oldHeaders) {
-        if (!shouldIgnoreHeaderForCacheReuse(header.key) && header.value != newHeaders.get(header.key))
+        if (header.keyAsHTTPHeaderName) {
+            if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
+                && !newHeaders.commonHeaders().contains(header.keyAsHTTPHeaderName.value()))
+                return false;
+        } else if (!newHeaders.uncommonHeaders().contains(header.key))
             return false;
     }
 

@@ -44,24 +44,25 @@ bool isOnAccessControlSimpleRequestMethodWhitelist(const String& method)
     return method == "GET" || method == "HEAD" || method == "POST";
 }
 
-bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value)
+bool isOnAccessControlSimpleRequestHeaderWhitelist(HTTPHeaderName name, const String& value)
 {
-    if (equalIgnoringCase(name, "accept")
-        || equalIgnoringCase(name, "accept-language")
-        || equalIgnoringCase(name, "content-language")
-        || equalIgnoringCase(name, "origin")
-        || equalIgnoringCase(name, "referer"))
+    switch (name) {
+    case HTTPHeaderName::Accept:
+    case HTTPHeaderName::AcceptLanguage:
+    case HTTPHeaderName::ContentLanguage:
+    case HTTPHeaderName::Origin:
+    case HTTPHeaderName::Referer:
         return true;
-
-    // Preflight is required for MIME types that can not be sent via form submission.
-    if (equalIgnoringCase(name, "content-type")) {
+    case HTTPHeaderName::ContentType: {
+        // Preflight is required for MIME types that can not be sent via form submission.
         String mimeType = extractMIMETypeFromMediaType(value);
         return equalIgnoringCase(mimeType, "application/x-www-form-urlencoded")
             || equalIgnoringCase(mimeType, "multipart/form-data")
             || equalIgnoringCase(mimeType, "text/plain");
     }
-
-    return false;
+    default:
+        return false;
+    }
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
@@ -70,7 +71,7 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
         return false;
 
     for (const auto& header : headerMap) {
-        if (!isOnAccessControlSimpleRequestHeaderWhitelist(header.key, header.value))
+        if (!header.keyAsHTTPHeaderName || !isOnAccessControlSimpleRequestHeaderWhitelist(header.keyAsHTTPHeaderName.value(), header.value))
             return false;
     }
 
