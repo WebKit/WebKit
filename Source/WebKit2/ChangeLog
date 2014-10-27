@@ -1,5 +1,51 @@
 2014-10-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175153.
+
+    2014-10-23  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS WK2] If a page has the exact same VisibleContentRect as the page before, its VisibleContentRectUpdate can be ignored
+            https://bugs.webkit.org/show_bug.cgi?id=138031
+            rdar://problem/18739335
+
+            Reviewed by Simon Fraser.
+
+            Since any VisibleContentRectUpdate is costly for the WebProcess, we avoid sending updates
+            if none of the important parameters have changed (scale and geometry).
+
+            One unintended side effect is that the update of a page can be blocked if the parameters
+            of the previous page were identical.
+
+            What happen is this:
+            1) Page [A] sends its content rect update as needed. WebPageProxy saves the last update
+               in m_lastVisibleContentRectUpdate and use that value to avoid useless updates.
+            2) Page [B] load after page [A] and have the exact VisibleContentRect. When receiving the first
+               layer tree commit after didCommitLoadForFrame, WKWebView sends its VisibleContentRect
+               to WebPageProxy to synchronize the state of the WebProcess with what is on screen.
+            3) Since the two VisibleContentRect update has the same value as the ones of page [A], WebPageProxy
+               discards the update. The WebProcess has its initialization viewport and is not udpated until
+               a major parameter changes (scale or position).
+
+            In rdar://problem/18739335, the problem is the similar but with a different failure point:
+            1) Everything above happened already.
+            2) The layer tree transaction has a scrolling request. This is processed by WKWebView.
+            3) Since the scrolling position is invalid, the request is ignored and we send the last
+               VisibleContentRect to the WebProcess with WebPageProxy::resendLastVisibleContentRects().
+            4) Since the VisibleContentRect was never updated after didCommitLoadForFrame, the one we send
+               is for the previous page, which the web process correctly ignores.
+
+            This patch solves the problem by nuking the cached m_lastVisibleContentRectUpdate before
+            any valid VisibleContentRectUpdate for a new page.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didCommitLayerTree):
+
+2014-10-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175145.
 
     2014-10-23  Benjamin Poulain  <bpoulain@apple.com>

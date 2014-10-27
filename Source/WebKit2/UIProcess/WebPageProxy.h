@@ -1333,6 +1333,8 @@ private:
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
+    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad;
+    uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation;
     bool m_dynamicViewportSizeUpdateWaitingForTarget;
     bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit;

@@ -336,6 +336,13 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 {
     m_pageExtendedBackgroundColor = layerTreeTransaction.pageExtendedBackgroundColor();
 
+    if (!m_hasReceivedLayerTreeTransactionAfterDidCommitLoad) {
+        if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
+            m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = true;
+            m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+        }
+    }
+
     if (!m_dynamicViewportSizeUpdateWaitingForTarget && m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit) {
         if (layerTreeTransaction.transactionID() >= m_dynamicViewportSizeUpdateLayerTreeTransactionID)
             m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
