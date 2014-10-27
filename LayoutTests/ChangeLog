@@ -1,3 +1,10 @@
+2014-10-27  Alexey Proskuryakov  <ap@apple.com>
+
+        media/track/audio-track.html is flaky on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=137882
+
+        * platform/mac/TestExpectations: Marking it as such.
+
 2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Images with usemap should not have a link state
