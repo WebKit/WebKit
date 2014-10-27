@@ -1,3 +1,24 @@
+2014-10-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r175143.
+
+    2014-10-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+            WebContent crash in WebKit::WebPage::expandedRangeFromHandle
+            https://bugs.webkit.org/show_bug.cgi?id=138023
+
+            Reviewed by Enrica Casucci.
+
+            The crashes are caused by rangeForBlockAtPoint returning a null Range.
+            Exit early or continue if a range is null in various places.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::expandedRangeFromHandle): Continue looking for another point if the range returned by
+            rangeForBlockAtPoint is null.
+            (WebKit::WebPage::contractedRangeFromHandle): Ditto.
+            (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle): Removed the FIXME now that Enrica has
+            verified that this early exit added in r173788 is correct.
+
 2014-10-23  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for r174799. <rdar://problem/18742380>
