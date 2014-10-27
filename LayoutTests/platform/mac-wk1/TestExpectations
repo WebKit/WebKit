@@ -19,6 +19,10 @@ webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 [ MountainLion Mavericks ] fast/multicol/fixed-stack.html [ Pass ]
 
+# Failing itermittently on Yosemite Release WK1 bots. 
+webkit.org/b/138098 http/tests/cookies/third-party-cookie-relaxing.html [ Pass Failure ]
+[ MountainLion Mavericks ] http/tests/cookies/third-party-cookie-relaxing.html [ Pass ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
