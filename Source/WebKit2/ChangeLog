@@ -1,5 +1,19 @@
 2014-10-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175157.
+
+    2014-10-23  Benjamin Poulain  <bpoulain@apple.com>
+
+            Fix a bad find-and-replace in r175153
+
+            Looks like I messed up the commit on landing.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+
+2014-10-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175153.
 
     2014-10-23  Benjamin Poulain  <bpoulain@apple.com>
