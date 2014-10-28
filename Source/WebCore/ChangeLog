@@ -1,3 +1,28 @@
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173181
+
+    2014-09-02  Simon Fraser  <simon.fraser@apple.com>
+
+            Non-composited child RenderLayers cause allocation of unncessary backing store
+            https://bugs.webkit.org/show_bug.cgi?id=136375
+
+            Reviewed by David Hyatt.
+            
+            A composited element that has non-composited descendant elements that fall into
+            RenderLayers was getting backing store when none was required. descendentLayerPaintsIntoAncestor()
+            was simply checking the "visibility:visible" bit on descendant non-composited layers,
+            instead of actually asking them if they have any visual content.
+            
+            Added a couple of FIXME comments.
+
+            Test: compositing/backing/child-layer-no-backing.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::calculateClipRects):
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::descendentLayerPaintsIntoAncestor):
+
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r174908. <rdar://problem/18694470>
