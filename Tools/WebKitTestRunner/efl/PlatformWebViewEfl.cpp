@@ -23,7 +23,6 @@
 #include "PlatformWebView.h"
 
 #include "EWebKit2.h"
-#include "WebKit/WKAPICast.h"
 #include <Ecore_Evas.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebKit/WKImageCairo.h>

@@ -1,3 +1,12 @@
+2014-10-28  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [EFL] Remove an unused include from Tools/WebKitTestRunner/efl/PlatformWebViewEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=138130
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+
 2014-10-25  Raniere Silva  <raniere@ime.unicamp.br>
 
         Fix link to Arch Linux Wiki
