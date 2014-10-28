@@ -38,29 +38,22 @@
 namespace WebCore {
 
 SelectionSubtreeRoot::SelectionSubtreeRoot()
-    : m_selectionStart(nullptr)
-    , m_selectionStartPos(-1)
-    , m_selectionEnd(nullptr)
-    , m_selectionEndPos(-1)
 {
 }
 
 SelectionSubtreeRoot::SelectionSubtreeRoot(RenderObject* selectionStart, int selectionStartPos, RenderObject* selectionEnd, int selectionEndPos)
-    : m_selectionStart(selectionStart)
-    , m_selectionStartPos(selectionStartPos)
-    , m_selectionEnd(selectionEnd)
-    , m_selectionEndPos(selectionEndPos)
+    : m_selectionSubtreeData(selectionStart, selectionStartPos, selectionEnd, selectionEndPos)
 {
 }
 
 void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
 {
-    if (selectionClear())
+    if (m_selectionSubtreeData.selectionClear())
         return;
 
     // Create a range based on the cached end points
-    Position startPosition = createLegacyEditingPosition(m_selectionStart->node(), m_selectionStartPos);
-    Position endPosition = createLegacyEditingPosition(m_selectionEnd->node(), m_selectionEndPos);
+    Position startPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionStart()->node(), m_selectionSubtreeData.selectionStartPos());
+    Position endPosition = createLegacyEditingPosition(m_selectionSubtreeData.selectionEnd()->node(), m_selectionSubtreeData.selectionEndPos());
 
     RefPtr<Range> range = Range::create(document, startPosition.parentAnchoredEquivalent(), endPosition.parentAnchoredEquivalent());
     VisibleSelection selection(range.get());
@@ -74,19 +67,16 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
     if (candidate.isCandidate())
         endPos = candidate;
 
-    m_selectionStart = nullptr;
-    m_selectionStartPos = -1;
-    m_selectionEnd = nullptr;
-    m_selectionEndPos = -1;
+    m_selectionSubtreeData.clearSelection();
 
     if (startPos.isNotNull()
         && endPos.isNotNull()
         && selection.visibleStart() != selection.visibleEnd()
         && startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() == endPos.deprecatedNode()->renderer()->flowThreadContainingBlock()) {
-        m_selectionStart = startPos.deprecatedNode()->renderer();
-        m_selectionStartPos = startPos.deprecatedEditingOffset();
-        m_selectionEnd = endPos.deprecatedNode()->renderer();
-        m_selectionEndPos = endPos.deprecatedEditingOffset();
+        m_selectionSubtreeData.setSelectionStart(startPos.deprecatedNode()->renderer());
+        m_selectionSubtreeData.setSelectionStartPos(startPos.deprecatedEditingOffset());
+        m_selectionSubtreeData.setSelectionEnd(endPos.deprecatedNode()->renderer());
+        m_selectionSubtreeData.setSelectionEndPos(endPos.deprecatedEditingOffset());
     }
 }
 

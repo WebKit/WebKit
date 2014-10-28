@@ -1632,7 +1632,7 @@ SelectionSubtreeRoot& RenderObject::selectionRoot() const
 
 void RenderObject::selectionStartEnd(int& spos, int& epos) const
 {
-    selectionRoot().selectionStartEndPositions(spos, epos);
+    selectionRoot().selectionData().selectionStartEndPositions(spos, epos);
 }
 
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, MapCoordinatesFlags mode) const

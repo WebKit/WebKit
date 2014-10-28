@@ -304,7 +304,7 @@ private:
     void splitSelectionBetweenSubtrees(const RenderObject* startRenderer, int startPos, const RenderObject* endRenderer, int endPos, SelectionRepaintMode blockRepaintMode);
     void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&) const;
     void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
-    void applySubtreeSelection(const SelectionSubtreeRoot&, RenderObject* startRenderer, RenderObject* endRenderer, int endPos, SelectionRepaintMode, const OldSelectionData&);
+    void applySubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, const OldSelectionData&);
     LayoutRect subtreeSelectionBounds(const SelectionSubtreeRoot&, bool clipToVisibleContent = true) const;
     void repaintSubtreeSelection(const SelectionSubtreeRoot&) const;
 

@@ -1,3 +1,55 @@
+2014-10-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Clean up subtrees selection code
+        https://bugs.webkit.org/show_bug.cgi?id=137740
+
+        Reviewed by David Hyatt.
+
+        Clean up subtrees selection code. Add a new class SelectionSubtreeData
+        that keeps only the selection data. Have SelectionSubtreeRoot class embed
+        a SelectionSubtreeData member and keep the business logic methods.
+        No functionality changed therefore no new layout tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionStartEnd):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::subtreeSelectionBounds):
+        (WebCore::RenderView::repaintSubtreeSelection):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        (WebCore::RenderView::updateSelectionForSubtrees):
+        (WebCore::RenderView::clearSubtreeSelection):
+        (WebCore::RenderView::applySubtreeSelection):
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeRoot):
+        (WebCore::SelectionSubtreeRoot::adjustForVisibleSelection):
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::SelectionSubtreeData):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStart):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStartPos):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionEnd):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionEndPos):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionClear):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStartEndPositions):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionStart):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionStartPos):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionEnd):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionEndPos):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::clearSelection):
+        (WebCore::SelectionSubtreeRoot::selectionData):
+        (WebCore::SelectionSubtreeRoot::setSelectionData):
+        (WebCore::SelectionSubtreeRoot::selectionStart): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionStartPos): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionEnd): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionEndPos): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionStartEndPositions): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionClear): Deleted.
+        (WebCore::SelectionSubtreeRoot::setSelectionStart): Deleted.
+        (WebCore::SelectionSubtreeRoot::setSelectionStartPos): Deleted.
+        (WebCore::SelectionSubtreeRoot::setSelectionEnd): Deleted.
+        (WebCore::SelectionSubtreeRoot::setSelectionEndPos): Deleted.
+
 2014-10-28  Jer Noble  <jer.noble@apple.com>
 
         [Mac] The first software paint of a <video> element takes up to 2.5s.
