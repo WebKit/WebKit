@@ -1,3 +1,10 @@
+2014-10-28  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/multicol/multicol-crazy-nesting.html sometimes crashes
+        https://bugs.webkit.org/show_bug.cgi?id=138145
+
+        * TestExpectations: Skipping for now.
+
 2014-10-28  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r171593) [Mac] Media controls create a large (and unnecessary) backing store
