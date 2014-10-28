@@ -282,16 +282,60 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder& decoder
 
 void ArgumentCoder<Credential>::encodePlatformData(ArgumentEncoder& encoder, const Credential& credential)
 {
+    NSURLCredential *nsCredential = credential.nsCredential();
+    // NSURLCredential doesn't serialize identities correctly, so we encode the pieces individually in the identity case.
+    if (SecIdentityRef identity = nsCredential.identity) {
+        encoder << true;
+        IPC::encode(encoder, identity);
+
+        if (NSArray *certificates = nsCredential.certificates) {
+            encoder << true;
+            IPC::encode(encoder, reinterpret_cast<CFArrayRef>(certificates));
+        } else
+            encoder << false;
+
+        encoder << static_cast<uint64_t>(nsCredential.persistence);
+        return;
+    }
+
+    encoder << false;
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
     [archiver setRequiresSecureCoding:YES];
-    [archiver encodeObject:credential.nsCredential() forKey:@"credential"];
+    [archiver encodeObject:nsCredential forKey:@"credential"];
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 }
 
 bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder& decoder, Credential& credential)
 {
+    bool hasIdentity;
+    if (!decoder.decode(hasIdentity))
+        return false;
+
+    if (hasIdentity) {
+        RetainPtr<SecIdentityRef> identity;
+        if (!IPC::decode(decoder, identity))
+            return false;
+
+        RetainPtr<CFArrayRef> certificates;
+        bool hasCertificates;
+        if (!decoder.decode(hasCertificates))
+            return false;
+
+        if (hasCertificates) {
+            if (!IPC::decode(decoder, certificates))
+                return false;
+        }
+
+        uint64_t persistence;
+        if (!decoder.decode(persistence))
+            return false;
+
+        credential = Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:(NSArray *)certificates.get() persistence:(NSURLCredentialPersistence)persistence]).get());
+        return true;
+    }
+
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
         return false;

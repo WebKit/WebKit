@@ -1,3 +1,18 @@
+2014-10-28  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] REGERESSION (r171801): Client certificate authentication is failing
+        https://bugs.webkit.org/show_bug.cgi?id=138144
+
+        Reviewed by Alexey Proskuryakov.
+
+        NSURLCredential’s implementation of NSSecureCoding fails to encode identity-based
+        credentials properly. Work around that by encoding the identity, certificate, and
+        persistence individually.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::decodePlatformData):
+
 2014-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] iPhone should not allow selecting <optgroup> in <select multiple>
