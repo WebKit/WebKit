@@ -1,5 +1,22 @@
 2014-10-27  Mark Lam  <mark.lam@apple.com>
 
+        Holes are not copied properly when Arrays change shape to ArrayStorage type.
+        <https://webkit.org/b/138118>
+
+        Reviewed by Mark Hahnenberg.
+
+        When we convert non-ArrayStorage typed arrays into ArrayStorage typed arrays,
+        we skipped the holes.  As a result, the slots in the ArrayStorage vector that
+        corresponds to those holes are uninitialize.  This is now fixed.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+
+2014-10-27  Mark Lam  <mark.lam@apple.com>
+
         Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.
         <https://webkit.org/b/137814>
 

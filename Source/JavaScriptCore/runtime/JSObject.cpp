@@ -732,6 +732,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
     unsigned vectorLength = m_butterfly->vectorLength();
     ArrayStorage* storage = constructConvertedArrayStorageWithoutCopyingElements(vm, vectorLength);
     // No need to copy elements.
+    ASSERT(!m_butterfly->publicLength());
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
     setStructureAndButterfly(vm, newStructure, storage->butterfly());
@@ -778,12 +779,13 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
 
     unsigned vectorLength = m_butterfly->vectorLength();
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, vectorLength);
-    for (unsigned i = m_butterfly->publicLength(); i--;) {
+    for (unsigned i = 0; i < m_butterfly->publicLength(); i++) {
         JSValue v = m_butterfly->contiguous()[i].get();
-        if (!v)
-            continue;
-        newStorage->m_vector[i].setWithoutWriteBarrier(v);
-        newStorage->m_numValuesInVector++;
+        if (v) {
+            newStorage->m_vector[i].setWithoutWriteBarrier(v);
+            newStorage->m_numValuesInVector++;
+        } else
+            newStorage->m_vector[i].clear();
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
@@ -847,12 +849,13 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
 
     unsigned vectorLength = m_butterfly->vectorLength();
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, vectorLength);
-    for (unsigned i = m_butterfly->publicLength(); i--;) {
+    for (unsigned i = 0; i < m_butterfly->publicLength(); i++) {
         double value = m_butterfly->contiguousDouble()[i];
-        if (value != value)
-            continue;
-        newStorage->m_vector[i].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
-        newStorage->m_numValuesInVector++;
+        if (value == value) {
+            newStorage->m_vector[i].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
+            newStorage->m_numValuesInVector++;
+        } else
+            newStorage->m_vector[i].clear();
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
@@ -872,12 +875,13 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
 
     unsigned vectorLength = m_butterfly->vectorLength();
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, vectorLength);
-    for (unsigned i = m_butterfly->publicLength(); i--;) {
+    for (unsigned i = 0; i < m_butterfly->publicLength(); i++) {
         JSValue v = m_butterfly->contiguous()[i].get();
-        if (!v)
-            continue;
-        newStorage->m_vector[i].setWithoutWriteBarrier(v);
-        newStorage->m_numValuesInVector++;
+        if (v) {
+            newStorage->m_vector[i].setWithoutWriteBarrier(v);
+            newStorage->m_numValuesInVector++;
+        } else
+            newStorage->m_vector[i].clear();
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
