@@ -1,3 +1,20 @@
+2014-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove App.PaneController.bugsChangeCount in the new perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=138111
+
+        Reviewed by Darin Adler.
+
+        * public/v2/app.js:
+        (App.PaneController.bugsChangeCount): Removed.
+        (App.PaneController.actions.associateBug): Call _updateMarkedPoints instead of incrementing bugsChangeCount.
+        (App.PaneController._updateMarkedPoints): Extracted from App.InteractiveChartComponent._updateDotsWithBugs.
+        Finds the list of current run's points that are associated with bugs.
+        (App.InteractiveChartComponent._updateMarkedDots): Renamed from _updateDotsWithBugs.
+        * public/v2/chart-pane.css:
+        (.chart .marked): Renamed from .hasBugs.
+        * public/v2/index.html: Specify chartPointRadius and markedPoints.
+
 2014-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: commit logs are not shown sometimes on the new dashboard UI

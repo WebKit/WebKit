@@ -154,6 +154,7 @@
                             chartData=chartData
                             domain=mainPlotDomain
                             interactive=true
+                            chartPointRadius=2
                             currentItem=currentItem
                             currentTime=sharedTime
                             selectedItem=selectedItem
@@ -162,7 +163,7 @@
                             sharedSelection=sharedSelection
                             selectionChanged="rangeChanged"
                             selectionIsLocked=timeRangeIsLocked
-                            bugsChangeCount=bugsChangeCount
+                            markedPoints=markedPoints
                             zoom="zoomed"}}
                     {{else}}
                         {{#if failure}}

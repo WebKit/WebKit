@@ -258,8 +258,8 @@
     stroke: none;
 }
 
-.chart .hasBugs {
-    fill: #33f;
+.chart .marked {
+    fill: #c33;
 }
 
 .chart path.area {

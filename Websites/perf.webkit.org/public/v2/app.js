@@ -664,7 +664,6 @@ App.PaneController = Ember.ObjectController.extend({
     sharedTime: Ember.computed.alias('parentController.sharedTime'),
     sharedSelection: Ember.computed.alias('parentController.sharedSelection'),
     selection: null,
-    bugsChangeCount: 0, // Dirty hack. Used to call InteractiveChartComponent's _updateDotsWithBugs.
     actions: {
         toggleDetails: function()
         {
@@ -689,7 +688,7 @@ App.PaneController = Ember.ObjectController.extend({
             var self = this;
             point.measurement.associateBug(bugTracker.get('id'), bugNumber).then(function () {
                 self._updateBugs();
-                self.set('bugsChangeCount', self.get('bugsChangeCount') + 1);
+                self._updateMarkedPoints();
             });
         },
         toggleSearchPane: function ()
@@ -843,7 +842,24 @@ App.PaneController = Ember.ObjectController.extend({
                 editedBugNumber: this._hasRange ? null : bugNumbers[0],
             }); // FIXME: Create urls for new bugs.
         }));
-    }
+    },
+    _updateMarkedPoints: function ()
+    {
+        var chartData = this.get('chartData');
+        if (!chartData || !chartData.current) {
+            this.set('markedPoints', {});
+            return;
+        }
+
+        var series = chartData.current.timeSeriesByCommitTime().series();
+        var markedPoints = {};
+        for (var i = 0; i < series.length; i++) {
+            var measurement = series[i].measurement;
+            if (measurement.hasBugs())
+                markedPoints[measurement.id()] = true;
+        }
+        this.set('markedPoints', markedPoints);
+    }.observes('chartData'),
 });
 
 App.InteractiveChartComponent = Ember.Component.extend({
@@ -989,7 +1005,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .data(this._currentTimeSeriesData)
             .enter().append("circle")
                 .attr("class", "dot")
-                .attr("r", this.get('interactive') ? 2 : 1));
+                .attr("r", this.get('chartPointRadius') || 1));
 
         if (this.get('interactive')) {
             this._attachEventListener(element, "mousemove", this._mouseMoved.bind(this));
@@ -1120,7 +1136,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 .attr("cx", function(measurement) { return xScale(measurement.time); })
                 .attr("cy", function(measurement) { return yScale(measurement.value); });
         });
-        this._updateDotsWithBugs();
+        this._updateMarkedDots();
         this._updateHighlightPositions();
 
         if (this._brush) {
@@ -1149,13 +1165,15 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .style("z-index", "100")
             .text(this._yAxisUnit);
     },
-    _updateDotsWithBugs: function () {
-        if (!this.get('interactive'))
-            return;
+    _updateMarkedDots: function () {
+        var markedPoints = this.get('markedPoints') || {};
+        var defaultDotRadius = this.get('chartPointRadius') || 1;
         this._dots.forEach(function (dot) {
-            dot.classed('hasBugs', function (point) { return !!point.measurement.hasBugs(); });
-        })
-    }.observes('bugsChangeCount'), // Never used for anything but to call this method :(
+            dot.classed('marked', function (point) { return markedPoints[point.measurement.id()]; });
+            dot.attr('r', function (point) {
+                return markedPoints[point.measurement.id()] ? defaultDotRadius * 1.5 : defaultDotRadius; });
+        });
+    }.observes('markedPoints'),
     _updateHighlightPositions: function () {
         var xScale = this._x;
         var yScale = this._y;
