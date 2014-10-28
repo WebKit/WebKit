@@ -1,3 +1,13 @@
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
+        Merge r174257. <rdar://problem/18753175>
+
+    2014-10-02  Csaba Osztrogonác  <ossy@webkit.org>
+    
+            URTBF after r174231 to fix non Apple builds.
+    
+            * WebProcess/WebPage/WebPage.h:
+    
 2014-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Correcting the merge for r175075. <rdar://problem/18717767>
