@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.7.1
+=================
+
+What's new in WebKitGTK+ 2.7.1?
+
+  - Add initial gestures support. For now only drag, zoom and tap
+    gestures are supported, but it's enough ot make WebKitGTK+ usable
+    in touch screens. It requires GTK+ 3.14.
+  - Add webkit_hit_test_result_context_is_selection().
+  - The Web Inspector now uses a separate Web Process.
+  - Add implementation of subtle crypto HMAC and digest algorithms.
+
+=================
 WebKitGTK+  2.5.3
 =================
 
