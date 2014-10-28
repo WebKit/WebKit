@@ -1,0 +1,33 @@
+Tests array length shortening.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS count is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
