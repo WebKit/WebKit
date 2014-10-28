@@ -492,3 +492,8 @@ EXPORTS
 #if ENABLE(ENCRYPTED_MEDIA_V2)
         symbolWithPointer(?registerCDMFactory@CDM@WebCore@@SAXP6A?AV?$unique_ptr@VCDMPrivateInterface@WebCore@@U?$default_delete@VCDMPrivateInterface@WebCore@@@std@@@std@@PAV12@@ZP6A_NABVString@WTF@@@ZP6A_N22@Z@Z,)
 #endif
+        ?updateLayout@Document@WebCore@@QAEXXZ
+        ?throwArgumentMustBeEnumError@WebCore@@YA_JAAVExecState@JSC@@IPBD111@Z
+        ?makeRGB@WebCore@@YAIHHH@Z
+        ?create@PageOverlay@WebCore@@SA?AV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@AAVClient@12@W4OverlayType@12@@Z
+        ??1PageOverlay@WebCore@@UAE@XZ

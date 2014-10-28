@@ -1,3 +1,13 @@
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
+        Merge r174320. <rdar://problem/18753175>
+
+    2014-10-04  Timothy Horton  <timothy_horton@apple.com>
+    
+            Try to fix the Windows build after r174315.
+    
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+    
 2014-08-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172019. <rdar://problem/18029617>
