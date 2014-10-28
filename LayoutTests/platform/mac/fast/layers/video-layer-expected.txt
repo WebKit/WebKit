@@ -18,9 +18,7 @@ layer at (58,110) size 302x152
 layer at (59,111) size 300x150
   RenderFlexibleBox {DIV} at (1,1) size 300x150
 layer at (59,236) size 300x25
-  RenderBlock {DIV} at (0,125) size 300x25
-layer at (59,236) size 300x25
-  RenderFlexibleBox {DIV} at (0,0) size 300x25
+  RenderFlexibleBox {DIV} at (0,125) size 300x25
 layer at (65,241) size 16x16
   RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
 layer at (91,241) size 16x16

@@ -16,7 +16,6 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,86) size 0x18
 layer at (8,42) size 200x25
   RenderFlexibleBox {DIV} at (0,0) size 200x25
-    RenderBlock {DIV} at (0,0) size 200x25
 layer at (8,42) size 200x25
   RenderFlexibleBox {DIV} at (0,0) size 200x25
 layer at (14,47) size 16x16
@@ -55,7 +54,6 @@ layer at (187,47) size 16x16
   RenderButton {BUTTON} at (3,3) size 16x16 [color=#FFFFFF]
 layer at (8,85) size 320x25
   RenderFlexibleBox {DIV} at (0,0) size 320x25
-    RenderBlock {DIV} at (0,0) size 320x25
 layer at (8,85) size 320x25
   RenderFlexibleBox {DIV} at (0,0) size 320x25
 layer at (14,90) size 16x16
@@ -96,9 +94,8 @@ layer at (8,128) size 320x100
   RenderMedia {AUDIO} at (8,128) size 320x100 [bgcolor=#0000FF]
 layer at (8,128) size 320x100
   RenderFlexibleBox {DIV} at (0,0) size 320x100
-    RenderBlock {DIV} at (0,75) size 320x25
 layer at (8,203) size 320x25
-  RenderFlexibleBox {DIV} at (0,0) size 320x25
+  RenderFlexibleBox {DIV} at (0,75) size 320x25
 layer at (14,208) size 16x16
   RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
 layer at (40,208) size 16x16

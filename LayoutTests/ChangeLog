@@ -1,3 +1,47 @@
+2014-10-28  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r171593) [Mac] Media controls create a large (and unnecessary) backing store
+        https://bugs.webkit.org/show_bug.cgi?id=137757
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-mavericks/media/audio-controls-rendering-expected.png:
+        * platform/mac-mavericks/media/audio-controls-rendering-expected.txt:
+        * platform/mac-mavericks/media/controls-strict-expected.txt:
+        * platform/mac-mavericks/media/controls-without-preload-expected.txt: Copied from LayoutTests/platform/mac/media/controls-without-preload-expected.txt.
+        * platform/mac-mavericks/media/video-controls-rendering-expected.txt:
+        * platform/mac-mavericks/media/video-display-toggle-expected.txt:
+        * platform/mac-mavericks/media/video-empty-source-expected.txt: Copied from LayoutTests/platform/mac/media/video-empty-source-expected.txt.
+        * platform/mac-mavericks/media/video-no-audio-expected.png:
+        * platform/mac-mavericks/media/video-no-audio-expected.txt:
+        * platform/mac-mavericks/media/video-volume-slider-expected.txt:
+        * platform/mac-mavericks/media/video-zoom-controls-expected.png:
+        * platform/mac-mavericks/media/video-zoom-controls-expected.txt:
+        * platform/mac/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/mac/fast/layers/video-layer-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.png:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.png:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/controls-without-preload-expected.png:
+        * platform/mac/media/controls-without-preload-expected.txt:
+        * platform/mac/media/media-controls-clone-expected.png:
+        * platform/mac/media/media-controls-clone-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-empty-source-expected.png:
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-no-audio-expected.png:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-volume-slider-expected.png:
+        * platform/mac/media/video-volume-slider-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.png:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2014-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         text-combine needs to center glyphs within the vertical area.

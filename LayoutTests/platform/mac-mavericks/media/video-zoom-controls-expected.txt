@@ -11,9 +11,7 @@ layer at (57,85) size 240x180
 layer at (57,85) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
 layer at (57,228) size 240x37
-  RenderBlock {DIV} at (0,142) size 240x38
-layer at (57,228) size 240x38
-  RenderFlexibleBox {DIV} at (0,0) size 240x38
+  RenderFlexibleBox {DIV} at (0,142) size 240x38
 layer at (66,234) size 24x24
   RenderButton {BUTTON} at (9,6) size 24x25 [color=#FFFFFF]
 layer at (105,235) size 24x24
@@ -50,9 +48,7 @@ layer at (57,310) size 240x180
 layer at (57,310) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
 layer at (57,453) size 240x37
-  RenderBlock {DIV} at (0,142) size 240x38
-layer at (57,453) size 240x38
-  RenderFlexibleBox {DIV} at (0,0) size 240x38
+  RenderFlexibleBox {DIV} at (0,142) size 240x38
 layer at (66,459) size 24x24
   RenderButton {BUTTON} at (9,6) size 24x25 [color=#FFFFFF]
 layer at (105,460) size 24x24
