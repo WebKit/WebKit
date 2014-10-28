@@ -1548,7 +1548,7 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
     Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
 
     // The value of displayOperatorMinHeight is sometimes too small, so we ensure that it is at least \sqrt{2} times the size of the base glyph.
-    float displayOperatorMinHeight = std::max(baseGlyph.fontData->boundsForGlyph(baseGlyph.glyph).height() * float(M_SQRT2), primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::DisplayOperatorMinHeight));
+    float displayOperatorMinHeight = std::max(baseGlyph.fontData->boundsForGlyph(baseGlyph.glyph).height() * sqrtOfTwoFloat, primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::DisplayOperatorMinHeight));
 
     primaryFontData->mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
 

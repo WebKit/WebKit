@@ -1,3 +1,18 @@
+2014-10-28  Milan Crha  <mcrha@redhat.com>
+
+        Use constants from wtf/MathExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=137967
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::rotateCairoMatrixForVerticalOrientation):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLMenclose::updateLogicalHeight):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator):
+
 2014-10-28  David Hyatt  <hyatt@apple.com>
 
         Selection gap painting is ugly for ruby bases.

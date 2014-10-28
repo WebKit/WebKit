@@ -67,6 +67,14 @@ const double piOverFourDouble = M_PI_4;
 const float piOverFourFloat = static_cast<float>(M_PI_4);
 #endif
 
+#ifndef M_SQRT2
+const double sqrtOfTwoDouble = 1.41421356237309504880;
+const float sqrtOfTwoFloat = 1.41421356237309504880f;
+#else
+const double sqrtOfTwoDouble = M_SQRT2;
+const float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
+#endif
+
 #if OS(DARWIN)
 
 // Work around a bug in the Mac OS X libc where ceil(-0.1) return +0.

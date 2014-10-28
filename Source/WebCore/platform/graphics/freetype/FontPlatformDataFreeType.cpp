@@ -31,6 +31,7 @@
 #include <fontconfig/fcfreetype.h>
 #include <ft2build.h>
 #include FT_TRUETYPE_TABLES_H
+#include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
 #if !PLATFORM(EFL)
@@ -120,7 +121,7 @@ static void rotateCairoMatrixForVerticalOrientation(cairo_matrix_t* matrix)
     // combination of rotation (R) and translation (T) applied on the
     // horizontal matrix (H). V = H . R . T, where R rotates by -90 degrees
     // and T translates by font size towards y axis.
-    cairo_matrix_rotate(matrix, -M_PI_2);
+    cairo_matrix_rotate(matrix, -piOverTwoDouble);
     cairo_matrix_translate(matrix, 0.0, 1.0);
 }
 
