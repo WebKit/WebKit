@@ -1503,6 +1503,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
     return finalOpacity;
 }
 
+// FIXME: Code is duplicated in RenderLayer. Also, we should probably not consider filters a box decoration here.
 static inline bool hasBoxDecorations(const RenderStyle& style)
 {
     return style.hasBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasAppearance() || style.boxShadow() || style.hasFilter();
@@ -1754,7 +1755,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!compositedWithOwnBackingStore(curLayer)
-                && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
                 return true;
         }
     }
@@ -1769,7 +1770,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
-                    && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                    && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
@@ -1779,7 +1780,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
-                    && (curLayer->hasVisibleContent() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                    && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
