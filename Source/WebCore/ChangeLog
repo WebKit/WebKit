@@ -1,3 +1,21 @@
+2014-10-28  Jer Noble  <jer.noble@apple.com>
+
+        [EME][Mac] Adopt new AVStreamSession API: pass storageDirectoryAtURL at creation-time
+        https://bugs.webkit.org/show_bug.cgi?id=138149
+
+        Reviewed by Brent Fulgham.
+
+        AVStreamSession now requires its storage location at creation-time, rather than post-creation. This requires
+        us to move storage location code from CDMSessionMediaSourceAVFObjC to MediaPlayerPrivateMediaSourceAVFObjC.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]): Renamed.
+        (WebCore::CDMSessionMediaSourceAVFObjC::update):
+        (WebCore::sessionStorageDirectory): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::sessionStorageDirectory):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession):
+
 2014-10-28  Geoffrey Garen  <ggaren@apple.com>
 
         All networking crashes on Mac 32bit
