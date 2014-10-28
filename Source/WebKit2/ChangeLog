@@ -1,3 +1,25 @@
+2014-10-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Add optimized fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=138044
+
+        Reviewed by Anders Carlsson.
+
+        Enable different types of fullscreen video behavior.
+        Add an enum parameter to enterVideoFullscreenForVideoElement for alternate types of fullscreen.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h: Add fullscreenType parameter
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in: ditto
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): ditto
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::enterVideoFullscreenForVideoElement): ditto
+        * WebProcess/WebCoreSupport/WebChromeClient.h: ditto
+        * WebProcess/ios/WebVideoFullscreenManager.h: ditto
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement): ditto
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen): ditto
+
 2014-10-28  Dan Bernstein  <mitz@apple.com>
 
         Added a Radar reference to a comment.

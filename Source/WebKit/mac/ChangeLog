@@ -1,3 +1,21 @@
+2014-10-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Add optimized fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=138044
+
+        Reviewed by Jer Noble.
+
+        Enable different types of fullscreen video behavior.
+        Add an enum parameter to enterVideoFullscreenForVideoElement for alternate types of fullscreen.
+
+        * WebCoreSupport/WebChromeClient.h: Add fullscreenType parameter
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterVideoFullscreenForVideoElement): ditto
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:type:]): ditto
+        (-[WebView _enterVideoFullscreenForVideoElement:]): Deleted.
+        * WebView/WebViewInternal.h: ditto
+
 2014-10-27  Beth Dakin  <bdakin@apple.com>
 
         Provide a way for WebKit1 clients to override default action menu items

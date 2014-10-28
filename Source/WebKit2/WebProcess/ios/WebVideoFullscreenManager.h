@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <WebCore/WebVideoFullscreenModelVideoElement.h>
@@ -59,7 +60,7 @@ public:
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     
     bool supportsVideoFullscreen() const;
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode);
     void exitVideoFullscreen();
     
 protected:
@@ -92,6 +93,7 @@ protected:
     
     bool m_isAnimating;
     bool m_targetIsFullscreen;
+    WebCore::HTMLMediaElement::VideoFullscreenMode m_fullscreenMode;
     bool m_isFullscreen;
 };
     

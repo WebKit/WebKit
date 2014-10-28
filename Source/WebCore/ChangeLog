@@ -1,3 +1,44 @@
+2014-10-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Add optimized fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=138044
+
+        Reviewed by Jer Noble.
+
+        Enable different types of fullscreen video behavior.
+        Add an enum parameter to enterVideoFullscreenForVideoElement for alternate types of fullscreen.
+        Add gesture for alternate fullscreen.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::enterFullscreenOptimized): added
+        * Modules/mediacontrols/MediaControlsHost.h: added enterFullscreenOptimized
+        * Modules/mediacontrols/MediaControlsHost.idl: added enterFullscreenOptimized
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleBaseGestureChange): recognize alternate gesture
+        * WebCore.exp.in: added parameter to setupFullscreen
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFrom) : replace m_isInVideoFullscreen with m_videoFullscreenType
+        (WebCore::HTMLMediaElement::stop) : ditto
+        (WebCore::HTMLMediaElement::isFullscreen) : ditto
+        (WebCore::HTMLMediaElement::enterFullscreen): add parameter to enterVideoFullscreenForVideoElement
+        (WebCore::HTMLMediaElement::exitFullscreen): replace m_isInVideoFullscreen with m_videoFullscreenType
+        (WebCore::HTMLMediaElement::enterFullscreenOptimized): added
+        * html/HTMLMediaElement.h: added enterFullscreenOptimized
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::enterVideoFullscreenForVideoElement): added parameter
+        * platform/ios/WebVideoFullscreenControllerAVKit.h: add parameter
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController enterFullscreen:type:]): add parameter
+        (-[WebVideoFullscreenController enterFullscreen:]): Deleted.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: reorder protected to after public
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController player]): this stub is now required
+        (-[WebAVPlayerController layoutSublayersOfLayer:]): this is a better way to update video frames
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): implement optimized fullscreen interface 
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): ditto
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): ditto
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): ditto
+
 2014-10-28  Chris Dumez  <cdumez@apple.com>
 
         Clean up virtual functions in accessibility/

@@ -114,7 +114,7 @@ public:
     return _videoElement.get();
 }
 
-- (void)enterFullscreen:(UIView *)view
+- (void)enterFullscreen:(UIView *)view mode:(HTMLMediaElement::VideoFullscreenMode)mode
 {
     [self retain]; // Balanced by -release in didExitFullscreen:
     
@@ -125,7 +125,7 @@ public:
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setVideoElement(_videoElement.get());
     _videoFullscreenLayer = [CALayer layer];
-    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _videoElement->clientRect(), view);
+    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _videoElement->clientRect(), view, mode);
 }
 
 - (void)exitFullscreen

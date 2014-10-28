@@ -187,6 +187,13 @@ void MediaControlsHost::exitedFullscreen()
     if (m_textTrackContainer)
         m_textTrackContainer->exitedFullscreen();
 }
+    
+void MediaControlsHost::enterFullscreenOptimized()
+{
+#if ENABLE(OPTIMIZED_FULLSCREEN)
+    m_mediaElement->enterFullscreenOptimized();
+#endif
+}
 
 void MediaControlsHost::updateCaptionDisplaySizes()
 {

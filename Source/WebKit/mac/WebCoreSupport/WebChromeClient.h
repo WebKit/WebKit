@@ -182,7 +182,7 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool supportsVideoFullscreen() override;
-    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*) override;
+    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode) override;
     virtual void exitVideoFullscreen() override;
 #endif
     

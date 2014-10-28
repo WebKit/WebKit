@@ -30,6 +30,7 @@
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
 
 #include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <wtf/RefPtr.h>
@@ -63,23 +64,7 @@ public:
 class WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
     , public RefCounted<WebVideoFullscreenInterfaceAVKit> {
-        
-    RetainPtr<WebAVPlayerController> m_playerController;
-    RetainPtr<AVPlayerViewController> m_playerViewController;
-    RetainPtr<CALayer> m_videoLayer;
-    RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
-    WebVideoFullscreenModel* m_videoFullscreenModel;
-    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
 
-    // These are only used when fullscreen is presented in a separate window.
-    RetainPtr<UIWindow> m_window;
-    RetainPtr<UIViewController> m_viewController;
-    RetainPtr<UIView> m_parentView;
-
-    WebAVPlayerController *playerController();
-    
-    void doEnterFullscreen();
-        
 public:
     WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit();
     virtual ~WebVideoFullscreenInterfaceAVKit() { }
@@ -95,13 +80,34 @@ public:
     WEBCORE_EXPORT virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
-
-    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, IntRect initialRect, UIView *);
+    
+    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, IntRect initialRect, UIView *, HTMLMediaElement::VideoFullscreenMode);
     WEBCORE_EXPORT virtual void enterFullscreen();
     WEBCORE_EXPORT virtual void exitFullscreen(IntRect finalRect);
     WEBCORE_EXPORT virtual void cleanupFullscreen();
     WEBCORE_EXPORT virtual void invalidate();
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();
+    
+protected:
+        
+    RetainPtr<WebAVPlayerController> m_playerController;
+    RetainPtr<AVPlayerViewController> m_playerViewController;
+    RetainPtr<CALayer> m_videoLayer;
+    RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
+    WebVideoFullscreenModel* m_videoFullscreenModel;
+    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
+
+    // These are only used when fullscreen is presented in a separate window.
+    RetainPtr<UIWindow> m_window;
+    RetainPtr<UIViewController> m_viewController;
+    RetainPtr<UIView> m_parentView;
+    HTMLMediaElement::VideoFullscreenMode m_mode;
+    bool m_exitRequested;
+    bool m_exitCompleted;
+
+    WebAVPlayerController *playerController();
+    
+    void doEnterFullscreen();
 };
 
 }

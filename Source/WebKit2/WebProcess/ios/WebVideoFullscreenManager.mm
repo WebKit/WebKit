@@ -85,11 +85,14 @@ bool WebVideoFullscreenManager::supportsVideoFullscreen() const
     return Settings::avKitEnabled();
 }
 
-void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
+void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement, HTMLMediaElement::VideoFullscreenMode mode)
 {
+    ASSERT(mode != HTMLMediaElement::VideoFullscreenModeNone);
+
     m_videoElement = videoElement;
 
     m_targetIsFullscreen = true;
+    m_fullscreenMode = mode;
 
     if (m_isAnimating)
         return;
@@ -99,7 +102,7 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), clientRectForElement(videoElement), m_page->deviceScaleFactor()), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), clientRectForElement(videoElement), m_page->deviceScaleFactor(), m_fullscreenMode), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitVideoFullscreen()
@@ -235,7 +238,7 @@ void WebVideoFullscreenManager::didCleanupFullscreen()
     // enter fullscreen now if it was previously requested during an animation.
     __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
     WebThreadRun(^ {
-        enterVideoFullscreenForVideoElement(m_videoElement.get());
+        enterVideoFullscreenForVideoElement(m_videoElement.get(), m_fullscreenMode);
         protect.clear();
     });
 }

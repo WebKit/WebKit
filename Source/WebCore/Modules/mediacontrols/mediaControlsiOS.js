@@ -330,12 +330,17 @@ ControllerIOS.prototype = {
             return;
 
         var velocity = Math.abs(event.scale - 1) / duration;
-
-        if (event.scale < 1.25 || velocity < 2)
+        
+        if (velocity < 2)
             return;
 
-        delete this.gestureStartTime;
-        this.video.webkitEnterFullscreen();
+        if (event.scale >= 1.25) {
+            delete this.gestureStartTime;
+            this.video.webkitEnterFullscreen();
+        } else if (event.scale <= 0.75) {
+            delete this.gestureStartTime;
+            this.host.enterFullscreenOptimized();
+        }
     },
 
     handleBaseGestureEnd: function(event) {

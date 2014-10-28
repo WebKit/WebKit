@@ -70,6 +70,7 @@ public:
     void updateCaptionDisplaySizes();
     void enteredFullscreen();
     void exitedFullscreen();
+    void enterFullscreenOptimized();
 
     String externalDeviceDisplayName() const;
     String externalDeviceType() const;

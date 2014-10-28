@@ -254,7 +254,7 @@ private:
 
 #if PLATFORM(IOS)
     virtual bool supportsVideoFullscreen();
-    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
+    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode);
     virtual void exitVideoFullscreen();
 #endif
 
