@@ -1,5 +1,12 @@
 2014-10-28  Dan Bernstein  <mitz@apple.com>
 
+        Added a Radar reference to a comment.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+
+2014-10-28  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] REGERESSION (r171801): Client certificate authentication is failing
         https://bugs.webkit.org/show_bug.cgi?id=138144
 

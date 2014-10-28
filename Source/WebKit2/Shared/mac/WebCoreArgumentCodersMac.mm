@@ -283,7 +283,8 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder& decoder
 void ArgumentCoder<Credential>::encodePlatformData(ArgumentEncoder& encoder, const Credential& credential)
 {
     NSURLCredential *nsCredential = credential.nsCredential();
-    // NSURLCredential doesn't serialize identities correctly, so we encode the pieces individually in the identity case.
+    // NSURLCredential doesn't serialize identities correctly, so we encode the pieces individually
+    // in the identity case. See <rdar://problem/18802434>.
     if (SecIdentityRef identity = nsCredential.identity) {
         encoder << true;
         IPC::encode(encoder, identity);
