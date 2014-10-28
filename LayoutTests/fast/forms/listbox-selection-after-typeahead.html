@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<select id="listbox" size="7" multiple style="border:none; margin:0px; padding:0px; width:100px;">
+    <option>0</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+</select>
+<script>
+var select = document.getElementById('listbox');
+
+function mouseDownAtOption(index)
+{
+    var itemHeight = Math.floor(select.offsetHeight / select.size);
+    var posX = select.offsetLeft + select.offsetWidth / 2;
+    var posY = select.offsetTop + index * itemHeight + itemHeight / 2;
+    eventSender.mouseMoveTo(posX, posY);
+    eventSender.mouseDown();
+}
+
+function sendkeyDown(identifier, modifier) {
+    if (window.eventSender)
+        eventSender.keyDown(identifier, [modifier]);
+}
+
+function bitPatternForSelectedOptions()
+{
+    var result = "";
+    for (var i = 0; i < select.options.length; ++i)
+        result += select.options[i].selected ? '1' : '0';
+    return result;
+}
+
+description('Test checking if active selection is cleared after type ahead');
+
+shouldBeEqualToString('mouseDownAtOption(1);               bitPatternForSelectedOptions()', "0100000");
+shouldBeEqualToString('sendkeyDown("5");                   bitPatternForSelectedOptions()', "0000010");
+shouldBeEqualToString('sendkeyDown("upArrow", "shiftKey"); bitPatternForSelectedOptions()', "0000110");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

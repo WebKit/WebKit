@@ -876,17 +876,18 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
     HTMLElement* element = nullptr;
     if (listIndex >= 0) {
         element = items[listIndex];
-        if (is<HTMLOptionElement>(*element)) {
-            if (m_activeSelectionAnchorIndex < 0 || shouldDeselect)
-                setActiveSelectionAnchorIndex(listIndex);
-            if (m_activeSelectionEndIndex < 0 || shouldDeselect)
-                setActiveSelectionEndIndex(listIndex);
-            downcast<HTMLOptionElement>(*element).setSelectedState(true);
-        }
     }
 
     if (shouldDeselect)
         deselectItemsWithoutValidation(element);
+
+    if (is<HTMLOptionElement>(element)) {
+        if (m_activeSelectionAnchorIndex < 0 || shouldDeselect)
+            setActiveSelectionAnchorIndex(listIndex);
+        if (m_activeSelectionEndIndex < 0 || shouldDeselect)
+            setActiveSelectionEndIndex(listIndex);
+        downcast<HTMLOptionElement>(*element).setSelectedState(true);
+    }
 
     // For the menu list case, this is what makes the selected element appear.
     if (auto* renderer = this->renderer())

@@ -1,3 +1,18 @@
+2014-10-28  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Abandoned select option is reselected when shift selecting new options
+        https://bugs.webkit.org/show_bug.cgi?id=137553
+
+        Reviewed by Ryosuke Niwa.
+
+        Previous active selection is wrongly recorded by HTMLSelectElement after selecting a new item using
+        typeAhead. Fixed by clearing previously selected options before starting a new active selection.
+
+        Test: fast/forms/listbox-selection-after-typeahead.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectOption): Code re-ordering
+
 2014-10-28  Milan Crha  <mcrha@redhat.com>
 
         Use constants from wtf/MathExtras.h
