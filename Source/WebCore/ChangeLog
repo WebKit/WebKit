@@ -1,3 +1,16 @@
+2014-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        All networking crashes on Mac 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=138157
+
+        Reviewed by Andy Estes.
+
+        NEFilterSource content filtering is not available on 32bit, so
+        soft-linking fails at runtime. The simplest solution is just to disable
+        it at compile time.
+
+        * platform/ContentFilter.h:
+
 2014-10-28  Jeremy Jones  <jeremyj@apple.com>
 
         Add optimized fullscreen mode.
