@@ -497,3 +497,16 @@ EXPORTS
         ?makeRGB@WebCore@@YAIHHH@Z
         ?create@PageOverlay@WebCore@@SA?AV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@AAVClient@12@W4OverlayType@12@@Z
         ??1PageOverlay@WebCore@@UAE@XZ
+        ?controller@PageOverlay@WebCore@@QBEPAVPageOverlayController@2@XZ
+        ?setNeedsDisplay@PageOverlay@WebCore@@QAEXXZ
+        ?bounds@PageOverlay@WebCore@@QBE?AVIntRect@2@XZ
+        ??0FloatRect@WebCore@@QAE@ABVIntRect@1@@Z
+        ?setStrokeColor@GraphicsContext@WebCore@@QAEXABVColor@2@W4ColorSpace@2@@Z
+        ?save@GraphicsContext@WebCore@@QAEXXZ
+        ?restore@GraphicsContext@WebCore@@QAEXXZ
+        ?strokeRect@GraphicsContext@WebCore@@QAEXABVFloatRect@2@M@Z
+        ?layerTreeAsText@GraphicsLayer@WebCore@@QBE?AVString@WTF@@I@Z
+        ?documentOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ
+        ?viewOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ
+        ?installPageOverlay@PageOverlayController@WebCore@@QAEXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z
+        ?uninstallPageOverlay@PageOverlayController@WebCore@@QAEXPAVPageOverlay@2@W4FadeMode@32@@Z
