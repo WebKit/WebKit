@@ -875,7 +875,7 @@ public:
     void setTitleElement(const StringWithDirection&, Element* titleElement);
     void removeTitle(Element* titleElement);
 
-    String cookie(ExceptionCode&) const;
+    String cookie(ExceptionCode&);
     void setCookie(const String&, ExceptionCode&);
 
     String referrer() const;
@@ -898,7 +898,7 @@ public:
     //    inherits its cookieURL but not its URL.
     //
     const URL& cookieURL() const { return m_cookieURL; }
-    void setCookieURL(const URL& url) { m_cookieURL = url; }
+    void setCookieURL(const URL&);
 
     // The firstPartyForCookies is used to compute whether this document
     // appears in a "third-party" context for the purpose of third-party
@@ -1358,6 +1358,14 @@ private:
 
     void didAssociateFormControlsTimerFired(Timer<Document>&);
 
+    // DOM Cookies caching.
+    const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
+    void setCachedDOMCookies(const String&);
+    bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
+    void invalidateDOMCookieCache();
+    void domCookieCacheExpiryTimerFired(Timer<Document>&);
+    void didLoadResourceSynchronously(const ResourceRequest&) override final;
+
     unsigned m_referencingNodeCount;
 
     std::unique_ptr<StyleResolver> m_styleResolver;
@@ -1690,6 +1698,8 @@ private:
 #endif
 
     Timer<Document> m_didAssociateFormControlsTimer;
+    Timer<Document> m_cookieCacheExpiryTimer;
+    String m_cachedDOMCookies;
     HashSet<RefPtr<Element>> m_associatedFormControls;
     unsigned m_disabledFieldsetElementsCount;
 
