@@ -213,17 +213,16 @@ struct Style {
     unsigned tabWidth;
 };
 
-static inline bool isWhitespace(UChar character, bool preserveNewline)
-{
-    return character == ' ' || character == '\t' || (!preserveNewline && character == '\n');
-}
-
 template <typename CharacterType>
-static inline unsigned skipWhitespaces(const CharacterType* text, unsigned offset, unsigned length, bool preserveNewline)
+static inline unsigned skipWhitespace(const CharacterType* text, unsigned offset, unsigned length, bool preserveNewline, unsigned& spaceCount)
 {
+    spaceCount = 0;
     for (; offset < length; ++offset) {
-        if (!isWhitespace(text[offset], preserveNewline))
+        bool isSpace = text[offset] == ' ';
+        if (!(isSpace || text[offset] == '\t' || (!preserveNewline && text[offset] == '\n')))
             return offset;
+        if (isSpace)
+            ++spaceCount;
     }
     return length;
 }
@@ -244,127 +243,10 @@ static float textWidth(const RenderText& renderText, const CharacterType* text, 
     return style.font.width(run);
 }
 
-template <typename CharacterType>
-static float measureWord(unsigned start, unsigned end, float lineWidth, const Style& style, const CharacterType* text, unsigned textLength, const RenderText& textRenderer)
+static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)
 {
-    if (text[start] == ' ' && end == start + 1)
-        return style.spaceWidth;
-
-    bool measureWithEndSpace = style.collapseWhitespace && end < textLength && text[end] == ' ';
-    if (measureWithEndSpace)
-        ++end;
-    float width = textWidth(textRenderer, text, textLength, start, end, lineWidth, style);
-
-    return measureWithEndSpace ? width - style.spaceWidth : width;
-}
-
-template <typename CharacterType>
-Vector<Run, 4> createLineRuns(unsigned lineStart, LineWidth& lineWidth, LazyLineBreakIterator& lineBreakIterator, const Style& style, const CharacterType* text, unsigned textLength, const RenderText& textRenderer)
-{
-    Vector<Run, 4> lineRuns;
-    lineRuns.uncheckedAppend(Run(lineStart, 0));
-
-    unsigned wordEnd = lineStart;
-    while (wordEnd < textLength) {
-        ASSERT(!style.collapseWhitespace || !isWhitespace(text[wordEnd], style.preserveNewline));
-
-        unsigned wordStart = wordEnd;
-
-        if (style.preserveNewline && text[wordStart] == '\n') {
-            ++wordEnd;
-            // FIXME: This creates a dedicated run for newline. This is wasteful and unnecessary but it keeps test results unchanged.
-            if (wordStart > lineStart)
-                lineRuns.append(Run(wordStart, lineRuns.last().right));
-            lineRuns.last().right = lineRuns.last().left;
-            lineRuns.last().end = wordEnd;
-            break;
-        }
-
-        if (!style.collapseWhitespace && isWhitespace(text[wordStart], style.preserveNewline))
-            wordEnd = wordStart + 1;
-        else
-            wordEnd = nextBreakablePosition<CharacterType, false>(lineBreakIterator, text, textLength, wordStart + 1);
-
-        bool wordIsPrecededByWhitespace = style.collapseWhitespace && wordStart > lineStart && isWhitespace(text[wordStart - 1], style.preserveNewline);
-        if (wordIsPrecededByWhitespace)
-            --wordStart;
-
-        float wordWidth = measureWord(wordStart, wordEnd, lineWidth.committedWidth(), style, text, textLength, textRenderer);
-
-        lineWidth.addUncommittedWidth(wordWidth);
-
-        if (style.wrapLines) {
-            // Move to the next line if the current one is full and we have something on it.
-            if (!lineWidth.fitsOnLine() && lineWidth.committedWidth())
-                break;
-
-            // This is for white-space: pre-wrap which requires special handling for end line whitespace.
-            if (!style.collapseWhitespace && lineWidth.fitsOnLine() && wordEnd < textLength && isWhitespace(text[wordEnd], style.preserveNewline)) {
-                // Look ahead to see if the next whitespace would fit.
-                float whitespaceWidth = textWidth(textRenderer, text, textLength, wordEnd, wordEnd + 1, lineWidth.committedWidth(), style);
-                if (!lineWidth.fitsOnLineIncludingExtraWidth(whitespaceWidth)) {
-                    // If not eat away the rest of the whitespace on the line.
-                    unsigned whitespaceEnd = skipWhitespaces(text, wordEnd, textLength, style.preserveNewline);
-                    // Include newline to this run too.
-                    if (whitespaceEnd < textLength && text[whitespaceEnd] == '\n')
-                        ++whitespaceEnd;
-                    lineRuns.last().end = whitespaceEnd;
-                    lineRuns.last().right = lineWidth.availableWidth();
-                    break;
-                }
-            }
-        }
-
-        if (wordStart > lineRuns.last().end) {
-            // There were more than one consecutive whitespace.
-            ASSERT(wordIsPrecededByWhitespace);
-            // Include space to the end of the previous run.
-            lineRuns.last().end++;
-            lineRuns.last().right += style.spaceWidth;
-            // Start a new run on the same line.
-            lineRuns.append(Run(wordStart + 1, lineRuns.last().right));
-        }
-
-        if (!lineWidth.fitsOnLine() && style.breakWordOnOverflow) {
-            // Backtrack and start measuring character-by-character.
-            lineWidth.addUncommittedWidth(-lineWidth.uncommittedWidth());
-            unsigned splitEnd = wordStart;
-            for (; splitEnd < wordEnd; ++splitEnd) {
-                float charWidth = textWidth(textRenderer, text, textLength, splitEnd, splitEnd + 1, 0, style);
-                lineWidth.addUncommittedWidth(charWidth);
-                if (!lineWidth.fitsOnLine() && splitEnd > lineStart)
-                    break;
-                lineWidth.commit();
-            }
-            lineRuns.last().end = splitEnd;
-            lineRuns.last().right = lineWidth.committedWidth();
-            // To match line boxes, set single-space-only line width to zero.
-            if (text[lineRuns.last().start] == ' ' && lineRuns.last().start + 1 == lineRuns.last().end)
-                lineRuns.last().right = lineRuns.last().left;
-            break;
-        }
-
-        lineWidth.commit();
-
-        lineRuns.last().right = lineWidth.committedWidth();
-        lineRuns.last().end = wordEnd;
-
-        if (style.collapseWhitespace)
-            wordEnd = skipWhitespaces(text, wordEnd, textLength, style.preserveNewline);
-
-        if (!lineWidth.fitsOnLine() && style.wrapLines) {
-            // The first run on the line overflows.
-            ASSERT(lineRuns.size() == 1);
-            break;
-        }
-    }
-    return lineRuns;
-}
-
-static float computeLineLeft(ETextAlign textAlign, const LineWidth& lineWidth)
-{
-    float remainingWidth = lineWidth.availableWidth() - lineWidth.committedWidth();
-    float left = lineWidth.logicalLeftOffset();
+    float remainingWidth = availableWidth - committedWidth;
+    float left = logicalLeftOffset;
     switch (textAlign) {
     case LEFT:
     case WEBKIT_LEFT:
@@ -384,56 +266,366 @@ static float computeLineLeft(ETextAlign textAlign, const LineWidth& lineWidth)
     return 0;
 }
 
-static void adjustRunOffsets(Vector<Run, 4>& lineRuns, float adjustment)
-{
-    if (!adjustment)
-        return;
-    for (unsigned i = 0; i < lineRuns.size(); ++i) {
-        lineRuns[i].left += adjustment;
-        lineRuns[i].right += adjustment;
+struct TextFragment {
+    TextFragment()
+        : start(0)
+        , isCollapsedWhitespace(false)
+        , end(0)
+        , isWhitespaceOnly(false)
+        , isBreakable(false)
+        , mustBreak(false)
+        , width(0)
+    { }
+
+    TextFragment(unsigned textStart, unsigned textEnd, unsigned textWidth)
+        : start(textStart)
+        , isCollapsedWhitespace(false)
+        , end(textEnd)
+        , isWhitespaceOnly(false)
+        , isBreakable(false)
+        , mustBreak(false)
+        , width(textWidth)
+    { }
+
+    bool isEmpty() const
+    {
+        return start == end;
     }
+
+    unsigned start : 31;
+    bool isCollapsedWhitespace : 1;
+    unsigned end : 31;
+    bool isWhitespaceOnly : 1;
+    bool isBreakable;
+    bool mustBreak;
+    float width;
+};
+
+struct LineState {
+    LineState()
+        : availableWidth(0)
+        , logicalLeftOffset(0)
+        , uncommittedStart(0)
+        , uncommittedEnd(0)
+        , uncommittedLeft(0)
+        , uncommittedWidth(0)
+        , committedWidth(0)
+        , end(0)
+        , trailingWhitespaceWidth(0)
+    {
+    }
+
+    void commitAndCreateRun(Layout::RunVector& lineRuns)
+    {
+        if (uncommittedStart == uncommittedEnd)
+            return;
+
+        lineRuns.append(Run(uncommittedStart, uncommittedEnd, uncommittedLeft, uncommittedLeft + uncommittedWidth, false));
+        // Move uncommitted to committed.
+        committedWidth += uncommittedWidth;
+
+        uncommittedStart = uncommittedEnd;
+        uncommittedLeft += uncommittedWidth;
+        uncommittedWidth = 0;
+    }
+
+    void addUncommitted(const TextFragment& fragment)
+    {
+        addUncommitted(fragment.end, fragment.width, fragment.isWhitespaceOnly);
+    }
+
+    void addUncommitted(unsigned fragmentEnd, float fragmentWidth, bool whitespaceOnly)
+    {
+        unsigned uncomittedFragmentLength = fragmentEnd - uncommittedEnd;
+        uncommittedWidth += fragmentWidth;
+        uncommittedEnd = fragmentEnd;
+        end = uncommittedEnd;
+        trailingWhitespaceWidth = whitespaceOnly ? fragmentWidth : 0;
+        trailingWhitespaceLength = whitespaceOnly ? uncomittedFragmentLength  : 0;
+    }
+
+    void addUncommittedWhitespace(float whitespaceWidth)
+    {
+        addUncommitted(uncommittedEnd + 1, whitespaceWidth, true);
+    }
+
+    void jumpTo(unsigned newPositon, float leftX)
+    {
+        end = newPositon;
+
+        uncommittedStart = newPositon;
+        uncommittedEnd = newPositon;
+        uncommittedLeft = leftX;
+        uncommittedWidth = 0;
+    }
+
+    float width() const
+    {
+        return committedWidth + uncommittedWidth;
+    }
+
+    bool fits(float extra) const
+    {
+        return availableWidth >= width() + extra;
+    }
+
+    void removeCommittedTrailingWhitespace()
+    {
+        ASSERT(!uncommittedWidth);
+        committedWidth -= trailingWhitespaceWidth;
+        trailingWhitespaceWidth = 0;
+        trailingWhitespaceLength = 0;
+    }
+
+    float availableWidth;
+    float logicalLeftOffset;
+
+    unsigned uncommittedStart;
+    unsigned uncommittedEnd;
+    float uncommittedLeft;
+    float uncommittedWidth;
+    float committedWidth;
+    unsigned end; // End position of the current line.
+    float trailingWhitespaceWidth; // Use this to remove trailing whitespace without re-mesuring the text.
+    float trailingWhitespaceLength;
+};
+
+template <typename CharacterType>
+static void removeTrailingWhitespace(LineState& line, TextFragment& fragmentForNextLine, Layout::RunVector& lineRuns, const Style& style, const CharacterType* text, unsigned textLength)
+{
+    bool preWrap = style.wrapLines && !style.collapseWhitespace;
+    // Trailing whitespace gets removed when we either collapse whitespace or pre-wrap is present.
+    if (!(style.collapseWhitespace || preWrap))
+        return;
+
+    ASSERT(lineRuns.size());
+    Run& lastRun = lineRuns.last();
+
+    unsigned originalLineEnd = line.end;
+    bool trailingPreWrapWhitespaceNeedsToBeRemoved = false;
+    // When pre-wrap is present, trailing whitespace needs to be removed:
+    // 1. from the "next line": when at least the first charater fits. When even the first whitespace is wider that the available width, we don't remove any whitespace at all.
+    // 2. from this line: remove whitespace, unless it's the only fragment on the line -so removing the whitesapce would produce an empty line.
+    if (preWrap) {
+        if (fragmentForNextLine.isWhitespaceOnly && !fragmentForNextLine.isEmpty() && line.availableWidth >= line.committedWidth) {
+            line.end = fragmentForNextLine.end;
+            fragmentForNextLine = TextFragment();
+        }
+        if (line.trailingWhitespaceLength)
+            trailingPreWrapWhitespaceNeedsToBeRemoved = !(line.committedWidth == line.trailingWhitespaceWidth); // Check if we've got only whitespace on this line.
+    }
+    if (line.trailingWhitespaceLength && (style.collapseWhitespace || trailingPreWrapWhitespaceNeedsToBeRemoved)) {
+        lastRun.right -= line.trailingWhitespaceWidth;
+        lastRun.end -= line.trailingWhitespaceLength;
+        if (lastRun.start == lastRun.end)
+            lineRuns.removeLast();
+        line.removeCommittedTrailingWhitespace();
+    }
+
+    // If we skipped any whitespace and now the line end is a "preserved" newline, skip the newline too as we are wrapping the line here already.
+    if (originalLineEnd != line.end && style.preserveNewline && line.end < textLength && text[line.end] == '\n')
+        ++line.end;
+}
+
+template <typename CharacterType>
+static void initializeLine(LineState& line, const Style& style, const CharacterType* text, unsigned textLength)
+{
+    line.committedWidth = 0;
+    line.uncommittedLeft = 0;
+    line.trailingWhitespaceWidth = 0;
+    line.trailingWhitespaceLength = 0;
+    // Skip leading whitespace if collapsing whitespace, unless there's an uncommitted fragment pushed from the previous line.
+    // FIXME: Be smarter when the run from the previous line does not fit the current line. Right now, we just reprocess it.
+    if (line.uncommittedWidth && !line.fits(line.uncommittedWidth))
+        line.jumpTo(line.uncommittedStart, 0); // Start over with this fragment.
+    else if (!line.uncommittedWidth) {
+        unsigned spaceCount = 0;
+        line.jumpTo(style.collapseWhitespace ? skipWhitespace(text, line.end, textLength, style.preserveNewline, spaceCount) : line.end, 0);
+    }
+}
+
+template <typename CharacterType>
+static TextFragment splitFragmentToFitLine(TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const RenderText& textRenderer,
+    const CharacterType* text, unsigned textLength, const Style& style)
+{
+    // Fast path for single char fragments.
+    if (fragmentToSplit.start + 1 == fragmentToSplit.end) {
+        if (keepAtLeastOneCharacter)
+            return TextFragment();
+
+        TextFragment fragmentForNextLine(fragmentToSplit);
+        fragmentToSplit.end = fragmentToSplit.start;
+        fragmentToSplit.width = 0;
+        return fragmentForNextLine;
+    }
+    // Simple binary search to find out what fits the current line.
+    // FIXME: add surrogate pair support.
+    unsigned left = fragmentToSplit.start;
+    unsigned right = fragmentToSplit.end - 1; // We can ignore the last character. It surely does not fit.
+    float width = 0;
+    while (left < right) {
+        unsigned middle = (left + right) / 2;
+        width = textWidth(textRenderer, text, textLength, fragmentToSplit.start, middle + 1, 0, style);
+        if (availableWidth > width)
+            left = middle + 1;
+        else if (availableWidth < width)
+            right = middle;
+        else {
+            right = middle + 1;
+            break;
+        }
+    }
+
+    if (keepAtLeastOneCharacter && right == fragmentToSplit.start)
+        ++right;
+    TextFragment fragmentForNextLine(fragmentToSplit);
+    fragmentToSplit.end = right;
+    fragmentToSplit.width = fragmentToSplit.isEmpty() ? 0 : textWidth(textRenderer, text, textLength, fragmentToSplit.start, right, 0, style);
+
+    fragmentForNextLine.start = fragmentToSplit.end;
+    fragmentForNextLine.width -= fragmentToSplit.width;
+    return fragmentForNextLine;
+}
+
+template <typename CharacterType>
+static TextFragment nextFragment(unsigned previousFragmentEnd, LazyLineBreakIterator& lineBreakIterator, const Style& style, const CharacterType* text, unsigned textLength,
+    float xPosition, const RenderText& textRenderer)
+{
+    // A fragment can have
+    // 1. new line character when preserveNewline is on (not considered as whitespace) or
+    // 2. whitespace (collasped, non-collapsed multi or single) or
+    // 3. non-whitespace characters.
+    TextFragment fragment;
+    fragment.mustBreak = style.preserveNewline && text[previousFragmentEnd] == '\n';
+    unsigned spaceCount = 0;
+    unsigned whitespaceEnd = previousFragmentEnd;
+    if (!fragment.mustBreak)
+        whitespaceEnd = skipWhitespace(text, previousFragmentEnd, textLength, style.preserveNewline, spaceCount);
+    fragment.isWhitespaceOnly = previousFragmentEnd < whitespaceEnd;
+    fragment.start = previousFragmentEnd;
+    if (fragment.isWhitespaceOnly)
+        fragment.end = whitespaceEnd;
+    else if (fragment.mustBreak)
+        fragment.end = fragment.start + 1;
+    else
+        fragment.end = nextBreakablePosition<CharacterType, false>(lineBreakIterator, text, textLength, previousFragmentEnd + 1);
+    bool multiple = fragment.start + 1 < fragment.end;
+    fragment.isCollapsedWhitespace = multiple && fragment.isWhitespaceOnly && style.collapseWhitespace;
+    // Non-collapsed whitespace or just plain words when "break word on overflow" is on can wrap.
+    fragment.isBreakable = multiple && ((fragment.isWhitespaceOnly && !fragment.isCollapsedWhitespace) || (!fragment.isWhitespaceOnly && style.breakWordOnOverflow));
+
+    // Compute fragment width or just use the pre-computed whitespace widths.
+    unsigned fragmentLength = fragment.end - fragment.start;
+    if (fragment.isCollapsedWhitespace)
+        fragment.width = style.spaceWidth;
+    else if (fragment.mustBreak)
+        fragment.width = 0; // Newline character's width is 0.
+    else if (fragmentLength == spaceCount) // Space only.
+        fragment.width = style.spaceWidth * spaceCount;
+    else
+        fragment.width = textWidth(textRenderer, text, textLength, fragment.start, fragment.end, xPosition, style);
+    return fragment;
+}
+
+template <typename CharacterType>
+bool createLineRuns(LineState& line, Layout::RunVector& lineRuns, unsigned& lineCount, LazyLineBreakIterator& lineBreakIterator, const Style& style, const CharacterType* text,
+    unsigned textLength, const RenderText& textRenderer)
+{
+    unsigned previousNumberOfRuns = lineRuns.size();
+    TextFragment fragmentForNextLine;
+    initializeLine(line, style, text, textLength);
+    bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
+    while (line.end < textLength) {
+        // Find the next text fragment. Start from the end of the previous fragment -current line end.
+        TextFragment fragment = nextFragment(line.end, lineBreakIterator, style, text, textLength, line.width(), textRenderer);
+        if ((lineCanBeWrapped && !line.fits(fragment.width)) || fragment.mustBreak) {
+            // Overflow wrapping behaviour:
+            // 1. Newline character: wraps the line unless it's treated as whitespace.
+            // 2. Whitesapce collapse on: whitespace is skipped.
+            // 3. Whitespace collapse off: whitespace is wrapped.
+            // 4. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
+            // 5. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
+            bool isFirstFragment = !line.width();
+            if (fragment.mustBreak) {
+                if (isFirstFragment)
+                    line.addUncommitted(fragment);
+                else {
+                    // No need to add the new line fragment if there's already content on the line. We are about to close this line anyway.
+                    ++line.end;
+                }
+            } else if (style.collapseWhitespace && fragment.isWhitespaceOnly) {
+                // Whitespace collapse is on: whitespace that doesn't fit is simply skipped.
+                line.end = fragment.end;
+            } else if (fragment.isWhitespaceOnly || ((isFirstFragment && style.breakWordOnOverflow) || !style.wrapLines)) { // !style.wrapLines: bug138102(preserve existing behavior)
+                // Whitespace collapse is off or non-whitespace content. split the fragment; (modified)fragment -> this line, fragmentForNextLine -> next line.
+                // When this is the only (first) fragment, the first character stays on the line, even if it does not fit.
+                fragmentForNextLine = splitFragmentToFitLine(fragment, line.availableWidth - line.width(), isFirstFragment, textRenderer, text, textLength, style);
+                if (!fragment.isEmpty()) {
+                    // Whitespace fragments can get pushed entirely to the next line.
+                    line.addUncommitted(fragment);
+                }
+            } else if (isFirstFragment) {
+                // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
+                line.addUncommitted(fragment);
+            } else {
+                // Non-breakable non-whitespace fragment when there's already a fragment on the line. Push it to the next line.
+                fragmentForNextLine = fragment;
+            }
+            break;
+        }
+        // When the current fragment is collapsed whitespace, we need to create a run for what we've processed so far.
+        if (fragment.isCollapsedWhitespace) {
+            // One trailing whitespace to preserve.
+            line.addUncommittedWhitespace(style.spaceWidth);
+            line.commitAndCreateRun(lineRuns);
+            // And skip the collapsed whitespace.
+            line.jumpTo(fragment.end, line.width() + fragment.width - style.spaceWidth);
+        } else
+            line.addUncommitted(fragment);
+    }
+    line.commitAndCreateRun(lineRuns);
+    // Postprocessing the runs we added for this line.
+    if (previousNumberOfRuns != lineRuns.size()) {
+        removeTrailingWhitespace(line, fragmentForNextLine, lineRuns, style, text, textLength);
+        lineRuns.last().isEndOfLine = true;
+        // Adjust runs' position by taking line's alignment into account.
+        if (float lineLeft = computeLineLeft(style.textAlign, line.availableWidth, line.committedWidth, line.logicalLeftOffset)) {
+            for (unsigned i = previousNumberOfRuns; i < lineRuns.size(); ++i) {
+                lineRuns[i].left += lineLeft;
+                lineRuns[i].right += lineLeft;
+            }
+        }
+        ++lineCount;
+    }
+    if (!fragmentForNextLine.isEmpty())
+        line.addUncommitted(fragmentForNextLine);
+    return line.end < textLength || line.uncommittedWidth;
+}
+
+static void updateLineConstrains(const RenderBlockFlow& flow, float& availableWidth, float& logicalLeftOffset)
+{
+    LayoutUnit height = flow.logicalHeight();
+    LayoutUnit logicalHeight = flow.minLineHeightForReplacedRenderer(false, 0);
+    float logicalRightOffset = flow.logicalRightOffsetForLine(height, false, logicalHeight);
+    logicalLeftOffset = flow.logicalLeftOffsetForLine(height, false, logicalHeight);
+    availableWidth = std::max<float>(0, logicalRightOffset - logicalLeftOffset);
 }
 
 template <typename CharacterType>
 void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlow& flow, RenderText& textRenderer)
 {
     const Style style(flow.style());
-
     const CharacterType* text = textRenderer.text()->characters<CharacterType>();
     const unsigned textLength = textRenderer.textLength();
-
     LayoutUnit borderAndPaddingBefore = flow.borderAndPaddingBefore();
     LayoutUnit lineHeight = lineHeightFromFlow(flow);
-
     LazyLineBreakIterator lineBreakIterator(textRenderer.text(), flow.style().locale());
+    LineState line;
 
-    unsigned lineEnd = 0;
-    while (lineEnd < textLength) {
-        if (style.collapseWhitespace)
-            lineEnd = skipWhitespaces(text, lineEnd, textLength, style.preserveNewline);
-
-        unsigned lineStart = lineEnd;
-
-        // LineWidth reads the current y position from the flow so keep it updated.
+    do {
         flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
-        LineWidth lineWidth(flow, false, DoNotIndentText);
-
-        auto lineRuns = createLineRuns(lineStart, lineWidth, lineBreakIterator, style, text, textLength, textRenderer);
-
-        lineEnd = lineRuns.last().end;
-        if (lineStart == lineEnd)
-            continue;
-
-        lineRuns.last().isEndOfLine = true;
-
-        float lineLeft = computeLineLeft(style.textAlign, lineWidth);
-        adjustRunOffsets(lineRuns, lineLeft);
-
-        for (unsigned i = 0; i < lineRuns.size(); ++i)
-            runs.append(lineRuns[i]);
-
-        ++lineCount;
-    }
+        updateLineConstrains(flow, line.availableWidth, line.logicalLeftOffset);
+    } while (createLineRuns(line, runs, lineCount, lineBreakIterator, style, text, textLength, textRenderer));
 }
 
 std::unique_ptr<Layout> create(RenderBlockFlow& flow)

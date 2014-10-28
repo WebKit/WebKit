@@ -1,3 +1,48 @@
+2014-10-28  Zalan Bujtas  <zalan@apple.com>
+
+        Speed up line parsing for simple line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=137275
+
+        Reviewed by Antti Koivisto.
+        
+        This patch speeds up the line parsing for simple line layout by
+        reducing the number of text measurement calls.
+        The parsing logic hasn't changed. We simply walk over
+        the whitespace/non-whitespace fragments and measure them to
+        figure out whether they fit.
+        The performance gain mainly comes from the more efficient line wrapping
+        so that we don't re-measure the fragment when it is pushed to
+        the next line.
+
+        No change in behaviour. (except the empty line-break run removal.)
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::skipWhitespace): 
+        (WebCore::SimpleLineLayout::computeLineLeft):
+        (WebCore::SimpleLineLayout::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragment::isEmpty):
+        (WebCore::SimpleLineLayout::LineState::LineState):
+        (WebCore::SimpleLineLayout::LineState::commitAndCreateRun): adds uncommitted text to the line and creates a run out of it. 
+        (WebCore::SimpleLineLayout::LineState::addUncommitted): appends fragment to the uncommitted text. 
+        (WebCore::SimpleLineLayout::LineState::addUncommittedWhitespace): appends whitespace to the uncommitted text.
+        (WebCore::SimpleLineLayout::LineState::jumpTo): moves line's current position without committing text. 
+        (WebCore::SimpleLineLayout::LineState::width): current width of the line including committed and uncommitted text.
+        (WebCore::SimpleLineLayout::LineState::fits): checks if committed + uncommitted text fits the line. 
+        (WebCore::SimpleLineLayout::LineState::removeCommittedTrailingWhitespace): 
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): post processing the trailing whitespace.
+        (WebCore::SimpleLineLayout::initializeLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine): breaks the fragments into 2 so that the first (sub)fragment fits the line.
+        (WebCore::SimpleLineLayout::nextFragment): returns the next valid fragment of the text.
+        (WebCore::SimpleLineLayout::createLineRuns): creates runs for the current line and returns when we can't fit more text on the line.
+        (WebCore::SimpleLineLayout::updateLineConstrains): updates left/right constrains for the current line.
+        (WebCore::SimpleLineLayout::createTextRuns): creates runs for the whole text.
+        (WebCore::SimpleLineLayout::isWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::skipWhitespaces): Deleted.
+        (WebCore::SimpleLineLayout::measureWord): Deleted.
+        (WebCore::SimpleLineLayout::adjustRunOffsets): Deleted.
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run):
+
 2014-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

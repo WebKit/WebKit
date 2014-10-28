@@ -1,3 +1,154 @@
+2014-10-28  Zalan Bujtas  <zalan@apple.com>
+
+        Speed up line parsing for simple line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=137275
+
+        Reviewed by Antti Koivisto.
+
+        This patch removes empty line-break runs. Rebaseline.
+
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/css1/basic/containment-expected.txt:
+        * platform/mac/css1/basic/contextual_selectors-expected.txt:
+        * platform/mac/css1/basic/grouping-expected.txt:
+        * platform/mac/css1/basic/id_as_selector-expected.txt:
+        * platform/mac/css1/basic/inheritance-expected.txt:
+        * platform/mac/css1/box_properties/border-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom_width-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom_width_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_color-expected.txt:
+        * platform/mac/css1/box_properties/border_color_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_left-expected.txt:
+        * platform/mac/css1/box_properties/border_left_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_left_width-expected.txt:
+        * platform/mac/css1/box_properties/border_left_width_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_right-expected.txt:
+        * platform/mac/css1/box_properties/border_right_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_right_width-expected.txt:
+        * platform/mac/css1/box_properties/border_right_width_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_style-expected.txt:
+        * platform/mac/css1/box_properties/border_style_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_top-expected.txt:
+        * platform/mac/css1/box_properties/border_top_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_top_width-expected.txt:
+        * platform/mac/css1/box_properties/border_top_width_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_width-expected.txt:
+        * platform/mac/css1/box_properties/border_width_inline-expected.txt:
+        * platform/mac/css1/box_properties/clear-expected.txt:
+        * platform/mac/css1/box_properties/clear_float-expected.txt:
+        * platform/mac/css1/box_properties/float-expected.txt:
+        * platform/mac/css1/box_properties/float_elements_in_series-expected.txt:
+        * platform/mac/css1/box_properties/float_margin-expected.txt:
+        * platform/mac/css1/box_properties/height-expected.txt:
+        * platform/mac/css1/box_properties/margin-expected.txt:
+        * platform/mac/css1/box_properties/margin_bottom-expected.txt:
+        * platform/mac/css1/box_properties/margin_bottom_inline-expected.txt:
+        * platform/mac/css1/box_properties/margin_inline-expected.txt:
+        * platform/mac/css1/box_properties/margin_left-expected.txt:
+        * platform/mac/css1/box_properties/margin_left_inline-expected.txt:
+        * platform/mac/css1/box_properties/margin_right-expected.txt:
+        * platform/mac/css1/box_properties/margin_right_inline-expected.txt:
+        * platform/mac/css1/box_properties/margin_top-expected.txt:
+        * platform/mac/css1/box_properties/margin_top_inline-expected.txt:
+        * platform/mac/css1/box_properties/padding-expected.txt:
+        * platform/mac/css1/box_properties/padding_bottom-expected.txt:
+        * platform/mac/css1/box_properties/padding_bottom_inline-expected.txt:
+        * platform/mac/css1/box_properties/padding_inline-expected.txt:
+        * platform/mac/css1/box_properties/padding_left-expected.txt:
+        * platform/mac/css1/box_properties/padding_left_inline-expected.txt:
+        * platform/mac/css1/box_properties/padding_right-expected.txt:
+        * platform/mac/css1/box_properties/padding_right_inline-expected.txt:
+        * platform/mac/css1/box_properties/padding_top-expected.txt:
+        * platform/mac/css1/box_properties/padding_top_inline-expected.txt:
+        * platform/mac/css1/box_properties/width-expected.txt:
+        * platform/mac/css1/cascade/cascade_order-expected.txt:
+        * platform/mac/css1/cascade/important-expected.txt:
+        * platform/mac/css1/classification/display-expected.txt:
+        * platform/mac/css1/classification/list_style-expected.txt:
+        * platform/mac/css1/classification/list_style_image-expected.txt:
+        * platform/mac/css1/classification/list_style_position-expected.txt:
+        * platform/mac/css1/classification/list_style_type-expected.txt:
+        * platform/mac/css1/classification/white_space-expected.txt:
+        * platform/mac/css1/color_and_background/background-expected.txt:
+        * platform/mac/css1/color_and_background/background_attachment-expected.txt:
+        * platform/mac/css1/color_and_background/background_color-expected.txt:
+        * platform/mac/css1/color_and_background/background_image-expected.txt:
+        * platform/mac/css1/color_and_background/background_position-expected.txt:
+        * platform/mac/css1/color_and_background/background_repeat-expected.txt:
+        * platform/mac/css1/color_and_background/color-expected.txt:
+        * platform/mac/css1/conformance/forward_compatible_parsing-expected.txt:
+        * platform/mac/css1/font_properties/font-expected.txt:
+        * platform/mac/css1/font_properties/font_family-expected.txt:
+        * platform/mac/css1/font_properties/font_size-expected.txt:
+        * platform/mac/css1/font_properties/font_style-expected.txt:
+        * platform/mac/css1/font_properties/font_variant-expected.txt:
+        * platform/mac/css1/font_properties/font_weight-expected.txt:
+        * platform/mac/css1/formatting_model/canvas-expected.txt:
+        * platform/mac/css1/formatting_model/floating_elements-expected.txt:
+        * platform/mac/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/mac/css1/formatting_model/inline_elements-expected.txt:
+        * platform/mac/css1/formatting_model/replaced_elements-expected.txt:
+        * platform/mac/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/mac/css1/pseudo/anchor-expected.txt:
+        * platform/mac/css1/pseudo/firstletter-expected.txt:
+        * platform/mac/css1/pseudo/firstline-expected.txt:
+        * platform/mac/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/mac/css1/pseudo/pseudo_elements_in_selectors-expected.txt:
+        * platform/mac/css1/text_properties/letter_spacing-expected.txt:
+        * platform/mac/css1/text_properties/line_height-expected.txt:
+        * platform/mac/css1/text_properties/text_align-expected.txt:
+        * platform/mac/css1/text_properties/text_decoration-expected.txt:
+        * platform/mac/css1/text_properties/text_indent-expected.txt:
+        * platform/mac/css1/text_properties/text_transform-expected.txt:
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/css1/units/color_units-expected.txt:
+        * platform/mac/css1/units/length_units-expected.txt:
+        * platform/mac/css1/units/percentage_units-expected.txt:
+        * platform/mac/css1/units/urls-expected.txt:
+        * platform/mac/css2.1/t100801-c548-ln-ht-00-c-a-expected.txt:
+        * platform/mac/css2.1/t1606-c562-white-sp-00-b-ag-expected.txt:
+        * platform/mac/editing/selection/designmode-no-caret-expected.txt:
+        * platform/mac/fast/css/empty-pseudo-class-expected.txt:
+        * platform/mac/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/mac/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/mac/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/mac/fast/html/listing-expected.txt:
+        * platform/mac/fast/invalid/junk-data-expected.txt:
+        * platform/mac/fast/invalid/missing-end-tag-expected.txt:
+        * platform/mac/fast/loader/text-document-wrapping-expected.txt:
+        * platform/mac/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/mac/fast/text/whitespace/001-expected.txt: Added.
+        * platform/mac/fast/text/whitespace/013-expected.txt: Added.
+        * platform/mac/fast/text/whitespace/014-expected.txt: Added.
+        * platform/mac/fast/text/whitespace/022-expected.txt: Added.
+        * platform/mac/fast/text/whitespace/024-expected.txt:
+        * platform/mac/fast/text/whitespace/030-expected.txt:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/mac/http/tests/misc/acid3-expected.txt:
+        * platform/mac/svg/custom/bug45331-expected.txt:
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt:
+        * platform/mac/svg/hixie/error/012-expected.txt:
+        * platform/mac/tables/mozilla/bugs/45621-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug139524-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1055-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug21518-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug22122-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+
 2014-10-28  Rebecca Hauck  <rhauck@adobe.com>
 
         Update CSS shapes suite import

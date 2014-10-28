@@ -51,6 +51,13 @@ struct Run {
         , left(left)
         , right(left)
     { }
+    Run(unsigned start, unsigned end, float left, float right, bool isEndOfLine)
+        : start(start)
+        , end(end)
+        , isEndOfLine(isEndOfLine)
+        , left(left)
+        , right(right)
+    { }
 
     unsigned start;
     unsigned end : 31;
