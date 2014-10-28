@@ -513,6 +513,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_inputCursor(EmptyInputCursor::create())
 #endif
     , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
+    , m_cookieCacheExpiryTimer(this, &Document::domCookieCacheExpiryTimerFired)
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
@@ -2212,7 +2213,7 @@ void Document::open(Document* ownerDocument)
 {
     if (ownerDocument) {
         setURL(ownerDocument->url());
-        m_cookieURL = ownerDocument->cookieURL();
+        setCookieURL(ownerDocument->cookieURL());
         setSecurityOrigin(ownerDocument->securityOrigin());
     }
 
@@ -3796,7 +3797,7 @@ HTMLFrameOwnerElement* Document::ownerElement() const
     return frame()->ownerElement();
 }
 
-String Document::cookie(ExceptionCode& ec) const
+String Document::cookie(ExceptionCode& ec)
 {
     if (page() && !page()->settings().cookieEnabled())
         return String();
@@ -3814,7 +3815,10 @@ String Document::cookie(ExceptionCode& ec) const
     if (cookieURL.isEmpty())
         return String();
 
-    return cookies(this, cookieURL);
+    if (!isDOMCookieCacheValid())
+        setCachedDOMCookies(cookies(this, cookieURL));
+
+    return cachedDOMCookies();
 }
 
 void Document::setCookie(const String& value, ExceptionCode& ec)
@@ -3835,6 +3839,7 @@ void Document::setCookie(const String& value, ExceptionCode& ec)
     if (cookieURL.isEmpty())
         return;
 
+    invalidateDOMCookieCache();
     setCookies(this, cookieURL, value);
 }
 
@@ -3936,6 +3941,14 @@ String Document::lastModified() const
     }
 
     return String::format("%02d/%02d/%04d %02d:%02d:%02d", date.month() + 1, date.monthDay(), date.fullYear(), date.hour(), date.minute(), date.second());
+}
+
+void Document::setCookieURL(const URL& url)
+{
+    if (m_cookieURL == url)
+        return;
+    m_cookieURL = url;
+    invalidateDOMCookieCache();
 }
 
 static bool isValidNameNonASCII(const LChar* characters, unsigned length)
@@ -4645,7 +4658,7 @@ void Document::initSecurityContext()
     if (!m_frame) {
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
-        m_cookieURL = URL(ParsedURLString, emptyString());
+        setCookieURL(URL(ParsedURLString, emptyString()));
         setSecurityOrigin(SecurityOrigin::createUnique());
         setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
         return;
@@ -4653,7 +4666,7 @@ void Document::initSecurityContext()
 
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
-    m_cookieURL = m_url;
+    setCookieURL(m_url);
     enforceSandboxFlags(m_frame->loader().effectiveSandboxFlags());
 
 #if PLATFORM(IOS)
@@ -4719,7 +4732,7 @@ void Document::initSecurityContext()
         return;
     }
 
-    m_cookieURL = ownerFrame->document()->cookieURL();
+    setCookieURL(ownerFrame->document()->cookieURL());
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
     setSecurityOrigin(ownerFrame->document()->securityOrigin());
@@ -6135,6 +6148,32 @@ void Document::didAssociateFormControlsTimerFired(Timer<Document>& timer)
 
     frame()->page()->chrome().client().didAssociateFormControls(associatedFormControls);
     m_associatedFormControls.clear();
+}
+
+void Document::setCachedDOMCookies(const String& cookies)
+{
+    ASSERT(!isDOMCookieCacheValid());
+    m_cachedDOMCookies = cookies;
+    // The cookie cache is valid at most until we go back to the event loop.
+    m_cookieCacheExpiryTimer.startOneShot(0);
+}
+
+void Document::invalidateDOMCookieCache()
+{
+    m_cookieCacheExpiryTimer.stop();
+    m_cachedDOMCookies = String();
+}
+
+void Document::domCookieCacheExpiryTimerFired(Timer<Document>&)
+{
+    invalidateDOMCookieCache();
+}
+
+void Document::didLoadResourceSynchronously(const ResourceRequest&)
+{
+    // Synchronous resources loading can set cookies so we invalidate the cookies cache
+    // in this case, to be safe.
+    invalidateDOMCookieCache();
 }
 
 void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)

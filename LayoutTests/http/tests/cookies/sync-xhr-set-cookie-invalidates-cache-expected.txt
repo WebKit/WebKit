@@ -1,0 +1,12 @@
+Tests that document.cookie returns the right value after a sync XHR
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS normalizeCookie(document.cookie) is "testKey=testValue"
+PASS xhr.status is 200
+PASS normalizeCookie(document.cookie) is "testKey=testValue; xhrKey=xhrValue"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

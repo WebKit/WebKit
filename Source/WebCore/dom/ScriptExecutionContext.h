@@ -30,6 +30,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
+#include "ResourceRequest.h"
 #include "ScheduledAction.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
@@ -109,6 +110,8 @@ public:
     void dispatchMessagePortEvents();
     void createdMessagePort(MessagePort&);
     void destroyedMessagePort(MessagePort&);
+
+    virtual void didLoadResourceSynchronously(const ResourceRequest&);
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }

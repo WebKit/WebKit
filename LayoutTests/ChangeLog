@@ -1,5 +1,22 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174190. <rdar://problem/18640846>
+
+    2014-10-01  Chris Dumez  <cdumez@apple.com>
+    
+            Add basic caching for Document.cookie API
+            https://bugs.webkit.org/show_bug.cgi?id=137225
+    
+            Reviewed by Alexey Proskuryakov.
+    
+            Add a layout test to make sure that document.cookie returns updated
+            results after cookies are set via a sync XHR.
+    
+            * http/tests/cookies/sync-xhr-set-cookie-invalidates-cache-expected.txt: Added.
+            * http/tests/cookies/sync-xhr-set-cookie-invalidates-cache.html: Added.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r173184. <rdar://problem/18428699>
 
     2014-09-02  Simon Fraser  <simon.fraser@apple.com>
