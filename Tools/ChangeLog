@@ -1,3 +1,17 @@
+2014-10-28  Rebecca Hauck  <rhauck@adobe.com>
+
+        import-w3c-tests should use re.escape() wherever it's handling file paths
+        https://bugs.webkit.org/show_bug.cgi?id=137934
+
+        This patch adds re.escape() to a few places where we're doing string
+        conversions. This prevents errors when attribute values coincidentally
+        have character sequences that can be interpreted as regular expressions.
+
+        Reviewed by Bem Jones-Bey.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.convert_attributes_if_needed):
+
 2014-10-28  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [EFL] Remove an unused include from Tools/WebKitTestRunner/efl/PlatformWebViewEfl.cpp
