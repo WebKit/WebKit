@@ -1,3 +1,11 @@
+2014-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed comment fix from r175267.
+
+        Fix namespace name in comment.
+
+        * css/StyleBuilderCustom.h:
+
 2014-10-28  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r171593) [Mac] Media controls create a large (and unnecessary) backing store

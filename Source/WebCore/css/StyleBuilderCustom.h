@@ -44,6 +44,6 @@ inline void applyValueWebkitHyphenateLimitLines(StyleResolver& styleResolver, CS
 
 } // namespace StyleBuilderFunctions
 
-} // namespace Value
+} // namespace WebCore
 
 #endif // StyleBuilderCustom_h
