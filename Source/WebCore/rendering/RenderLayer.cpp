@@ -6242,11 +6242,13 @@ bool RenderLayer::isVisuallyNonEmpty() const
 {
     ASSERT(!m_visibleDescendantStatusDirty);
 
-    if (hasVisibleContent() && hasNonEmptyChildRenderers())
+    if (!hasVisibleContent())
+        return false;
+
+    if (hasNonEmptyChildRenderers())
         return true;
 
-    // FIXME: a visibility:hidden replaced element should return false here.
-    if (renderer().isReplaced() || renderer().hasMask())
+    if (renderer().isReplaced())
         return true;
 
     if (hasVisibleBoxDecorations())

@@ -1,5 +1,31 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173184. <rdar://problem/18428699>
+
+    2014-09-02  Simon Fraser  <simon.fraser@apple.com>
+    
+            Avoid backing store allocation with some combinations of replaced elements, masking and visibility:hidden
+            https://bugs.webkit.org/show_bug.cgi?id=136400
+    
+            Reviewed by Tim Horton.
+            
+            RenderLayer::isVisuallyNonEmpty() would return true for replaced elements (e.g. images)
+            with visibility:hidden, and for layers with a mask, and both would cause additional
+            backing store in some cases.
+            
+            We can move the hasVisibleContent() to the top of the function, since visibility:hidden
+            will always hide any content of this layer. The hasMask() check can also be removed;
+            a mask can only mask content that is already visible; it never contributes additional
+            pixels.
+    
+            Tests: compositing/backing/masked-child-no-backing.html
+                   compositing/backing/replaced-child-no-backing.html
+    
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::calculateClipRects):
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r173181
 
     2014-09-02  Simon Fraser  <simon.fraser@apple.com>
