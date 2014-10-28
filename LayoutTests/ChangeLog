@@ -1,3 +1,15 @@
+2014-10-24  David Hyatt  <hyatt@apple.com>
+
+        text-combine needs to center text within the vertical space using glyph bounds
+        https://bugs.webkit.org/show_bug.cgi?id=138056
+        <rdar://problem/15403667>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/tatechuyoko.html: Added.
+        * platform/mac/fast/text/tatechuyoko-expected.png: Added.
+        * platform/mac/fast/text/tatechuyoko-expected.txt: Added.
+
 2014-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/cookies/third-party-cookie-relaxing.html is flaky on bots

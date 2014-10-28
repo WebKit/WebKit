@@ -30,7 +30,6 @@ const float textCombineMargin = 1.15f; // Allow em + 15% margin
 
 RenderCombineText::RenderCombineText(Text& textNode, PassRefPtr<StringImpl> string)
     : RenderText(textNode, string)
-    , m_combinedTextWidth(0)
     , m_isCombined(false)
     , m_needsFontUpdate(false)
 {
@@ -69,7 +68,7 @@ float RenderCombineText::width(unsigned from, unsigned length, const Font& font,
 void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const
 {
     if (m_isCombined)
-        textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style().font().pixelSize());
+        textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextSize.width()) / 2, boxRect.width() + (boxRect.width() - m_combinedTextSize.height()) / 2);
 }
 
 void RenderCombineText::getStringToRender(int start, String& string, int& length) const
@@ -97,15 +96,18 @@ void RenderCombineText::combineText()
     if (style().isHorizontalWritingMode())
         return;
 
-    TextRun run = RenderBlock::constructTextRun(this, originalFont(), this, style());
     FontDescription description = originalFont().fontDescription();
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;
 
     description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
-    m_combinedTextWidth = originalFont().width(run);
-    m_isCombined = m_combinedTextWidth <= emWidth;
-
+    
+    GlyphOverflow glyphOverflow;
+    glyphOverflow.computeBounds = true;
+    
+    float combinedTextWidth = width(0, textLength(), originalFont(), 0, nullptr, &glyphOverflow);
+    m_isCombined = combinedTextWidth <= emWidth;
+    
     FontSelector* fontSelector = style().font().fontSelector();
 
     if (m_isCombined)
@@ -117,9 +119,10 @@ void RenderCombineText::combineText()
             description.setWidthVariant(widthVariants[i]);
             Font compressedFont = Font(description, style().font().letterSpacing(), style().font().wordSpacing());
             compressedFont.update(fontSelector);
-            float runWidth = compressedFont.width(run);
+            
+            float runWidth = RenderText::width(0, textLength(), compressedFont, 0, nullptr, &glyphOverflow);
             if (runWidth <= emWidth) {
-                m_combinedTextWidth = runWidth;
+                combinedTextWidth = runWidth;
                 m_isCombined = true;
 
                 // Replace my font with the new one.
@@ -138,6 +141,7 @@ void RenderCombineText::combineText()
     if (m_isCombined) {
         DEPRECATED_DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));
         RenderText::setRenderedText(objectReplacementCharacterString.impl());
+        m_combinedTextSize = FloatSize(combinedTextWidth, glyphOverflow.bottom + glyphOverflow.top);
     }
 }
 
