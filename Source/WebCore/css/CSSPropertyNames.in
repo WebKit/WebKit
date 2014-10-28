@@ -172,7 +172,7 @@ speak [Inherited, NewStyleBuilder]
 table-layout [NewStyleBuilder]
 tab-size [Inherited, NewStyleBuilder, TypeName=unsigned]
 text-align [Inherited]
-text-decoration
+text-decoration [NewStyleBuilder, Converter=TextDecoration]
 text-indent [Inherited]
 text-line-through
 text-line-through-color
@@ -414,7 +414,7 @@ order [NewStyleBuilder, TypeName=int]
 -webkit-text-justify [Inherited, NewStyleBuilder, TypeName=TextJustify]
 #endif
 -webkit-text-decoration
--webkit-text-decoration-line
+-webkit-text-decoration-line [NewStyleBuilder, NameForMethods=TextDecoration, Converter=TextDecoration]
 -webkit-text-decoration-style [NewStyleBuilder, TypeName=TextDecorationStyle]
 -webkit-text-decoration-color
 -webkit-text-decoration-skip [Inherited]

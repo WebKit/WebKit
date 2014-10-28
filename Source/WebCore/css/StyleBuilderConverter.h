@@ -45,6 +45,7 @@ public:
     template <typename T> static T convertLineWidth(StyleResolver&, CSSValue&);
     static float convertSpacing(StyleResolver&, CSSValue&);
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
+    static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -159,7 +160,7 @@ inline float StyleBuilderConverter::convertSpacing(StyleResolver& styleResolver,
     return primitiveValue.computeLength<float>(conversionData);
 }
 
-Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversionData& conversionData, CSSPrimitiveValue& value)
+inline Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversionData& conversionData, CSSPrimitiveValue& value)
 {
     if (value.isPercentage())
         return Length(value.getDoubleValue(), Percent);
@@ -168,7 +169,7 @@ Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversionData& c
     return value.computeLength<Length>(conversionData);
 }
 
-LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CSSValue& value)
+inline LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     Pair* pair = primitiveValue.getPairValue();
@@ -185,6 +186,14 @@ LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CS
         return LengthSize(Length(0, Fixed), Length(0, Fixed));
 
     return LengthSize(radiusWidth, radiusHeight);
+}
+
+inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver&, CSSValue& value)
+{
+    TextDecoration result = RenderStyle::initialTextDecoration();
+    for (CSSValueListIterator it(&value); it.hasMore(); it.advance())
+        result |= downcast<CSSPrimitiveValue>(*it.value());
+    return result;
 }
 
 } // namespace WebCore

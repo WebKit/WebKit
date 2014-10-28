@@ -1,3 +1,23 @@
+2014-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Move text decoration CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138121
+
+        Reviewed by Antti Koivisto.
+
+        Move text decoration CSS properties from DeprecatedStyleBuilder to the
+        new StyleBuilder so that they are generated from CSSPropertyNames.in.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyTextDecoration::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextDecoration::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextDecoration):
+
 2014-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove GDK dependency from SharedTimerGtk
