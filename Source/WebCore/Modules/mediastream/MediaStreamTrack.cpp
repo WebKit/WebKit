@@ -298,24 +298,21 @@ void MediaStreamTrack::scheduleEventDispatch(PassRefPtr<Event> event)
         m_eventDispatchScheduled = true;
     }
 
-    callOnMainThread(bind(&MediaStreamTrack::dispatchQueuedEvents, this));
-}
+    RefPtr<MediaStreamTrack> protectedThis(this);
+    callOnMainThread([protectedThis] {
+        Vector<RefPtr<Event>> events;
+        {
+            MutexLocker locker(protectedThis->m_mutex);
+            protectedThis->m_eventDispatchScheduled = false;
+            events = WTF::move(protectedThis->m_scheduledEvents);
+        }
 
-void MediaStreamTrack::dispatchQueuedEvents()
-{
-    Vector<RefPtr<Event>> events;
-    {
-        MutexLocker locker(m_mutex);
-        m_eventDispatchScheduled = false;
-        events.swap(m_scheduledEvents);
-    }
-    if (!scriptExecutionContext())
-        return;
+        if (!protectedThis->scriptExecutionContext())
+            return;
 
-    for (auto it = events.begin(); it != events.end(); ++it)
-        dispatchEvent((*it).release());
-
-    events.clear();
+        for (auto& event : events)
+            protectedThis->dispatchEvent(event.release());
+    });
 }
 
 } // namespace WebCore

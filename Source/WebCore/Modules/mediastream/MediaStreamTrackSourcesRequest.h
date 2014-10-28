@@ -51,8 +51,6 @@ private:
     virtual const String& requestOrigin() const override { return m_origin; }
     virtual void didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>&) override;
 
-    void callCompletionHandler();
-
     String m_origin;
     RefPtr<MediaStreamTrackSourcesCallback> m_callback;
     Vector<RefPtr<SourceInfo>> m_sourceInfos;

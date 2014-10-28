@@ -79,11 +79,6 @@ private:
     // ContextDestructionObserver
     virtual void contextDestroyed() override final;
     
-    void callSuccessHandler(PassRefPtr<MediaStreamPrivate>);
-    void callErrorHandler(PassRefPtr<NavigatorUserMediaError>);
-    void requestPermission();
-    void createMediaStream();
-
     RefPtr<MediaConstraints> m_audioConstraints;
     RefPtr<MediaConstraints> m_videoConstraints;
 

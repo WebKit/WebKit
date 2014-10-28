@@ -1,3 +1,34 @@
+2014-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCore] Remove uses of WTF::bind() in the Media Stream module
+        https://bugs.webkit.org/show_bug.cgi?id=138016
+
+        Reviewed by Eric Carlson.
+
+        Replace uses of WTF::bind() in the Media Stream module with C++11 lambdas.
+        Internal helper methods are removed in favor of inlining the code directly
+        into the lambdas. Range-based for-loops are deployed where appropriate.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::scheduleEventDispatch):
+        (WebCore::MediaStreamTrack::dispatchQueuedEvents): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrackSourcesRequest.cpp:
+        (WebCore::MediaStreamTrackSourcesRequest::didCompleteRequest):
+        (WebCore::MediaStreamTrackSourcesRequest::callCompletionHandler): Deleted.
+        * Modules/mediastream/MediaStreamTrackSourcesRequest.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::constraintsValidated):
+        (WebCore::UserMediaRequest::userMediaAccessGranted):
+        (WebCore::UserMediaRequest::didCreateStream):
+        (WebCore::UserMediaRequest::failedToCreateStreamWithConstraintsError):
+        (WebCore::UserMediaRequest::failedToCreateStreamWithPermissionError):
+        (WebCore::UserMediaRequest::requestPermission): Deleted.
+        (WebCore::UserMediaRequest::createMediaStream): Deleted.
+        (WebCore::UserMediaRequest::callSuccessHandler): Deleted.
+        (WebCore::UserMediaRequest::callErrorHandler): Deleted.
+        * Modules/mediastream/UserMediaRequest.h:
+
 2014-10-28  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Abandoned select option is reselected when shift selecting new options

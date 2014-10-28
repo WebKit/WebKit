@@ -116,7 +116,6 @@ private:
     void configureTrackRendering();
     void trackDidEnd();
     void scheduleEventDispatch(PassRefPtr<Event>);
-    void dispatchQueuedEvents();
 
     // ActiveDOMObject
     virtual void stop() override final;

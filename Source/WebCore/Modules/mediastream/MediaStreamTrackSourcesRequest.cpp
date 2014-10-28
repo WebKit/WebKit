@@ -56,15 +56,14 @@ void MediaStreamTrackSourcesRequest::didCompleteRequest(const Vector<RefPtr<Trac
     for (size_t i = 0; i < requestSourceInfos.size(); ++i)
         m_sourceInfos.append(SourceInfo::create(requestSourceInfos[i]));
 
-    callOnMainThread(bind(&MediaStreamTrackSourcesRequest::callCompletionHandler, this));
-}
+    RefPtr<MediaStreamTrackSourcesRequest> protectedThis(this);
+    callOnMainThread([protectedThis] {
+        RefPtr<MediaStreamTrackSourcesCallback>& callback = protectedThis->m_callback;
+        ASSERT(callback);
 
-void MediaStreamTrackSourcesRequest::callCompletionHandler()
-{
-    ASSERT(m_callback);
-
-    m_callback->handleEvent(m_sourceInfos);
-    m_callback = nullptr;
+        callback->handleEvent(protectedThis->m_sourceInfos);
+        callback = nullptr;
+    });
 }
 
 } // namespace WebCore
