@@ -1,3 +1,71 @@
+2014-10-28  Rebecca Hauck  <rhauck@adobe.com>
+
+        Update CSS shapes suite import
+        https://bugs.webkit.org/show_bug.cgi?id=138045
+
+        This patch is a full re-import of the CSS Shapes test suite from the W3C
+        test repo and an updated TestExpectations file to match the current 
+        results.
+
+        Reviewed by Benjamin Poulain.
+
+        * TestExpectations:
+        * css3/shapes/shape-outside/shape-box/w3c-import.log:
+        * css3/shapes/shape-outside/shape-image/gradients/w3c-import.log:
+        * css3/shapes/shape-outside/shape-image/shape-image-000-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-001-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-002-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-002.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-003-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-003.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-004-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-005-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-005.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-006-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-006.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-007-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-007.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-008-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-008.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-009-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-009.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-010-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-010.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-011-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-011.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-013-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-013.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-014-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-014.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-015-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-015.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-016-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-016.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-017-expected.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-017.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-024-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-024.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-025-expected.html: Added.
+        * css3/shapes/shape-outside/shape-image/shape-image-025.html: Added.
+        * css3/shapes/shape-outside/shape-image/support/animated.gif: Added.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-20.png:
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle-20.png:
+        * css3/shapes/shape-outside/shape-image/support/w3c-import.log:
+        * css3/shapes/shape-outside/shape-image/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/circle/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/ellipse/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/inset/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html:
+        * css3/shapes/shape-outside/supported-shapes/polygon/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/support/w3c-import.log: Copied from LayoutTests/css3/shapes/shape-outside/values/support/w3c-import.log.
+        * css3/shapes/shape-outside/values/shape-image-threshold-001.html:
+        * css3/shapes/shape-outside/values/support/w3c-import.log:
+        * css3/shapes/shape-outside/values/w3c-import.log:
+        * css3/shapes/spec-examples/shape-outside-019-expected.html:
+        * css3/shapes/spec-examples/support/w3c-import.log:
+        * css3/shapes/spec-examples/w3c-import.log:
+        * css3/shapes/w3c-import.log:
+
 2014-10-27  Mark Lam  <mark.lam@apple.com>
 
         Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.

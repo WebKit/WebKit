@@ -7,7 +7,16 @@
         .container {
           width: 100px;
           height: 100px;
-          background-color: rgb(0, 100, 0);
+        }
+        img {
+            float: left;
+        }
+        .green {
+            position: relative;
+            left: 50px;
+            width: 50px;
+            height: 100px;
+            background: rgb(0, 100, 0);
         }
     </style>
 </head>
@@ -16,6 +25,8 @@
         The test passes if you see a solid green square. There should be no red.
     </p>
     <div class="container">
+        <img src="support/left-half-rectangle-50.png"/>
+        <div class="green"></div>
     </div>
 </body>
 </html>

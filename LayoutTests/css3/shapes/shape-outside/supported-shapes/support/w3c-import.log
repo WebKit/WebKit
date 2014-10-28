@@ -18,4 +18,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/css3/shapes/shape-outside/values/support/parsing-utils.js
+/LayoutTests/css3/shapes/shape-outside/supported-shapes/support/rounded-rectangle.js
+/LayoutTests/css3/shapes/shape-outside/supported-shapes/support/subpixel-utils.js
+/LayoutTests/css3/shapes/shape-outside/supported-shapes/support/test-utils.js
