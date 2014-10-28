@@ -1,5 +1,21 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173184. <rdar://problem/18428699>
+
+    2014-09-02  Simon Fraser  <simon.fraser@apple.com>
+    
+            Avoid backing store allocation with some combinations of replaced elements, masking and visibility:hidden
+            https://bugs.webkit.org/show_bug.cgi?id=136400
+    
+            Reviewed by Tim Horton.
+    
+            * compositing/backing/masked-child-no-backing-expected.txt: Added.
+            * compositing/backing/masked-child-no-backing.html: Added.
+            * compositing/backing/replaced-child-no-backing-expected.txt: Added.
+            * compositing/backing/replaced-child-no-backing.html: Added.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r173181
 
     2014-09-02  Simon Fraser  <simon.fraser@apple.com>
