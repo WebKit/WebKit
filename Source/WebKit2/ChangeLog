@@ -1,5 +1,23 @@
 2014-10-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175235.
+
+    2014-10-27  Enrica Casucci  <enrica@apple.com>
+
+            WebContent crash in WebKit::WebPage::expandedRangeFromHandle.
+            https://bugs.webkit.org/show_bug.cgi?id=138023
+            rdar://problem/18787412
+
+            Reviewed by Ryosuke Niwa.
+
+            We must change that we have a valid currentRange before trying
+            to expand or contract.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::changeBlockSelection):
+
+2014-10-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175157.
 
     2014-10-23  Benjamin Poulain  <bpoulain@apple.com>
