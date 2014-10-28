@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
+#include "AudioProducer.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
@@ -94,7 +95,7 @@ class MediaStream;
 
 class HTMLMediaElement
     : public HTMLElement
-    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient
+    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient, private AudioProducer
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -706,6 +707,9 @@ private:
     virtual bool overrideBackgroundPlaybackRestriction() const override;
     virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics) const override;
     virtual void mediaStateDidChange() override;
+
+    // AudioProducer overrides
+    virtual bool isPlayingAudio() override;
 
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);

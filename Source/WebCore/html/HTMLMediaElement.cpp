@@ -443,7 +443,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
         document.registerForPageScaleFactorChangedCallbacks(this);
 #endif
 
-    document.registerMediaSession(*m_mediaSession);
+    document.addAudioProducer(this);
     addElementToDocumentMap(*this, document);
 }
 
@@ -468,7 +468,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
         document.unregisterForPageScaleFactorChangedCallbacks(this);
 #endif
 
-    document.unregisterMediaSession(*m_mediaSession);
+    document.removeAudioProducer(this);
     removeElementFromDocumentMap(*this, document);
 }
 
@@ -6020,6 +6020,11 @@ bool HTMLMediaElement::hasMediaCharacteristics(MediaSession::MediaCharacteristic
 void HTMLMediaElement::mediaStateDidChange()
 {
     document().updateIsPlayingAudio();
+}
+
+bool HTMLMediaElement::isPlayingAudio()
+{
+    return m_mediaSession->state() == MediaSession::Playing && hasAudio();
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const

@@ -1,3 +1,39 @@
+2014-10-27  Ada Chan  <adachan@apple.com>
+
+        Introduce a new abstract class called AudioProducer and keep a set of AudioProducers
+        rather than the active MediaSessions in Document
+        https://bugs.webkit.org/show_bug.cgi?id=138107
+
+        Reviewed by Eric Carlson.
+
+        No new tests, no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add AudioProducer.h to the project.
+        * dom/Document.cpp:
+        (WebCore::Document::addAudioProducer):
+        (WebCore::Document::removeAudioProducer):
+        (WebCore::Document::updateIsPlayingAudio):
+        Go through the set of AudioProducers and see if any is playing audio.
+        Now that this method no longer refers to MediaSessions directly, this code
+        does not need to be guarded by #if ENABLE(VIDEO).
+        (WebCore::Document::registerMediaSession): Deleted.
+        (WebCore::Document::unregisterMediaSession): Deleted.
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::isPlayingAudio):
+        Return whether this element is playing audio.
+        * html/HTMLMediaElement.h:
+        * page/AudioProducer.h: Added.
+        (WebCore::AudioProducer::~AudioProducer):
+        * page/Page.cpp:
+        (WebCore::Page::updateIsPlayingAudio):
+        This is no longer guarded with #if ENABLE(VIDEO) since the Document methods it calls
+        are no longer guarded.
+        * page/Page.h:
+
 2014-10-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed comment fix from r175267.

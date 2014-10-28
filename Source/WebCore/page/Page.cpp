@@ -1193,7 +1193,6 @@ void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
     setSessionID(privateBrowsingEnabled ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
 }
 
-#if ENABLE(VIDEO)
 void Page::updateIsPlayingAudio()
 {
     bool isPlayingAudio = false;
@@ -1211,7 +1210,6 @@ void Page::updateIsPlayingAudio()
 
     chrome().client().isPlayingAudioDidChange(m_isPlayingAudio);
 }
-#endif
 
 #if !ASSERT_DISABLED
 void Page::checkSubframeCountConsistency() const

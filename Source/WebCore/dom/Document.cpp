@@ -31,6 +31,7 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "Attr.h"
+#include "AudioProducer.h"
 #include "CDATASection.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
@@ -99,7 +100,6 @@
 #include "MediaCanStartListener.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
-#include "MediaSession.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
@@ -3273,24 +3273,23 @@ void Document::updateViewportUnitsOnResize()
     }
 }
 
-#if ENABLE(VIDEO)
-void Document::registerMediaSession(MediaSession& mediaSession)
+void Document::addAudioProducer(AudioProducer* audioProducer)
 {
-    m_mediaSessions.add(&mediaSession);
+    m_audioProducers.add(audioProducer);
     updateIsPlayingAudio();
 }
 
-void Document::unregisterMediaSession(MediaSession& mediaSession)
+void Document::removeAudioProducer(AudioProducer* audioProducer)
 {
-    m_mediaSessions.remove(&mediaSession);
+    m_audioProducers.remove(audioProducer);
     updateIsPlayingAudio();
 }
 
 void Document::updateIsPlayingAudio()
 {
     bool isPlayingAudio = false;
-    for (auto mediaSession : m_mediaSessions) {
-        if (mediaSession->hasMediaCharacteristics(MediaSession::MediaCharacteristicAudible) && mediaSession->state() == MediaSession::Playing) {
+    for (auto audioProducer : m_audioProducers) {
+        if (audioProducer->isPlayingAudio()) {
             isPlayingAudio = true;
             break;
         }
@@ -3304,7 +3303,6 @@ void Document::updateIsPlayingAudio()
     if (page())
         page()->updateIsPlayingAudio();
 }
-#endif
 
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 {
