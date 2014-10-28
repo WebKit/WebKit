@@ -1,3 +1,13 @@
+2014-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: input type=hidden is being exposed when aria-hidden=false
+        https://bugs.webkit.org/show_bug.cgi?id=138106
+
+        Reviewed by Benjamin Poulain.
+
+        * accessibility/input-type-hidden-in-aria-hidden-false-expected.txt: Added.
+        * accessibility/input-type-hidden-in-aria-hidden-false.html: Added.
+
 2014-10-24  David Hyatt  <hyatt@apple.com>
 
         text-combine needs to center text within the vertical space using glyph bounds
