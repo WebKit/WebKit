@@ -132,6 +132,7 @@ list(APPEND WebCore_SOURCES
     platform/gtk/LoggingGtk.cpp
     platform/gtk/MIMETypeRegistryGtk.cpp
     platform/gtk/SharedBufferGtk.cpp
+    platform/gtk/SharedTimerGtk.cpp
     platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
 
@@ -234,7 +235,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformWheelEventGtk.cpp
     platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/SharedTimerGtk.cpp
     platform/gtk/SoundGtk.cpp
     platform/gtk/WidgetGtk.cpp
 
