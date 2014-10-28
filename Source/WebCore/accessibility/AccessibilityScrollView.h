@@ -34,7 +34,7 @@ class AccessibilityScrollbar;
 class Scrollbar;
 class ScrollView;
     
-class AccessibilityScrollView : public AccessibilityObject {
+class AccessibilityScrollView final : public AccessibilityObject {
 public:
     static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
     virtual AccessibilityRole roleValue() const override { return ScrollAreaRole; }
@@ -43,13 +43,11 @@ public:
     virtual ~AccessibilityScrollView();
     virtual void detach(AccessibilityDetachmentType, AXObjectCache*) override;
 
-protected:
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const override;
-    virtual void scrollTo(const IntPoint&) const override;
-    
 private:
     explicit AccessibilityScrollView(ScrollView*);
     
+    virtual ScrollableArea* getScrollableAreaIfScrollable() const override;
+    virtual void scrollTo(const IntPoint&) const override;
     virtual bool computeAccessibilityIsIgnored() const override;
     virtual bool isAccessibilityScrollView() const override { return true; }
     virtual bool isEnabled() const override { return true; }

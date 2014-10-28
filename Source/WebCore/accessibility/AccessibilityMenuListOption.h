@@ -33,7 +33,7 @@ namespace WebCore {
 class AccessibilityMenuListPopup;
 class HTMLElement;
 
-class AccessibilityMenuListOption : public AccessibilityMockObject {
+class AccessibilityMenuListOption final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityMenuListOption> create() { return adoptRef(new AccessibilityMenuListOption); }
 

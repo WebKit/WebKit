@@ -33,15 +33,10 @@
 
 namespace WebCore {
 
-class AccessibilityListBox : public AccessibilityRenderObject {
-
-private:
-    explicit AccessibilityListBox(RenderObject*);
+class AccessibilityListBox final : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilityListBox> create(RenderObject*);
     virtual ~AccessibilityListBox();
-    
-    virtual bool isListBox() const override { return true; }
     
     virtual bool canSetSelectedChildrenAttribute() const override;
     void setSelectedChildren(const AccessibilityChildrenVector&);
@@ -52,7 +47,10 @@ public:
     
     virtual void addChildren() override;
 
-private:    
+private:
+    explicit AccessibilityListBox(RenderObject*);
+
+    virtual bool isListBox() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 };

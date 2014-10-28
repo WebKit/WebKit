@@ -40,10 +40,7 @@ class Element;
 class HTMLElement;
 class HTMLSelectElement;
     
-class AccessibilityListBoxOption : public AccessibilityObject {
-
-private:
-    AccessibilityListBoxOption();
+class AccessibilityListBoxOption final : public AccessibilityObject {
 public:
     static PassRefPtr<AccessibilityListBoxOption> create();
     virtual ~AccessibilityListBoxOption();
@@ -62,17 +59,19 @@ public:
 
     virtual LayoutRect elementRect() const override;
     virtual AccessibilityObject* parentObject() const override;
-    virtual bool isListBoxOption() const override final { return true; }
 
 private:
-    HTMLElement* m_optionElement;
-    
+    AccessibilityListBoxOption();
+
+    virtual bool isListBoxOption() const override { return true; }
     virtual bool canHaveChildren() const override { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual bool computeAccessibilityIsIgnored() const override;
+
+    HTMLElement* m_optionElement;
 };
     
 } // namespace WebCore 

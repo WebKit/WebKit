@@ -33,21 +33,20 @@
 
 namespace WebCore {
 
-class AccessibilitySVGRoot : public AccessibilityRenderObject {
-    
-protected:
-    explicit AccessibilitySVGRoot(RenderObject*);
+class AccessibilitySVGRoot final : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilitySVGRoot> create(RenderObject*);
     virtual ~AccessibilitySVGRoot();
     
     void setParent(AccessibilityObject* parent) { m_parent = parent; }
-    
+
 private:
-    AccessibilityObject* m_parent;
+    explicit AccessibilitySVGRoot(RenderObject*);
     
     virtual AccessibilityObject* parentObject() const override;
     virtual bool isAccessibilitySVGRoot() const override { return true; }
+
+    AccessibilityObject* m_parent;
 };
     
 } // namespace WebCore 

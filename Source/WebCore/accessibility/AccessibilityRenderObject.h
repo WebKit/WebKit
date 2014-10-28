@@ -57,13 +57,9 @@ class VisibleSelection;
 class Widget;
     
 class AccessibilityRenderObject : public AccessibilityNodeObject {
-protected:
-    explicit AccessibilityRenderObject(RenderObject*);
 public:
     static PassRefPtr<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();
-    
-    virtual bool isAccessibilityRenderObject() const override { return true; }
 
     virtual void init() override;
     
@@ -214,8 +210,7 @@ public:
     virtual String passwordFieldValue() const override;
 
 protected:
-    RenderObject* m_renderer;
-    
+    explicit AccessibilityRenderObject(RenderObject*);
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
@@ -227,7 +222,10 @@ protected:
     virtual AccessibilityRole determineAccessibilityRole() override;
     virtual bool computeAccessibilityIsIgnored() const override;
 
+    RenderObject* m_renderer;
+
 private:
+    virtual bool isAccessibilityRenderObject() const override final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;

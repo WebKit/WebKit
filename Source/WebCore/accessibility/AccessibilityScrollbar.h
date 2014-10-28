@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Scrollbar;
 
-class AccessibilityScrollbar : public AccessibilityMockObject {
+class AccessibilityScrollbar final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityScrollbar> create(Scrollbar*);
 

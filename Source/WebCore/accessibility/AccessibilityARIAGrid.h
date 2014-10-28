@@ -37,23 +37,21 @@ namespace WebCore {
 class AccessibilityTableCell;
 class AccessibilityTableHeaderContainer;
 
-class AccessibilityARIAGrid : public AccessibilityTable {
-    
-private:
-    explicit AccessibilityARIAGrid(RenderObject*);
+class AccessibilityARIAGrid final : public AccessibilityTable {
 public:
     static PassRefPtr<AccessibilityARIAGrid> create(RenderObject*);
     virtual ~AccessibilityARIAGrid();
-
-    virtual bool isAriaTable() const override { return true; }
     
     virtual void addChildren() override;
     
 private:
+    explicit AccessibilityARIAGrid(RenderObject*);
+
     // ARIA treegrids and grids support selected rows.
     virtual bool supportsSelectedRows() override { return true; }
     virtual bool isMultiSelectable() const override { return true; }
     virtual bool computeIsTableExposableThroughAccessibility() const override { return true; }
+    virtual bool isAriaTable() const override { return true; }
     
     void addRowDescendant(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
     bool addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);

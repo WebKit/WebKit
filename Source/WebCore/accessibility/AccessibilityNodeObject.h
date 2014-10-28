@@ -61,15 +61,11 @@ enum MouseButtonListenerResultFilter {
 };
 
 class AccessibilityNodeObject : public AccessibilityObject {
-protected:
-    explicit AccessibilityNodeObject(Node*);
 public:
     static PassRefPtr<AccessibilityNodeObject> create(Node*);
     virtual ~AccessibilityNodeObject();
 
     virtual void init() override;
-    
-    virtual bool isAccessibilityNodeObject() const override { return true; }
 
     virtual bool canvasHasFallbackContent() const override;
 
@@ -158,6 +154,8 @@ public:
     virtual LayoutRect elementRect() const override;
 
 protected:
+    explicit AccessibilityNodeObject(Node*);
+
     AccessibilityRole m_ariaRole;
     bool m_childrenDirty;
     mutable AccessibilityRole m_roleForMSAA;
@@ -193,8 +191,7 @@ protected:
     AccessibilityObject* menuButtonForMenu() const;
 
 private:
-    Node* m_node;
-
+    virtual bool isAccessibilityNodeObject() const override final { return true; }
     virtual void accessibilityText(Vector<AccessibilityText>&) override;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     void alternativeText(Vector<AccessibilityText>&) const;
@@ -204,6 +201,8 @@ private:
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     virtual bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
+
+    Node* m_node;
 };
 
 } // namespace WebCore

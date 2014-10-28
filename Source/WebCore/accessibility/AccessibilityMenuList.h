@@ -35,7 +35,7 @@ class AccessibilityMenuListPopup;
 class HTMLOptionElement;
 class RenderMenuList;
 
-class AccessibilityMenuList : public AccessibilityRenderObject {
+class AccessibilityMenuList final : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilityMenuList> create(RenderMenuList* renderer);
 

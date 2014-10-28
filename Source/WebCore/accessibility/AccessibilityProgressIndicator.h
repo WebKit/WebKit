@@ -33,7 +33,7 @@ class RenderMeter;
 class HTMLProgressElement;
 class RenderProgress;
     
-class AccessibilityProgressIndicator : public AccessibilityRenderObject {
+class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilityProgressIndicator> create(RenderProgress*);
 #if ENABLE(METER_ELEMENT)

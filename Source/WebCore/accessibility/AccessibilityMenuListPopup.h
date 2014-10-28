@@ -35,7 +35,7 @@ class AccessibilityMenuListOption;
 class HTMLElement;
 class HTMLSelectElement;
 
-class AccessibilityMenuListPopup : public AccessibilityMockObject {
+class AccessibilityMenuListPopup final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityMenuListPopup> create() { return adoptRef(new AccessibilityMenuListPopup); }
 
@@ -43,7 +43,6 @@ public:
     virtual bool isOffScreen() const override;
 
     void didUpdateActiveOption(int optionIndex);
-
 
 private:
     AccessibilityMenuListPopup();

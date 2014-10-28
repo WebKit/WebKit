@@ -33,10 +33,7 @@
 
 namespace WebCore {
     
-class AccessibilityARIAGridCell : public AccessibilityTableCell {
-    
-private:
-    explicit AccessibilityARIAGridCell(RenderObject*);
+class AccessibilityARIAGridCell final : public AccessibilityTableCell {
 public:
     static PassRefPtr<AccessibilityARIAGridCell> create(RenderObject*);
     virtual ~AccessibilityARIAGridCell();
@@ -46,7 +43,9 @@ public:
     // fills in the start location and column span of cell
     virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const override;
     
-protected:
+private:
+    explicit AccessibilityARIAGridCell(RenderObject*);
+
     virtual AccessibilityTable* parentTable() const override;
 }; 
     

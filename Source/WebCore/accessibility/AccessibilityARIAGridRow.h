@@ -35,10 +35,7 @@ namespace WebCore {
     
 class AccessibilityTable;
     
-class AccessibilityARIAGridRow : public AccessibilityTableRow {
-    
-private:
-    explicit AccessibilityARIAGridRow(RenderObject*);
+class AccessibilityARIAGridRow final : public AccessibilityTableRow {
 public:
     static PassRefPtr<AccessibilityARIAGridRow> create(RenderObject*);
     virtual ~AccessibilityARIAGridRow();
@@ -49,6 +46,8 @@ public:
     virtual AccessibilityObject* headerObject() override;
     
 private:
+    explicit AccessibilityARIAGridRow(RenderObject*);
+
     virtual bool isARIATreeGridRow() const override;
     virtual AccessibilityTable* parentTable() const override;
 }; 

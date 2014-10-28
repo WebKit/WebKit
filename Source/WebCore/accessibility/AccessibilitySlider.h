@@ -37,7 +37,6 @@ namespace WebCore {
 class HTMLInputElement;
 
 class AccessibilitySlider : public AccessibilityRenderObject {
-    
 public:
     static PassRefPtr<AccessibilitySlider> create(RenderObject*);
     virtual ~AccessibilitySlider() { }
@@ -50,7 +49,7 @@ private:
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     virtual AccessibilityRole roleValue() const override { return SliderRole; }
-    virtual bool isSlider() const override { return true; }
+    virtual bool isSlider() const override final { return true; }
     virtual bool isInputSlider() const override { return true; }
     virtual bool isControl() const override { return true; }
     
@@ -66,21 +65,18 @@ private:
     virtual AccessibilityOrientation orientation() const override;
 };
 
-class AccessibilitySliderThumb : public AccessibilityMockObject {
-    
+class AccessibilitySliderThumb final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilitySliderThumb> create();
     virtual ~AccessibilitySliderThumb() { }
 
-    virtual bool isSliderThumb() const override final { return true; }
-
     virtual AccessibilityRole roleValue() const override { return SliderThumbRole; }
-
     virtual LayoutRect elementRect() const override;
 
 private:
     AccessibilitySliderThumb();
 
+    virtual bool isSliderThumb() const override { return true; }
     virtual bool computeAccessibilityIsIgnored() const override;
 };
 

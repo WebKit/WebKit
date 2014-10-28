@@ -39,20 +39,17 @@ class HTMLTableElement;
 class RenderTableSection;
     
 class AccessibilityTable : public AccessibilityRenderObject {
-
-protected:
-    explicit AccessibilityTable(RenderObject*);
 public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
-    virtual void init() override;
+    virtual void init() override final;
 
-    virtual AccessibilityRole roleValue() const override;
+    virtual AccessibilityRole roleValue() const override final;
     virtual bool isAriaTable() const { return false; }
     
     virtual void addChildren() override;
-    virtual void clearChildren() override;
+    virtual void clearChildren() override final;
     
     const AccessibilityChildrenVector& columns();
     const AccessibilityChildrenVector& rows();
@@ -62,7 +59,7 @@ public:
     unsigned rowCount();
     virtual int tableLevel() const override final;
     
-    virtual String title() const override;
+    virtual String title() const override final;
     
     // all the cells in the table
     void cells(AccessibilityChildrenVector&);
@@ -79,6 +76,8 @@ public:
     bool isExposableThroughAccessibility() const;
 
 protected:
+    explicit AccessibilityTable(RenderObject*);
+
     AccessibilityChildrenVector m_rows;
     AccessibilityChildrenVector m_columns;
 
@@ -88,15 +87,15 @@ protected:
     bool hasARIARole() const;
 
     // isTable is whether it's an AccessibilityTable object.
-    virtual bool isTable() const override { return true; }
+    virtual bool isTable() const override final { return true; }
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
-    virtual bool isDataTable() const override;
-    virtual bool computeAccessibilityIsIgnored() const override;
+    virtual bool isDataTable() const override final;
+    virtual bool computeAccessibilityIsIgnored() const override final;
 
 private:
     virtual bool computeIsTableExposableThroughAccessibility() const;
-    virtual void titleElementText(Vector<AccessibilityText>&) const override;
+    virtual void titleElementText(Vector<AccessibilityText>&) const override final;
     HTMLTableElement* tableElement() const;
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
 };

@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-class AccessibilitySpinButton : public AccessibilityMockObject {
+class AccessibilitySpinButton final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilitySpinButton> create();
     virtual ~AccessibilitySpinButton();
@@ -56,7 +56,7 @@ private:
     SpinButtonElement* m_spinButtonElement;
 }; 
    
-class AccessibilitySpinButtonPart : public AccessibilityMockObject {
+class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilitySpinButtonPart> create();
     virtual ~AccessibilitySpinButtonPart() { }
@@ -66,12 +66,13 @@ public:
     
 private:
     AccessibilitySpinButtonPart();
-    bool m_isIncrementor : 1;
     
     virtual bool press() override;
     virtual AccessibilityRole roleValue() const override { return ButtonRole; }
     virtual bool isSpinButtonPart() const override { return true; }
     virtual LayoutRect elementRect() const override;
+
+    unsigned m_isIncrementor : 1;
 };
     
 } // namespace WebCore

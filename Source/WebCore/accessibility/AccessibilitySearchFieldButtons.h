@@ -39,11 +39,10 @@ public:
     virtual bool press() override;
     virtual AccessibilityRole roleValue() const override { return ButtonRole; }
 
-protected:
-    virtual bool computeAccessibilityIsIgnored() const override;
-
 private:
     explicit AccessibilitySearchFieldCancelButton(RenderObject*);
+
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 } // namespace WebCore

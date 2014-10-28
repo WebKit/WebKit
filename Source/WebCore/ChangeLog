@@ -1,3 +1,47 @@
+2014-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in accessibility/
+        https://bugs.webkit.org/show_bug.cgi?id=138148
+
+        Reviewed by Chris Fleizach.
+
+        Clean up virtual functions in accessibility/ by:
+        - Marking classes as final when suitable
+        - Marking virtual functions as final when suitable
+        - Dropping final on virtual functions in classes that are already final
+        - Make isXXX() virtual type checking functions in XXX classes to avoid
+          useless type checks
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityARIAGridCell.h:
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityMediaControls.h:
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListOption.h:
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::setParent):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGRoot.h:
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySearchFieldButtons.h:
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.h:
+        * accessibility/AccessibilityTableRow.h:
+
 2014-10-24  Jeffrey Pfau  <jpfau@apple.com>
 
         FrameProgressTracker expects Page to not have detached
