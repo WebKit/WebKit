@@ -59,7 +59,7 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
-@interface WKActionMenuController ()
+@interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 - (void)_updateActionMenuItems;
 @end
 
