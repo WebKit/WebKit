@@ -1,3 +1,29 @@
+2014-10-27  Mark Lam  <mark.lam@apple.com>
+
+        Simplified some JSObject methods for converting arrays to ArrayStorage shape.
+        <https://webkit.org/b/138119>
+
+        Reviewed by Filip Pizlo.
+
+        Currently, for each Undecided, Int32, Double, and Contiguous array shapes,
+        there are 3 JSObject methods to convert them to ArrayStorage shape:
+            ArrayStorage* convert<shape>ToArrayStorage(VM&, NonPropertyTransition, unsigned neededLength);
+            ArrayStorage* convert<shape>ToArrayStorage(VM&, NonPropertyTransition);
+            ArrayStorage* convert<shape>ToArrayStorage(VM&);
+
+        However, the neededLength that is passed is always m_butterfly->vectorLength().
+        Hence, the method that takes a neededLength is really not needed.  This patch
+        removes this unneeded verbosity.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        - Also reordered the placement of the DeferGC statement so this Int32 function
+          will look more similar to the others.
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        * runtime/JSObject.h:
+
 2014-10-25  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timelines should not count time elapsed while paused in the debugger

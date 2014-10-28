@@ -780,23 +780,19 @@ protected:
     ContiguousJSValues convertUndecidedToInt32(VM&);
     ContiguousDoubles convertUndecidedToDouble(VM&);
     ContiguousJSValues convertUndecidedToContiguous(VM&);
-    ArrayStorage* convertUndecidedToArrayStorage(VM&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertUndecidedToArrayStorage(VM&, NonPropertyTransition);
     ArrayStorage* convertUndecidedToArrayStorage(VM&);
         
     ContiguousDoubles convertInt32ToDouble(VM&);
     ContiguousJSValues convertInt32ToContiguous(VM&);
-    ArrayStorage* convertInt32ToArrayStorage(VM&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertInt32ToArrayStorage(VM&, NonPropertyTransition);
     ArrayStorage* convertInt32ToArrayStorage(VM&);
     
     ContiguousJSValues convertDoubleToContiguous(VM&);
     ContiguousJSValues rageConvertDoubleToContiguous(VM&);
-    ArrayStorage* convertDoubleToArrayStorage(VM&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertDoubleToArrayStorage(VM&, NonPropertyTransition);
     ArrayStorage* convertDoubleToArrayStorage(VM&);
         
-    ArrayStorage* convertContiguousToArrayStorage(VM&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertContiguousToArrayStorage(VM&, NonPropertyTransition);
     ArrayStorage* convertContiguousToArrayStorage(VM&);
 
