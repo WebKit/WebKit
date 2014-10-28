@@ -35,9 +35,6 @@ find_package(LibSoup 2.42.0 REQUIRED)
 set(WTF_USE_SOUP 1)
 set(WTF_USE_UDIS86 1)
 
-add_definitions(-DWTF_USE_GLIB=1)
-add_definitions(-DWTF_USE_SOUP=1)
-add_definitions(-DWTF_USE_CAIRO=1)
 add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 
 set(WTF_LIBRARY_TYPE STATIC)
@@ -170,8 +167,6 @@ find_package(Efreet ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 
 find_package(Freetype2 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
-add_definitions(-DWTF_USE_FREETYPE=1)
-add_definitions(-DWTF_USE_HARFBUZZ=1)
 
 if (ENABLE_GEOLOCATION)
     find_package(GeoClue2 2.1.5)

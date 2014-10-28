@@ -462,15 +462,12 @@
 #define WTF_USE_CA 1
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_CAIRO 1
 #define WTF_USE_GLIB 1
 #define WTF_USE_FREETYPE 1
 #define WTF_USE_HARFBUZZ 1
 #define WTF_USE_SOUP 1
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_WEBP 1
 #endif
 
