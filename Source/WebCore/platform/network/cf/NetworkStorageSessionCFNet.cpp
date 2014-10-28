@@ -29,6 +29,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/ProcessID.h>
 
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
@@ -54,7 +55,7 @@ static OwnPtr<NetworkStorageSession>& defaultNetworkStorageSession()
 void NetworkStorageSession::switchToNewTestingSession()
 {
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getpid()));
+    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 #if PLATFORM(COCOA)
     defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()))));
 #else
