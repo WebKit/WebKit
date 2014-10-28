@@ -53,7 +53,10 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101000
 typedef NSUInteger NSEventModifierFlags;
+#endif
 
 #if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
 typedef NSInteger NSURLSessionAuthChallengeDisposition;

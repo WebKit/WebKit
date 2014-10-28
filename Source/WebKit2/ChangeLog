@@ -1,3 +1,13 @@
+2014-10-28  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] OS X Mavericks build broken with public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138108
+
+        Reviewed by Mark Rowe.
+
+        * Shared/API/Cocoa/WKFoundation.h: Only define the NSEventModifierFlags type when using a
+        version of the OS X SDK that doesn’t define it.
+
 2014-10-27  Conrad Shultz  <conrad_shultz@apple.com>
 
         NSSharingService protocol conformance should be internal to WKActionMenuController
