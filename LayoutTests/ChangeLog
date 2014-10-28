@@ -1,3 +1,13 @@
+2014-10-28  Alexey Proskuryakov  <ap@apple.com>
+
+        text-combine needs to center glyphs within the vertical area.
+        https://bugs.webkit.org/show_bug.cgi?id=138056
+
+        Adding pre-Yosemite test results.
+
+        * platform/mac-mavericks/fast/text/tatechuyoko-expected.png: Added.
+        * platform/mac-mavericks/fast/text/tatechuyoko-expected.txt: Added.
+
 2014-10-28  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Abandoned select option is reselected when shift selecting new options
