@@ -143,9 +143,6 @@ void RenderBlockFlow::insertedIntoTree()
 
 void RenderBlockFlow::willBeDestroyed()
 {
-    // Mark as being destroyed to avoid trouble with merges in removeChild().
-    m_beingDestroyed = true;
-
     if (renderNamedFlowFragment())
         setRenderNamedFlowFragment(0);
 

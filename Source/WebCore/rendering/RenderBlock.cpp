@@ -186,7 +186,6 @@ RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned 
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
-    , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
     , m_lineLayoutPath(UndeterminedPath)
@@ -198,7 +197,6 @@ RenderBlock::RenderBlock(Document& document, PassRef<RenderStyle> style, unsigne
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
-    , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
     , m_lineLayoutPath(UndeterminedPath)
@@ -240,9 +238,6 @@ bool RenderBlock::hasRareData() const
 
 void RenderBlock::willBeDestroyed()
 {
-    // Mark as being destroyed to avoid trouble with merges in removeChild().
-    m_beingDestroyed = true;
-
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();

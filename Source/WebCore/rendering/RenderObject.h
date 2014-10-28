@@ -378,6 +378,8 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
+    bool beingDestroyed() const { return m_bitfields.beingDestroyed(); }
+
     bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
     bool childrenInline() const { return m_bitfields.childrenInline(); }
@@ -920,7 +922,8 @@ private:
 
     public:
         RenderObjectBitfields(const Node& node)
-            : m_needsLayout(false)
+            : m_beingDestroyed(false)
+            , m_needsLayout(false)
             , m_needsPositionedMovementLayout(false)
             , m_normalChildNeedsLayout(false)
             , m_posChildNeedsLayout(false)
@@ -948,7 +951,7 @@ private:
         {
         }
         
-        // 31 bits have been used here. There is one bit available.
+        ADD_BOOLEAN_BITFIELD(beingDestroyed, BeingDestroyed);
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
         ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
         ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);

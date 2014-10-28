@@ -2061,6 +2061,8 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
 
 void RenderObject::destroy()
 {
+    m_bitfields.setBeingDestroyed(true);
+
 #if PLATFORM(IOS)
     if (hasLayer())
         downcast<RenderBoxModelObject>(*this).layer()->willBeDestroyed();

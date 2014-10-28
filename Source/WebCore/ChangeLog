@@ -1,3 +1,27 @@
+2014-10-27  Andreas Kling  <akling@apple.com>
+
+        Move RenderBlock::beingDestroyed() to RenderObject.
+        <https://webkit.org/b/138116>
+
+        Reviewed by Antti Koivisto.
+
+        Make "is being destroyed" a RenderObject concept instead of restricting
+        it to RenderBlocks. I'm guessing that this was specific to blocks due to
+        lack of bitfield space in RenderObject, and that's no longer an issue.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::beingDestroyed): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::beingDestroyed):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+
 2014-10-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: input type=hidden is being exposed when aria-hidden=false
