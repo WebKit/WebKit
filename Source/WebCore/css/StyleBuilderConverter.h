@@ -46,6 +46,7 @@ public:
     static float convertSpacing(StyleResolver&, CSSValue&);
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
     static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
+    template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -194,6 +195,15 @@ inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver
     for (CSSValueListIterator it(&value); it.hasMore(); it.advance())
         result |= downcast<CSSPrimitiveValue>(*it.value());
     return result;
+}
+
+template <typename T>
+inline T StyleBuilderConverter::convertNumber(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueAuto)
+        return -1;
+    return primitiveValue.getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
 }
 
 } // namespace WebCore

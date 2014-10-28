@@ -1,3 +1,40 @@
+2014-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Move "Number" CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138125
+
+        Reviewed by Antti Koivisto.
+
+        Move "Number" CSS properties from DeprecatedStyleBuilder to the new
+        StyleBuilder:
+        -webkit-hyphenate-limit-after
+        -webkit-hyphenate-limit-before
+        -webkit-shape-image-threshold
+        -webkit-hyphenate-limit-lines
+
+        They are now generated from CSSPropertyNames.in
+
+        For -webkit-hyphenate-limit-lines, I used custom code instead of
+        the Number converter as it required special handling for the id
+        value. This patch thus adds support for [Custom=Value] to
+        CSSPropertyNames.in and the custom code goes into
+        css/StyleBuilderCustom.h.
+
+        No new tests, no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyNumber::setValue): Deleted.
+        (WebCore::ApplyPropertyNumber::applyValue): Deleted.
+        (WebCore::ApplyPropertyNumber::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertNumber):
+        * css/StyleBuilderCustom.h: Added.
+        (WebCore::StyleBuilderFunctions::applyValueWebkitHyphenateLimitLines):
+        * css/makeprop.pl:
+
 2014-10-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCore] Remove uses of WTF::bind() in the Media Stream module

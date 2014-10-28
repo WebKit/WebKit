@@ -2502,6 +2502,7 @@
 		82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
+		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
 		836FBCEA178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */; };
 		836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */; };
 		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
@@ -9687,6 +9688,7 @@
 		82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertySourceData.h; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
+		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
 		836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTypeAnimator.cpp; sourceTree = "<group>"; };
 		836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedProperty.cpp; sourceTree = "<group>"; };
 		8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
@@ -22231,6 +22233,7 @@
 				536D5A26193F410B00CE4CAB /* SourceSizeList.h */,
 				8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */,
 				83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */,
+				835D363619FF6193004C93AB /* StyleBuilderCustom.h */,
 				E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */,
 				E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -25568,6 +25571,7 @@
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
+				835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,

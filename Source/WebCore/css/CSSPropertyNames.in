@@ -7,6 +7,48 @@
 // Microsoft extensions are documented here:
 // http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
 // 
+// StyleBuilder options:
+// * NewStyleBuilder:
+// Indicates to makeprop.pl that this property should be generated
+// in the new StyleBuilder.cpp. This option is temporary until all
+// CSS properties are generated.
+//
+// * TypeName:
+// Overrides the type of the setter method argument on RenderStyle. By
+// default, 'E' + PropertyId is used (e.g. EBorderCollapse). This option
+// is not needed if the "Converter" option is used.
+//
+// * Initial:
+// Overrides the method name on RenderStyle to get the initial value for
+// the property. By default, initial' + PropertyId is used (e.g.
+// initialBorderCollapse()).
+//
+// * Getter:
+// Overrides the method name on RenderStyle to get the current value for
+// the property. By default, the PropertyId with first letter lowercased
+// is used (e.g. borderCollapse()).
+//
+// * Setter:
+// Overrides the method name on RenderStyle to set the current value for
+// the property. By default, 'set' + PropertyId is used (e.g.
+// setBorderCollapse()).
+//
+// * NameForMethods:
+// Overrides the Getter / Setter / Initial method names on RenderStyle.
+// For e.g. "NameForMethods=OverflowWrap" will use
+// "overflowWrap() / setOverflowWrap() / initialOverflowWrap()".
+//
+// * Converter=XXX:
+// If converting the input CSSValue into the setter method argument type
+// is not trivial (i.e. casting to TypeName does not suffice), then you
+// can indicate that a Converter helper function in
+// css/StyleBuilderConverter.h should be used.
+//
+// * Custom=Value:
+// This option is used to indicate that the CSS property requires special
+// handling to set its value, and a regular Converter helper cannot be
+// used. The Custom code for the property should be located in
+// css/StyleBuilderCustom.h and named applyValue[CSSPropertyName]().
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -335,9 +377,9 @@ justify-content [NewStyleBuilder]
 -webkit-grid-auto-flow
 #endif
 -webkit-hyphenate-character [Inherited]
--webkit-hyphenate-limit-after [Inherited]
--webkit-hyphenate-limit-before [Inherited]
--webkit-hyphenate-limit-lines [Inherited]
+-webkit-hyphenate-limit-after [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitAfter, Converter=Number<short>]
+-webkit-hyphenate-limit-before [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitBefore, Converter=Number<short>]
+-webkit-hyphenate-limit-lines [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitLines, Custom=Value]
 -webkit-hyphens [Inherited, NewStyleBuilder, TypeName=Hyphens]
 -epub-hyphens = -webkit-hyphens
 -webkit-initial-letter
@@ -461,7 +503,7 @@ text-emphasis-style = -webkit-text-emphasis-style
 #if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-outside
 -webkit-shape-margin [NewStyleBuilder, Converter=Length]
--webkit-shape-image-threshold
+-webkit-shape-image-threshold [NewStyleBuilder, Converter=Number<float>]
 #endif
 #if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
 max-zoom

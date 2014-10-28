@@ -46,6 +46,7 @@ my %nameIsInherited;
 my %propertiesUsingNewStyleBuilder;
 my %newStyleBuilderOptions = (
   Converter => 1, # Defined in Source/WebCore/css/StyleBuilderConverter.h
+  Custom => 1,
   Getter => 1,
   Initial => 1,
   NameForMethods => 1,
@@ -350,6 +351,9 @@ foreach my $name (@names) {
   if (!exists($propertiesUsingNewStyleBuilder{$name}{"Initial"})) {
     $propertiesUsingNewStyleBuilder{$name}{"Initial"} = "initial" . $nameForMethods;
   }
+  if (!exists($propertiesUsingNewStyleBuilder{$name}{"Custom"})) {
+    $propertiesUsingNewStyleBuilder{$name}{"Custom"} = "None";
+  }
 }
 
 open STYLEBUILDER, ">StyleBuilder.cpp" || die "Could not open StyleBuilder.cpp for writing";
@@ -363,12 +367,12 @@ print STYLEBUILDER << "EOF";
 #include "CSSProperty.h"
 #include "RenderStyle.h"
 #include "StyleBuilderConverter.h"
+#include "StyleBuilderCustom.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
 
-class StyleBuilderFunctions {
-public:
+namespace StyleBuilderFunctions {
 EOF
 
 foreach my $name (@names) {
@@ -376,28 +380,30 @@ foreach my $name (@names) {
   next unless exists($propertiesUsingNewStyleBuilder{$name});
 
   my $setValue = "styleResolver.style()->" . $propertiesUsingNewStyleBuilder{$name}{"Setter"};
-  print STYLEBUILDER "    static void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  print STYLEBUILDER "    inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   print STYLEBUILDER "    {\n";
   print STYLEBUILDER "        " . $setValue . "(RenderStyle::" . $propertiesUsingNewStyleBuilder{$name}{"Initial"} . "());\n";
   print STYLEBUILDER "    }\n";
-  print STYLEBUILDER "    static void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  print STYLEBUILDER "    inline void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   print STYLEBUILDER "    {\n";
   print STYLEBUILDER "        " . $setValue . "(styleResolver.parentStyle()->" .  $propertiesUsingNewStyleBuilder{$name}{"Getter"} . "());\n";
   print STYLEBUILDER "    }\n";
-  print STYLEBUILDER "    static void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
-  print STYLEBUILDER "    {\n";
-  my $convertedValue;
-  if (exists($propertiesUsingNewStyleBuilder{$name}{"Converter"})) {
-    $convertedValue = "StyleBuilderConverter::convert" . $propertiesUsingNewStyleBuilder{$name}{"Converter"} . "(styleResolver, value)";
-  } else {
-    $convertedValue = "static_cast<" . $propertiesUsingNewStyleBuilder{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
+  if ($propertiesUsingNewStyleBuilder{$name}{"Custom"} ne "Value") {
+    print STYLEBUILDER "    inline void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
+    print STYLEBUILDER "    {\n";
+    my $convertedValue;
+    if (exists($propertiesUsingNewStyleBuilder{$name}{"Converter"})) {
+      $convertedValue = "StyleBuilderConverter::convert" . $propertiesUsingNewStyleBuilder{$name}{"Converter"} . "(styleResolver, value)";
+    } else {
+      $convertedValue = "static_cast<" . $propertiesUsingNewStyleBuilder{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
+    }
+    print STYLEBUILDER "        " . $setValue . "(" . $convertedValue . ");\n";
+    print STYLEBUILDER "    }\n";
   }
-  print STYLEBUILDER "        " . $setValue . "(" . $convertedValue . ");\n";
-  print STYLEBUILDER "    }\n";
 }
 
 print STYLEBUILDER << "EOF";
-};
+} // namespace StyleBuilderFunctions
 
 bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
 {
