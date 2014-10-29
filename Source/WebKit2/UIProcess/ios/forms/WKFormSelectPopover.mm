@@ -143,11 +143,18 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    if (_singleSelectionIndex != NSNotFound) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:_singleSelectionIndex inSection:_singleSelectionSection];
-        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-    }
+
+    if (_singleSelectionIndex == NSNotFound)
+        return;
+
+    if (_singleSelectionSection >= (NSUInteger)[self.tableView numberOfSections])
+        return;
+
+    if (_singleSelectionIndex >= (NSUInteger)[self.tableView numberOfRowsInSection:_singleSelectionSection])
+        return;
+
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:_singleSelectionIndex inSection:_singleSelectionSection];
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
 
 #pragma mark UITableView delegate methods
