@@ -701,6 +701,7 @@ public:
     void removeResourceRequest(unsigned long);
 
     void setMediaVolume(float);
+    void setMuted(bool);
     void setMayStartMediaWhenInWindow(bool);
 
     void updateMainFrameScrollOffsetPinning();

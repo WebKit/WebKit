@@ -3914,6 +3914,11 @@ void WebPage::setMediaVolume(float volume)
     m_page->setMediaVolume(volume);
 }
 
+void WebPage::setMuted(bool muted)
+{
+    m_page->setMuted(muted);
+}
+
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
 {
     if (mayStartMedia == m_mayStartMediaWhenInWindow)

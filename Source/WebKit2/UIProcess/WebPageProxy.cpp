@@ -3383,6 +3383,14 @@ void WebPageProxy::setMediaVolume(float volume)
     m_process->send(Messages::WebPage::SetMediaVolume(volume), m_pageID);    
 }
 
+void WebPageProxy::setMuted(bool muted)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetMuted(muted), m_pageID);
+}
+
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
 {
     if (mayStartMedia == m_mayStartMediaWhenInWindow)

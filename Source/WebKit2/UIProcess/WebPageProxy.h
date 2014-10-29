@@ -837,6 +837,7 @@ public:
     void printMainFrame();
     
     void setMediaVolume(float);
+    void setMuted(bool);
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
         

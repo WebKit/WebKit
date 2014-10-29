@@ -1,3 +1,21 @@
+2014-10-28  Ada Chan  <adachan@apple.com>
+
+        Implement WKPageSetMuted(bool).
+        https://bugs.webkit.org/show_bug.cgi?id=138158
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMuted):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMuted):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setMuted):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-10-29  Anders Carlsson  <andersca@apple.com>
 
         Clear ViewSnapshots when back/forward list items are removed from their list

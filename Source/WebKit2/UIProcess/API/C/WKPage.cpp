@@ -1806,6 +1806,11 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
     toImpl(page)->setMediaVolume(volume);    
 }
 
+void WKPageSetMuted(WKPageRef page, bool muted)
+{
+    toImpl(page)->setMuted(muted);
+}
+
 void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     toImpl(pageRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));

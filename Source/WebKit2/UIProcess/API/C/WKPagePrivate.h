@@ -109,6 +109,7 @@ WK_EXPORT bool WKPageGetAddsVisitedLinks(WKPageRef page);
 WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
 
 WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
+WK_EXPORT void WKPageSetMuted(WKPageRef page, bool muted);
 
 #ifdef __cplusplus
 }
