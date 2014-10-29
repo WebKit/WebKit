@@ -1,5 +1,51 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174516. <rdar://problem/18640864>
+
+    2014-10-09  Chris Dumez  <cdumez@apple.com>
+    
+            [Mac] Spending too much time mapping desired font families to available ones
+            https://bugs.webkit.org/show_bug.cgi?id=137539
+    
+            Reviewed by Darin Adler.
+    
+            While profiling the load of weather.com, I noticed that we are spending
+            quite a bit of time trying to map the font family requested to a font
+            that is available on the system. The process involves:
+            1. Doing a linear search of all the installed font families and do a
+               case-insensitive string comparison for each of them until we find a
+               match,
+            2. Then, if we don't find a match, do another linear search of the
+               fonts' postscript names this time and do again a case-insensitive
+               string comparison for each of them.
+    
+            This process is costly and the fonts requested by weather.com are not
+            available, causing us to do 2 linear searches and a lot of string
+            comparisons (accounting for ~2% of the WebProcess CPU time for the page
+            load). As a result, we end up spending ~90ms in
+            internalFontWithFamily() when loading weather.com.
+    
+            This patch introduces a cache for the mapping between desired font
+            families and available font families. This cuts the time spent in
+            internalFontWithFamily() in half (~45ms). The cache gets invalidated
+            when fonts are installed / uninstalled on the system so we don't break
+            that scenario. The cache is also limited in size to avoid using too
+            much memory.
+    
+            No new tests, but manual testing making sure the cache gets invalidated
+            when installing a font on the system.
+    
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::invalidateFontCache):
+            * platform/mac/WebFontCache.h:
+            * platform/mac/WebFontCache.mm:
+            (desiredFamilyToAvailableFamilyDictionary):
+            (rememberDesiredFamilyToAvailableFamilyMapping):
+            (+[WebFontCache internalFontWithFamily:traits:weight:size:]):
+            (+[WebFontCache invalidate]):
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174457. <rdar://problem/18640864>
 
     2014-10-08  Chris Dumez  <cdumez@apple.com>
