@@ -192,6 +192,7 @@ using namespace WebKit;
         RetainPtr<CGImageRef> image = bitmap->makeCGImage();
         RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
         _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+        [_sharingServicePicker setDelegate:self];
         [shareItem setSubmenu:[_sharingServicePicker menu]];
     }
 
@@ -289,6 +290,20 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
             [getIKSlideshowClass() exportSlideshowItem:filePath toApplication:@"com.apple.Photos"];
         });
     });
+}
+
+#pragma mark NSSharingServicePickerDelegate implementation
+
+- (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
+{
+    return self;
+}
+
+#pragma mark NSSharingServiceDelegate implementation
+
+- (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
+{
+    return _wkView.window;
 }
 
 #pragma mark Menu Items

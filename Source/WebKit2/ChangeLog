@@ -1,5 +1,30 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175190
+
+    2014-10-24  Tim Horton  <timothy_horton@apple.com>
+
+            Share sheet doesn't attach to the window
+            https://bugs.webkit.org/show_bug.cgi?id=138062
+            <rdar://problem/18767397>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            WKActionMenuController is now a NSSharingService{Picker}Delegate.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForImage]):
+            Set us up as the NSSharingServicePicker delegate.
+
+            (-[WKActionMenuController sharingServicePicker:delegateForSharingService:]):
+            Set us up as the NSSharingService delegate.
+
+            (-[WKActionMenuController sharingService:sourceWindowForShareItems:sharingContentScope:]):
+            Return the appropriate window to attach to.
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175187
 
     2014-10-24  Beth Dakin  <bdakin@apple.com>
