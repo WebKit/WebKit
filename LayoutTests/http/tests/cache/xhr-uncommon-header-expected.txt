@@ -1,0 +1,11 @@
+Test that we don't crash on xhr loads from cache with only uncommon HTTP headers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+load
+load
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
