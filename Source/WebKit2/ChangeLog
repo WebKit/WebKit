@@ -1,5 +1,20 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175179
+
+    2014-10-24  Tim Horton  <timothy_horton@apple.com>
+
+            [Mac][WebKit2] Move action menu code into its own file
+            https://bugs.webkit.org/show_bug.cgi?id=138034
+            <rdar://problem/18758758>
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            (-[WKActionMenuController _addImageToPhotos:]):
+            Review comments that were not previously addressed.
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175178
 
     2014-10-24  Tim Horton  <timothy_horton@apple.com>
