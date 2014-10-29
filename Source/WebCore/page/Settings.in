@@ -228,3 +228,5 @@ useImageDocumentForSubframePDF initial=false
 # Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
 # of 1080p video and stereo audio.
 maximumSourceBufferSize type=int, initial=318767104, conditional=MEDIA_SOURCE
+
+serviceControlsEnabled initial=false, conditional=SERVICE_CONTROLS

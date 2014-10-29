@@ -1,5 +1,46 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174524. <rdar://problem/18640868>
+
+    2014-10-09  Tim Horton  <timothy_horton@apple.com>
+    
+            Move ServicesOverlayController to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=137416
+            <rdar://problem/18546283>
+    
+            Reviewed by Anders Carlsson.
+    
+            * Platform/Logging.h:
+            Move Services logging channel to WebCore.
+    
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::handleTelephoneNumberClick):
+            (WebKit::WebChromeClient::handleSelectionServiceClick):
+            (WebKit::WebChromeClient::hasRelevantSelectionServices):
+            Implement services-related ChromeClient callbacks.
+            Clicks are forwarded to WebPageMac where they do what they used to;
+            hasRelevantSelectionServices is implemented as it was when it lived
+            inside ServicesOverlayController.
+    
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            (WebKit::WebEditorClient::selectedTelephoneNumberRangesChanged): Deleted.
+            (WebKit::WebEditorClient::selectionRectsDidChange): Deleted.
+            * WebProcess/WebCoreSupport/WebEditorClient.h:
+            Remove WebEditorClient overrides for now-removed functions.
+    
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            (WebKit::WebPage::updatePreferences):
+            Forward serviceControlsEnabled setting to WebCore.
+    
+            (WebKit::WebPage::servicesOverlayController): Deleted.
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::serviceControlsEnabled): Deleted.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174231. <rdar://problem/18640833>
 
     2014-10-02  Tim Horton  <timothy_horton@apple.com>

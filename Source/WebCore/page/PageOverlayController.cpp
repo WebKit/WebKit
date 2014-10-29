@@ -260,7 +260,7 @@ void PageOverlayController::didScrollFrame(Frame& frame)
 
 void PageOverlayController::updateSettingsForLayer(GraphicsLayer& layer)
 {
-    Settings& settings = m_mainFrame.page()->settings();
+    Settings& settings = m_mainFrame.settings();
     layer.setAcceleratesDrawing(settings.acceleratedDrawingEnabled());
     layer.setShowDebugBorder(settings.showDebugBorders());
     layer.setShowRepaintCounter(settings.showRepaintCounter());

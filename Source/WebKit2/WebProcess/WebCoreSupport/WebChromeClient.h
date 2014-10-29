@@ -299,6 +299,14 @@ private:
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;
 #endif
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
+    virtual void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&) override;
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) override;
+    virtual bool hasRelevantSelectionServices(bool isTextOnly) const override;
+#endif
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

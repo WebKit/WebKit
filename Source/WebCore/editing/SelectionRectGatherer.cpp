@@ -26,12 +26,14 @@
 #include "config.h"
 #include "SelectionRectGatherer.h"
 
+#if ENABLE(SERVICE_CONTROLS)
+
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Frame.h"
+#include "MainFrame.h"
 #include "RenderView.h"
-
-#if ENABLE(SERVICE_CONTROLS)
+#include "ServicesOverlayController.h"
 
 namespace WebCore {
 
@@ -70,8 +72,7 @@ SelectionRectGatherer::Notifier::Notifier(SelectionRectGatherer& gatherer)
 
 SelectionRectGatherer::Notifier::~Notifier()
 {
-    if (EditorClient* client = m_gatherer.m_renderView.view().frame().editor().client())
-        client->selectionRectsDidChange(m_gatherer.m_rects, m_gatherer.m_gapRects, m_gatherer.isTextOnly());
+    m_gatherer.m_renderView.view().frame().mainFrame().servicesOverlayController().selectionRectsDidChange(m_gatherer.m_rects, m_gatherer.m_gapRects, m_gatherer.isTextOnly());
 }
 
 std::unique_ptr<SelectionRectGatherer::Notifier> SelectionRectGatherer::clearAndCreateNotifier()

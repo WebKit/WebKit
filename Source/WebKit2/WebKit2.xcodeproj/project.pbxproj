@@ -936,7 +936,6 @@
 		518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0216B2093700E91429 /* DownloadManager.cpp */; };
 		518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0316B2093700E91429 /* DownloadManager.h */; };
 		518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0516B2093700E91429 /* DownloadMac.mm */; };
-		5192D5761961FD0300CD19AA /* ServicesOverlayController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5192D5751961FD0300CD19AA /* ServicesOverlayController.mm */; };
 		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
 		51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51933DEC1965EB24008AC3EA /* MenuUtilities.mm */; };
 		51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */; };
@@ -2968,8 +2967,6 @@
 		518E8F0216B2093700E91429 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
 		518E8F0316B2093700E91429 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = Downloads/DownloadManager.h; sourceTree = "<group>"; };
 		518E8F0516B2093700E91429 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
-		5192D5711961FA2F00CD19AA /* ServicesOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServicesOverlayController.h; sourceTree = "<group>"; };
-		5192D5751961FD0300CD19AA /* ServicesOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesOverlayController.mm; sourceTree = "<group>"; };
 		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
 		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsRequest.cpp; sourceTree = "<group>"; };
@@ -5747,7 +5744,6 @@
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
 				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
 				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
-				5192D5711961FA2F00CD19AA /* ServicesOverlayController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
 				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,
@@ -6515,7 +6511,6 @@
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
 				1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */,
-				5192D5751961FD0300CD19AA /* ServicesOverlayController.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
 				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */,
@@ -8802,7 +8797,6 @@
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
-				5192D5761961FD0300CD19AA /* ServicesOverlayController.mm in Sources */,
 				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
 				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,

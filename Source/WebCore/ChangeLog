@@ -1,5 +1,67 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174524. <rdar://problem/18640868>
+
+    2014-10-09  Tim Horton  <timothy_horton@apple.com>
+    
+            Move ServicesOverlayController to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=137416
+            <rdar://problem/18546283>
+    
+            Reviewed by Anders Carlsson.
+    
+            Move ServicesOverlayController from WebKit2 to WebCore, as it can be used by both Legacy WebKit and WebKit2.
+    
+            * WebCore.xcodeproj/project.pbxproj:
+            * editing/Editor.cpp:
+            (WebCore::Editor::scanSelectionForTelephoneNumbers):
+            * editing/SelectionRectGatherer.cpp:
+            (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+            Notify ServicesOverlayController of changes via Page instead of EditorClient.
+    
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::handleTelephoneNumberClick):
+            (WebCore::ChromeClient::handleSelectionServiceClick):
+            (WebCore::ChromeClient::hasRelevantSelectionServices):
+            Add ChromeClient functions for services actions.
+    
+            * page/EditorClient.h:
+            (WebCore::EditorClient::selectedTelephoneNumberRangesChanged): Deleted.
+            (WebCore::EditorClient::selectionRectsDidChange): Deleted.
+            Remove EditorClient functions for notifying ServicesOverlayController of changes,
+            because it lives in WebCore proper now.
+    
+            * page/Page.cpp:
+            (WebCore::Page::Page):
+            * page/Page.h:
+            (WebCore::Page::servicesOverlayController):
+            Keep a ServicesOverlayController on Page.
+    
+            * page/PageOverlay.cpp:
+            (WebCore::PageOverlay::mouseEvent):
+            Use windowToContents instead of rootViewToContents; events come in in window coordinates.
+    
+            * page/PageOverlayController.cpp:
+            (WebCore::PageOverlayController::updateSettingsForLayer):
+            Get Settings from MainFrame, not Page.
+    
+            * page/Settings.in:
+            Add servicesControlsEnabled setting.
+    
+            * page/mac/ServicesOverlayController.h: Renamed from Source/WebKit2/WebProcess/WebPage/ServicesOverlayController.h.
+            * page/mac/ServicesOverlayController.mm: Renamed from Source/WebKit2/WebProcess/WebPage/mac/ServicesOverlayController.mm.
+            Moved from WebKit2. Mostly mechanical changes, plus:
+                - Use windowToContents instead of rootViewToContents; events come in in window coordinates.
+                - Cut off rebuild* if serviceControlsEnabled setting is false
+                - Don't create the overlay if serviceControlsEnabled setting is false
+                - Send click events via ChromeClient.
+                - Tie our lifetime to MainFrame instead of Page, and get lots of things from MainFrame instead.
+    
+            * platform/Logging.h:
+            Add Services logging channel (moved from WebKit2).
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174231. <rdar://problem/18640833>
 
     2014-10-02  Tim Horton  <timothy_horton@apple.com>

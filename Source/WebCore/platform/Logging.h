@@ -73,6 +73,7 @@ namespace WebCore {
     M(WebAudio) \
     M(WebGL) \
     M(WebReplay) \
+    M(Services) \
 
 #define DECLARE_LOG_CHANNEL(name) \
     extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);

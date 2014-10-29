@@ -29,11 +29,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "PageOverlayController.h"
 
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
+#endif
+
 namespace WebCore {
 
 inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
     : Frame(page, nullptr, client)
     , m_selfOnlyRefCount(0)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
+#endif
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
 {
 }

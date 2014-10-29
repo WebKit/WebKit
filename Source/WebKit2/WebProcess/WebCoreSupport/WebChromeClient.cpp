@@ -1037,5 +1037,24 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
 }
 #endif
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
+void WebChromeClient::handleTelephoneNumberClick(const String& number, const WebCore::IntPoint& point)
+{
+    m_page->handleTelephoneNumberClick(number, point);
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+void WebChromeClient::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& telephoneNumbers, const WebCore::IntPoint& point)
+{
+    m_page->handleSelectionServiceClick(selection, telephoneNumbers, point);
+}
+
+bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
+{
+    return (isTextOnly && WebProcess::shared().hasSelectionServices()) || WebProcess::shared().hasRichContentServices();
+}
+
+#endif
 
 } // namespace WebKit

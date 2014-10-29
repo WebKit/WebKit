@@ -1107,6 +1107,8 @@
 		2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8FEBDB143E3EF70072502B /* CSSCrossfadeValue.h */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */; };
+		2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */; };
 		2D9A246E15B9BD0000D34527 /* DOMSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9A246B15B9BBDD00D34527 /* DOMSecurityPolicy.h */; };
 		2D9A246F15B9BD2F00D34527 /* DOMSecurityPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A246A15B9BBDD00D34527 /* DOMSecurityPolicy.cpp */; };
 		2D9A247315B9C2D100D34527 /* DOMDOMSecurityPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A247215B9C2C700D34527 /* DOMDOMSecurityPolicy.mm */; };
@@ -8116,6 +8118,8 @@
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660C0665D937006B6F1A /* DataTransferMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataTransferMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesOverlayController.h; sourceTree = "<group>"; };
+		2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesOverlayController.mm; sourceTree = "<group>"; };
 		2D9A246A15B9BBDD00D34527 /* DOMSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMSecurityPolicy.cpp; sourceTree = "<group>"; };
 		2D9A246B15B9BBDD00D34527 /* DOMSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSecurityPolicy.h; sourceTree = "<group>"; };
 		2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMSecurityPolicy.h; sourceTree = "<group>"; };
@@ -17631,6 +17635,8 @@
 				A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */,
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
+				2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */,
+				2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */,
 				E1C2F2481533A2120083F974 /* SettingsMac.mm */,
 				26255F0218878E110006E1FD /* UserAgentMac.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
@@ -23561,6 +23567,7 @@
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
 				FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
+				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
@@ -28478,6 +28485,7 @@
 				E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */,
 				75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */,
 				410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */,
+				2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */,
 				E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */,
 				E1ADED470E76B8DD004A1A5E /* JSMessagePortCustom.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,

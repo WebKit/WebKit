@@ -143,7 +143,6 @@ class InjectedBundleBackForwardList;
 class NotificationPermissionRequestManager;
 class PageBanner;
 class PluginView;
-class ServicesOverlayController;
 class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
@@ -824,11 +823,9 @@ public:
     // While this is not ideal, it does not have to be applied to every platform at the moment.
     static bool synchronousMessagesShouldSpinRunLoop();
 
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION) 
-    ServicesOverlayController& servicesOverlayController();
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
-    bool serviceControlsEnabled() const { return m_serviceControlsEnabled; }
 #endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
@@ -1090,10 +1087,6 @@ private:
     RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-    bool m_serviceControlsEnabled;
-#endif
-
     // The layer hosting mode.
     LayerHostingMode m_layerHostingMode;
 
@@ -1266,10 +1259,6 @@ private:
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
-#endif
-
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
 };
 
