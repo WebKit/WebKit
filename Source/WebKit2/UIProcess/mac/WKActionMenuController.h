@@ -39,11 +39,11 @@ struct ActionMenuHitTestResult;
 
 @interface WKActionMenuController : NSObject {
 @private
-    WebPageProxy *_page;
+    WebKit::WebPageProxy *_page;
     WKView *_wkView;
 
-    ActionMenuState _state;
-    ActionMenuHitTestResult _hitTestResult;
+    WebKit::ActionMenuState _state;
+    WebKit::ActionMenuHitTestResult _hitTestResult;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
 }
 
