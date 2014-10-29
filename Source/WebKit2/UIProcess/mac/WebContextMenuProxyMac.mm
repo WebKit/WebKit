@@ -54,11 +54,21 @@ typedef enum {
     NSSharingServicePickerStyleRollover = 1,
     NSSharingServicePickerStyleTextSelection = 2
 } NSSharingServicePickerStyle;
+
+typedef enum {
+    NSSharingServiceTypeEditor = 2
+} NSSharingServiceType;
+
+typedef NSUInteger NSSharingServiceMask;
 #endif
 
 @interface NSSharingServicePicker (Details)
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
+@end
+
+@interface NSSharingService (Private)
+@property (readonly) NSSharingServiceType type;
 @end
 
 #endif // ENABLE(SERVICE_CONTROLS)
