@@ -1,3 +1,10 @@
+2014-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip compositing/regions/propagate-region-box-shadow-border-padding-for-video.html which 
+        asserts in Debug.
+
+        * platform/mac/TestExpectations:
+
 2014-10-29  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

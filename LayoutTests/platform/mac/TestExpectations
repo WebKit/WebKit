@@ -920,7 +920,7 @@ webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
 
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
-webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html  [ Pass ImageOnlyFailure ]
+webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
