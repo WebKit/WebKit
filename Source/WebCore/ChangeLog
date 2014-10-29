@@ -1,5 +1,18 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174457. <rdar://problem/18640864>
+
+    2014-10-08  Chris Dumez  <cdumez@apple.com>
+    
+            Unreviewed build fix after r174456.
+    
+            I was comparing a signed int to an unsigned one.
+    
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::shouldAutoActivateFontIfNeeded):
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174456. <rdar://problem/18640864>
 
     2014-10-08  Christophe Dumez  <cdumez@apple.com>
