@@ -1,5 +1,17 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174841. <rdar://problem/18753175>
+
+    2014-10-17  Tim Horton  <timothy_horton@apple.com>
+    
+            Build fix for 32-bit Yosemite
+    
+            * WebCoreSupport/WebContextMenuClient.mm:
+            (WebContextMenuClient::contextMenuForEvent):
+            Avoid using NSItemProvider in 32-bit, because it doesn't exist.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174837. <rdar://problem/18753175>
 
     2014-10-17  Tim Horton  <timothy_horton@apple.com>
