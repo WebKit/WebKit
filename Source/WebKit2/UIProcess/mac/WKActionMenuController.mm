@@ -60,12 +60,6 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
-enum class ActionMenuState {
-    None = 0,
-    Pending,
-    Ready
-};
-
 @interface WKActionMenuController ()
 - (void)_updateActionMenuItems;
 @end

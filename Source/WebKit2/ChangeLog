@@ -1,5 +1,16 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175184
+
+    2014-10-24  Tim Horton  <timothy_horton@apple.com>
+
+            Blindly try to fix all the builds.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175181
 
     2014-10-24  Timothy Horton  <timothy_horton@apple.com>

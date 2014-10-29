@@ -31,6 +31,13 @@
 namespace WebKit {
 class WebPageProxy;
 class WKView;
+
+enum class ActionMenuState {
+    None = 0,
+    Pending,
+    Ready
+};
+
 struct ActionMenuHitTestResult;
 }
 
