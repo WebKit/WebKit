@@ -28,7 +28,6 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "ActionMenuHitTestResult.h"
 #include "Arguments.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
@@ -4775,34 +4774,6 @@ void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
 void WebPage::willChangeCurrentHistoryItemForMainFrame()
 {
     send(Messages::WebPageProxy::WillChangeCurrentHistoryItemForMainFrame());
-}
-
-void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
-{
-    layoutIfNeeded();
-
-    MainFrame& mainFrame = corePage()->mainFrame();
-    if (!mainFrame.view() || !mainFrame.view()->renderView()) {
-        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(ActionMenuHitTestResult()));
-        return;
-    }
-
-    RenderView& mainRenderView = *mainFrame.view()->renderView();
-
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
-
-    HitTestResult hitTestResult(mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates)));
-    mainRenderView.hitTest(request, hitTestResult);
-
-    ActionMenuHitTestResult actionMenuResult;
-
-    if (Image* image = hitTestResult.image()) {
-        actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
-        if (actionMenuResult.image)
-            actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
-    }
-
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
 }
 
 } // namespace WebKit

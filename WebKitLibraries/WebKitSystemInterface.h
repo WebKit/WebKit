@@ -22,6 +22,7 @@
 
 @class AVAsset;
 @class AVPlayer;
+@class DDActionContext;
 @class QTMovie;
 @class QTMovieView;
 
@@ -152,9 +153,10 @@ void WKDrawBezeledTextFieldCell(NSRect, BOOL enabled);
 void WKDrawTextFieldCellFocusRing(NSTextFieldCell*, NSRect);
 void WKDrawBezeledTextArea(NSRect, BOOL enabled);
 
-void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
+void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 void WKPopupMenuWithSize(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
 void WKPopupContextMenu(NSMenu *menu, NSPoint screenLocation);
+void WKSetDDActionContextIsForActionMenu(DDActionContext *actionContext);
 void WKSendUserChangeNotifications(void);
 #ifndef __LP64__
 BOOL WKConvertNSEventToCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent);

@@ -35,7 +35,8 @@ extern "C" {
 enum {
     kWKActionMenuNone = 0,
     kWKActionMenuLink,
-    kWKActionMenuImage
+    kWKActionMenuImage,
+    kWKActionMenuDataDetectedItem
 };
 typedef uint32_t _WKActionMenuType;
 

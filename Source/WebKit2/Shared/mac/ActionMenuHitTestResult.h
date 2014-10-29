@@ -27,6 +27,9 @@
 #define ActionMenuHitTestResult_h
 
 #include "ShareableBitmap.h"
+#include <WebCore/FloatRect.h>
+
+OBJC_CLASS DDActionContext;
 
 namespace IPC {
 class ArgumentDecoder;
@@ -40,6 +43,9 @@ struct ActionMenuHitTestResult {
     static bool decode(IPC::ArgumentDecoder&, ActionMenuHitTestResult&);
 
     RefPtr<ShareableBitmap> image;
+
+    RetainPtr<DDActionContext> actionContext;
+    WebCore::FloatRect actionBoundingBox;
 };
 
 } // namespace WebKit
