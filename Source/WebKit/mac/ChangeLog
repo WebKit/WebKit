@@ -1,5 +1,11 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Fix the branch pre-Yosemite build by moving an #if to encompass the whole file.
+
+        * Misc/WebSharingServicePickerController.mm:
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175229
 
     2014-10-27  Beth Dakin  <bdakin@apple.com>

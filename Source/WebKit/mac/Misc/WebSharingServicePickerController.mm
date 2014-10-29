@@ -48,7 +48,6 @@
 - (void)loadItemForTypeIdentifier:(NSString *)typeIdentifier options:(NSDictionary *)options completionHandler:(void (^)(id <NSSecureCoding> item, NSError *error))completionHandler;
 @end
 #endif
-#endif
 
 static NSString *serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 
@@ -222,3 +221,5 @@ using namespace WebCore;
 }
 
 @end
+
+#endif // ENABLE(SERVICE_CONTROLS)
