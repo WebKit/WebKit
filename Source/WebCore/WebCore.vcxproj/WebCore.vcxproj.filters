@@ -5004,6 +5004,12 @@
     <ClCompile Include="..\page\PageGroupLoadDeferrer.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\PageOverlay.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\PageOverlayController.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\PageSerializer.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -12965,6 +12971,12 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\PageGroupLoadDeferrer.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\PageOverlay.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\PageOverlayController.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\PageSerializer.h">

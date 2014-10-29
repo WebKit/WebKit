@@ -26,10 +26,10 @@
 #ifndef FindController_h
 #define FindController_h
 
-#include "PageOverlay.h"
 #include "ShareableBitmap.h"
 #include "WebFindOptions.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -45,10 +45,9 @@ class Range;
 
 namespace WebKit {
 
-class PageOverlay;
 class WebPage;
 
-class FindController : private PageOverlay::Client {
+class FindController : private WebCore::PageOverlay::Client {
     WTF_MAKE_NONCOPYABLE(FindController);
 
 public:
@@ -71,11 +70,11 @@ public:
 
 private:
     // PageOverlay::Client.
-    virtual void pageOverlayDestroyed(PageOverlay*);
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*);
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*);
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&);
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay&);
+    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
+    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
+    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&);
+    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
     Vector<WebCore::IntRect> rectsForTextMatches();
     bool getFindIndicatorBitmapAndRect(WebCore::Frame&, ShareableBitmap::Handle&, WebCore::IntRect& selectionRect);
@@ -88,7 +87,7 @@ private:
     void didHideFindIndicator();
 
     WebPage* m_webPage;
-    PageOverlay* m_findPageOverlay;
+    WebCore::PageOverlay* m_findPageOverlay;
 
     // Whether the UI process is showing the find indicator. Note that this can be true even if
     // the find indicator isn't showing, but it will never be false when it is showing.
@@ -99,7 +98,7 @@ private:
     int m_foundStringMatchIndex;
 
 #if PLATFORM(IOS)
-    RefPtr<PageOverlay> m_findIndicatorOverlay;
+    RefPtr<WebCore::PageOverlay> m_findIndicatorOverlay;
     std::unique_ptr<FindIndicatorOverlayClientIOS> m_findIndicatorOverlayClient;
 #endif
 };

@@ -51,6 +51,7 @@
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <wtf/MainThread.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -76,10 +77,12 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_transientZoomScale(1)
     , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
+    , m_viewOverlayRootLayer(nullptr)
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
 
     m_hostingLayer = [CALayer layer];
+    [m_hostingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_hostingLayer setFrame:m_webPage.bounds()];
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
@@ -204,9 +207,28 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     updateDebugInfoLayer(showTiledScrollingIndicator);
 }
 
+void TiledCoreAnimationDrawingArea::updateRootLayers()
+{
+    if (!m_rootLayer) {
+        [m_hostingLayer setSublayers:@[ ]];
+        return;
+    }
+
+    [m_hostingLayer setSublayers:m_viewOverlayRootLayer ? @[ m_rootLayer.get(), m_viewOverlayRootLayer->platformLayer() ] : @[ m_rootLayer.get() ]];
+}
+
+void TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
+{
+    if (!frame->isMainFrame())
+        return;
+
+    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    updateRootLayers();
+}
+
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
-    m_webPage.pageOverlayController().didChangeDocumentSize();
+
 }
 
 void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
@@ -283,7 +305,10 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
     FloatRect visibleRect = [m_hostingLayer frame];
     visibleRect.intersect(m_scrolledExposedRect);
-    m_webPage.pageOverlayController().flushPageOverlayLayers(visibleRect);
+
+    // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
+    if (m_viewOverlayRootLayer)
+        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
 
     bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 #if ENABLE(ASYNC_SCROLLING)
@@ -363,8 +388,6 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
 #endif
 
     frameView->setExposedRect(m_scrolledExposedRect);
-
-    m_webPage.pageOverlayController().didChangeExposedRect();
 }
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
@@ -464,11 +487,11 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_hostingLayer setSublayers:layer ? @[ layer, m_webPage.pageOverlayController().viewOverlayRootLayer()->platformLayer() ] : @[ ]];
-
     bool hadRootLayer = !!m_rootLayer;
     m_rootLayer = layer;
     [m_rootLayer setSublayerTransform:m_transform];
+
+    updateRootLayers();
 
     if (hadRootLayer != !!layer)
         m_layerHostingContext->setRootLayer(layer ? m_hostingLayer.get() : 0);

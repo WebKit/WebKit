@@ -67,6 +67,7 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
     virtual void scheduleCompositingLayerFlushImmediately() override;
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
     virtual void addTransactionCallbackID(uint64_t callbackID) override;
 
@@ -111,6 +112,7 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip) override { }
 
     void updateScrolledExposedRect();
+    void updateRootLayers();
 
     void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*);
     void flushLayers();
@@ -164,6 +166,9 @@ private:
 
     uint64_t m_currentTransactionID;
     Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
+
+    WebCore::GraphicsLayer* m_contentLayer;
+    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 
 DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);

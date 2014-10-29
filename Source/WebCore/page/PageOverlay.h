@@ -26,41 +26,42 @@
 #ifndef PageOverlay_h
 #define PageOverlay_h
 
-#include "APIObject.h"
-#include "WKBase.h"
-#include <WebCore/Color.h>
-#include <WebCore/IntRect.h>
+#include "Color.h"
+#include "FloatPoint.h"
+#include "IntRect.h"
+#include "Timer.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RunLoop.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
 class Frame;
 class GraphicsContext;
 class GraphicsLayer;
-}
+class Page;
+class PageOverlayController;
+class PlatformMouseEvent;
 
-namespace WebKit {
-
-class WebFrame;
-class WebMouseEvent;
-class WebPage;
-
-class PageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay> {
+class PageOverlay final : public RefCounted<PageOverlay> {
+    WTF_MAKE_NONCOPYABLE(PageOverlay);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Client {
     protected:
         virtual ~Client() { }
     
     public:
-        virtual void pageOverlayDestroyed(PageOverlay*) = 0;
-        virtual void willMoveToWebPage(PageOverlay*, WebPage*) = 0;
-        virtual void didMoveToWebPage(PageOverlay*, WebPage*) = 0;
-        virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
-        virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
-        virtual void didScrollFrame(PageOverlay*, WebCore::Frame*) { }
+        virtual void pageOverlayDestroyed(PageOverlay&) = 0;
+        virtual void willMoveToPage(PageOverlay&, Page*) = 0;
+        virtual void didMoveToPage(PageOverlay&, Page*) = 0;
+        virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) = 0;
+        virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) = 0;
+        virtual void didScrollFrame(PageOverlay&, Frame&) { }
 
-        virtual WKTypeRef copyAccessibilityAttributeValue(PageOverlay*, WKStringRef /* attribute */, WKTypeRef /* parameter */) { return 0; }
-        virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay*, bool /* parameterizedNames */) { return 0; }
+        virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) { return false; }
+        virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)  { return false; }
+        virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
     };
 
     enum class OverlayType {
@@ -68,19 +69,22 @@ public:
         Document, // Scales and scrolls with the document.
     };
 
-    static PassRefPtr<PageOverlay> create(Client*, OverlayType = OverlayType::View);
+    static PassRefPtr<PageOverlay> create(Client&, OverlayType = OverlayType::View);
     virtual ~PageOverlay();
 
-    void setPage(WebPage*);
-    void setNeedsDisplay(const WebCore::IntRect& dirtyRect);
+    PageOverlayController* controller() const;
+
+    void setPage(Page*);
+    void setNeedsDisplay(const IntRect& dirtyRect);
     void setNeedsDisplay();
 
-    void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
-    bool mouseEvent(const WebMouseEvent&);
-    void didScrollFrame(WebCore::Frame*);
+    void drawRect(GraphicsContext&, const IntRect& dirtyRect);
+    bool mouseEvent(const PlatformMouseEvent&);
+    void didScrollFrame(Frame&);
 
-    WKTypeRef copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
-    WKArrayRef copyAccessibilityAttributeNames(bool parameterizedNames);
+    bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value);
+    bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value);
+    Vector<String> copyAccessibilityAttributeNames(bool parameterizedNames);
     
     void startFadeInAnimation();
     void startFadeOutAnimation();
@@ -88,32 +92,32 @@ public:
 
     void clear();
 
-    Client* client() const { return m_client; }
+    Client& client() const { return m_client; }
 
     enum class FadeMode { DoNotFade, Fade };
 
     OverlayType overlayType() { return m_overlayType; }
 
-    WebCore::IntRect bounds() const;
-    WebCore::IntRect frame() const;
-    void setFrame(WebCore::IntRect);
+    IntRect bounds() const;
+    IntRect frame() const;
+    void setFrame(IntRect);
 
-    WebCore::RGBA32 backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(WebCore::RGBA32);
-
-    WebCore::GraphicsLayer* layer();
+    RGBA32 backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(RGBA32);
     
-protected:
-    explicit PageOverlay(Client*, OverlayType);
+    // FIXME: PageOverlay should own its layer, instead of PageOverlayController.
+    GraphicsLayer& layer();
 
 private:
+    explicit PageOverlay(Client&, OverlayType);
+
     void startFadeAnimation();
-    void fadeAnimationTimerFired();
+    void fadeAnimationTimerFired(Timer<PageOverlay>&);
 
-    Client* m_client;
-    WebPage* m_webPage;
+    Client& m_client;
+    Page* m_page;
 
-    RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
+    Timer<PageOverlay> m_fadeAnimationTimer;
     double m_fadeAnimationStartTime;
     double m_fadeAnimationDuration;
 
@@ -127,9 +131,9 @@ private:
     float m_fractionFadedIn;
 
     OverlayType m_overlayType;
-    WebCore::IntRect m_overrideFrame;
+    IntRect m_overrideFrame;
 
-    WebCore::RGBA32 m_backgroundColor;
+    RGBA32 m_backgroundColor;
 };
 
 } // namespace WebKit

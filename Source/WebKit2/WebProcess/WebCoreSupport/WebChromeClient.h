@@ -211,10 +211,10 @@ private:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() const override;
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
     virtual void setNeedsOneShotDrawingSynchronization() override;
     virtual void scheduleCompositingLayerFlush() override;
     virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
-    virtual WebCore::GraphicsLayer* documentOverlayLayerForFrame(WebCore::Frame&) override;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;

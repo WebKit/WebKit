@@ -1,5 +1,160 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174231. <rdar://problem/18640833>
+
+    2014-10-02  Tim Horton  <timothy_horton@apple.com>
+    
+            Move PageOverlay[Controller] to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=137164
+            <rdar://problem/18508258>
+    
+            Reviewed by Anders Carlsson.
+    
+            * CMakeLists.txt:
+            * WebCore.vcxproj/WebCore.vcxproj:
+            * WebCore.vcxproj/WebCore.vcxproj.filters:
+            * WebCore.xcodeproj/project.pbxproj:
+            Make the appropriate build system changes.
+    
+            * WebCore.exp.in:
+            Export the new PageOverlay[Controller] symbols from WebCore.
+    
+            * loader/EmptyClients.h:
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::documentOverlayLayerForFrame): Deleted.
+            Add attachViewOverlayGraphicsLayer, which allows PageOverlayController
+            to push view-relative page overlay root layers down to WebKit to be
+            installed just inside the view.
+    
+            Remove documentOverlayLayerForFrame because RenderLayerCompositor can now
+            talk directly to PageOverlayController.
+    
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::handleMousePressEvent):
+            (WebCore::EventHandler::mouseMoved):
+            (WebCore::EventHandler::handleMouseReleaseEvent):
+            When the mouse is moved, pressed, or released, give PageOverlayController
+            the first shot at handling the event.
+    
+            * page/FrameView.cpp:
+            (WebCore::FrameView::setFrameRect):
+            Inform PageOverlayController that the main FrameView's size changed,
+            so it can update the size of view-relative overlays.
+    
+            (WebCore::FrameView::setContentsSize):
+            Inform PageOverlayController that the main FrameView's contents size changed,
+            so it can update the size of document-relative overlays.
+    
+            (WebCore::FrameView::setFixedVisibleContentRect):
+            (WebCore::FrameView::didChangeScrollOffset):
+            (WebCore::FrameView::scrollTo):
+            (WebCore::FrameView::wheelEvent):
+            Inform PageOverlayController that something scrolled.
+    
+            (WebCore::FrameView::setExposedRect):
+            Inform PageOverlayController that the exposed rect changed, so it can push
+            the new exposed rect down to the overlays.
+    
+            * page/FrameView.h:
+            Add didChangeScrollOffset.
+    
+            * page/MainFrame.cpp:
+            (WebCore::MainFrame::MainFrame):
+            * page/MainFrame.h:
+            Keep one PageOverlayController per MainFrame.
+    
+            * page/Page.cpp:
+            (WebCore::Page::setDeviceScaleFactor):
+            Inform PageOverlayController that the device scale factor changed.
+    
+            (WebCore::Page::setSessionID):
+            Remove a blank line.
+    
+            * page/PageOverlay.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp.
+            Move PageOverlay from WebKit2 to WebCore.
+            A few overarching changes that I won't detail in each place:
+                - references instead of pointers in many places
+                - WebCore types instead of WebKit2 types everywhere
+    
+            (WebCore::PageOverlay::bounds):
+            It is possible to install an overlay before we have a FrameView.
+            We will eventually get a view/contents size changed notification and try again.
+    
+            (WebCore::PageOverlay::copyAccessibilityAttributeStringValueForPoint):
+            (WebCore::PageOverlay::copyAccessibilityAttributeBoolValueForPoint):
+            (WebCore::PageOverlay::copyAccessibilityAttributeNames):
+            Split copyAccessibilityAttribute into "StringValueForPoint" and "BoolValueForPoint"
+            variants, because we don't have anything like WKTypeRef here.
+    
+            * page/PageOverlay.h: Renamed from Source/WebKit2/WebProcess/WebPage/PageOverlay.h.
+            Make PageOverlay a normal RefCounted object instead of a WebKit2 API object.
+            Leave a comment noting that we should move the PageOverlay's GraphicsLayer
+            to PageOverlay instead of a map on PageOverlayController.
+    
+            * page/PageOverlayController.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/PageOverlayController.cpp.
+            Move PageOverlayController from WebKit2 to WebCore.
+            A few overarching changes that I won't detail in each place:
+                - references instead of pointers in many places
+                - WebCore types instead of WebKit2 types everywhere
+    
+            Leave a FIXME that didChangeSettings is not currently called when settings change.
+            This is not a problem for normal use of overlays, only for dynamically changing
+            layer border/repaint counter settings.
+    
+            (WebCore::PageOverlayController::PageOverlayController):
+            (WebCore::PageOverlayController::createRootLayersIfNeeded):
+            We will now lazily initialize the root layers when we first try to use them,
+            because otherwise we try to create them before the ChromeClient's GraphicsLayerFactory
+            is hooked up, in some cases, and that can cause us to create the wrong kind of GraphicsLayers.
+    
+            (WebCore::PageOverlayController::installPageOverlay):
+            Enter compositing mode when installing a PageOverlay.
+            Avoid pushing the Page to the PageOverlay until after we've set up
+            its root layer, so that the installation process can make use of that layer;
+            clients may, for example, expect to be able to setNeedsDisplay() in the
+            didMoveToPage callback.
+            Avoid updateOverlayGeometry until the layer is created and we've pushed
+            the Page down, so that e.g. bounds() will use the right Page.
+    
+            (WebCore::PageOverlayController::didChangeSettings):
+            Leave a FIXME about a future improvement to didChangeSettings.
+    
+            (WebCore::PageOverlayController::deviceScaleFactor):
+            (WebCore::PageOverlayController::notifyFlushRequired):
+            Null-check Page; these can get called when tearing down the Frame.
+    
+            * page/PageOverlayController.h: Renamed from Source/WebKit2/WebProcess/WebPage/PageOverlayController.h.
+    
+            * platform/graphics/GraphicsLayerClient.h:
+            Add wtf/Forward.h, because GraphicsLayerClient.h uses String.
+    
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::scrollTo):
+            Inform PageOverlayController that something scrolled.
+    
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers):
+            Make hasAnyAdditionalCompositedLayers return true if there are any page overlays,
+            because we need to avoid falling out of compositing mode if we still have
+            page overlays.
+    
+            (WebCore::RenderLayerCompositor::updateCompositingLayers):
+            Enter compositing mode if we have page overlays.
+    
+            (WebCore::RenderLayerCompositor::appendOverlayLayers): Deleted.
+            (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+            Rename appendOverlayLayers -> appendDocumentOverlayLayers.
+    
+            (WebCore::RenderLayerCompositor::attachRootLayer):
+            (WebCore::RenderLayerCompositor::detachRootLayer):
+            Attach/detach the view overlay root layer when attaching/detaching the
+            normal compositing root layer.
+    
+            (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+            * rendering/RenderLayerCompositor.h:
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174541. <rdar://problem/18753175>
 
     2014-10-09  Roger Fong  <roger_fong@apple.com>

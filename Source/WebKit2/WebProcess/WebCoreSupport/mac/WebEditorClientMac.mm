@@ -44,6 +44,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebCoreNSURLExtras.h>

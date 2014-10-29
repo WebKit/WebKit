@@ -361,7 +361,7 @@ private:
     bool layerHas3DContent(const RenderLayer&) const;
     bool isRunningAcceleratedTransformAnimation(RenderLayerModelObject&) const;
 
-    void appendOverlayLayers(Vector<GraphicsLayer*>&);
+    void appendDocumentOverlayLayers(Vector<GraphicsLayer*>&);
     bool hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const;
 
     void ensureRootLayer();

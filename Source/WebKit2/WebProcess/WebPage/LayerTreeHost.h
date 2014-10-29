@@ -47,7 +47,6 @@ class GraphicsLayerFactory;
 
 namespace WebKit {
 
-class PageOverlay;
 class UpdateInfo;
 class WebPage;
 
@@ -71,11 +70,6 @@ public:
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
     virtual void pageBackgroundTransparencyChanged() = 0;
-
-    virtual void didInstallPageOverlay(PageOverlay*) { }
-    virtual void didUninstallPageOverlay(PageOverlay*) { }
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) { }
-    virtual void setPageOverlayOpacity(PageOverlay*, float) { }
 
     virtual void pauseRendering() { }
     virtual void resumeRendering() { }

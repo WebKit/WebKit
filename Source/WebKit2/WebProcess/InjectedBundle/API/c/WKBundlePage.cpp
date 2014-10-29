@@ -47,12 +47,15 @@
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
 #include "WebPage.h"
+#include "WebPageOverlay.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlay.h>
+#include <WebCore/PageOverlayController.h>
 #include <WebCore/URL.h>
 #include <wtf/StdLibExtras.h>
 
@@ -354,22 +357,22 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
 
 void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef));
+    toImpl(pageRef)->mainFrame()->pageOverlayController().installPageOverlay(toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef));
+    toImpl(pageRef)->mainFrame()->pageOverlayController().uninstallPageOverlay(toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef), PageOverlay::FadeMode::Fade);
+    toImpl(pageRef)->mainFrame()->pageOverlayController().installPageOverlay(toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), PageOverlay::FadeMode::Fade);
+    toImpl(pageRef)->mainFrame()->pageOverlayController().uninstallPageOverlay(toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)

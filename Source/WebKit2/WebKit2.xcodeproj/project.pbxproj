@@ -307,8 +307,6 @@
 		1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */; };
 		1A90C1F41264FD71003E44D4 /* FindController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1F21264FD71003E44D4 /* FindController.h */; };
 		1A90C1F51264FD71003E44D4 /* FindController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C1F31264FD71003E44D4 /* FindController.cpp */; };
-		1A90C23712650717003E44D4 /* PageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C23512650717003E44D4 /* PageOverlay.h */; };
-		1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C23612650717003E44D4 /* PageOverlay.cpp */; };
 		1A910071126675C4001842F5 /* FindIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A91006F126675C3001842F5 /* FindIndicator.h */; };
 		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
@@ -566,8 +564,6 @@
 		29D55DF2161BF9F10031A2E3 /* WebPageGroupProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D55DF0161BF9F10031A2E3 /* WebPageGroupProxyMessages.h */; };
 		2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D125C5C1857EA05003BA3CB /* ViewGestureController.h */; };
 		2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */; };
-		2D140EAF18F37BE0005E75A0 /* PageOverlayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D140EAD18F37BE0005E75A0 /* PageOverlayController.cpp */; };
-		2D140EB018F37BE0005E75A0 /* PageOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D140EAE18F37BE0005E75A0 /* PageOverlayController.h */; };
 		2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */; };
 		2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */; };
 		2D28F3E41885CCC1004B9EAE /* WebChromeClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */; };
@@ -586,6 +582,8 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
+		2D5C9D0519C81D8F00B3C5C1 /* WebPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */; };
+		2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */; };
 		2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */; };
 		2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */; };
 		2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2287,8 +2285,6 @@
 		1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFindOptions.h; sourceTree = "<group>"; };
 		1A90C1F21264FD71003E44D4 /* FindController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindController.h; sourceTree = "<group>"; };
 		1A90C1F31264FD71003E44D4 /* FindController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindController.cpp; sourceTree = "<group>"; };
-		1A90C23512650717003E44D4 /* PageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlay.h; sourceTree = "<group>"; };
-		1A90C23612650717003E44D4 /* PageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlay.cpp; sourceTree = "<group>"; };
 		1A91006F126675C3001842F5 /* FindIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicator.h; sourceTree = "<group>"; };
 		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
 		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
@@ -2571,8 +2567,6 @@
 		29D55DF0161BF9F10031A2E3 /* WebPageGroupProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageGroupProxyMessages.h; sourceTree = "<group>"; };
 		2D125C5C1857EA05003BA3CB /* ViewGestureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureController.h; sourceTree = "<group>"; };
 		2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewGestureControllerMac.mm; sourceTree = "<group>"; };
-		2D140EAD18F37BE0005E75A0 /* PageOverlayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlayController.cpp; sourceTree = "<group>"; };
-		2D140EAE18F37BE0005E75A0 /* PageOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlayController.h; sourceTree = "<group>"; };
 		2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewGestureController.messages.in; sourceTree = "<group>"; };
 		2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureControllerMessages.h; sourceTree = "<group>"; };
@@ -2597,6 +2591,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
+		2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageOverlay.cpp; sourceTree = "<group>"; };
+		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
 		2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFPageNumberIndicator.h; path = ios/WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
 		2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFPageNumberIndicator.mm; path = ios/WKPDFPageNumberIndicator.mm; sourceTree = "<group>"; };
 		2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKThumbnailView.h; sourceTree = "<group>"; };
@@ -5749,10 +5745,8 @@
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
-				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
-				1A90C23512650717003E44D4 /* PageOverlay.h */,
-				2D140EAD18F37BE0005E75A0 /* PageOverlayController.cpp */,
-				2D140EAE18F37BE0005E75A0 /* PageOverlayController.h */,
+				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
+				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
 				5192D5711961FA2F00CD19AA /* ServicesOverlayController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
@@ -7092,6 +7086,7 @@
 				7C85FD8019341665000177C4 /* WebPreferencesKeys.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
+				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
@@ -7200,7 +7195,6 @@
 				1AE52F9219201DA700A1FA37 /* APIContextConfiguration.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
-				2D140EB018F37BE0005E75A0 /* PageOverlayController.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
@@ -7326,7 +7320,6 @@
 				1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
-				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
 				51FCB18917BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h in Headers */,
@@ -9000,7 +8993,6 @@
 				51E351F5180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
-				1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */,
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
 				2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */,
@@ -9201,7 +9193,6 @@
 				A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */,
 				C0337DAE127A24FE008FF4F4 /* WebEvent.cpp in Sources */,
 				BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */,
-				2D140EAF18F37BE0005E75A0 /* PageOverlayController.cpp in Sources */,
 				BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */,
 				A118A9EE1907AD6F00F7C92B /* QuickLookDocumentData.cpp in Sources */,
 				1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */,
@@ -9286,6 +9277,7 @@
 				C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */,
 				C59C4A5818B81174007BDCB6 /* AssistedNodeInformation.cpp in Sources */,
 				BC7B6207129A0A6700D174A4 /* WebPageGroup.cpp in Sources */,
+				2D5C9D0519C81D8F00B3C5C1 /* WebPageOverlay.cpp in Sources */,
 				BC7B625312A43C9600D174A4 /* WebPageGroupData.cpp in Sources */,
 				BC7B621612A4219A00D174A4 /* WebPageGroupProxy.cpp in Sources */,
 				29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */,

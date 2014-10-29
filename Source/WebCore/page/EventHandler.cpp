@@ -66,6 +66,7 @@
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
+#include "PageOverlayController.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -1530,6 +1531,9 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         return true;
     }
 
+    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(mouseEvent))
+        return true;
+
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
     if (defaultPrevented)
@@ -1726,6 +1730,9 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     RefPtr<FrameView> protector(m_frame.view());
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
+    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(event))
+        return true;
+
     HitTestResult hoveredNode = HitTestResult(LayoutPoint());
     bool result = handleMouseMoveEvent(event, &hoveredNode);
 
@@ -1905,6 +1912,9 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     RefPtr<FrameView> protector(m_frame.view());
 
     m_frame.selection().setCaretBlinkingSuspended(false);
+
+    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(mouseEvent))
+        return true;
 
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);

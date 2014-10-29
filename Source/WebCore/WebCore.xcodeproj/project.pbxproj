@@ -1092,6 +1092,10 @@
 		2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */; };
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; };
+		2D5C9CFF19C7B52E00B3C5C1 /* PageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C9CFB19C7B52E00B3C5C1 /* PageOverlay.cpp */; };
+		2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D5C9D0119C7B52E00B3C5C1 /* PageOverlayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */; };
+		2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */; };
 		2D70BA1318074DDF0001908A /* PlatformCALayerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D70BA1218074DDF0001908A /* PlatformCALayerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D70BA1418074F850001908A /* PlatformCALayer.cpp */; };
@@ -8096,6 +8100,10 @@
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
 		2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityPolicyViolationEvent.h; sourceTree = "<group>"; };
 		2D5BC42616F882BE007048D0 /* SecurityPolicyViolationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecurityPolicyViolationEvent.idl; sourceTree = "<group>"; };
+		2D5C9CFB19C7B52E00B3C5C1 /* PageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlay.cpp; sourceTree = "<group>"; };
+		2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlay.h; sourceTree = "<group>"; };
+		2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlayController.cpp; sourceTree = "<group>"; };
+		2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlayController.h; sourceTree = "<group>"; };
 		2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentImageMac.mm; sourceTree = "<group>"; };
 		2D70BA1218074DDF0001908A /* PlatformCALayerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerMac.h; path = ca/mac/PlatformCALayerMac.h; sourceTree = "<group>"; };
 		2D70BA1418074F850001908A /* PlatformCALayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformCALayer.cpp; path = ca/PlatformCALayer.cpp; sourceTree = "<group>"; };
@@ -16662,6 +16670,10 @@
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
+				2D5C9CFB19C7B52E00B3C5C1 /* PageOverlay.cpp */,
+				2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */,
+				2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */,
+				2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
 				A7197F2517568AE5007B9442 /* PageThrottler.cpp */,
@@ -23742,6 +23754,7 @@
 				97BC6A211505F081001B74AC /* Database.h in Headers */,
 				97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */,
 				FE16CFD4169D1DED00D3A0C7 /* DatabaseBackend.h in Headers */,
+				2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */,
 				97BC69DB1505F076001B74AC /* DatabaseBackendBase.h in Headers */,
 				FE6F6AB0169E057500FC30A2 /* DatabaseBackendContext.h in Headers */,
 				FE16CFD6169D1DED00D3A0C7 /* DatabaseBackendSync.h in Headers */,
@@ -25719,6 +25732,7 @@
 				439046EC12DA25E800AF80A9 /* RenderMathMLToken.h in Headers */,
 				439046EA12DA25E800AF80A2 /* RenderMathMLUnderOver.h in Headers */,
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
+				2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */,
 				DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */,
 				41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
@@ -28112,6 +28126,7 @@
 				A5840E1C187B74D500843B10 /* InspectorInstrumentationCookie.cpp in Sources */,
 				71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */,
 				504AACCD1834455900E3D9BC /* InspectorNodeFinder.cpp in Sources */,
+				2D5C9D0119C7B52E00B3C5C1 /* PageOverlayController.cpp in Sources */,
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
 				99CC0B6618BE9F15006CEBCC /* InspectorReplayAgent.cpp in Sources */,
@@ -28180,6 +28195,7 @@
 				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
 				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
 				5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */,
+				2D5C9CFF19C7B52E00B3C5C1 /* PageOverlay.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSDataTransferCustom.cpp in Sources */,
 				51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */,
