@@ -32,6 +32,7 @@
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size shouldAutoActivateIfNeeded:(BOOL)shouldAutoActivateIfNeeded;
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size;
 + (void)getTraits:(Vector<unsigned>&)traitsMasks inFamily:(NSString *)desiredFamily;
++ (void)invalidate;
 
 // This older version of the interface is relied upon by some clients. WebCore doesn't use it.
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size;
