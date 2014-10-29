@@ -1,5 +1,67 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175178
+
+    2014-10-24  Tim Horton  <timothy_horton@apple.com>
+
+            [Mac][WebKit2] Move action menu code into its own file
+            https://bugs.webkit.org/show_bug.cgi?id=138034
+            <rdar://problem/18758758>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            Make a WKActionMenuController if needed.
+
+            (-[WKView prepareForMenu:withEvent:]):
+            (-[WKView willOpenMenu:withEvent:]):
+            (-[WKView didCloseMenu:withEvent:]):
+            (-[WKView _didPerformActionMenuHitTest:]):
+            Forward these to WKActionMenuController.
+
+            (-[WKView _openURLFromActionMenu:]): Deleted.
+            (-[WKView _addToReadingListFromActionMenu:]): Deleted.
+            (-[WKView _quickLookURLFromActionMenu:]): Deleted.
+            (-[WKView _createActionMenuItemForTag:]): Deleted.
+            (webKitBundleImageNamed): Deleted.
+            (-[WKView _copyImage:]): Deleted.
+            (-[WKView _saveImageToDownloads:]): Deleted.
+            (temporaryPhotosDirectoryPath): Deleted.
+            (pathToPhotoOnDisk): Deleted.
+            (-[WKView _addImageToPhotos:]): Deleted.
+            (-[WKView _defaultMenuItemsForImage]): Deleted.
+            (-[WKView _defaultMenuItems]): Deleted.
+            (-[WKView _updateActionMenu]): Deleted.
+            Moved to WKActionMenuController.
+
+            * UIProcess/mac/WKActionMenuController.h: Added.
+            * UIProcess/mac/WKActionMenuController.mm: Added.
+            (-[WKActionMenuController initWithPage:view:]):
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (-[WKActionMenuController didPerformActionMenuHitTest:]):
+            (-[WKActionMenuController _defaultMenuItemsForLink]):
+            (-[WKActionMenuController _openURLFromActionMenu:]):
+            (-[WKActionMenuController _addToReadingListFromActionMenu:]):
+            (-[WKActionMenuController _quickLookURLFromActionMenu:]):
+            (-[WKActionMenuController _defaultMenuItemsForImage]):
+            (-[WKActionMenuController _copyImage:]):
+            (-[WKActionMenuController _saveImageToDownloads:]):
+            (temporaryPhotosDirectoryPath):
+            (pathToPhotoOnDisk):
+            (-[WKActionMenuController _addImageToPhotos:]):
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            (webKitBundleImageNamed):
+            (imageForResource:name::if):
+            (-[WKActionMenuController _updateActionMenuItems]):
+            Moved from WKView.
+
+            * WebKit2.xcodeproj/project.pbxproj:
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175147
 
     2014-10-23  Tim Horton  <timothy_horton@apple.com>
