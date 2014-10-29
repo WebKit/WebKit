@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "ActionMenuHitTestResult.h"
-#import "WKActionMenuItemTypes.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WebContext.h"
@@ -71,14 +70,7 @@ enum class ActionMenuState {
 - (void)_updateActionMenuItems;
 @end
 
-@implementation WKActionMenuController {
-    WebPageProxy *_page;
-    WKView *_wkView;
-
-    ActionMenuState _state;
-    ActionMenuHitTestResult _hitTestResult;
-    RetainPtr<NSSharingServicePicker> _sharingServicePicker;
-}
+@implementation WKActionMenuController
 
 - (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView
 {

@@ -1,5 +1,16 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175180
+
+    2014-10-24  Timothy Horton  <timothy_horton@apple.com>
+
+            Blindly try to fix the 32-bit build.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175179
 
     2014-10-24  Tim Horton  <timothy_horton@apple.com>
