@@ -1,5 +1,27 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174791. <rdar://problem/18753175>
+
+    2014-10-16  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement selection services menu for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=137582
+            <rdar://problem/18604241>
+    
+            Reviewed by Brady Eidson.
+    
+            * WebCore.exp.in:
+            * editing/Editor.h:
+            * editing/ios/EditorIOS.mm:
+            (WebCore::Editor::replaceSelectionWithAttributedString):
+            * editing/mac/EditorMac.mm:
+            (WebCore::Editor::replaceSelectionWithAttributedString):
+            Add replaceSelectionWithAttributedString, which replaces the selection
+            with the given attributed string (converting to plain text if the destination
+            is not richly editable).
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174524. <rdar://problem/18640868>
 
     2014-10-09  Tim Horton  <timothy_horton@apple.com>

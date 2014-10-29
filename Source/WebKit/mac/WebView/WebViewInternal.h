@@ -56,6 +56,8 @@ class RenderBox;
 class Node;
 struct DictationAlternative;
 }
+
+class WebSelectionServiceController;
 #endif
 
 @class WebBasePluginPackage;
@@ -117,6 +119,10 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext;
 - (void)_removeDictationAlternatives:(uint64_t)dictationContext;
 - (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext;
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+- (WebSelectionServiceController&)_selectionServiceController;
 #endif
 
 @end

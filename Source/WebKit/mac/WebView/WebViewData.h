@@ -82,6 +82,7 @@ extern int pluginDatabaseClientCount;
 
 class LayerFlushController;
 class WebViewGroup;
+class WebSelectionServiceController;
 
 class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
 public:
@@ -268,6 +269,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     id<WebUserMediaClient> m_userMediaClient;
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+    std::unique_ptr<WebSelectionServiceController> _selectionServiceController;
 #endif
 
     RefPtr<WebCore::HistoryItem> _globalHistoryItem;

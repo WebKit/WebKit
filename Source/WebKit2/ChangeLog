@@ -1,5 +1,25 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174791. <rdar://problem/18753175>
+
+    2014-10-16  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement selection services menu for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=137582
+            <rdar://problem/18604241>
+    
+            Reviewed by Brady Eidson.
+    
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+            Add a note that we should transition to using replaceSelectionWithAttributedString.
+    
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::handleSelectionServiceClick):
+            Allow editor services in editable-but-not-rich-text areas, just like in WebKit1.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174524. <rdar://problem/18640868>
 
     2014-10-09  Tim Horton  <timothy_horton@apple.com>

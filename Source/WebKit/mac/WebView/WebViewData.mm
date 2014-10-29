@@ -31,6 +31,7 @@
 
 #import "WebKitLogging.h"
 #import "WebPreferenceKeysPrivate.h"
+#import "WebSelectionServiceController.h"
 #import "WebViewGroup.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/WebCoreObjCExtras.h>
