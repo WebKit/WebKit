@@ -9,24 +9,17 @@ layer at (0,0) size 800x585
       RenderBlock {PRE} at (0,33) size 784x60
         RenderText {#text} at (0,0) size 232x60
           text run at (0,0) width 192: ".one {white-space: pre;}"
-          text run at (192,0) width 0: " "
           text run at (0,15) width 216: ".two {white-space: nowrap;}"
-          text run at (216,15) width 0: " "
           text run at (0,30) width 232: ".three {white-space: normal;}"
-          text run at (232,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,106) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,124) size 784x85
         RenderText {#text} at (0,0) size 569x85
           text run at (0,0) width 0: " "
           text run at (0,17) width 569: "This sentence should     show extra space  where there    would ordinarily         not be any."
-          text run at (569,17) width 0: " "
           text run at (0,34) width 296: "     There should also be preservation of returns"
-          text run at (296,34) width 0: " "
           text run at (0,51) width 97: "as this sentence"
-          text run at (97,51) width 0: " "
           text run at (0,68) width 184: "     very clearly demonstrates."
-          text run at (184,68) width 0: " "
       RenderBlock {P} at (0,225) size 784x17
         RenderText {#text} at (0,0) size 891x17
           text run at (0,0) width 891: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
@@ -57,13 +50,9 @@ layer at (0,0) size 800x585
                 RenderText {#text} at (0,0) size 569x85
                   text run at (0,0) width 0: " "
                   text run at (0,17) width 569: "This sentence should     show extra space  where there    would ordinarily         not be any."
-                  text run at (569,17) width 0: " "
                   text run at (0,34) width 296: "     There should also be preservation of returns"
-                  text run at (296,34) width 0: " "
                   text run at (0,51) width 97: "as this sentence"
-                  text run at (97,51) width 0: " "
                   text run at (0,68) width 184: "     very clearly demonstrates."
-                  text run at (184,68) width 0: " "
               RenderBlock {P} at (4,105) size 891x17
                 RenderText {#text} at (0,0) size 891x17
                   text run at (0,0) width 891: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."

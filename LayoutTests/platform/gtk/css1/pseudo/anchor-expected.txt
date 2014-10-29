@@ -9,15 +9,10 @@ layer at (0,0) size 785x659
       RenderBlock {PRE} at (0,33) size 769x90
         RenderText {#text} at (0,0) size 200x90
           text run at (0,0) width 136: "A {color: green;}"
-          text run at (136,0) width 0: " "
           text run at (0,15) width 184: "A:link {color: purple;}"
-          text run at (184,15) width 0: " "
           text run at (0,30) width 192: "A:visited {color: lime;}"
-          text run at (192,30) width 0: " "
           text run at (0,45) width 200: "A:active {color: maroon;}"
-          text run at (200,45) width 0: " "
           text run at (0,60) width 176: "#one {color: #006600;}"
-          text run at (176,60) width 0: " "
           text run at (0,75) width 0: " "
       RenderBlock {HR} at (0,136) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,154) size 769x17

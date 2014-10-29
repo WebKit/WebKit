@@ -12,11 +12,8 @@ layer at (0,0) size 785x689
       RenderBlock {PRE} at (0,33) size 769x60
         RenderText {#text} at (0,0) size 312x60
           text run at (0,0) width 248: "P:first-letter {color: maroon;}"
-          text run at (248,0) width 0: " "
           text run at (0,15) width 288: ".two:first-letter {font-size: 200%;}"
-          text run at (288,15) width 0: " "
           text run at (0,30) width 312: "P.three:first-letter {font-size: 350%;}"
-          text run at (312,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,106) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,124) size 769x51

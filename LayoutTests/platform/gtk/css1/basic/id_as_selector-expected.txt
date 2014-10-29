@@ -9,19 +9,12 @@ layer at (0,0) size 785x619
       RenderBlock {PRE} at (0,33) size 769x120
         RenderText {#text} at (0,0) size 272x120
           text run at (0,0) width 160: "#one {color: green;}"
-          text run at (160,0) width 0: " "
           text run at (0,15) width 152: "#a1 {color: green;}"
-          text run at (152,15) width 0: " "
           text run at (0,30) width 224: "P#two, P#two2 {color: blue;}"
-          text run at (224,30) width 0: " "
           text run at (0,45) width 272: "P#three, P#three2 {color: purple;}"
-          text run at (272,45) width 0: " "
           text run at (0,60) width 168: "#four {color: green;}"
-          text run at (168,60) width 0: " "
           text run at (0,75) width 152: "#a2 {color: green;}"
-          text run at (152,75) width 0: " "
           text run at (0,90) width 240: "P#five, P#five2 {color: blue;}"
-          text run at (240,90) width 0: " "
           text run at (0,105) width 240: "P#six, P#six2 {color: purple;}"
       RenderBlock {HR} at (0,166) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,184) size 769x17 [color=#008000]
@@ -41,11 +34,9 @@ layer at (0,0) size 785x619
       RenderBlock {PRE} at (0,284) size 769x15
         RenderText {#text} at (0,0) size 392x15
           text run at (0,0) width 392: "This sentence should NOT be blue [PRE ID=\"two2\"]."
-          text run at (392,0) width 0: " "
       RenderBlock {PRE} at (0,312) size 769x15
         RenderText {#text} at (0,0) size 472x15
           text run at (0,0) width 472: "This sentence should be black, not purple [PRE ID=\"three\"]."
-          text run at (472,0) width 0: " "
       RenderBlock {UL} at (0,343) size 769x17
         RenderListItem {LI} at (40,0) size 729x17
           RenderListMarker at (-17,0) size 7x17: bullet
@@ -80,11 +71,9 @@ layer at (0,0) size 785x619
               RenderBlock {PRE} at (4,104) size 400x15
                 RenderText {#text} at (0,0) size 400x15
                   text run at (0,0) width 400: "This sentence should NOT be blue [PRE ID=\"five2\"]."
-                  text run at (400,0) width 0: " "
               RenderBlock {PRE} at (4,132) size 400x15
                 RenderText {#text} at (0,0) size 360x15
                   text run at (0,0) width 360: "This sentence should be black [PRE ID=\"six\"]."
-                  text run at (360,0) width 0: " "
               RenderBlock {UL} at (4,163) size 400x17
                 RenderListItem {LI} at (40,0) size 360x17
                   RenderListMarker at (-17,0) size 7x17: bullet

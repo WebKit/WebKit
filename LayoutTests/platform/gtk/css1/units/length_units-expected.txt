@@ -9,27 +9,16 @@ layer at (0,0) size 785x1572
       RenderBlock {PRE} at (0,33) size 769x165
         RenderText {#text} at (0,0) size 624x165
           text run at (0,0) width 184: ".zero {margin-left: 0;}"
-          text run at (184,0) width 0: " "
           text run at (0,15) width 192: ".one {margin-left: 3em;}"
-          text run at (192,15) width 0: " "
           text run at (0,30) width 192: ".two {margin-left: 3ex;}"
-          text run at (192,30) width 0: " "
           text run at (0,45) width 216: ".three {margin-left: 36px;}"
-          text run at (216,45) width 0: " "
           text run at (0,60) width 216: ".four {margin-left: 0.5in;}"
-          text run at (216,60) width 0: " "
           text run at (0,75) width 224: ".five {margin-left: 1.27cm;}"
-          text run at (224,75) width 0: " "
           text run at (0,90) width 216: ".six {margin-left: 12.7mm;}"
-          text run at (216,90) width 0: " "
           text run at (0,105) width 216: ".seven {margin-left: 36pt;}"
-          text run at (216,105) width 0: " "
           text run at (0,120) width 208: ".eight {margin-left: 3pc;}"
-          text run at (208,120) width 0: " "
           text run at (0,135) width 208: ".nine {margin-left: +3pc;}"
-          text run at (208,135) width 0: " "
           text run at (0,150) width 624: ".ten {font-size: 40px; border-left: 1ex solid purple; background-color: aqua;}"
-          text run at (624,150) width 0: " "
       RenderBlock {HR} at (0,211) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,229) size 769x34
         RenderText {#text} at (0,0) size 761x34

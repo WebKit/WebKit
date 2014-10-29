@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,33) size 784x60
         RenderText {#text} at (0,0) size 312x60
           text run at (0,0) width 176: "P {margin-left: 20px;}"
-          text run at (176,0) width 0: " "
           text run at (0,15) width 312: ".one {border-left: purple double 10px;}"
-          text run at (312,15) width 0: " "
           text run at (0,30) width 304: ".two {border-left: purple thin solid;}"
-          text run at (304,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,106) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (20,124) size 764x51 [bgcolor=#C0C0C0]
