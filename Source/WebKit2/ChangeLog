@@ -1,5 +1,20 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175238
+
+    2014-10-27  Conrad Shultz  <conrad_shultz@apple.com>
+
+            NSSharingService protocol conformance should be internal to WKActionMenuController
+            https://bugs.webkit.org/show_bug.cgi?id=138112
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            Move protocol conformance from the interface to a class extension.
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175193
 
     2014-10-24  Beth Dakin  <bdakin@apple.com>

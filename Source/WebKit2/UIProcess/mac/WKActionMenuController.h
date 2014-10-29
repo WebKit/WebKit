@@ -44,7 +44,7 @@ enum class ActionMenuState {
 
 @class WKView;
 
-@interface WKActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
+@interface WKActionMenuController : NSObject {
 @private
     WebKit::WebPageProxy *_page;
     WKView *_wkView;
