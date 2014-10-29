@@ -31,12 +31,15 @@
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WebContext.h"
+#import "WebKitSystemInterface.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
+#import <Foundation/Foundation.h>
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
+#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/SoftLinking.h>
@@ -94,29 +97,10 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    [self _updateActionMenuItems];
-
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
-}
-
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (menu != _wkView.actionMenu)
-        return;
-
-    ASSERT(_state != ActionMenuState::None);
-
-    // FIXME: We need to be able to cancel this if the menu goes away.
-    // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
-    if (_state == ActionMenuState::Pending) {
-        if (auto* connection = _page->process().connection())
-            connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
-    }
-
-    if (_state == ActionMenuState::Ready)
-        [self _updateActionMenuItems];
+    [self _updateActionMenuItems];
 }
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -297,6 +281,25 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     });
 }
 
+#pragma mark NSMenuDelegate implementation
+
+- (void)menuNeedsUpdate:(NSMenu *)menu
+{
+    if (menu != _wkView.actionMenu)
+        return;
+
+    ASSERT(_state != ActionMenuState::None);
+
+    // FIXME: We need to be able to cancel this if the menu goes away.
+    // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
+    if (_state == ActionMenuState::Pending) {
+        if (auto* connection = _page->process().connection())
+            connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
+    }
+
+    [self _updateActionMenuItems];
+}
+
 #pragma mark NSSharingServicePickerDelegate implementation
 
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
@@ -385,13 +388,28 @@ static NSImage *webKitBundleImageNamed(NSString *name)
         if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
             _type = kWKActionMenuImage;
             return [self _defaultMenuItemsForImage];
-        } if (!hitTestResult->absoluteLinkURL().isEmpty()) {
+        }
+
+        if (!hitTestResult->absoluteLinkURL().isEmpty()) {
             _type = kWKActionMenuLink;
             return [self _defaultMenuItemsForLink];
         }
+
+        if (hitTestResult->isTextNode()) {
+            if (DDActionContext *actionContext = _hitTestResult.actionContext.get()) {
+                WKSetDDActionContextIsForActionMenu(actionContext);
+                actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.actionBoundingBox toView:nil]];
+                NSArray *dataDetectorMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
+                if (dataDetectorMenuItems.count) {
+                    _type = kWKActionMenuDataDetectedItem;
+                    return dataDetectorMenuItems;
+                }
+            }
+        }
     }
 
-    return @[ ];
+    _type = kWKActionMenuNone;
+    return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
 }
 
 - (void)_updateActionMenuItems

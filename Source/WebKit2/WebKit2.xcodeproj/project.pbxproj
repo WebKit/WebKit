@@ -577,7 +577,7 @@
 		2D2ADF0916362DD500197E47 /* PDFPluginTextAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */; };
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
-		2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */; };
+		2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.mm */; };
 		2D353B1319F8305D000EEACD /* ActionMenuHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */; };
 		2D3EF4421917646300034184 /* WebMemoryPressureHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.mm */; };
 		2D3EF4431917646300034184 /* WebMemoryPressureHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */; };
@@ -2587,7 +2587,7 @@
 		2D2ADF0C16363DEC00197E47 /* PDFLayerControllerDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFLayerControllerDetails.h; path = PDF/PDFLayerControllerDetails.h; sourceTree = "<group>"; };
 		2D2ADF0D16364D8200197E47 /* PDFPluginChoiceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginChoiceAnnotation.h; path = PDF/PDFPluginChoiceAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
-		2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActionMenuHitTestResult.cpp; sourceTree = "<group>"; };
+		2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionMenuHitTestResult.mm; sourceTree = "<group>"; };
 		2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionMenuHitTestResult.h; sourceTree = "<group>"; };
 		2D3EF4401917646300034184 /* WebMemoryPressureHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebMemoryPressureHandlerIOS.mm; path = ios/WebMemoryPressureHandlerIOS.mm; sourceTree = "<group>"; };
 		2D3EF4411917646300034184 /* WebMemoryPressureHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMemoryPressureHandlerIOS.h; path = ios/WebMemoryPressureHandlerIOS.h; sourceTree = "<group>"; };
@@ -6121,7 +6121,7 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.cpp */,
+				2D353B1019F8305D000EEACD /* ActionMenuHitTestResult.mm */,
 				2D353B1119F8305D000EEACD /* ActionMenuHitTestResult.h */,
 				E179FD9B134D38060015B883 /* ArgumentCodersMac.h */,
 				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
@@ -9305,7 +9305,7 @@
 				1AE00D5C182DADE100087DD7 /* KeyedEncoder.cpp in Sources */,
 				1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */,
 				BC5744EF12638FB3006F0F12 /* WebPopupItem.cpp in Sources */,
-				2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.cpp in Sources */,
+				2D353B1219F8305D000EEACD /* ActionMenuHitTestResult.mm in Sources */,
 				0F931C1D18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm in Sources */,
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
 				1AAF08A1192681D100B6390C /* WebUserContentControllerProxy.cpp in Sources */,

@@ -1,3 +1,77 @@
+2014-08-29  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175335. rdar://problem/18709436
+
+    2014-10-29  Tim Horton  <timothy_horton@apple.com>
+
+            Implement action menus for data detected items
+            https://bugs.webkit.org/show_bug.cgi?id=138178
+            <rdar://problem/18709436>
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/API/c/WKActionMenuTypes.h:
+            Add a new type.
+
+            * Shared/WebHitTestResult.cpp:
+            (WebKit::WebHitTestResult::Data::Data):
+            (WebKit::WebHitTestResult::Data::encode):
+            (WebKit::WebHitTestResult::Data::decode):
+            * Shared/WebHitTestResult.h:
+            (WebKit::WebHitTestResult::isTextNode):
+            Determine, store, encode, and decode whether or not the hit node is a text node.
+
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm: Renamed from Source/WebKit2/Shared/mac/ActionMenuHitTestResult.cpp.
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            Make ActionMenuHitTestResult an Obj-C++ file.
+            Store, encode, and decode (securely!) a DDActionContext and FloatRect
+            representing the bounding box of the data detected item, if any.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            (-[WKView willOpenMenu:withEvent:]): Deleted.
+            Stop using willOpenMenu; we'll use NSMenuDelegate's menuNeedsUpdate: instead.
+            Hook up WKActionMenuController as our action menu's delegate.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            Call _updateActionMenuItems *after* we've adjusted _state, so that it
+            can depend on the value being correct.
+
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            (-[WKActionMenuController didPerformActionMenuHitTest:]):
+            Move menu updating to menuNeedsUpdate for more accurate timing.
+
+            (_updateActionMenuItems):
+            When building the menu, if we have a text node that is not a link,
+            and hit a data detected item, retrieve the menu from the DDActionContext.
+            If we have nothing, make sure to reset _type, and if the final hit-test
+            is still pending, build a menu with a dummy item.
+
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation): Moved to WebPageMac.
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::rangeExpandedAroundPosition):
+            Factor this out of performDictionaryLookupAtLocation.
+
+            (WebKit::WebPage::performDictionaryLookupAtLocation):
+            Make use of rangeExpandedAroundPosition.
+
+            (WebKit::scanForDataDetectedItems):
+            Expand to four lines of context around the hit point.
+            Convert that range to plain text, and feed it to DataDetectors.
+            Find the result that intersects the hit point, and make a DDActionContext
+            for it. Also, store the bounding box of the first quad of the detected
+            text, to provide to Data Detectors as a hint for UI placement.
+
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            If the hit node is a text node, call scanForDataDetectedItems and
+            store the resultant DDActionContext and bounding rect on our
+            ActionMenuHitTestResult for transfer to the UI process.
+
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r175256

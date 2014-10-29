@@ -23,11 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ActionMenuHitTestResult.h"
+#import "config.h"
+#import "ActionMenuHitTestResult.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#import "ArgumentCodersCF.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/DataDetectorsSPI.h>
 
 namespace WebKit {
 
@@ -40,6 +43,20 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
         image->createHandle(handle, SharedMemory::ReadOnly);
 
     encoder << handle;
+
+    bool hasActionContext = actionContext;
+    encoder << hasActionContext;
+    if (hasActionContext) {
+        RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+        RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+        [archiver setRequiresSecureCoding:YES];
+        [archiver encodeObject:actionContext.get() forKey:@"actionContext"];
+        [archiver finishEncoding];
+
+        IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
+    }
+
+    encoder << actionBoundingBox;
 }
 
 bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
@@ -50,6 +67,30 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
 
     if (!handle.isNull())
         actionMenuHitTestResult.image = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
+
+    bool hasActionContext;
+    if (!decoder.decode(hasActionContext))
+        return false;
+
+    if (hasActionContext) {
+        RetainPtr<CFDataRef> data;
+        if (!IPC::decode(decoder, data))
+            return false;
+
+        RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+        [unarchiver setRequiresSecureCoding:YES];
+        @try {
+            actionMenuHitTestResult.actionContext = [unarchiver decodeObjectOfClass:getDDActionContextClass() forKey:@"actionContext"];
+        } @catch (NSException *exception) {
+            LOG_ERROR("Failed to decode DDActionContext: %@", exception);
+            return false;
+        }
+        
+        [unarchiver finishDecoding];
+    }
+
+    if (!decoder.decode(actionMenuHitTestResult.actionBoundingBox))
+        return false;
 
     return true;
 }

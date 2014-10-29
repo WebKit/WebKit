@@ -3538,6 +3538,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
+        self.actionMenu.delegate = _data->_actionMenuController.get();
     }
 
     return self;
@@ -3640,11 +3641,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     [_data->_actionMenuController prepareForMenu:menu withEvent:event];
-}
-
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    [_data->_actionMenuController willOpenMenu:menu withEvent:event];
 }
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
