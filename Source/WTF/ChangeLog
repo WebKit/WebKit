@@ -1,3 +1,12 @@
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
+        Merge parts of 172749 for rdar://problem/18757166
+        Partially merged to make SPI headers work correctly on the branch
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h:
+
 2014-09-13  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173595
