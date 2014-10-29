@@ -785,6 +785,9 @@ class Port(object):
     def perf_results_directory(self):
         return self._build_path()
 
+    def python_unittest_results_directory(self):
+        return self._build_path('python-unittest-results')
+
     def default_results_directory(self):
         """Absolute path to the default place to store the test results."""
         # Results are store relative to the built products to make it easy
