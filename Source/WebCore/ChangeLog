@@ -1,3 +1,12 @@
+2014-10-29  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Add a missing symbol to fix the build after the merge of r175335. rdar://problem/18709436
+
+        Rubber-stamped by Tim Horton.
+
+        * WebCore.exp.in:
+        Add __ZN7WebCore8PositionC1EN3WTF10PassRefPtrINS_4NodeEEENS0_10AnchorTypeE symbol.
+
 2014-08-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175335. rdar://problem/18709436
