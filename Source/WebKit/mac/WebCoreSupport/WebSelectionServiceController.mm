@@ -99,7 +99,7 @@ bool WebSelectionServiceController::hasRelevantSelectionServices(bool isTextOnly
     RetainPtr<NSImage> image = adoptNS([[NSImage alloc] init]);
     NSTextAttachmentCell *cell = [[NSTextAttachmentCell alloc] initImageCell:image.get()];
     [attachment setAttachmentCell:cell];
-    RetainPtr<NSMutableAttributedString> attributedStringWithRichContent = adoptNS((NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment]);
+    RetainPtr<NSMutableAttributedString> attributedStringWithRichContent = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment];
     [attributedStringWithRichContent appendAttributedString:attributedString.get()];
 
     bool hasRichContentServices = hasCompatibleServicesForItems(@[ attributedStringWithRichContent.get() ]);
