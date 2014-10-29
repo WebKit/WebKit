@@ -1857,6 +1857,7 @@ set(WebCore_SOURCES
     loader/cache/CachedSVGDocumentReference.cpp
     loader/cache/CachedScript.cpp
     loader/cache/CachedXSLStyleSheet.cpp
+    loader/cache/CacheValidation.cpp
     loader/cache/MemoryCache.cpp
 
     loader/icon/IconController.cpp

@@ -62,6 +62,37 @@
 
 2014-10-29  Antti Koivisto  <antti@apple.com>
 
+        Factor cache validity computation functions out of CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=138156
+
+        Reviewed by Andreas Kling.
+
+        These can be used to implement cache logic on WebKit level.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CacheValidation.cpp: Added.
+        (WebCore::computeCurrentAge):
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        (WebCore::updateRedirectChainStatus):
+        (WebCore::redirectChainAllowsReuse):
+        * loader/CacheValidation.h: Added.
+        (WebCore::RedirectChainCacheStatus::RedirectChainCacheStatus):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::updateResponseHeadersAfterRevalidation):
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::isExpired):
+        (WebCore::CachedResource::freshnessLifetime):
+        (WebCore::CachedResource::willSendRequest):
+        (WebCore::CachedResource::updateResponseAfterRevalidation):
+        (WebCore::CachedResource::redirectChainAllowsReuse):
+        (WebCore::currentAge): Deleted.
+        * loader/cache/CachedResource.h:
+
+2014-10-29  Antti Koivisto  <antti@apple.com>
+
         Unreviewed, rolling out r175342.
 
         a file ended up in a wrong directory
