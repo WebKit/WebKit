@@ -112,6 +112,18 @@ enum {
     WebMenuItemTagBaseApplication = 10000
 };
 
+enum {
+    WebActionMenuItemTagNoAction = 0,
+    WebActionMenuItemTagOpenLinkInDefaultBrowser,
+    WebActionMenuItemTagPreviewLink,
+    WebActionMenuItemTagAddLinkToSafariReadingList
+};
+
+typedef enum {
+    WebActionMenuNone = 0,
+    WebActionMenuLink
+} WebActionMenuType;
+
 // Message Sources.
 extern NSString *WebConsoleMessageXMLMessageSource;
 extern NSString *WebConsoleMessageJSMessageSource;
@@ -193,6 +205,7 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
+- (NSArray *)_webView:(WebView *)sender actionMenuItemsForHitTestResult:(NSDictionary *)hitTestResult withType:(WebActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems;
 #endif
 - (BOOL)webView:(WebView *)sender didPressMissingPluginButton:(DOMElement *)element;
 /*!
@@ -268,12 +281,5 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 #endif
 
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;
-
-enum {
-    WebActionMenuItemTagNoAction = 0,
-    WebActionMenuItemTagOpenLinkInDefaultBrowser,
-    WebActionMenuItemTagPreviewLink,
-    WebActionMenuItemTagAddLinkToSafariReadingList
-};
 
 @end
