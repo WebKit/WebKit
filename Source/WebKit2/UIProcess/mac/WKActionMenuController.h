@@ -26,14 +26,26 @@
 #ifndef WKActionMenuController_h
 #define WKActionMenuController_h
 
+#import "WKActionMenuItemTypes.h"
+
 namespace WebKit {
 class WebPageProxy;
+class WKView;
 struct ActionMenuHitTestResult;
 }
 
+@class NSSharingServicePicker;
 @class WKView;
 
-@interface WKActionMenuController : NSObject
+@interface WKActionMenuController : NSObject {
+@private
+    WebPageProxy *_page;
+    WKView *_wkView;
+
+    ActionMenuState _state;
+    ActionMenuHitTestResult _hitTestResult;
+    RetainPtr<NSSharingServicePicker> _sharingServicePicker;
+}
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView;
 - (void)willDestroyView:(WKView *)view;
