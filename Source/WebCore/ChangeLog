@@ -1,3 +1,23 @@
+2014-10-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: growthShare > 0 in WebCore::RenderGrid::distributeSpaceToTracks
+        https://bugs.webkit.org/show_bug.cgi?id=137772
+
+        Reviewed by Andreas Kling.
+
+        We're hitting the ASSERTION because if the number of tracks an
+        item spans does greatly exceed the available logical space, then
+        the result of the division availableLogicalSpace/numberOfTracks is
+        truncated to 0. So the ASSERTION was theoretically right because
+        the result has to be always >0 (as the dividend > 0) but the fact
+        that the result is a LayoutUnit forces us to accept 0 as a valid
+        outcome of the operation.
+
+        Test: fast/css-grid-layout/tracks-number-greatly-exceeding-available-size-crash.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
         Crash in CachedRawResource::canReuse() when reloading http://dnd.wizards.com/dungeons-and-dragons/story

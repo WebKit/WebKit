@@ -650,8 +650,7 @@ void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<size
         if (trackGrowthPotential > 0 || infiniteGrowthPotential) {
             LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
             LayoutUnit growthShare = infiniteGrowthPotential ? availableLogicalSpaceShare : std::min(availableLogicalSpaceShare, trackGrowthPotential);
-            ASSERT(growthShare > 0);
-            // We should never shrink any grid track or else we can't guarantee we abide by our min-sizing function.
+            ASSERT_WITH_MESSAGE(growthShare >= 0, "We should never shrink any grid track or else we can't guarantee we abide by our min-sizing function. We can still have 0 as growthShare if the amount of tracks greatly exceeds the availableLogicalSpace.");
             sizingData.distributeTrackVector[i] += growthShare;
             availableLogicalSpace -= growthShare;
         }
