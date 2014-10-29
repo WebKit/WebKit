@@ -1,5 +1,15 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174541. <rdar://problem/18753175>
+
+    2014-10-09  Roger Fong  <roger_fong@apple.com>
+    
+            Build fix for Win EWS bots.
+    
+            * testing/Internals.idl: Move enum declaration to the top of the file.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174516. <rdar://problem/18640864>
 
     2014-10-09  Chris Dumez  <cdumez@apple.com>
