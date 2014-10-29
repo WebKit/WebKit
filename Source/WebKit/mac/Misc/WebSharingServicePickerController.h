@@ -26,30 +26,10 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import <wtf/RetainPtr.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
+#import <WebCore/NSSharingServiceSPI.h>
 
-@class NSSharingServicePicker;
 @class WebSharingServicePickerController;
-@protocol NSSharingServiceDelegate;
-@protocol NSSharingServicePickerDelegate;
-
-#if __has_include(<AppKit/NSSharingService_Private.h>)
-#import <AppKit/NSSharingService_Private.h>
-#else
-typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
-    NSSharingServicePickerStyleMenu = 0,
-    NSSharingServicePickerStyleRollover = 1,
-    NSSharingServicePickerStyleTextSelection = 2,
-    NSSharingServicePickerStyleDataDetector = 3
-} NS_ENUM_AVAILABLE_MAC(10_10);
-
-typedef NS_ENUM(NSInteger, NSSharingServiceType) {
-    NSSharingServiceTypeShare = 0,
-    NSSharingServiceTypeViewer = 1,
-    NSSharingServiceTypeEditor = 2
-} NS_ENUM_AVAILABLE_MAC(10_10);
-
-typedef NSUInteger NSSharingServiceMask;
-#endif
 
 namespace WebCore {
 class FloatRect;

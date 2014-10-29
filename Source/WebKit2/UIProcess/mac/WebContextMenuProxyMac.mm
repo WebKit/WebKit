@@ -40,38 +40,10 @@
 #import "WKView.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
+#import <WebCore/NSSharingServiceSPI.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
-
-#if ENABLE(SERVICE_CONTROLS)
-#import <AppKit/NSSharingService.h>
-
-#if __has_include(<AppKit/NSSharingService_Private.h>)
-#import <AppKit/NSSharingService_Private.h>
-#else
-typedef enum {
-    NSSharingServicePickerStyleMenu = 0,
-    NSSharingServicePickerStyleRollover = 1,
-    NSSharingServicePickerStyleTextSelection = 2
-} NSSharingServicePickerStyle;
-
-typedef enum {
-    NSSharingServiceTypeEditor = 2
-} NSSharingServiceType;
-
-typedef NSUInteger NSSharingServiceMask;
-#endif
-
-@interface NSSharingServicePicker (Details)
-@property NSSharingServicePickerStyle style;
-- (NSMenu *)menu;
-@end
-
-@interface NSSharingService (Private)
-@property (readonly) NSSharingServiceType type;
-@end
-
-#endif // ENABLE(SERVICE_CONTROLS)
 
 using namespace WebCore;
 

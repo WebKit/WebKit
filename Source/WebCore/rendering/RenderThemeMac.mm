@@ -44,6 +44,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
+#import "NSSharingServicePickerSPI.h"
 #import "Page.h"
 #import "PaintInfo.h"
 #import "RenderLayer.h"
@@ -87,14 +88,6 @@
 #import <AppKit/AppKitDefines_Private.h>
 #else
 #define APPKIT_PRIVATE_CLASS
-#endif
-
-#if __has_include(<AppKit/NSSharingService_Private.h>)
-#import <AppKit/NSSharingService_Private.h>
-#else
-typedef enum {
-    NSSharingServicePickerStyleRollover = 1
-} NSSharingServicePickerStyle;
 #endif
 
 #if __has_include(<AppKit/NSServicesRolloverButtonCell.h>)
