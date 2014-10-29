@@ -1,5 +1,16 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174837. <rdar://problem/18753175>
+
+    2014-10-17  Tim Horton  <timothy_horton@apple.com>
+    
+            Fix the build with the public SDK.
+    
+            * WebCoreSupport/WebSelectionServiceController.mm:
+            We should transition all this SPI to real SPI headers as soon as possible.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174791. <rdar://problem/18753175>
 
     2014-10-16  Tim Horton  <timothy_horton@apple.com>
