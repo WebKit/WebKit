@@ -490,23 +490,23 @@ EXPORTS
         symbolWithPointer(?throwSetterTypeError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z, ?throwSetterTypeError@WebCore@@YAXAEAVExecState@JSC@@PEBD1@Z)
         symbolWithPointer(?throwThisTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z, ?throwThisTypeError@WebCore@@YA_JAEAVExecState@JSC@@PEBD1@Z)
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-        symbolWithPointer(?registerCDMFactory@CDM@WebCore@@SAXP6A?AV?$unique_ptr@VCDMPrivateInterface@WebCore@@U?$default_delete@VCDMPrivateInterface@WebCore@@@std@@@std@@PAV12@@ZP6A_NABVString@WTF@@@ZP6A_N22@Z@Z,)
+        symbolWithPointer(?registerCDMFactory@CDM@WebCore@@SAXP6A?AV?$unique_ptr@VCDMPrivateInterface@WebCore@@U?$default_delete@VCDMPrivateInterface@WebCore@@@std@@@std@@PAV12@@ZP6A_NABVString@WTF@@@ZP6A_N22@Z@Z,?registerCDMFactory@CDM@WebCore@@SAXP6A?AV?$unique_ptr@VCDMPrivateInterface@WebCore@@U?$default_delete@VCDMPrivateInterface@WebCore@@@std@@@std@@PEAV12@@ZP6A_NAEBVString@WTF@@@ZP6A_N22@Z@Z)
 #endif
-        ?updateLayout@Document@WebCore@@QAEXXZ
-        ?throwArgumentMustBeEnumError@WebCore@@YA_JAAVExecState@JSC@@IPBD111@Z
-        ?makeRGB@WebCore@@YAIHHH@Z
-        ?create@PageOverlay@WebCore@@SA?AV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@AAVClient@12@W4OverlayType@12@@Z
-        ??1PageOverlay@WebCore@@UAE@XZ
-        ?controller@PageOverlay@WebCore@@QBEPAVPageOverlayController@2@XZ
-        ?setNeedsDisplay@PageOverlay@WebCore@@QAEXXZ
-        ?bounds@PageOverlay@WebCore@@QBE?AVIntRect@2@XZ
-        ??0FloatRect@WebCore@@QAE@ABVIntRect@1@@Z
-        ?setStrokeColor@GraphicsContext@WebCore@@QAEXABVColor@2@W4ColorSpace@2@@Z
-        ?save@GraphicsContext@WebCore@@QAEXXZ
-        ?restore@GraphicsContext@WebCore@@QAEXXZ
-        ?strokeRect@GraphicsContext@WebCore@@QAEXABVFloatRect@2@M@Z
-        ?layerTreeAsText@GraphicsLayer@WebCore@@QBE?AVString@WTF@@I@Z
-        ?documentOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ
-        ?viewOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ
-        ?installPageOverlay@PageOverlayController@WebCore@@QAEXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z
-        ?uninstallPageOverlay@PageOverlayController@WebCore@@QAEXPAVPageOverlay@2@W4FadeMode@32@@Z
+        symbolWithPointer(?updateLayout@Document@WebCore@@QAEXXZ, ?updateLayout@Document@WebCore@@QEAAXXZ)
+        symbolWithPointer(?throwArgumentMustBeEnumError@WebCore@@YA_JAAVExecState@JSC@@IPBD111@Z, ?throwArgumentMustBeEnumError@WebCore@@YA_JAEAVExecState@JSC@@IPEBD111@Z)
+        symbolWithPointer(?makeRGB@WebCore@@YAIHHH@Z, ?makeRGB@WebCore@@YAIHHH@Z)
+        symbolWithPointer(?create@PageOverlay@WebCore@@SA?AV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@AAVClient@12@W4OverlayType@12@@Z, ?create@PageOverlay@WebCore@@SA?AV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@AEAVClient@12@W4OverlayType@12@@Z)
+        symbolWithPointer(??1PageOverlay@WebCore@@UAE@XZ, ??1PageOverlay@WebCore@@UEAA@XZ)
+        symbolWithPointer(?controller@PageOverlay@WebCore@@QBEPAVPageOverlayController@2@XZ, ?controller@PageOverlay@WebCore@@QEBAPEAVPageOverlayController@2@XZ)
+        symbolWithPointer(?setNeedsDisplay@PageOverlay@WebCore@@QAEXXZ, ?setNeedsDisplay@PageOverlay@WebCore@@QEAAXXZ)
+        symbolWithPointer(?bounds@PageOverlay@WebCore@@QBE?AVIntRect@2@XZ, ?bounds@PageOverlay@WebCore@@QEBA?AVIntRect@2@XZ)
+        symbolWithPointer(??0FloatRect@WebCore@@QAE@ABVIntRect@1@@Z,??0FloatRect@WebCore@@QEAA@AEBVIntRect@1@@Z )
+        symbolWithPointer(?setStrokeColor@GraphicsContext@WebCore@@QAEXABVColor@2@W4ColorSpace@2@@Z, ?setStrokeColor@GraphicsContext@WebCore@@QEAAXAEBVColor@2@W4ColorSpace@2@@Z)
+        symbolWithPointer(?save@GraphicsContext@WebCore@@QAEXXZ, ?save@GraphicsContext@WebCore@@QEAAXXZ)
+        symbolWithPointer(?restore@GraphicsContext@WebCore@@QAEXXZ, ?restore@GraphicsContext@WebCore@@QEAAXXZ)
+        symbolWithPointer(?strokeRect@GraphicsContext@WebCore@@QAEXABVFloatRect@2@M@Z, ?strokeRect@GraphicsContext@WebCore@@QEAAXAEBVFloatRect@2@M@Z)
+        symbolWithPointer(?layerTreeAsText@GraphicsLayer@WebCore@@QBE?AVString@WTF@@I@Z, ?layerTreeAsText@GraphicsLayer@WebCore@@QEBA?AVString@WTF@@I@Z)
+        symbolWithPointer(?documentOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ, ?documentOverlayRootLayer@PageOverlayController@WebCore@@QEAAAEAVGraphicsLayer@2@XZ)
+        symbolWithPointer(?viewOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ, ?viewOverlayRootLayer@PageOverlayController@WebCore@@QEAAAEAVGraphicsLayer@2@XZ)
+        symbolWithPointer(?installPageOverlay@PageOverlayController@WebCore@@QAEXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z, ?installPageOverlay@PageOverlayController@WebCore@@QEAAXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z)
+        symbolWithPointer(?uninstallPageOverlay@PageOverlayController@WebCore@@QAEXPAVPageOverlay@2@W4FadeMode@32@@Z, ?uninstallPageOverlay@PageOverlayController@WebCore@@QEAAXPEAVPageOverlay@2@W4FadeMode@32@@Z)
