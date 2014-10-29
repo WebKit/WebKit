@@ -180,7 +180,6 @@ WebContext::WebContext(WebContextConfiguration configuration)
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
-    , m_canHandleHTTPSServerTrustEvaluation(true)
     , m_usesNetworkProcess(false)
 #endif
 #if USE(SOUP)
@@ -416,7 +415,6 @@ void WebContext::ensureNetworkProcess()
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = m_cacheModel;
-    parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
     parameters.diskCacheDirectory = stringByResolvingSymlinksInPath(diskCacheDirectory());
     if (!parameters.diskCacheDirectory.isEmpty())
@@ -980,19 +978,6 @@ void WebContext::setDomainRelaxationForbiddenForURLScheme(const String& urlSchem
 {
     m_schemesToSetDomainRelaxationForbiddenFor.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme));
-}
-
-void WebContext::setCanHandleHTTPSServerTrustEvaluation(bool value)
-{
-#if ENABLE(NETWORK_PROCESS)
-    m_canHandleHTTPSServerTrustEvaluation = value;
-    if (m_usesNetworkProcess && m_networkProcess) {
-        m_networkProcess->send(Messages::NetworkProcess::SetCanHandleHTTPSServerTrustEvaluation(value), 0);
-        return;
-    }
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 void WebContext::registerURLSchemeAsLocal(const String& urlScheme)

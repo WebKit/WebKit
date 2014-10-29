@@ -52,7 +52,6 @@ struct NetworkProcessCreationParameters {
 
     bool privateBrowsingEnabled;
     CacheModel cacheModel;
-    bool canHandleHTTPSServerTrustEvaluation;
 
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;

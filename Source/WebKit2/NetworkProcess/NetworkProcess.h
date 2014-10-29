@@ -73,7 +73,6 @@ public:
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
-    bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
 private:
     NetworkProcess();
@@ -116,7 +115,6 @@ private:
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
-    void setCanHandleHTTPSServerTrustEvaluation(bool);
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
 
@@ -136,7 +134,6 @@ private:
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
-    bool m_canHandleHTTPSServerTrustEvaluation;
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;

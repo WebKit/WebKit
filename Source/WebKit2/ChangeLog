@@ -1,3 +1,63 @@
+2014-10-29  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Rollout r174369. <rdar://problem/18640842>
+
+    2014-10-06  Chris Dumez  <cdumez@apple.com>
+    
+            [Mac] We are spending too much time serializing ProtectionSpace objects
+            https://bugs.webkit.org/show_bug.cgi?id=137367
+    
+            Reviewed by Dan Bernstein.
+    
+            When profiling the load of nytimes.com, I noticed that we were spending
+            a lot of CPU time serializing ProtectionSpace objects (in particular
+            the NSURLProtectionSpace platform data):
+            - 5.6% of CPU time for Network Process
+            - 2.5% of CPU time for WebProcess
+    
+            Serializing an NSURLProtectionSpace seems to be costly due to server
+            trust verification. We do this for every sub-resource load over HTTPS
+            due to the canAuthenticateAgainstProtectionSpace() callback for server
+            trust validation, from the NetworkProcess to the WebProcess and then to
+            the UIProcess.
+    
+            This patch adds a WKContextSetCanHandleHTTPSServerTrustEvaluation(bool)
+            WK2 private API that the client can call to indicate that it cannot
+            handle HTTPS server trust evaluation and that it is thus unnecessary to
+            call the canAuthenticateAgainstProtectionSpace() callback for such
+            evaluations. This reduces the amount of IPC between the process and
+            thus the number of times we have to serialize the ProtectionSpace.
+    
+            In the case of the nytimes.com load, there is no longer any
+            ProtectionSpace serialization happening as
+            canAuthenticateAgainstProtectionSpace() was only called for HTTPS
+            server trust evaluation.
+    
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::NetworkProcess):
+            (WebKit::NetworkProcess::initializeNetworkProcess):
+            (WebKit::NetworkProcess::setCanHandleHTTPSServerTrustEvaluation):
+            * NetworkProcess/NetworkProcess.h:
+            (WebKit::NetworkProcess::canHandleHTTPSServerTrustEvaluation):
+            * NetworkProcess/NetworkProcess.messages.in:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+            * Shared/Network/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * Shared/Network/NetworkProcessCreationParameters.h:
+            * UIProcess/API/C/WKContext.cpp:
+            (WKContextSetCanHandleHTTPSServerTrustEvaluation):
+            * UIProcess/API/C/WKContextPrivate.h:
+            * UIProcess/API/Cocoa/WKProcessPool.mm:
+            (-[WKProcessPool _setCanHandleHTTPSServerTrustEvaluation:]):
+            * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::WebContext):
+            (WebKit::WebContext::ensureNetworkProcess):
+            (WebKit::WebContext::setCanHandleHTTPSServerTrustEvaluation):
+            * UIProcess/WebContext.h:
+    
 2014-08-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175335. rdar://problem/18709436
