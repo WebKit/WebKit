@@ -362,7 +362,7 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 - (NSArray *)_defaultMenuItems
 {
     if (WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult()) {
-        if (!hitTestResult->absoluteImageURL().isEmpty())
+        if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image)
             return [self _defaultMenuItemsForImage];
         if (!hitTestResult->absoluteLinkURL().isEmpty())
             return [self _defaultMenuItemsForLink];

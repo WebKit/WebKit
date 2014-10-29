@@ -4798,7 +4798,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     if (Image* image = hitTestResult.image()) {
         actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
-        actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
+        if (actionMenuResult.image)
+            actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
     }
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
