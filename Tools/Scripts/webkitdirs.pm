@@ -1682,10 +1682,6 @@ sub shouldRemoveCMakeCache(@)
 {
     my ($cacheFilePath, @buildArgs) = @_;
 
-    if (!isGtk()) {
-        return 1;
-    }
-
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = File::Spec->catdir(baseProductDir(), configuration());
     my $optionsCache = File::Spec->catdir($productDir, "build-webkit-options.txt");
@@ -1759,7 +1755,7 @@ sub generateBuildSystemFromCMakeProject
     my $originalWorkingDirectory = getcwd();
     chdir($buildPath) or die;
 
-    # For GTK+ we try to be smart about when to rerun cmake, so that we can have faster incremental builds.
+    # We try to be smart about when to rerun cmake, so that we can have faster incremental builds.
     my $willUseNinja = canUseNinja();
     if (-e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
         return 0;
