@@ -240,6 +240,8 @@ Page::~Page()
     setGroupName(String());
     allPages->remove(this);
     
+    m_settings->pageDestroyed();
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->willDetachPage();
         frame->detachFromPage();
