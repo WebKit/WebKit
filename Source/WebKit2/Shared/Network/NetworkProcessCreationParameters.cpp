@@ -40,6 +40,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
 {
     encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);
+    encoder << canHandleHTTPSServerTrustEvaluation;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << cookieStorageDirectory;
@@ -74,6 +75,8 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.privateBrowsingEnabled))
         return false;
     if (!decoder.decodeEnum(result.cacheModel))
+        return false;
+    if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
     if (!decoder.decode(result.diskCacheDirectory))
         return false;
