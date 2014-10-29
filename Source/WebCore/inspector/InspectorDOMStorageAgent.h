@@ -51,11 +51,11 @@ class Storage;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
+class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
-    ~InspectorDOMStorageAgent();
+    virtual ~InspectorDOMStorageAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

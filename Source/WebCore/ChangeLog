@@ -1,3 +1,39 @@
+2014-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in inspector/
+        https://bugs.webkit.org/show_bug.cgi?id=138190
+
+        Reviewed by Andreas Kling.
+
+        Clean up virtual functions in inspector/ by:
+        - Making virtual functions final when possible
+        - Making classes final when possible
+        - Explicitly marking functions / destructors as virtual when they are
+          inherently virtual
+        - Making isXXX() virtual functions private on XXX classes to avoid
+          unnecessary type checks
+
+        No new tests, no behavior change.
+
+        * inspector/InspectorApplicationCacheAgent.h:
+        (WebCore::InspectorApplicationCacheAgent::~InspectorApplicationCacheAgent): Deleted.
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageConsoleAgent.h:
+        * inspector/WorkerInspectorController.h:
+
 2014-10-29  Andreas Kling  <akling@apple.com>
 
         Generalize dirtying of parent's line boxes when taking a renderer out of tree.

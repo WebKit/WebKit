@@ -49,11 +49,11 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
+class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
-    ~InspectorDatabaseAgent();
+    virtual ~InspectorDatabaseAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

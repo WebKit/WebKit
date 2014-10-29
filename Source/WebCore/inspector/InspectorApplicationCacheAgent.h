@@ -49,11 +49,11 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorAgentBase, public Inspector::InspectorApplicationCacheBackendDispatcherHandler {
+class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::InspectorApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
-    ~InspectorApplicationCacheAgent() { }
+    virtual ~InspectorApplicationCacheAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

@@ -93,7 +93,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public InspectorAgentBase, public Inspector::InspectorDOMBackendDispatcherHandler {
+class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::InspectorDOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -107,7 +107,7 @@ public:
     };
 
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
-    ~InspectorDOMAgent();
+    virtual ~InspectorDOMAgent();
 
     static String toErrorString(const ExceptionCode&);
 

@@ -60,7 +60,7 @@ class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerInspectorController(WorkerGlobalScope&);
-    ~WorkerInspectorController();
+    virtual ~WorkerInspectorController();
 
     void connectFrontend();
     void disconnectFrontend(Inspector::InspectorDisconnectReason);

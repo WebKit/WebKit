@@ -64,7 +64,7 @@ class ChangeRegionOversetTask;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorCSSAgent
+class InspectorCSSAgent final
     : public InspectorAgentBase
     , public InspectorDOMAgent::DOMListener
     , public Inspector::InspectorCSSBackendDispatcherHandler
@@ -90,7 +90,7 @@ public:
     };
 
     InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
-    ~InspectorCSSAgent();
+    virtual ~InspectorCSSAgent();
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 

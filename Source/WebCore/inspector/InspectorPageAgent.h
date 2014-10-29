@@ -66,7 +66,7 @@ class TextResourceDecoder;
 
 typedef String ErrorString;
 
-class InspectorPageAgent : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
+class InspectorPageAgent final : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:

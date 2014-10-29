@@ -62,7 +62,7 @@ class InspectorReplayAgent final
     WTF_MAKE_NONCOPYABLE(InspectorReplayAgent);
 public:
     InspectorReplayAgent(InstrumentingAgents*, InspectorPageAgent*);
-    ~InspectorReplayAgent();
+    virtual ~InspectorReplayAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

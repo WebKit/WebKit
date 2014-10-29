@@ -114,7 +114,7 @@ enum class TimelineRecordType {
     WebSocketDestroy
 };
 
-class InspectorTimelineAgent
+class InspectorTimelineAgent final
     : public InspectorAgentBase
     , public Inspector::InspectorTimelineBackendDispatcherHandler
     , public Inspector::ScriptDebugListener {
@@ -124,7 +124,7 @@ public:
     enum InspectorType { PageInspector, WorkerInspector };
 
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorType, InspectorClient*);
-    ~InspectorTimelineAgent();
+    virtual ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

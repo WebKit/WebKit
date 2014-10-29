@@ -47,10 +47,10 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorAgentBase, public Inspector::InspectorIndexedDBBackendDispatcherHandler {
+class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::InspectorIndexedDBBackendDispatcherHandler {
 public:
     InspectorIndexedDBAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, InspectorPageAgent*);
-    ~InspectorIndexedDBAgent();
+    virtual ~InspectorIndexedDBAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

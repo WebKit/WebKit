@@ -46,11 +46,11 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorLayerTreeAgent : public InspectorAgentBase, public Inspector::InspectorLayerTreeBackendDispatcherHandler {
+class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::InspectorLayerTreeBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorLayerTreeAgent(InstrumentingAgents*);
-    ~InspectorLayerTreeAgent();
+    virtual ~InspectorLayerTreeAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

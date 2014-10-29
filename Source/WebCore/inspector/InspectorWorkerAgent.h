@@ -48,11 +48,11 @@ class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::InspectorWorkerBackendDispatcherHandler {
+class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::InspectorWorkerBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorWorkerAgent(InstrumentingAgents*);
-    ~InspectorWorkerAgent();
+    virtual ~InspectorWorkerAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;

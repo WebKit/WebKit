@@ -257,7 +257,7 @@ private:
     Listener* m_listener;
 };
 
-class InspectorStyleSheetForInlineStyle : public InspectorStyleSheet {
+class InspectorStyleSheetForInlineStyle final : public InspectorStyleSheet {
 public:
     static PassRefPtr<InspectorStyleSheetForInlineStyle> create(InspectorPageAgent*, const String& id, PassRefPtr<Element>, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 
