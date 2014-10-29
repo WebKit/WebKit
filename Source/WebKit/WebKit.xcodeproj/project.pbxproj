@@ -161,6 +161,8 @@
 		934C11670D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */; };
 		934C4A910F01406C009372C0 /* WebNSObjectExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934C4A900F01406C009372C0 /* WebNSObjectExtras.mm */; };
 		934C4AA00F0141F7009372C0 /* WebResourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */; };
+		935D44E419F9AFF000FB5306 /* WebActionMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 935D44E219F9AFF000FB5306 /* WebActionMenuController.h */; };
+		935D44E519F9AFF000FB5306 /* WebActionMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935D44E319F9AFF000FB5306 /* WebActionMenuController.mm */; };
 		936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */; };
 		936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */; };
 		9391F275121B38BD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */; };
@@ -701,6 +703,8 @@
 		934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsViewInternal.h; sourceTree = "<group>"; };
 		934C4A900F01406C009372C0 /* WebNSObjectExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSObjectExtras.mm; sourceTree = "<group>"; };
 		934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceInternal.h; sourceTree = "<group>"; };
+		935D44E219F9AFF000FB5306 /* WebActionMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebActionMenuController.h; sourceTree = "<group>"; };
+		935D44E319F9AFF000FB5306 /* WebActionMenuController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebActionMenuController.mm; sourceTree = "<group>"; };
 		936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextCompletionController.mm; sourceTree = "<group>"; };
 		936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextCompletionController.h; sourceTree = "<group>"; };
 		9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
@@ -1290,6 +1294,8 @@
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				A10C1D79182030190036883A /* ios */,
+				935D44E219F9AFF000FB5306 /* WebActionMenuController.h */,
+				935D44E319F9AFF000FB5306 /* WebActionMenuController.mm */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
 				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
 				44BB8B131241A022001E3A22 /* WebArchiveInternal.h */,
@@ -1728,6 +1734,7 @@
 				9398104B0824BF01008DF038 /* WebDataSource.h in Headers */,
 				658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */,
 				9398104C0824BF01008DF038 /* WebDataSourcePrivate.h in Headers */,
+				935D44E419F9AFF000FB5306 /* WebActionMenuController.h in Headers */,
 				9398104E0824BF01008DF038 /* WebDefaultContextMenuDelegate.h in Headers */,
 				9398108D0824BF01008DF038 /* WebDefaultEditingDelegate.h in Headers */,
 				9398104F0824BF01008DF038 /* WebDefaultPolicyDelegate.h in Headers */,
@@ -2245,6 +2252,7 @@
 				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
 				1C68F672095B5FC100C2984E /* WebNodeHighlightView.mm in Sources */,
 				A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */,
+				935D44E519F9AFF000FB5306 /* WebActionMenuController.mm in Sources */,
 				A10C1D6C1820300E0036883A /* WebFrameIOS.mm in Sources */,
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,

@@ -269,4 +269,11 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;
 
+enum {
+    WebActionMenuItemTagNoAction = 0,
+    WebActionMenuItemTagOpenLinkInDefaultBrowser,
+    WebActionMenuItemTagPreviewLink,
+    WebActionMenuItemTagAddLinkToSafariReadingList
+};
+
 @end
