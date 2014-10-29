@@ -83,6 +83,8 @@
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		2D25396618CE85C200270222 /* WebSharingServicePickerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25396418CE85C200270222 /* WebSharingServicePickerController.h */; };
 		2D25396718CE85C200270222 /* WebSharingServicePickerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D25396518CE85C200270222 /* WebSharingServicePickerController.mm */; };
+		2DD632C219E5D1F0002E9C7B /* WebSelectionServiceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */; };
+		2DD632C319E5D1F0002E9C7B /* WebSelectionServiceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */; };
 		312E2FE514E48182007CCA18 /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE314E48182007CCA18 /* WebNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = 312E2FE414E48182007CCA18 /* WebNotification.mm */; };
 		312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE814E48215007CCA18 /* WebNotificationInternal.h */; };
@@ -465,7 +467,7 @@
 		0F30985D11ECFE4400F559DF /* WebRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderLayer.h; sourceTree = "<group>"; };
 		0F30985E11ECFE4500F559DF /* WebRenderLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRenderLayer.mm; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
-		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
+		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
 		1A2DBE9D0F251E3A0036F8A6 /* ProxyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyInstance.h; sourceTree = "<group>"; };
 		1A2DBE9E0F251E3A0036F8A6 /* ProxyInstance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProxyInstance.mm; sourceTree = "<group>"; };
 		1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginView.h; sourceTree = "<group>"; };
@@ -535,6 +537,8 @@
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFormDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSelectionServiceController.h; sourceTree = "<group>"; };
+		2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSelectionServiceController.mm; sourceTree = "<group>"; };
 		312E2FE314E48182007CCA18 /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotification.h; sourceTree = "<group>"; };
 		312E2FE414E48182007CCA18 /* WebNotification.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotification.mm; sourceTree = "<group>"; };
 		312E2FE814E48215007CCA18 /* WebNotificationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationInternal.h; sourceTree = "<group>"; };
@@ -1572,6 +1576,8 @@
 				A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */,
 				A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */,
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
+				2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */,
+				2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
 				93EB178C09F88D460091F8FF /* WebSystemInterface.mm */,
 				1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */,
@@ -1693,6 +1699,7 @@
 				7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */,
 				A10C1D6F1820300E0036883A /* WebGeolocationInternal.h in Headers */,
 				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
+				2DD632C219E5D1F0002E9C7B /* WebSelectionServiceController.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
 				A10C1D721820300E0036883A /* WebMIMETypeRegistry.h in Headers */,
 				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
@@ -2136,6 +2143,7 @@
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
 				A10C1D8E1820305E0036883A /* WebPDFViewPlaceholder.mm in Sources */,
 				7C01CB86173435C900C5D807 /* PopupMenuMac.mm in Sources */,
+				2DD632C319E5D1F0002E9C7B /* WebSelectionServiceController.mm in Sources */,
 				A10C1D771820300E0036883A /* WebVisiblePosition.mm in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
 				070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */,

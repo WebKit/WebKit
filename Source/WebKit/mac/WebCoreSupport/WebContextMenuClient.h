@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebSharingServicePickerController.h"
 #import <WebCore/ContextMenuClient.h>
 #import <WebCore/IntRect.h>
 
@@ -36,10 +37,14 @@ namespace WebCore {
 class Node;
 }
 
-class WebContextMenuClient : public WebCore::ContextMenuClient {
+class WebContextMenuClient : public WebCore::ContextMenuClient
+#if ENABLE(SERVICE_CONTROLS)
+, public WebSharingServicePickerClient
+#endif
+{
 public:
     WebContextMenuClient(WebView *webView);
-    ~WebContextMenuClient();
+    virtual ~WebContextMenuClient();
 
     virtual void contextMenuDestroyed() override;
     
@@ -55,11 +60,13 @@ public:
     virtual void searchWithSpotlight() override;
     virtual void showContextMenu() override;
 
-    NSRect screenRectForHitTestNode() const;
-
 #if ENABLE(SERVICE_CONTROLS)
-    void clearSharingServicePickerController();
-    NSImage *renderedImageForControlledImage() const;
+    // WebSharingServicePickerClient
+    virtual void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;
+    virtual WebCore::Page* pageForSharingServicePicker(WebSharingServicePickerController &) override;
+    virtual RetainPtr<NSWindow> windowForSharingServicePicker(WebSharingServicePickerController &) override;
+    virtual WebCore::FloatRect screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
+    virtual RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
 #endif
 
     WebView *webView() { return m_webView; }

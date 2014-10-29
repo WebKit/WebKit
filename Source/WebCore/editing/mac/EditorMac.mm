@@ -668,4 +668,20 @@ PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedS
     return fragment.release();
 }
 
+void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)
+{
+    if (m_frame.selection().isNone())
+        return;
+
+    if (m_frame.selection().selection().isContentRichlyEditable()) {
+        RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(attributedString);
+        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
+            pasteAsFragment(fragment, false, false, mailBlockquoteHandling);
+    } else {
+        String text = [attributedString string];
+        if (shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
+            pasteAsPlainText(text, false);
+    }
+}
+
 } // namespace WebCore

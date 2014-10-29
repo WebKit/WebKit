@@ -441,6 +441,7 @@ public:
     void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
     PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif // !PLATFORM(IOS)
+    void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(EFL)

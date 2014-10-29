@@ -1034,7 +1034,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
 
     NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:nil];
     IPC::DataReference data = IPC::DataReference(reinterpret_cast<const uint8_t*>([selectionData bytes]), [selectionData length]);
-    bool isEditable = selection.selection().isContentRichlyEditable();
+    bool isEditable = selection.selection().isContentEditable();
 
     send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, phoneNumbers, isEditable, point));
 }

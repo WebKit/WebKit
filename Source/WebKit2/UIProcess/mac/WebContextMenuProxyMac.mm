@@ -265,6 +265,7 @@ using namespace WebCore;
         return;
     }
 
+    // FIXME: We should adopt replaceSelectionWithAttributedString instead of bouncing through the (fake) pasteboard.
     _menuProxy->page().replaceSelectionWithPasteboardData(types, dataReference);
 }
 

@@ -1,5 +1,19 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174791. <rdar://problem/18753175>
+
+    2014-10-16  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement selection services menu for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=137582
+            <rdar://problem/18604241>
+    
+            Reviewed by Brady Eidson.
+    
+            * WebKit.xcodeproj/project.pbxproj:
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174368. <rdar://problem/18753175>
 
     2014-10-06  Brent Fulgham  <bfulgham@apple.com>

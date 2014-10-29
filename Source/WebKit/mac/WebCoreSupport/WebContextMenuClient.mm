@@ -387,7 +387,23 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
     return true;
 }
 
-NSRect WebContextMenuClient::screenRectForHitTestNode() const
+#if ENABLE(SERVICE_CONTROLS)
+void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)
+{
+    m_sharingServicePickerController = nil;
+}
+
+WebCore::Page* WebContextMenuClient::pageForSharingServicePicker(WebSharingServicePickerController &)
+{
+    return [m_webView page];
+}
+
+RetainPtr<NSWindow> WebContextMenuClient::windowForSharingServicePicker(WebSharingServicePickerController &)
+{
+    return [m_webView window];
+}
+
+WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
     Page* page = [m_webView page];
     if (!page)
@@ -415,8 +431,7 @@ NSRect WebContextMenuClient::screenRectForHitTestNode() const
     return frameView->contentsToScreen(intRect);
 }
 
-#if ENABLE(SERVICE_CONTROLS)
-NSImage *WebContextMenuClient::renderedImageForControlledImage() const
+RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
     Page* page = [m_webView page];
     if (!page)
@@ -455,10 +470,9 @@ NSImage *WebContextMenuClient::renderedImageForControlledImage() const
     frameView->setPaintBehavior(oldPaintBehavior);
 
     RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
-    return [[image->getNSImage() retain] autorelease];
+    return image->getNSImage();
 }
 #endif
-
 
 NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, bool& isServicesMenu)
 {
@@ -472,12 +486,10 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
     if (Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
 
-        RefPtr<SharedBuffer> data = image->data();
-        ASSERT(data);
-        RetainPtr<CFDataRef> cfData = data->createCFData();
+        RetainPtr<NSItemProvider> itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:image->getNSImage() typeIdentifier:@"public.image"]);
 
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
-        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithData:(NSData *)cfData.get() includeEditorServices:isContentEditable menuClient:this]);
+        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithItems:@[ itemProvider.get() ] includeEditorServices:isContentEditable client:this style:NSSharingServicePickerStyleRollover]);
 
         isServicesMenu = true;
         return [m_sharingServicePickerController menu];
@@ -512,12 +524,5 @@ void WebContextMenuClient::showContextMenu()
             [NSMenu popUpContextMenu:menu withEvent:event forView:view];
     }
 }
-
-#if ENABLE(SERVICE_CONTROLS)
-void WebContextMenuClient::clearSharingServicePickerController()
-{
-    m_sharingServicePickerController = nil;
-}
-#endif
 
 #endif // !PLATFORM(IOS)

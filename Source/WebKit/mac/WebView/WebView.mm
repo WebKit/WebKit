@@ -97,6 +97,7 @@
 #import "WebProgressTrackerClient.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptWorldInternal.h"
+#import "WebSelectionServiceController.h"
 #import "WebStorageManagerInternal.h"
 #import "WebSystemInterface.h"
 #import "WebTextCompletionController.h"
@@ -8515,6 +8516,15 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 - (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext
 {
     return _private->m_alternativeTextUIController->alternativesForContext(dictationContext);
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+- (WebSelectionServiceController&)_selectionServiceController
+{
+    if (!_private->_selectionServiceController)
+        _private->_selectionServiceController = std::make_unique<WebSelectionServiceController>(self);
+    return *_private->_selectionServiceController;
 }
 #endif
 

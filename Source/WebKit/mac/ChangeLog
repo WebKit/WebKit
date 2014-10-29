@@ -1,5 +1,91 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174791. <rdar://problem/18753175>
+
+    2014-10-16  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement selection services menu for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=137582
+            <rdar://problem/18604241>
+    
+            Reviewed by Brady Eidson.
+    
+            * Misc/WebSharingServicePickerController.h:
+            Move SPI into the header (in the near future it will be moved to a modern-style SPI header).
+            Add WebSharingServicePickerClient, which other classes can implement
+            instead of tying WebSharingServicePickerController strongly to WebContextMenuClient.
+            Make initWithData:... -> initWithItems:... instead, taking an array of NSItemProviders.
+    
+            * Misc/WebSharingServicePickerController.mm:
+            Pass in NSSharingServicePickerStyle, so that clients can specify the style.
+    
+            (-[WebSharingServicePickerController clear]):
+            (-[WebSharingServicePickerController didShareImageData:confirmDataIsValidTIFFData:]):
+            (-[WebSharingServicePickerController sharingServicePicker:didChooseSharingService:]):
+            (-[WebSharingServicePickerController sharingService:sourceFrameOnScreenForShareItem:]):
+            (-[WebSharingServicePickerController sharingService:transitionImageForShareItem:contentRect:]):
+            (-[WebSharingServicePickerController sharingService:sourceWindowForShareItems:sharingContentScope:]):
+            Make use of WebSharingServicePickerClient.
+    
+            (-[WebSharingServicePickerController sharingService:didShareItems:]):
+            If we're returned a NSAttributedString, paste it on top of the current selection,
+            similar to what the WebKit2 implementation currently does.
+            
+            * WebCoreSupport/WebChromeClient.h:
+            * WebCoreSupport/WebChromeClient.mm:
+            (WebChromeClient::handleTelephoneNumberClick):
+            (WebChromeClient::handleSelectionServiceClick):
+            (WebChromeClient::hasRelevantSelectionServices):
+            Override the services-related ChromeClient functions, forward them to WebSelectionServiceController.
+    
+            * WebCoreSupport/WebContextMenuClient.h:
+            * WebCoreSupport/WebContextMenuClient.mm:
+            (WebContextMenuClient::sharingServicePickerWillBeDestroyed):
+            (WebContextMenuClient::pageForSharingServicePicker):
+            (WebContextMenuClient::windowForSharingServicePicker):
+            (WebContextMenuClient::screenRectForCurrentSharingServicePickerItem):
+            (WebContextMenuClient::imageForCurrentSharingServicePickerItem):
+            (WebContextMenuClient::contextMenuForEvent):
+            (WebContextMenuClient::screenRectForHitTestNode): Deleted.
+            (WebContextMenuClient::renderedImageForControlledImage): Deleted.
+            (WebContextMenuClient::clearSharingServicePickerController): Deleted.
+            Have WebContextMenuClient implement WebSharingServicePickerClient to avoid
+            having WebSharingServicePickerController tightly bound to it.
+            Make an NSItemProvider array when instantiating WebSharingServicePickerController
+            instead of handing it data directly.
+    
+            * WebCoreSupport/WebSelectionServiceController.h: Copied from Source/WebKit/mac/WebCoreSupport/WebContextMenuClient.h.
+            * WebCoreSupport/WebSelectionServiceController.mm: Added.
+            (WebSelectionServiceController::WebSelectionServiceController):
+            Add WebSelectionServiceController, which will act as the WebSharingServicePickerClient
+            for selection services.
+    
+            (WebSelectionServiceController::handleSelectionServiceClick):
+            Create a WebSharingSericePickerController with the selection's attributed string, and show its menu.
+    
+            (hasCompatibleServicesForItems):
+            (WebSelectionServiceController::hasRelevantSelectionServices):
+            Determine whether or not services are available.
+    
+            (WebSelectionServiceController::sharingServicePickerWillBeDestroyed):
+            (WebSelectionServiceController::pageForSharingServicePicker):
+            (WebSelectionServiceController::windowForSharingServicePicker):
+            Implement the rest of the WebSharingServicePickerClient overrides.
+    
+            (WebSelectionServiceController::screenRectForCurrentSharingServicePickerItem):
+            (WebSelectionServiceController::imageForCurrentSharingServicePickerItem):
+            These are only useful for image sharing services, so we don't need to
+            implement them (WebContextMenuClient does, on the other hand).
+    
+            * WebView/WebView.mm:
+            (-[WebView _selectionServiceController]):
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            * WebView/WebViewInternal.h:
+            Keep a WebSelectionServiceController.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174525. <rdar://problem/18640876>
 
     2014-10-09  Tim Horton  <timothy_horton@apple.com>
