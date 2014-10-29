@@ -4531,15 +4531,14 @@ void HTMLMediaElement::updatePlayState()
             m_activityToken = document().page()->pageThrottler().mediaActivityToken();
 
         startPlaybackProgressTimer();
-        m_playing = true;
-
+        setPlaying(true);
     } else {
         if (!playerPaused)
             m_player->pause();
         refreshCachedTime();
 
         m_playbackProgressTimer.stop();
-        m_playing = false;
+        setPlaying(false);
         MediaTime time = currentMediaTime();
         if (time > m_lastSeekTime)
             addPlayedRange(m_lastSeekTime, time);
@@ -4556,6 +4555,15 @@ void HTMLMediaElement::updatePlayState()
 
     if (renderer())
         renderer()->updateFromElement();
+}
+
+void HTMLMediaElement::setPlaying(bool playing)
+{
+    if (m_playing == playing)
+        return;
+    
+    m_playing = playing;
+    document().updateIsPlayingAudio();
 }
 
 void HTMLMediaElement::setPausedInternal(bool b)
@@ -4676,7 +4684,7 @@ void HTMLMediaElement::stop()
     m_inActiveDocument = false;
 
     // Stop the playback without generating events
-    m_playing = false;
+    setPlaying(false);
     setPausedInternal(true);
     m_mediaSession->clientWillPausePlayback();
 
@@ -6019,26 +6027,9 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
     return false;
 }
 
-bool HTMLMediaElement::hasMediaCharacteristics(MediaSession::MediaCharacteristics characteristics) const
-{
-    if ((characteristics & MediaSession::MediaCharacteristicAudible) && !hasAudio())
-        return false;
-    if ((characteristics & MediaSession::MediaCharacteristicVisual) && !hasVideo())
-        return false;
-    if ((characteristics & MediaSession::MediaCharacteristicLegible) && !hasClosedCaptions())
-        return false;
-
-    return true;
-}
-
-void HTMLMediaElement::mediaStateDidChange()
-{
-    document().updateIsPlayingAudio();
-}
-
 bool HTMLMediaElement::isPlayingAudio()
 {
-    return m_mediaSession->state() == MediaSession::Playing && hasAudio();
+    return isPlaying() && hasAudio();
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const

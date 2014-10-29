@@ -62,7 +62,6 @@ private:
     virtual bool overrideBackgroundPlaybackRestriction() const { return false; }
     virtual void pausePlayback() override { stop(); }
     virtual void resumePlayback() override { start(); }
-    virtual bool hasMediaCharacteristics(MediaSession::MediaCharacteristics characteristics) const override { return characteristics == MediaSession::MediaCharacteristicAudible; }
 
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);

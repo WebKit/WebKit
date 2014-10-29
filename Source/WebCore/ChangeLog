@@ -1,3 +1,36 @@
+2014-10-28  Ada Chan  <adachan@apple.com>
+
+        Remove MediaSessionClient::hasMediaCharacteristics() and MediaSessionClient::mediaStateDidChange().
+        https://bugs.webkit.org/show_bug.cgi?id=138153
+
+        Reviewed by Jer Noble.
+
+        After http://trac.webkit.org/changeset/175273, Document no longer keeps a set of MediaSessions
+        and it doesn't need to query each MediaSession for its characteristics and play state.
+        MediaSessionClient::hasMediaCharacteristics() is no longer needed and MediaSessionClient::mediaStateDidChange()
+        can be removed if HTMLMediaElement calls Document::updateIsPlayingAudio() after m_playing has changed.
+
+        No new tests, no behavior change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState):
+        Call setPlaying() rather than setting m_playing directly.
+        (WebCore::HTMLMediaElement::setPlaying):
+        Update m_playing. If it has changed, call Document::updateIsPlayingAudio().
+        (WebCore::HTMLMediaElement::setPausedInternal):
+        Call setPlaying() rather than setting m_playing directly.
+        (WebCore::HTMLMediaElement::isPlayingAudio):
+        Call isPlaying() directly rather than checking the MediaSession's state.
+        * html/HTMLMediaElement.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::setState):
+        MediaSessionClient::mediaStateDidChange() has been removed.
+        (WebCore::MediaSession::hasMediaCharacteristics): Deleted.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSessionClient::mediaStateDidChange): Deleted.
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/mac/AudioDestinationMac.h:
+
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
         Clean up virtual functions in html/

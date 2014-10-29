@@ -76,13 +76,7 @@ MediaSession::~MediaSession()
 void MediaSession::setState(State state)
 {
     LOG(Media, "MediaSession::setState(%p) - %s", this, stateName(state));
-
-    if (m_state == state)
-        return;
-
     m_state = state;
-
-    client().mediaStateDidChange();
 }
 
 void MediaSession::beginInterruption(InterruptionType type)
@@ -111,11 +105,6 @@ void MediaSession::endInterruption(EndInterruptionFlags flags)
         LOG(Media, "MediaSession::endInterruption - resuming playback");
         client().resumePlayback();
     }
-}
-
-bool MediaSession::hasMediaCharacteristics(MediaSession::MediaCharacteristics mediaCharacteristics) const
-{
-    return client().hasMediaCharacteristics(mediaCharacteristics);
 }
 
 bool MediaSession::clientWillBeginPlayback()
