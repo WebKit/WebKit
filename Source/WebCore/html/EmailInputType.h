@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class EmailInputType : public BaseTextInputType {
+class EmailInputType final : public BaseTextInputType {
 public:
     explicit EmailInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 

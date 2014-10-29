@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class ColorInputType : public BaseClickableWithKeyInputType, public ColorChooserClient {
+class ColorInputType final : public BaseClickableWithKeyInputType, public ColorChooserClient {
 public:
     explicit ColorInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
     virtual ~ColorInputType();

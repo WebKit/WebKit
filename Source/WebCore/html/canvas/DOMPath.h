@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class DOMPath : public RefCounted<DOMPath>, public CanvasPathMethods {
+class DOMPath final : public RefCounted<DOMPath>, public CanvasPathMethods {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<DOMPath> create() { return adoptRef(new DOMPath); }

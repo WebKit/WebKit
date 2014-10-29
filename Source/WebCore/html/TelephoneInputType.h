@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class TelephoneInputType : public BaseTextInputType {
+class TelephoneInputType final : public BaseTextInputType {
 public:
     explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 

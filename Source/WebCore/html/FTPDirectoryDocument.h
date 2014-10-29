@@ -31,7 +31,7 @@ namespace WebCore {
     
 class DOMImplementation;
     
-class FTPDirectoryDocument : public HTMLDocument {
+class FTPDirectoryDocument final : public HTMLDocument {
 public:
     static PassRefPtr<FTPDirectoryDocument> create(Frame* frame, const URL& url)
     {

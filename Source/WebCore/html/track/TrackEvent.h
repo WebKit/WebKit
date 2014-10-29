@@ -39,7 +39,7 @@ struct TrackEventInit : public EventInit {
     RefPtr<TrackBase> track;
 };
 
-class TrackEvent : public Event {
+class TrackEvent final : public Event {
 public:
     virtual ~TrackEvent();
 

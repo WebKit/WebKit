@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class CheckboxInputType : public BaseCheckableInputType {
+class CheckboxInputType final : public BaseCheckableInputType {
 public:
     explicit CheckboxInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
 

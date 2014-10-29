@@ -88,9 +88,9 @@ private:
     virtual void derefFormAssociatedElement() override { deref(); }
     virtual HTMLFormElement* virtualForm() const override;
 
-    virtual FormNamedItem* asFormNamedItem() override final { return this; }
-    virtual HTMLObjectElement& asHTMLElement() override final { return *this; }
-    virtual const HTMLObjectElement& asHTMLElement() const override final { return *this; }
+    virtual FormNamedItem* asFormNamedItem() override { return this; }
+    virtual HTMLObjectElement& asHTMLElement() override { return *this; }
+    virtual const HTMLObjectElement& asHTMLElement() const override { return *this; }
 
     virtual bool isFormControlElement() const override { return false; }
 

@@ -68,7 +68,7 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
 
-    virtual HTMLInputElement* toInputElement() override { return this; }
+    virtual HTMLInputElement* toInputElement() override final { return this; }
 
     WEBCORE_EXPORT virtual bool shouldAutocomplete() const override;
 

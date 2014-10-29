@@ -36,7 +36,7 @@ class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
 
-class OESVertexArrayObject : public WebGLExtension {
+class OESVertexArrayObject final : public WebGLExtension {
 public:
     OESVertexArrayObject(WebGLRenderingContext*);
     virtual ~OESVertexArrayObject();

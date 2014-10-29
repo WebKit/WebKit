@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class PasswordInputType : public BaseTextInputType {
+class PasswordInputType final : public BaseTextInputType {
 public:
     explicit PasswordInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 

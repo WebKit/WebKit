@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class SubmitInputType : public BaseButtonInputType {
+class SubmitInputType final : public BaseButtonInputType {
 public:
     explicit SubmitInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
 

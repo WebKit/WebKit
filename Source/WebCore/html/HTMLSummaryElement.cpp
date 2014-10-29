@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class SummaryContentElement : public InsertionPoint {
+class SummaryContentElement final : public InsertionPoint {
 public:
     static PassRefPtr<SummaryContentElement> create(Document&);
 

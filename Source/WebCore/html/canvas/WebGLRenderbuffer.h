@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class WebGLRenderbuffer : public WebGLSharedObject {
+class WebGLRenderbuffer final : public WebGLSharedObject {
 public:
     virtual ~WebGLRenderbuffer();
 

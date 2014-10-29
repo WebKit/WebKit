@@ -43,7 +43,7 @@ private:
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
     HTMLDetailsElement* detailsElement() const;
 
-    bool supportsFocus() const override;
+    virtual bool supportsFocus() const override;
 };
 
 }

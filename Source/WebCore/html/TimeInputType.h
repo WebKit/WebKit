@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class TimeInputType : public BaseChooserOnlyDateAndTimeInputType {
+class TimeInputType final : public BaseChooserOnlyDateAndTimeInputType {
 public:
     explicit TimeInputType(HTMLInputElement&);
 

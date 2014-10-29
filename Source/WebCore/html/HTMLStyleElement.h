@@ -58,7 +58,7 @@ private:
 
     virtual void finishParsingChildren() override;
 
-    virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
+    bool isLoading() const { return m_styleSheetOwner.isLoading(); }
     virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(document()); }
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) override;
     virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(document()); }

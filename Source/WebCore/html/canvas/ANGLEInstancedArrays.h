@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WebGLRenderingContext;
 
-class ANGLEInstancedArrays : public WebGLExtension {
+class ANGLEInstancedArrays final : public WebGLExtension {
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContext*);
     virtual ~ANGLEInstancedArrays();

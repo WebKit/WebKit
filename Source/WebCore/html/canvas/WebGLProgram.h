@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class WebGLProgram : public WebGLSharedObject {
+class WebGLProgram final : public WebGLSharedObject {
 public:
     virtual ~WebGLProgram();
 

@@ -45,7 +45,7 @@ public:
     virtual void audioTrackEnabledChanged(AudioTrack*) = 0;
 };
 
-class AudioTrack : public TrackBase, public AudioTrackPrivateClient {
+class AudioTrack final : public TrackBase, public AudioTrackPrivateClient {
 public:
     static PassRefPtr<AudioTrack> create(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> trackPrivate)
     {
@@ -62,9 +62,9 @@ public:
     virtual const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
 
     virtual bool enabled() const override { return m_enabled; }
-    virtual void setEnabled(const bool);
+    void setEnabled(const bool);
 
-    virtual void clearClient() override { m_client = 0; }
+    virtual void clearClient() override { m_client = nullptr; }
     AudioTrackClient* client() const { return m_client; }
 
     size_t inbandTrackIndex();

@@ -42,7 +42,7 @@ public:
 private:
     HTMLOptGroupElement(const QualifiedName&, Document&);
 
-    virtual const AtomicString& formControlType() const;
+    const AtomicString& formControlType() const;
     virtual bool isFocusable() const override;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }

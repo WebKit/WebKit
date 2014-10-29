@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class HiddenInputType : public InputType {
+class HiddenInputType final : public InputType {
 public:
     explicit HiddenInputType(HTMLInputElement& element) : InputType(element) { }
 

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WebGLTexture;
 
-class WebGLCompressedTextureATC : public WebGLExtension {
+class WebGLCompressedTextureATC final : public WebGLExtension {
 public:
     explicit WebGLCompressedTextureATC(WebGLRenderingContext*);
     virtual ~WebGLCompressedTextureATC();

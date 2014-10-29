@@ -101,7 +101,7 @@ private:
 
 // ----------------------------
 
-class MediaControlTimelineContainerElement : public MediaControlDivElement {
+class MediaControlTimelineContainerElement final : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlTimelineContainerElement> create(Document&);
 
@@ -115,7 +115,7 @@ private:
 
 // ----------------------------
 
-class MediaControlVolumeSliderContainerElement : public MediaControlDivElement {
+class MediaControlVolumeSliderContainerElement final : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlVolumeSliderContainerElement> create(Document&);
 
@@ -133,7 +133,7 @@ private:
 
 // ----------------------------
 
-class MediaControlStatusDisplayElement : public MediaControlDivElement {
+class MediaControlStatusDisplayElement final : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlStatusDisplayElement> create(Document&);
 
@@ -209,7 +209,7 @@ private:
 
 // ----------------------------
 
-class MediaControlSeekForwardButtonElement : public MediaControlSeekButtonElement {
+class MediaControlSeekForwardButtonElement final : public MediaControlSeekButtonElement {
 public:
     static PassRefPtr<MediaControlSeekForwardButtonElement> create(Document&);
 
@@ -221,7 +221,7 @@ private:
 
 // ----------------------------
 
-class MediaControlSeekBackButtonElement : public MediaControlSeekButtonElement {
+class MediaControlSeekBackButtonElement final : public MediaControlSeekButtonElement {
 public:
     static PassRefPtr<MediaControlSeekBackButtonElement> create(Document&);
 
@@ -233,7 +233,7 @@ private:
 
 // ----------------------------
 
-class MediaControlRewindButtonElement : public MediaControlInputElement {
+class MediaControlRewindButtonElement final : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlRewindButtonElement> create(Document&);
 
@@ -249,7 +249,7 @@ private:
 
 // ----------------------------
 
-class MediaControlReturnToRealtimeButtonElement : public MediaControlInputElement {
+class MediaControlReturnToRealtimeButtonElement final : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlReturnToRealtimeButtonElement> create(Document&);
 
@@ -358,7 +358,7 @@ public:
     virtual bool willRespondToMouseClickEvents() override { return true; }
 #endif
 
-    virtual void setIsFullscreen(bool);
+    void setIsFullscreen(bool);
 
 private:
     explicit MediaControlFullscreenButtonElement(Document&);
@@ -377,7 +377,7 @@ private:
 };
 // ----------------------------
 
-class MediaControlFullscreenVolumeSliderElement : public MediaControlVolumeSliderElement {
+class MediaControlFullscreenVolumeSliderElement final : public MediaControlVolumeSliderElement {
 public:
     static PassRefPtr<MediaControlFullscreenVolumeSliderElement> create(Document&);
 
@@ -387,7 +387,7 @@ private:
 
 // ----------------------------
 
-class MediaControlFullscreenVolumeMinButtonElement : public MediaControlInputElement {
+class MediaControlFullscreenVolumeMinButtonElement final : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> create(Document&);
 
@@ -402,7 +402,7 @@ private:
 
 // ----------------------------
 
-class MediaControlFullscreenVolumeMaxButtonElement : public MediaControlInputElement {
+class MediaControlFullscreenVolumeMaxButtonElement final : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> create(Document&);
 

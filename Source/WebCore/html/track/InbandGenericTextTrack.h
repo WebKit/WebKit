@@ -39,10 +39,10 @@ class Document;
 class InbandTextTrackPrivate;
 class TextTrackCue;
 
-class GenericTextTrackCueMap {
+class GenericTextTrackCueMap final {
 public:
     GenericTextTrackCueMap();
-    virtual ~GenericTextTrackCueMap();
+    ~GenericTextTrackCueMap();
 
     void add(GenericCueData*, TextTrackCueGeneric*);
 
@@ -60,7 +60,7 @@ private:
     CueDataToCueMap m_dataToCueMap;
 };
 
-class InbandGenericTextTrack : public InbandTextTrack, private WebVTTParserClient {
+class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
 public:
     static PassRefPtr<InbandGenericTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
     virtual ~InbandGenericTextTrack();

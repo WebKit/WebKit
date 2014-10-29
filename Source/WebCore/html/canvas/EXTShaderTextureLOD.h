@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class EXTShaderTextureLOD : public WebGLExtension {
+class EXTShaderTextureLOD final : public WebGLExtension {
 public:
     explicit EXTShaderTextureLOD(WebGLRenderingContext*);
     virtual ~EXTShaderTextureLOD();

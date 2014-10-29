@@ -109,18 +109,20 @@ private:
 
 class MediaControlDivElement : public HTMLDivElement, public MediaControlElement {
 protected:
-    virtual bool isMediaControlElement() const override { return MediaControlElement::isMediaControlElement(); }
     explicit MediaControlDivElement(Document&, MediaControlElementType);
+
+private:
+    virtual bool isMediaControlElement() const override final { return MediaControlElement::isMediaControlElement(); }
 };
 
 // ----------------------------
 
 class MediaControlInputElement : public HTMLInputElement, public MediaControlElement {
 protected:
-    virtual bool isMediaControlElement() const override { return MediaControlElement::isMediaControlElement(); }
     explicit MediaControlInputElement(Document&, MediaControlElementType);
 
 private:
+    virtual bool isMediaControlElement() const override final { return MediaControlElement::isMediaControlElement(); }
     virtual void updateDisplayType() { }
 };
 

@@ -37,7 +37,7 @@ class ArrayBufferView;
 
 namespace WebCore {
 
-class WebGLBuffer : public WebGLSharedObject {
+class WebGLBuffer final : public WebGLSharedObject {
 public:
     virtual ~WebGLBuffer();
 

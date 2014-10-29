@@ -45,7 +45,7 @@ struct MediaKeyEventInit : public EventInit {
     unsigned short systemCode;
 };
 
-class MediaKeyEvent : public Event {
+class MediaKeyEvent final : public Event {
 public:
     virtual ~MediaKeyEvent();
 

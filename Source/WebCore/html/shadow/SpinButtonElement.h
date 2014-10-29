@@ -56,7 +56,7 @@ public:
     // implementation, e.g. during event handling.
     static PassRefPtr<SpinButtonElement> create(Document&, SpinButtonOwner&);
     UpDownState upDownState() const { return m_upDownState; }
-    virtual void releaseCapture();
+    void releaseCapture();
     void removeSpinButtonOwner() { m_spinButtonOwner = 0; }
 
     void step(int amount);

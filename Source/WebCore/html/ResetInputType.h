@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class ResetInputType : public BaseButtonInputType {
+class ResetInputType final : public BaseButtonInputType {
 public:
     explicit ResetInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
 

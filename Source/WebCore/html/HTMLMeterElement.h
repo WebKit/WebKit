@@ -70,7 +70,6 @@ private:
 
     virtual bool supportLabels() const override { return true; }
 
-    virtual bool recalcWillValidate() const { return false; }
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

@@ -39,7 +39,7 @@ public:
     // DOM Functions
 
     void start();
-    void stop() override;
+    virtual void stop() override;
     
     int scrollAmount() const;
     void setScrollAmount(int, ExceptionCode&);

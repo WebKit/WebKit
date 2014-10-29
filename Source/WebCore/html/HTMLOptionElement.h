@@ -39,7 +39,7 @@ public:
     static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 
-    WEBCORE_EXPORT virtual String text() const;
+    WEBCORE_EXPORT String text() const;
     void setText(const String&, ExceptionCode&);
 
     int index() const;

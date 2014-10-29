@@ -37,7 +37,7 @@ namespace WebCore {
 class WebGLRenderbuffer;
 class WebGLTexture;
 
-class WebGLFramebuffer : public WebGLContextObject {
+class WebGLFramebuffer final : public WebGLContextObject {
 public:
     class WebGLAttachment : public RefCounted<WebGLAttachment> {
     public:
@@ -106,8 +106,6 @@ protected:
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isFramebuffer() const { return true; }
-
     WebGLAttachment* getAttachment(GC3Denum) const;
 
     // Return false if framebuffer is incomplete.

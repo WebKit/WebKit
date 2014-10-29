@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class OESElementIndexUint : public WebGLExtension {
+class OESElementIndexUint final : public WebGLExtension {
 public:
     explicit OESElementIndexUint(WebGLRenderingContext*);
     virtual ~OESElementIndexUint();

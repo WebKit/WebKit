@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class NumberInputType : public TextFieldInputType {
+class NumberInputType final : public TextFieldInputType {
 public:
     explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
 

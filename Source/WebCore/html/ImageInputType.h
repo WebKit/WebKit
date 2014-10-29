@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class ImageInputType : public BaseButtonInputType {
+class ImageInputType final : public BaseButtonInputType {
 public:
     explicit ImageInputType(HTMLInputElement&);
 

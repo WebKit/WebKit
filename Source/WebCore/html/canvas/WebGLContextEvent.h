@@ -36,7 +36,7 @@ struct WebGLContextEventInit : public EventInit {
     String statusMessage;
 };
 
-class WebGLContextEvent : public Event {
+class WebGLContextEvent final : public Event {
 public:
     static PassRefPtr<WebGLContextEvent> create()
     {

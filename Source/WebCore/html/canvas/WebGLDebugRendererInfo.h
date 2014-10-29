@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WebGLDebugRendererInfo : public WebGLExtension {
+class WebGLDebugRendererInfo final : public WebGLExtension {
 public:
     enum EnumType {
         UNMASKED_VENDOR_WEBGL = 0x9245,

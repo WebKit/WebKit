@@ -34,13 +34,13 @@ namespace WebCore {
 
 class VideoTrack;
 
-class VideoTrackList : public TrackListBase {
+class VideoTrackList final : public TrackListBase {
 public:
     static PassRefPtr<VideoTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
     {
         return adoptRef(new VideoTrackList(owner, context));
     }
-    ~VideoTrackList();
+    virtual ~VideoTrackList();
 
     VideoTrack* getTrackById(const AtomicString&) const;
     long selectedIndex() const;

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class URLInputType : public BaseTextInputType {
+class URLInputType final : public BaseTextInputType {
 public:
     explicit URLInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 

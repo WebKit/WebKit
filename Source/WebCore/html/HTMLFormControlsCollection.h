@@ -35,7 +35,7 @@ class QualifiedName;
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
-class HTMLFormControlsCollection : public HTMLCollection {
+class HTMLFormControlsCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
 

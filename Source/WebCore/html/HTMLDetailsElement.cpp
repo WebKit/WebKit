@@ -40,7 +40,7 @@ static const AtomicString& summaryQuerySelector()
     return selector;
 };
 
-class DetailsContentElement : public InsertionPoint {
+class DetailsContentElement final : public InsertionPoint {
 public:
     static PassRefPtr<DetailsContentElement> create(Document&);
 
@@ -63,7 +63,7 @@ PassRefPtr<DetailsContentElement> DetailsContentElement::create(Document& docume
     return adoptRef(new DetailsContentElement(document));
 }
 
-class DetailsSummaryElement : public InsertionPoint {
+class DetailsSummaryElement final : public InsertionPoint {
 public:
     static PassRefPtr<DetailsSummaryElement> create(Document&);
 

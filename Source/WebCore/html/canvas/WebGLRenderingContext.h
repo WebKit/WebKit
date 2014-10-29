@@ -82,7 +82,7 @@ class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
 
-class WebGLRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
+class WebGLRenderingContext final : public CanvasRenderingContext, public ActiveDOMObject {
 public:
     static std::unique_ptr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
     virtual ~WebGLRenderingContext();
@@ -320,7 +320,7 @@ public:
 
     void markLayerComposited();
     virtual void paintRenderingResultsToCanvas() override;
-    virtual PassRefPtr<ImageData> paintRenderingResultsToImageData();
+    PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeSharedObject(WebGLSharedObject*);
     void removeContextObject(WebGLContextObject*);

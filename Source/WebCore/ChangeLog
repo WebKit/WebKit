@@ -1,3 +1,133 @@
+2014-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in html/
+        https://bugs.webkit.org/show_bug.cgi?id=138166
+
+        Reviewed by Andreas Kling.
+
+        Clean up virtual functions in html/ by:
+        - Making virtual functions final when possible
+        - Making classes final when possible
+        - Using 'override' when appropriate
+        - Explicitly marking functions / destructors as virtual when they are
+          inherently virtual
+        - Dropping virtual destructors when the class does not have subclasses
+          and mark the class as final, to get rid of unnecessary vtables
+        - Making isXXX() virtual functions private on XXX classes to avoid
+          unnecessary type checks
+        - De-virtualizing some functions that do not need to be virtual
+        - Dropping final for virtual functions in classes already marked as
+          final
+
+        No new tests, no behavior change.
+
+        * html/ButtonInputType.h:
+        * html/CheckboxInputType.h:
+        * html/ColorInputType.h:
+        * html/DOMSettableTokenList.h:
+        * html/DateInputType.h:
+        * html/DateTimeInputType.h:
+        * html/DateTimeLocalInputType.h:
+        * html/EmailInputType.h:
+        * html/FTPDirectoryDocument.h:
+        * html/HTMLAnchorElement.h:
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaSession.h:
+        (WebCore::HTMLMediaSession::requiresPlaybackTargetRouteMonitoring): Deleted.
+        * html/HTMLMeterElement.h:
+        * html/HTMLNameCollection.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLSpanElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLSummaryElement.h:
+        * html/HTMLUnknownElement.h:
+        * html/HTMLVideoElement.h:
+        * html/HiddenInputType.h:
+        * html/ImageInputType.h:
+        * html/MediaKeyEvent.h:
+        * html/MonthInputType.h:
+        * html/NumberInputType.h:
+        * html/PasswordInputType.h:
+        * html/PublicURLManager.h:
+        * html/RadioInputType.h:
+        * html/ResetInputType.h:
+        * html/SubmitInputType.h:
+        * html/TelephoneInputType.h:
+        * html/TextInputType.h:
+        * html/TimeInputType.h:
+        * html/URLInputType.h:
+        * html/WeekInputType.h:
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/DOMPath.h:
+        * html/canvas/EXTShaderTextureLOD.h:
+        * html/canvas/EXTTextureFilterAnisotropic.h:
+        * html/canvas/OESElementIndexUint.h:
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureFloatLinear.h:
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/OESTextureHalfFloatLinear.h:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTexturePVRTC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLContextAttributes.h:
+        * html/canvas/WebGLContextEvent.h:
+        * html/canvas/WebGLDebugRendererInfo.h:
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLDrawBuffers.h:
+        * html/canvas/WebGLFramebuffer.h:
+        (WebCore::WebGLFramebuffer::isFramebuffer): Deleted.
+        * html/canvas/WebGLLoseContext.h:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLSharedObject.h:
+        (WebCore::WebGLSharedObject::isFramebuffer): Deleted.
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        (WebCore::WebGLVertexArrayObjectOES::isVertexArray): Deleted.
+        * html/shadow/ImageControlsRootElement.h:
+        * html/shadow/InsertionPoint.h:
+        * html/shadow/MediaControlElementTypes.h:
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControls.h:
+        * html/shadow/MediaControlsApple.h:
+        * html/shadow/SpinButtonElement.h:
+        * html/track/AudioTrack.h:
+        * html/track/AudioTrackList.h:
+        * html/track/DataCue.h:
+        (WebCore::DataCue::cueType): Deleted.
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrackList.h:
+        * html/track/TrackEvent.h:
+        * html/track/VTTCue.h:
+        (WebCore::VTTCueBox::setFontSizeFromCaptionUserPrefs):
+        * html/track/VTTRegion.h:
+        * html/track/VideoTrack.h:
+        * html/track/VideoTrackList.h:
+        * html/track/WebVTTParser.h:
+        (WebCore::WebVTTCueData::~WebVTTCueData): Deleted.
+
 2014-10-17  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: growthShare > 0 in WebCore::RenderGrid::distributeSpaceToTracks

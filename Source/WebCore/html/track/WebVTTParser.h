@@ -64,11 +64,11 @@ public:
     virtual void fileFailedToParse() = 0;
 };
 
-class WebVTTCueData : public RefCounted<WebVTTCueData> {
+class WebVTTCueData final : public RefCounted<WebVTTCueData> {
 public:
 
     static PassRefPtr<WebVTTCueData> create() { return adoptRef(new WebVTTCueData()); }
-    virtual ~WebVTTCueData() { }
+    ~WebVTTCueData() { }
 
     MediaTime startTime() const { return m_startTime; }
     void setStartTime(const MediaTime& startTime) { m_startTime = startTime; }

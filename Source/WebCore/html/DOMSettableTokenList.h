@@ -35,22 +35,22 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class DOMSettableTokenList : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
+class DOMSettableTokenList final : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<DOMSettableTokenList> create();
 
-    virtual void ref() override final;
-    virtual void deref() override final;
+    virtual void ref() override;
+    virtual void deref() override;
 
-    virtual unsigned length() const override final;
-    virtual const AtomicString item(unsigned index) const override final;
+    virtual unsigned length() const override;
+    virtual const AtomicString item(unsigned index) const override;
 
-    virtual AtomicString value() const override final;
-    virtual void setValue(const AtomicString&) override final;
+    virtual AtomicString value() const override;
+    virtual void setValue(const AtomicString&) override;
 
 private:
-    virtual bool containsInternal(const AtomicString&) const override final;
+    virtual bool containsInternal(const AtomicString&) const override;
 
     AtomicString m_value;
     SpaceSplitString m_tokens;

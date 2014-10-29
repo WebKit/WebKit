@@ -34,7 +34,7 @@ class WebGLShader;
 
 typedef int ExceptionCode;
 
-class WebGLDebugShaders : public WebGLExtension {
+class WebGLDebugShaders final : public WebGLExtension {
 public:
     explicit WebGLDebugShaders(WebGLRenderingContext*);
     virtual ~WebGLDebugShaders();

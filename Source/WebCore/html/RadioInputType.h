@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class RadioInputType : public BaseCheckableInputType {
+class RadioInputType final : public BaseCheckableInputType {
 public:
     explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
 

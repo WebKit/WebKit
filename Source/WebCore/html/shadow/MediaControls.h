@@ -142,7 +142,7 @@ protected:
     bool m_isMouseOverControls;
 
 private:
-    virtual bool isMediaControls() const override { return true; }
+    virtual bool isMediaControls() const override final { return true; }
 };
 
 inline MediaControls* toMediaControls(Node* node)

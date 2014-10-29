@@ -46,7 +46,7 @@ public:
     virtual void videoTrackSelectedChanged(VideoTrack*) = 0;
 };
 
-class VideoTrack : public TrackBase, public VideoTrackPrivateClient {
+class VideoTrack final : public TrackBase, public VideoTrackPrivateClient {
 public:
     static PassRefPtr<VideoTrack> create(VideoTrackClient* client, PassRefPtr<VideoTrackPrivate> trackPrivate)
     {

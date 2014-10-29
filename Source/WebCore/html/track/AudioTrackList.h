@@ -34,7 +34,7 @@ namespace WebCore {
 
 class AudioTrack;
 
-class AudioTrackList : public TrackListBase {
+class AudioTrackList final : public TrackListBase {
 public:
     static PassRefPtr<AudioTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
     {

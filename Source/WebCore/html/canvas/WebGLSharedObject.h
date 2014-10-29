@@ -43,7 +43,6 @@ public:
     WebGLContextGroup* contextGroup() const { return m_contextGroup; }
 
     virtual bool isBuffer() const { return false; }
-    virtual bool isFramebuffer() const { return false; }
     virtual bool isProgram() const { return false; }
     virtual bool isRenderbuffer() const { return false; }
     virtual bool isShader() const { return false; }

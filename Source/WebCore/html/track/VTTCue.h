@@ -59,12 +59,12 @@ public:
     virtual void applyCSSProperties(const IntSize& videoSize);
 
     static const AtomicString& vttCueBoxShadowPseudoId();
-    virtual void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
+    void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
 
 protected:
     VTTCueBox(Document&, VTTCue&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override final;
 
     VTTCue& m_cue;
     int m_fontSizeFromCaptionUserPrefs;

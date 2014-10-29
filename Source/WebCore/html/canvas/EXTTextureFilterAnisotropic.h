@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class EXTTextureFilterAnisotropic : public WebGLExtension {
+class EXTTextureFilterAnisotropic final : public WebGLExtension {
 public:
     explicit EXTTextureFilterAnisotropic(WebGLRenderingContext*);
     virtual ~EXTTextureFilterAnisotropic();

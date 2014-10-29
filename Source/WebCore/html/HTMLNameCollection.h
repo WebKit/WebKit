@@ -33,7 +33,7 @@ class Document;
 
 class HTMLNameCollection : public HTMLCollection {
 public:
-    ~HTMLNameCollection();
+    virtual ~HTMLNameCollection();
 
     Document& document() { return downcast<Document>(ownerNode()); }
 

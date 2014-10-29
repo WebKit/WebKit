@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WebGLDrawBuffers : public WebGLExtension {
+class WebGLDrawBuffers final : public WebGLExtension {
 public:
     explicit WebGLDrawBuffers(WebGLRenderingContext*);
     virtual ~WebGLDrawBuffers();

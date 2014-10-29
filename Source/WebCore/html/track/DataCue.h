@@ -43,7 +43,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class DataCue : public TextTrackCue {
+class DataCue final : public TextTrackCue {
 public:
     static PassRefPtr<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer* data, ExceptionCode& ec)
     {
@@ -73,7 +73,7 @@ public:
 #endif
 
     virtual ~DataCue();
-    virtual CueType cueType() const { return Data; }
+    virtual CueType cueType() const override { return Data; }
 
     PassRefPtr<ArrayBuffer> data() const;
     void setData(ArrayBuffer*, ExceptionCode&);

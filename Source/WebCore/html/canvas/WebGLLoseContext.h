@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WebGLRenderingContext;
 
-class WebGLLoseContext : public WebGLExtension {
+class WebGLLoseContext final : public WebGLExtension {
 public:
     explicit WebGLLoseContext(WebGLRenderingContext*);
     virtual ~WebGLLoseContext();

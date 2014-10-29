@@ -68,9 +68,9 @@ protected:
     virtual void childrenChanged(const ChildChange&) override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
-    virtual bool isInsertionPointNode() const override { return true; }
 
 private:
+    virtual bool isInsertionPointNode() const override final { return true; }
 
     bool m_hasDistribution;
 };

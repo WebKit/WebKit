@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class WebGLContextAttributes : public CanvasContextAttributes {
+class WebGLContextAttributes final : public CanvasContextAttributes {
   public:
     virtual ~WebGLContextAttributes();
 

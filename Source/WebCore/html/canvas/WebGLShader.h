@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class WebGLShader : public WebGLSharedObject {
+class WebGLShader final : public WebGLSharedObject {
 public:
     virtual ~WebGLShader();
 

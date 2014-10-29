@@ -46,7 +46,7 @@ class HTMLDivElement;
 class VTTCueBox;
 class VTTScanner;
 
-class VTTRegion : public RefCounted<VTTRegion>, public ContextDestructionObserver {
+class VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
 public:
     static PassRefPtr<VTTRegion> create(ScriptExecutionContext& context)
     {

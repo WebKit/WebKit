@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class WebGLTexture : public WebGLSharedObject {
+class WebGLTexture final : public WebGLSharedObject {
 public:
 
     enum TextureExtensionFlag {
@@ -81,12 +81,11 @@ public:
 
     static GC3Dint computeLevelCount(GC3Dsizei width, GC3Dsizei height);
 
-protected:
+private:
     WebGLTexture(WebGLRenderingContext*);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
-private:
     class LevelInfo {
     public:
         LevelInfo()

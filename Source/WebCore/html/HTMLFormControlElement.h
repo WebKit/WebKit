@@ -150,7 +150,7 @@ private:
     virtual void refFormAssociatedElement() override { ref(); }
     virtual void derefFormAssociatedElement() override { deref(); }
 
-    virtual bool isFormControlElement() const override { return true; }
+    virtual bool isFormControlElement() const override final { return true; }
     virtual bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
     virtual short tabIndex() const override final;

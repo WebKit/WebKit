@@ -59,7 +59,7 @@ private:
     MediaControlsApple* m_mediaControls;
 };
 
-class MediaControlsApple : public MediaControls {
+class MediaControlsApple final : public MediaControls {
 public:
     static PassRefPtr<MediaControlsApple> createControls(Document&);
 

@@ -53,8 +53,6 @@ public:
 
     void setPrivate(PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual bool isInband() const override { return true; }
-
 protected:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
@@ -64,7 +62,7 @@ protected:
     RefPtr<InbandTextTrackPrivate> m_private;
 
 private:
-
+    virtual bool isInband() const override final { return true; }
     virtual void idChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void labelChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void languageChanged(TrackPrivateBase*, const AtomicString&) override;

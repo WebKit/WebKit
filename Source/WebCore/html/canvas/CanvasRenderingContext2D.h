@@ -57,7 +57,7 @@ class TextMetrics;
 
 typedef int ExceptionCode;
 
-class CanvasRenderingContext2D : public CanvasRenderingContext, public CanvasPathMethods {
+class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPathMethods {
 public:
     CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
@@ -235,7 +235,7 @@ private:
         LTR
     };
 
-    struct State : FontSelectorClient {
+    struct State final : FontSelectorClient {
         State();
         virtual ~State();
 

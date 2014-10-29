@@ -44,7 +44,7 @@ protected:
     explicit ImageControlsRootElement(Document&);
 
 private:
-    virtual bool isImageControlsRootElement() const override { return true; }
+    virtual bool isImageControlsRootElement() const override final { return true; }
 };
 
 } // namespace WebCore
