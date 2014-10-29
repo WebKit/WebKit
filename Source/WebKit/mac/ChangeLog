@@ -1,5 +1,23 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175147
+
+    2014-10-23  Tim Horton  <timothy_horton@apple.com>
+
+            Add some SPI headers for NSExtension and NSSharingService{Picker}
+            https://bugs.webkit.org/show_bug.cgi?id=138027
+
+            Reviewed by Anders Carlsson.
+
+            * Misc/WebSharingServicePickerController.h:
+            * Misc/WebSharingServicePickerController.mm:
+            * WebCoreSupport/WebSelectionServiceController.mm:
+            * WebCoreSupport/WebContextMenuClient.mm:
+            Fix a sorting issue.
+            Replace redefinitions with SPI header #imports.
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172542
 
     2014-08-13  Mark Rowe  <mrowe@apple.com>
