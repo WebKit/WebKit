@@ -48,7 +48,9 @@
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebMediaCacheManager.h"
+#include "WebMediaKeyStorageManager.h"
 #include "WebMemorySampler.h"
+#include "WebOriginDataManager.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxyMessages.h"
@@ -174,6 +176,7 @@ WebProcess::WebProcess()
     , m_hasRichContentServices(false)
 #endif
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
+    , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(*this, *this))
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -197,6 +200,9 @@ WebProcess::WebProcess()
     addSupplement<CustomProtocolManager>();
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManager>();
+#endif
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    addSupplement<WebMediaKeyStorageManager>();
 #endif
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 }
@@ -1245,5 +1251,72 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
     m_hasRichContentServices = hasRichContentServices;
 }
 #endif
+
+void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Vector<SecurityOriginData>&)> completion)
+{
+    if (!(types & kWKWebSQLDatabaseOriginData)) {
+        completion(Vector<SecurityOriginData>());
+        return;
+    }
+
+    WebMediaKeyStorageManager* manager = supplement<WebMediaKeyStorageManager>();
+    if (!manager) {
+        completion(Vector<SecurityOriginData>());
+        return;
+    }
+
+    completion(manager->getMediaKeyOrigins());
+}
+
+void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void()> completion)
+{
+    if (!(types & kWKWebSQLDatabaseOriginData)) {
+        completion();
+        return;
+    }
+
+    WebMediaKeyStorageManager* manager = supplement<WebMediaKeyStorageManager>();
+    if (!manager) {
+        completion();
+        return;
+    }
+
+    manager->deleteMediaKeyEntriesForOrigin(origin);
+    completion();
+}
+
+void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void()> completion)
+{
+    if (!(types & kWKWebSQLDatabaseOriginData)) {
+        completion();
+        return;
+    }
+
+    WebMediaKeyStorageManager* manager = supplement<WebMediaKeyStorageManager>();
+    if (!manager) {
+        completion();
+        return;
+    }
+
+    manager->deleteMediaKeyEntriesModifiedBetweenDates(startDate, endDate);
+    completion();
+}
+
+void WebProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void()> completion)
+{
+    if (!(types & kWKWebSQLDatabaseOriginData)) {
+        completion();
+        return;
+    }
+    
+    WebMediaKeyStorageManager* manager = supplement<WebMediaKeyStorageManager>();
+    if (!manager) {
+        completion();
+        return;
+    }
+
+    manager->deleteAllMediaKeyEntries();
+    completion();
+}
 
 } // namespace WebKit

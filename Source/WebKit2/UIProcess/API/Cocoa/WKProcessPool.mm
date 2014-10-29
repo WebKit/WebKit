@@ -174,6 +174,7 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     webContextConfiguration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteURL.path.fileSystemRepresentation;
     webContextConfiguration.webSQLDatabaseDirectory = websiteDataDirectoryURL(@"WebSQL").absoluteURL.path.fileSystemRepresentation;
     webContextConfiguration.indexedDBDatabaseDirectory = websiteDataDirectoryURL(@"IndexedDB").absoluteURL.path.fileSystemRepresentation;
+    webContextConfiguration.mediaKeysStorageDirectory = websiteDataDirectoryURL(@"MediaKeys").absoluteURL.path.fileSystemRepresentation;
 
     API::Object::constructInWrapper<WebKit::WebContext>(self, WTF::move(webContextConfiguration));
     _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());

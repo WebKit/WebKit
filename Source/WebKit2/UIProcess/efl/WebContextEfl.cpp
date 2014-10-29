@@ -121,6 +121,11 @@ String WebContext::platformDefaultLocalStorageDirectory()
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
 }
 
+String WebContext::platformDefaultMediaKeysStorageDirectory()
+{
+    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
+}
+
 String WebContext::platformDefaultDiskCacheDirectory() const
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";

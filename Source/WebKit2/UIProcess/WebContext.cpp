@@ -128,6 +128,9 @@ void WebContext::applyPlatformSpecificConfigurationDefaults(WebContextConfigurat
     // *********
     if (!configuration.indexedDBDatabaseDirectory)
         configuration.indexedDBDatabaseDirectory = platformDefaultIndexedDBDatabaseDirectory();
+
+    if (!configuration.mediaKeysStorageDirectory)
+        configuration.mediaKeysStorageDirectory = platformDefaultMediaKeysStorageDirectory();
 }
 
 PassRefPtr<WebContext> WebContext::create(WebContextConfiguration configuration)
@@ -170,6 +173,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #endif
     , m_webSQLDatabaseDirectory(WTF::move(configuration.webSQLDatabaseDirectory))
     , m_indexedDBDatabaseDirectory(WTF::move(configuration.indexedDBDatabaseDirectory))
+    , m_mediaKeysStorageDirectory(WTF::move(configuration.mediaKeysStorageDirectory))
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
@@ -627,6 +631,10 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!hstsDatabasePath.isEmpty())
         SandboxExtension::createHandle(hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
 #endif
+
+    parameters.mediaKeyStorageDirectory = m_mediaKeysStorageDirectory;
+    if (!parameters.mediaKeyStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.mediaKeyStorageDirectory, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 

@@ -136,6 +136,12 @@ String WebContext::platformDefaultLocalStorageDirectory()
     return WebCore::filenameToString(storageDirectory.get());
 }
 
+String WebContext::platformDefaultMediaKeysStorageDirectory()
+{
+    GUniquePtr<gchar> mediaKeysStorageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "mediakeys", nullptr));
+    return WebCore::filenameToString(mediaKeysStorageDirectory.get());
+}
+
 String WebContext::platformDefaultDiskCacheDirectory() const
 {
     GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), nullptr));

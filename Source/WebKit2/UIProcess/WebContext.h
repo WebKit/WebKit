@@ -100,6 +100,7 @@ struct WebContextConfiguration {
     String localStorageDirectory;
     String webSQLDatabaseDirectory;
     String indexedDBDatabaseDirectory;
+    String mediaKeysStorageDirectory;
 };
 
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
@@ -416,6 +417,7 @@ private:
     static String platformDefaultLocalStorageDirectory();
     static String platformDefaultIndexedDBDatabaseDirectory();
     static String platformDefaultWebSQLDatabaseDirectory();
+    static String platformDefaultMediaKeysStorageDirectory();
 
     String diskCacheDirectory() const;
     String platformDefaultDiskCacheDirectory() const;
@@ -529,6 +531,7 @@ private:
 
     String m_webSQLDatabaseDirectory;
     String m_indexedDBDatabaseDirectory;
+    String m_mediaKeysStorageDirectory;
 
     bool m_shouldUseTestingNetworkSession;
 
