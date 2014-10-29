@@ -100,7 +100,7 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
 #endif
 
     static NeverDestroyed<HashSet<AtomicString>> knownFamilies;
-    static const unsigned maxCacheSize = 128;
+    static const int maxCacheSize = 128;
     ASSERT(knownFamilies.get().size() <= maxCacheSize);
     if (knownFamilies.get().size() == maxCacheSize)
         knownFamilies.get().remove(knownFamilies.get().begin());
