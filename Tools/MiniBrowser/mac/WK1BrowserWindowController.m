@@ -48,6 +48,9 @@
     [_webView setResourceLoadDelegate:self];
     [_webView setPolicyDelegate:self];
 
+    [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
+    [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
+
     [containerView addSubview:_webView];
 }
 

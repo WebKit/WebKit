@@ -1,3 +1,19 @@
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
+        Merge r174525. <rdar://problem/18640876>
+
+    2014-10-09  Tim Horton  <timothy_horton@apple.com>
+    
+            Add a WebKit1 preference for selection services
+            https://bugs.webkit.org/show_bug.cgi?id=137498
+            <rdar://problem/18572699>
+    
+            Reviewed by Simon Fraser.
+    
+            * MiniBrowser/mac/WK1BrowserWindowController.m:
+            (-[WK1BrowserWindowController awakeFromNib]):
+            Turn on image and selection services in the Legacy WebKit MiniBrowser.
+    
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
         Merge r172982. <rdar://problem/18141695>

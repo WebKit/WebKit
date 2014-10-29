@@ -432,6 +432,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setImageControlsEnabled:(BOOL)flag;
 - (BOOL)imageControlsEnabled;
 
+- (void)setServiceControlsEnabled:(BOOL)flag;
+- (BOOL)serviceControlsEnabled;
+
 - (void)setGamepadsEnabled:(BOOL)flag;
 - (BOOL)gamepadsEnabled;
 
