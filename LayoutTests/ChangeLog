@@ -1,3 +1,10 @@
+2014-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Mavericks results after https://bugs.webkit.org/show_bug.cgi?id=137275
+        (Speed up line parsing for simple line layout)
+
+        * platform/mac-mavericks/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+
 2014-10-17  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: growthShare > 0 in WebCore::RenderGrid::distributeSpaceToTracks
