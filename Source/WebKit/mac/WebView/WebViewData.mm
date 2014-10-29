@@ -144,6 +144,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #endif
     [inspector release];
     [currentNodeHighlight release];
+    [actionMenuController release];
     [hostWindow release];
     [policyDelegateForwarder release];
     [UIDelegateForwarder release];

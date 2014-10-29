@@ -1,3 +1,47 @@
+2014-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r175182
+
+    2014-10-24  Beth Dakin  <bdakin@apple.com>
+
+            WebKit1 should support action menus
+            https://bugs.webkit.org/show_bug.cgi?id=138032
+
+            Reviewed by Tim Horton.
+
+            This patch adds basic support for action menus and adds actions for links.
+
+            Helper class takes care of all of the action menu work. WebView will forward the 
+            prepareForMenu: message, and then the helper class takes it from there.
+            * WebView/WebActionMenuController.h: Added.
+            * WebView/WebActionMenuController.mm: Added.
+            (-[WebActionMenuController webViewClosed]):
+            (-[WebActionMenuController prepareForMenu:withEvent:]):
+
+            Selectors for link actions.
+            (-[WebActionMenuController _openURLFromActionMenu:]):
+            (-[WebActionMenuController _addToReadingListFromActionMenu:]):
+            (-[WebActionMenuController _elementBoundingBoxFromDOMElement:]):
+            (-[WebActionMenuController _quickLookURLFromActionMenu:]):
+            (-[WebActionMenuController _createActionMenuItemForTag:withHitTestResult:]):
+            (webKitBundleImageNamed):
+            (-[WebActionMenuController _defaultMenuItemsForLink:]):
+            (-[WebActionMenuController _defaultMenuItemsForHitTestResult:]):
+
+            Tags for the action menu items.
+            * WebView/WebUIDelegatePrivate.h:
+            * WebView/WebView.mm:
+
+            Set the action menu if possible and create the controller.
+            (-[WebView _initWithFrame:frameName:groupName:]):
+            (-[WebView _close]):
+            (-[WebView prepareForMenu:withEvent:]):
+
+            WebViewData stores the WebActionMenuHelper
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            (-[WebViewPrivate dealloc]):
+
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
         Merge r175132. <rdar://problem/18753175>
